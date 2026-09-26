@@ -16,6 +16,7 @@ export interface SpecialistImageSetting {
 }
 
 import { savePersistentModule } from '../utils/persistentSync';
+import defaultSyncData from './defaultSyncData.json';
 
 export interface GlobalCardSettings {
   hideAllSessionPrices: boolean; // Hide session prices from all cards in the website
@@ -348,11 +349,23 @@ const STORAGE_KEY = 'raba_specialists_card_customizations';
 
 export function getStoredSpecialistSettings(): Record<string, SpecialistImageSetting> {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { ...DEFAULT_SPECIALIST_SETTINGS };
-    const parsed = JSON.parse(raw);
-    return { ...DEFAULT_SPECIALIST_SETTINGS, ...parsed };
+    const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('raba_specialists_settings');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        return { ...DEFAULT_SPECIALIST_SETTINGS, ...parsed };
+      }
+    }
+    const bundled = (defaultSyncData as any)?.data?.raba_specialists_card_customizations || (defaultSyncData as any)?.data?.raba_specialists_settings;
+    if (bundled && typeof bundled === 'object') {
+      return { ...DEFAULT_SPECIALIST_SETTINGS, ...bundled };
+    }
+    return { ...DEFAULT_SPECIALIST_SETTINGS };
   } catch {
+    const bundled = (defaultSyncData as any)?.data?.raba_specialists_card_customizations || (defaultSyncData as any)?.data?.raba_specialists_settings;
+    if (bundled && typeof bundled === 'object') {
+      return { ...DEFAULT_SPECIALIST_SETTINGS, ...bundled };
+    }
     return { ...DEFAULT_SPECIALIST_SETTINGS };
   }
 }

@@ -41,6 +41,8 @@ export const DEFAULT_ACCREDITATIONS_SETTINGS: AccreditationsSectionSettings = {
   accentBarColor: 'bg-amber-500'
 };
 
+import defaultSyncData from './defaultSyncData.json';
+
 export const ACCREDITATIONS_LIST: AccreditationItem[] = [
   {
     id: 'iso-9001',
@@ -57,7 +59,8 @@ export const ACCREDITATIONS_LIST: AccreditationItem[] = [
     verified: true,
     active: true,
     order: 1,
-    logoType: 'iso-9001',
+    logoType: 'custom',
+    customLogoUrl: '/uploads/1790357652181_ISO-Logo_webp.jpg',
     certificateNumber: 'ISO-SA-88421-2024',
     validUntil: '2027'
   },
@@ -76,7 +79,8 @@ export const ACCREDITATIONS_LIST: AccreditationItem[] = [
     verified: true,
     active: true,
     order: 2,
-    logoType: 'ibao',
+    logoType: 'custom',
+    customLogoUrl: '/uploads/1790357668910_ibao_webp.jpg',
     certificateNumber: 'IBAO-CP-9041',
     validUntil: '2026'
   },
@@ -95,7 +99,8 @@ export const ACCREDITATIONS_LIST: AccreditationItem[] = [
     verified: true,
     active: true,
     order: 3,
-    logoType: 'qaba',
+    logoType: 'custom',
+    customLogoUrl: '/uploads/1790357681328_qaba_webp.jpg',
     certificateNumber: 'QABA-ORG-7712',
     validUntil: '2026'
   },
@@ -172,6 +177,15 @@ export const getStoredAccreditations = (): AccreditationItem[] => {
           logoType: item.logoType || (item.customLogoUrl ? 'custom' : undefined)
         })).sort((a: AccreditationItem, b: AccreditationItem) => a.order - b.order);
       }
+    }
+    const bundled = (defaultSyncData as any)?.data?.raba_accreditations;
+    if (Array.isArray(bundled) && bundled.length > 0) {
+      return bundled.map((item: any, idx: number) => ({
+        ...item,
+        active: item.active !== undefined ? item.active : true,
+        order: item.order !== undefined ? item.order : idx + 1,
+        logoType: item.logoType || (item.customLogoUrl ? 'custom' : undefined)
+      })).sort((a: AccreditationItem, b: AccreditationItem) => a.order - b.order);
     }
   } catch {
     // ignore

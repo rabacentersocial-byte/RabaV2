@@ -67,12 +67,20 @@ for (const file of dataFiles) {
   }
 }
 
-// Write combined all_sync.json into public/data
+// Write combined all_sync.json into public/data and src/data/
 const allSyncPath = path.join(PUBLIC_DATA_DIR, 'all_sync.json');
-fs.writeFileSync(allSyncPath, JSON.stringify({
+const defaultSyncPath = path.join(rootDir, 'src', 'data', 'defaultSyncData.json');
+const syncPayload = JSON.stringify({
   success: true,
   timestamp: new Date().toISOString(),
   data: combinedData
-}, null, 2), 'utf-8');
+}, null, 2);
 
-console.log(`[Sync-Data] Synchronized ${dataFiles.length} files to public/data and generated all_sync.json successfully.`);
+fs.writeFileSync(allSyncPath, syncPayload, 'utf-8');
+try {
+  fs.writeFileSync(defaultSyncPath, syncPayload, 'utf-8');
+} catch (e) {
+  console.warn('Could not write to src/data/defaultSyncData.json:', e);
+}
+
+console.log(`[Sync-Data] Synchronized ${dataFiles.length} files to public/data and src/data/defaultSyncData.json successfully.`);

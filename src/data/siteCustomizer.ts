@@ -1,3 +1,5 @@
+import defaultSyncData from './defaultSyncData.json';
+
 export interface SiteThemeSettings {
   id: string;
   nameAr: string;
@@ -140,9 +142,9 @@ export interface SiteLogoSettings {
 
 export const DEFAULT_LOGO_SETTINGS: SiteLogoSettings = {
   logoSource: 'custom',
-  customLogoUrl: '/logo/raba_puzzle_brain.png',
+  customLogoUrl: '/uploads/1790358266500_logo_transparent_transparent_png.png',
   iconSizePx: 46,
-  iconRounding: 'none',
+  iconRounding: 'md',
   iconObjectFit: 'contain',
   spacingPx: 10,
   showText: false, // Default is false: text beside logo is removed for modern clean look
@@ -348,8 +350,16 @@ export function getStoredLogoSettings(): SiteLogoSettings {
         // ignore JSON parse error
       }
     }
+    const bundled = (defaultSyncData as any)?.data?.raba_site_logo_v3;
+    if (bundled && typeof bundled === 'object') {
+      return { ...DEFAULT_LOGO_SETTINGS, ...bundled };
+    }
     return { ...DEFAULT_LOGO_SETTINGS };
   } catch {
+    const bundled = (defaultSyncData as any)?.data?.raba_site_logo_v3;
+    if (bundled && typeof bundled === 'object') {
+      return { ...DEFAULT_LOGO_SETTINGS, ...bundled };
+    }
     return { ...DEFAULT_LOGO_SETTINGS };
   }
 }

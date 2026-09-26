@@ -83,6 +83,12 @@ export function getResolvedImageUrl(src?: string): string {
     }
   }
 
+  // If a custom base URL is used in production (other than '/')
+  const base = (typeof import.meta !== 'undefined' && import.meta.env?.BASE_URL) || '/';
+  if (base !== '/' && src.startsWith('/') && !src.startsWith(base)) {
+    return `${base.replace(/\/$/, '')}${src}`;
+  }
+
   return src;
 }
 
@@ -218,28 +224,49 @@ export async function handleImageErrorWithStore(
   fallbackSrc?: string
 ): Promise<void> {
   const target = e.target as HTMLImageElement;
-  if (!target) return;
+  if (!target || !originalSrc) return;
 
-  // Prevent infinite error loop
-  if (target.dataset.triedStore) {
-    if (fallbackSrc && target.src !== fallbackSrc) {
-      target.src = fallbackSrc;
-    }
-    return;
+  const currentAttempt = Number(target.dataset.retryAttempt || 0);
+
+  // Attempt 1: Try encoded URI if original has special characters
+  if (currentAttempt === 0) {
+    target.dataset.retryAttempt = '1';
+    try {
+      const encoded = encodeURI(originalSrc);
+      if (encoded !== originalSrc && target.src !== encoded) {
+        target.src = encoded;
+        return;
+      }
+    } catch { /* ignore */ }
   }
-  target.dataset.triedStore = 'true';
 
-  try {
-    const cached = await getPersistentImage(originalSrc);
-    if (cached) {
-      target.src = cached;
+  // Attempt 2: Try relative path without leading slash
+  if (currentAttempt <= 1 && originalSrc.startsWith('/')) {
+    target.dataset.retryAttempt = '2';
+    const relative = originalSrc.replace(/^\/+/, '');
+    if (target.src !== relative) {
+      target.src = relative;
       return;
     }
-  } catch {
-    // ignore
   }
 
-  if (fallbackSrc) {
+  // Attempt 3: Try looking up from persistent IndexedDB store
+  if (currentAttempt <= 2) {
+    target.dataset.retryAttempt = '3';
+    try {
+      const cached = await getPersistentImage(originalSrc);
+      if (cached && target.src !== cached) {
+        target.src = cached;
+        return;
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  // Final fallback: Use designated fallback image if provided
+  target.dataset.retryAttempt = '4';
+  if (fallbackSrc && target.src !== fallbackSrc) {
     target.src = fallbackSrc;
   }
 }

@@ -5,8 +5,11 @@ import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext.tsx';
 import { updateTabFavicon } from './data/siteCustomizer';
-import { initPersistentSync } from './utils/persistentSync';
+import { initPersistentSync, hydratePersistentData } from './utils/persistentSync';
 import './index.css';
+
+// Instant synchronous hydration for incognito/private mode
+hydratePersistentData();
 
 // Initialize tab favicon with brand logo
 updateTabFavicon();

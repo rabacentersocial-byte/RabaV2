@@ -153,6 +153,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
 
 import { savePersistentModule } from '../utils/persistentSync';
 import { savePersistentImage } from '../utils/persistentImageStore';
+import defaultSyncData from './defaultSyncData.json';
 
 const STORAGE_HERO_SLIDES_KEY = 'raba_hero_slides_v2';
 const STORAGE_HERO_CONFIG_KEY = 'raba_hero_slider_config_v2';
@@ -160,14 +161,39 @@ const STORAGE_HERO_CONFIG_KEY = 'raba_hero_slider_config_v2';
 export function getStoredHeroSlides(): HeroSlideItem[] {
   try {
     const raw = localStorage.getItem(STORAGE_HERO_SLIDES_KEY);
-    if (!raw) return [...DEFAULT_HERO_SLIDES];
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed.sort((a, b) => (a.order || 0) - (b.order || 0));
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.sort((a, b) => (a.order || 0) - (b.order || 0));
+      }
+    }
+    const bundled = (defaultSyncData as any)?.data?.raba_hero_slides_v2;
+    if (Array.isArray(bundled) && bundled.length > 0) {
+      return [...bundled].sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
     }
     return [...DEFAULT_HERO_SLIDES];
   } catch {
+    const bundled = (defaultSyncData as any)?.data?.raba_hero_slides_v2;
+    if (Array.isArray(bundled) && bundled.length > 0) {
+      return [...bundled].sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+    }
     return [...DEFAULT_HERO_SLIDES];
+  }
+}
+
+export function getStoredHeroSliderConfig(): HeroSliderConfig {
+  try {
+    const raw = localStorage.getItem(STORAGE_HERO_CONFIG_KEY);
+    if (raw) {
+      return { ...DEFAULT_HERO_SLIDER_CONFIG, ...JSON.parse(raw) };
+    }
+    const bundled = (defaultSyncData as any)?.data?.raba_hero_slider_config_v2;
+    if (bundled && typeof bundled === 'object') {
+      return { ...DEFAULT_HERO_SLIDER_CONFIG, ...bundled };
+    }
+    return { ...DEFAULT_HERO_SLIDER_CONFIG };
+  } catch {
+    return { ...DEFAULT_HERO_SLIDER_CONFIG };
   }
 }
 
@@ -188,16 +214,6 @@ export function saveStoredHeroSlides(slides: HeroSlideItem[]): void {
 
   savePersistentModule(STORAGE_HERO_SLIDES_KEY, slides);
   dispatchSlidesUpdated();
-}
-
-export function getStoredHeroSliderConfig(): HeroSliderConfig {
-  try {
-    const raw = localStorage.getItem(STORAGE_HERO_CONFIG_KEY);
-    if (!raw) return { ...DEFAULT_HERO_SLIDER_CONFIG };
-    return { ...DEFAULT_HERO_SLIDER_CONFIG, ...JSON.parse(raw) };
-  } catch {
-    return { ...DEFAULT_HERO_SLIDER_CONFIG };
-  }
 }
 
 export function saveStoredHeroSliderConfig(config: HeroSliderConfig): void {
