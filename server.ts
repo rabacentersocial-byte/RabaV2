@@ -346,10 +346,53 @@ async function startServer() {
   app.post('/api/db/appointments', async (req: Request, res: Response) => {
     try {
       const newAppt = await createDbAppointment(req.body);
+
+      // Optional mirror to Supabase if configured via Hostinger / Env
+      const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+      const supabaseKey = process.env.SUPABASE_API_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+      if (supabaseUrl && supabaseKey) {
+        try {
+          const { createClient } = await import('@supabase/supabase-js');
+          const client = createClient(supabaseUrl, supabaseKey);
+          await client.from('appointments').insert([{
+            patient_name: req.body.patientName || req.body.patient_name || req.body.name,
+            phone: req.body.phone || req.body.phoneNumber,
+            specialist: req.body.doctorName || req.body.specialist || req.body.doctor_name,
+            service: req.body.specialty || req.body.service,
+            date: req.body.date,
+            time: req.body.time,
+            notes: req.body.notes,
+            status: 'pending'
+          }]);
+        } catch (sErr) {
+          console.warn('[Supabase] Appointment mirror notice:', sErr);
+        }
+      }
+
       res.json({ success: true, appointment: newAppt });
     } catch (error: any) {
       console.error('Failed to create appointment:', error);
       res.status(500).json({ error: error.message || 'Failed to create appointment' });
+    }
+  });
+
+  // Supabase Status API
+  app.get('/api/supabase/status', async (req: Request, res: Response) => {
+    try {
+      const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+      const key = process.env.SUPABASE_API_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+      if (!url || !key) {
+        return res.json({ connected: false, configured: false, message: 'SUPABASE_URL or SUPABASE_API_KEY not configured' });
+      }
+      const { createClient } = await import('@supabase/supabase-js');
+      const client = createClient(url, key);
+      const { data, error } = await client.from('appointments').select('*').limit(1);
+      if (error) {
+        return res.json({ connected: true, configured: true, tableFound: false, message: error.message });
+      }
+      return res.json({ connected: true, configured: true, tableFound: true, count: data?.length ?? 0 });
+    } catch (err: any) {
+      return res.status(500).json({ connected: false, error: err.message });
     }
   });
 
