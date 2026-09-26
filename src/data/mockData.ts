@@ -9,7 +9,7 @@ export const SPECIALISTS: Specialist[] = [
     titleEn: 'Head of Occupational Therapy Department',
     role: 'رئيس قسم العلاج الوظيفي والتكامل الحسي',
     roleEn: 'Head of Occupational Therapy Department',
-    avatar: '/uploads/1790357520279_________________jpg_jpeg.jpg',
+    avatar: '/images/specialists/haneen_obaidi.jpg',
     experienceYears: 16,
     licenseNumber: 'RABA-OT-016',
     specialties: [
@@ -68,7 +68,7 @@ export const SPECIALISTS: Specialist[] = [
     titleEn: 'Supervisor of ABA Department',
     role: 'مشرفة قسم تحليل السلوك التطبيقي ABA',
     roleEn: 'Supervisor of ABA Department & QABA Analyst',
-    avatar: '/uploads/1790357530423_________________jpg_jpeg.jpg',
+    avatar: '/images/specialists/rahaf_doghmani.jpg',
     experienceYears: 5,
     licenseNumber: 'RABA-ABA-052',
     specialties: [
@@ -119,7 +119,7 @@ export const SPECIALISTS: Specialist[] = [
     titleEn: 'Supervisor of ABA Department',
     role: 'مشرفة قسم تحليل السلوك التطبيقي ومحلل سلوكي معتمد',
     roleEn: 'ABA Supervisor & Certified Behavior Analyst',
-    avatar: '/uploads/1790357539758_____________jpg_jpeg.jpg',
+    avatar: '/images/specialists/doha_khaled.jpg',
     experienceYears: 9,
     licenseNumber: 'RABA-ABA-091',
     specialties: [
@@ -170,7 +170,7 @@ export const SPECIALISTS: Specialist[] = [
     titleEn: 'Supervisor of Speech & Language Pathology Department',
     role: 'مشرفة قسم النطق والتخاطب والتأهيل اللغوي',
     roleEn: 'Speech & Language Pathology Supervisor',
-    avatar: '/uploads/1790357549806______________jpg_jpeg.jpg',
+    avatar: '/images/specialists/manar_wahba.jpg',
     experienceYears: 10,
     licenseNumber: 'RABA-SLP-010',
     specialties: [
@@ -227,7 +227,7 @@ export const SPECIALISTS: Specialist[] = [
     titleEn: 'ABA Specialist',
     role: 'أخصائي تحليل السلوك التطبيقي المعتمد ABAT',
     roleEn: 'ABA Specialist & Board Certified ABAT',
-    avatar: '/uploads/1790357579245_______________jpg_jpeg.jpg',
+    avatar: '/images/specialists/ahmed_fathi.jpg',
     experienceYears: 8,
     licenseNumber: 'RABA-ABA-084',
     specialties: [
@@ -278,7 +278,7 @@ export const SPECIALISTS: Specialist[] = [
     titleEn: 'ABA Specialist',
     role: 'أخصائي تحليل السلوك التطبيقي ومشرف توحد مؤهل QASP-S',
     roleEn: 'ABA Specialist & Qualified Autism Services Supervisor (QASP-S)',
-    avatar: '/uploads/1790357588113______________jpg_jpeg.jpg',
+    avatar: '/images/specialists/mohamed_atef.jpg',
     experienceYears: 5,
     licenseNumber: 'RABA-ABA-057',
     specialties: [
@@ -331,7 +331,7 @@ export const SPECIALISTS: Specialist[] = [
     titleEn: 'ABA Specialist',
     role: 'أخصائي تحليل السلوك ومصنفة من الهيئة السعودية للتخصصات الصحية',
     roleEn: 'ABA Specialist & SCFHS Licensed Psychologist',
-    avatar: '/uploads/1790357598308______________________jpg_jpeg.jpg',
+    avatar: '/images/specialists/sadeem_mshari.jpg',
     experienceYears: 4,
     licenseNumber: 'RABA-PSY-049',
     specialties: [
@@ -384,7 +384,7 @@ export const SPECIALISTS: Specialist[] = [
     titleEn: 'ABA Specialist',
     role: 'أخصائية تحليل السلوك التطبيقي وعلم النفس الإكلينيكي',
     roleEn: 'ABA Specialist & Clinical Psychologist',
-    avatar: '/uploads/1790357606704______________jpg_jpeg.jpg',
+    avatar: '/images/specialists/maram_mohamed.jpg',
     experienceYears: 3,
     licenseNumber: 'RABA-ABA-033',
     specialties: [
@@ -435,7 +435,7 @@ export const SPECIALISTS: Specialist[] = [
     titleEn: 'ABA Specialist',
     role: 'أخصائي تحليل السلوك التطبيقي ABAT والعلوم الصحية',
     roleEn: 'ABA Specialist & Health Sciences Graduate',
-    avatar: '/uploads/1790357615959______________jpg_jpeg.jpg',
+    avatar: '/images/specialists/ahmed_raad.jpg',
     experienceYears: 3,
     licenseNumber: 'RABA-ABA-038',
     specialties: [
@@ -484,7 +484,7 @@ export const SPECIALISTS: Specialist[] = [
     titleEn: 'General Director of Rehabilitation | Head of ABA',
     role: 'المدير العام للبرامج التأهيلية ورئيس قسم تحليل السلوك',
     roleEn: 'General Director of Programs & Head of ABA',
-    avatar: '/uploads/1790357622619________________jpeg.jpg',
+    avatar: '/images/specialists/ahmed_abouzeid.jpg',
     experienceYears: 12,
     licenseNumber: 'RABA-ABA-0104',
     specialties: ['MA, QBA, IBA', 'خبرة 12 سنة ومقدم CEUs للبورد QABA', 'خطط التدخل السلوكي المكثفة', 'تعديل السلوك وتدريب الكوادر والأسر'],

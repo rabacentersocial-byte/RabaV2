@@ -1,6 +1,6 @@
 {
   "success": true,
-  "timestamp": "2026-09-26T16:13:24.115Z",
+  "timestamp": "2026-09-26T20:15:22.391Z",
   "data": {
     "raba_accreditations": [
       {
@@ -21,7 +21,7 @@
         "logoType": "custom",
         "certificateNumber": "ISO-SA-88421-2024",
         "validUntil": "2027",
-        "customLogoUrl": "/uploads/1790357652181_ISO-Logo_webp.jpg"
+        "customLogoUrl": "/images/accreditations/iso_logo.jpg"
       },
       {
         "id": "ibao",
@@ -41,7 +41,7 @@
         "logoType": "custom",
         "certificateNumber": "IBAO-CP-9041",
         "validUntil": "2026",
-        "customLogoUrl": "/uploads/1790357668910_ibao_webp.jpg"
+        "customLogoUrl": "/images/accreditations/ibao_logo.jpg"
       },
       {
         "id": "qaba",
@@ -61,7 +61,7 @@
         "logoType": "custom",
         "certificateNumber": "QABA-ORG-7712",
         "validUntil": "2026",
-        "customLogoUrl": "/uploads/1790357681328_qaba_webp.jpg"
+        "customLogoUrl": "/images/accreditations/qaba_logo.jpg"
       },
       {
         "id": "bacb",
@@ -81,7 +81,7 @@
         "logoType": "custom",
         "certificateNumber": "BACB-SUP-33019",
         "validUntil": "2027",
-        "customLogoUrl": "/uploads/1790357693975_IMG_6729_jpg.jpg"
+        "customLogoUrl": "/images/accreditations/cert_1.jpg"
       },
       {
         "id": "acc-1790357770406",
@@ -99,7 +99,7 @@
         "active": true,
         "order": 5,
         "logoType": "custom",
-        "customLogoUrl": "/uploads/1790357709799_IMG_6728_png_jpeg.jpg",
+        "customLogoUrl": "/images/accreditations/cert_2.jpg",
         "certificateNumber": "RABA-02003",
         "validUntil": "2027"
       }
@@ -749,7 +749,7 @@
     "raba_hero_slides_v2": [
       {
         "id": "photo-1",
-        "src": "/uploads/1790357979807_Screenshot_2569-09-23_at_2_25_17_AM_png.png",
+        "src": "/images/hero/slide_1_haneen.png",
         "alt": "أ. حنين العبيدي - رئيس قسم العلاج الوظيفي والتكامل الحسي",
         "titleAr": "أ. حنين العبيدي",
         "titleEn": "Haneen Al-Obaidi",
@@ -764,7 +764,7 @@
       },
       {
         "id": "photo-2",
-        "src": "/uploads/1790358006694________________jpeg.jpg",
+        "src": "/images/hero/slide_2_ahmed.jpg",
         "alt": "أ. أحمد أبو زيد أنور - المدير العام للبرامج التأهيلية ورئيس قسم ABA",
         "titleAr": "أ. أحمد أبو زيد أنور",
         "titleEn": "Ahmed Abouzeid Anwar",
@@ -779,7 +779,7 @@
       },
       {
         "id": "photo-3",
-        "src": "/uploads/1790358033686_Screenshot_2569-09-23_at_2_25_29_AM_png.png",
+        "src": "/images/hero/slide_3_rahaf.png",
         "alt": "أ. رهف الدغماني - مشرفة قسم تحليل السلوك التطبيقي ABA",
         "titleAr": "أ. رهف الدغماني",
         "titleEn": "Rahaf Al-Doghmani",
@@ -794,7 +794,7 @@
       },
       {
         "id": "photo-4",
-        "src": "/uploads/1790358050734_Screenshot_2569-09-23_at_2_26_05_AM_png.png",
+        "src": "/images/hero/slide_4_doha.png",
         "alt": "أ. ضحى خالد - مشرفة قسم ABA ومحلل سلوكي معتمد",
         "titleAr": "أ. ضحى خالد",
         "titleEn": "Doha Khaled",
@@ -809,7 +809,7 @@
       },
       {
         "id": "photo-5",
-        "src": "/uploads/1790358074567_Screenshot_2569-09-23_at_2_27_08_AM_png.png",
+        "src": "/images/hero/slide_5_manar.png",
         "alt": "أ. منار وهبه - مشرفة قسم النطق والتخاطب",
         "titleAr": "أ. منار وهبه",
         "titleEn": "Manar Wahba",
@@ -824,7 +824,7 @@
       },
       {
         "id": "photo-6",
-        "src": "/uploads/1790358094657_Screenshot_2569-09-22_at_2_07_53_PM_png.png",
+        "src": "/images/hero/slide_6_fathi.png",
         "alt": "أ. أحمد فتحي - أخصائي تحليل السلوك التطبيقي ABAT",
         "titleAr": "أ. أحمد فتحي",
         "titleEn": "Ahmed Fathi",
@@ -839,7 +839,7 @@
       },
       {
         "id": "photo-7",
-        "src": "/uploads/1790358114735_Screenshot_2569-09-23_at_2_25_47_AM_png.png",
+        "src": "/images/hero/slide_7_specialist.png",
         "alt": "أ. سديم احمد المشاري - أخصائي ABA ومصنفة من الهيئة السعودية",
         "titleAr": "أ. سديم احمد المشاري",
         "titleEn": "Sadeem Ahmed Al-Mshari",
@@ -854,7 +854,7 @@
       },
       {
         "id": "photo-8",
-        "src": "/uploads/1790358142609_Screenshot_2569-09-23_at_2_26_16_AM_png.png",
+        "src": "/images/hero/slide_8_specialist.png",
         "alt": "أ. محمد عاطف - أخصائي تحليل السلوك ومشرف توحد QASP-S",
         "titleAr": "أ. محمد عاطف",
         "titleEn": "Mohamed Atef",
@@ -1459,7 +1459,7 @@
     },
     "raba_site_logo_v3": {
       "logoSource": "custom",
-      "customLogoUrl": "/uploads/1790358266500_logo_transparent_transparent_png.png",
+      "customLogoUrl": "/logo/raba_puzzle_brain.png",
       "iconSizePx": 46,
       "iconRounding": "md",
       "iconObjectFit": "contain",
@@ -1477,7 +1477,7 @@
     },
     "raba_site_logo_v2": {
       "logoSource": "custom",
-      "customLogoUrl": "/uploads/1790358266500_logo_transparent_transparent_png.png",
+      "customLogoUrl": "/logo/raba_puzzle_brain.png",
       "iconSizePx": 46,
       "iconRounding": "md",
       "iconObjectFit": "contain",
@@ -1495,7 +1495,7 @@
     },
     "raba_site_logo_v1": {
       "logoSource": "custom",
-      "customLogoUrl": "/uploads/1790358266500_logo_transparent_transparent_png.png",
+      "customLogoUrl": "/logo/raba_puzzle_brain.png",
       "iconSizePx": 46,
       "iconRounding": "md",
       "iconObjectFit": "contain",
@@ -1616,7 +1616,7 @@
       "spec-haneen-obaidi": {
         "id": "spec-haneen-obaidi",
         "name": "أ. حنين العبيدي",
-        "avatar": "/uploads/1790357520279_________________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/haneen_obaidi.jpg",
         "posterCrop": "/specialists/poster_haneen_obaidi_1790197758317.jpg",
         "portraitCrop": "/specialists/spec_haneen_obaidi_1790197216150.jpg",
         "fallbackAvatar": "/specialists/haneen_obaidi_poster.jpg",
@@ -1630,7 +1630,7 @@
       "doc-haneen-obaidi": {
         "id": "doc-haneen-obaidi",
         "name": "أ. حنين العبيدي",
-        "avatar": "/uploads/1790357520279_________________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/haneen_obaidi.jpg",
         "posterCrop": "/specialists/poster_haneen_obaidi_1790197758317.jpg",
         "portraitCrop": "/specialists/spec_haneen_obaidi_1790197216150.jpg",
         "fallbackAvatar": "/specialists/haneen_obaidi_poster.jpg",
@@ -1644,7 +1644,7 @@
       "spec-rahaf-doghmani": {
         "id": "spec-rahaf-doghmani",
         "name": "أ. رهف الدغماني",
-        "avatar": "/uploads/1790357530423_________________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/rahaf_doghmani.jpg",
         "posterCrop": "/specialists/poster_rahaf_doghmani_1790197765782.jpg",
         "portraitCrop": "/specialists/spec_rahaf_doghmani_1790197226544.jpg",
         "fallbackAvatar": "/specialists/rahaf_doghmani_poster.jpg",
@@ -1658,7 +1658,7 @@
       "doc-rahaf-doghmani": {
         "id": "doc-rahaf-doghmani",
         "name": "أ. رهف الدغماني",
-        "avatar": "/uploads/1790357530423_________________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/rahaf_doghmani.jpg",
         "posterCrop": "/specialists/poster_rahaf_doghmani_1790197765782.jpg",
         "portraitCrop": "/specialists/spec_rahaf_doghmani_1790197226544.jpg",
         "fallbackAvatar": "/specialists/rahaf_doghmani_poster.jpg",
@@ -1672,7 +1672,7 @@
       "spec-doha-khaled": {
         "id": "spec-doha-khaled",
         "name": "أ. ضحى خالد",
-        "avatar": "/uploads/1790357539758_____________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/doha_khaled.jpg",
         "posterCrop": "/specialists/poster_doha_khaled_1790197784055.jpg",
         "portraitCrop": "/specialists/spec_doha_khaled_1790197246850.jpg",
         "fallbackAvatar": "/specialists/doha_khaled_poster.jpg",
@@ -1686,7 +1686,7 @@
       "doc-doha-khaled": {
         "id": "doc-doha-khaled",
         "name": "أ. ضحى خالد",
-        "avatar": "/uploads/1790357539758_____________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/doha_khaled.jpg",
         "posterCrop": "/specialists/poster_doha_khaled_1790197784055.jpg",
         "portraitCrop": "/specialists/spec_doha_khaled_1790197246850.jpg",
         "fallbackAvatar": "/specialists/doha_khaled_poster.jpg",
@@ -1700,7 +1700,7 @@
       "spec-manar-wahba": {
         "id": "spec-manar-wahba",
         "name": "أ. منار وهبه",
-        "avatar": "/uploads/1790357549806______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/manar_wahba.jpg",
         "posterCrop": "/specialists/poster_manar_wahba_1790197794286.jpg",
         "portraitCrop": "/specialists/spec_manar_wahba_1790197276842.jpg",
         "fallbackAvatar": "/specialists/manar_wahba_poster.jpg",
@@ -1714,7 +1714,7 @@
       "doc-manar-wahba": {
         "id": "doc-manar-wahba",
         "name": "أ. منار وهبه",
-        "avatar": "/uploads/1790357549806______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/manar_wahba.jpg",
         "posterCrop": "/specialists/poster_manar_wahba_1790197794286.jpg",
         "portraitCrop": "/specialists/spec_manar_wahba_1790197276842.jpg",
         "fallbackAvatar": "/specialists/manar_wahba_poster.jpg",
@@ -1728,7 +1728,7 @@
       "spec-ahmed-fathi": {
         "id": "spec-ahmed-fathi",
         "name": "أ. أحمد فتحي",
-        "avatar": "/uploads/1790357579245_______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_fathi.jpg",
         "posterCrop": "/specialists/poster_ahmed_fathi_1790197750721.jpg",
         "portraitCrop": "/specialists/spec_ahmed_fathi_1790197207910.jpg",
         "fallbackAvatar": "/specialists/ahmed_fathi_poster.jpg",
@@ -1742,7 +1742,7 @@
       "doc-ahmed-fathi": {
         "id": "doc-ahmed-fathi",
         "name": "أ. أحمد فتحي",
-        "avatar": "/uploads/1790357579245_______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_fathi.jpg",
         "posterCrop": "/specialists/poster_ahmed_fathi_1790197750721.jpg",
         "portraitCrop": "/specialists/spec_ahmed_fathi_1790197207910.jpg",
         "fallbackAvatar": "/specialists/ahmed_fathi_poster.jpg",
@@ -1756,7 +1756,7 @@
       "spec-mohamed-atef": {
         "id": "spec-mohamed-atef",
         "name": "أ. محمد عاطف",
-        "avatar": "/uploads/1790357588113______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/mohamed_atef.jpg",
         "posterCrop": "/specialists/poster_mohamed_atef_1790197803776.jpg",
         "portraitCrop": "/specialists/spec_mohamed_atef_1790197255945.jpg",
         "fallbackAvatar": "/specialists/mohamed_atef_poster.jpg",
@@ -1770,7 +1770,7 @@
       "doc-mohamed-atef": {
         "id": "doc-mohamed-atef",
         "name": "أ. محمد عاطف",
-        "avatar": "/uploads/1790357588113______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/mohamed_atef.jpg",
         "posterCrop": "/specialists/poster_mohamed_atef_1790197803776.jpg",
         "portraitCrop": "/specialists/spec_mohamed_atef_1790197255945.jpg",
         "fallbackAvatar": "/specialists/mohamed_atef_poster.jpg",
@@ -1784,7 +1784,7 @@
       "spec-sadeem-mshari": {
         "id": "spec-sadeem-mshari",
         "name": "أ. سديم احمد المشاري",
-        "avatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/sadeem_mshari.jpg",
         "posterCrop": "/specialists/poster_sadeem_mshari_1790197812611.jpg",
         "portraitCrop": "/specialists/spec_sadeem_mshari_1790197236144.jpg",
         "fallbackAvatar": "/specialists/sadeem_mshari_poster.jpg",
@@ -1798,7 +1798,7 @@
       "doc-sadeem-mshari": {
         "id": "doc-sadeem-mshari",
         "name": "أ. سديم احمد المشاري",
-        "avatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/sadeem_mshari.jpg",
         "posterCrop": "/specialists/poster_sadeem_mshari_1790197812611.jpg",
         "portraitCrop": "/specialists/spec_sadeem_mshari_1790197236144.jpg",
         "fallbackAvatar": "/specialists/sadeem_mshari_poster.jpg",
@@ -1812,7 +1812,7 @@
       "spec-maram-mohamed": {
         "id": "spec-maram-mohamed",
         "name": "أ. مرام محمد",
-        "avatar": "/uploads/1790357606704______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/maram_mohamed.jpg",
         "posterCrop": "/specialists/poster_maram_mohamed_1790197821665.jpg",
         "portraitCrop": "/specialists/spec_maram_mohamed_1790197265873.jpg",
         "fallbackAvatar": "/specialists/maram_mohamed_poster.jpg",
@@ -1826,7 +1826,7 @@
       "doc-maram-mohamed": {
         "id": "doc-maram-mohamed",
         "name": "أ. مرام محمد",
-        "avatar": "/uploads/1790357606704______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/maram_mohamed.jpg",
         "posterCrop": "/specialists/poster_maram_mohamed_1790197821665.jpg",
         "portraitCrop": "/specialists/spec_maram_mohamed_1790197265873.jpg",
         "fallbackAvatar": "/specialists/maram_mohamed_poster.jpg",
@@ -1840,7 +1840,7 @@
       "spec-ahmed-raad": {
         "id": "spec-ahmed-raad",
         "name": "أ. أحمد رعد",
-        "avatar": "/uploads/1790357615959______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_raad.jpg",
         "posterCrop": "/specialists/poster_ahmed_raad_1790197742838.jpg",
         "portraitCrop": "/specialists/spec_ahmed_raad_1790197197424.jpg",
         "fallbackAvatar": "/specialists/ahmed_raad_poster.jpg",
@@ -1854,7 +1854,7 @@
       "doc-ahmed-raad": {
         "id": "doc-ahmed-raad",
         "name": "أ. أحمد رعد",
-        "avatar": "/uploads/1790357615959______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_raad.jpg",
         "posterCrop": "/specialists/poster_ahmed_raad_1790197742838.jpg",
         "portraitCrop": "/specialists/spec_ahmed_raad_1790197197424.jpg",
         "fallbackAvatar": "/specialists/ahmed_raad_poster.jpg",
@@ -1868,7 +1868,7 @@
       "spec-1": {
         "id": "spec-1",
         "name": "أ. أحمد أبو زيد أنور",
-        "avatar": "/uploads/1790357622619________________jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
         "posterCrop": "/specialists/ahmed_abouzeid.jpg",
         "portraitCrop": "/specialists/ahmed_abouzeid.jpg",
         "fallbackAvatar": "/specialists/ahmed_abouzeid.jpg",
@@ -1882,7 +1882,7 @@
       "doc-ahmed-abouzeid": {
         "id": "doc-ahmed-abouzeid",
         "name": "أ. أحمد أبو زيد أنور",
-        "avatar": "/uploads/1790357622619________________jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
         "posterCrop": "/specialists/ahmed_abouzeid.jpg",
         "portraitCrop": "/specialists/ahmed_abouzeid.jpg",
         "fallbackAvatar": "/specialists/ahmed_abouzeid.jpg",
@@ -1896,7 +1896,7 @@
       "spec-ahmed-abouzeid": {
         "id": "spec-ahmed-abouzeid",
         "name": "أ. أحمد أبو زيد أنور",
-        "avatar": "/uploads/1790357622619________________jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
         "posterCrop": "/specialists/ahmed_abouzeid.jpg",
         "portraitCrop": "/specialists/ahmed_abouzeid.jpg",
         "fallbackAvatar": "/specialists/ahmed_abouzeid.jpg",
@@ -1910,7 +1910,7 @@
       "doc-1": {
         "id": "doc-1",
         "name": "أ. أحمد أبو زيد أنور",
-        "avatar": "/uploads/1790357622619________________jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
         "posterCrop": "/specialists/ahmed_abouzeid.jpg",
         "portraitCrop": "/specialists/ahmed_abouzeid.jpg",
         "fallbackAvatar": "/specialists/ahmed_abouzeid.jpg",
@@ -1926,7 +1926,7 @@
       "spec-haneen-obaidi": {
         "id": "spec-haneen-obaidi",
         "name": "أ. حنين العبيدي",
-        "avatar": "/uploads/1790357520279_________________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/haneen_obaidi.jpg",
         "posterCrop": "/specialists/poster_haneen_obaidi_1790197758317.jpg",
         "portraitCrop": "/specialists/spec_haneen_obaidi_1790197216150.jpg",
         "fallbackAvatar": "/specialists/haneen_obaidi_poster.jpg",
@@ -1940,7 +1940,7 @@
       "doc-haneen-obaidi": {
         "id": "doc-haneen-obaidi",
         "name": "أ. حنين العبيدي",
-        "avatar": "/uploads/1790357520279_________________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/haneen_obaidi.jpg",
         "posterCrop": "/specialists/poster_haneen_obaidi_1790197758317.jpg",
         "portraitCrop": "/specialists/spec_haneen_obaidi_1790197216150.jpg",
         "fallbackAvatar": "/specialists/haneen_obaidi_poster.jpg",
@@ -1954,7 +1954,7 @@
       "spec-rahaf-doghmani": {
         "id": "spec-rahaf-doghmani",
         "name": "أ. رهف الدغماني",
-        "avatar": "/uploads/1790357530423_________________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/rahaf_doghmani.jpg",
         "posterCrop": "/specialists/poster_rahaf_doghmani_1790197765782.jpg",
         "portraitCrop": "/specialists/spec_rahaf_doghmani_1790197226544.jpg",
         "fallbackAvatar": "/specialists/rahaf_doghmani_poster.jpg",
@@ -1968,7 +1968,7 @@
       "doc-rahaf-doghmani": {
         "id": "doc-rahaf-doghmani",
         "name": "أ. رهف الدغماني",
-        "avatar": "/uploads/1790357530423_________________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/rahaf_doghmani.jpg",
         "posterCrop": "/specialists/poster_rahaf_doghmani_1790197765782.jpg",
         "portraitCrop": "/specialists/spec_rahaf_doghmani_1790197226544.jpg",
         "fallbackAvatar": "/specialists/rahaf_doghmani_poster.jpg",
@@ -1982,7 +1982,7 @@
       "spec-doha-khaled": {
         "id": "spec-doha-khaled",
         "name": "أ. ضحى خالد",
-        "avatar": "/uploads/1790357539758_____________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/doha_khaled.jpg",
         "posterCrop": "/specialists/poster_doha_khaled_1790197784055.jpg",
         "portraitCrop": "/specialists/spec_doha_khaled_1790197246850.jpg",
         "fallbackAvatar": "/specialists/doha_khaled_poster.jpg",
@@ -1996,7 +1996,7 @@
       "doc-doha-khaled": {
         "id": "doc-doha-khaled",
         "name": "أ. ضحى خالد",
-        "avatar": "/uploads/1790357539758_____________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/doha_khaled.jpg",
         "posterCrop": "/specialists/poster_doha_khaled_1790197784055.jpg",
         "portraitCrop": "/specialists/spec_doha_khaled_1790197246850.jpg",
         "fallbackAvatar": "/specialists/doha_khaled_poster.jpg",
@@ -2010,7 +2010,7 @@
       "spec-manar-wahba": {
         "id": "spec-manar-wahba",
         "name": "أ. منار وهبه",
-        "avatar": "/uploads/1790357549806______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/manar_wahba.jpg",
         "posterCrop": "/specialists/poster_manar_wahba_1790197794286.jpg",
         "portraitCrop": "/specialists/spec_manar_wahba_1790197276842.jpg",
         "fallbackAvatar": "/specialists/manar_wahba_poster.jpg",
@@ -2024,7 +2024,7 @@
       "doc-manar-wahba": {
         "id": "doc-manar-wahba",
         "name": "أ. منار وهبه",
-        "avatar": "/uploads/1790357549806______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/manar_wahba.jpg",
         "posterCrop": "/specialists/poster_manar_wahba_1790197794286.jpg",
         "portraitCrop": "/specialists/spec_manar_wahba_1790197276842.jpg",
         "fallbackAvatar": "/specialists/manar_wahba_poster.jpg",
@@ -2038,7 +2038,7 @@
       "spec-ahmed-fathi": {
         "id": "spec-ahmed-fathi",
         "name": "أ. أحمد فتحي",
-        "avatar": "/uploads/1790357579245_______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_fathi.jpg",
         "posterCrop": "/specialists/poster_ahmed_fathi_1790197750721.jpg",
         "portraitCrop": "/specialists/spec_ahmed_fathi_1790197207910.jpg",
         "fallbackAvatar": "/specialists/ahmed_fathi_poster.jpg",
@@ -2052,7 +2052,7 @@
       "doc-ahmed-fathi": {
         "id": "doc-ahmed-fathi",
         "name": "أ. أحمد فتحي",
-        "avatar": "/uploads/1790357579245_______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_fathi.jpg",
         "posterCrop": "/specialists/poster_ahmed_fathi_1790197750721.jpg",
         "portraitCrop": "/specialists/spec_ahmed_fathi_1790197207910.jpg",
         "fallbackAvatar": "/specialists/ahmed_fathi_poster.jpg",
@@ -2066,7 +2066,7 @@
       "spec-mohamed-atef": {
         "id": "spec-mohamed-atef",
         "name": "أ. محمد عاطف",
-        "avatar": "/uploads/1790357588113______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/mohamed_atef.jpg",
         "posterCrop": "/specialists/poster_mohamed_atef_1790197803776.jpg",
         "portraitCrop": "/specialists/spec_mohamed_atef_1790197255945.jpg",
         "fallbackAvatar": "/specialists/mohamed_atef_poster.jpg",
@@ -2080,7 +2080,7 @@
       "doc-mohamed-atef": {
         "id": "doc-mohamed-atef",
         "name": "أ. محمد عاطف",
-        "avatar": "/uploads/1790357588113______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/mohamed_atef.jpg",
         "posterCrop": "/specialists/poster_mohamed_atef_1790197803776.jpg",
         "portraitCrop": "/specialists/spec_mohamed_atef_1790197255945.jpg",
         "fallbackAvatar": "/specialists/mohamed_atef_poster.jpg",
@@ -2094,7 +2094,7 @@
       "spec-sadeem-mshari": {
         "id": "spec-sadeem-mshari",
         "name": "أ. سديم احمد المشاري",
-        "avatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/sadeem_mshari.jpg",
         "posterCrop": "/specialists/poster_sadeem_mshari_1790197812611.jpg",
         "portraitCrop": "/specialists/spec_sadeem_mshari_1790197236144.jpg",
         "fallbackAvatar": "/specialists/sadeem_mshari_poster.jpg",
@@ -2108,7 +2108,7 @@
       "doc-sadeem-mshari": {
         "id": "doc-sadeem-mshari",
         "name": "أ. سديم احمد المشاري",
-        "avatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/sadeem_mshari.jpg",
         "posterCrop": "/specialists/poster_sadeem_mshari_1790197812611.jpg",
         "portraitCrop": "/specialists/spec_sadeem_mshari_1790197236144.jpg",
         "fallbackAvatar": "/specialists/sadeem_mshari_poster.jpg",
@@ -2122,7 +2122,7 @@
       "spec-maram-mohamed": {
         "id": "spec-maram-mohamed",
         "name": "أ. مرام محمد",
-        "avatar": "/uploads/1790357606704______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/maram_mohamed.jpg",
         "posterCrop": "/specialists/poster_maram_mohamed_1790197821665.jpg",
         "portraitCrop": "/specialists/spec_maram_mohamed_1790197265873.jpg",
         "fallbackAvatar": "/specialists/maram_mohamed_poster.jpg",
@@ -2136,7 +2136,7 @@
       "doc-maram-mohamed": {
         "id": "doc-maram-mohamed",
         "name": "أ. مرام محمد",
-        "avatar": "/uploads/1790357606704______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/maram_mohamed.jpg",
         "posterCrop": "/specialists/poster_maram_mohamed_1790197821665.jpg",
         "portraitCrop": "/specialists/spec_maram_mohamed_1790197265873.jpg",
         "fallbackAvatar": "/specialists/maram_mohamed_poster.jpg",
@@ -2150,7 +2150,7 @@
       "spec-ahmed-raad": {
         "id": "spec-ahmed-raad",
         "name": "أ. أحمد رعد",
-        "avatar": "/uploads/1790357615959______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_raad.jpg",
         "posterCrop": "/specialists/poster_ahmed_raad_1790197742838.jpg",
         "portraitCrop": "/specialists/spec_ahmed_raad_1790197197424.jpg",
         "fallbackAvatar": "/specialists/ahmed_raad_poster.jpg",
@@ -2164,7 +2164,7 @@
       "doc-ahmed-raad": {
         "id": "doc-ahmed-raad",
         "name": "أ. أحمد رعد",
-        "avatar": "/uploads/1790357615959______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_raad.jpg",
         "posterCrop": "/specialists/poster_ahmed_raad_1790197742838.jpg",
         "portraitCrop": "/specialists/spec_ahmed_raad_1790197197424.jpg",
         "fallbackAvatar": "/specialists/ahmed_raad_poster.jpg",
@@ -2178,7 +2178,7 @@
       "spec-1": {
         "id": "spec-1",
         "name": "أ. أحمد أبو زيد أنور",
-        "avatar": "/uploads/1790357622619________________jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
         "posterCrop": "/specialists/ahmed_abouzeid.jpg",
         "portraitCrop": "/specialists/ahmed_abouzeid.jpg",
         "fallbackAvatar": "/specialists/ahmed_abouzeid.jpg",
@@ -2192,7 +2192,7 @@
       "doc-ahmed-abouzeid": {
         "id": "doc-ahmed-abouzeid",
         "name": "أ. أحمد أبو زيد أنور",
-        "avatar": "/uploads/1790357622619________________jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
         "posterCrop": "/specialists/ahmed_abouzeid.jpg",
         "portraitCrop": "/specialists/ahmed_abouzeid.jpg",
         "fallbackAvatar": "/specialists/ahmed_abouzeid.jpg",
@@ -2206,7 +2206,7 @@
       "spec-ahmed-abouzeid": {
         "id": "spec-ahmed-abouzeid",
         "name": "أ. أحمد أبو زيد أنور",
-        "avatar": "/uploads/1790357622619________________jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
         "posterCrop": "/specialists/ahmed_abouzeid.jpg",
         "portraitCrop": "/specialists/ahmed_abouzeid.jpg",
         "fallbackAvatar": "/specialists/ahmed_abouzeid.jpg",
@@ -2220,7 +2220,7 @@
       "doc-1": {
         "id": "doc-1",
         "name": "أ. أحمد أبو زيد أنور",
-        "avatar": "/uploads/1790357622619________________jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
         "posterCrop": "/specialists/ahmed_abouzeid.jpg",
         "portraitCrop": "/specialists/ahmed_abouzeid.jpg",
         "fallbackAvatar": "/specialists/ahmed_abouzeid.jpg",
@@ -2241,7 +2241,7 @@
         "titleEn": "Head of Occupational Therapy Department",
         "role": "رئيس قسم العلاج الوظيفي والتكامل الحسي",
         "roleEn": "Head of Occupational Therapy Department",
-        "avatar": "/uploads/1790357520279_________________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/haneen_obaidi.jpg",
         "experienceYears": 16,
         "licenseNumber": "RABA-OT-016",
         "specialties": [
@@ -2310,7 +2310,7 @@
         "titleEn": "Supervisor of ABA Department",
         "role": "مشرفة قسم تحليل السلوك التطبيقي ABA",
         "roleEn": "Supervisor of ABA Department & QABA Analyst",
-        "avatar": "/uploads/1790357530423_________________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/rahaf_doghmani.jpg",
         "experienceYears": 5,
         "licenseNumber": "RABA-ABA-052",
         "specialties": [
@@ -2371,7 +2371,7 @@
         "titleEn": "Supervisor of ABA Department",
         "role": "مشرفة قسم تحليل السلوك التطبيقي ومحلل سلوكي معتمد",
         "roleEn": "ABA Supervisor & Certified Behavior Analyst",
-        "avatar": "/uploads/1790357539758_____________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/doha_khaled.jpg",
         "experienceYears": 9,
         "licenseNumber": "RABA-ABA-091",
         "specialties": [
@@ -2432,7 +2432,7 @@
         "titleEn": "Supervisor of Speech & Language Pathology Department",
         "role": "مشرفة قسم النطق والتخاطب والتأهيل اللغوي",
         "roleEn": "Speech & Language Pathology Supervisor",
-        "avatar": "/uploads/1790357549806______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/manar_wahba.jpg",
         "experienceYears": 10,
         "licenseNumber": "RABA-SLP-010",
         "specialties": [
@@ -2499,7 +2499,7 @@
         "titleEn": "ABA Specialist",
         "role": "أخصائي تحليل السلوك التطبيقي المعتمد ABAT",
         "roleEn": "ABA Specialist & Board Certified ABAT",
-        "avatar": "/uploads/1790357579245_______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_fathi.jpg",
         "experienceYears": 8,
         "licenseNumber": "RABA-ABA-084",
         "specialties": [
@@ -2560,7 +2560,7 @@
         "titleEn": "ABA Specialist",
         "role": "أخصائي تحليل السلوك التطبيقي ومشرف توحد مؤهل QASP-S",
         "roleEn": "ABA Specialist & Qualified Autism Services Supervisor (QASP-S)",
-        "avatar": "/uploads/1790357588113______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/mohamed_atef.jpg",
         "experienceYears": 5,
         "licenseNumber": "RABA-ABA-057",
         "specialties": [
@@ -2623,7 +2623,7 @@
         "titleEn": "ABA Specialist",
         "role": "أخصائي تحليل السلوك ومصنفة من الهيئة السعودية للتخصصات الصحية",
         "roleEn": "ABA Specialist & SCFHS Licensed Psychologist",
-        "avatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/sadeem_mshari.jpg",
         "experienceYears": 4,
         "licenseNumber": "RABA-PSY-049",
         "specialties": [
@@ -2686,7 +2686,7 @@
         "titleEn": "ABA Specialist",
         "role": "أخصائية تحليل السلوك التطبيقي وعلم النفس الإكلينيكي",
         "roleEn": "ABA Specialist & Clinical Psychologist",
-        "avatar": "/uploads/1790357606704______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/maram_mohamed.jpg",
         "experienceYears": 3,
         "licenseNumber": "RABA-ABA-033",
         "specialties": [
@@ -2747,7 +2747,7 @@
         "titleEn": "ABA Specialist",
         "role": "أخصائي تحليل السلوك التطبيقي ABAT والعلوم الصحية",
         "roleEn": "ABA Specialist & Health Sciences Graduate",
-        "avatar": "/uploads/1790357615959______________jpg_jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_raad.jpg",
         "experienceYears": 3,
         "licenseNumber": "RABA-ABA-038",
         "specialties": [
@@ -2806,7 +2806,7 @@
         "titleEn": "General Director of Rehabilitation | Head of ABA",
         "role": "المدير العام للبرامج التأهيلية ورئيس قسم تحليل السلوك",
         "roleEn": "General Director of Programs & Head of ABA",
-        "avatar": "/uploads/1790357622619________________jpeg.jpg",
+        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
         "experienceYears": 12,
         "licenseNumber": "RABA-ABA-0104",
         "specialties": [

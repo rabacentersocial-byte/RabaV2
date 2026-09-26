@@ -17,6 +17,8 @@ const __dirname = path.dirname(__filename);
 const DATA_DIR = path.join(process.cwd(), 'data');
 const PUBLIC_DATA_DIR = path.join(process.cwd(), 'public', 'data');
 const UPLOADS_DIR = path.join(process.cwd(), 'public', 'uploads');
+const IMAGES_DIR = path.join(process.cwd(), 'public', 'images');
+const LOGO_DIR = path.join(process.cwd(), 'public', 'logo');
 const UPLOADS_MANIFEST = path.join(DATA_DIR, 'uploads_manifest.json');
 
 if (!fs.existsSync(DATA_DIR)) {
@@ -187,8 +189,10 @@ async function startServer() {
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-  // Static uploads directory with auto-restoration from manifest
+  // Static directories for uploads, images, and logo
   app.use('/uploads', express.static(UPLOADS_DIR));
+  app.use('/images', express.static(IMAGES_DIR));
+  app.use('/logo', express.static(LOGO_DIR));
   app.get('/uploads/:filename', async (req: Request, res: Response, next) => {
     const filename = req.params.filename;
     const filePath = path.join(UPLOADS_DIR, filename);

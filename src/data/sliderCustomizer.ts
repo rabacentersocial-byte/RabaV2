@@ -31,7 +31,7 @@ export const DEFAULT_HERO_SLIDER_CONFIG: HeroSliderConfig = {
 export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   {
     id: 'photo-1',
-    src: '/uploads/1790357979807_Screenshot_2569-09-23_at_2_25_17_AM_png.png',
+    src: '/images/hero/slide_1_haneen.png',
     alt: 'أ. حنين العبيدي - رئيس قسم العلاج الوظيفي والتكامل الحسي',
     titleAr: 'أ. حنين العبيدي',
     titleEn: 'Haneen Al-Obaidi',
@@ -46,7 +46,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   },
   {
     id: 'photo-2',
-    src: '/uploads/1790358006694________________jpeg.jpg',
+    src: '/images/hero/slide_2_ahmed.jpg',
     alt: 'أ. أحمد أبو زيد أنور - المدير العام للبرامج التأهيلية ورئيس قسم ABA',
     titleAr: 'أ. أحمد أبو زيد أنور',
     titleEn: 'Ahmed Abouzeid Anwar',
@@ -61,7 +61,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   },
   {
     id: 'photo-3',
-    src: '/uploads/1790358033686_Screenshot_2569-09-23_at_2_25_29_AM_png.png',
+    src: '/images/hero/slide_3_rahaf.png',
     alt: 'أ. رهف الدغماني - مشرفة قسم تحليل السلوك التطبيقي ABA',
     titleAr: 'أ. رهف الدغماني',
     titleEn: 'Rahaf Al-Doghmani',
@@ -76,7 +76,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   },
   {
     id: 'photo-4',
-    src: '/uploads/1790358050734_Screenshot_2569-09-23_at_2_26_05_AM_png.png',
+    src: '/images/hero/slide_4_doha.png',
     alt: 'أ. ضحى خالد - مشرفة قسم ABA ومحلل سلوكي معتمد',
     titleAr: 'أ. ضحى خالد',
     titleEn: 'Doha Khaled',
@@ -91,7 +91,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   },
   {
     id: 'photo-5',
-    src: '/uploads/1790358074567_Screenshot_2569-09-23_at_2_27_08_AM_png.png',
+    src: '/images/hero/slide_5_manar.png',
     alt: 'أ. منار وهبه - مشرفة قسم النطق والتخاطب',
     titleAr: 'أ. منار وهبه',
     titleEn: 'Manar Wahba',
@@ -121,7 +121,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   },
   {
     id: 'photo-7',
-    src: '/uploads/1790358114735_Screenshot_2569-09-23_at_2_25_47_AM_png.png',
+    src: '/images/hero/slide_7_specialist.png',
     alt: 'أ. سديم احمد المشاري - أخصائي ABA ومصنفة من الهيئة السعودية',
     titleAr: 'أ. سديم احمد المشاري',
     titleEn: 'Sadeem Ahmed Al-Mshari',
@@ -136,7 +136,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   },
   {
     id: 'photo-8',
-    src: '/uploads/1790358142609_Screenshot_2569-09-23_at_2_26_16_AM_png.png',
+    src: '/images/hero/slide_8_specialist.png',
     alt: 'أ. محمد عاطف - أخصائي تحليل السلوك ومشرف توحد QASP-S',
     titleAr: 'أ. محمد عاطف',
     titleEn: 'Mohamed Atef',

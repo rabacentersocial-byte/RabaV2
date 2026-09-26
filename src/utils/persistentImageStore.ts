@@ -64,6 +64,37 @@ export async function loadPersistentImagesToMemory(): Promise<void> {
   }
 }
 
+export const KNOWN_STATIC_ALIASES: Record<string, string> = {
+  // Specialists
+  '/uploads/1790357520279_________________jpg_jpeg.jpg': '/images/specialists/haneen_obaidi.jpg',
+  '/uploads/1790357530423_________________jpg_jpeg.jpg': '/images/specialists/rahaf_doghmani.jpg',
+  '/uploads/1790357539758_____________jpg_jpeg.jpg': '/images/specialists/doha_khaled.jpg',
+  '/uploads/1790357549806______________jpg_jpeg.jpg': '/images/specialists/manar_wahba.jpg',
+  '/uploads/1790357579245_______________jpg_jpeg.jpg': '/images/specialists/ahmed_fathi.jpg',
+  '/uploads/1790357588113______________jpg_jpeg.jpg': '/images/specialists/mohamed_atef.jpg',
+  '/uploads/1790357598308______________________jpg_jpeg.jpg': '/images/specialists/sadeem_mshari.jpg',
+  '/uploads/1790357606704______________jpg_jpeg.jpg': '/images/specialists/maram_mohamed.jpg',
+  '/uploads/1790357615959______________jpg_jpeg.jpg': '/images/specialists/ahmed_raad.jpg',
+  '/uploads/1790357622619________________jpeg.jpg': '/images/specialists/ahmed_abouzeid.jpg',
+  // Hero
+  '/uploads/1790357979807_Screenshot_2569-09-23_at_2_25_17_AM_png.png': '/images/hero/slide_1_haneen.png',
+  '/uploads/1790358006694________________jpeg.jpg': '/images/hero/slide_2_ahmed.jpg',
+  '/uploads/1790358033686_Screenshot_2569-09-23_at_2_25_29_AM_png.png': '/images/hero/slide_3_rahaf.png',
+  '/uploads/1790358050734_Screenshot_2569-09-23_at_2_26_05_AM_png.png': '/images/hero/slide_4_doha.png',
+  '/uploads/1790358074567_Screenshot_2569-09-23_at_2_27_08_AM_png.png': '/images/hero/slide_5_manar.png',
+  '/uploads/1790358094657_Screenshot_2569-09-22_at_2_07_53_PM_png.png': '/images/hero/slide_6_fathi.png',
+  '/uploads/1790358114735_Screenshot_2569-09-23_at_2_25_47_AM_png.png': '/images/hero/slide_7_specialist.png',
+  '/uploads/1790358142609_Screenshot_2569-09-23_at_2_26_16_AM_png.png': '/images/hero/slide_8_specialist.png',
+  // Accreditations
+  '/uploads/1790357652181_ISO-Logo_webp.jpg': '/images/accreditations/iso_logo.jpg',
+  '/uploads/1790357668910_ibao_webp.jpg': '/images/accreditations/ibao_logo.jpg',
+  '/uploads/1790357681328_qaba_webp.jpg': '/images/accreditations/qaba_logo.jpg',
+  '/uploads/1790357693975_IMG_6729_jpg.jpg': '/images/accreditations/cert_1.jpg',
+  '/uploads/1790357709799_IMG_6728_png_jpeg.jpg': '/images/accreditations/cert_2.jpg',
+  // Logo
+  '/uploads/1790358266500_logo_transparent_transparent_png.png': '/logo/raba_puzzle_brain.png',
+};
+
 /**
  * Synchronous image resolver:
  * If an image has been cached in IndexedDB / Memory, returns its dataURL synchronously!
@@ -72,14 +103,25 @@ export function getResolvedImageUrl(src?: string): string {
   if (!src) return '';
   if (src.startsWith('data:') || src.startsWith('blob:')) return src;
 
+  // Direct alias match to permanent bundled asset
+  if (KNOWN_STATIC_ALIASES[src]) {
+    return KNOWN_STATIC_ALIASES[src];
+  }
+
   if (IN_MEMORY_IMAGE_CACHE.has(src)) {
     return IN_MEMORY_IMAGE_CACHE.get(src)!;
   }
 
   if (src.includes('/')) {
     const filename = src.split('/').pop();
-    if (filename && IN_MEMORY_IMAGE_CACHE.has(filename)) {
-      return IN_MEMORY_IMAGE_CACHE.get(filename)!;
+    if (filename) {
+      const aliasKey = `/uploads/${filename}`;
+      if (KNOWN_STATIC_ALIASES[aliasKey]) {
+        return KNOWN_STATIC_ALIASES[aliasKey];
+      }
+      if (IN_MEMORY_IMAGE_CACHE.has(filename)) {
+        return IN_MEMORY_IMAGE_CACHE.get(filename)!;
+      }
     }
   }
 
@@ -228,31 +270,19 @@ export async function handleImageErrorWithStore(
 
   const currentAttempt = Number(target.dataset.retryAttempt || 0);
 
-  // Attempt 1: Try encoded URI if original has special characters
+  // Attempt 1: Direct permanent static asset alias
   if (currentAttempt === 0) {
     target.dataset.retryAttempt = '1';
-    try {
-      const encoded = encodeURI(originalSrc);
-      if (encoded !== originalSrc && target.src !== encoded) {
-        target.src = encoded;
-        return;
-      }
-    } catch { /* ignore */ }
-  }
-
-  // Attempt 2: Try relative path without leading slash
-  if (currentAttempt <= 1 && originalSrc.startsWith('/')) {
-    target.dataset.retryAttempt = '2';
-    const relative = originalSrc.replace(/^\/+/, '');
-    if (target.src !== relative) {
-      target.src = relative;
+    const alias = KNOWN_STATIC_ALIASES[originalSrc] || (originalSrc.includes('/') ? KNOWN_STATIC_ALIASES[`/uploads/${originalSrc.split('/').pop()}`] : undefined);
+    if (alias && target.src !== alias) {
+      target.src = alias;
       return;
     }
   }
 
-  // Attempt 3: Try looking up from persistent IndexedDB store
-  if (currentAttempt <= 2) {
-    target.dataset.retryAttempt = '3';
+  // Attempt 2: Try looking up from persistent IndexedDB store
+  if (currentAttempt <= 1) {
+    target.dataset.retryAttempt = '2';
     try {
       const cached = await getPersistentImage(originalSrc);
       if (cached && target.src !== cached) {
@@ -264,9 +294,22 @@ export async function handleImageErrorWithStore(
     }
   }
 
-  // Final fallback: Use designated fallback image if provided
+  // Attempt 3: Try encoded URI if original has special characters
+  if (currentAttempt <= 2) {
+    target.dataset.retryAttempt = '3';
+    try {
+      const encoded = encodeURI(originalSrc);
+      if (encoded !== originalSrc && target.src !== encoded) {
+        target.src = encoded;
+        return;
+      }
+    } catch { /* ignore */ }
+  }
+
+  // Final fallback: Use designated fallback image or alias
   target.dataset.retryAttempt = '4';
-  if (fallbackSrc && target.src !== fallbackSrc) {
-    target.src = fallbackSrc;
+  const resolvedFallback = fallbackSrc ? (KNOWN_STATIC_ALIASES[fallbackSrc] || fallbackSrc) : undefined;
+  if (resolvedFallback && target.src !== resolvedFallback) {
+    target.src = resolvedFallback;
   }
 }

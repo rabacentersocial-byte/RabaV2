@@ -148,7 +148,9 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
   // Determine current active preset
   const isPuzzleBrainPreset = settings.logoSource === 'custom' && (
     settings.customLogoUrl === '/logo/raba_puzzle_brain.png' || 
-    settings.customLogoUrl === '/logo/raba_puzzle_brain.svg'
+    settings.customLogoUrl === '/logo/raba_puzzle_brain.svg' ||
+    settings.customLogoUrl === '/uploads/1790358266500_logo_transparent_transparent_png.png' ||
+    Boolean(settings.customLogoUrl?.includes('logo_transparent'))
   );
   const isVectorPreset = settings.logoSource === 'vector';
   const isCustomUserUpload = settings.logoSource === 'custom' && !isPuzzleBrainPreset;

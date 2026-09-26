@@ -142,9 +142,9 @@ export interface SiteLogoSettings {
 
 export const DEFAULT_LOGO_SETTINGS: SiteLogoSettings = {
   logoSource: 'custom',
-  customLogoUrl: '/uploads/1790358266500_logo_transparent_transparent_png.png',
+  customLogoUrl: '/logo/raba_puzzle_brain.png',
   iconSizePx: 46,
-  iconRounding: 'md',
+  iconRounding: 'none',
   iconObjectFit: 'contain',
   spacingPx: 10,
   showText: false, // Default is false: text beside logo is removed for modern clean look
