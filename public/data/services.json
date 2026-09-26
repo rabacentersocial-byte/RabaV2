@@ -1,0 +1,170 @@
+[
+  {
+    "id": "srv-aba",
+    "title": "تحليل السلوك التطبيقي ABA",
+    "titleEn": "Applied Behavior Analysis (ABA)",
+    "category": "aba",
+    "categoryAr": "تحليل السلوك التطبيقي",
+    "categoryEn": "Behavior Analysis (ABA)",
+    "description": "تنمية المهارات وتعزيز السلوك الإيجابي والاستقلالية",
+    "descriptionEn": "Skill development, positive behavior reinforcement, and adaptive daily independence.",
+    "benefits": [
+      "تنمية المهارات التكيفية والتواصلية وبناء الاستقلالية الذاتية",
+      "تعزيز وتدعيم السلوكيات الإيجابية والحد من السلوكيات غير المرغوبة",
+      "خطط علاجية فردية قائمة على التقييم السلوكي الوظيفي FBA",
+      "تدريب أولياء الأمور لنقل وتعميم المهارات المكتسبة للمنزل"
+    ],
+    "benefitsEn": [
+      "Adaptive and communicative skills development fostering daily independence",
+      "Reinforcing positive behaviors and mitigating challenging outbursts",
+      "Individualized intervention plans derived from Functional Behavior Assessment (FBA)",
+      "Caregiver coaching to generalize acquired skills into everyday home routines"
+    ],
+    "targetAges": "من عمر سنة ونصف إلى 14 سنة",
+    "targetAgesEn": "Ages 1.5 to 14 years",
+    "durationMinutes": 50,
+    "iconName": "Puzzle",
+    "image": "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=600&q=80",
+    "featured": true
+  },
+  {
+    "id": "srv-speech",
+    "title": "النطق والتخاطب",
+    "titleEn": "Speech & Language Therapy",
+    "category": "speech",
+    "categoryAr": "النطق والتخاطب",
+    "categoryEn": "Speech & Language",
+    "description": "تطوير مهارات اللغة والنطق والتواصل",
+    "descriptionEn": "Enhancing functional language, speech clarity, and social communication.",
+    "benefits": [
+      "تطوير الحصيلة اللغوية الاستقبالية والتعبيرية وبناء الجمل المتناسقة",
+      "علاج تأخر الكلام وتصحيح مخارج الحروف وعيوب النطق والتأتأة",
+      "تأهيل العلاج الفموي الحركي OPT ومشاكل عضلات النطق",
+      "تطبيق وسائل التواصل البديل والمعزز (AAC / PECS) لغير الناطقين"
+    ],
+    "benefitsEn": [
+      "Enriching receptive and expressive linguistic repertoire and syntax",
+      "Addressing speech delays, articulation defects, lisping, and stuttering",
+      "Oral Placement Therapy (OPT) for oral motor coordination and chewing",
+      "Augmentative and Alternative Communication (PECS / AAC) for non-verbal children"
+    ],
+    "targetAges": "من عمر سنة ونصف فما فوق",
+    "targetAgesEn": "Ages 1.5 years and above",
+    "durationMinutes": 45,
+    "iconName": "MessageSquare",
+    "image": "https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=600&q=80",
+    "featured": true
+  },
+  {
+    "id": "srv-occupational",
+    "title": "العلاج الوظيفي",
+    "titleEn": "Occupational Therapy",
+    "category": "occupational",
+    "categoryAr": "العلاج الوظيفي",
+    "categoryEn": "Occupational Therapy",
+    "description": "تنمية المهارات الحركية والإدراكية ومهارات الحياة اليومية",
+    "descriptionEn": "Motor and cognitive skills development, and activities of daily living (ADL).",
+    "benefits": [
+      "تطوير المهارات الحركية الدقيقة والتآزر البصري الحركي",
+      "تدريب الطفل على مهارات الاستقلالية في الحياة اليومية (ارتداء، طعام، نظافة)",
+      "تحسين مهارات مسك القلم والكتابة المدرسية واستخدام الأدوات",
+      "تعزيز التركيز والانتباه الحركي أثناء أداء المهام المختلفة"
+    ],
+    "benefitsEn": [
+      "Fine motor dexterity, hand-eye coordination, and grip development",
+      "Activities of Daily Living (ADL) independence: dressing, feeding, personal hygiene",
+      "Pencil grasp optimization, school readiness, and tool manipulation",
+      "Elevating motor-based attention span and task persistence"
+    ],
+    "targetAges": "كافة الفئات العمرية للأطفال",
+    "targetAgesEn": "All pediatric age groups",
+    "durationMinutes": 45,
+    "iconName": "Hand",
+    "image": "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=600&q=80",
+    "featured": true
+  },
+  {
+    "id": "srv-sensory",
+    "title": "التكامل الحسي",
+    "titleEn": "Sensory Integration",
+    "category": "sensory",
+    "categoryAr": "التكامل الحسي",
+    "categoryEn": "Sensory Integration",
+    "description": "دعم تنظيم ومعالجة الاستجابات الحسية",
+    "descriptionEn": "Supporting the regulation and processing of sensory responses.",
+    "benefits": [
+      "معالجة فرط أو نقص التحسس للمثيرات البصرية والسمعية واللمسية",
+      "تنظيم الجهاز الدهليزي والحس العميق في صالة حسية مجهزة عالمياً",
+      "تقليل نوبات الانزعاج والتوتر الناتجة عن فرط التحفيز البيئي",
+      "تحسين التوازن الحركي والتنظيم الذاتي والهدوء السلوكي للطفل"
+    ],
+    "benefitsEn": [
+      "Modulating hyper/hypo-reactivity to tactile, auditory, and visual sensory input",
+      "Vestibular and proprioceptive regulation in a fully equipped sensory gym",
+      "Mitigating sensory meltdowns and anxiety caused by environmental overload",
+      "Advancing postural balance, motor planning, and emotional self-regulation"
+    ],
+    "targetAges": "من عمر سنتين إلى 14 سنة",
+    "targetAgesEn": "Ages 2 to 14 years",
+    "durationMinutes": 45,
+    "iconName": "Brain",
+    "image": "https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=600&q=80",
+    "featured": true
+  },
+  {
+    "id": "srv-learning-difficulties",
+    "title": "صعوبات التعلم وحل الواجبات",
+    "titleEn": "Learning Difficulties & Homework Support",
+    "category": "learning",
+    "categoryAr": "صعوبات التعلم والواجبات",
+    "categoryEn": "Learning Difficulties",
+    "description": "تنمية المهارات الأكاديمية ودعم الطفل في أداء واجباته باستقلالية",
+    "descriptionEn": "Academic skill building and empowering the child to manage homework independently.",
+    "benefits": [
+      "تنمية مهارات القراءة والكتابة والعمليات الحسابية الأساسية",
+      "دعم وتوجيه الطفل لإنجاز واجباته المدرسية باستقلالية وثقة",
+      "استراتيجيات علاجية متخصصة لعسر القراءة وتشتت الانتباه الأكاديمي",
+      "تنسيق مستمر مع البيئة المدرسية لتطبيق التعديلات التربوية المناسبة"
+    ],
+    "benefitsEn": [
+      "Foundational reading, writing, and mathematical comprehension",
+      "Empowering independent homework completion and academic confidence",
+      "Evidence-based remediation for dyslexia, dysgraphia, and academic ADHD",
+      "Direct collaboration with school staff for tailored educational accommodations"
+    ],
+    "targetAges": "من عمر 5 سنوات فما فوق",
+    "targetAgesEn": "Ages 5 years and above",
+    "durationMinutes": 50,
+    "iconName": "BookOpen",
+    "image": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=600&q=80",
+    "featured": true
+  },
+  {
+    "id": "srv-psychological",
+    "title": "التشخيص والعلاج النفسي",
+    "titleEn": "Psychological Diagnosis & Therapy",
+    "category": "psychological",
+    "categoryAr": "التشخيص والعلاج النفسي",
+    "categoryEn": "Psychological Care",
+    "description": "تقييم وتشخيص وتدخلات نفسية وفق احتياج كل حالة",
+    "descriptionEn": "Comprehensive psychological evaluation, diagnosis, and tailored interventions for each case.",
+    "benefits": [
+      "تطبيق اختبارات ومقاييس الذكاء والنمو واضطرابات طيف التوحد وفرط الحركة",
+      "إصدار تقارير تشخيصية نفسية دقيقة ومعتمدة لدى الجهات الطبية والتعليمية",
+      "جلسات دعم وعلاج نفسي سلوكي معرفي لتجاوز المخاوف والقلق والعدوانية",
+      "إرشاد وتوجيه أسري تخصصي لتمكين الوالدين من مساندة طفلهم"
+    ],
+    "benefitsEn": [
+      "Standardized developmental, IQ, Autism, and ADHD diagnostic batteries",
+      "Official accredited psychological evaluation reports for schools and healthcare entities",
+      "Cognitive-behavioral psychological interventions targeting anxiety and tantrums",
+      "Specialized parental coaching empowering families to nurture child progress"
+    ],
+    "targetAges": "كافة الفئات العمرية للأطفال والأسر",
+    "targetAgesEn": "All age groups and caregivers",
+    "durationMinutes": 50,
+    "iconName": "HeartHandshake",
+    "image": "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&q=80",
+    "featured": true
+  }
+]

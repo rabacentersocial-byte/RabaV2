@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 615" width="100%" height="100%" fill="none">
+  <!-- Definitions for Fonts & Filters -->
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Almarai:wght@700;800&amp;family=Montserrat:wght@800;900&amp;display=swap');
+      .raba-letter { font-family: 'Montserrat', system-ui, -apple-system, sans-serif; font-weight: 900; font-size: 110px; letter-spacing: 6px; }
+      .arabic-main { font-family: 'Almarai', 'Cairo', system-ui, sans-serif; font-weight: 800; font-size: 82px; letter-spacing: -0.5px; }
+      .arabic-sub { font-family: 'Almarai', 'Cairo', system-ui, sans-serif; font-weight: 700; font-size: 32px; letter-spacing: 0px; }
+      .puzzle-cut { stroke: #ffffff; stroke-width: 4; stroke-linejoin: round; stroke-linecap: round; }
+      .gyri-line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+    <filter id="soft-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(0,0,0,0.06)" />
+    </filter>
+  </defs>
+
+  <!-- ================= BRAIN PUZZLE ICON ================= -->
+  <g id="brain-puzzle" transform="translate(50, 20)" filter="url(#soft-shadow)">
+    
+    <!-- 1. TOP-LEFT PIECE (Sky Blue) -->
+    <path id="piece-blue" class="puzzle-cut" fill="#008CD3" d="
+      M 200 45 
+      C 152 44, 114 62, 88 98 
+      C 72 118, 68 138, 72 156 
+      C 76 172, 90 182, 106 182 
+      C 118 182, 126 174, 134 168
+      C 142 162, 154 164, 160 174
+      C 166 184, 160 196, 150 200
+      L 142 202
+      C 152 216, 172 220, 186 214
+      C 192 208, 194 198, 190 188
+      C 186 178, 192 168, 204 168
+      C 216 168, 224 178, 222 190
+      L 220 206
+      L 218 126
+      C 218 114, 224 104, 236 104
+      C 248 104, 254 114, 254 126
+      C 254 138, 246 148, 234 148
+      L 204 148
+      L 200 45 Z
+    " />
+    <!-- Blue piece gyri lines -->
+    <path class="gyri-line" stroke="#006BA8" stroke-width="2.5" d="M 108 112 C 124 102, 148 106, 162 120" />
+    <path class="gyri-line" stroke="#006BA8" stroke-width="2.5" d="M 132 82 C 150 74, 174 76, 188 88" />
+
+    <!-- 2. TOP-RIGHT PIECE (Golden Amber / Warm Yellow) -->
+    <path id="piece-yellow" class="puzzle-cut" fill="#F8A51D" d="
+      M 200 45
+      L 204 148
+      L 234 148
+      C 246 148, 254 138, 254 126
+      C 254 114, 248 104, 236 104
+      C 224 104, 218 114, 218 126
+      L 220 206
+      L 242 206
+      C 244 194, 254 184, 268 184
+      C 282 184, 290 196, 288 210
+      C 286 224, 274 232, 260 230
+      L 250 230
+      C 264 246, 286 250, 308 244
+      C 328 234, 338 216, 334 194
+      C 342 180, 344 160, 338 140
+      C 330 110, 310 82, 280 64
+      C 256 50, 228 44, 200 45 Z
+    " />
+    <!-- Yellow piece gyri lines -->
+    <path class="gyri-line" stroke="#D97706" stroke-width="2.5" d="M 234 82 C 254 74, 282 78, 298 94" />
+    <path class="gyri-line" stroke="#D97706" stroke-width="2.5" d="M 248 118 C 274 110, 304 116, 318 134" />
+    <path class="gyri-line" stroke="#D97706" stroke-width="2.5" d="M 272 156 C 292 152, 314 162, 322 178" />
+
+    <!-- 3. MIDDLE-LEFT PIECE (Emerald Green) -->
+    <path id="piece-green" class="puzzle-cut" fill="#00B050" d="
+      M 72 156
+      C 68 174, 70 196, 78 214
+      C 90 240, 114 260, 142 268
+      C 156 272, 170 270, 180 262
+      L 176 250
+      C 168 250, 158 244, 156 234
+      C 154 224, 162 214, 172 212
+      C 182 210, 192 216, 194 226
+      L 194 246
+      C 202 242, 210 234, 214 224
+      L 220 206
+      L 186 214
+      C 172 220, 152 216, 142 202
+      L 150 200
+      C 160 196, 166 184, 160 174
+      C 154 164, 142 162, 134 168
+      C 126 174, 118 182, 106 182
+      C 90 182, 76 172, 72 156 Z
+    " />
+    <!-- Green piece gyri lines -->
+    <path class="gyri-line" stroke="#047857" stroke-width="2.5" d="M 96 196 C 114 188, 134 192, 146 206" />
+    <path class="gyri-line" stroke="#047857" stroke-width="2.5" d="M 106 230 C 124 224, 144 232, 152 246" />
+
+    <!-- 4. CENTER & LOWER-RIGHT PIECE (Vibrant Magenta / Pink) -->
+    <path id="piece-magenta" class="puzzle-cut" fill="#E5007D" d="
+      M 220 206
+      L 242 206
+      C 244 194, 254 184, 268 184
+      C 282 184, 290 196, 288 210
+      C 286 224, 274 232, 260 230
+      L 250 230
+      C 264 246, 286 250, 308 244
+      C 316 260, 310 280, 294 294
+      C 278 308, 254 314, 234 308
+      C 220 304, 210 294, 204 282
+      L 194 282
+      C 190 292, 180 298, 168 296
+      C 158 294, 150 284, 152 274
+      C 154 264, 164 258, 174 260
+      L 180 262
+      L 194 246
+      C 202 242, 210 234, 214 224
+      L 220 206 Z
+    " />
+    <!-- Magenta piece gyri lines -->
+    <path class="gyri-line" stroke="#BE185D" stroke-width="2.5" d="M 238 238 C 262 232, 286 242, 294 262" />
+    <path class="gyri-line" stroke="#BE185D" stroke-width="2.5" d="M 226 270 C 248 266, 270 274, 278 290" />
+
+    <!-- 5. BOTTOM STEM / CEREBELLUM PIECE (Bright Lemon Yellow) -->
+    <path id="piece-stem-yellow" class="puzzle-cut" fill="#FDE047" d="
+      M 176 250
+      C 168 250, 158 244, 156 234
+      C 154 224, 162 214, 172 212
+      C 182 210, 192 216, 194 226
+      L 194 282
+      C 190 292, 180 298, 168 296
+      C 158 294, 150 284, 152 274
+      C 154 264, 164 258, 174 260
+      L 180 262
+      C 180 284, 174 308, 166 326
+      C 160 338, 152 344, 144 340
+      C 136 336, 138 322, 142 312
+      C 146 302, 142 292, 134 288
+      C 126 284, 116 290, 114 300
+      C 112 314, 122 328, 136 338
+      C 142 344, 140 354, 132 360
+      C 124 366, 112 364, 108 354
+      C 100 334, 106 312, 118 292
+      C 128 276, 142 268, 156 268
+      L 176 250 Z
+    " />
+    <path class="gyri-line" stroke="#CA8A04" stroke-width="2" d="M 148 296 C 158 308, 158 326, 152 340" />
+
+  </g>
+
+  <!-- ================= TYPOGRAPHY ================= -->
+
+  <!-- 1. 'R A B A' Clean Colored Typography -->
+  <g id="text-raba" transform="translate(250, 420)" text-anchor="middle">
+    <text class="raba-letter" x="-135" y="0" fill="#008CD3">R</text>
+    <text class="raba-letter" x="-45" y="0" fill="#00A89A">A</text>
+    <text class="raba-letter" x="45" y="0" fill="#00B050">B</text>
+    <text class="raba-letter" x="135" y="0" fill="#009F4D">A</text>
+  </g>
+
+  <!-- 2. 'مركز رابا' Arabic in Iconic Magenta -->
+  <g id="text-arabic-main" transform="translate(250, 510)" text-anchor="middle">
+    <text class="arabic-main" x="0" y="0" fill="#E5007D">مركز رابا</text>
+  </g>
+
+  <!-- 3. 'للعلاج بتحليل السلوك التطبيقي' Arabic Subtitle in Slate Grey -->
+  <g id="text-arabic-sub" transform="translate(250, 575)" text-anchor="middle">
+    <text class="arabic-sub" x="0" y="0" fill="#5A6065">للعلاج بتحليل السلوك التطبيقي</text>
+  </g>
+
+</svg>

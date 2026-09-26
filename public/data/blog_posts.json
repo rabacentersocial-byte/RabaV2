@@ -1,0 +1,350 @@
+[
+  {
+    "id": "blog-1",
+    "title": "علامات التدخل المبكر لطيف التوحد: دليلك العملي لملاحظة تطور طفلك",
+    "titleEn": "Early Intervention Signs for Autism: Practical Guide to Monitoring Development",
+    "slug": "autism-early-intervention-signs",
+    "excerpt": "تعد أول 3 سنوات من عمر الطفل المرحلة الذهبية للتدخل المبكر. تعرف على أهم المؤشرات السلوكية والتواصلية وكيفية اتخاذ الخطوة الأولى بثقة.",
+    "excerptEn": "The first 3 years are the golden window for early intervention. Learn the key behavioral and communication milestones and next steps.",
+    "category": "autism",
+    "categoryTitle": "طيف التوحد والتدخل المبكر",
+    "categoryTitleEn": "Autism & Early Intervention",
+    "categoryColor": "sky",
+    "author": {
+      "id": "spec-hanaa",
+      "name": "د. هناء محمد بشير",
+      "nameEn": "Dr. Hanaa Basheer",
+      "role": "المدير الطبي – استشاري علم نفس",
+      "roleEn": "Medical Director & Clinical Psychologist",
+      "avatar": "/specialists/hanaa_basheer.jpg"
+    },
+    "image": "https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=800&q=80",
+    "readTimeMinutes": 5,
+    "publishDate": "15 سبتمبر 2026",
+    "publishDateEn": "Sep 15, 2026",
+    "viewsCount": 1420,
+    "likesCount": 98,
+    "tags": [
+      "طيف التوحد",
+      "التدخل المبكر",
+      "التطور النمائي",
+      "إرشاد الأسرة"
+    ],
+    "tagsEn": [
+      "Autism",
+      "Early Intervention",
+      "Child Development",
+      "Parent Guidance"
+    ],
+    "keyTakeaways": [
+      "التواصل البصري والاستجابة عند مناداة الاسم مؤشران أساسيان في عمر 12 إلى 18 شهراً.",
+      "التدخل المبكر قبل سن الرابعة يرفع نسب التحسن التواصلي والاستقلالي بنسبة تزيد عن 80%.",
+      "التشخيص المقنن المعتمد (مثل مقياس ADOS-2) هو الأساس لبناء خطة تأهيلية دقيقة وناجحة."
+    ],
+    "keyTakeawaysEn": [
+      "Eye contact and name responsiveness are core indicators between 12-18 months.",
+      "Intervention before age 4 boosts communication gains by over 80%.",
+      "Standardized clinical assessment (ADOS-2) is essential for precision therapy plans."
+    ],
+    "content": [
+      "تشير الدراسات الإكلينيكية الحديثة إلى أن مرونة الدماغ العصبي في مرحلة الطفولة المبكرة (خاصة بين عمر عامين وخمسة أعوام) تكون في ذروتها، مما يجعل أي خطة علاجية وتأهيلية في هذه الفترة تحقق نتائج مضاعفة وسريعة مقارنة بالتدخل في مراحل لاحقة.",
+      "من أبرز العلامات التي تستدعي استشارة فريق متخصص: قلة التواصل البصري أثناء اللعب المشترك، تأخر ظهور الكلمات الأولى أو الإشارة بالإصبع لطلب الأشياء، عدم الاستجابة لنداء الاسم رغم سلامة السمع، والميل لتكرار حركات نمطية مثل الرفرفة أو الدوران أو ترتيب الألعاب في صفوف دون لعب تخيلي.",
+      "في مركز رابا، نطبق بروتوكولات التقييم الدولية المقننة بقيادة استشاريين مرخصين من الهيئة السعودية للتخصصات الصحية، لتحديد مستوى الطفل بدقة وتصميم خطة تدخل سلوكي (ABA) وتواصلي متكاملة تمكن الأسرة من رؤية تطور يومي ملموس."
+    ],
+    "contentEn": [
+      "Clinical studies show neural plasticity is at its peak in early childhood, making targeted intervention remarkably effective.",
+      "Key early markers include reduced eye contact during shared play, delayed gestures or pointing, lack of response to name, and repetitive sensory behaviors.",
+      "At Raba Center, our licensed multidisciplinary team deploys gold-standard assessments to tailor ABA and speech programs for lasting independence."
+    ]
+  },
+  {
+    "id": "blog-2",
+    "title": "تحليل السلوك التطبيقي (ABA): كيف تبني خطة سلوكية إيجابية لطفلك؟",
+    "titleEn": "Applied Behavior Analysis (ABA): Building a Positive Behavioral Plan",
+    "slug": "applied-behavior-analysis-aba-guide",
+    "excerpt": "استراتيجيات تحليل السلوك التطبيقي لا تعتمد على العقاب بل على التعزيز الإيجابي وفهم وظيفة السلوك لتحويل التحديات إلى مهارات مكتسبة.",
+    "excerptEn": "ABA principles rely on positive reinforcement and functional behavior analysis to replace challenging behaviors with functional skills.",
+    "category": "aba",
+    "categoryTitle": "تحليل السلوك التطبيقي (ABA)",
+    "categoryTitleEn": "Applied Behavior Analysis",
+    "categoryColor": "emerald",
+    "author": {
+      "id": "spec-1",
+      "name": "احمد أبو زيد أنور",
+      "nameEn": "Ahmed Abouzeid",
+      "role": "المدير العام للبرامج التأهيلية | رئيس قسم ABA",
+      "roleEn": "General Director of Rehab Programs | Head of ABA",
+      "avatar": "/specialists/ahmed_abouzeid.jpg"
+    },
+    "image": "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=800&q=80",
+    "readTimeMinutes": 6,
+    "publishDate": "10 سبتمبر 2026",
+    "publishDateEn": "Sep 10, 2026",
+    "viewsCount": 1850,
+    "likesCount": 134,
+    "tags": [
+      "تعديل السلوك",
+      "تحليل السلوك ABA",
+      "التعزيز الإيجابي",
+      "نوبات الغضب"
+    ],
+    "tagsEn": [
+      "Behavior Modification",
+      "ABA Therapy",
+      "Positive Reinforcement",
+      "Tantrums"
+    ],
+    "keyTakeaways": [
+      "لكل سلوك وظيفة واضحة (لفت الانتباه، الهروب من مهمة، الحصول على شيء، أو إشباع حسي).",
+      "التعزيز الفوري للسلوك البديل هو المفتاح الأسرع لتقليل نوبات الغضب والرفض.",
+      "التكامل بين المعالج في المركز والوالدين في المنزل يضمن ثبات واستمرار المهارات المكتسبة."
+    ],
+    "keyTakeawaysEn": [
+      "Every behavior serves a function: attention, escape, access, or sensory feedback.",
+      "Immediate reinforcement of alternative behaviors accelerates positive growth.",
+      "Consistency between therapy sessions and home environment ensures generalization."
+    ],
+    "content": [
+      "يُعد علم تحليل السلوك التطبيقي (ABA) المعيار الذهبي المعتمد عالمياً من الجمعية الأمريكية لعلم النفس والأكاديمية الأمريكية لطب الأطفال في تأهيل ذوي اضطراب طيف التوحد وتعديل السلوكيات التحدّية.",
+      "يقوم المعالج السلوكي المعتمد (BCBA / QBA) بدراسة ما يحدث مباشرة قبل السلوك (المثيرات القبلية) وما يحدث بعده (النتائج واللواحق)، مما يمكننا من استبدال السلوك غير المرغوب به بمهارة تواصلية أو سلوكية مقبولة واجتماعية.",
+      "من خلال التدريب على المحاولات المنفصلة (DTT) وتدريب البيئة الطبيعية (NET)، يتعلم الطفل مهارات الاستقلالية الذاتية، التفاعل مع الأقران، وتلبية احتياجاته اليومية دون اللجوء لنوبات الصراخ أو التوتر."
+    ],
+    "contentEn": [
+      "ABA is recognized worldwide by the AAP and APA as the gold-standard evidence-based intervention for autism spectrum support.",
+      "By analyzing antecedents, behaviors, and consequences (ABCs), certified therapists guide children to functionally communicate their desires.",
+      "Through naturalistic and discrete trial teaching, children gain vital self-care, social reciprocity, and emotional regulation tools."
+    ]
+  },
+  {
+    "id": "blog-3",
+    "title": "العلاج الوظيفي والتكامل الحسي: كيف يتغلب الطفل على حساسية المثيرات؟",
+    "titleEn": "Occupational Therapy & Sensory Integration: Managing Sensory Overload",
+    "slug": "occupational-therapy-sensory-integration",
+    "excerpt": "ما هو التكامل الحسي؟ وكيف يساعد العلاج الوظيفي في تنظيم استجابة الجهاز العصبي للأصوات واللمس والحركة لتعزيز التركيز والاسترخاء.",
+    "excerptEn": "Understand sensory processing challenges and how occupational therapy helps regulate neural responses to noise, touch, and movement.",
+    "category": "occupational",
+    "categoryTitle": "العلاج الوظيفي والتكامل الحسي",
+    "categoryTitleEn": "Occupational & Sensory Therapy",
+    "categoryColor": "amber",
+    "author": {
+      "id": "spec-4",
+      "name": "ضحى خالد أنور",
+      "nameEn": "Doha Khaled",
+      "role": "مشرفة برامج ABA والتقييم النمائي",
+      "roleEn": "ABA Supervisor & Developmental Assessment",
+      "avatar": "/specialists/doha_khaled.jpg"
+    },
+    "image": "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=800&q=80",
+    "readTimeMinutes": 4,
+    "publishDate": "05 سبتمبر 2026",
+    "publishDateEn": "Sep 05, 2026",
+    "viewsCount": 1190,
+    "likesCount": 82,
+    "tags": [
+      "العلاج الوظيفي",
+      "التكامل الحسي",
+      "الحمية الحسية",
+      "التركيز والانتباه"
+    ],
+    "tagsEn": [
+      "Occupational Therapy",
+      "Sensory Integration",
+      "Sensory Diet",
+      "Focus"
+    ],
+    "keyTakeaways": [
+      "الجهاز العصبي يحتاج إلى مدخلات حسية متوازنة ليبقى في نطاق اليقظة والهدوء المطلوب للتعلم.",
+      "الألعاب الحسية العميقة مثل التأرجح والضغط العميق تقلل من التوتر الحركي المفرط.",
+      "تصميم حمية حسية فردية (Sensory Diet) داخل المنزل والمدرسة ينعكس إيجاباً على استقرار الطفل."
+    ],
+    "keyTakeawaysEn": [
+      "The nervous system requires balanced sensory inputs to maintain optimal focus.",
+      "Proprioceptive and vestibular input reduces restlessness and sensory seeking behaviors.",
+      "A tailored home and classroom sensory diet dramatically stabilizes emotional regulation."
+    ],
+    "content": [
+      "كثيراً ما يُساء فهم سلوكيات مثل تغطية الأذنين، رفض ارتداء ملابس معينة، أو الركض والقفز المستمر على أنها عناد، بينما هي في الواقع استجابة فسيولوجية لاضطراب في المعالجة الحسية (Sensory Processing Disorder).",
+      "في غرف التكامل الحسي المجهزة في مركز رابا، يستخدم الأخصائيون الوظيفيون أراجيح متخصصة، أسطح متباينة الملمس، وأوزاناً ضاغطة توفر مدخلات حسية للمستقبلات العميقة في المفاصل والعضلات.",
+      "هذا التنظيم الحسي يمنح الطفل شعوراً بالأمان والهدوء، مما يرفع قدرته على التركيز في الصف المدرسي والمشاركة في المهام الحركية الدقيقة كالكتابة واستخدام الأدوات."
+    ],
+    "contentEn": [
+      "Covering ears, rejecting fabrics, or relentless bouncing often stems from sensory overload rather than willful opposition.",
+      "In Raba’s sensory gyms, therapists use swings, textured surfaces, and deep proprioceptive pressure to calibrate the central nervous system.",
+      "Achieving sensory equilibrium unlocks a child’s readiness to learn, write, and engage comfortably in everyday environments."
+    ]
+  },
+  {
+    "id": "blog-4",
+    "title": "جلسات النطق والتخاطب: استراتيجيات منزلية فعالة لتحفيز الحصيلة اللغوية",
+    "titleEn": "Speech & Language Therapy: Practical Home Strategies for Vocabulary Growth",
+    "slug": "speech-language-therapy-home-tips",
+    "excerpt": "كيف تحول الروتين اليومي في المنزل إلى فرصة ذهبية لتطوير النطق، فهم الأوامر، والتعبير بالكلمات والجمل المتكاملة مع طفلك.",
+    "excerptEn": "Transform daily routines into enriching language learning moments to boost articulation, receptive skills, and expressive language.",
+    "category": "speech",
+    "categoryTitle": "النطق والتخاطب والتواصل",
+    "categoryTitleEn": "Speech & Language Therapy",
+    "categoryColor": "rose",
+    "author": {
+      "id": "spec-sara",
+      "name": "سارة عبد الحميد",
+      "nameEn": "Sara Abdelhamid",
+      "role": "أخصائية أولى نطق وتخاطب وتأهيل لغوي",
+      "roleEn": "Senior Speech-Language Pathologist",
+      "avatar": "/specialists/sara_abdelhamid.jpg"
+    },
+    "image": "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=800&q=80",
+    "readTimeMinutes": 5,
+    "publishDate": "01 سبتمبر 2026",
+    "publishDateEn": "Sep 01, 2026",
+    "viewsCount": 1670,
+    "likesCount": 115,
+    "tags": [
+      "النطق والتخاطب",
+      "تأخر الكلام",
+      "الحصيلة اللغوية",
+      "التواصل البصري"
+    ],
+    "tagsEn": [
+      "Speech Therapy",
+      "Language Delay",
+      "Vocabulary",
+      "Communication"
+    ],
+    "keyTakeaways": [
+      "تكرار الكلمات ببطء وبنبرة لحنية في سياق ملموس أفضل بعشرات المرات من التكرار الآلي.",
+      "الانتظار لمدة 5 إلى 10 ثوانٍ يمنح دماغ الطفل وقتاً كافياً لمعالجة السؤال وبدء الرد.",
+      "استخدام أنظمة التواصل البديل والمعزز (مثل PECS أو الأجهزة الذكية) لا يمنع الكلام بل يحفزه."
+    ],
+    "keyTakeawaysEn": [
+      "Slow, melodic repetition in meaningful contexts outpaces mechanical flashcard drills.",
+      "Giving the child a 5-10 second pause allows cognitive processing and response formulation.",
+      "Augmentative and Alternative Communication (AAC/PECS) accelerates verbal development rather than hindering it."
+    ],
+    "content": [
+      "التواصل ليس مجرد نطق أحرف صحيحة، بل هو رغبة الطفل وقدرته على مشاركة أفكاره ومشاعره واحتياجاته مع من حوله.",
+      "لتحفيز الكلام في المنزل، ننصح بوضع ألعاب الطفل المفضلة في مرمى بصره ولكن بعيداً عن متناول يده، لخلق دافع طبيعي يدفعه لطلب المساعدة باستخدام نظرة، إشارة، ثم كلمة.",
+      "كما ينبغي تجنب إنهاء الجمل نيابة عن الطفل فور تعثره، وإعطائه المساحة الزمنية اللازمة لتركيب الأصوات، مع مدحه الفوري عند كل محاولة نطق إيجابية."
+    ],
+    "contentEn": [
+      "True communication goes beyond pronunciation; it embodies the desire to connect and express desires.",
+      "Placing desired toys within sight but out of reach creates a natural incentive to point, vocalize, and request.",
+      "Patiently awaiting child verbal attempts without finishing sentences fosters lasting self-confidence and conversational reciprocity."
+    ]
+  },
+  {
+    "id": "blog-5",
+    "title": "نوم هادئ لطفل فرط الحركة (ADHD): خطوات عملية لروتين مسائي مريح",
+    "titleEn": "Peaceful Sleep for Children with ADHD: Practical Evening Routines",
+    "slug": "adhd-children-peaceful-sleep-routine",
+    "excerpt": "يعاني أكثر من 70% من أطفال فرط الحركة وتشتت الانتباه من صعوبات النوم. إليك الحلول الإكلينيكية المجربة لتنظيم الساعة البيولوجية.",
+    "excerptEn": "Over 70% of children with ADHD experience bedtime battles. Explore clinical routines that naturally regulate sleep cycles.",
+    "category": "family_guidance",
+    "categoryTitle": "إرشادات أسرية وتعديل روتين",
+    "categoryTitleEn": "Family Guidance & Routines",
+    "categoryColor": "purple",
+    "author": {
+      "id": "spec-rawan",
+      "name": "روان أسامة طبلت",
+      "nameEn": "Rawan Tablett",
+      "role": "مشرفة ومحللة سلوك بورد دولي (QBA)",
+      "roleEn": "Behavior Analyst Supervisor (QBA)",
+      "avatar": "/specialists/rawan_tablett.jpg"
+    },
+    "image": "https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=800&q=80",
+    "readTimeMinutes": 5,
+    "publishDate": "28 أغسطس 2026",
+    "publishDateEn": "Aug 28, 2026",
+    "viewsCount": 1310,
+    "likesCount": 94,
+    "tags": [
+      "فرط الحركة وتشتت الانتباه",
+      "روتين النوم",
+      "جودة النوم",
+      "استشارات أسرية"
+    ],
+    "tagsEn": [
+      "ADHD",
+      "Sleep Routine",
+      "Sleep Quality",
+      "Parenting Support"
+    ],
+    "keyTakeaways": [
+      "إيقاف الشاشات والأجهزة اللوحية قبل النوم بساعتين على الأقل يمنع تثبيط هرمون الميلاتونين.",
+      "الأنشطة المهدئة مثل القراءة بصوت هادئ والحمام الدافئ ترسل إشارات طمأنينة للجهاز العصبي.",
+      "تثبيت موعد الاستيقاظ صباحاً في عطلات نهاية الأسبوع يضبط الإيقاع البيولوجي على المدى الطويل."
+    ],
+    "keyTakeawaysEn": [
+      "Turning off screens at least two hours before bed prevents melatonin suppression.",
+      "Calming activities such as dim-light reading and warm baths signal autonomic relaxation.",
+      "Maintaining consistent morning wake-up times sets the circadian clock permanently."
+    ],
+    "content": [
+      "يواجه الطفل المصاب بفرط الحركة صعوبة حقيقية في خفض نشاط دماغه عند حلول وقت النوم، وغالباً ما يترافق ذلك مع مقاومة شديدة وتكرار النهوض من الفراش.",
+      "الحل لا يكمن في إجبار الطفل على الاستلقاء في الظلام وهو في قمة طاقته، بل في إدخاله تدريجياً في مرحلة \"التهدئة الحركية\" قبل النوم بـ 90 دقيقة من خلال الإضاءة الخافتة والموسيقى الهادئة ومساج الضغط الخفيف.",
+      "يساعد الجدول البصري المصور للخطوات المسائية الطفل على توقع ما سيحدث، مما يقلل من القلق ويبني عادات نوم صحية تدوم طوال مراحل حياته."
+    ],
+    "contentEn": [
+      "Children with ADHD struggle to down-regulate brain wave activity for sleep, resulting in prolonged bedtime negotiations.",
+      "The optimal approach is a structured 90-minute wind-down buffer featuring dimmed lighting, gentle pressure blankets, and quiet reading.",
+      "Visual schedules empower the child to predict each step, minimizing bedtime friction and promoting restorative sleep."
+    ]
+  },
+  {
+    "id": "blog-6",
+    "title": "دور الأسرة كشريك علاجي: كيف تضاعف نتائج جلسات التأهيل في البيت؟",
+    "titleEn": "Family as a Therapy Partner: Maximizing Rehabilitation Progress at Home",
+    "slug": "parents-as-rehab-partners-generalization",
+    "excerpt": "الجلسة العلاجية مدتها 45 دقيقة، لكن الطفل يقضي باقي يومه معك. دليلك الشامل لتعميم المهارات السلوكية والحركية واللغوية في الحياة اليومية.",
+    "excerptEn": "While therapy sessions last 45 minutes, generalization happens at home. Discover how parents accelerate real-world progress.",
+    "category": "family_guidance",
+    "categoryTitle": "إرشادات أسرية وتكامل تأهيلي",
+    "categoryTitleEn": "Family Guidance & Continuity",
+    "categoryColor": "emerald",
+    "author": {
+      "id": "spec-omara",
+      "name": "محمد عمارة هنداوي",
+      "nameEn": "Mohamed Omara",
+      "role": "رئيس قسم التأهيل الحركي والعلاج الطبيعي",
+      "roleEn": "Head of Physical Rehabilitation",
+      "avatar": "/specialists/mohamed_omara.jpg"
+    },
+    "image": "https://images.unsplash.com/photo-1543332164-6e82f355badc?auto=format&fit=crop&w=800&q=80",
+    "readTimeMinutes": 4,
+    "publishDate": "20 أغسطس 2026",
+    "publishDateEn": "Aug 20, 2026",
+    "viewsCount": 1530,
+    "likesCount": 110,
+    "tags": [
+      "الشراكة الأسرية",
+      "تعميم المهارات",
+      "العلاج المنزلي",
+      "تمكين الوالدين"
+    ],
+    "tagsEn": [
+      "Family Partnership",
+      "Generalization",
+      "Home Therapy",
+      "Empowerment"
+    ],
+    "keyTakeaways": [
+      "حضور الوالدين لجزء من الجلسة أو مراجعة التقارير اليومية يعزز فهم أساليب التعزيز المعتمدة.",
+      "تعميم المهارات في السوبرماركت والحديقة يرسخ ما تعلمه الطفل في بيئة المركز المحمية.",
+      "الاحتفال بالخطوات الصغيرة يمنح الطفل والأسرة طاقة إيجابية مستمرة لإكمال رحلة التأهيل."
+    ],
+    "keyTakeawaysEn": [
+      "Active parental observation of sessions reinforces consistent reinforcement strategies.",
+      "Practicing newly acquired skills at grocery stores and parks cements real-life functional mastery.",
+      "Celebrating micro-milestones builds long-term confidence and emotional resilience for the whole family."
+    ],
+    "content": [
+      "الهدف الأسمى لأي برنامج تأهيلي في مركز رابا ليس فقط أن يؤدي الطفل المهارة داخل غرفة العلاج، بل أن ينقلها تلقائياً إلى حياته اليومية ومع إخوته وأقرانه في المدرسة.",
+      "نحن نعتبر الوالدين أعضاء أساسيين في الفريق المعالج، ونوفر لهم تدريباً دورياً وجلسات إرشاد أسري فردية لتمكينهم من التعامل مع التحديات الطارئة بثقة وهدوء.",
+      "تكامل الأدوار وتوحيد أسلوب التوجيه بين المنزل والمركز هو السر الحقيقي وراء قصص النجاح الملهمة التي نعيشها يومياً مع أبطالنا الصغار."
+    ],
+    "contentEn": [
+      "The ultimate clinical goal is not merely isolated success inside the therapy room, but effortless generalization across daily life.",
+      "We view parents as co-therapists, equipping them with customized coaching and continuous data-driven feedback.",
+      "Unified guidance across home and clinical settings is the undeniable cornerstone behind every child’s breakthrough."
+    ]
+  }
+]

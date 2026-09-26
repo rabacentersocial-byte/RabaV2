@@ -1,0 +1,147 @@
+[
+  {
+    "id": "req-1790209118435",
+    "referenceNumber": "ST-989680",
+    "childName": "طفل (RRRRR)",
+    "childAge": 1,
+    "guardianName": "RRRRR",
+    "guardianPhone": "0565477567",
+    "guardianEmail": "shadow.teacher@customer.com",
+    "serviceId": "srv-shadow-teacher",
+    "serviceTitle": "خدمة معلم الظل المدرسي (Shadow Teacher)",
+    "specialistId": "spec-inclusion",
+    "specialistName": "فريق الدمج المدرسي ومعلمي الظل",
+    "date": "2026-09-24",
+    "timeSlot": "الفترة الصباحية (الدوام المدرسي)",
+    "notes": "طلب تسجيل خدمة معلم ظل مدرسي من الموقع. تاريخ ميلاد الطفل: 2026-09-07 - البريد: غير محدد",
+    "status": "new",
+    "paymentStatus": "unpaid",
+    "amount": 0,
+    "reminderSettings": {
+      "whatsapp": true,
+      "sms": true,
+      "email": true
+    },
+    "createdAt": "2026-09-24T00:18:38.435Z",
+    "requestType": "shadow_teacher",
+    "requestSource": "استمارة خدمة معلم الظل (الموقع الرئيسي)",
+    "childBirthDate": "2026-09-07",
+    "readByAdmin": false
+  },
+  {
+    "id": "apt-1790071368468",
+    "referenceNumber": "RB-163934",
+    "childName": "المستفيد",
+    "childAge": 5,
+    "guardianName": "يوسف",
+    "guardianPhone": "0565477567",
+    "guardianEmail": "contact@customer.com",
+    "serviceId": "srv-aba",
+    "serviceTitle": "تحليل السلوك التطبيقي (ABA)",
+    "specialistId": "spec-hanaa",
+    "specialistName": "د. هناء محمد بشير",
+    "date": "2026-09-22",
+    "timeSlot": "10:00 صباحاً - 10:45 صباحاً",
+    "notes": "",
+    "status": "confirmed",
+    "paymentStatus": "unpaid",
+    "amount": 320,
+    "reminderSettings": {
+      "whatsapp": true,
+      "sms": true,
+      "email": false
+    },
+    "createdAt": "2026-09-22T10:02:48.468Z"
+  },
+  {
+    "id": "apt-1789760817292",
+    "referenceNumber": "REF-91307",
+    "childName": "يوسف",
+    "childAge": 4,
+    "guardianName": "محمد",
+    "guardianPhone": "٠٥٦٥٤٧٧٥٦٧",
+    "guardianEmail": "parent@example.com",
+    "serviceId": "srv-occupational",
+    "serviceTitle": "العلاج الوظيفي والتكامل الحسي (Occupational Therapy)",
+    "specialistId": "spec-1",
+    "specialistName": "د. نورة العتيبي",
+    "date": "2026-09-18",
+    "timeSlot": "10:00 صباحاً - 10:45 صباحاً",
+    "notes": "",
+    "status": "confirmed",
+    "paymentStatus": "paid",
+    "amount": 280,
+    "reminderSettings": {
+      "whatsapp": true,
+      "sms": true,
+      "email": false,
+      "intervals": [
+        "24h",
+        "2h"
+      ]
+    },
+    "createdAt": "2026-09-18",
+    "paymentMethod": "apple_pay"
+  },
+  {
+    "id": "apt-001",
+    "referenceNumber": "REF-84291",
+    "childName": "سلطان محمد الشمري",
+    "childAge": 5,
+    "guardianName": "محمد الشمري",
+    "guardianPhone": "0551234567",
+    "guardianEmail": "m.alshammari@example.com",
+    "serviceId": "srv-occupational",
+    "serviceTitle": "العلاج الوظيفي والتكامل الحسي",
+    "specialistId": "spec-1",
+    "specialistName": "د. نورة العتيبي",
+    "date": "2026-09-20",
+    "timeSlot": "10:00 صباحاً - 10:45 صباحاً",
+    "notes": "يعاني من حساسية مفرطة للأصوات ومسك القلم بطريقة غير سليمة",
+    "status": "confirmed",
+    "paymentStatus": "paid",
+    "paymentMethod": "mada",
+    "amount": 280,
+    "reminderSettings": {
+      "whatsapp": true,
+      "sms": true,
+      "email": true,
+      "intervals": [
+        "24h",
+        "2h",
+        "30m"
+      ]
+    },
+    "createdAt": "2026-09-17"
+  },
+  {
+    "id": "apt-002",
+    "referenceNumber": "REF-92104",
+    "childName": "ريما عبدالله الحربي",
+    "childAge": 4,
+    "guardianName": "عبدالله الحربي",
+    "guardianPhone": "0509876543",
+    "guardianEmail": "a.alharbi@example.com",
+    "serviceId": "srv-speech",
+    "serviceTitle": "علاج اضطرابات النطق والتخاطب",
+    "specialistId": "spec-3",
+    "specialistName": "د. سارة المنصور",
+    "date": "2026-09-21",
+    "timeSlot": "04:30 مساءً - 05:15 مساءً",
+    "notes": "تأخر في تكوين الجمل وصعوبة نطق حرف الراء والكاف",
+    "status": "confirmed",
+    "paymentStatus": "paid",
+    "paymentMethod": "apple_pay",
+    "amount": 290,
+    "reminderSettings": {
+      "whatsapp": true,
+      "sms": true,
+      "email": false,
+      "intervals": [
+        "24h",
+        "2h"
+      ]
+    },
+    "createdAt": "2026-09-18"
+  }
+]

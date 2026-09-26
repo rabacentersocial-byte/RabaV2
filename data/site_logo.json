@@ -1,0 +1,18 @@
+{
+  "logoSource": "custom",
+  "customLogoUrl": "/uploads/1790358266500_logo_transparent_transparent_png.png",
+  "iconSizePx": 46,
+  "iconRounding": "md",
+  "iconObjectFit": "contain",
+  "spacingPx": 10,
+  "showText": false,
+  "titleAr": "مركز رابا",
+  "subtitleAr": "للرعاية النهارية والتأهيل",
+  "titleEn": "RABA",
+  "subtitleEn": "Center for Day Care & Rehabilitation",
+  "showEnglishBadge": true,
+  "showSubtitle": true,
+  "titleColor": "",
+  "titleFontSizePx": 18,
+  "subtitleFontSizePx": 10
+}

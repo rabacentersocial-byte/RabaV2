@@ -1,0 +1,15 @@
+{
+  "hero": true,
+  "pillars": false,
+  "stats": true,
+  "accreditations": true,
+  "branches": true,
+  "services": true,
+  "specialists": true,
+  "offers": true,
+  "reviews": true,
+  "blog": true,
+  "bookingForm": true,
+  "faq": true,
+  "footer": true
+}

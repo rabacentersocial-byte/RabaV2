@@ -1,0 +1,67 @@
+[
+  {
+    "id": "leadership",
+    "titleAr": "الريادة والتميز الإكلينيكي",
+    "titleEn": "Clinical Leadership",
+    "descAr": "قيادة طبية سعودية مرخصة تضع معايير الجودة الدولية في الرعاية النهارية والتأهيل المتخصص.",
+    "descEn": "Licensed Saudi clinical leadership setting international standards.",
+    "iconName": "UserCheck",
+    "color": "text-[#0284C7]",
+    "bgColor": "bg-sky-500/15",
+    "borderColor": "border-sky-400/30",
+    "active": true,
+    "order": 1
+  },
+  {
+    "id": "innovation",
+    "titleAr": "الابتكار والتحديث المستمر",
+    "titleEn": "Innovation",
+    "descAr": "تطبيق أحدث الأدوات والتقنيات المقننة في التقييم والتدخل السلوكي والحسي لدعم التطور النمائي.",
+    "descEn": "Employing modern standardized tools and evidence-based methods.",
+    "iconName": "Lightbulb",
+    "color": "text-[#F59E0B]",
+    "bgColor": "bg-amber-500/15",
+    "borderColor": "border-amber-400/30",
+    "active": true,
+    "order": 2
+  },
+  {
+    "id": "values",
+    "titleAr": "القيم والأثر الإنساني",
+    "titleEn": "Values & Impact",
+    "descAr": "بيئة علاجية آمنة ومحبة تحترم خصوصية الطفل وتوفر إرشاداً نفسياً وأسرياً دائماً للوالدين.",
+    "descEn": "A caring therapeutic setting respecting privacy and empowering families.",
+    "iconName": "Heart",
+    "color": "text-[#0D6D54] dark:text-[#00E5BE]",
+    "bgColor": "bg-teal-500/15",
+    "borderColor": "border-teal-400/30",
+    "active": true,
+    "order": 3
+  },
+  {
+    "id": "behavior",
+    "titleAr": "تحليل السلوك التطبيقي ABA",
+    "titleEn": "Applied Behavior ABA",
+    "descAr": "خطط تعديل سلوك فردية بإشراف مشرفين معتمدين دولياً لرفع الاستقلالية والمهارات الاجتماعية.",
+    "descEn": "Individual behavior modification plans under international board supervision.",
+    "iconName": "Star",
+    "color": "text-[#10B981]",
+    "bgColor": "bg-emerald-500/15",
+    "borderColor": "border-emerald-400/30",
+    "active": true,
+    "order": 4
+  },
+  {
+    "id": "culture",
+    "titleAr": "البيئة والدمج المجتمعي",
+    "titleEn": "Inclusion & Culture",
+    "descAr": "تهيئة الطفل للدمج المدرسي والمجتمعي الفعال وتوفير معلم الظل المتخصص لتحقيق أقصى إمكاناته.",
+    "descEn": "Preparing children for school inclusion and real-world independence.",
+    "iconName": "Globe",
+    "color": "text-[#00E5BE]",
+    "bgColor": "bg-teal-500/15",
+    "borderColor": "border-teal-400/30",
+    "active": true,
+    "order": 5
+  }
+]

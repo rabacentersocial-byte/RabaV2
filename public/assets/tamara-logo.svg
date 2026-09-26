@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 52" fill="none">
+  <defs>
+    <linearGradient id="tamaraBg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FCE193" />
+      <stop offset="30%" stop-color="#FFAC7D" />
+      <stop offset="65%" stop-color="#FA8CA5" />
+      <stop offset="100%" stop-color="#B7D5F7" />
+    </linearGradient>
+  </defs>
+  <rect width="160" height="52" rx="26" fill="url(#tamaraBg)"/>
+  <text x="80" y="32" font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" font-size="27" font-weight="900" fill="#000000" letter-spacing="-0.8" text-anchor="middle">tamara</text>
+</svg>

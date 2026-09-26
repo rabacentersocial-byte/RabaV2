@@ -1,0 +1,74 @@
+[
+  {
+    "id": "offer-national-day-free-day",
+    "titleAr": "يوم مجاني لجميع عملائنا",
+    "titleEn": "Free Day for All Clients",
+    "subtitleAr": "بمناسبة اليوم الوطني السعودي الـ96 — عزّ وفخر",
+    "subtitleEn": "Saudi National Day 96 — Glory & Pride",
+    "badgeAr": "عرض حصري 100% مجاني",
+    "badgeEn": "100% FREE DAY",
+    "couponCode": "KSA96-FREE",
+    "targetDate": "2026-09-24T23:59:59",
+    "dateLabelAr": "يوم الخميس 24/9/2026",
+    "dateLabelEn": "Thursday 24/09/2026",
+    "discountType": "free_day",
+    "discountValue": 100,
+    "theme": "emerald",
+    "isNationalDay": true,
+    "active": true,
+    "descriptionAr": "نحتفل معكم بيوم مميز تقديراً لثقتكم ووفائكم لنا لجميع عملائنا الكرام.",
+    "descriptionEn": "Celebrating a special day in appreciation of your trust and loyalty to us for all valued clients.",
+    "terms": [
+      {
+        "textAr": "متاح لجميع العملاء الحاليين والجدد",
+        "textEn": "Available for all existing and new clients"
+      },
+      {
+        "textAr": "الحجز المسبق إلزامي لتأكيد الحضور",
+        "textEn": "Prior booking is mandatory"
+      },
+      {
+        "textAr": "ساري حصرياً يوم الخميس 24/9/2026",
+        "textEn": "Valid exclusively on Thursday 24/9/2026"
+      }
+    ]
+  },
+  {
+    "id": "offer-national-day-35-percent",
+    "titleAr": "خصم 35% للعملاء الجدد",
+    "titleEn": "35% Discount for New Clients",
+    "subtitleAr": "بمناسبة اليوم الوطني الـ96 — تسجيل صباحي",
+    "subtitleEn": "The 96th Saudi National Day — Morning Registration",
+    "badgeAr": "خصم 35% للعملاء الجدد",
+    "badgeEn": "NEW CLIENTS 35% OFF",
+    "couponCode": "KSA96-NEW",
+    "targetDate": "2026-09-30T23:59:59",
+    "dateLabelAr": "ساري حتى 30/9/2026",
+    "dateLabelEn": "Valid until 30/09/2026",
+    "discountType": "percentage",
+    "discountValue": 35,
+    "theme": "teal",
+    "isNationalDay": true,
+    "active": true,
+    "descriptionAr": "عرض مميز للعملاء الجدد بمناسبة اليوم الوطني السعودي الـ96.",
+    "descriptionEn": "Exclusive offer for new clients on the occasion of Saudi National Day 96.",
+    "terms": [
+      {
+        "textAr": "الخصم يطبق على السعر الأصلي.",
+        "textEn": "Discount applies to original price."
+      },
+      {
+        "textAr": "يُطبق الخصم لمرة واحدة على كل باقة.",
+        "textEn": "Applied once per package."
+      },
+      {
+        "textAr": "العرض ساري حتى 30/9/2026.",
+        "textEn": "Offer valid until 30/9/2026."
+      },
+      {
+        "textAr": "الخصم يقدم للتسجيل الصباحي من 08:00 ص إلى 12:00 م.",
+        "textEn": "Valid for morning registration (08:00 AM - 12:00 PM)."
+      }
+    ]
+  }
+]
