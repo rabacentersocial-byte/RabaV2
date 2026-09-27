@@ -121,6 +121,8 @@ const STORAGE_FILE_MAP: Record<string, string> = {
   raba_custom_services_v2: 'services.json',
   raba_appointments: 'appointments.json',
   raba_notifications: 'notifications.json',
+  raba_branches_data_v1: 'branches.json',
+  raba_courses_data_v1: 'courses.json',
   raba_admin_users: 'admin_users.json'
 };
 

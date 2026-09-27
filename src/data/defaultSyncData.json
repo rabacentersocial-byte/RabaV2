@@ -1,6 +1,6 @@
 {
   "success": true,
-  "timestamp": "2026-09-26T20:15:22.391Z",
+  "timestamp": "2026-09-27T10:01:10.474Z",
   "data": {
     "raba_accreditations": [
       {
@@ -21,7 +21,7 @@
         "logoType": "custom",
         "certificateNumber": "ISO-SA-88421-2024",
         "validUntil": "2027",
-        "customLogoUrl": "/images/accreditations/iso_logo.jpg"
+        "customLogoUrl": "/uploads/1790357652181_ISO-Logo_webp.jpg"
       },
       {
         "id": "ibao",
@@ -41,7 +41,7 @@
         "logoType": "custom",
         "certificateNumber": "IBAO-CP-9041",
         "validUntil": "2026",
-        "customLogoUrl": "/images/accreditations/ibao_logo.jpg"
+        "customLogoUrl": "/uploads/1790357668910_ibao_webp.jpg"
       },
       {
         "id": "qaba",
@@ -61,7 +61,7 @@
         "logoType": "custom",
         "certificateNumber": "QABA-ORG-7712",
         "validUntil": "2026",
-        "customLogoUrl": "/images/accreditations/qaba_logo.jpg"
+        "customLogoUrl": "/uploads/1790357681328_qaba_webp.jpg"
       },
       {
         "id": "bacb",
@@ -81,7 +81,7 @@
         "logoType": "custom",
         "certificateNumber": "BACB-SUP-33019",
         "validUntil": "2027",
-        "customLogoUrl": "/images/accreditations/cert_1.jpg"
+        "customLogoUrl": "/uploads/1790357693975_IMG_6729_jpg.jpg"
       },
       {
         "id": "acc-1790357770406",
@@ -99,7 +99,7 @@
         "active": true,
         "order": 5,
         "logoType": "custom",
-        "customLogoUrl": "/images/accreditations/cert_2.jpg",
+        "customLogoUrl": "/uploads/1790357709799_IMG_6728_png_jpeg.jpg",
         "certificateNumber": "RABA-02003",
         "validUntil": "2027"
       }
@@ -737,6 +737,362 @@
         ]
       }
     ],
+    "raba_branches_data_v1": [
+      {
+        "id": "branch-sahafa",
+        "name": "فرع الصحافة",
+        "nameEn": "Al-Sahafah Branch",
+        "city": "riyadh",
+        "cityNameAr": "الرياض",
+        "cityNameEn": "Riyadh",
+        "regionBadgeAr": "الرياض - الصحافة",
+        "regionBadgeEn": "Riyadh - Al-Sahafah",
+        "badgeColorClass": "bg-teal-500/20 text-teal-400 border-teal-500/30",
+        "address": "شارع الأمير عبد الله بن سعود - داخل مدارس رواد الخليج العالمية",
+        "addressEn": "Prince Abdullah Bin Saud St - inside Rowad Al-Khaleej International Schools",
+        "googleMapsUrl": "https://maps.app.goo.gl/F6CpqLohJJTzqrRq6?g_st=iw",
+        "whatsappUrl": "https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20الاستفسار%20عن%20خدمات%20ومواعيد%20مركز%20رابا%20-%20فرع%20الصحافة",
+        "whatsappNumber": "0575100100",
+        "phone": "0575100100",
+        "hoursAr": "الأحد - الخميس: 8:00 ص - 8:00 م",
+        "hoursEn": "Sun - Thu: 8:00 AM - 8:00 PM",
+        "order": 1
+      },
+      {
+        "id": "branch-narjis",
+        "name": "فرع النرجس",
+        "nameEn": "Al-Narjis Branch",
+        "city": "riyadh",
+        "cityNameAr": "الرياض",
+        "cityNameEn": "Riyadh",
+        "regionBadgeAr": "الرياض - النرجس",
+        "regionBadgeEn": "Riyadh - Al-Narjis",
+        "badgeColorClass": "bg-emerald-500/20 text-emerald-400 border-emerald-500/30",
+        "address": "طريق أنس ابن مالك",
+        "addressEn": "Anas Ibn Malik Rd",
+        "googleMapsUrl": "https://maps.google.com/?q=مركز+رابا+فرع+النرجس+طريق+أنس+بن+مالك+الرياض",
+        "whatsappUrl": "https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20الاستفسار%20عن%20خدمات%20ومواعيد%20مركز%20رابا%20-%20فرع%20النرجس",
+        "whatsappNumber": "0575100100",
+        "phone": "0575100100",
+        "hoursAr": "الأحد - الخميس: 8:00 ص - 8:00 م",
+        "hoursEn": "Sun - Thu: 8:00 AM - 8:00 PM",
+        "order": 2
+      },
+      {
+        "id": "branch-rabwah",
+        "name": "فرع الربوة",
+        "nameEn": "Al-Rabwah Branch",
+        "city": "riyadh",
+        "cityNameAr": "الرياض",
+        "cityNameEn": "Riyadh",
+        "regionBadgeAr": "الرياض - الربوة",
+        "regionBadgeEn": "Riyadh - Al-Rabwah",
+        "badgeColorClass": "bg-blue-500/20 text-blue-400 border-blue-500/30",
+        "address": "شارع الأمير فواز بن عبد العزيز",
+        "addressEn": "Prince Fawaz Ibn Abdulaziz St",
+        "googleMapsUrl": "https://maps.google.com/?q=مركز+رابا+فرع+الربوة+شارع+الأمير+فواز+بن+عبدالعزيز+الرياض",
+        "whatsappUrl": "https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20الاستفسار%20عن%20خدمات%20ومواعيد%20مركز%20رابا%20-%20فرع%20الربوة",
+        "whatsappNumber": "0575100100",
+        "phone": "0575100100",
+        "hoursAr": "الأحد - الخميس: 8:00 ص - 8:00 م",
+        "hoursEn": "Sun - Thu: 8:00 AM - 8:00 PM",
+        "order": 3
+      },
+      {
+        "id": "branch-mugharrazat",
+        "name": "فرع المغرزات (رواد الخليج)",
+        "nameEn": "Al-Mugharrazat Branch (Rowad Al-Khaleej)",
+        "city": "riyadh",
+        "cityNameAr": "الرياض",
+        "cityNameEn": "Riyadh",
+        "regionBadgeAr": "الرياض - المغرزات",
+        "regionBadgeEn": "Riyadh - Al-Mugharrazat",
+        "badgeColorClass": "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
+        "address": "شارع ابي سفيان ابن حرب - داخل مدارس رواد الخليج العالمية - بوابة ٩",
+        "addressEn": "Abi Sufyan Ibn Harb St - inside Rowad Al-Khaleej International Schools - Gate 9",
+        "googleMapsUrl": "https://maps.google.com/?q=مدارس+رواد+الخليج+العالمية+حي+المغرزات+بوابة+9+الرياض",
+        "whatsappUrl": "https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20الاستفسار%20عن%20خدمات%20ومواعيد%20مركز%20رابا%20-%20فرع%20المغرزات",
+        "whatsappNumber": "0575100100",
+        "phone": "0575100100",
+        "hoursAr": "الأحد - الخميس: 8:00 ص - 4:00 م",
+        "hoursEn": "Sun - Thu: 8:00 AM - 4:00 PM",
+        "order": 4
+      },
+      {
+        "id": "branch-hittin",
+        "name": "فرع حطين",
+        "nameEn": "Hittin Branch",
+        "city": "riyadh",
+        "cityNameAr": "الرياض",
+        "cityNameEn": "Riyadh",
+        "regionBadgeAr": "الرياض - حطين",
+        "regionBadgeEn": "Riyadh - Hittin",
+        "badgeColorClass": "bg-violet-500/20 text-violet-400 border-violet-500/30",
+        "address": "شارع الأمير يزيد ابن عبد الله - داخل مدارس رواد الخليج العالمية",
+        "addressEn": "Prince Yazid Ibn Abdullah St - inside Rowad Al-Khaleej International Schools",
+        "googleMapsUrl": "https://maps.google.com/?q=مدارس+رواد+الخليج+العالمية+شارع+الأمير+يزيد+ابن+عبدالله+حي+حطين+الرياض",
+        "whatsappUrl": "https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20الاستفسار%20عن%20خدمات%20ومواعيد%20مركز%20رابا%20-%20فرع%20حطين",
+        "whatsappNumber": "0575100100",
+        "phone": "0575100100",
+        "hoursAr": "الأحد - الخميس: 8:00 ص - 8:00 م",
+        "hoursEn": "Sun - Thu: 8:00 AM - 8:00 PM",
+        "order": 5
+      },
+      {
+        "id": "branch-jeddah-shiraa",
+        "name": "فرع الشراع (أبحر الشمالية)",
+        "nameEn": "Al-Sheraa Branch (North Obhur)",
+        "city": "jeddah",
+        "cityNameAr": "جدة",
+        "cityNameEn": "Jeddah",
+        "regionBadgeAr": "جدة - أبحر الشمالية",
+        "regionBadgeEn": "Jeddah - North Obhur",
+        "badgeColorClass": "bg-amber-500/20 text-amber-400 border-amber-500/30",
+        "address": "حي الشراع - ابحر الشمالية - داخل مدارس رواد الخليج العالمية - بوابة ٢",
+        "addressEn": "Al-Sheraa Dist - North Obhur - inside Rowad Al-Khaleej International Schools - Gate 2",
+        "googleMapsUrl": "https://maps.google.com/?q=مدارس+رواد+الخليج+العالمية+حي+الشراع+أبحر+الشمالية+جدة",
+        "whatsappUrl": "https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20الاستفسار%20عن%20خدمات%20ومواعيد%20مركز%20رابا%20-%20فرع%20جدة%20الشراع",
+        "whatsappNumber": "0575100100",
+        "phone": "0575100100",
+        "hoursAr": "الأحد - الخميس: 8:00 ص - 8:00 م",
+        "hoursEn": "Sun - Thu: 8:00 AM - 8:00 PM",
+        "order": 6
+      },
+      {
+        "id": "branch-jeddah-hamadaniyah",
+        "name": "فرع الحمدانية",
+        "nameEn": "Al-Hamadaniyah Branch",
+        "city": "jeddah",
+        "cityNameAr": "جدة",
+        "cityNameEn": "Jeddah",
+        "regionBadgeAr": "جدة - الحمدانية",
+        "regionBadgeEn": "Jeddah - Al-Hamadaniyah",
+        "badgeColorClass": "bg-rose-500/20 text-rose-400 border-rose-500/30",
+        "address": "حي الحمدانية - خلف مدارس الفيصلية الأهلية بنين",
+        "addressEn": "Al-Hamadaniyah Dist - behind Al-Faisaliah Private Schools (Boys)",
+        "googleMapsUrl": "https://maps.google.com/?q=حي+الحمدانية+خلف+مدارس+الفيصلية+الأهلية+بنين+جدة",
+        "whatsappUrl": "https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20الاستفسار%20عن%20خدمات%20ومواعيد%20مركز%20رابا%20-%20فرع%20الحمدانية",
+        "whatsappNumber": "0575100100",
+        "phone": "0575100100",
+        "hoursAr": "الأحد - الخميس: 8:00 ص - 8:00 م",
+        "hoursEn": "Sun - Thu: 8:00 AM - 8:00 PM",
+        "order": 7
+      },
+      {
+        "id": "branch-ahsa",
+        "name": "فرع الأحساء (المبرز)",
+        "nameEn": "Al-Ahsa Branch (Al-Mubarraz)",
+        "city": "ahsa",
+        "cityNameAr": "الأحساء",
+        "cityNameEn": "Al-Ahsa",
+        "regionBadgeAr": "الأحساء - المبرز",
+        "regionBadgeEn": "Al-Ahsa - Al-Mubarraz",
+        "badgeColorClass": "bg-indigo-500/20 text-indigo-400 border-indigo-500/30",
+        "address": "حي اليرموك - المبرز - شارع أبي ابيب الأنصاري - تقاطع شارع عبد الله بن أبي حدرد - داخل مدارس رواد الخليج العالمية - بوابة ٧",
+        "addressEn": "Al-Yarmouk Dist - Al-Mubarraz - Abi Habib Al-Ansari St x Abdullah Bin Abi Hadrad St - inside Rowad Al-Khaleej International Schools - Gate 7",
+        "googleMapsUrl": "https://maps.google.com/?q=25.426332,49.565449",
+        "whatsappUrl": "https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20الاستفسار%20عن%20خدمات%20ومواعيد%20مركز%20رابا%20-%20فرع%20الأحساء",
+        "whatsappNumber": "0575100100",
+        "phone": "0575100100",
+        "hoursAr": "الأحد - الخميس: 8:00 ص - 8:00 م",
+        "hoursEn": "Sun - Thu: 8:00 AM - 8:00 PM",
+        "order": 8
+      },
+      {
+        "id": "branch-khobar",
+        "name": "فرع الخبر (الراكة الجنوبية)",
+        "nameEn": "Al-Khobar Branch (South Rakah)",
+        "city": "khobar",
+        "cityNameAr": "الخبر",
+        "cityNameEn": "Al-Khobar",
+        "regionBadgeAr": "الخبر - الراكة الجنوبية",
+        "regionBadgeEn": "Al-Khobar - South Rakah",
+        "badgeColorClass": "bg-sky-500/20 text-sky-400 border-sky-500/30",
+        "address": "حي الراكة الجنوبية - طريق الملك فيصل داخل مدارس رواد الخليج العالمية",
+        "addressEn": "South Rakah Dist - King Faisal Rd, inside Rowad Al-Khaleej International Schools",
+        "googleMapsUrl": "https://maps.app.goo.gl/iPsvY46UotNMBcc27?g_st=aw",
+        "whatsappUrl": "https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20الاستفسار%20عن%20خدمات%20ومواعيد%20مركز%20رابا%20-%20فرع%20الخبر",
+        "whatsappNumber": "0575100100",
+        "phone": "0575100100",
+        "hoursAr": "الأحد - الخميس: 8:00 ص - 8:00 م",
+        "hoursEn": "Sun - Thu: 8:00 AM - 8:00 PM",
+        "order": 9
+      },
+      {
+        "id": "branch-alkharj",
+        "name": "مركز رابا (الخرج)",
+        "nameEn": "Raba Center (Al-Kharj)",
+        "city": "kharj",
+        "cityNameAr": "الخرج",
+        "cityNameEn": "Al-Kharj",
+        "regionBadgeAr": "الخرج - اليمامة",
+        "regionBadgeEn": "Al-Kharj - Al-Yamamah",
+        "badgeColorClass": "bg-emerald-500/25 text-emerald-300 border-emerald-500/40",
+        "address": "حي اليمامة - داخل مقر جمعية التنمية الاجتماعية",
+        "addressEn": "Al-Yamamah Dist - inside Social Development Association headquarters",
+        "googleMapsUrl": "https://maps.google.com/?q=مركز+رابا+الخرج+حي+اليمامة+جمعية+التنمية+الاجتماعية",
+        "whatsappUrl": "https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20الاستفسار%20عن%20خدمات%20ومواعيد%20مركز%20رابا%20-%20فرع%20الخرج",
+        "whatsappNumber": "0575100100",
+        "phone": "0575100100",
+        "hoursAr": "الأحد - الخميس: 8:00 ص - 8:00 م",
+        "hoursEn": "Sun - Thu: 8:00 AM - 8:00 PM",
+        "order": 10
+      }
+    ],
+    "raba_courses_data_v1": [
+      {
+        "id": "course-qba",
+        "titleAr": "كورس محلل سلوكي مؤهل (QBA)",
+        "titleEn": "Qualified Behavior Analyst (QBA) Course",
+        "shortTitle": "محلل سلوكي مؤهل QBA",
+        "hoursBadgeAr": "270 ساعة تدريبية معتمدة",
+        "hoursBadgeEn": "270 Certified Training Hours",
+        "hoursCount": 270,
+        "ribbonTagAr": "منصة رابا التعليمية",
+        "ribbonTagEn": "RABA Academy",
+        "categoryAr": "اعتماد البورد العالمي QABA",
+        "categoryEn": "QABA International Certification",
+        "badgeColor": "from-fuchsia-600 to-pink-600",
+        "tagHighlightAr": "يشمل أيضاً: VB-MAPP - ABLLS-R - PEAK",
+        "tagHighlightEn": "Includes: VB-MAPP - ABLLS-R - PEAK",
+        "descriptionAr": "ابدأ رحلتك الاحترافية في تحليل السلوك التطبيقي مع محتوى تدريبي متكامل يؤهلك للحصول على اعتماد QBA الدولي والعمل كمحلل سلوك مؤهل ومستقل.",
+        "descriptionEn": "Begin your professional career in Applied Behavior Analysis with comprehensive curriculum qualifying you for international QBA certification.",
+        "featuresAr": [
+          "270 ساعة تدريبية معتمدة دولياً ومستوفية لمتطلبات QABA",
+          "يشمل أدوات التقييم الشاملة: VB-MAPP و ABLLS-R و PEAK",
+          "تدريب عملي على تصميم الخطط العلاجية وتحليل البيانات الإكلينيكية",
+          "إشراف مباشر من محللي سلوك معتمدين دولياً ومصنفين",
+          "إمكانية التقسيط الميسر عبر تمارا وإمكان"
+        ],
+        "featuresEn": [
+          "270 QABA-accredited training hours meeting board criteria",
+          "Includes core assessment tools: VB-MAPP, ABLLS-R, and PEAK",
+          "Clinical case planning and behavior intervention strategy design",
+          "Mentorship by board-certified behavioral analysts",
+          "Installment options via Tamara & Emkan"
+        ],
+        "priceDisplayAr": "متاح التقسيط عبر تمارا وإمكان",
+        "priceDisplayEn": "Installments via Tamara & Emkan",
+        "accentColor": "#E11D48",
+        "targetAudienceAr": "أخصائيو التربية الخاصة، علم النفس، العلاج الوظيفي، والراغبون في رخصة QBA الدولية",
+        "targetAudienceEn": "Special educators, psychologists, and clinicians seeking QBA credentials",
+        "order": 1
+      },
+      {
+        "id": "course-abat",
+        "titleAr": "كورس فني تحليل سلوك تطبيقي (ABAT)",
+        "titleEn": "Applied Behavior Analysis Technician (ABAT)",
+        "shortTitle": "فني تحليل سلوك تطبيقي ABAT",
+        "hoursBadgeAr": "40 ساعة تدريبية معتمدة",
+        "hoursBadgeEn": "40 Certified Training Hours",
+        "hoursCount": 40,
+        "ribbonTagAr": "منصة رابا التعليمية",
+        "ribbonTagEn": "RABA Academy",
+        "categoryAr": "الاعتماد المهني الأول في ABA",
+        "categoryEn": "Entry-Level Professional Credential",
+        "badgeColor": "from-teal-500 to-emerald-600",
+        "tagHighlightAr": "تأهيل لاختبار البورد QABA - فني سلوك",
+        "tagHighlightEn": "Prepares for QABA ABAT Board Exam",
+        "descriptionAr": "ابدأ مسارك المهني في تحليل السلوك التطبيقي مع شهادة ABAT الدولية المؤهلة للعمل المباشر كفني سلوك تحت إشراف إكلينيكي معتمد.",
+        "descriptionEn": "Launch your career in ABA with the recognized ABAT qualification for direct 1-on-1 behavioral therapy implementation.",
+        "featuresAr": [
+          "40 ساعة تدريبية معتمدة دولياً وفق معايير QABA",
+          "التأهيل الشامل لاجتياز اختبار بورد ABAT بنجاح",
+          "فهم أساليب التعزيز الإيجابي وإجراءات تعديل السلوك",
+          "تطبيق استراتيجيات التدخل المبكر ومساعدة معلم الظل",
+          "تقسيط الرسوم عبر تمارا وإمكان"
+        ],
+        "featuresEn": [
+          "40 QABA-accredited curriculum hours",
+          "Full prep for the ABAT international certification exam",
+          "Positive reinforcement and behavioral modification protocols",
+          "Early intervention and shadow teaching methodologies",
+          "Installment options via Tamara & Emkan"
+        ],
+        "priceDisplayAr": "متاح التقسيط عبر تمارا وإمكان",
+        "priceDisplayEn": "Installments via Tamara & Emkan",
+        "accentColor": "#00E5BE",
+        "targetAudienceAr": "الخريجون الجدد، معلمو الظل، ومقدمو الرعاية المهتمون بالتدخل العملي",
+        "targetAudienceEn": "Recent graduates, shadow teachers, and therapists seeking certified entry",
+        "order": 2
+      },
+      {
+        "id": "course-ceus-vbm-bip",
+        "titleAr": "طوّر خبرتك المهنية في ABA (ساعات CEUs)",
+        "titleEn": "Advance Your Professional ABA Practice (CEUs)",
+        "shortTitle": "طوّر خبرتك المهنية في ABA",
+        "hoursBadgeAr": "ساعات تعلم مستمر (CEUs)",
+        "hoursBadgeEn": "Continuous Education Units (CEUs)",
+        "hoursCount": 20,
+        "ribbonTagAr": "منصة رابا التعليمية",
+        "ribbonTagEn": "RABA Academy",
+        "categoryAr": "ساعات تعلم مستمر وتطوير إكلينيكي",
+        "categoryEn": "Clinical CEU Modules",
+        "badgeColor": "from-amber-500 to-orange-600",
+        "tagHighlightAr": "كورس VB-MAPP (10 ساعات) + كورس خطة BIP (10 ساعات)",
+        "tagHighlightEn": "Includes VB-MAPP (10 hrs) + BIP Plan (10 hrs)",
+        "descriptionAr": "طوّر معرفتك بأهم أدوات التقييم والتخطيط السلوكي: كورس إعداد خطة التدخل السلوكي (BIP) وكورس أداة (VB-MAPP) واحصل على ساعات تعلم مستمر تدعم مسيرتك المهنية.",
+        "descriptionEn": "Master behavioral assessment tools with VB-MAPP and BIP behavior intervention planning, gaining accredited CEUs.",
+        "featuresAr": [
+          "كورس متقدم في أداة تقييم معالم السلوك اللفظي VB-MAPP (10 ساعات)",
+          "كورس عملي في إعداد وصياغة خطة التدخل السلوكي الفردية BIP (10 ساعات)",
+          "شهادة ساعات تعلم مستمر (CEUs) لتجديد الرخص المهنية",
+          "دراسة حالات واقعية ونماذج تقييم عملية جاهزة للتطبيق",
+          "تقسيط متاح عبر تمارا وإمكان"
+        ],
+        "featuresEn": [
+          "10-hour intensive module on VB-MAPP Assessment Protocol",
+          "10-hour practical workshop on BIP (Behavior Intervention Plans)",
+          "Official CEU units for credential maintenance and renewal",
+          "Real clinical case studies and customizable assessment forms",
+          "Installment options via Tamara & Emkan"
+        ],
+        "priceDisplayAr": "متاح التقسيط عبر تمارا وإمكان",
+        "priceDisplayEn": "Installments via Tamara & Emkan",
+        "accentColor": "#F59E0B",
+        "targetAudienceAr": "أخصائيو ABA الممارسون، مشرفو البرامج، والمحللون السلوكيون",
+        "targetAudienceEn": "Practicing behavior therapists, supervisors, and clinical directors",
+        "order": 3
+      },
+      {
+        "id": "course-specialist-skills",
+        "titleAr": "كورس مهارات أخصائي ABA",
+        "titleEn": "ABA Specialist Clinical Skills Course",
+        "shortTitle": "مهارات أخصائي ABA",
+        "hoursBadgeAr": "10 ساعات تدريبية مكثفة",
+        "hoursBadgeEn": "10 Intensive Training Hours",
+        "hoursCount": 10,
+        "ribbonTagAr": "منصة رابا التعليمية",
+        "ribbonTagEn": "RABA Academy",
+        "categoryAr": "مهارات سريرية وتطبيقية",
+        "categoryEn": "Clinical & Practical Skills",
+        "badgeColor": "from-sky-500 to-blue-600",
+        "tagHighlightAr": "طوّر مهاراتك وارتقِ بممارستك الإكلينيكية",
+        "tagHighlightEn": "Elevate your clinical ABA intervention skills",
+        "descriptionAr": "طوّر مهاراتك وارتقِ بممارستك في تحليل السلوك التطبيقي من خلال استراتيجيات إكلينيكية متقدمة في قياس السلوك وبناء جداول التعزيز وتطوير التواصل الوظيفي.",
+        "descriptionEn": "Upgrade your hands-on competencies in behavioral measurement, functional communication training, and reinforcement scheduling.",
+        "featuresAr": [
+          "10 ساعات تدريبية مركزة على الممارسة الإكلينيكية الميدانية",
+          "تقنيات إدارة السلوكيات التحديات والتقليل من المشكلات السلوكية",
+          "تطوير التواصل الوظيفي البديل (FCT) وجداول الأنشطة المرئية",
+          "قياس وتسجيل البيانات السلوكية وتحليل منحنيات التطور",
+          "متاح التقسيط الميسر عبر تمارا وإمكان"
+        ],
+        "featuresEn": [
+          "10 hours focused on direct clinical intervention",
+          "Challenging behavior de-escalation and functional replacement",
+          "Functional Communication Training (FCT) and visual scheduling",
+          "Data collection protocols, graphing, and progress monitoring",
+          "Installment options via Tamara & Emkan"
+        ],
+        "priceDisplayAr": "متاح التقسيط عبر تمارا وإمكان",
+        "priceDisplayEn": "Installments via Tamara & Emkan",
+        "accentColor": "#38BDF8",
+        "targetAudienceAr": "الأخصائيون، معلمو التربية الخاصة، ومقدمو الرعاية الصحية",
+        "targetAudienceEn": "Therapists, special education teachers, and allied healthcare staff",
+        "order": 4
+      }
+    ],
     "raba_global_card_settings": {
       "hideAllSessionPrices": true
     },
@@ -749,7 +1105,7 @@
     "raba_hero_slides_v2": [
       {
         "id": "photo-1",
-        "src": "/images/hero/slide_1_haneen.png",
+        "src": "/uploads/1790357979807_Screenshot_2569-09-23_at_2_25_17_AM_png.png",
         "alt": "أ. حنين العبيدي - رئيس قسم العلاج الوظيفي والتكامل الحسي",
         "titleAr": "أ. حنين العبيدي",
         "titleEn": "Haneen Al-Obaidi",
@@ -764,7 +1120,7 @@
       },
       {
         "id": "photo-2",
-        "src": "/images/hero/slide_2_ahmed.jpg",
+        "src": "/uploads/1790358006694________________jpeg.jpg",
         "alt": "أ. أحمد أبو زيد أنور - المدير العام للبرامج التأهيلية ورئيس قسم ABA",
         "titleAr": "أ. أحمد أبو زيد أنور",
         "titleEn": "Ahmed Abouzeid Anwar",
@@ -779,7 +1135,7 @@
       },
       {
         "id": "photo-3",
-        "src": "/images/hero/slide_3_rahaf.png",
+        "src": "/uploads/1790358033686_Screenshot_2569-09-23_at_2_25_29_AM_png.png",
         "alt": "أ. رهف الدغماني - مشرفة قسم تحليل السلوك التطبيقي ABA",
         "titleAr": "أ. رهف الدغماني",
         "titleEn": "Rahaf Al-Doghmani",
@@ -794,7 +1150,7 @@
       },
       {
         "id": "photo-4",
-        "src": "/images/hero/slide_4_doha.png",
+        "src": "/uploads/1790358050734_Screenshot_2569-09-23_at_2_26_05_AM_png.png",
         "alt": "أ. ضحى خالد - مشرفة قسم ABA ومحلل سلوكي معتمد",
         "titleAr": "أ. ضحى خالد",
         "titleEn": "Doha Khaled",
@@ -809,7 +1165,7 @@
       },
       {
         "id": "photo-5",
-        "src": "/images/hero/slide_5_manar.png",
+        "src": "/uploads/1790358074567_Screenshot_2569-09-23_at_2_27_08_AM_png.png",
         "alt": "أ. منار وهبه - مشرفة قسم النطق والتخاطب",
         "titleAr": "أ. منار وهبه",
         "titleEn": "Manar Wahba",
@@ -824,7 +1180,7 @@
       },
       {
         "id": "photo-6",
-        "src": "/images/hero/slide_6_fathi.png",
+        "src": "/uploads/1790358094657_Screenshot_2569-09-22_at_2_07_53_PM_png.png",
         "alt": "أ. أحمد فتحي - أخصائي تحليل السلوك التطبيقي ABAT",
         "titleAr": "أ. أحمد فتحي",
         "titleEn": "Ahmed Fathi",
@@ -839,7 +1195,7 @@
       },
       {
         "id": "photo-7",
-        "src": "/images/hero/slide_7_specialist.png",
+        "src": "/uploads/1790358114735_Screenshot_2569-09-23_at_2_25_47_AM_png.png",
         "alt": "أ. سديم احمد المشاري - أخصائي ABA ومصنفة من الهيئة السعودية",
         "titleAr": "أ. سديم احمد المشاري",
         "titleEn": "Sadeem Ahmed Al-Mshari",
@@ -854,7 +1210,7 @@
       },
       {
         "id": "photo-8",
-        "src": "/images/hero/slide_8_specialist.png",
+        "src": "/uploads/1790358142609_Screenshot_2569-09-23_at_2_26_16_AM_png.png",
         "alt": "أ. محمد عاطف - أخصائي تحليل السلوك ومشرف توحد QASP-S",
         "titleAr": "أ. محمد عاطف",
         "titleEn": "Mohamed Atef",
@@ -1459,7 +1815,7 @@
     },
     "raba_site_logo_v3": {
       "logoSource": "custom",
-      "customLogoUrl": "/logo/raba_puzzle_brain.png",
+      "customLogoUrl": "/uploads/1790358266500_logo_transparent_transparent_png.png",
       "iconSizePx": 46,
       "iconRounding": "md",
       "iconObjectFit": "contain",
@@ -1477,7 +1833,7 @@
     },
     "raba_site_logo_v2": {
       "logoSource": "custom",
-      "customLogoUrl": "/logo/raba_puzzle_brain.png",
+      "customLogoUrl": "/uploads/1790358266500_logo_transparent_transparent_png.png",
       "iconSizePx": 46,
       "iconRounding": "md",
       "iconObjectFit": "contain",
@@ -1495,7 +1851,7 @@
     },
     "raba_site_logo_v1": {
       "logoSource": "custom",
-      "customLogoUrl": "/logo/raba_puzzle_brain.png",
+      "customLogoUrl": "/uploads/1790358266500_logo_transparent_transparent_png.png",
       "iconSizePx": 46,
       "iconRounding": "md",
       "iconObjectFit": "contain",
@@ -1616,7 +1972,7 @@
       "spec-haneen-obaidi": {
         "id": "spec-haneen-obaidi",
         "name": "أ. حنين العبيدي",
-        "avatar": "/images/specialists/haneen_obaidi.jpg",
+        "avatar": "/uploads/1790357520279_________________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_haneen_obaidi_1790197758317.jpg",
         "portraitCrop": "/specialists/spec_haneen_obaidi_1790197216150.jpg",
         "fallbackAvatar": "/specialists/haneen_obaidi_poster.jpg",
@@ -1630,7 +1986,7 @@
       "doc-haneen-obaidi": {
         "id": "doc-haneen-obaidi",
         "name": "أ. حنين العبيدي",
-        "avatar": "/images/specialists/haneen_obaidi.jpg",
+        "avatar": "/uploads/1790357520279_________________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_haneen_obaidi_1790197758317.jpg",
         "portraitCrop": "/specialists/spec_haneen_obaidi_1790197216150.jpg",
         "fallbackAvatar": "/specialists/haneen_obaidi_poster.jpg",
@@ -1644,7 +2000,7 @@
       "spec-rahaf-doghmani": {
         "id": "spec-rahaf-doghmani",
         "name": "أ. رهف الدغماني",
-        "avatar": "/images/specialists/rahaf_doghmani.jpg",
+        "avatar": "/uploads/1790357530423_________________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_rahaf_doghmani_1790197765782.jpg",
         "portraitCrop": "/specialists/spec_rahaf_doghmani_1790197226544.jpg",
         "fallbackAvatar": "/specialists/rahaf_doghmani_poster.jpg",
@@ -1658,7 +2014,7 @@
       "doc-rahaf-doghmani": {
         "id": "doc-rahaf-doghmani",
         "name": "أ. رهف الدغماني",
-        "avatar": "/images/specialists/rahaf_doghmani.jpg",
+        "avatar": "/uploads/1790357530423_________________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_rahaf_doghmani_1790197765782.jpg",
         "portraitCrop": "/specialists/spec_rahaf_doghmani_1790197226544.jpg",
         "fallbackAvatar": "/specialists/rahaf_doghmani_poster.jpg",
@@ -1672,7 +2028,7 @@
       "spec-doha-khaled": {
         "id": "spec-doha-khaled",
         "name": "أ. ضحى خالد",
-        "avatar": "/images/specialists/doha_khaled.jpg",
+        "avatar": "/uploads/1790357539758_____________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_doha_khaled_1790197784055.jpg",
         "portraitCrop": "/specialists/spec_doha_khaled_1790197246850.jpg",
         "fallbackAvatar": "/specialists/doha_khaled_poster.jpg",
@@ -1686,7 +2042,7 @@
       "doc-doha-khaled": {
         "id": "doc-doha-khaled",
         "name": "أ. ضحى خالد",
-        "avatar": "/images/specialists/doha_khaled.jpg",
+        "avatar": "/uploads/1790357539758_____________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_doha_khaled_1790197784055.jpg",
         "portraitCrop": "/specialists/spec_doha_khaled_1790197246850.jpg",
         "fallbackAvatar": "/specialists/doha_khaled_poster.jpg",
@@ -1700,7 +2056,7 @@
       "spec-manar-wahba": {
         "id": "spec-manar-wahba",
         "name": "أ. منار وهبه",
-        "avatar": "/images/specialists/manar_wahba.jpg",
+        "avatar": "/uploads/1790357549806______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_manar_wahba_1790197794286.jpg",
         "portraitCrop": "/specialists/spec_manar_wahba_1790197276842.jpg",
         "fallbackAvatar": "/specialists/manar_wahba_poster.jpg",
@@ -1714,7 +2070,7 @@
       "doc-manar-wahba": {
         "id": "doc-manar-wahba",
         "name": "أ. منار وهبه",
-        "avatar": "/images/specialists/manar_wahba.jpg",
+        "avatar": "/uploads/1790357549806______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_manar_wahba_1790197794286.jpg",
         "portraitCrop": "/specialists/spec_manar_wahba_1790197276842.jpg",
         "fallbackAvatar": "/specialists/manar_wahba_poster.jpg",
@@ -1728,7 +2084,7 @@
       "spec-ahmed-fathi": {
         "id": "spec-ahmed-fathi",
         "name": "أ. أحمد فتحي",
-        "avatar": "/images/specialists/ahmed_fathi.jpg",
+        "avatar": "/uploads/1790357579245_______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_ahmed_fathi_1790197750721.jpg",
         "portraitCrop": "/specialists/spec_ahmed_fathi_1790197207910.jpg",
         "fallbackAvatar": "/specialists/ahmed_fathi_poster.jpg",
@@ -1742,7 +2098,7 @@
       "doc-ahmed-fathi": {
         "id": "doc-ahmed-fathi",
         "name": "أ. أحمد فتحي",
-        "avatar": "/images/specialists/ahmed_fathi.jpg",
+        "avatar": "/uploads/1790357579245_______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_ahmed_fathi_1790197750721.jpg",
         "portraitCrop": "/specialists/spec_ahmed_fathi_1790197207910.jpg",
         "fallbackAvatar": "/specialists/ahmed_fathi_poster.jpg",
@@ -1756,7 +2112,7 @@
       "spec-mohamed-atef": {
         "id": "spec-mohamed-atef",
         "name": "أ. محمد عاطف",
-        "avatar": "/images/specialists/mohamed_atef.jpg",
+        "avatar": "/uploads/1790357588113______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_mohamed_atef_1790197803776.jpg",
         "portraitCrop": "/specialists/spec_mohamed_atef_1790197255945.jpg",
         "fallbackAvatar": "/specialists/mohamed_atef_poster.jpg",
@@ -1770,7 +2126,7 @@
       "doc-mohamed-atef": {
         "id": "doc-mohamed-atef",
         "name": "أ. محمد عاطف",
-        "avatar": "/images/specialists/mohamed_atef.jpg",
+        "avatar": "/uploads/1790357588113______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_mohamed_atef_1790197803776.jpg",
         "portraitCrop": "/specialists/spec_mohamed_atef_1790197255945.jpg",
         "fallbackAvatar": "/specialists/mohamed_atef_poster.jpg",
@@ -1784,7 +2140,7 @@
       "spec-sadeem-mshari": {
         "id": "spec-sadeem-mshari",
         "name": "أ. سديم احمد المشاري",
-        "avatar": "/images/specialists/sadeem_mshari.jpg",
+        "avatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_sadeem_mshari_1790197812611.jpg",
         "portraitCrop": "/specialists/spec_sadeem_mshari_1790197236144.jpg",
         "fallbackAvatar": "/specialists/sadeem_mshari_poster.jpg",
@@ -1798,7 +2154,7 @@
       "doc-sadeem-mshari": {
         "id": "doc-sadeem-mshari",
         "name": "أ. سديم احمد المشاري",
-        "avatar": "/images/specialists/sadeem_mshari.jpg",
+        "avatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_sadeem_mshari_1790197812611.jpg",
         "portraitCrop": "/specialists/spec_sadeem_mshari_1790197236144.jpg",
         "fallbackAvatar": "/specialists/sadeem_mshari_poster.jpg",
@@ -1812,7 +2168,7 @@
       "spec-maram-mohamed": {
         "id": "spec-maram-mohamed",
         "name": "أ. مرام محمد",
-        "avatar": "/images/specialists/maram_mohamed.jpg",
+        "avatar": "/uploads/1790357606704______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_maram_mohamed_1790197821665.jpg",
         "portraitCrop": "/specialists/spec_maram_mohamed_1790197265873.jpg",
         "fallbackAvatar": "/specialists/maram_mohamed_poster.jpg",
@@ -1826,7 +2182,7 @@
       "doc-maram-mohamed": {
         "id": "doc-maram-mohamed",
         "name": "أ. مرام محمد",
-        "avatar": "/images/specialists/maram_mohamed.jpg",
+        "avatar": "/uploads/1790357606704______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_maram_mohamed_1790197821665.jpg",
         "portraitCrop": "/specialists/spec_maram_mohamed_1790197265873.jpg",
         "fallbackAvatar": "/specialists/maram_mohamed_poster.jpg",
@@ -1840,7 +2196,7 @@
       "spec-ahmed-raad": {
         "id": "spec-ahmed-raad",
         "name": "أ. أحمد رعد",
-        "avatar": "/images/specialists/ahmed_raad.jpg",
+        "avatar": "/uploads/1790357615959______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_ahmed_raad_1790197742838.jpg",
         "portraitCrop": "/specialists/spec_ahmed_raad_1790197197424.jpg",
         "fallbackAvatar": "/specialists/ahmed_raad_poster.jpg",
@@ -1854,7 +2210,7 @@
       "doc-ahmed-raad": {
         "id": "doc-ahmed-raad",
         "name": "أ. أحمد رعد",
-        "avatar": "/images/specialists/ahmed_raad.jpg",
+        "avatar": "/uploads/1790357615959______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_ahmed_raad_1790197742838.jpg",
         "portraitCrop": "/specialists/spec_ahmed_raad_1790197197424.jpg",
         "fallbackAvatar": "/specialists/ahmed_raad_poster.jpg",
@@ -1868,7 +2224,7 @@
       "spec-1": {
         "id": "spec-1",
         "name": "أ. أحمد أبو زيد أنور",
-        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
+        "avatar": "/uploads/1790357622619________________jpeg.jpg",
         "posterCrop": "/specialists/ahmed_abouzeid.jpg",
         "portraitCrop": "/specialists/ahmed_abouzeid.jpg",
         "fallbackAvatar": "/specialists/ahmed_abouzeid.jpg",
@@ -1882,7 +2238,7 @@
       "doc-ahmed-abouzeid": {
         "id": "doc-ahmed-abouzeid",
         "name": "أ. أحمد أبو زيد أنور",
-        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
+        "avatar": "/uploads/1790357622619________________jpeg.jpg",
         "posterCrop": "/specialists/ahmed_abouzeid.jpg",
         "portraitCrop": "/specialists/ahmed_abouzeid.jpg",
         "fallbackAvatar": "/specialists/ahmed_abouzeid.jpg",
@@ -1896,7 +2252,7 @@
       "spec-ahmed-abouzeid": {
         "id": "spec-ahmed-abouzeid",
         "name": "أ. أحمد أبو زيد أنور",
-        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
+        "avatar": "/uploads/1790357622619________________jpeg.jpg",
         "posterCrop": "/specialists/ahmed_abouzeid.jpg",
         "portraitCrop": "/specialists/ahmed_abouzeid.jpg",
         "fallbackAvatar": "/specialists/ahmed_abouzeid.jpg",
@@ -1910,7 +2266,7 @@
       "doc-1": {
         "id": "doc-1",
         "name": "أ. أحمد أبو زيد أنور",
-        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
+        "avatar": "/uploads/1790357622619________________jpeg.jpg",
         "posterCrop": "/specialists/ahmed_abouzeid.jpg",
         "portraitCrop": "/specialists/ahmed_abouzeid.jpg",
         "fallbackAvatar": "/specialists/ahmed_abouzeid.jpg",
@@ -1926,7 +2282,7 @@
       "spec-haneen-obaidi": {
         "id": "spec-haneen-obaidi",
         "name": "أ. حنين العبيدي",
-        "avatar": "/images/specialists/haneen_obaidi.jpg",
+        "avatar": "/uploads/1790357520279_________________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_haneen_obaidi_1790197758317.jpg",
         "portraitCrop": "/specialists/spec_haneen_obaidi_1790197216150.jpg",
         "fallbackAvatar": "/specialists/haneen_obaidi_poster.jpg",
@@ -1940,7 +2296,7 @@
       "doc-haneen-obaidi": {
         "id": "doc-haneen-obaidi",
         "name": "أ. حنين العبيدي",
-        "avatar": "/images/specialists/haneen_obaidi.jpg",
+        "avatar": "/uploads/1790357520279_________________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_haneen_obaidi_1790197758317.jpg",
         "portraitCrop": "/specialists/spec_haneen_obaidi_1790197216150.jpg",
         "fallbackAvatar": "/specialists/haneen_obaidi_poster.jpg",
@@ -1954,7 +2310,7 @@
       "spec-rahaf-doghmani": {
         "id": "spec-rahaf-doghmani",
         "name": "أ. رهف الدغماني",
-        "avatar": "/images/specialists/rahaf_doghmani.jpg",
+        "avatar": "/uploads/1790357530423_________________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_rahaf_doghmani_1790197765782.jpg",
         "portraitCrop": "/specialists/spec_rahaf_doghmani_1790197226544.jpg",
         "fallbackAvatar": "/specialists/rahaf_doghmani_poster.jpg",
@@ -1968,7 +2324,7 @@
       "doc-rahaf-doghmani": {
         "id": "doc-rahaf-doghmani",
         "name": "أ. رهف الدغماني",
-        "avatar": "/images/specialists/rahaf_doghmani.jpg",
+        "avatar": "/uploads/1790357530423_________________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_rahaf_doghmani_1790197765782.jpg",
         "portraitCrop": "/specialists/spec_rahaf_doghmani_1790197226544.jpg",
         "fallbackAvatar": "/specialists/rahaf_doghmani_poster.jpg",
@@ -1982,7 +2338,7 @@
       "spec-doha-khaled": {
         "id": "spec-doha-khaled",
         "name": "أ. ضحى خالد",
-        "avatar": "/images/specialists/doha_khaled.jpg",
+        "avatar": "/uploads/1790357539758_____________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_doha_khaled_1790197784055.jpg",
         "portraitCrop": "/specialists/spec_doha_khaled_1790197246850.jpg",
         "fallbackAvatar": "/specialists/doha_khaled_poster.jpg",
@@ -1996,7 +2352,7 @@
       "doc-doha-khaled": {
         "id": "doc-doha-khaled",
         "name": "أ. ضحى خالد",
-        "avatar": "/images/specialists/doha_khaled.jpg",
+        "avatar": "/uploads/1790357539758_____________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_doha_khaled_1790197784055.jpg",
         "portraitCrop": "/specialists/spec_doha_khaled_1790197246850.jpg",
         "fallbackAvatar": "/specialists/doha_khaled_poster.jpg",
@@ -2010,7 +2366,7 @@
       "spec-manar-wahba": {
         "id": "spec-manar-wahba",
         "name": "أ. منار وهبه",
-        "avatar": "/images/specialists/manar_wahba.jpg",
+        "avatar": "/uploads/1790357549806______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_manar_wahba_1790197794286.jpg",
         "portraitCrop": "/specialists/spec_manar_wahba_1790197276842.jpg",
         "fallbackAvatar": "/specialists/manar_wahba_poster.jpg",
@@ -2024,7 +2380,7 @@
       "doc-manar-wahba": {
         "id": "doc-manar-wahba",
         "name": "أ. منار وهبه",
-        "avatar": "/images/specialists/manar_wahba.jpg",
+        "avatar": "/uploads/1790357549806______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_manar_wahba_1790197794286.jpg",
         "portraitCrop": "/specialists/spec_manar_wahba_1790197276842.jpg",
         "fallbackAvatar": "/specialists/manar_wahba_poster.jpg",
@@ -2038,7 +2394,7 @@
       "spec-ahmed-fathi": {
         "id": "spec-ahmed-fathi",
         "name": "أ. أحمد فتحي",
-        "avatar": "/images/specialists/ahmed_fathi.jpg",
+        "avatar": "/uploads/1790357579245_______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_ahmed_fathi_1790197750721.jpg",
         "portraitCrop": "/specialists/spec_ahmed_fathi_1790197207910.jpg",
         "fallbackAvatar": "/specialists/ahmed_fathi_poster.jpg",
@@ -2052,7 +2408,7 @@
       "doc-ahmed-fathi": {
         "id": "doc-ahmed-fathi",
         "name": "أ. أحمد فتحي",
-        "avatar": "/images/specialists/ahmed_fathi.jpg",
+        "avatar": "/uploads/1790357579245_______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_ahmed_fathi_1790197750721.jpg",
         "portraitCrop": "/specialists/spec_ahmed_fathi_1790197207910.jpg",
         "fallbackAvatar": "/specialists/ahmed_fathi_poster.jpg",
@@ -2066,7 +2422,7 @@
       "spec-mohamed-atef": {
         "id": "spec-mohamed-atef",
         "name": "أ. محمد عاطف",
-        "avatar": "/images/specialists/mohamed_atef.jpg",
+        "avatar": "/uploads/1790357588113______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_mohamed_atef_1790197803776.jpg",
         "portraitCrop": "/specialists/spec_mohamed_atef_1790197255945.jpg",
         "fallbackAvatar": "/specialists/mohamed_atef_poster.jpg",
@@ -2080,7 +2436,7 @@
       "doc-mohamed-atef": {
         "id": "doc-mohamed-atef",
         "name": "أ. محمد عاطف",
-        "avatar": "/images/specialists/mohamed_atef.jpg",
+        "avatar": "/uploads/1790357588113______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_mohamed_atef_1790197803776.jpg",
         "portraitCrop": "/specialists/spec_mohamed_atef_1790197255945.jpg",
         "fallbackAvatar": "/specialists/mohamed_atef_poster.jpg",
@@ -2094,7 +2450,7 @@
       "spec-sadeem-mshari": {
         "id": "spec-sadeem-mshari",
         "name": "أ. سديم احمد المشاري",
-        "avatar": "/images/specialists/sadeem_mshari.jpg",
+        "avatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_sadeem_mshari_1790197812611.jpg",
         "portraitCrop": "/specialists/spec_sadeem_mshari_1790197236144.jpg",
         "fallbackAvatar": "/specialists/sadeem_mshari_poster.jpg",
@@ -2108,7 +2464,7 @@
       "doc-sadeem-mshari": {
         "id": "doc-sadeem-mshari",
         "name": "أ. سديم احمد المشاري",
-        "avatar": "/images/specialists/sadeem_mshari.jpg",
+        "avatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_sadeem_mshari_1790197812611.jpg",
         "portraitCrop": "/specialists/spec_sadeem_mshari_1790197236144.jpg",
         "fallbackAvatar": "/specialists/sadeem_mshari_poster.jpg",
@@ -2122,7 +2478,7 @@
       "spec-maram-mohamed": {
         "id": "spec-maram-mohamed",
         "name": "أ. مرام محمد",
-        "avatar": "/images/specialists/maram_mohamed.jpg",
+        "avatar": "/uploads/1790357606704______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_maram_mohamed_1790197821665.jpg",
         "portraitCrop": "/specialists/spec_maram_mohamed_1790197265873.jpg",
         "fallbackAvatar": "/specialists/maram_mohamed_poster.jpg",
@@ -2136,7 +2492,7 @@
       "doc-maram-mohamed": {
         "id": "doc-maram-mohamed",
         "name": "أ. مرام محمد",
-        "avatar": "/images/specialists/maram_mohamed.jpg",
+        "avatar": "/uploads/1790357606704______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_maram_mohamed_1790197821665.jpg",
         "portraitCrop": "/specialists/spec_maram_mohamed_1790197265873.jpg",
         "fallbackAvatar": "/specialists/maram_mohamed_poster.jpg",
@@ -2150,7 +2506,7 @@
       "spec-ahmed-raad": {
         "id": "spec-ahmed-raad",
         "name": "أ. أحمد رعد",
-        "avatar": "/images/specialists/ahmed_raad.jpg",
+        "avatar": "/uploads/1790357615959______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_ahmed_raad_1790197742838.jpg",
         "portraitCrop": "/specialists/spec_ahmed_raad_1790197197424.jpg",
         "fallbackAvatar": "/specialists/ahmed_raad_poster.jpg",
@@ -2164,7 +2520,7 @@
       "doc-ahmed-raad": {
         "id": "doc-ahmed-raad",
         "name": "أ. أحمد رعد",
-        "avatar": "/images/specialists/ahmed_raad.jpg",
+        "avatar": "/uploads/1790357615959______________jpg_jpeg.jpg",
         "posterCrop": "/specialists/poster_ahmed_raad_1790197742838.jpg",
         "portraitCrop": "/specialists/spec_ahmed_raad_1790197197424.jpg",
         "fallbackAvatar": "/specialists/ahmed_raad_poster.jpg",
@@ -2178,7 +2534,7 @@
       "spec-1": {
         "id": "spec-1",
         "name": "أ. أحمد أبو زيد أنور",
-        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
+        "avatar": "/uploads/1790357622619________________jpeg.jpg",
         "posterCrop": "/specialists/ahmed_abouzeid.jpg",
         "portraitCrop": "/specialists/ahmed_abouzeid.jpg",
         "fallbackAvatar": "/specialists/ahmed_abouzeid.jpg",
@@ -2192,7 +2548,7 @@
       "doc-ahmed-abouzeid": {
         "id": "doc-ahmed-abouzeid",
         "name": "أ. أحمد أبو زيد أنور",
-        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
+        "avatar": "/uploads/1790357622619________________jpeg.jpg",
         "posterCrop": "/specialists/ahmed_abouzeid.jpg",
         "portraitCrop": "/specialists/ahmed_abouzeid.jpg",
         "fallbackAvatar": "/specialists/ahmed_abouzeid.jpg",
@@ -2206,7 +2562,7 @@
       "spec-ahmed-abouzeid": {
         "id": "spec-ahmed-abouzeid",
         "name": "أ. أحمد أبو زيد أنور",
-        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
+        "avatar": "/uploads/1790357622619________________jpeg.jpg",
         "posterCrop": "/specialists/ahmed_abouzeid.jpg",
         "portraitCrop": "/specialists/ahmed_abouzeid.jpg",
         "fallbackAvatar": "/specialists/ahmed_abouzeid.jpg",
@@ -2220,7 +2576,7 @@
       "doc-1": {
         "id": "doc-1",
         "name": "أ. أحمد أبو زيد أنور",
-        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
+        "avatar": "/uploads/1790357622619________________jpeg.jpg",
         "posterCrop": "/specialists/ahmed_abouzeid.jpg",
         "portraitCrop": "/specialists/ahmed_abouzeid.jpg",
         "fallbackAvatar": "/specialists/ahmed_abouzeid.jpg",
@@ -2241,7 +2597,7 @@
         "titleEn": "Head of Occupational Therapy Department",
         "role": "رئيس قسم العلاج الوظيفي والتكامل الحسي",
         "roleEn": "Head of Occupational Therapy Department",
-        "avatar": "/images/specialists/haneen_obaidi.jpg",
+        "avatar": "/uploads/1790357520279_________________jpg_jpeg.jpg",
         "experienceYears": 16,
         "licenseNumber": "RABA-OT-016",
         "specialties": [
@@ -2310,7 +2666,7 @@
         "titleEn": "Supervisor of ABA Department",
         "role": "مشرفة قسم تحليل السلوك التطبيقي ABA",
         "roleEn": "Supervisor of ABA Department & QABA Analyst",
-        "avatar": "/images/specialists/rahaf_doghmani.jpg",
+        "avatar": "/uploads/1790357530423_________________jpg_jpeg.jpg",
         "experienceYears": 5,
         "licenseNumber": "RABA-ABA-052",
         "specialties": [
@@ -2371,7 +2727,7 @@
         "titleEn": "Supervisor of ABA Department",
         "role": "مشرفة قسم تحليل السلوك التطبيقي ومحلل سلوكي معتمد",
         "roleEn": "ABA Supervisor & Certified Behavior Analyst",
-        "avatar": "/images/specialists/doha_khaled.jpg",
+        "avatar": "/uploads/1790357539758_____________jpg_jpeg.jpg",
         "experienceYears": 9,
         "licenseNumber": "RABA-ABA-091",
         "specialties": [
@@ -2432,7 +2788,7 @@
         "titleEn": "Supervisor of Speech & Language Pathology Department",
         "role": "مشرفة قسم النطق والتخاطب والتأهيل اللغوي",
         "roleEn": "Speech & Language Pathology Supervisor",
-        "avatar": "/images/specialists/manar_wahba.jpg",
+        "avatar": "/uploads/1790357549806______________jpg_jpeg.jpg",
         "experienceYears": 10,
         "licenseNumber": "RABA-SLP-010",
         "specialties": [
@@ -2499,7 +2855,7 @@
         "titleEn": "ABA Specialist",
         "role": "أخصائي تحليل السلوك التطبيقي المعتمد ABAT",
         "roleEn": "ABA Specialist & Board Certified ABAT",
-        "avatar": "/images/specialists/ahmed_fathi.jpg",
+        "avatar": "/uploads/1790357579245_______________jpg_jpeg.jpg",
         "experienceYears": 8,
         "licenseNumber": "RABA-ABA-084",
         "specialties": [
@@ -2560,7 +2916,7 @@
         "titleEn": "ABA Specialist",
         "role": "أخصائي تحليل السلوك التطبيقي ومشرف توحد مؤهل QASP-S",
         "roleEn": "ABA Specialist & Qualified Autism Services Supervisor (QASP-S)",
-        "avatar": "/images/specialists/mohamed_atef.jpg",
+        "avatar": "/uploads/1790357588113______________jpg_jpeg.jpg",
         "experienceYears": 5,
         "licenseNumber": "RABA-ABA-057",
         "specialties": [
@@ -2623,7 +2979,7 @@
         "titleEn": "ABA Specialist",
         "role": "أخصائي تحليل السلوك ومصنفة من الهيئة السعودية للتخصصات الصحية",
         "roleEn": "ABA Specialist & SCFHS Licensed Psychologist",
-        "avatar": "/images/specialists/sadeem_mshari.jpg",
+        "avatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
         "experienceYears": 4,
         "licenseNumber": "RABA-PSY-049",
         "specialties": [
@@ -2686,7 +3042,7 @@
         "titleEn": "ABA Specialist",
         "role": "أخصائية تحليل السلوك التطبيقي وعلم النفس الإكلينيكي",
         "roleEn": "ABA Specialist & Clinical Psychologist",
-        "avatar": "/images/specialists/maram_mohamed.jpg",
+        "avatar": "/uploads/1790357606704______________jpg_jpeg.jpg",
         "experienceYears": 3,
         "licenseNumber": "RABA-ABA-033",
         "specialties": [
@@ -2747,7 +3103,7 @@
         "titleEn": "ABA Specialist",
         "role": "أخصائي تحليل السلوك التطبيقي ABAT والعلوم الصحية",
         "roleEn": "ABA Specialist & Health Sciences Graduate",
-        "avatar": "/images/specialists/ahmed_raad.jpg",
+        "avatar": "/uploads/1790357615959______________jpg_jpeg.jpg",
         "experienceYears": 3,
         "licenseNumber": "RABA-ABA-038",
         "specialties": [
@@ -2806,7 +3162,7 @@
         "titleEn": "General Director of Rehabilitation | Head of ABA",
         "role": "المدير العام للبرامج التأهيلية ورئيس قسم تحليل السلوك",
         "roleEn": "General Director of Programs & Head of ABA",
-        "avatar": "/images/specialists/ahmed_abouzeid.jpg",
+        "avatar": "/uploads/1790357622619________________jpeg.jpg",
         "experienceYears": 12,
         "licenseNumber": "RABA-ABA-0104",
         "specialties": [

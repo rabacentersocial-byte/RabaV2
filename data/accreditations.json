@@ -17,7 +17,7 @@
     "logoType": "custom",
     "certificateNumber": "ISO-SA-88421-2024",
     "validUntil": "2027",
-    "customLogoUrl": "/images/accreditations/iso_logo.jpg"
+    "customLogoUrl": "/uploads/1790357652181_ISO-Logo_webp.jpg"
   },
   {
     "id": "ibao",
@@ -37,7 +37,7 @@
     "logoType": "custom",
     "certificateNumber": "IBAO-CP-9041",
     "validUntil": "2026",
-    "customLogoUrl": "/images/accreditations/ibao_logo.jpg"
+    "customLogoUrl": "/uploads/1790357668910_ibao_webp.jpg"
   },
   {
     "id": "qaba",
@@ -57,7 +57,7 @@
     "logoType": "custom",
     "certificateNumber": "QABA-ORG-7712",
     "validUntil": "2026",
-    "customLogoUrl": "/images/accreditations/qaba_logo.jpg"
+    "customLogoUrl": "/uploads/1790357681328_qaba_webp.jpg"
   },
   {
     "id": "bacb",
@@ -77,7 +77,7 @@
     "logoType": "custom",
     "certificateNumber": "BACB-SUP-33019",
     "validUntil": "2027",
-    "customLogoUrl": "/images/accreditations/cert_1.jpg"
+    "customLogoUrl": "/uploads/1790357693975_IMG_6729_jpg.jpg"
   },
   {
     "id": "acc-1790357770406",
@@ -95,7 +95,7 @@
     "active": true,
     "order": 5,
     "logoType": "custom",
-    "customLogoUrl": "/images/accreditations/cert_2.jpg",
+    "customLogoUrl": "/uploads/1790357709799_IMG_6728_png_jpeg.jpg",
     "certificateNumber": "RABA-02003",
     "validUntil": "2027"
   }

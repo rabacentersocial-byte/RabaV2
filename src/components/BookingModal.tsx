@@ -389,7 +389,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 >
                   {SERVICES.map((srv) => (
                     <option key={srv.id} value={srv.id}>
-                      {!isArabic && srv.titleEn ? srv.titleEn : srv.title} ({srv.durationMinutes} {isArabic ? 'دقيقة' : 'min'})
+                      {!isArabic && srv.titleEn ? srv.titleEn : srv.title}
                     </option>
                   ))}
                 </select>

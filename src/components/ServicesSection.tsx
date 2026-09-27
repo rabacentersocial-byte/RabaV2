@@ -5,7 +5,6 @@ import {
   Brain, 
   Heart, 
   Calendar, 
-  Clock, 
   Users, 
   Check, 
   ArrowLeft,
@@ -449,15 +448,10 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                   {/* Highlights Bar & Action Buttons */}
                   <div className="mt-5 pt-4 border-t border-slate-100 dark:border-white/10 flex flex-wrap items-center justify-between gap-3">
                     
-                    {/* Meta stats: Duration & Age group */}
-                    <div className="flex items-center gap-3 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5 text-[#0B3B36] dark:text-[#00E5BE]" />
-                        <span>{service.durationMinutes} {isArabic ? 'دقيقة' : 'min'}</span>
-                      </span>
-                      <span className="text-slate-300 dark:text-slate-700">•</span>
-                      <span className="flex items-center gap-1">
-                        <Users className="w-3.5 h-3.5 text-amber-500" />
+                    {/* Meta stats: Age group only */}
+                    <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                      <span className="flex items-center gap-1.5">
+                        <Users className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                         <span className="line-clamp-1">{isArabic ? service.targetAges : (service.targetAgesEn || service.targetAges)}</span>
                       </span>
                     </div>
@@ -560,13 +554,9 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
 
                     {/* Metadata & Direct Booking Button */}
                     <div className="pt-3 border-t border-slate-100 dark:border-white/10 space-y-3">
-                      <div className="flex items-center justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
+                      <div className="flex items-center text-xs font-semibold text-slate-600 dark:text-slate-400">
                         <span className="flex items-center gap-1.5">
-                          <Clock className="w-3.5 h-3.5 text-[#0B3B36] dark:text-[#00E5BE]" />
-                          <span>{service.durationMinutes} {isArabic ? 'دقيقة للجلسة' : 'min session'}</span>
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                          <Users className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
+                          <Users className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 shrink-0" />
                           <span>{isArabic ? service.targetAges : (service.targetAgesEn || service.targetAges)}</span>
                         </span>
                       </div>
@@ -671,13 +661,9 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                     </div>
 
                     <div className="pt-3 border-t border-slate-100 dark:border-white/10 space-y-3">
-                      <div className="flex items-center justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
+                      <div className="flex items-center text-xs font-semibold text-slate-600 dark:text-slate-400">
                         <span className="flex items-center gap-1.5">
-                          <Clock className="w-3.5 h-3.5 text-[#0B3B36] dark:text-[#00E5BE]" />
-                          <span>{service.durationMinutes} {isArabic ? 'دقيقة للجلسة' : 'min session'}</span>
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                          <Users className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
+                          <Users className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 shrink-0" />
                           <span>{isArabic ? service.targetAges : (service.targetAgesEn || service.targetAges)}</span>
                         </span>
                       </div>

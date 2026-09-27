@@ -298,40 +298,38 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                     : 'border-slate-200/90 dark:border-white/10'
                 }`}
               >
-                {/* Distinctive Left Corner Badge for Summer Packages */}
-                {isSummer && (
-                  <div 
-                    className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white shadow-md text-xs font-black tracking-wide border border-white/30 backdrop-blur-xs select-none"
-                    style={{ transformOrigin: 'top left' }}
-                  >
-                    <Sun className="w-3.5 h-3.5 text-yellow-100 fill-yellow-200" />
-                    <span>{isArabic ? 'باقات الصيف' : 'Summer Packages'}</span>
-                  </div>
-                )}
-
                 {/* Upper Header Section */}
                 <div className={`${isSummer ? 'bg-gradient-to-br from-amber-50/80 via-orange-50/40 to-yellow-50/30 dark:from-amber-950/30 dark:to-slate-900' : theme.headerBg} p-6 sm:p-7 rounded-t-3xl transition-colors`}>
                   
-                  {/* Top Row: Icon Container on Right (in RTL) or Left (in LTR), with Popular / Corner spacing */}
-                  <div className="flex items-center justify-between gap-3 mb-4">
+                  {/* Top Row: Icon Container and Badges */}
+                  <div className="flex items-center justify-between gap-2.5 mb-4">
                     
                     {/* Rounded Icon Box */}
-                    <div className={`w-11 h-11 rounded-2xl ${isSummer ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : theme.iconBg} shadow-xs border border-white/60 dark:border-white/10 flex items-center justify-center`}>
+                    <div className={`w-11 h-11 rounded-2xl ${isSummer ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : theme.iconBg} shadow-xs border border-white/60 dark:border-white/10 flex items-center justify-center shrink-0`}>
                       {isSummer ? <Sun className="w-5 h-5 fill-amber-500/20 stroke-[2.2]" /> : theme.icon}
                     </div>
 
-                    {/* Popular Pill Badge or Right Badge (avoid overlapping with the left corner badge) */}
-                    {pkg.popular && !isSummer && (
-                      <span className="bg-[#0B3B36] text-white text-[10px] font-black tracking-wider px-3.5 py-1.5 rounded-full shadow-xs uppercase">
-                        {isArabic ? 'الأكثر طلباً' : 'MOST POPULAR'}
-                      </span>
-                    )}
+                    {/* Badges Container (Non-overlapping, neatly aligned side-by-side) */}
+                    <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                      {isSummer && (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white shadow-xs text-xs font-black tracking-wide border border-white/30 select-none">
+                          <Sun className="w-3.5 h-3.5 text-yellow-100 fill-yellow-200 shrink-0" />
+                          <span>{isArabic ? 'باقات الصيف' : 'Summer Packages'}</span>
+                        </span>
+                      )}
 
-                    {pkg.popular && isSummer && (
-                      <span className="bg-amber-600 text-white text-[10px] font-black tracking-wider px-3 py-1 rounded-full shadow-xs uppercase">
-                        {isArabic ? 'عرض مميز' : 'SPECIAL OFFER'}
-                      </span>
-                    )}
+                      {pkg.popular && isSummer && (
+                        <span className="bg-amber-600 dark:bg-amber-500/20 text-white dark:text-amber-300 text-[10px] font-black tracking-wider px-2.5 py-1 rounded-full shadow-xs uppercase border border-amber-500/30">
+                          {isArabic ? 'عرض مميز' : 'SPECIAL OFFER'}
+                        </span>
+                      )}
+
+                      {pkg.popular && !isSummer && (
+                        <span className="bg-[#0B3B36] text-white text-[10px] font-black tracking-wider px-3.5 py-1.5 rounded-full shadow-xs uppercase">
+                          {isArabic ? 'الأكثر طلباً' : 'MOST POPULAR'}
+                        </span>
+                      )}
+                    </div>
 
                   </div>
 

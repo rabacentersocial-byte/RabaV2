@@ -44,7 +44,7 @@ export function saveAndBroadcastCustomerRequest(request: Appointment): Appointme
     } else if (request.requestType === 'package') {
       notifTitle = `طلب باقة تأهيلية جديدة: ${request.serviceTitle}`;
     } else {
-      notifTitle = `حجز جلسة عيادة جديدة: ${request.childName}`;
+      notifTitle = `حجز جديد: ${request.guardianName || request.childName}`;
     }
 
     const newNotif: NotificationItem = {
@@ -71,6 +71,49 @@ export function saveAndBroadcastCustomerRequest(request: Appointment): Appointme
     console.error('Error saving customer request:', err);
     return request;
   }
+}
+
+export interface DispatchCustomerRequestPayload {
+  clientName: string;
+  childName?: string;
+  phone: string;
+  email?: string;
+  serviceType: string;
+  sourcePage?: string;
+  notes?: string;
+  city?: string;
+}
+
+export function dispatchCustomerRequest(payload: DispatchCustomerRequestPayload): Appointment {
+  const req: Appointment = {
+    id: 'req-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+    childName: payload.childName || payload.clientName,
+    childAge: 0,
+    serviceId: 'service-custom',
+    serviceTitle: payload.serviceType,
+    specialistId: 'spec-general',
+    specialistName: 'مركز رابا للتأهيل',
+    date: new Date().toISOString().split('T')[0],
+    timeSlot: 'طلب جديد',
+    guardianName: payload.clientName,
+    guardianPhone: payload.phone,
+    guardianEmail: payload.email || '',
+    notes: payload.notes || payload.sourcePage || '',
+    status: 'pending',
+    requestType: 'appointment',
+    referenceNumber: generateRequestReference('appointment'),
+    paymentStatus: 'unpaid',
+    amount: 0,
+    reminderSettings: {
+      whatsapp: true,
+      sms: false,
+      email: true
+    },
+    createdAt: new Date().toISOString(),
+    city: payload.city || 'الرياض'
+  };
+
+  return saveAndBroadcastCustomerRequest(req);
 }
 
 export function getCustomerWhatsAppMessage(request: Appointment, isArabic = true): string {

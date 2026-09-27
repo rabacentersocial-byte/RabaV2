@@ -18,6 +18,9 @@ import { Footer } from './components/Footer';
 import { FloatingActions } from './components/FloatingActions';
 import { AccreditationsSection } from './components/AccreditationsSection';
 import { BranchesSection } from './components/BranchesSection';
+import { CoursesSliderSection } from './components/CoursesSliderSection';
+import { CourseRegistrationModal } from './components/CourseRegistrationModal';
+import { CourseItem } from './data/coursesData';
 import { LoginModal } from './components/LoginModal';
 import { StoreModal } from './components/StoreModal';
 import { VideoModal } from './components/VideoModal';
@@ -226,6 +229,13 @@ export default function App() {
   });
   const [adminSession, setAdminSession] = useState<AdminUser | null>(() => getStoredAdminSession());
   const [cartCount, setCartCount] = useState(0);
+  const [selectedCourseForRegistration, setSelectedCourseForRegistration] = useState<CourseItem | null>(null);
+  const [isCourseRegistrationOpen, setIsCourseRegistrationOpen] = useState(false);
+
+  const handleOpenCourseRegistration = (course: CourseItem) => {
+    setSelectedCourseForRegistration(course);
+    setIsCourseRegistrationOpen(true);
+  };
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -448,6 +458,11 @@ export default function App() {
             <ServicesSection
               onSelectService={handleSelectServiceForBooking}
             />
+            {modules.courses && (
+              <CoursesSliderSection
+                onRegisterCourse={handleOpenCourseRegistration}
+              />
+            )}
             <ShadowTeacherSection 
               onSubmitRequest={handleConfirmBooking}
             />
@@ -531,6 +546,16 @@ export default function App() {
         isOpen={isStoreOpen}
         onClose={() => setIsStoreOpen(false)}
         onAddToCart={() => setCartCount((prev) => prev + 1)}
+      />
+
+      {/* Course Registration Modal */}
+      <CourseRegistrationModal
+        course={selectedCourseForRegistration}
+        isOpen={isCourseRegistrationOpen}
+        onClose={() => {
+          setIsCourseRegistrationOpen(false);
+          setSelectedCourseForRegistration(null);
+        }}
       />
 
       {/* Video Presentation Modal */}

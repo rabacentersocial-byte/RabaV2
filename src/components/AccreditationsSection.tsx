@@ -226,7 +226,7 @@ export const AccreditationsSection: React.FC = () => {
                   setSelectedItem(item);
                 }
               }}
-              className="w-[72vw] max-w-[260px] sm:w-[230px] md:w-auto shrink-0 md:shrink snap-center md:snap-align-none group relative bg-white dark:bg-slate-900/95 rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-white/10 p-3.5 sm:p-4 flex flex-col items-center justify-between min-h-[160px] sm:min-h-[180px] shadow-2xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 cursor-pointer overflow-hidden"
+              className="w-[72vw] max-w-[260px] sm:w-[230px] md:w-auto shrink-0 md:shrink snap-center md:snap-align-none group relative bg-white dark:bg-slate-900/95 rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-white/10 p-4 sm:p-5 flex items-center justify-center min-h-[130px] sm:min-h-[150px] shadow-2xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 cursor-pointer overflow-hidden"
               title={isArabic ? `${item.nameAr} - انقر للاطلاع على تفاصيل الاعتماد` : `${item.nameEn} - Click to view accreditation details`}
             >
               {/* Subtle hover gradient glow */}
@@ -237,21 +237,14 @@ export const AccreditationsSection: React.FC = () => {
                 <span className="w-2 h-2 rounded-full bg-[#00E5BE] inline-block shadow-xs ring-4 ring-[#00E5BE]/20" />
               </div>
 
-              {/* Uniform Logo Showcase Stage */}
-              <div className="w-full flex-1 flex items-center justify-center relative p-1.5 min-h-[85px] sm:min-h-[100px]">
+              {/* Uniform Certificate Logo Showcase Stage - Only Logo Image */}
+              <div className="w-full h-full flex items-center justify-center relative p-1.5 min-h-[95px] sm:min-h-[110px]">
                 <SmartAccreditationLogo
                   src={item.customLogoUrl}
                   alt={isArabic ? item.nameAr : item.nameEn}
-                  className="h-12 sm:h-14 w-auto max-w-[130px] sm:max-w-[140px]"
+                  className="h-14 sm:h-16 md:h-18 w-auto max-w-[145px] sm:max-w-[160px] object-contain transition-transform duration-300 group-hover:scale-105"
                   fallbackSvg={renderFallbackSvg(item)}
                 />
-              </div>
-
-              {/* Verified Clinical Label with Divider */}
-              <div className="w-full pt-2.5 border-t border-slate-100 dark:border-white/10 text-center mt-1">
-                <span className="text-[11px] sm:text-xs font-black text-slate-800 dark:text-slate-200 group-hover:text-[#0B3B36] dark:group-hover:text-[#00E5BE] transition-colors line-clamp-1 block">
-                  {isArabic ? item.badgeTextAr : item.badgeTextEn}
-                </span>
               </div>
             </div>
           ))}

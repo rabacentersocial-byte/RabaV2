@@ -112,6 +112,7 @@ export interface SiteModulesVisibility {
   accreditations: boolean;
   branches: boolean;
   services: boolean;
+  courses: boolean;
   specialists: boolean;
   offers: boolean;
   reviews: boolean;
@@ -268,6 +269,7 @@ export const DEFAULT_MODULES_VISIBILITY: SiteModulesVisibility = {
   accreditations: true,
   branches: true,
   services: true,
+  courses: true,
   specialists: true,
   offers: true,
   reviews: true,

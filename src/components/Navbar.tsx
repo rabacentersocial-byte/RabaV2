@@ -47,9 +47,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navLinks = [
     { label: t('nav.home'), href: '#hero' },
     { label: t('nav.services'), href: '#services' },
+    { label: isArabic ? 'الكورسات والدورات' : 'Courses', href: '#courses' },
     { label: isArabic ? 'خدمة سِوار (معلم الظل)' : 'Sewar (Shadow Teacher)', href: '#shadow-teacher' },
     { label: t('nav.packages'), href: '#packages' },
     { label: t('nav.specialists'), href: '#specialists' },
+    { label: isArabic ? 'فروعنا بالمملكة' : 'Branches', href: '#branches' },
     { label: t('nav.blog'), href: '#blog' },
     { label: isArabic ? 'الاعتمادات' : 'Accreditations', href: '#accreditations-section' },
     { label: t('nav.stories'), href: '#testimonials' },

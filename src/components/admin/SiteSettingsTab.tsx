@@ -1108,10 +1108,11 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
             {[
               { key: 'hero', labelAr: 'سلايدر العرض الرئيسي (Hero Section)', descAr: 'البانر الترحيبي والصورة الدائرية ونموذج التواصل السريع' },
               { key: 'accreditations', labelAr: 'اعتمادات وشهادات (معترف بنا من)', descAr: 'شريط جهات الاعتماد الرسمية (ISO, IBAO, QABA, BACB, ضمان, سباهي CBAHI)' },
-              { key: 'branches', labelAr: 'سلايدر الفروع المعتمدة (Branches)', descAr: 'فروع الرياض والخرج مع خرائط Google وروابط الواتساب المباشرة' },
+              { key: 'branches', labelAr: 'فروعنا المعتمدة بالمملكة (Branches)', descAr: 'فروع الرياض، الخبر، الأحساء، الخرج مع خرائط Google وروابط الواتساب المباشرة' },
               { key: 'pillars', labelAr: 'محاور برنامجنا (Program Pillars)', descAr: 'بطاقات التميز الإكلينيكي والابتكار وقيم المركز' },
               { key: 'stats', labelAr: 'شريط الإحصائيات والأرقام (Stats Bar)', descAr: 'الأرقام التقديرية وساعات التدخل ومعدلات الرضا' },
               { key: 'services', labelAr: 'الخدمات وباقات التأهيل ومعلم الظل', descAr: 'برامج ABA والتخاطب والعلاج الوظيفي والدمج المدرسي' },
+              { key: 'courses', labelAr: 'سلايدر الكورسات والدورات ومنصة رابا التعليمية', descAr: 'دورات تأهيل البورد QABA, ABAT, CEUs, وورش العمل الإكلينيكية' },
               { key: 'specialists', labelAr: 'الكوادر الطبية واستكشاف السير الذاتية', descAr: 'سلايدر الأخصائيين والشهادات وحجز المواعيد معهم' },
               { key: 'offers', labelAr: 'عروض وخصومات التأهيل (Offers)', descAr: 'باقات الخصم الخاصة والتقييم المجاني' },
               { key: 'blog', labelAr: 'سلايدر المدونات والمقالات الطبية (Blog)', descAr: 'المقالات المعرفية والإرشادات الأسرية' },

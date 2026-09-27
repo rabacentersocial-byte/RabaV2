@@ -5,16 +5,13 @@ import {
   MessageCircle, 
   ChevronRight, 
   ChevronLeft, 
-  ExternalLink, 
   Phone, 
   Clock, 
-  Building2, 
   Compass,
-  CheckCircle2,
   SlidersHorizontal,
   LayoutGrid
 } from 'lucide-react';
-import { BRANCHES_DATA, BranchItem } from '../data/branchesData';
+import { getStoredBranchesData, BranchItem } from '../data/branchesData';
 import { BranchMapPinGraphic } from './BranchMapPinGraphic';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -24,7 +21,8 @@ interface BranchesSectionProps {
 
 export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch }) => {
   const { isArabic } = useLanguage();
-  const [selectedCity, setSelectedCity] = useState<'all' | 'riyadh' | 'kharj'>('all');
+  const [branches, setBranches] = useState<BranchItem[]>(() => getStoredBranchesData());
+  const [selectedCity, setSelectedCity] = useState<'all' | 'riyadh' | 'jeddah' | 'khobar' | 'ahsa' | 'kharj'>('all');
   const [viewMode, setViewMode] = useState<'slider' | 'grid'>('slider');
   
   // Slider reference & state
@@ -37,9 +35,31 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
   const [canScrollNext, setCanScrollNext] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const filteredBranches = selectedCity === 'all'
-    ? BRANCHES_DATA
-    : BRANCHES_DATA.filter((b) => b.city === selectedCity);
+  // Sync with updates from other tabs or persistent storage
+  useEffect(() => {
+    const handleUpdate = () => {
+      setBranches(getStoredBranchesData());
+    };
+    window.addEventListener('raba_branches_updated', handleUpdate);
+    window.addEventListener('raba_persistent_sync_ready' as any, handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('raba_branches_updated', handleUpdate);
+      window.removeEventListener('raba_persistent_sync_ready' as any, handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
+
+  const filteredBranches = branches.filter((b) => {
+    if (selectedCity === 'all') return true;
+    return b.city === selectedCity;
+  });
+
+  const riyadhCount = branches.filter(b => b.city === 'riyadh').length;
+  const jeddahCount = branches.filter(b => b.city === 'jeddah').length;
+  const khobarCount = branches.filter(b => b.city === 'khobar').length;
+  const ahsaCount = branches.filter(b => b.city === 'ahsa').length;
+  const kharjCount = branches.filter(b => b.city === 'kharj').length;
 
   const updateScrollState = useCallback(() => {
     const el = sliderRef.current;
@@ -51,7 +71,6 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
     setCanScrollPrev(current > 15);
     setCanScrollNext(current < maxScroll - 15);
 
-    // Calculate active slide index
     const slideWidth = 360;
     const index = Math.round(current / slideWidth);
     setCurrentIndex(Math.min(Math.max(0, index), filteredBranches.length - 1));
@@ -132,7 +151,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header Title & Controls Bar */}
-        <div className="mb-10 space-y-6">
+        <div className="mb-8 space-y-6">
           {/* Main Title Block */}
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#00E5BE]/10 border border-[#00E5BE]/30 text-[#00E5BE] text-xs font-black mb-3 shadow-2xs">
@@ -144,56 +163,123 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
               {isArabic ? (
                 <>
                   <span className="inline-block">فروعنا المعتمدة</span>{' '}
-                  <span className="inline-block bg-gradient-to-r from-[#00E5BE] to-[#38BDF8] bg-clip-text text-transparent">في الرياض والخرج</span>
+                  <span className="inline-block bg-gradient-to-r from-[#00E5BE] to-[#38BDF8] bg-clip-text text-transparent">
+                    داخل المملكة العربية السعودية
+                  </span>
                 </>
               ) : (
                 <>
-                  Accredited Branches in <span className="text-[#00E5BE]">Riyadh & Al-Kharj</span>
+                  Our Accredited Branches <span className="text-[#00E5BE]">Across Saudi Arabia</span>
                 </>
               )}
             </h2>
 
             <p className="text-sm sm:text-base text-slate-300 font-medium leading-relaxed max-w-3xl [text-wrap:pretty]">
               {isArabic 
-                ? 'مواقع مجهزة بأعلى المعايير العالمية لتقديم خدمات التأهيل وتحليل السلوك في بيئة مهيأة وآمنة لطفلك.'
-                : 'State-of-the-art facilities equipped with world-class clinical standards for behavioral and occupational rehabilitation.'}
+                ? 'مراكز وعيادات مجهزة بأعلى المعايير العالمية لتقديم خدمات التأهيل وتحليل السلوك في بيئة مهيأة وآمنة لطفلك في الرياض، وجدة، والخبر، والأحساء، والخرج.'
+                : 'Clinics equipped with international clinical standards for behavioral and occupational rehabilitation across Riyadh, Jeddah, Al-Khobar, Al-Ahsa, and Al-Kharj.'}
             </p>
           </div>
 
           {/* Controls: Filter tabs & Slider Navigation */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-4 border-t border-white/10">
             
-            {/* Filter Tabs */}
-            <div className="bg-slate-800/90 p-1.5 rounded-2xl border border-white/10 flex items-center gap-1 shadow-xs overflow-x-auto">
+            {/* City Filter Tabs */}
+            <div className="bg-slate-800/90 p-1.5 rounded-2xl border border-white/10 flex items-center gap-1 shadow-xs overflow-x-auto no-scrollbar">
               <button
                 onClick={() => setSelectedCity('all')}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   selectedCity === 'all'
                     ? 'bg-[#00E5BE] text-slate-950 shadow-xs'
                     : 'text-slate-300 hover:text-white'
                 }`}
               >
-                {isArabic ? 'كافة الفروع (4)' : 'All Branches (4)'}
+                <span>{isArabic ? 'كافة الفروع' : 'All Branches'}</span>
+                <span className={`text-[11px] px-1.5 py-0.2 rounded-md font-bold ${
+                  selectedCity === 'all' ? 'bg-slate-950/20 text-slate-950' : 'bg-white/10 text-slate-300'
+                }`}>
+                  {branches.length}
+                </span>
               </button>
+
               <button
                 onClick={() => setSelectedCity('riyadh')}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   selectedCity === 'riyadh'
                     ? 'bg-[#00E5BE] text-slate-950 shadow-xs'
                     : 'text-slate-300 hover:text-white'
                 }`}
               >
-                {isArabic ? 'فروع الرياض (3)' : 'Riyadh (3)'}
+                <span>{isArabic ? 'الرياض' : 'Riyadh'}</span>
+                <span className={`text-[11px] px-1.5 py-0.2 rounded-md font-bold ${
+                  selectedCity === 'riyadh' ? 'bg-slate-950/20 text-slate-950' : 'bg-white/10 text-slate-300'
+                }`}>
+                  {riyadhCount}
+                </span>
               </button>
+
+              <button
+                onClick={() => setSelectedCity('jeddah')}
+                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                  selectedCity === 'jeddah'
+                    ? 'bg-[#00E5BE] text-slate-950 shadow-xs'
+                    : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                <span>{isArabic ? 'جدة' : 'Jeddah'}</span>
+                <span className={`text-[11px] px-1.5 py-0.2 rounded-md font-bold ${
+                  selectedCity === 'jeddah' ? 'bg-slate-950/20 text-slate-950' : 'bg-white/10 text-slate-300'
+                }`}>
+                  {jeddahCount}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setSelectedCity('khobar')}
+                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                  selectedCity === 'khobar'
+                    ? 'bg-[#00E5BE] text-slate-950 shadow-xs'
+                    : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                <span>{isArabic ? 'الخبر' : 'Al-Khobar'}</span>
+                <span className={`text-[11px] px-1.5 py-0.2 rounded-md font-bold ${
+                  selectedCity === 'khobar' ? 'bg-slate-950/20 text-slate-950' : 'bg-white/10 text-slate-300'
+                }`}>
+                  {khobarCount}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setSelectedCity('ahsa')}
+                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                  selectedCity === 'ahsa'
+                    ? 'bg-[#00E5BE] text-slate-950 shadow-xs'
+                    : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                <span>{isArabic ? 'الأحساء' : 'Al-Ahsa'}</span>
+                <span className={`text-[11px] px-1.5 py-0.2 rounded-md font-bold ${
+                  selectedCity === 'ahsa' ? 'bg-slate-950/20 text-slate-950' : 'bg-white/10 text-slate-300'
+                }`}>
+                  {ahsaCount}
+                </span>
+              </button>
+
               <button
                 onClick={() => setSelectedCity('kharj')}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   selectedCity === 'kharj'
                     ? 'bg-[#00E5BE] text-slate-950 shadow-xs'
                     : 'text-slate-300 hover:text-white'
                 }`}
               >
-                {isArabic ? 'فرع الخرج (1)' : 'Al-Kharj (1)'}
+                <span>{isArabic ? 'الخرج' : 'Al-Kharj'}</span>
+                <span className={`text-[11px] px-1.5 py-0.2 rounded-md font-bold ${
+                  selectedCity === 'kharj' ? 'bg-slate-950/20 text-slate-950' : 'bg-white/10 text-slate-300'
+                }`}>
+                  {kharjCount}
+                </span>
               </button>
             </div>
 
@@ -260,17 +346,6 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
           </div>
         </div>
 
-        {/* Section Category Title Divider (when viewing All or Riyadh) */}
-        {selectedCity === 'all' && (
-          <div className="flex items-center gap-3 mb-6">
-            <h3 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-[#00E5BE]" />
-              <span>{isArabic ? 'فروع الرياض وفرع الخرج' : 'Riyadh & Al-Kharj Branches'}</span>
-            </h3>
-            <div className="h-px flex-1 bg-gradient-to-r from-white/20 to-transparent" />
-          </div>
-        )}
-
         {/* SLIDER / GRID CONTAINER */}
         {viewMode === 'slider' ? (
           <div className="relative">
@@ -290,8 +365,8 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                   key={branch.id}
                   className="w-[85vw] max-w-[360px] sm:w-[350px] md:w-[365px] shrink-0 snap-start bg-[#16202C] rounded-3xl overflow-hidden border border-white/10 shadow-2xl hover:border-[#00E5BE]/40 transition-all duration-300 flex flex-col justify-between group relative"
                 >
-                  {/* Top: 3D Map Pin Graphic matching the exact screenshot visual */}
-                  <div className="relative h-64 overflow-hidden bg-[#0e1722]">
+                  {/* Top: 3D Map Pin Graphic */}
+                  <div className="relative h-60 overflow-hidden bg-[#0e1722]">
                     <BranchMapPinGraphic branchName={branch.name} />
 
                     {/* City Tag Indicator Overlay */}
@@ -305,7 +380,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                   <div className="p-6 flex-1 flex flex-col justify-between space-y-5 bg-[#16202C]">
                     
                     <div className="space-y-3">
-                      {/* Region Tag Pill (matching screenshot e.g. "شمال الرياض", "الرياض", "الخرج") */}
+                      {/* Region Tag Pill */}
                       <div className="flex items-center justify-between">
                         <span className={`inline-block px-3 py-1 rounded-full text-xs font-black border ${branch.badgeColorClass}`}>
                           {isArabic ? branch.regionBadgeAr : branch.regionBadgeEn}
@@ -323,16 +398,16 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                       </h3>
 
                       {/* Branch Address */}
-                      <div className="text-xs text-slate-300 leading-relaxed min-h-[38px]">
+                      <div className="text-xs text-slate-300 leading-relaxed min-h-[48px]">
                         <span className="font-bold text-white ml-1">{isArabic ? 'العنوان:' : 'Address:'}</span>
                         <span>{isArabic ? branch.address : branch.addressEn}</span>
                       </div>
                     </div>
 
-                    {/* Two Action Buttons matching the screenshot exactly */}
+                    {/* Action Buttons */}
                     <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/10">
                       
-                      {/* Google Maps Button (Dark navy with map pin / navigation) */}
+                      {/* Google Maps Button */}
                       <a
                         href={branch.googleMapsUrl}
                         target="_blank"
@@ -344,7 +419,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                         <span>{isArabic ? 'خرائط Google' : 'Google Maps'}</span>
                       </a>
 
-                      {/* WhatsApp Button (Emerald green #00E5BE / #10B981) */}
+                      {/* WhatsApp Button */}
                       <a
                         href={branch.whatsappUrl}
                         target="_blank"
@@ -381,7 +456,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
           </div>
         ) : (
           /* GRID VIEW */
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredBranches.map((branch) => (
               <div
                 key={branch.id}
@@ -401,13 +476,18 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                       <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-black border ${branch.badgeColorClass}`}>
                         {isArabic ? branch.regionBadgeAr : branch.regionBadgeEn}
                       </span>
+
+                      <span className="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-[#00E5BE]" />
+                        <span>{isArabic ? branch.hoursAr : branch.hoursEn}</span>
+                      </span>
                     </div>
 
                     <h3 className="text-lg font-black text-white group-hover:text-[#00E5BE] transition-colors">
                       {isArabic ? branch.name : branch.nameEn}
                     </h3>
 
-                    <p className="text-xs text-slate-300 leading-relaxed min-h-[38px]">
+                    <p className="text-xs text-slate-300 leading-relaxed min-h-[48px]">
                       <span className="font-bold text-white ml-1">{isArabic ? 'العنوان:' : 'Address:'}</span>
                       <span>{isArabic ? branch.address : branch.addressEn}</span>
                     </p>
@@ -447,7 +527,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
               <Phone className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-xs text-slate-400 font-bold">{isArabic ? 'الرقم الموحد لكافة الفروع:' : 'Unified Branch Call Center:'}</div>
+              <div className="text-xs text-slate-400 font-bold">{isArabic ? 'الرقم الموحد لكافة فروع المملكة:' : 'Unified Branch Call Center (KSA):'}</div>
               <a href="tel:0575100100" className="text-base font-black text-white hover:text-[#00E5BE] transition-colors" dir="ltr">
                 0575100100
               </a>
@@ -456,7 +536,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
 
           <div className="flex items-center gap-2">
             <a
-              href="https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20الاستفسار%20عن%20أقرب%20فرع%20لمركز%20رابا"
+              href="https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20الاستفسار%20عن%20أقرب%20فرع%20لمركز%20رابا%20في%20المملكة"
               target="_blank"
               rel="noopener noreferrer"
               className="px-5 py-2.5 bg-[#00E5BE] hover:bg-[#00ffd2] text-slate-950 font-black rounded-xl text-xs flex items-center gap-2 transition-all shadow-md shadow-teal-500/20 cursor-pointer"
