@@ -319,7 +319,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                   <span>{isArabic ? 'خدمة مخصصة وفورية' : 'Tailored & Immediate Service'}</span>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                  {isArabic ? 'احجز موعدك الآن' : 'Book Your Appointment Now'}
+                  {isArabic ? 'احجز خدمة سِوار الآن' : 'Book Sewar Service Now'}
                 </h3>
                 <p className="text-[11px] sm:text-xs text-emerald-100/80 mt-0.5 font-medium">
                   {isArabic 

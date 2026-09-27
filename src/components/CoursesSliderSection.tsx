@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { 
-  GraduationCap, 
   Sparkles, 
   Clock, 
   Award, 
@@ -10,8 +9,7 @@ import {
   CheckCircle2, 
   SlidersHorizontal, 
   LayoutGrid, 
-  BookOpen,
-  BellRing
+  BookOpen
 } from 'lucide-react';
 import { getStoredCoursesData, CourseItem } from '../data/coursesData';
 import { useLanguage } from '../context/LanguageContext';
@@ -139,70 +137,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* 1. OFFICIAL PROMINENT NOTICE BANNER: "ترقبوا إطلاق منصة رابا التعليمية" */}
-        <div className="mb-12 relative group">
-          <div className="absolute -inset-1 bg-gradient-to-r from-pink-500 via-[#00E5BE] to-amber-500 rounded-3xl blur-md opacity-20 dark:opacity-40 group-hover:opacity-35 dark:group-hover:opacity-60 transition duration-500" />
-          <div className="relative bg-white dark:bg-gradient-to-r dark:from-[#171D2F] dark:via-[#1E2638] dark:to-[#121927] border border-slate-200/90 dark:border-white/15 rounded-3xl p-6 sm:p-8 shadow-xl dark:shadow-2xl overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-6">
-            
-            {/* Left Accent Ribbon & Graphic */}
-            <div className="flex items-start sm:items-center gap-4 sm:gap-5 w-full lg:w-auto">
-              <div className="relative shrink-0">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-[#E5007D] to-rose-600 text-white flex items-center justify-center shadow-lg shadow-pink-500/30">
-                  <GraduationCap className="w-7 h-7 sm:w-8 sm:h-8" />
-                </div>
-                <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00E5BE] opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-4 w-4 bg-[#00E5BE]"></span>
-                </span>
-              </div>
-
-              <div className="space-y-1.5">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-50 dark:bg-gradient-to-r dark:from-pink-500/20 dark:to-purple-500/20 border border-pink-200 dark:border-pink-500/40 text-pink-700 dark:text-pink-300 text-xs font-black">
-                  <BellRing className="w-3.5 h-3.5 text-pink-500 dark:text-pink-400 animate-bounce" />
-                  <span>{isArabic ? 'إشعار رسمي وإطلاق مرتقب' : 'Official Announcement'}</span>
-                </div>
-
-                <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-snug">
-                  {isArabic ? (
-                    <>
-                      <span>ترقبوا إطلاق</span>{' '}
-                      <span className="bg-gradient-to-r from-pink-600 via-teal-600 to-amber-600 dark:from-pink-400 dark:via-[#00E5BE] dark:to-amber-300 bg-clip-text text-transparent">
-                        منصة رابا التعليمية
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      Stay Tuned for the Launch of{' '}
-                      <span className="text-teal-600 dark:text-[#00E5BE]">RABA Educational Platform</span>
-                    </>
-                  )}
-                </h3>
-
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl font-medium">
-                  {isArabic 
-                    ? 'الوجهة الأكاديمية الرائدة لتأهيل الأخصائيين والكوادر في تحليل السلوك التطبيقي (ABA)، دورات البورد العالمي (QABA & ABAT)، وبرامج التعليم المستمر (CEUs) بالتعاون مع كبرى الجهات الدولية.'
-                    : 'The premier academic academy preparing specialists in Applied Behavior Analysis (ABA), QABA & ABAT board credentials, and continuous education units (CEUs).'}
-                </p>
-              </div>
-            </div>
-
-            {/* Quick Action in Notice */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto shrink-0">
-              <a
-                href="https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20التسجيل%20في%20قائمة%20الانتظار%20لمنصة%20رابا%20التعليمية%20والاستفسار%20عن%20الكورسات"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-teal-500 to-[#00E5BE] hover:from-teal-400 hover:to-[#00ffd2] text-slate-950 text-xs sm:text-sm font-black transition-all shadow-lg shadow-teal-500/20 flex items-center justify-center gap-2 cursor-pointer active:scale-95 text-center"
-              >
-                <Sparkles className="w-4 h-4 fill-slate-950" />
-                <span>{isArabic ? 'سجل اهتمامك الآن للحصول على خصم الإطلاق' : 'Join VIP Launch Waitlist'}</span>
-              </a>
-            </div>
-
-          </div>
-        </div>
-
-        {/* 2. HEADER & CONTROLS BAR */}
+        {/* 1. HEADER & CONTROLS BAR */}
         <div className="mb-10 space-y-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="max-w-3xl space-y-2">

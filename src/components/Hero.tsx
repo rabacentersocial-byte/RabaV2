@@ -226,16 +226,19 @@ export const Hero: React.FC<HeroProps> = ({
               </button>
 
               {/* Button 2: شاهد فيديو تعريفي */}
-              <button
+              <a
                 id="hero-watch-video-btn"
-                onClick={onOpenVideo || onOpenNotifications}
+                href="https://x.com/rabacenter/status/1352206247299321858?s=46"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center justify-center gap-3 text-slate-800 dark:text-white hover:text-sky-600 dark:hover:text-[#00E5BE] font-bold transition-all group cursor-pointer text-sm sm:text-base py-2"
+                title={isArabic ? 'شاهد فيديو تعريفي عن مركز رابا على منصة X' : 'Watch introductory video on X (Twitter)'}
               >
                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/80 dark:bg-white/[0.12] hover:bg-white dark:hover:bg-white/[0.22] backdrop-blur-xl text-slate-900 dark:text-white border border-slate-200 dark:border-white/30 flex items-center justify-center shadow-lg shadow-sky-500/10 group-hover:scale-110 active:scale-95 transition-transform shrink-0">
                   <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current ml-0.5" />
                 </div>
                 <span>{isArabic ? 'شاهد فيديو تعريفي' : 'Watch Video'}</span>
-              </button>
+              </a>
             </div>
 
           </div>
