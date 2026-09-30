@@ -117,7 +117,7 @@ export function dispatchCustomerRequest(payload: DispatchCustomerRequestPayload)
 }
 
 export function getCustomerWhatsAppMessage(request: Appointment, isArabic = true): string {
-  const centerPhone = '966551234567';
+  const centerPhone = '966575100100';
 
   let text = '';
   switch (request.requestType) {

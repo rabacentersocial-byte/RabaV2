@@ -114,10 +114,10 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
     {
       id: 'whatsapp',
       name: isArabic ? 'واتساب' : 'WhatsApp',
-      href: social.whatsapp || 'https://wa.me/966551234567',
+      href: social.whatsapp || 'https://wa.me/966575100100',
       icon: MessageCircle,
       hoverClass: 'hover:bg-[#25D366] hover:text-white hover:border-transparent border-slate-300 dark:border-white/15',
-      badge: social.phone || '+966 55 123 4567'
+      badge: social.phone || '0575100100'
     },
     {
       id: 'snapchat',

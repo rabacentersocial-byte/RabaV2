@@ -6,9 +6,11 @@ import {
   UserCheck 
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useDailyChildrenCounter } from '../utils/dailyChildrenCounter';
 
 export const StatsBar: React.FC = () => {
   const { t, isArabic } = useLanguage();
+  const { count: dailyCount, formattedTotal, isWithinHours } = useDailyChildrenCounter(10);
 
   return (
     <section 
@@ -39,16 +41,27 @@ export const StatsBar: React.FC = () => {
             </div>
           </div>
 
-          {/* Card 2: عدد الأطفال المستفيدين */}
-          <div className="glass-card p-3.5 sm:p-6 flex flex-col-reverse xs:flex-row items-start xs:items-center justify-between gap-3 sm:gap-4 group hover:border-teal-400/50 rounded-2xl sm:rounded-3xl transition-all duration-300 relative overflow-hidden">
+          {/* Card 2: عدد الأطفال المستفيدين (Synchronized with Daily Children Counter) */}
+          <div 
+            id="stat-children-card"
+            className="glass-card p-3.5 sm:p-6 flex flex-col-reverse xs:flex-row items-start xs:items-center justify-between gap-3 sm:gap-4 group hover:border-teal-400/50 rounded-2xl sm:rounded-3xl transition-all duration-300 relative overflow-hidden"
+            title={isArabic ? `إجمالي الأطفال المستفيدين: ${formattedTotal}+ (يزداد تلقائياً بـ 10 أطفال يومياً من 8:00 ص إلى 6:00 م — المسجل اليوم: +${dailyCount})` : `Total beneficiary children: ${formattedTotal}+ (+${dailyCount} enrolled today)`}
+          >
             <div className={isArabic ? 'text-right' : 'text-left'}>
-              <div className="text-lg xs:text-xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-0.5">
+              <div className="text-lg xs:text-xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-1">
                 <span className="text-[#0D6D54] dark:text-[#00E5BE] font-extrabold text-base xs:text-lg sm:text-3xl">+</span>
-                <span>1,340</span>
+                <span>{formattedTotal}</span>
               </div>
-              <p className="text-[11px] sm:text-sm text-slate-600 dark:text-slate-300 font-bold mt-0.5 sm:mt-1">
-                {t.stats.childrenLabel}
-              </p>
+              <div className="flex items-center gap-1.5 mt-0.5 sm:mt-1 flex-wrap">
+                <p className="text-[11px] sm:text-sm text-slate-600 dark:text-slate-300 font-bold">
+                  {t.stats.childrenLabel}
+                </p>
+                {/* Synchronized Live Daily Pill */}
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-emerald-500/10 dark:bg-emerald-400/15 border border-emerald-500/25 text-[#0D6D54] dark:text-[#00E5BE] text-[10px] font-extrabold shadow-2xs">
+                  {isWithinHours && <span className="w-1 h-1 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-ping inline-block" />}
+                  <span>+{dailyCount} {isArabic ? 'اليوم' : 'today'}</span>
+                </span>
+              </div>
             </div>
 
             {/* Professional Pediatric Care Baby Icon Badge */}

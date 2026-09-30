@@ -53,7 +53,7 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
       ? 'السلام عليكم ورحمة الله وبركاته، أود الاستفسار عن خدمات وبرامج مركز رابا للعلاج بتحليل السلوك التطبيقي ABA'
       : 'Hello, I would like to inquire about Raba Center programs and ABA therapy services.';
     const msg = text || defaultMsg;
-    const url = `https://wa.me/966551234567?text=${encodeURIComponent(msg)}`;
+    const url = `https://wa.me/966575100100?text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank', 'noopener,noreferrer');
     setIsWhatsAppOpen(false);
   };

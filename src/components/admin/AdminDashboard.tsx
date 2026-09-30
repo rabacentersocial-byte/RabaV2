@@ -28,7 +28,8 @@ import {
   Palette,
   Award,
   RefreshCw,
-  Database
+  Database,
+  Handshake
 } from 'lucide-react';
 import { Appointment, ParentReview, AdminUser, PermissionId, ServiceItem, TherapyPackage, Specialist } from '../../types';
 import { syncAllToDiskNow, savePersistentModule } from '../../utils/persistentSync';
@@ -55,6 +56,7 @@ import { SliderManagementTab } from './SliderManagementTab';
 import { BlogManagementTab } from './BlogManagementTab';
 import { SiteSettingsTab } from './SiteSettingsTab';
 import { AccreditationsSettingsTab } from './AccreditationsSettingsTab';
+import { PartnersSettingsTab } from './PartnersSettingsTab';
 import { MarketingReviewsTab } from './MarketingReviewsTab';
 import { FinancesSettingsTab } from './FinancesSettingsTab';
 
@@ -85,7 +87,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Active navigation tab
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'users' | 'appointments' | 'services' | 'specialists' | 'slider' | 'blog' | 'accreditations' | 'site_settings' | 'marketing' | 'finances'
+    'overview' | 'users' | 'appointments' | 'services' | 'specialists' | 'slider' | 'blog' | 'accreditations' | 'partners' | 'site_settings' | 'marketing' | 'finances'
   >('overview');
 
   // Mobile sidebar toggle
@@ -248,6 +250,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       labelEn: 'Accreditations & Certificates',
       icon: Award,
       badge: isArabic ? 'جديد' : 'New',
+      perm: null
+    },
+    {
+      id: 'partners',
+      labelAr: 'شركاء النجاح والرعايات',
+      labelEn: 'Partners & Alliances',
+      icon: Handshake,
+      badge: isArabic ? 'تخصيص وشعارات' : 'Logos',
       perm: null
     },
     {
@@ -630,6 +640,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
           {activeTab === 'accreditations' && (
             <AccreditationsSettingsTab />
+          )}
+
+          {activeTab === 'partners' && (
+            <PartnersSettingsTab />
           )}
 
           {activeTab === 'site_settings' && (

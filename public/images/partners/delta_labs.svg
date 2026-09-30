@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 200" fill="none">
+  <!-- Center Main Block -->
+  <g transform="translate(210, 85)">
+    <!-- English: Delta (Left) -->
+    <text x="-95" y="10" text-anchor="middle" font-family="'Inter', 'Arial', sans-serif" font-weight="900" font-size="44" fill="#2E2A72" letter-spacing="-1">Delta</text>
+
+    <!-- Center Icon: Green Triangle with Microscope -->
+    <g transform="translate(0, -6)">
+      <!-- Triangle Shape -->
+      <path d="M0 -34 L32 20 L-32 20 Z" fill="none" stroke="#70B243" stroke-width="5" stroke-linejoin="round" />
+      <line x1="-34" y1="20" x2="34" y2="20" stroke="#2E2A72" stroke-width="4" stroke-linecap="round" />
+      <!-- Stylized Microscope Inside in Navy -->
+      <circle cx="-2" cy="-14" r="2.5" fill="#2E2A72" />
+      <path d="M-6 -6 L10 10" stroke="#2E2A72" stroke-width="3.5" stroke-linecap="round" />
+      <rect x="-1" y="-1" width="10" height="5" rx="1.5" transform="rotate(-45 4 1)" fill="#2E2A72" />
+      <path d="M-10 6 C-14 12, -4 16, 2 16" fill="none" stroke="#2E2A72" stroke-width="3" />
+      <!-- Registered Mark -->
+      <text x="-24" y="-22" font-family="sans-serif" font-size="10" font-weight="bold" fill="#70B243">®</text>
+    </g>
+
+    <!-- Arabic: دلتا (Right) -->
+    <text x="95" y="10" text-anchor="middle" font-family="'Tajawal', 'Cairo', 'Segoe UI', sans-serif" font-weight="900" font-size="52" fill="#2E2A72">دلتا</text>
+  </g>
+
+  <!-- Green Bar Below with Text -->
+  <g transform="translate(210, 138)">
+    <rect x="-160" y="0" width="320" height="26" rx="3" fill="#70B243" />
+    <text x="0" y="18" text-anchor="middle" font-family="'Tajawal', 'Cairo', 'Segoe UI', sans-serif" font-weight="800" font-size="13" fill="#FFFFFF" letter-spacing="1">
+      مـخـتـبـرات طـبـيـة &nbsp;&nbsp;|&nbsp;&nbsp; Medical Laboratories
+    </text>
+  </g>
+</svg>

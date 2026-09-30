@@ -51,17 +51,17 @@ export const COURSES_DATA: CourseItem[] = [
       "يشمل أدوات التقييم الشاملة: VB-MAPP و ABLLS-R و PEAK",
       "تدريب عملي على تصميم الخطط العلاجية وتحليل البيانات الإكلينيكية",
       "إشراف مباشر من محللي سلوك معتمدين دولياً ومصنفين",
-      "إمكانية التقسيط الميسر عبر تمارا وإمكان"
+      "شهادة معتمدة دولياً ومسار مهني معترف به"
     ],
     featuresEn: [
       "270 QABA-accredited training hours meeting board criteria",
       "Includes core assessment tools: VB-MAPP, ABLLS-R, and PEAK",
       "Clinical case planning and behavior intervention strategy design",
       "Mentorship by board-certified behavioral analysts",
-      "Installment options via Tamara & Emkan"
+      "Internationally recognized certification & career path"
     ],
-    priceDisplayAr: "متاح التقسيط عبر تمارا وإمكان",
-    priceDisplayEn: "Installments via Tamara & Emkan",
+    priceDisplayAr: "شامل المنهج المعتمد والاختبارات",
+    priceDisplayEn: "Includes Accredited Curriculum & Exams",
     accentColor: "#E11D48",
     targetAudienceAr: "أخصائيو التربية الخاصة، علم النفس، العلاج الوظيفي، والراغبون في رخصة QBA الدولية",
     targetAudienceEn: "Special educators, psychologists, and clinicians seeking QBA credentials",
@@ -89,17 +89,17 @@ export const COURSES_DATA: CourseItem[] = [
       "التأهيل الشامل لاجتياز اختبار بورد ABAT بنجاح",
       "فهم أساليب التعزيز الإيجابي وإجراءات تعديل السلوك",
       "تطبيق استراتيجيات التدخل المبكر ومساعدة معلم الظل",
-      "تقسيط الرسوم عبر تمارا وإمكان"
+      "تطبيق عملي ونماذج تدريبية محاكية للميدان"
     ],
     featuresEn: [
       "40 QABA-accredited curriculum hours",
       "Full prep for the ABAT international certification exam",
       "Positive reinforcement and behavioral modification protocols",
       "Early intervention and shadow teaching methodologies",
-      "Installment options via Tamara & Emkan"
+      "Hands-on practice & simulated field models"
     ],
-    priceDisplayAr: "متاح التقسيط عبر تمارا وإمكان",
-    priceDisplayEn: "Installments via Tamara & Emkan",
+    priceDisplayAr: "شامل المادة العلمية والتدريب",
+    priceDisplayEn: "Includes Course Material & Training",
     accentColor: "#00E5BE",
     targetAudienceAr: "الخريجون الجدد، معلمو الظل، ومقدمو الرعاية المهتمون بالتدخل العملي",
     targetAudienceEn: "Recent graduates, shadow teachers, and therapists seeking certified entry",
@@ -127,17 +127,17 @@ export const COURSES_DATA: CourseItem[] = [
       "كورس عملي في إعداد وصياغة خطة التدخل السلوكي الفردية BIP (10 ساعات)",
       "شهادة ساعات تعلم مستمر (CEUs) لتجديد الرخص المهنية",
       "دراسة حالات واقعية ونماذج تقييم عملية جاهزة للتطبيق",
-      "تقسيط متاح عبر تمارا وإمكان"
+      "حقيبة تدريبية ونماذج إكلينيكية متكاملة"
     ],
     featuresEn: [
       "10-hour intensive module on VB-MAPP Assessment Protocol",
       "10-hour practical workshop on BIP (Behavior Intervention Plans)",
       "Official CEU units for credential maintenance and renewal",
       "Real clinical case studies and customizable assessment forms",
-      "Installment options via Tamara & Emkan"
+      "Complete clinical toolkit & customizable forms"
     ],
-    priceDisplayAr: "متاح التقسيط عبر تمارا وإمكان",
-    priceDisplayEn: "Installments via Tamara & Emkan",
+    priceDisplayAr: "شامل ساعات التعليم المستمر",
+    priceDisplayEn: "Includes Continuous CEU Units",
     accentColor: "#F59E0B",
     targetAudienceAr: "أخصائيو ABA الممارسون، مشرفو البرامج، والمحللون السلوكيون",
     targetAudienceEn: "Practicing behavior therapists, supervisors, and clinical directors",
@@ -165,17 +165,17 @@ export const COURSES_DATA: CourseItem[] = [
       "تقنيات إدارة السلوكيات التحديات والتقليل من المشكلات السلوكية",
       "تطوير التواصل الوظيفي البديل (FCT) وجداول الأنشطة المرئية",
       "قياس وتسجيل البيانات السلوكية وتحليل منحنيات التطور",
-      "متاح التقسيط الميسر عبر تمارا وإمكان"
+      "إشراف إكلينيكي وتطبيقات عملية متقدمة"
     ],
     featuresEn: [
       "10 hours focused on direct clinical intervention",
       "Challenging behavior de-escalation and functional replacement",
       "Functional Communication Training (FCT) and visual scheduling",
       "Data collection protocols, graphing, and progress monitoring",
-      "Installment options via Tamara & Emkan"
+      "Clinical supervision & advanced practice"
     ],
-    priceDisplayAr: "متاح التقسيط عبر تمارا وإمكان",
-    priceDisplayEn: "Installments via Tamara & Emkan",
+    priceDisplayAr: "شامل التدريب والمتابعة الإكلينيكية",
+    priceDisplayEn: "Includes Clinical Supervision & Training",
     accentColor: "#38BDF8",
     targetAudienceAr: "الأخصائيون، معلمو التربية الخاصة، ومقدمو الرعاية الصحية",
     targetAudienceEn: "Therapists, special education teachers, and allied healthcare staff",

@@ -13,8 +13,10 @@ import {
   Sparkles,
   Award,
   Clock,
-  ShieldCheck
+  ShieldCheck,
+  Heart
 } from 'lucide-react';
+import { SiwarBraceletIcon } from './SiwarBraceletIcon';
 import { useLanguage } from '../context/LanguageContext';
 import confetti from 'canvas-confetti';
 import { Appointment } from '../types';
@@ -179,7 +181,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
       const message = isArabic
         ? `السلام عليكم، أود حجز واستفسار عن خدمة سِوار (معلم الظل والدمج المدرسي Shadow Teacher) بمركز رابا للأطفال.\nالاسم: ${formData.name || 'ولي أمر'}\nالمدينة: ${formData.city || 'الرياض'}\nرقم الهاتف: ${formData.phone || 'غير محدد'}`
         : `Hello, I would like to inquire and book Sewar Service (School Shadow Teacher) at Raba Center.\nName: ${formData.name || 'Parent'}\nCity: ${formData.city || 'Riyadh'}\nPhone: ${formData.phone || 'N/A'}`;
-      window.open(`https://wa.me/966551234567?text=${encodeURIComponent(message)}`, '_blank');
+      window.open(`https://wa.me/966575100100?text=${encodeURIComponent(message)}`, '_blank');
     }
   };
 
@@ -197,18 +199,62 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
         {/* Section Pill Badge & Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#00E5BE]/10 border border-[#00E5BE]/30 text-[#00897B] dark:text-[#00E5BE] text-xs sm:text-sm font-bold shadow-sm mb-3">
-            <GraduationCap className="w-4 h-4 text-[#00E5BE]" />
-            <span>{isArabic ? 'الدمج المدرسي الشامل' : 'Comprehensive School Inclusion'}</span>
+            <SiwarBraceletIcon className="w-4 h-4 text-[#00897B] dark:text-[#00E5BE] animate-pulse" />
+            <span>{isArabic ? 'سِوار الأمان والدمج المدرسي' : 'Sewar Protective Inclusion'}</span>
             <span className="w-1.5 h-1.5 rounded-full bg-[#00E5BE]" />
             <span>{isArabic ? 'خدمة سِوار المعتمدة' : 'Sewar Certified Program'}</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-            {isArabic ? 'خدمة سِوار — معلم الظل والدمج التعليمي والمدرسي' : 'Sewar Service — School Shadow Teacher & Inclusion'}
-          </h2>
+
+          <div className="flex items-center justify-center gap-3">
+            <div className="hidden sm:flex w-10 h-10 rounded-2xl bg-[#00E5BE]/15 border border-[#00E5BE]/30 items-center justify-center text-[#00897B] dark:text-[#00E5BE] shadow-xs shrink-0">
+              <SiwarBraceletIcon className="w-6 h-6" />
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+              {isArabic ? 'خدمة سِوار — معلم الظل والدمج التعليمي والمدرسي' : 'Sewar Service — School Shadow Teacher & Inclusion'}
+            </h2>
+            <div className="hidden sm:flex w-10 h-10 rounded-2xl bg-[#00E5BE]/15 border border-[#00E5BE]/30 items-center justify-center text-[#00897B] dark:text-[#00E5BE] shadow-xs shrink-0">
+              <SiwarBraceletIcon className="w-6 h-6" />
+            </div>
+          </div>
         </div>
 
-        {/* Featured Visual Image Banner */}
-        <div className="relative rounded-3xl overflow-hidden shadow-xl border border-slate-200/80 dark:border-white/10 group bg-slate-100 dark:bg-slate-800 mb-8">
+        {/* ========================================================================= */}
+        {/* THE ENCIRCLING BRACELET FRAME (سِوار الأمان والاحتواء المحيط بالقسم) */}
+        {/* ========================================================================= */}
+        <div className="relative rounded-[36px] sm:rounded-[48px] p-3 sm:p-6 md:p-8 bg-gradient-to-b from-[#00E5BE]/[0.05] via-transparent to-[#D2B2A4]/[0.06] border-2 border-dashed border-[#00E5BE]/40 dark:border-[#00E5BE]/35 shadow-[0_10px_40px_rgba(0,229,190,0.08)]">
+          
+          {/* Top Bracelet Clasp Ornament (ميدالية وقفل سِوار الأمان) */}
+          <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 sm:px-5 py-1 sm:py-1.5 rounded-full bg-white dark:bg-slate-900 border-2 border-[#00E5BE]/60 shadow-lg flex items-center gap-2 z-20">
+            <SiwarBraceletIcon className="w-4 sm:w-5 h-4 sm:h-5 text-[#00897B] dark:text-[#00E5BE] animate-pulse shrink-0" />
+            <span className="text-[11px] sm:text-xs font-black tracking-wider text-[#00897B] dark:text-[#00E5BE] whitespace-nowrap">
+              {isArabic ? 'سِوار الأمان والاحتواء المدرسي' : 'Sewar School Protection Bracelet'}
+            </span>
+          </div>
+
+          {/* Bracelet Decorative Pearl Beads at the 4 Corners */}
+          <div className="absolute top-3 end-3 flex items-center gap-1.5 pointer-events-none opacity-80">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#00E5BE] shadow-xs ring-2 ring-[#00E5BE]/30 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-amber-400" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00E5BE]" />
+          </div>
+          <div className="absolute top-3 start-3 flex items-center gap-1.5 pointer-events-none opacity-80">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00E5BE]" />
+            <span className="w-2 h-2 rounded-full bg-amber-400" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#00E5BE] shadow-xs ring-2 ring-[#00E5BE]/30 animate-pulse" />
+          </div>
+          <div className="absolute bottom-3 end-3 flex items-center gap-1.5 pointer-events-none opacity-80">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#00E5BE] shadow-xs ring-2 ring-[#00E5BE]/30" />
+            <span className="w-2 h-2 rounded-full bg-amber-400" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00E5BE]" />
+          </div>
+          <div className="absolute bottom-3 start-3 flex items-center gap-1.5 pointer-events-none opacity-80">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00E5BE]" />
+            <span className="w-2 h-2 rounded-full bg-amber-400" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#00E5BE] shadow-xs ring-2 ring-[#00E5BE]/30" />
+          </div>
+
+          {/* Featured Visual Image Banner */}
+          <div className="relative rounded-3xl overflow-hidden shadow-xl border border-slate-200/80 dark:border-white/10 group bg-slate-100 dark:bg-slate-800 mb-8">
           <img
             src="/images/shadow_teacher.jpg"
             alt={isArabic ? 'أخصائية معلم الظل مع طفلة في بيئة تعليمية' : 'Shadow teacher with child in classroom'}
@@ -247,8 +293,8 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
             
             {/* Core Narrative Text (Exact text requested by user) */}
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 text-xs font-bold text-[#00897B] dark:text-[#00E5BE] bg-[#00E5BE]/10 px-3 py-1 rounded-lg">
-                <Sparkles className="w-3.5 h-3.5" />
+              <div className="inline-flex items-center gap-2 text-xs font-bold text-[#00897B] dark:text-[#00E5BE] bg-[#00E5BE]/10 px-3 py-1.5 rounded-xl border border-[#00E5BE]/25 shadow-xs">
+                <SiwarBraceletIcon className="w-4 h-4 text-[#00897B] dark:text-[#00E5BE] animate-pulse" />
                 <span>{isArabic ? 'عن خدمة سِوار ورسالتنا' : 'About Sewar Service'}</span>
               </div>
               <p className="text-slate-700 dark:text-slate-200 text-base sm:text-lg leading-relaxed font-medium">
@@ -314,12 +360,13 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
 
               {/* Form Title & Subtitle */}
               <div className="text-center mb-4 relative z-10">
-                <div className="inline-flex items-center justify-center gap-1 px-2.5 py-0.5 rounded-full bg-[#00E5BE]/15 text-[#00E5BE] text-[11px] font-bold mb-1.5 border border-[#00E5BE]/30">
-                  <Sparkles className="w-3 h-3" />
-                  <span>{isArabic ? 'خدمة مخصصة وفورية' : 'Tailored & Immediate Service'}</span>
+                <div className="inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-full bg-[#00E5BE]/20 text-[#00E5BE] text-[11px] font-bold mb-1.5 border border-[#00E5BE]/35 shadow-xs">
+                  <SiwarBraceletIcon className="w-3.5 h-3.5" />
+                  <span>{isArabic ? 'سِوار الأمان — حجز مباشر' : 'Sewar Direct Booking'}</span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                  {isArabic ? 'احجز خدمة سِوار الآن' : 'Book Sewar Service Now'}
+                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center justify-center gap-2">
+                  <SiwarBraceletIcon className="w-5 h-5 text-[#00E5BE]" />
+                  <span>{isArabic ? 'احجز خدمة سِوار الآن' : 'Book Sewar Service Now'}</span>
                 </h3>
                 <p className="text-[11px] sm:text-xs text-emerald-100/80 mt-0.5 font-medium">
                   {isArabic 
@@ -528,6 +575,13 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
             </div>
           </div>
 
+        </div>
+
+          {/* Bottom Bracelet Charm (ميدالية سِوار الاحتواء السفلية) */}
+          <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-white dark:bg-slate-900 border border-[#00E5BE]/40 shadow-xs flex items-center gap-1.5 z-10 text-[10px] font-bold text-slate-500 dark:text-slate-400">
+            <Heart className="w-3 h-3 text-[#00E5BE] fill-current" />
+            <span>{isArabic ? 'سِوار الأمان — خطوة بخطوة مع طفلك' : 'Sewar Bracelet — Step by Step with Your Child'}</span>
+          </div>
         </div>
 
       </div>

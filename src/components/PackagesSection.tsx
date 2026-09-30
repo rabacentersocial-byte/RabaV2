@@ -408,22 +408,23 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                     </div>
                   </div>
 
-                  {/* Bottom Area: Installments Notice with Tamara & Emkan Logos on the Left */}
+                  {/* Bottom Area: Installments Notice with Tamara & Emkan Logos - ONLY for Summer Packages */}
                   <div>
-                    {/* مع إمكانية التقسيط عبر تمارا وإمكان + لوجو تمارا وإمكان باليسار تحت */}
-                    <div className="pt-3.5 border-t border-slate-100 dark:border-white/10 mb-4 bg-slate-50/70 dark:bg-slate-800/50 p-3 rounded-2xl border border-slate-200/70 dark:border-white/10">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-200 leading-tight">
-                          {isArabic ? 'مع إمكانية التقسيط عبر تمارا وإمكان' : 'Installment available via Tamara & Emkan'}
-                        </span>
-                        
-                        {/* تحت على اليسار لوجو تمارا ولوجو إمكان */}
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          <TamaraLogo height={23} />
-                          <EmkanLogo height={23} />
+                    {isSummer && (
+                      <div className="pt-3.5 border-t border-slate-100 dark:border-white/10 mb-4 bg-slate-50/70 dark:bg-slate-800/50 p-3 rounded-2xl border border-slate-200/70 dark:border-white/10">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-200 leading-tight">
+                            {isArabic ? 'متاح التقسيط :' : 'Installments Available:'}
+                          </span>
+                          
+                          {/* تحت على اليسار لوجو تمارا ولوجو إمكان */}
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <TamaraLogo height={23} />
+                            <EmkanLogo height={23} />
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
 
                     {/* Book Package Button */}
                     <button

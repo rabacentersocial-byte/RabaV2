@@ -57,7 +57,7 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
       onOpenWhatsApp();
     } else {
       const msg = encodeURIComponent('السلام عليكم، أود الاستفسار عن برامج وجلسات مركز رابا لتأهيل الطفل');
-      window.open(`https://wa.me/966551234567?text=${msg}`, '_blank', 'noopener,noreferrer');
+      window.open(`https://wa.me/966575100100?text=${msg}`, '_blank', 'noopener,noreferrer');
     }
   };
 

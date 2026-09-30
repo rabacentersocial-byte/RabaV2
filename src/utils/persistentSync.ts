@@ -42,7 +42,9 @@ export const SYNC_KEYS = {
   SERVICES_LEGACY: 'raba_custom_services_v1',
   APPOINTMENTS: 'raba_appointments',
   NOTIFICATIONS: 'raba_notifications',
-  ADMIN_USERS: 'raba_admin_users'
+  ADMIN_USERS: 'raba_admin_users',
+  PARTNERS: 'raba_partners_list_v2',
+  PARTNERS_SETTINGS: 'raba_partners_settings_v2'
 } as const;
 
 // Canonical primary keys used in the synchronization loop to prevent legacy collisions
@@ -65,7 +67,9 @@ export const PRIMARY_SYNC_KEYS = [
   SYNC_KEYS.SERVICES,
   SYNC_KEYS.APPOINTMENTS,
   SYNC_KEYS.NOTIFICATIONS,
-  SYNC_KEYS.ADMIN_USERS
+  SYNC_KEYS.ADMIN_USERS,
+  SYNC_KEYS.PARTNERS,
+  SYNC_KEYS.PARTNERS_SETTINGS
 ] as const;
 
 // Helper to mirror primary keys to legacy aliases with identical timestamps

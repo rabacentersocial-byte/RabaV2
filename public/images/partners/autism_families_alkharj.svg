@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 220" fill="none">
+  <!-- Right: 3D Isometric Heart Puzzle Block -->
+  <g transform="translate(350, 110) scale(0.95)">
+    <!-- 3D Heart Puzzle Geometry in Isometric Perspective -->
+    <!-- Top Left Cube -->
+    <path d="M-36 -12 L0 -34 L36 -12 L0 10 Z" fill="#007791" stroke="#D97706" stroke-width="1.5" />
+    <path d="M-36 -12 L0 10 L0 44 L-36 22 Z" fill="#0284C7" stroke="#D97706" stroke-width="1.5" />
+    <path d="M0 10 L36 -12 L36 22 L0 44 Z" fill="#0F4C81" stroke="#D97706" stroke-width="1.5" />
+
+    <!-- Puzzle Interlocking Notch on Top Left -->
+    <circle cx="-16" cy="-22" r="5" fill="#0284C7" stroke="#D97706" stroke-width="1.5" />
+    
+    <!-- Puzzle Interlocking Notch on Right Side -->
+    <circle cx="20" cy="-6" r="5" fill="#007791" stroke="#D97706" stroke-width="1.5" />
+
+    <!-- Lower Triangular Tip of the Heart -->
+    <path d="M0 44 L-28 26 L0 58 L28 26 Z" fill="#003B5C" stroke="#D97706" stroke-width="1" />
+  </g>
+
+  <!-- Left: Official Association Typography -->
+  <g transform="translate(160, 80)">
+    <!-- Golden Word: جمعية -->
+    <text x="0" y="22" text-anchor="middle" font-family="'Tajawal', 'Cairo', 'Segoe UI', sans-serif" font-weight="900" font-size="34" fill="#C59B27" letter-spacing="-0.5">جــمــعـيــة</text>
+    
+    <!-- Navy Blue Title: أسر التوحد -->
+    <text x="0" y="65" text-anchor="middle" font-family="'Tajawal', 'Cairo', 'Segoe UI', sans-serif" font-weight="900" font-size="44" fill="#005A9C" letter-spacing="-1">أُسـر الـتـوحّـد</text>
+
+    <!-- Subtitle: فرع الخرج -->
+    <text x="0" y="94" text-anchor="middle" font-family="'Tajawal', 'Cairo', 'Segoe UI', sans-serif" font-weight="800" font-size="14" fill="#64748B" letter-spacing="1">فـرع الـخـرج &nbsp;|&nbsp; Autism Families Association</text>
+  </g>
+</svg>

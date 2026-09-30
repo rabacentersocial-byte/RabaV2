@@ -28,8 +28,8 @@ export const FinancesSettingsTab: React.FC<FinancesSettingsTabProps> = ({
   const { isArabic } = useLanguage();
 
   const [clinicName, setClinicName] = useState('مركز رابا للرعاية النهارية وتأهيل أطفال التوحد');
-  const [phone, setPhone] = useState('0558444747');
-  const [whatsapp, setWhatsapp] = useState('0558444747');
+  const [phone, setPhone] = useState('0575100100');
+  const [whatsapp, setWhatsapp] = useState('0575100100');
   const [workingHours, setWorkingHours] = useState('السبت – الخميس: 8:00 ص – 9:00 م');
   const [address, setAddress] = useState('الرياض – حي النرجس / حي الملقا، طريق الملك سلمان');
   const [announcement, setAnnouncement] = useState('خصم 30% على جلسات التقييم الشامل للتوحد والنطق خلال هذا الشهر');

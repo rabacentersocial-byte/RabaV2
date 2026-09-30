@@ -53,6 +53,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: t('nav.specialists'), href: '#specialists' },
     { label: isArabic ? 'فروعنا بالمملكة' : 'Branches', href: '#branches' },
     { label: t('nav.blog'), href: '#blog' },
+    { label: isArabic ? 'شركاء النجاح' : 'Success Partners', href: '#partners' },
     { label: isArabic ? 'الاعتمادات' : 'Accreditations', href: '#accreditations-section' },
     { label: t('nav.stories'), href: '#testimonials' },
   ];

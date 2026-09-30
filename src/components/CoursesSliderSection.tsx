@@ -302,20 +302,8 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
                         </div>
                       </div>
 
-                      {/* Bottom Section: Payment Badges & Action Buttons */}
-                      <div className="space-y-3.5 pt-4 border-t border-slate-100 dark:border-white/10">
-                        {/* Tamara & Emkan installment badge */}
-                        <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/60 px-3 py-1.5 rounded-xl border border-slate-200/80 dark:border-white/5">
-                          <span className="text-[11px] text-slate-500 dark:text-slate-400 font-bold">
-                            {isArabic ? 'خيارات التقسيط المتاح:' : 'Installment Plans:'}
-                          </span>
-                          <div className="flex items-center gap-2">
-                            <img src="/assets/tamara-logo.svg" alt="Tamara" className="h-4 object-contain opacity-90 hover:opacity-100 transition-opacity" />
-                            <span className="text-slate-300 dark:text-slate-600 text-xs">|</span>
-                            <img src="/assets/emkan-logo.svg" alt="Emkan" className="h-4 object-contain opacity-90 hover:opacity-100 transition-opacity" />
-                          </div>
-                        </div>
-
+                      {/* Bottom Section: Action Buttons */}
+                      <div className="pt-4 border-t border-slate-100 dark:border-white/10">
                         {/* Action Buttons: Register & WhatsApp */}
                         <div className="grid grid-cols-2 gap-2.5">
                           <button
@@ -416,18 +404,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
                       </div>
                     </div>
 
-                    <div className="space-y-2.5 pt-3 border-t border-slate-100 dark:border-white/10">
-                      <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-900/60 px-2.5 py-1 rounded-xl border border-slate-200/80 dark:border-white/5">
-                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">
-                          {isArabic ? 'تقسيط متاح:' : 'Installments:'}
-                        </span>
-                        <div className="flex items-center gap-1.5">
-                          <img src="/assets/tamara-logo.svg" alt="Tamara" className="h-3.5 object-contain" />
-                          <span className="text-slate-300 dark:text-slate-600 text-xs">|</span>
-                          <img src="/assets/emkan-logo.svg" alt="Emkan" className="h-3.5 object-contain" />
-                        </div>
-                      </div>
-
+                    <div className="pt-3 border-t border-slate-100 dark:border-white/10">
                       <div className="grid grid-cols-2 gap-2">
                         <button
                           onClick={() => onRegisterCourse(course)}

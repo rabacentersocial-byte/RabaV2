@@ -17,6 +17,7 @@ import { BlogSliderSection } from './components/BlogSliderSection';
 import { Footer } from './components/Footer';
 import { FloatingActions } from './components/FloatingActions';
 import { AccreditationsSection } from './components/AccreditationsSection';
+import { PartnersSection } from './components/PartnersSection';
 import { BranchesSection } from './components/BranchesSection';
 import { CoursesSliderSection } from './components/CoursesSliderSection';
 import { CourseRegistrationModal } from './components/CourseRegistrationModal';
@@ -169,7 +170,7 @@ export default function App() {
 
   const [testimonials, setTestimonials] = useState<ParentReview[]>(() => {
     try {
-      const saved = localStorage.getItem('raba_testimonials') || localStorage.getItem('khotwa_testimonials');
+      const saved = localStorage.getItem('raba_testimonials_v7');
       return saved ? JSON.parse(saved) : PARENT_REVIEWS;
     } catch {
       return PARENT_REVIEWS;
@@ -211,7 +212,7 @@ export default function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('raba_testimonials', JSON.stringify(testimonials));
+      localStorage.setItem('raba_testimonials_v7', JSON.stringify(testimonials));
     } catch {
       // ignore
     }
@@ -492,6 +493,11 @@ export default function App() {
         {/* 11.4. Branches Network Slider (فروع الرياض والخرج) directly above Accreditations */}
         {modules.branches && (
           <BranchesSection />
+        )}
+
+        {/* 11.45. Partners Horizontal Slider (شركاء النجاح والرعايات) directly above Accreditations */}
+        {modules.partners !== false && (
+          <PartnersSection />
         )}
 
         {/* 11.5. Accreditations & Certifications Section (معترف بنا من) in the footer of the blogs & branches */}

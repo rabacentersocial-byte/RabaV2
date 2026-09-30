@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 200" fill="none">
+  <!-- Left/Center Triangle Emblem -->
+  <g transform="translate(90, 100) scale(0.95)">
+    <!-- Red Outer Triangle with sharp border -->
+    <polygon points="0,-72 68,48 -68,48" fill="#C8102E" stroke="#A00C24" stroke-width="3" />
+    <polygon points="0,-64 60,42 -60,42" fill="#B91C1C" />
+
+    <!-- Stylized Silver/White Geometric Monogram ELSEIF Inside -->
+    <!-- Central Tower/Trident Shape -->
+    <path d="M0 -54 L12 36 L-12 36 Z" fill="#FFFFFF" opacity="0.9" />
+    <!-- Angular cutouts -->
+    <polygon points="-40,36 -20,-4 -12,36" fill="#FFFFFF" />
+    <polygon points="40,36 20,-4 12,36" fill="#FFFFFF" />
+    <polygon points="0,-48 8,24 -8,24" fill="#C8102E" />
+    <!-- Horizontal base bar -->
+    <rect x="-48" y="28" width="96" height="6" fill="#FFFFFF" />
+  </g>
+
+  <!-- Right: Official Company Typography -->
+  <g transform="translate(350, 75)">
+    <!-- Arabic Text: السيف مهندسون مقاولون -->
+    <text x="0" y="24" text-anchor="middle" font-family="'Tajawal', 'Cairo', 'Segoe UI', sans-serif" font-weight="900" font-size="36" fill="#1E293B" letter-spacing="-0.5">السيف مهندسون مقاولون</text>
+    
+    <!-- English Subtitle: EL SEIF Engineering Contracting -->
+    <text x="0" y="58" text-anchor="middle" font-family="'Inter', 'Arial', sans-serif" font-weight="800" font-size="16" fill="#1E293B" letter-spacing="0.5">EL SEIF Engineering Contracting</text>
+  </g>
+</svg>

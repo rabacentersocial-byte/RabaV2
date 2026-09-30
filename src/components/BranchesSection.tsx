@@ -15,6 +15,14 @@ import { getStoredBranchesData, BranchItem } from '../data/branchesData';
 import { BranchMapPinGraphic } from './BranchMapPinGraphic';
 import { useLanguage } from '../context/LanguageContext';
 
+const LedClubBadge: React.FC = () => (
+  <span 
+    className="inline-flex items-center justify-center px-3 py-0.5 rounded-full text-xs font-black text-amber-300 bg-[#181005]/95 border-2 border-amber-400 shadow-[0_0_12px_#f59e0b,inset_0_0_7px_rgba(245,158,11,0.45)] ring-2 ring-amber-400/35 whitespace-nowrap select-none shrink-0 tracking-wide"
+  >
+    + نادي
+  </span>
+);
+
 interface BranchesSectionProps {
   onSelectBranch?: (branch: BranchItem) => void;
 }
@@ -392,10 +400,13 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                         </span>
                       </div>
 
-                      {/* Branch Name */}
-                      <h3 className="text-xl font-black text-white group-hover:text-[#00E5BE] transition-colors">
-                        {isArabic ? branch.name : branch.nameEn}
-                      </h3>
+                      {/* Branch Name with single LedClubBadge */}
+                      <div className="flex items-center gap-2.5 flex-wrap">
+                        <h3 className="text-xl font-black text-white group-hover:text-[#00E5BE] transition-colors leading-snug">
+                          {isArabic ? branch.name : branch.nameEn}
+                        </h3>
+                        {branch.hasClubBadge && <LedClubBadge />}
+                      </div>
 
                       {/* Branch Address */}
                       <div className="text-xs text-slate-300 leading-relaxed min-h-[48px]">
@@ -472,6 +483,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
 
                 <div className="p-5 flex-1 flex flex-col justify-between space-y-4 bg-[#16202C]">
                   <div className="space-y-2.5">
+                    {/* Region Tag Pill */}
                     <div className="flex items-center justify-between">
                       <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-black border ${branch.badgeColorClass}`}>
                         {isArabic ? branch.regionBadgeAr : branch.regionBadgeEn}
@@ -483,9 +495,12 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                       </span>
                     </div>
 
-                    <h3 className="text-lg font-black text-white group-hover:text-[#00E5BE] transition-colors">
-                      {isArabic ? branch.name : branch.nameEn}
-                    </h3>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-lg font-black text-white group-hover:text-[#00E5BE] transition-colors leading-snug">
+                        {isArabic ? branch.name : branch.nameEn}
+                      </h3>
+                      {branch.hasClubBadge && <LedClubBadge />}
+                    </div>
 
                     <p className="text-xs text-slate-300 leading-relaxed min-h-[48px]">
                       <span className="font-bold text-white ml-1">{isArabic ? 'العنوان:' : 'Address:'}</span>

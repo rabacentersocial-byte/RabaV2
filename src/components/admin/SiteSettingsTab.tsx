@@ -810,7 +810,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
                   type="text"
                   value={socialSettings.whatsapp}
                   onChange={(e) => setSocialSettings({ ...socialSettings, whatsapp: e.target.value })}
-                  placeholder="https://wa.me/966551234567"
+                  placeholder="https://wa.me/966575100100"
                   className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-xs font-mono"
                 />
               </div>
@@ -824,7 +824,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
                   type="text"
                   value={socialSettings.phone}
                   onChange={(e) => setSocialSettings({ ...socialSettings, phone: e.target.value })}
-                  placeholder="+966 55 123 4567"
+                  placeholder="0575100100"
                   className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-xs font-mono"
                 />
               </div>

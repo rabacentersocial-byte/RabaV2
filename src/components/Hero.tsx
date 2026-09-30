@@ -17,6 +17,7 @@ import {
   getStoredHeroSliderConfig 
 } from '../data/sliderCustomizer';
 import { getResolvedImageUrl, handleImageErrorWithStore } from '../utils/persistentImageStore';
+import { useDailyChildrenCounter } from '../utils/dailyChildrenCounter';
 
 interface HeroProps {
   onOpenBooking: () => void;
@@ -42,6 +43,9 @@ export const Hero: React.FC<HeroProps> = ({
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const touchStartXRef = useRef<number | null>(null);
+
+  // Dynamic daily children counter (10 children from 8 AM to 6 PM) synchronized with cumulative beneficiaries
+  const { count: dailyChildrenCount, formattedTotal, isWithinHours } = useDailyChildrenCounter(10);
 
   useEffect(() => {
     const handleUpdated = () => {
@@ -312,21 +316,35 @@ export const Hero: React.FC<HeroProps> = ({
                 </button>
               )}
 
-              {/* Floating Badge 1 (Top-Left Corner): ينضم لنا يومياً أطفال جدد +1K */}
+              {/* Floating Badge 1 (Top-Left Corner): عداد أطفال جدد يومياً (+10 أطفال من 8 ص إلى 6 م) */}
               {config.showBadges && (
                 <>
-                  <div className="absolute -top-2 -left-2 sm:-left-12 z-30 bg-emerald-600/90 dark:bg-emerald-500/80 backdrop-blur-xl text-white px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl shadow-xl flex items-center gap-2 sm:gap-2.5 border border-emerald-300/40 animate-bounce-subtle">
-                    <div className="flex -space-x-2 -space-x-reverse overflow-hidden">
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-white bg-amber-400 flex items-center justify-center text-[9px] sm:text-[10px] font-black text-slate-900">
-                        +1K
+                  <a 
+                    href="#stats-bar"
+                    className="absolute -top-2 -left-2 sm:-left-12 z-30 bg-emerald-600/90 dark:bg-emerald-500/80 backdrop-blur-xl text-white px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl shadow-xl flex items-center gap-2 sm:gap-2.5 border border-emerald-300/40 animate-bounce-subtle cursor-pointer hover:scale-105 transition-transform"
+                    title={isArabic ? `مزامنة مباشرة: +${dailyChildrenCount} أطفال جدد اليوم (من إجمالي ${formattedTotal}+ مستفيد) — انقر للتفاصيل` : `Live sync: +${dailyChildrenCount} enrolled today (out of ${formattedTotal}+ total)`}
+                  >
+                    <div className="flex -space-x-2 -space-x-reverse overflow-hidden items-center">
+                      {/* Counter Badge Circle */}
+                      <div className="min-w-6 h-6 sm:min-w-7 sm:h-7 px-1 rounded-full border-2 border-white bg-amber-400 flex items-center justify-center text-[9px] sm:text-[10px] font-black text-slate-900 shadow-xs z-10 transition-transform">
+                        +{dailyChildrenCount}
                       </div>
                       <img className="inline-block h-6 w-6 sm:h-7 sm:w-7 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="child" />
                       <img className="inline-block h-6 w-6 sm:h-7 sm:w-7 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="child" />
                     </div>
-                    <span className="text-[11px] sm:text-xs font-black">
-                      {isArabic ? 'أطفال جدد يومياً' : '+1K Enrolled'}
-                    </span>
-                  </div>
+
+                    <div className="flex flex-col items-start leading-tight">
+                      <span className="text-[11px] sm:text-xs font-black flex items-center gap-1.5">
+                        <span>{isArabic ? `+${dailyChildrenCount} أطفال جدد اليوم` : `+${dailyChildrenCount} Enrolled Today`}</span>
+                        {isWithinHours && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-ping inline-block" title={isArabic ? 'تحديث مباشر' : 'Live update'} />
+                        )}
+                      </span>
+                      <span className="text-[9px] text-emerald-100/90 font-bold tracking-tight">
+                        {isArabic ? `إجمالي المستفيدين: ${formattedTotal}+` : `Total: ${formattedTotal}+`}
+                      </span>
+                    </div>
+                  </a>
 
                   {/* Floating Notification Card (Bottom-Right Corner) */}
                   <div className={`absolute -bottom-5 -right-2 sm:-right-8 z-30 bg-white/95 dark:bg-[#0B1120]/90 backdrop-blur-2xl border border-slate-200 dark:border-white/20 rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-[0_16px_40px_rgba(0,0,0,0.25)] flex items-center gap-2.5 sm:gap-3 ${isArabic ? 'text-right' : 'text-left'} max-w-[230px] sm:max-w-[310px]`}>

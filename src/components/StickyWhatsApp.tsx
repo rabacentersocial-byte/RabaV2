@@ -15,7 +15,7 @@ export const StickyWhatsApp: React.FC = () => {
   const handleSend = (textToSend?: string) => {
     const finalMsg = textToSend || userMsg || 'السلام عليكم، أود الاستفسار عن خدمات وباقات مركز رعاية الطفل والعلاج الوظيفي';
     const encoded = encodeURIComponent(finalMsg);
-    window.open(`https://wa.me/966551234567?text=${encoded}`, '_blank', 'noopener,noreferrer');
+    window.open(`https://wa.me/966575100100?text=${encoded}`, '_blank', 'noopener,noreferrer');
     setIsOpen(false);
     setUserMsg('');
   };

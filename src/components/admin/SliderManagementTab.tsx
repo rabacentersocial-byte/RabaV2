@@ -40,6 +40,7 @@ import {
 } from '../../data/sliderCustomizer';
 import { compressImage } from '../../utils/imageCompressor';
 import { BacbBadge, IsoBadge, BhcoeBadge } from '../TrustBadges';
+import { useDailyChildrenCounter } from '../../utils/dailyChildrenCounter';
 
 interface SliderManagementTabProps {
   hasPermission?: (perm: any) => boolean;
@@ -51,6 +52,9 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
   // State
   const [slides, setSlides] = useState<HeroSlideItem[]>(() => getStoredHeroSlides());
   const [config, setConfig] = useState<HeroSliderConfig>(() => getStoredHeroSliderConfig());
+  
+  // Dynamic daily children counter (+10 children from 8am to 6pm)
+  const { count: dailyChildrenCount } = useDailyChildrenCounter(10);
   
   // Preview State
   const [previewIndex, setPreviewIndex] = useState(0);
@@ -489,10 +493,15 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
             {/* Badges preview matching screenshot */}
             {config.showBadges && (
               <>
-                {/* +1K Children Badge */}
-                <div className="absolute -top-2 -left-2 sm:-left-6 z-30 bg-emerald-600/90 text-white px-2 py-1 rounded-xl shadow-lg flex items-center gap-1.5 border border-emerald-300/40 text-[10px] font-black">
-                  <span className="w-4 h-4 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center text-[8px] font-bold">+1K</span>
-                  <span>{isArabic ? 'أطفال جدد يومياً' : '+1K Enrolled'}</span>
+                {/* Dynamic Daily Children Counter Badge */}
+                <div 
+                  className="absolute -top-2 -left-2 sm:-left-6 z-30 bg-emerald-600/90 text-white px-2 py-1 rounded-xl shadow-lg flex items-center gap-1.5 border border-emerald-300/40 text-[10px] font-black"
+                  title={isArabic ? 'عداد يومي: يتزايد بمعدل 10 أطفال يومياً بين 8:00 ص و 6:00 م' : 'Daily counter: +10 children throughout the day (8:00 AM - 6:00 PM)'}
+                >
+                  <span className="min-w-4 h-4 px-1 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center text-[8px] font-bold">
+                    +{dailyChildrenCount}
+                  </span>
+                  <span>{isArabic ? `+${dailyChildrenCount} أطفال جدد اليوم` : `+${dailyChildrenCount} Today`}</span>
                 </div>
 
                 {/* Yellow Mail Badge */}

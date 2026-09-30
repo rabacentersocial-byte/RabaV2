@@ -499,7 +499,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   const text = isArabic 
                     ? `تم تأكيد حجز موعد جلسة في مركز رابا للطفل ${appointment.childName} مع ${appointment.specialistName} بتاريخ ${appointment.date} - ${appointment.timeSlot}. رقم الحجز: ${appointment.referenceNumber}`
                     : `Session appointment confirmed at Raba Center for ${appointment.childName} with ${appointment.specialistName} on ${appointment.date} - ${appointment.timeSlot}. Booking Ref: ${appointment.referenceNumber}`;
-                  window.open(`https://wa.me/966551234567?text=${encodeURIComponent(text)}`, '_blank');
+                  window.open(`https://wa.me/966575100100?text=${encodeURIComponent(text)}`, '_blank');
                 }}
                 className="py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
               >

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 240" fill="none">
+  <!-- Center: Al Faisaliah Schools Emblem -->
+  <g transform="translate(190, 115) scale(0.95)">
+    <!-- Outer Cyan Ring -->
+    <path d="M-85 10 C-85 -55, 85 -55, 85 10" fill="none" stroke="#00A3E0" stroke-width="6" stroke-linecap="round" />
+    
+    <!-- Curved Text on Path or arc -->
+    <text font-family="'Tajawal', 'Cairo', 'Segoe UI', sans-serif" font-weight="900" font-size="21" fill="#004C87">
+      <textPath href="#arcPath" startOffset="50%" text-anchor="middle">
+        مـــدارس الـفـيـصـلـيـة الأهلية
+      </textPath>
+    </text>
+    <path id="arcPath" d="M-72 6 C-70 -48, 70 -48, 72 6" fill="none" />
+
+    <!-- Two Student Figures with Arms Up -->
+    <!-- Left Student Head -->
+    <circle cx="-35" cy="-8" r="8" fill="#004C87" />
+    <!-- Left Student Body -->
+    <path d="M-45 32 L-20 32 L-30 0 L-48 6 Z" fill="#004C87" />
+    
+    <!-- Right Higher Student Head -->
+    <circle cx="22" cy="-6" r="8" fill="#004C87" />
+    <!-- Right Higher Student Body reaching up -->
+    <path d="M-5 -45 L-2 32 L36 32 L54 -3 Z" fill="#004C87" />
+
+    <!-- Open Book Below (Layers of blue pages spreading) -->
+    <!-- Left Pages -->
+    <path d="M0 34 C-30 30, -65 20, -95 12 L-92 24 C-65 30, -30 40, 0 46 Z" fill="#00A3E0" />
+    <path d="M0 46 C-30 40, -65 30, -92 24 L-90 36 C-60 42, -30 52, 0 56 Z" fill="#0082C8" />
+    <path d="M0 56 C-30 52, -60 42, -90 36 L-85 50 C-55 56, -25 64, 0 68 Z" fill="#004C87" />
+
+    <!-- Right Pages -->
+    <path d="M0 34 C30 30, 65 20, 95 12 L92 24 C65 30, 30 40, 0 46 Z" fill="#00A3E0" />
+    <path d="M0 46 C30 40, 65 30, 92 24 L90 36 C60 42, 30 52, 0 56 Z" fill="#0082C8" />
+    <path d="M0 56 C30 52, 60 42, 90 36 L85 50 C55 56, 25 64, 0 68 Z" fill="#004C87" />
+  </g>
+</svg>

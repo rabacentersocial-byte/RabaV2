@@ -109,6 +109,7 @@ export interface SiteModulesVisibility {
   hero: boolean;
   pillars: boolean;
   stats: boolean;
+  partners?: boolean;
   accreditations: boolean;
   branches: boolean;
   services: boolean;
@@ -163,8 +164,8 @@ export const DEFAULT_LOGO_SETTINGS: SiteLogoSettings = {
 export const DEFAULT_THEME_SETTINGS: SiteThemeSettings = THEME_PRESETS[0];
 
 export const DEFAULT_SOCIAL_SETTINGS: SocialLinksSettings = {
-  whatsapp: 'https://wa.me/966551234567',
-  phone: '+966 55 123 4567',
+  whatsapp: 'https://wa.me/966575100100',
+  phone: '0575100100',
   x: 'https://x.com/rabacenter',
   instagram: 'https://instagram.com/rabacenter',
   tiktok: 'https://tiktok.com/@rabacenter',
@@ -248,7 +249,7 @@ export const DEFAULT_FOOTER_SETTINGS: FooterSettings = {
   accreditationBadgeEn: 'MOH & Saudi Ministry of Human Resources Accredited',
   addressAr: 'المملكة العربية السعودية، الرياض - حي الصحافة',
   addressEn: 'Riyadh, Saudi Arabia - Al Sahafa District',
-  phone: '+966 55 123 4567',
+  phone: '0575100100',
   email: 'contact@rabacenter.com',
   hoursAr: 'الأحد - الخميس: 8:00 ص - 8:00 م | السبت: 9:00 ص - 4:00 م',
   hoursEn: 'Sun - Thu: 8:00 AM - 8:00 PM | Sat: 9:00 AM - 4:00 PM',
@@ -266,6 +267,7 @@ export const DEFAULT_MODULES_VISIBILITY: SiteModulesVisibility = {
   hero: true,
   pillars: false,
   stats: true,
+  partners: true,
   accreditations: true,
   branches: true,
   services: true,
@@ -280,9 +282,9 @@ export const DEFAULT_MODULES_VISIBILITY: SiteModulesVisibility = {
 };
 
 const STORAGE_THEME_KEY = 'raba_site_theme_v1';
-const STORAGE_SOCIAL_KEY = 'raba_social_links_v1';
+const STORAGE_SOCIAL_KEY = 'raba_social_links_v2';
 const STORAGE_PILLARS_KEY = 'raba_program_pillars_v1';
-const STORAGE_FOOTER_KEY = 'raba_footer_settings_v1';
+const STORAGE_FOOTER_KEY = 'raba_footer_settings_v2';
 const STORAGE_MODULES_KEY = 'raba_site_modules_v1';
 const STORAGE_LOGO_KEY = 'raba_site_logo_v3';
 const STORAGE_LOGO_KEY_OLD2 = 'raba_site_logo_v2';
@@ -438,9 +440,17 @@ export function applyGlobalTheme(settings: SiteThemeSettings): void {
 // Social Load / Save
 export function getStoredSocialSettings(): SocialLinksSettings {
   try {
-    const raw = localStorage.getItem(STORAGE_SOCIAL_KEY);
+    const raw = localStorage.getItem(STORAGE_SOCIAL_KEY) || localStorage.getItem('raba_social_links_v1');
     if (!raw) return { ...DEFAULT_SOCIAL_SETTINGS };
-    return { ...DEFAULT_SOCIAL_SETTINGS, ...JSON.parse(raw) };
+    const parsed = JSON.parse(raw);
+    // Auto-migrate legacy placeholders
+    if (!parsed.phone || parsed.phone.includes('55 123 4567') || parsed.phone.includes('000 0000')) {
+      parsed.phone = '0575100100';
+    }
+    if (!parsed.whatsapp || parsed.whatsapp.includes('551234567')) {
+      parsed.whatsapp = 'https://wa.me/966575100100';
+    }
+    return { ...DEFAULT_SOCIAL_SETTINGS, ...parsed };
   } catch {
     return { ...DEFAULT_SOCIAL_SETTINGS };
   }
@@ -484,9 +494,13 @@ export function saveStoredPillars(pillars: ProgramPillarItem[]): void {
 // Footer Load / Save
 export function getStoredFooterSettings(): FooterSettings {
   try {
-    const raw = localStorage.getItem(STORAGE_FOOTER_KEY);
+    const raw = localStorage.getItem(STORAGE_FOOTER_KEY) || localStorage.getItem('raba_footer_settings_v1');
     if (!raw) return { ...DEFAULT_FOOTER_SETTINGS };
-    return { ...DEFAULT_FOOTER_SETTINGS, ...JSON.parse(raw) };
+    const parsed = JSON.parse(raw);
+    if (!parsed.phone || parsed.phone.includes('55 123 4567') || parsed.phone.includes('000 0000')) {
+      parsed.phone = '0575100100';
+    }
+    return { ...DEFAULT_FOOTER_SETTINGS, ...parsed };
   } catch {
     return { ...DEFAULT_FOOTER_SETTINGS };
   }

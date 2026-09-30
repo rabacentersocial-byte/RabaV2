@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 220" fill="none">
+  <!-- Top Center: SBA Monogram -->
+  <g transform="translate(210, 80) scale(0.95)">
+    <!-- S with Green bottom accent -->
+    <path d="M-95 -48 C-80 -48, -60 -40, -60 -24 C-60 -8, -75 -4, -85 0 C-98 4, -108 10, -108 24 C-108 42, -90 48, -72 48 C-60 48, -50 44, -45 38 L-45 22 C-52 28, -62 32, -72 32 C-82 32, -90 28, -90 18 C-90 8, -78 4, -68 0 C-55 -5, -44 -12, -44 -26 C-44 -42, -62 -48, -80 -48 C-90 -48, -100 -45, -105 -40 L-105 -25 C-100 -32, -90 -48, -95 -48 Z" fill="#0C1B33" />
+    <polygon points="-108,30 -90,48 -108,48" fill="#84CC16" />
+
+    <!-- B with Green middle accent -->
+    <path d="M-35 -48 L15 -48 C30 -48, 42 -38, 42 -22 C42 -12, 34 -4, 25 0 C36 4, 46 14, 46 26 C46 42, 32 48, 15 48 L-35 48 Z M-18 -32 L-18 -6 L12 -6 C20 -6, 26 -12, 26 -19 C26 -26, 20 -32, 12 -32 Z M-18 10 L-18 32 L15 32 C24 32, 30 26, 30 21 C30 16, 24 10, 15 10 Z" fill="#0C1B33" />
+    
+    <!-- A with Green left accent -->
+    <path d="M70 48 L95 -48 L122 48 L103 48 L97 22 L78 22 L72 48 Z M83 6 L93 -30 L101 6 Z" fill="#0C1B33" />
+    <polygon points="56,48 70,48 65,30" fill="#84CC16" />
+  </g>
+
+  <!-- Middle: Arabic Title "هيئة الإذاعة والتلفزيون" -->
+  <text x="210" y="152" text-anchor="middle" font-family="'Tajawal', 'Cairo', 'Segoe UI', sans-serif" font-weight="900" font-size="28" fill="#0C1B33" letter-spacing="-0.5">هيئة الإذاعة و التلفزيون</text>
+
+  <!-- Green Underline Divider -->
+  <line x1="80" y1="168" x2="340" y2="168" stroke="#84CC16" stroke-width="2.5" stroke-linecap="round" />
+
+  <!-- Bottom: English Subtitle -->
+  <text x="210" y="190" text-anchor="middle" font-family="'Inter', 'Segoe UI', sans-serif" font-weight="800" font-size="12" fill="#0C1B33" letter-spacing="2">SAUDI BROADCASTING AUTHORITY</text>
+</svg>
