@@ -522,7 +522,7 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
               {/* Direct URL input fallback */}
               <div>
                 <input
-                  type="url"
+                  type="text"
                   value={settings.customLogoUrl}
                   onChange={(e) => setSettings(prev => ({ ...prev, customLogoUrl: e.target.value }))}
                   placeholder={isArabic ? 'رابط مباشر للشعار أو مسار محلي...' : 'Direct image URL or path...'}

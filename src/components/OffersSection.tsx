@@ -148,7 +148,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
   return (
     <section 
       id="offers-section" 
-      className="py-14 sm:py-20 bg-[#031E18] relative overflow-hidden text-white"
+      className="py-14 sm:py-20 bg-slate-50/60 dark:bg-[#061F1A]/70 relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white"
     >
       {/* Background ambient lighting */}
       <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none" />
@@ -167,25 +167,25 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
           <div className={`max-w-3xl ${isArabic ? 'text-right' : 'text-left'}`}>
             
             {/* National Day Tracked Eyebrow */}
-            <div className="inline-flex items-center gap-2 bg-emerald-950/70 border border-emerald-500/30 px-3.5 py-1.5 rounded-full text-[#52B79A] text-xs font-black tracking-widest uppercase mb-3">
+            <div className="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-500/30 px-3.5 py-1.5 rounded-full text-[#0D6D54] dark:text-[#52B79A] text-xs font-black tracking-widest uppercase mb-3 shadow-2xs">
               <span className="text-base">🇸🇦</span>
               <span>{isArabic ? 'عروض وتخفيضات اليوم الوطني الـ96 — عزّنا بطبعنا' : 'SAUDI NATIONAL DAY 96 EXCLUSIVE OFFERS'}</span>
             </div>
 
             {/* Headline with dot */}
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight mb-2">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight mb-2">
               {isArabic ? (
                 <span>
-                  العروض والخصومات الحصرية<span className="text-[#00E5BE]">.</span>
+                  العروض والخصومات الحصرية<span className="text-[#0D6D54] dark:text-[#00E5BE]">.</span>
                 </span>
               ) : (
                 <span>
-                  Offers & Discounts<span className="text-[#00E5BE]">.</span>
+                  Offers & Discounts<span className="text-[#0D6D54] dark:text-[#00E5BE]">.</span>
                 </span>
               )}
             </h2>
 
-            <p className="text-sm sm:text-base text-emerald-100/80 leading-relaxed max-w-2xl font-medium">
+            <p className="text-sm sm:text-base text-slate-600 dark:text-emerald-100/80 leading-relaxed max-w-2xl font-medium">
               {isArabic 
                 ? 'استكشف باقة عروضنا الحصرية بمناسبة اليوم الوطني السعودي الـ96 مع إمكانية التمرير والاستفادة الفورية.'
                 : 'Explore our premier exclusive offers for Saudi National Day 96 with convenient horizontal slider.'}
@@ -194,8 +194,8 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
 
           {/* Navigation Arrows for Slider */}
           <div className="shrink-0 flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-2xl backdrop-blur-md text-xs font-bold text-emerald-200">
-              <Sparkles className="w-4 h-4 text-[#00E5BE]" />
+            <div className="hidden sm:flex items-center gap-2 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 px-3 py-1.5 rounded-2xl backdrop-blur-md text-xs font-bold text-slate-700 dark:text-emerald-200 shadow-2xs">
+              <Sparkles className="w-4 h-4 text-[#0D6D54] dark:text-[#00E5BE]" />
               <span>{isArabic ? `${activeOffers.length} عروض متاحة` : `${activeOffers.length} Active Offers`}</span>
             </div>
 
@@ -203,7 +203,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
               <button
                 onClick={() => handleScroll('prev')}
                 aria-label={isArabic ? 'العرض السابق' : 'Previous offer'}
-                className="w-10 h-10 rounded-full border border-emerald-500/30 bg-[#062c22]/80 text-emerald-200 hover:text-white hover:bg-emerald-600/40 flex items-center justify-center transition-all cursor-pointer shadow-md active:scale-95"
+                className="w-10 h-10 rounded-full border border-slate-200 dark:border-emerald-500/30 bg-white dark:bg-[#062c22]/80 text-slate-700 dark:text-emerald-200 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-emerald-600/40 flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
               >
                 {isArabic ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
               </button>
@@ -211,7 +211,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
               <button
                 onClick={() => handleScroll('next')}
                 aria-label={isArabic ? 'العرض التالي' : 'Next offer'}
-                className="w-10 h-10 rounded-full border border-emerald-500/30 bg-[#062c22]/80 text-emerald-200 hover:text-white hover:bg-emerald-600/40 flex items-center justify-center transition-all cursor-pointer shadow-md active:scale-95"
+                className="w-10 h-10 rounded-full border border-slate-200 dark:border-emerald-500/30 bg-white dark:bg-[#062c22]/80 text-slate-700 dark:text-emerald-200 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-emerald-600/40 flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
               >
                 {isArabic ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
               </button>

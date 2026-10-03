@@ -222,7 +222,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
   return (
     <section 
       id="testimonials" 
-      className="py-16 sm:py-24 bg-[#F7FAF8] dark:bg-[#071D18] relative overflow-hidden transition-colors"
+      className="py-16 sm:py-24 bg-transparent relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         

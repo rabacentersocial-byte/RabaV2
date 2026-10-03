@@ -64,10 +64,10 @@ export const Navbar: React.FC<NavbarProps> = ({
       className={`sticky top-0 z-40 transition-all duration-300 ${
         isScrolled 
           ? isDark 
-            ? 'bg-[#0B1120]/90 backdrop-blur-2xl border-b border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] py-2.5' 
+            ? 'bg-[#061412]/90 backdrop-blur-2xl border-b border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] py-2.5' 
             : 'bg-white/90 backdrop-blur-2xl border-b border-slate-200/90 shadow-[0_8px_25px_rgba(0,0,0,0.06)] py-2.5'
           : isDark 
-            ? 'bg-[#080C16]/65 backdrop-blur-xl border-b border-white/10 py-3.5' 
+            ? 'bg-[#061412]/75 backdrop-blur-xl border-b border-white/10 py-3.5' 
             : 'bg-white/75 backdrop-blur-xl border-b border-slate-200/70 py-3.5'
       }`}
     >

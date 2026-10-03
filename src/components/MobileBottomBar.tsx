@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Home, 
   Layers, 
@@ -21,23 +21,23 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
   const { isArabic } = useLanguage();
   const [activeTab, setActiveTab] = useState<'home' | 'services' | 'specialists' | 'chat'>('home');
   const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollYRef = useRef(0);
 
   // Auto-hide bottom bar on fast scroll down, reveal on scroll up for cleaner view
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      if (currentScrollY > 200 && currentScrollY > lastScrollY + 20) {
+      if (currentScrollY > 200 && currentScrollY > lastScrollYRef.current + 20) {
         setIsVisible(false);
-      } else if (currentScrollY < lastScrollY - 10 || currentScrollY < 100) {
+      } else if (currentScrollY < lastScrollYRef.current - 10 || currentScrollY < 100) {
         setIsVisible(true);
       }
-      setLastScrollY(currentScrollY);
+      lastScrollYRef.current = currentScrollY;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   const scrollToSection = (id: string, tab: 'home' | 'services' | 'specialists') => {
     setActiveTab(tab);

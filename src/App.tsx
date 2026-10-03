@@ -48,6 +48,8 @@ import {
   ParentReview,
   AdminUser
 } from './types';
+import { deduplicateSpecialists } from './utils/specialistDeduplication';
+import { savePersistentModule } from './utils/persistentSync';
 import { 
   getStoredThemeSettings, 
   applyGlobalTheme, 
@@ -64,7 +66,13 @@ export default function App() {
     applyGlobalTheme(getStoredThemeSettings());
 
     const handleThemeUpdate = () => applyGlobalTheme(getStoredThemeSettings());
-    const handleModulesUpdate = () => setModules(getStoredModulesVisibility());
+    const handleModulesUpdate = () => {
+      const next = getStoredModulesVisibility();
+      setModules((prev) => {
+        if (JSON.stringify(prev) === JSON.stringify(next)) return prev;
+        return next;
+      });
+    };
 
     window.addEventListener('raba_theme_updated', handleThemeUpdate);
     window.addEventListener('raba_modules_updated', handleModulesUpdate);
@@ -76,7 +84,13 @@ export default function App() {
       }
     };
     const handleNotifsUpdate = (e: any) => {
-      if (e?.detail) setNotifications(e.detail);
+      if (Array.isArray(e?.detail)) {
+        const next = e.detail;
+        setNotifications((prev) => {
+          if (prev.length === next.length && prev.every((n, i) => n.id === next[i].id)) return prev;
+          return next;
+        });
+      }
     };
 
     window.addEventListener(DISPATCH_REQUEST_EVENT, handleNewRequest);
@@ -84,13 +98,26 @@ export default function App() {
 
     const handleSpecialistsUpdate = (e: any) => {
       if (Array.isArray(e?.detail)) {
-        setSpecialists(e.detail);
+        const next = e.detail;
+        setSpecialists((prev) => {
+          if (prev.length === next.length && prev.every((s, i) => s.id === next[i].id && s.avatar === next[i].avatar)) {
+            return prev;
+          }
+          return next;
+        });
       } else {
         try {
           const saved = localStorage.getItem('raba_specialists');
           if (saved) {
             const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length > 0) setSpecialists(parsed);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setSpecialists((prev) => {
+                if (prev.length === parsed.length && prev.every((s, i) => s.id === parsed[i].id && s.avatar === parsed[i].avatar)) {
+                  return prev;
+                }
+                return parsed;
+              });
+            }
           }
         } catch { /* ignore */ }
       }
@@ -98,30 +125,57 @@ export default function App() {
 
     const handleAppointmentsUpdate = (e: any) => {
       if (Array.isArray(e?.detail)) {
-        setAppointments(e.detail);
+        const next = e.detail;
+        setAppointments((prev) => {
+          if (prev.length === next.length && prev.every((a, i) => a.id === next[i].id)) return prev;
+          return next;
+        });
       }
     };
 
     const handleSyncReady = () => {
       // Re-read theme and modules
       applyGlobalTheme(getStoredThemeSettings());
-      setModules(getStoredModulesVisibility());
+      const nextMods = getStoredModulesVisibility();
+      setModules((prev) => {
+        if (JSON.stringify(prev) === JSON.stringify(nextMods)) return prev;
+        return nextMods;
+      });
 
-      // Re-read specialists
+      // Re-read specialists gracefully without loop
       try {
         const savedSpec = localStorage.getItem('raba_specialists');
         if (savedSpec) {
           const parsed = JSON.parse(savedSpec);
-          if (Array.isArray(parsed) && parsed.length > 0) setSpecialists(parsed);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            const hasStaleMocks = parsed.length > SPECIALISTS.length ||
+              parsed.some((s: any) => s.id === 'spec-mohamed-omara' || s.id === 'spec-rawan-tablett' || s.id === 'spec-hossam-malki');
+            const fullList = hasStaleMocks
+              ? SPECIALISTS
+              : (parsed.length < SPECIALISTS.length
+                  ? deduplicateSpecialists([...parsed, ...SPECIALISTS.filter(s => !parsed.some(p => p.id === s.id || p.name === s.name))])
+                  : parsed);
+            setSpecialists((prev) => {
+              if (prev.length === fullList.length && prev.every((s, i) => s.id === fullList[i].id && s.avatar === fullList[i].avatar)) {
+                return prev;
+              }
+              return fullList;
+            });
+          }
         }
       } catch { /* ignore */ }
 
-      // Re-read appointments
+      // Re-read appointments gracefully
       try {
         const savedAppt = localStorage.getItem('raba_appointments');
         if (savedAppt) {
           const parsed = JSON.parse(savedAppt);
-          if (Array.isArray(parsed) && parsed.length > 0) setAppointments(parsed);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setAppointments((prev) => {
+              if (prev.length === parsed.length && prev.every((a, i) => a.id === parsed[i].id)) return prev;
+              return parsed;
+            });
+          }
         }
       } catch { /* ignore */ }
     };
@@ -180,9 +234,26 @@ export default function App() {
   const [specialists, setSpecialists] = useState<Specialist[]>(() => {
     try {
       const saved = localStorage.getItem('raba_specialists');
-      return saved ? JSON.parse(saved) : SPECIALISTS;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const hasStaleMocks = parsed.length > SPECIALISTS.length ||
+            parsed.some((s: any) => s.id === 'spec-mohamed-omara' || s.id === 'spec-rawan-tablett' || s.id === 'spec-hossam-malki');
+          if (hasStaleMocks) {
+            return deduplicateSpecialists(SPECIALISTS);
+          }
+          if (parsed.length < SPECIALISTS.length) {
+            const existingIds = new Set(parsed.map((s: Specialist) => s.id));
+            const existingNames = new Set(parsed.map((s: Specialist) => s.name));
+            const missing = SPECIALISTS.filter(s => !existingIds.has(s.id) && !existingNames.has(s.name));
+            return deduplicateSpecialists([...parsed, ...missing]);
+          }
+          return parsed;
+        }
+      }
+      return deduplicateSpecialists(SPECIALISTS);
     } catch {
-      return SPECIALISTS;
+      return deduplicateSpecialists(SPECIALISTS);
     }
   });
 

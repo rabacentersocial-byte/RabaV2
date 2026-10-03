@@ -1,0 +1,20 @@
+<svg viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="140" cy="140" r="125" fill="#FFFFFF" stroke="#006C35" stroke-width="4"/>
+  <!-- Outer Laurel Wreath -->
+  <path d="M55 160 C40 100, 75 50, 140 45 C205 50, 240 100, 225 160 C215 200, 185 225, 140 230 C95 225, 65 200, 55 160" stroke="#006C35" stroke-width="6" stroke-linecap="round" stroke-dasharray="8 12" fill="none"/>
+  <!-- Palm and Swords -->
+  <g transform="translate(140, 95) scale(0.95)">
+    <path d="M-2.5 -25 L2.5 -25 L2.5 10 L-2.5 10 Z" fill="#006C35"/>
+    <path d="M0 -25 C-12 -36, -26 -28, -28 -18 C-18 -22, -6 -18, 0 -25 Z" fill="#006C35"/>
+    <path d="M0 -25 C12 -36, 26 -28, 28 -18 C18 -22, 6 -18, 0 -25 Z" fill="#006C35"/>
+    <path d="M0 -18 C-16 -24, -28 -12, -24 -2 C-14 -8, -4 -10, 0 -18 Z" fill="#006C35"/>
+    <path d="M0 -18 C16 -24, 28 -12, 24 -2 C14 -8, 4 -10, 0 -18 Z" fill="#006C35"/>
+    <!-- Crossed Swords -->
+    <path d="M-22 12 Q0 20 22 26 L20 29 Q0 23 -20 15 Z" fill="#006C35"/>
+    <path d="M22 12 Q0 20 -22 26 L-20 29 Q0 23 20 15 Z" fill="#006C35"/>
+  </g>
+  <!-- Crescent Banner -->
+  <path d="M68 142 C85 185, 195 185, 212 142 L205 136 C190 172, 90 172, 75 136 Z" fill="#006C35"/>
+  <text x="140" y="160" text-anchor="middle" font-family="'Tajawal', 'Cairo', sans-serif" font-weight="900" font-size="14" fill="#FFFFFF">وزارة الـداخـلـيـة</text>
+  <text x="140" y="178" text-anchor="middle" font-family="'Tajawal', 'Cairo', sans-serif" font-weight="800" font-size="10" fill="#006C35">المملكة العربية السعودية</text>
+</svg>

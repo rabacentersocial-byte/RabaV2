@@ -130,7 +130,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
   ];
 
   return (
-    <footer className={`bg-white/90 dark:bg-slate-950/75 backdrop-blur-2xl text-slate-700 dark:text-slate-300 pt-16 pb-28 md:pb-12 ${isArabic ? 'text-right' : 'text-left'} border-t border-slate-200/90 dark:border-white/15 relative overflow-hidden transition-colors duration-300`}>
+    <footer className={`bg-white/90 dark:bg-[#061412]/90 backdrop-blur-2xl text-slate-700 dark:text-slate-300 pt-16 pb-28 md:pb-12 ${isArabic ? 'text-right' : 'text-left'} border-t border-slate-200/90 dark:border-white/15 relative overflow-hidden transition-colors duration-300`}>
       {/* Ambient background glow */}
       <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-48 bg-[#00E5BE]/10 rounded-full blur-[100px] pointer-events-none" />
       

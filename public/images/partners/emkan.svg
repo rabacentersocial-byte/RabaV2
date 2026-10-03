@@ -1,0 +1,10 @@
+<svg viewBox="0 0 320 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(25, 20)">
+    <path d="M38 12 C38 4, 30 -4, 20 -4 C10 -4, 4 4, 4 14 C4 30, 24 38, 40 46 C58 54, 72 64, 72 80 C72 94, 60 104, 44 104 C28 104, 14 94, 14 80" stroke="#2DD4BF" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <path d="M24 48 C14 48, -2 40, -2 24 C-2 10, 8 -2, 22 -2 C38 -2, 48 12, 48 28" stroke="#2DD4BF" stroke-width="12" stroke-linecap="round" fill="none"/>
+  </g>
+  <g transform="translate(150, 48)">
+    <text x="0" y="0" font-family="'Tajawal', 'Cairo', sans-serif" font-weight="900" font-size="36" fill="#4C4B82">إمـكـان</text>
+    <text x="0" y="32" font-family="'Inter', 'Montserrat', sans-serif" font-weight="900" font-size="24" fill="#4C4B82" letter-spacing="2">EMKAN</text>
+  </g>
+</svg>

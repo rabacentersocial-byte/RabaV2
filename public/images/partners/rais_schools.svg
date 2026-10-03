@@ -1,0 +1,13 @@
+<svg viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="140" cy="140" r="132" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+  <path d="M65 180 C50 120, 80 65, 140 60 C200 65, 230 120, 215 180" stroke="#004098" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <text x="140" y="55" text-anchor="middle" font-family="'Inter', sans-serif" font-weight="900" font-size="32" fill="#004098" letter-spacing="4">RAIS</text>
+  <g transform="translate(140, 145) scale(0.9)">
+    <path d="M-45 -40 C-20 -50, -5 -40, 0 -30 C5 -40, 20 -50, 45 -40 L45 25 C20 15, 5 25, 0 35 C-5 25, -20 15, -45 25 Z" fill="#004098"/>
+    <path d="M-2 -30 L-2 35" stroke="#FFFFFF" stroke-width="3"/>
+    <path d="M-40 -30 C-20 -38, -5 -30, -2 -22 L-2 28 C-5 20, -20 12, -40 20 Z" fill="#1E3A8A"/>
+    <path d="M40 -30 C20 -38, 5 -30, 2 -22 L2 28 C5 20, 20 12, 40 20 Z" fill="#1E3A8A"/>
+  </g>
+  <text x="140" y="215" text-anchor="middle" font-family="'Inter', sans-serif" font-weight="800" font-size="18" fill="#004098">Education</text>
+  <text x="140" y="238" text-anchor="middle" font-family="'Inter', sans-serif" font-weight="800" font-size="18" fill="#004098">for Life</text>
+</svg>

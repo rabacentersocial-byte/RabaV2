@@ -1,28 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 220" fill="none">
-  <!-- Center/Top: Official Green Circular Emblem -->
-  <g transform="translate(210, 62) scale(0.95)">
-    <!-- Outer Green Circle with double boundary -->
-    <circle cx="0" cy="0" r="42" fill="#FFFFFF" stroke="#16A34A" stroke-width="4.5" />
-    
-    <!-- Palm Tree with crossed swords and foliage -->
-    <!-- Trunk -->
-    <path d="M-2.5 -15 L2.5 -15 L2.5 12 L-2.5 12 Z" fill="#15803D" />
-    <!-- Fronds -->
-    <path d="M0 -15 C-6 -23, -16 -21, -18 -15 C-12 -17, -4 -13, 0 -15 Z" fill="#16A34A" />
-    <path d="M0 -15 C6 -23, 16 -21, 18 -15 C12 -17, 4 -13, 0 -15 Z" fill="#16A34A" />
-    <path d="M0 -10 C-10 -15, -18 -7, -14 0 C-8 -4, -2 -6, 0 -10 Z" fill="#15803D" />
-    <path d="M0 -10 C10 -15, 18 -7, 14 0 C8 -4, 2 -6, 0 -10 Z" fill="#15803D" />
-    <path d="M0 -5 C-12 -9, -16 2, -10 8 C-6 3, -1 0, 0 -5 Z" fill="#16A34A" />
-    <path d="M0 -5 C12 -9, 16 2, 10 8 C6 3, 1 0, 0 -5 Z" fill="#16A34A" />
-    
-    <!-- Curved Crossed Swords at Base -->
-    <path d="M-14 10 Q0 16 14 20 L13 22 Q0 18 -13 12 Z" fill="#15803D" />
-    <path d="M14 10 Q0 16 -14 20 L-13 22 Q0 18 13 12 Z" fill="#15803D" />
+<svg viewBox="0 0 340 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(170, 48) scale(0.9)">
+    <circle cx="0" cy="0" r="38" fill="#0C7844" stroke="#D4AF37" stroke-width="4"/>
+    <path d="M-2 -14 L2 -14 L2 10 L-2 10 Z" fill="#D4AF37"/>
+    <path d="M0 -14 C-5 -22, -14 -20, -16 -14 C-10 -16, -3 -12, 0 -14 Z" fill="#D4AF37"/>
+    <path d="M0 -14 C5 -22, 14 -20, 16 -14 C10 -16, 3 -12, 0 -14 Z" fill="#D4AF37"/>
+    <!-- Crossed Swords -->
+    <path d="M-12 10 Q0 16 12 20 L11 22 Q0 18 -11 12 Z" fill="#D4AF37"/>
+    <path d="M12 10 Q0 16 -12 20 L-11 22 Q0 18 11 12 Z" fill="#D4AF37"/>
   </g>
-
-  <!-- Typography: Centered Below -->
-  <g transform="translate(210, 138)">
-    <text x="0" y="24" text-anchor="middle" font-family="'Tajawal', 'Cairo', 'Segoe UI', sans-serif" font-weight="900" font-size="25" fill="#0C3456" letter-spacing="-0.3">وزارة البيئة والمياه والزراعة</text>
-    <text x="0" y="52" text-anchor="middle" font-family="'Inter', 'Segoe UI', sans-serif" font-weight="700" font-size="12" fill="#1E293B" letter-spacing="0.3">Ministry of Environment Water &amp; Agriculture</text>
-  </g>
+  <text x="170" y="116" text-anchor="middle" font-family="'Tajawal', 'Cairo', sans-serif" font-weight="900" font-size="20" fill="#0C7844">وزارة البيئة والمياه والزراعة</text>
+  <text x="170" y="138" text-anchor="middle" font-family="'Inter', sans-serif" font-weight="700" font-size="11" fill="#0C7844" letter-spacing="0.3">Ministry of Environment Water &amp; Agriculture</text>
 </svg>

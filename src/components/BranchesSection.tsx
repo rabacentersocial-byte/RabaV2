@@ -149,12 +149,12 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
   return (
     <section 
       id="branches" 
-      className="py-16 sm:py-24 bg-[#0F172A] text-white relative overflow-hidden transition-colors border-b border-white/10"
+      className="py-16 sm:py-24 bg-slate-50/70 dark:bg-[#071915]/60 text-slate-900 dark:text-white relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10"
       dir={isArabic ? 'rtl' : 'ltr'}
     >
       {/* Background Ambience & Lighting */}
-      <div className="absolute top-10 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="absolute bottom-10 left-10 w-[500px] h-[500px] bg-pink-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute top-10 right-10 w-96 h-96 bg-emerald-500/10 dark:bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute bottom-10 left-10 w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -162,27 +162,27 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
         <div className="mb-8 space-y-6">
           {/* Main Title Block */}
           <div className="max-w-4xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#00E5BE]/10 border border-[#00E5BE]/30 text-[#00E5BE] text-xs font-black mb-3 shadow-2xs">
-              <Compass className="w-4 h-4 text-[#00E5BE]" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 dark:bg-[#00E5BE]/10 border border-emerald-200 dark:border-[#00E5BE]/30 text-[#0D6D54] dark:text-[#00E5BE] text-xs font-black mb-3 shadow-2xs">
+              <Compass className="w-4 h-4 text-[#0D6D54] dark:text-[#00E5BE]" />
               <span>{isArabic ? 'شبكة فروع مركز رابا' : 'RABA CENTER BRANCH NETWORK'}</span>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight mb-3 [text-wrap:balance]">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight mb-3 [text-wrap:balance]">
               {isArabic ? (
                 <>
                   <span className="inline-block">فروعنا المعتمدة</span>{' '}
-                  <span className="inline-block bg-gradient-to-r from-[#00E5BE] to-[#38BDF8] bg-clip-text text-transparent">
+                  <span className="inline-block bg-gradient-to-r from-[#0D6D54] to-[#00E5BE] bg-clip-text text-transparent">
                     داخل المملكة العربية السعودية
                   </span>
                 </>
               ) : (
                 <>
-                  Our Accredited Branches <span className="text-[#00E5BE]">Across Saudi Arabia</span>
+                  Our Accredited Branches <span className="text-[#0D6D54] dark:text-[#00E5BE]">Across Saudi Arabia</span>
                 </>
               )}
             </h2>
 
-            <p className="text-sm sm:text-base text-slate-300 font-medium leading-relaxed max-w-3xl [text-wrap:pretty]">
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium leading-relaxed max-w-3xl [text-wrap:pretty]">
               {isArabic 
                 ? 'مراكز وعيادات مجهزة بأعلى المعايير العالمية لتقديم خدمات التأهيل وتحليل السلوك في بيئة مهيأة وآمنة لطفلك في الرياض، وجدة، والخبر، والأحساء، والخرج.'
                 : 'Clinics equipped with international clinical standards for behavioral and occupational rehabilitation across Riyadh, Jeddah, Al-Khobar, Al-Ahsa, and Al-Kharj.'}
@@ -190,21 +190,21 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
           </div>
 
           {/* Controls: Filter tabs & Slider Navigation */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-4 border-t border-white/10">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-4 border-t border-slate-200/80 dark:border-white/10">
             
             {/* City Filter Tabs */}
-            <div className="bg-slate-800/90 p-1.5 rounded-2xl border border-white/10 flex items-center gap-1 shadow-xs overflow-x-auto no-scrollbar">
+            <div className="bg-white dark:bg-slate-800/90 p-1.5 rounded-2xl border border-slate-200 dark:border-white/10 flex items-center gap-1 shadow-xs overflow-x-auto no-scrollbar">
               <button
                 onClick={() => setSelectedCity('all')}
                 className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   selectedCity === 'all'
-                    ? 'bg-[#00E5BE] text-slate-950 shadow-xs'
-                    : 'text-slate-300 hover:text-white'
+                    ? 'bg-[#0D6D54] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <span>{isArabic ? 'كافة الفروع' : 'All Branches'}</span>
                 <span className={`text-[11px] px-1.5 py-0.2 rounded-md font-bold ${
-                  selectedCity === 'all' ? 'bg-slate-950/20 text-slate-950' : 'bg-white/10 text-slate-300'
+                  selectedCity === 'all' ? 'bg-white/20 dark:bg-slate-950/20 text-white dark:text-slate-950' : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300'
                 }`}>
                   {branches.length}
                 </span>
@@ -214,13 +214,13 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                 onClick={() => setSelectedCity('riyadh')}
                 className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   selectedCity === 'riyadh'
-                    ? 'bg-[#00E5BE] text-slate-950 shadow-xs'
-                    : 'text-slate-300 hover:text-white'
+                    ? 'bg-[#0D6D54] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <span>{isArabic ? 'الرياض' : 'Riyadh'}</span>
                 <span className={`text-[11px] px-1.5 py-0.2 rounded-md font-bold ${
-                  selectedCity === 'riyadh' ? 'bg-slate-950/20 text-slate-950' : 'bg-white/10 text-slate-300'
+                  selectedCity === 'riyadh' ? 'bg-white/20 dark:bg-slate-950/20 text-white dark:text-slate-950' : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300'
                 }`}>
                   {riyadhCount}
                 </span>
@@ -230,13 +230,13 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                 onClick={() => setSelectedCity('jeddah')}
                 className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   selectedCity === 'jeddah'
-                    ? 'bg-[#00E5BE] text-slate-950 shadow-xs'
-                    : 'text-slate-300 hover:text-white'
+                    ? 'bg-[#0D6D54] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <span>{isArabic ? 'جدة' : 'Jeddah'}</span>
                 <span className={`text-[11px] px-1.5 py-0.2 rounded-md font-bold ${
-                  selectedCity === 'jeddah' ? 'bg-slate-950/20 text-slate-950' : 'bg-white/10 text-slate-300'
+                  selectedCity === 'jeddah' ? 'bg-white/20 dark:bg-slate-950/20 text-white dark:text-slate-950' : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300'
                 }`}>
                   {jeddahCount}
                 </span>
@@ -246,13 +246,13 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                 onClick={() => setSelectedCity('khobar')}
                 className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   selectedCity === 'khobar'
-                    ? 'bg-[#00E5BE] text-slate-950 shadow-xs'
-                    : 'text-slate-300 hover:text-white'
+                    ? 'bg-[#0D6D54] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <span>{isArabic ? 'الخبر' : 'Al-Khobar'}</span>
                 <span className={`text-[11px] px-1.5 py-0.2 rounded-md font-bold ${
-                  selectedCity === 'khobar' ? 'bg-slate-950/20 text-slate-950' : 'bg-white/10 text-slate-300'
+                  selectedCity === 'khobar' ? 'bg-white/20 dark:bg-slate-950/20 text-white dark:text-slate-950' : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300'
                 }`}>
                   {khobarCount}
                 </span>
@@ -262,13 +262,13 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                 onClick={() => setSelectedCity('ahsa')}
                 className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   selectedCity === 'ahsa'
-                    ? 'bg-[#00E5BE] text-slate-950 shadow-xs'
-                    : 'text-slate-300 hover:text-white'
+                    ? 'bg-[#0D6D54] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <span>{isArabic ? 'الأحساء' : 'Al-Ahsa'}</span>
                 <span className={`text-[11px] px-1.5 py-0.2 rounded-md font-bold ${
-                  selectedCity === 'ahsa' ? 'bg-slate-950/20 text-slate-950' : 'bg-white/10 text-slate-300'
+                  selectedCity === 'ahsa' ? 'bg-white/20 dark:bg-slate-950/20 text-white dark:text-slate-950' : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300'
                 }`}>
                   {ahsaCount}
                 </span>
@@ -278,13 +278,13 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                 onClick={() => setSelectedCity('kharj')}
                 className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   selectedCity === 'kharj'
-                    ? 'bg-[#00E5BE] text-slate-950 shadow-xs'
-                    : 'text-slate-300 hover:text-white'
+                    ? 'bg-[#0D6D54] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <span>{isArabic ? 'الخرج' : 'Al-Kharj'}</span>
                 <span className={`text-[11px] px-1.5 py-0.2 rounded-md font-bold ${
-                  selectedCity === 'kharj' ? 'bg-slate-950/20 text-slate-950' : 'bg-white/10 text-slate-300'
+                  selectedCity === 'kharj' ? 'bg-white/20 dark:bg-slate-950/20 text-white dark:text-slate-950' : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300'
                 }`}>
                   {kharjCount}
                 </span>
@@ -294,13 +294,13 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
             {/* View Mode Toggle & Slider Navigation */}
             <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
               {/* View Mode Toggle (Slider / Grid) */}
-              <div className="bg-slate-800/90 p-1 rounded-2xl border border-white/10 flex items-center shadow-xs">
+              <div className="bg-white dark:bg-slate-800/90 p-1 rounded-2xl border border-slate-200 dark:border-white/10 flex items-center shadow-xs">
                 <button
                   onClick={() => setViewMode('slider')}
                   className={`p-2 rounded-xl transition-all cursor-pointer ${
                     viewMode === 'slider' 
-                      ? 'bg-[#00E5BE] text-slate-950 shadow-xs' 
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-[#0D6D54] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs' 
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                   title={isArabic ? 'عرض سلايدر تفاعلي' : 'Slider View'}
                 >
@@ -310,8 +310,8 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-xl transition-all cursor-pointer ${
                     viewMode === 'grid' 
-                      ? 'bg-[#00E5BE] text-slate-950 shadow-xs' 
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-[#0D6D54] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs' 
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                   title={isArabic ? 'عرض شبكي' : 'Grid View'}
                 >
@@ -326,9 +326,9 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                     onClick={() => handleScroll('prev')}
                     disabled={!canScrollPrev}
                     aria-label={isArabic ? 'الفرع السابق' : 'Previous branch'}
-                    className={`w-10 h-10 rounded-full border border-white/15 bg-slate-800 text-slate-200 flex items-center justify-center shadow-xs transition-all cursor-pointer ${
+                    className={`w-10 h-10 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs transition-all cursor-pointer ${
                       canScrollPrev 
-                        ? 'hover:bg-slate-700 hover:text-white active:scale-95' 
+                        ? 'hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white active:scale-95' 
                         : 'opacity-40 cursor-not-allowed'
                     }`}
                   >
@@ -339,9 +339,9 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                     onClick={() => handleScroll('next')}
                     disabled={!canScrollNext}
                     aria-label={isArabic ? 'الفرع التالي' : 'Next branch'}
-                    className={`w-10 h-10 rounded-full border border-white/15 bg-slate-800 text-slate-200 flex items-center justify-center shadow-xs transition-all cursor-pointer ${
+                    className={`w-10 h-10 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs transition-all cursor-pointer ${
                       canScrollNext 
-                        ? 'hover:bg-slate-700 hover:text-white active:scale-95' 
+                        ? 'hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white active:scale-95' 
                         : 'opacity-40 cursor-not-allowed'
                     }`}
                   >
@@ -371,10 +371,10 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
               {filteredBranches.map((branch) => (
                 <div
                   key={branch.id}
-                  className="w-[85vw] max-w-[360px] sm:w-[350px] md:w-[365px] shrink-0 snap-start bg-[#16202C] rounded-3xl overflow-hidden border border-white/10 shadow-2xl hover:border-[#00E5BE]/40 transition-all duration-300 flex flex-col justify-between group relative"
+                  className="w-[85vw] max-w-[360px] sm:w-[350px] md:w-[365px] shrink-0 snap-start bg-white dark:bg-[#0C1F1A] rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-xl hover:border-emerald-500/50 dark:hover:border-[#00E5BE]/40 transition-all duration-300 flex flex-col justify-between group relative"
                 >
                   {/* Top: 3D Map Pin Graphic */}
-                  <div className="relative h-60 overflow-hidden bg-[#0e1722]">
+                  <div className="relative h-60 overflow-hidden bg-slate-100 dark:bg-[#071713]">
                     <BranchMapPinGraphic branchName={branch.name} />
 
                     {/* City Tag Indicator Overlay */}
@@ -385,7 +385,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                   </div>
 
                   {/* Body Content */}
-                  <div className="p-6 flex-1 flex flex-col justify-between space-y-5 bg-[#16202C]">
+                  <div className="p-6 flex-1 flex flex-col justify-between space-y-5 bg-white dark:bg-[#0C1F1A]">
                     
                     <div className="space-y-3">
                       {/* Region Tag Pill */}
@@ -394,29 +394,29 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                           {isArabic ? branch.regionBadgeAr : branch.regionBadgeEn}
                         </span>
 
-                        <span className="text-[11px] text-slate-400 font-semibold flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-[#00E5BE]" />
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold flex items-center gap-1">
+                          <Clock className="w-3 h-3 text-[#0D6D54] dark:text-[#00E5BE]" />
                           <span>{isArabic ? branch.hoursAr : branch.hoursEn}</span>
                         </span>
                       </div>
 
                       {/* Branch Name with single LedClubBadge */}
                       <div className="flex items-center gap-2.5 flex-wrap">
-                        <h3 className="text-xl font-black text-white group-hover:text-[#00E5BE] transition-colors leading-snug">
+                        <h3 className="text-xl font-black text-slate-900 dark:text-white group-hover:text-[#0D6D54] dark:group-hover:text-[#00E5BE] transition-colors leading-snug">
                           {isArabic ? branch.name : branch.nameEn}
                         </h3>
                         {branch.hasClubBadge && <LedClubBadge />}
                       </div>
 
                       {/* Branch Address */}
-                      <div className="text-xs text-slate-300 leading-relaxed min-h-[48px]">
-                        <span className="font-bold text-white ml-1">{isArabic ? 'العنوان:' : 'Address:'}</span>
+                      <div className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed min-h-[48px]">
+                        <span className="font-bold text-slate-900 dark:text-white ml-1">{isArabic ? 'العنوان:' : 'Address:'}</span>
                         <span>{isArabic ? branch.address : branch.addressEn}</span>
                       </div>
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/10">
+                    <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100 dark:border-white/10">
                       
                       {/* Google Maps Button */}
                       <a
@@ -471,9 +471,9 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
             {filteredBranches.map((branch) => (
               <div
                 key={branch.id}
-                className="bg-[#16202C] rounded-3xl overflow-hidden border border-white/10 shadow-2xl hover:border-[#00E5BE]/40 transition-all duration-300 flex flex-col justify-between group relative"
+                className="bg-white dark:bg-[#0C1F1A] rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-xl hover:border-emerald-500/50 dark:hover:border-[#00E5BE]/40 transition-all duration-300 flex flex-col justify-between group relative"
               >
-                <div className="relative h-56 overflow-hidden bg-[#0e1722]">
+                <div className="relative h-56 overflow-hidden bg-slate-100 dark:bg-[#071713]">
                   <BranchMapPinGraphic branchName={branch.name} />
                   <div className="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-bold text-slate-300 border border-white/10 flex items-center gap-1">
                     <MapPin className="w-3 h-3 text-[#00E5BE]" />
@@ -481,7 +481,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                   </div>
                 </div>
 
-                <div className="p-5 flex-1 flex flex-col justify-between space-y-4 bg-[#16202C]">
+                <div className="p-5 flex-1 flex flex-col justify-between space-y-4 bg-white dark:bg-[#0C1F1A]">
                   <div className="space-y-2.5">
                     {/* Region Tag Pill */}
                     <div className="flex items-center justify-between">
@@ -489,26 +489,26 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                         {isArabic ? branch.regionBadgeAr : branch.regionBadgeEn}
                       </span>
 
-                      <span className="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
-                        <Clock className="w-3 h-3 text-[#00E5BE]" />
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-[#0D6D54] dark:text-[#00E5BE]" />
                         <span>{isArabic ? branch.hoursAr : branch.hoursEn}</span>
                       </span>
                     </div>
 
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-lg font-black text-white group-hover:text-[#00E5BE] transition-colors leading-snug">
+                      <h3 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-[#0D6D54] dark:group-hover:text-[#00E5BE] transition-colors leading-snug">
                         {isArabic ? branch.name : branch.nameEn}
                       </h3>
                       {branch.hasClubBadge && <LedClubBadge />}
                     </div>
 
-                    <p className="text-xs text-slate-300 leading-relaxed min-h-[48px]">
-                      <span className="font-bold text-white ml-1">{isArabic ? 'العنوان:' : 'Address:'}</span>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed min-h-[48px]">
+                      <span className="font-bold text-slate-900 dark:text-white ml-1">{isArabic ? 'العنوان:' : 'Address:'}</span>
                       <span>{isArabic ? branch.address : branch.addressEn}</span>
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/10">
+                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-white/10">
                     <a
                       href={branch.googleMapsUrl}
                       target="_blank"

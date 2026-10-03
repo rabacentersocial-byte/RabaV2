@@ -99,7 +99,7 @@ export const AccreditationsSection: React.FC = () => {
   return (
     <section 
       id="accreditations-section"
-      className="py-8 sm:py-10 bg-[#07111E] dark:bg-[#050D18] text-white relative overflow-hidden border-t border-b border-white/5 select-none"
+      className="py-8 sm:py-10 bg-slate-50/60 dark:bg-white/[0.02] text-slate-800 dark:text-white relative overflow-hidden border-t border-b border-slate-200/80 dark:border-white/10 select-none transition-colors"
     >
       {/* CSS Animation Keyframes for Smooth, Steady, Slow Marquee */}
       <style>{`
@@ -122,14 +122,14 @@ export const AccreditationsSection: React.FC = () => {
       `}</style>
 
       {/* Edge gradient fade masks for smooth entrance/exit */}
-      <div className="absolute top-0 right-0 bottom-0 w-16 sm:w-28 bg-gradient-to-l from-[#07111E] dark:from-[#050D18] to-transparent z-20 pointer-events-none" />
-      <div className="absolute top-0 left-0 bottom-0 w-16 sm:w-28 bg-gradient-to-r from-[#07111E] dark:from-[#050D18] to-transparent z-20 pointer-events-none" />
+      <div className="absolute top-0 right-0 bottom-0 w-16 sm:w-28 bg-gradient-to-l from-slate-50/90 dark:from-[#061412] to-transparent z-20 pointer-events-none" />
+      <div className="absolute top-0 left-0 bottom-0 w-16 sm:w-28 bg-gradient-to-r from-slate-50/90 dark:from-[#061412] to-transparent z-20 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         
         {/* Simple Centered Header: "معتمدون من" exactly matching screenshot */}
         <div className="text-center mb-6 sm:mb-8">
-          <h3 className="text-xs sm:text-sm font-semibold text-slate-400 dark:text-slate-400 tracking-wider">
+          <h3 className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 tracking-wider">
             {isArabic ? (settings.titleAr || 'معتمدون من') : (settings.titleEn || 'Accredited By')}
           </h3>
         </div>
@@ -145,7 +145,7 @@ export const AccreditationsSection: React.FC = () => {
                 title={isArabic ? `${item.nameAr} - انقر للتفاصيل` : `${item.nameEn} - Click for details`}
               >
                 {/* Certification Name / Label */}
-                <span className="text-xs sm:text-sm md:text-base font-bold text-slate-300 dark:text-slate-300 tracking-wider group-hover:text-white transition-colors">
+                <span className="text-xs sm:text-sm md:text-base font-bold text-slate-700 dark:text-slate-300 tracking-wider group-hover:text-[#0D6D54] dark:group-hover:text-white transition-colors">
                   {item.label}
                 </span>
 

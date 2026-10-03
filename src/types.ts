@@ -15,7 +15,16 @@ export interface Specialist {
   titleEn?: string;
   role: string;
   roleEn?: string;
+  category?: 'all' | 'aba' | 'occupational' | 'speech' | 'psychology' | string;
+  department?: string;
   avatar: string;
+  cardImage?: string;
+  fallbackAvatar?: string;
+  orderIndex?: number;
+  posterCrop?: string;
+  portraitCrop?: string;
+  focalPosition?: string;
+  zoomLevel?: number;
   experienceYears: number;
   licenseNumber: string;
   specialties: string[];
@@ -61,7 +70,7 @@ export interface TherapyPackage {
   badgeEn?: string;
   tagline: string;
   taglineEn?: string;
-  category?: 'all' | 'summer' | 'assessment' | 'sensory' | 'speech' | 'aba' | 'physical';
+  category?: 'all' | 'summer' | 'assessment' | 'sensory' | 'speech' | 'aba';
   categoryTitle?: string;
   categoryTitleEn?: string;
   categoryCode?: string;

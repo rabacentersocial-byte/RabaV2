@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import { Specialist } from '../types';
 import { useLanguage } from '../context/LanguageContext';
-import { getStoredGlobalCardSettings, findCustomSettingForDoctor } from '../data/specialistCustomizer';
 
 interface SpecialistCvModalProps {
   specialist: Specialist | null;
@@ -90,10 +89,12 @@ export const SpecialistCvModal: React.FC<SpecialistCvModalProps> = ({
                   <Clock className="w-3.5 h-3.5 text-sky-600 dark:text-[#00E5BE]" />
                   {isArabic ? `خبرة سريرية: ${specialist.experienceYears} سنوات` : `Clinical Exp: ${specialist.experienceYears} Years`}
                 </span>
-                <span className="flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-sky-600 dark:text-[#00E5BE]" />
-                  {isArabic ? 'ترخيص الهيئة:' : 'SCFHS Lic:'} <strong className="text-slate-900 dark:text-white font-mono">{specialist.licenseNumber}</strong>
-                </span>
+                {specialist.licenseNumber && specialist.licenseNumber.trim() !== '' && (
+                  <span className="flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-sky-600 dark:text-[#00E5BE]" />
+                    {isArabic ? 'ترخيص الهيئة:' : 'SCFHS Lic:'} <strong className="text-slate-900 dark:text-white font-mono">{specialist.licenseNumber}</strong>
+                  </span>
+                )}
                 <span className="flex items-center gap-1 text-amber-500 dark:text-amber-300 font-bold">
                   <Star className="w-3.5 h-3.5 fill-amber-500 dark:fill-amber-300" />
                   {specialist.rating} ({specialist.reviewsCount} {isArabic ? 'تقييم' : 'reviews'})
@@ -176,30 +177,6 @@ export const SpecialistCvModal: React.FC<SpecialistCvModalProps> = ({
                   </span>
                 ))}
               </div>
-            </div>
-            <div className={`text-center ${isArabic ? 'sm:text-left' : 'sm:text-right'}`}>
-              <span className="text-xs text-slate-500 dark:text-slate-400 block">
-                {isArabic ? 'رسوم جلسة التقييم / العلاج:' : 'Session / Assessment Fee:'}
-              </span>
-              {(() => {
-                const globalSettings = getStoredGlobalCardSettings();
-                const custom = findCustomSettingForDoctor(specialist);
-                const isPriceHidden = globalSettings.hideAllSessionPrices || !!custom?.hideSessionPrice || specialist.sessionPrice <= 0;
-                
-                if (isPriceHidden) {
-                  return (
-                    <span className="text-sm font-black text-sky-600 dark:text-[#00E5BE]">
-                      {isArabic ? 'تحدد بعد التقييم الإكلينيكي الأول' : 'Determined Upon Initial Assessment'}
-                    </span>
-                  );
-                }
-
-                return (
-                  <span className="text-xl font-black text-sky-600 dark:text-[#00E5BE]">
-                    {specialist.sessionPrice} {isArabic ? 'ر.س' : 'SAR'}
-                  </span>
-                );
-              })()}
             </div>
           </div>
 

@@ -504,14 +504,17 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
                   <span>{isArabic ? `+${dailyChildrenCount} أطفال جدد اليوم` : `+${dailyChildrenCount} Today`}</span>
                 </div>
 
-                {/* Yellow Mail Badge */}
-                <div className="absolute -bottom-3 -right-2 sm:-right-4 z-30 bg-white/95 text-slate-900 p-2 rounded-2xl shadow-xl flex items-center gap-2 max-w-[190px] border border-slate-200">
-                  <div className="w-6 h-6 rounded-lg bg-amber-400 text-slate-950 flex items-center justify-center shrink-0">
+                {/* Yellow Mail Badge with live counter indicator */}
+                <div className="absolute -bottom-3 -right-2 sm:-right-4 z-30 bg-white/95 text-slate-900 p-2 rounded-2xl shadow-xl flex items-center gap-2 max-w-[210px] border border-slate-200">
+                  <div className="relative w-6 h-6 rounded-lg bg-amber-400 text-slate-950 flex items-center justify-center shrink-0">
                     <Mail className="w-3.5 h-3.5" />
+                    <span className="absolute -top-1 -right-1 min-w-3.5 h-3.5 px-0.5 rounded-full bg-emerald-600 text-white text-[7px] font-black flex items-center justify-center">
+                      +{dailyChildrenCount}
+                    </span>
                   </div>
                   <div>
                     <div className="text-[10px] font-black flex items-center gap-1">
-                      <span>{isArabic ? 'تم استلام طلبك' : 'Request Sent'}</span>
+                      <span>{isArabic ? `تم استلام طلب جديد (#${dailyChildrenCount})` : `Request (#${dailyChildrenCount})`}</span>
                       <span className="text-emerald-600">✔</span>
                     </div>
                   </div>

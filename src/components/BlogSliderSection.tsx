@@ -148,7 +148,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
   return (
     <section 
       id="blog" 
-      className="py-16 sm:py-24 relative overflow-hidden bg-slate-50/50 dark:bg-slate-900/30 border-t border-slate-200/80 dark:border-white/10"
+      className="py-16 sm:py-24 relative overflow-hidden bg-slate-50/50 dark:bg-white/[0.02] border-b border-slate-200/80 dark:border-white/10 transition-colors"
       dir={isArabic ? 'rtl' : 'ltr'}
     >
       {/* Background ambient lighting */}

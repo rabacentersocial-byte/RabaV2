@@ -123,7 +123,15 @@ const STORAGE_FILE_MAP: Record<string, string> = {
   raba_notifications: 'notifications.json',
   raba_branches_data_v1: 'branches.json',
   raba_courses_data_v1: 'courses.json',
-  raba_admin_users: 'admin_users.json'
+  raba_admin_users: 'admin_users.json',
+  raba_partners_list_v7: 'partners.json',
+  raba_partners_list_v6: 'partners.json',
+  raba_partners_list_v5: 'partners.json',
+  raba_partners_data_v1: 'partners.json',
+  raba_partners_settings_v7: 'partners_settings.json',
+  raba_partners_settings_v6: 'partners_settings.json',
+  raba_partners_settings_v5: 'partners_settings.json',
+  raba_partners_slider_settings: 'partners_settings.json'
 };
 
 // Helper to safely read JSON from data dir or public/data fallback
@@ -183,23 +191,47 @@ function writeJsonFile(filename: string, data: any): boolean {
   }
 }
 
+function getPort(): number {
+  const args = process.argv;
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--port' && args[i + 1]) {
+      const p = parseInt(args[i + 1], 10);
+      if (!isNaN(p)) return p;
+    }
+    if (args[i].startsWith('--port=')) {
+      const p = parseInt(args[i].split('=')[1], 10);
+      if (!isNaN(p)) return p;
+    }
+  }
+  // In development, dev server MUST run on port 3000 (avoid container 8080 collision)
+  if (process.env.NODE_ENV !== 'production') {
+    return Number(process.env.DEFAULT_APP_PORT) || 3000;
+  }
+  return Number(process.env.PORT) || 3000;
+}
+
 async function startServer() {
   const app = express();
-  const PORT = Number(process.env.PORT) || 3000;
+  const PORT = getPort();
 
   // JSON and URL-encoded body parser with generous limit for attachments
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-  // Static directories for uploads, images, and logo
+  // Static directories for uploads, images, logo, and specialists
   app.use('/uploads', express.static(UPLOADS_DIR));
   app.use('/images', express.static(IMAGES_DIR));
   app.use('/logo', express.static(LOGO_DIR));
+  app.use('/specialists', express.static(path.join(process.cwd(), 'public', 'specialists')));
   app.get('/uploads/:filename', async (req: Request, res: Response, next) => {
     const filename = req.params.filename;
     const filePath = path.join(UPLOADS_DIR, filename);
     if (fs.existsSync(filePath)) {
       return res.sendFile(filePath);
+    }
+    const cardPath = path.join(process.cwd(), 'public', 'specialists', 'cards', filename);
+    if (fs.existsSync(cardPath)) {
+      return res.sendFile(cardPath);
     }
     if (fs.existsSync(UPLOADS_MANIFEST)) {
       try {
@@ -415,19 +447,33 @@ async function startServer() {
         }
       }
 
-      // 2. Merge with Cloud SQL site_settings
+      // 2. Merge with Cloud SQL site_settings with a 2-second timeout guard
       if (process.env.SQL_HOST) {
         try {
-          const dbSettings = await getAllDbSettings();
+          const dbPromise = getAllDbSettings();
+          const timeoutPromise = new Promise<Record<string, any>>((resolve) => setTimeout(() => resolve({}), 2000));
+          const dbSettings = await Promise.race([dbPromise, timeoutPromise]);
           for (const [key, val] of Object.entries(dbSettings)) {
             if (!key.startsWith('upload:') && val !== null && val !== undefined) {
-              result[key] = val;
-              // Mirror to local disk file so disk stays 100% up to date
-              const filename = STORAGE_FILE_MAP[key] || `${key.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`;
-              const filePath1 = path.join(DATA_DIR, filename);
-              try {
-                fs.writeFileSync(filePath1, JSON.stringify(val, null, 2), 'utf-8');
-              } catch { /* ignore */ }
+              if (key === 'raba_specialists') {
+                if (Array.isArray(result[key]) && result[key].length === 40) {
+                  if (!Array.isArray(val) || val.length !== 40) {
+                    try {
+                      await saveDbSetting(key, result[key]);
+                    } catch { /* ignore */ }
+                  }
+                } else if (Array.isArray(val) && val.length > 0) {
+                  result[key] = val;
+                }
+              } else {
+                result[key] = val;
+                // Mirror to local disk file so disk stays 100% up to date
+                const filename = STORAGE_FILE_MAP[key] || `${key.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`;
+                const filePath1 = path.join(DATA_DIR, filename);
+                try {
+                  fs.writeFileSync(filePath1, JSON.stringify(val, null, 2), 'utf-8');
+                } catch { /* ignore */ }
+              }
             }
           }
         } catch (dbErr) {
@@ -675,6 +721,7 @@ async function startServer() {
   });
 
   // --- Vite Dev Server Middleware or Production Static Serving ---
+  let viteInstance: any = null;
   if (process.env.NODE_ENV === 'production') {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
@@ -682,18 +729,48 @@ async function startServer() {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   } else {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
+    const isHmrDisabled = process.env.DISABLE_HMR === 'true';
+    viteInstance = await createViteServer({
+      server: {
+        middlewareMode: true,
+        hmr: isHmrDisabled ? false : undefined,
+        watch: isHmrDisabled ? null : undefined,
+      },
       appType: 'spa',
     });
-    app.use(vite.middlewares);
+    app.use(viteInstance.middlewares);
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`[Raba Server] Full-Stack server running at http://0.0.0.0:${PORT}`);
     console.log(`[Raba Server] Persistent data dir: ${DATA_DIR}`);
     console.log(`[Raba Server] Uploads dir: ${UPLOADS_DIR}`);
   });
+
+  server.on('error', (err: any) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`[Raba Server] Fatal: Port ${PORT} is already in use.`);
+      process.exit(1);
+    } else {
+      console.error('[Raba Server] Server error:', err);
+    }
+  });
+
+  const handleShutdown = async () => {
+    console.log('[Raba Server] Received termination signal, closing server...');
+    server.close(() => {
+      console.log('[Raba Server] HTTP server closed.');
+    });
+    if (viteInstance) {
+      try {
+        await viteInstance.close();
+      } catch { /* ignore */ }
+    }
+    process.exit(0);
+  };
+
+  process.on('SIGTERM', handleShutdown);
+  process.on('SIGINT', handleShutdown);
 }
 
 startServer().catch(err => {

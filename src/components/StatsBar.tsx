@@ -45,7 +45,6 @@ export const StatsBar: React.FC = () => {
           <div 
             id="stat-children-card"
             className="glass-card p-3.5 sm:p-6 flex flex-col-reverse xs:flex-row items-start xs:items-center justify-between gap-3 sm:gap-4 group hover:border-teal-400/50 rounded-2xl sm:rounded-3xl transition-all duration-300 relative overflow-hidden"
-            title={isArabic ? `إجمالي الأطفال المستفيدين: ${formattedTotal}+ (يزداد تلقائياً بـ 10 أطفال يومياً من 8:00 ص إلى 6:00 م — المسجل اليوم: +${dailyCount})` : `Total beneficiary children: ${formattedTotal}+ (+${dailyCount} enrolled today)`}
           >
             <div className={isArabic ? 'text-right' : 'text-left'}>
               <div className="text-lg xs:text-xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-1">

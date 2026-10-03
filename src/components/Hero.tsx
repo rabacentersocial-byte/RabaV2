@@ -47,6 +47,25 @@ export const Hero: React.FC<HeroProps> = ({
   // Dynamic daily children counter (10 children from 8 AM to 6 PM) synchronized with cumulative beneficiaries
   const { count: dailyChildrenCount, formattedTotal, isWithinHours } = useDailyChildrenCounter(10);
 
+  // Dynamic notification state for the floating card reacting to daily children counter
+  const [pulseNotification, setPulseNotification] = useState(false);
+  const [cardMessageIndex, setCardMessageIndex] = useState(0);
+
+  // Trigger subtle pulse animation whenever dailyChildrenCount changes
+  useEffect(() => {
+    setPulseNotification(true);
+    const t = setTimeout(() => setPulseNotification(false), 2200);
+    return () => clearTimeout(t);
+  }, [dailyChildrenCount]);
+
+  // Gentle cycle between message variants every 7 seconds to keep it lively & reactive
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCardMessageIndex((prev) => (prev === 0 ? 1 : 0));
+    }, 7000);
+    return () => clearInterval(timer);
+  }, []);
+
   useEffect(() => {
     const handleUpdated = () => {
       const all = getStoredHeroSlides();
@@ -66,7 +85,7 @@ export const Hero: React.FC<HeroProps> = ({
 
   // Safeguard index if slides count changes
   useEffect(() => {
-    if (currentSlideIndex >= slides.length) {
+    if (slides.length > 0 && currentSlideIndex >= slides.length) {
       setCurrentSlideIndex(0);
     }
   }, [slides.length, currentSlideIndex]);
@@ -346,23 +365,44 @@ export const Hero: React.FC<HeroProps> = ({
                     </div>
                   </a>
 
-                  {/* Floating Notification Card (Bottom-Right Corner) */}
-                  <div className={`absolute -bottom-5 -right-2 sm:-right-8 z-30 bg-white/95 dark:bg-[#0B1120]/90 backdrop-blur-2xl border border-slate-200 dark:border-white/20 rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-[0_16px_40px_rgba(0,0,0,0.25)] flex items-center gap-2.5 sm:gap-3 ${isArabic ? 'text-right' : 'text-left'} max-w-[230px] sm:max-w-[310px]`}>
-                    {/* Yellow Envelope Badge */}
-                    <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center shrink-0 shadow-md border border-amber-300">
+                  {/* Floating Notification Card (Bottom-Right Corner) connected & interacting with the new children counter */}
+                  <div 
+                    onClick={onOpenBooking}
+                    className={`absolute -bottom-5 -right-2 sm:-right-8 z-30 bg-white/95 dark:bg-[#0B1120]/90 backdrop-blur-2xl border border-slate-200 dark:border-white/20 hover:border-emerald-400/60 dark:hover:border-emerald-400/60 rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-[0_16px_40px_rgba(0,0,0,0.25)] flex items-center gap-2.5 sm:gap-3 ${isArabic ? 'text-right' : 'text-left'} max-w-[240px] sm:max-w-[325px] cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 ${
+                      pulseNotification ? 'ring-2 ring-emerald-400 dark:ring-emerald-500 scale-102' : ''
+                    }`}
+                    title={isArabic ? 'انقر لتقديم طلب تسجيل جديد لطفلك' : 'Click to submit registration for your child'}
+                  >
+                    {/* Yellow Envelope Badge with live counter indicator */}
+                    <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center shrink-0 shadow-md border border-amber-300 group-hover:scale-105 transition-transform">
                       <Mail className="w-5 h-5 sm:w-6 sm:h-6" />
+                      
+                      {/* Dynamic counter notification badge */}
+                      <span className="absolute -top-1.5 -right-1.5 min-w-5 h-5 px-1 rounded-full bg-emerald-600 dark:bg-emerald-500 text-white text-[9px] font-black flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-xs">
+                        +{dailyChildrenCount}
+                      </span>
+                      {isWithinHours && (
+                        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping pointer-events-none" />
+                      )}
                     </div>
-                    <div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-black text-slate-900 dark:text-white">
-                          {isArabic ? 'تم استلام طلبك' : 'Request Received'}
+
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-xs font-black text-slate-900 dark:text-white truncate">
+                          {cardMessageIndex === 0 
+                            ? (isArabic ? `تم استلام طلب جديد (#${dailyChildrenCount})` : `New Request Received (#${dailyChildrenCount})`)
+                            : (isArabic ? `تم استلام طلبك بنجاح` : `Request Received Successfully`)}
                         </span>
-                        <span className="text-emerald-600 dark:text-[#00E5BE] text-xs">✔</span>
+                        <span className="text-emerald-600 dark:text-[#00E5BE] text-xs font-bold">✔</span>
                       </div>
-                      <p className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 leading-tight mt-0.5">
-                        {isArabic 
-                          ? 'سيقوم فريق مركز رابا بالتواصل معك' 
-                          : 'Our team will contact you shortly'}
+                      <p className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 leading-tight mt-0.5 truncate">
+                        {cardMessageIndex === 0
+                          ? (isArabic 
+                              ? `الطفل رقم ${dailyChildrenCount} المسجل اليوم — جاري التواصل` 
+                              : `Child #${dailyChildrenCount} enrolled today — In progress`)
+                          : (isArabic 
+                              ? 'سيقوم فريق مركز رابا بالتواصل معك' 
+                              : 'Our team will contact you shortly')}
                       </p>
                     </div>
                   </div>

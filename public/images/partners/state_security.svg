@@ -1,0 +1,21 @@
+<svg viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="280" height="280" rx="24" fill="#0F172A"/>
+  <g transform="translate(140, 105)">
+    <!-- Green Palm -->
+    <path d="M-4 -60 L4 -60 L4 0 L-4 0 Z" fill="#16A34A"/>
+    <path d="M0 -60 C-18 -80, -40 -65, -42 -45 C-26 -52, -8 -45, 0 -60 Z" fill="#16A34A"/>
+    <path d="M0 -60 C18 -80, 40 -65, 42 -45 C26 -52, 8 -45, 0 -60 Z" fill="#16A34A"/>
+    <path d="M0 -45 C-24 -55, -42 -35, -36 -15 C-20 -25, -6 -28, 0 -45 Z" fill="#16A34A"/>
+    <path d="M0 -45 C24 -55, 42 -35, 36 -15 C20 -25, 6 -28, 0 -45 Z" fill="#16A34A"/>
+    <!-- Golden Swords -->
+    <path d="M-35 8 Q0 22 35 32 L32 37 Q0 27 -32 15 Z" fill="#EAB308"/>
+    <path d="M35 8 Q0 22 -35 32 L-32 37 Q0 27 32 15 Z" fill="#EAB308"/>
+  </g>
+  <!-- Red Curved Banner -->
+  <g transform="translate(140, 195)">
+    <path d="M-95 0 C-40 25, 40 25, 95 0 L85 24 C40 45, -40 45, -85 24 Z" fill="#DC2626"/>
+    <path d="M-95 0 L-110 -12 L-100 12 L-85 24 Z" fill="#B91C1C"/>
+    <path d="M95 0 L110 -12 L100 12 L85 24 Z" fill="#B91C1C"/>
+    <text x="0" y="22" text-anchor="middle" font-family="'Tajawal', 'Cairo', sans-serif" font-weight="900" font-size="20" fill="#FFFFFF">رئـاسـة أمـن الـدولـة</text>
+  </g>
+</svg>

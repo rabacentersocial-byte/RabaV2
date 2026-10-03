@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="grad_fahad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#081726"/>
+      <stop offset="50%" stop-color="#0B2538"/>
+      <stop offset="100%" stop-color="#0A3432"/>
+    </linearGradient>
+    <linearGradient id="accent_fahad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  
+  <!-- Modern Card Background -->
+  <rect width="600" height="600" fill="url(#grad_fahad)"/>
+  
+  <!-- Decorative Medical Waves -->
+  <path d="M 0 350 Q 150 330 300 350 T 600 350 L 600 600 L 0 600 Z" fill="#061E2E" opacity="0.6"/>
+  <path d="M 0 380 Q 150 360 300 380 T 600 380 L 600 600 L 0 600 Z" fill="#041420" opacity="0.8"/>
+  
+  <!-- Outer Glowing Portal Ring -->
+  <circle cx="300" cy="240" r="165" fill="none" stroke="url(#accent_fahad)" stroke-width="3.5" opacity="0.8" filter="url(#glow)"/>
+  <circle cx="300" cy="240" r="150" fill="#0A1D2D" stroke="#1E3A52" stroke-width="2"/>
+  
+  <!-- Specialist Visual Illustration -->
+  
+        <!-- Hair / Cap -->
+        <path d="M250 175 C250 135, 350 135, 350 175 Z" fill="#1E293B"/>
+        <!-- Face -->
+        <ellipse cx="300" cy="215" rx="48" ry="54" fill="#FED7AA" opacity="0.45"/>
+        <ellipse cx="280" cy="205" rx="11" ry="6" fill="#FFFFFF"/>
+        <circle cx="280" cy="205" r="4" fill="#0F172A"/>
+        <ellipse cx="320" cy="205" rx="11" ry="6" fill="#FFFFFF"/>
+        <circle cx="320" cy="205" r="4" fill="#0F172A"/>
+        <path d="M260 230 Q300 270 340 230 C335 260, 320 275, 300 275 C280 275, 265 260, 260 230 Z" fill="#1E293B"/>
+        <!-- Smile -->
+        <path d="M285 245 Q300 256 315 245" fill="none" stroke="#9A3412" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- White Doctor Lab Coat -->
+        <path d="M190 380 C190 315, 230 295, 300 295 C370 295, 410 315, 410 380 Z" fill="#FFFFFF"/>
+        <path d="M275 295 L300 350 L325 295 Z" fill="#0F172A"/>
+        <path d="M255 315 L285 380" fill="none" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>
+        <path d="M345 315 L315 380" fill="none" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>
+        
+  
+  <!-- Badge & Name Section -->
+  <rect x="80" y="430" width="440" height="135" rx="24" fill="#061624" fill-opacity="0.9" stroke="#1E3A52" stroke-width="1.5"/>
+  
+  <!-- Name in Glowing Yellow Calligraphy -->
+  <text x="300" y="478" font-family="'Almarai', 'Segoe UI', Arial, sans-serif" font-size="32" font-weight="900" fill="#FBBF24" text-anchor="middle" letter-spacing="0.5">فهد الجهني</text>
+  
+  <!-- Specialty Pill Badge -->
+  <rect x="130" y="500" width="340" height="40" rx="20" fill="#0B3B36" stroke="#F59E0B" stroke-width="1.5"/>
+  <text x="300" y="526" font-family="'Almarai', 'Segoe UI', Arial, sans-serif" font-size="17" font-weight="bold" fill="#FFFFFF" text-anchor="middle">أخصائي ABA</text>
+  
+  <!-- RABA Center Watermark -->
+  <text x="540" y="45" font-family="sans-serif" font-size="14" font-weight="bold" fill="#00E5BE" opacity="0.5" text-anchor="end">RABA CENTER</text>
+</svg>

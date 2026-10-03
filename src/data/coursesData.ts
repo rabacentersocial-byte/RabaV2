@@ -26,7 +26,31 @@ export interface CourseItem {
   targetAudienceAr: string;
   targetAudienceEn: string;
   order: number;
+  isActive?: boolean;
+  cardCoverUrl?: string;
 }
+
+export interface CoursesSectionSettings {
+  badgeAr: string;
+  badgeEn: string;
+  titlePart1Ar: string;
+  titleHighlightAr: string;
+  titleEn: string;
+  subtitleAr: string;
+  subtitleEn: string;
+  whatsappNumber: string;
+}
+
+export const DEFAULT_COURSES_SETTINGS: CoursesSectionSettings = {
+  badgeAr: 'الكورسات والدورات التدريبية',
+  badgeEn: 'COURSES & PROFESSIONAL TRAINING',
+  titlePart1Ar: 'طوّر مسارك المهني في',
+  titleHighlightAr: 'تحليل السلوك التطبيقي (ABA)',
+  titleEn: 'Advance Your Clinical Career in Applied Behavior Analysis',
+  subtitleAr: 'برامج تدريبية معتمدة دولياً ومصممة بأعلى المعايير الإكلينيكية لتزويدك بالمعرفة النظرية والمهارات التطبيقية في التقييم والتدخل السلوكي.',
+  subtitleEn: 'Internationally accredited training programs designed to build rigorous clinical competencies in behavior assessment and intervention.',
+  whatsappNumber: '966575100100'
+};
 
 export const COURSES_DATA: CourseItem[] = [
   {
@@ -184,6 +208,7 @@ export const COURSES_DATA: CourseItem[] = [
 ];
 
 export const STORAGE_COURSES_KEY = 'raba_courses_data_v1';
+export const STORAGE_COURSES_SETTINGS_KEY = 'raba_courses_settings_v1';
 
 export function getStoredCoursesData(): CourseItem[] {
   try {
@@ -191,16 +216,16 @@ export function getStoredCoursesData(): CourseItem[] {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed.sort((a, b) => (a.order || 0) - (b.order || 0));
+        return parsed.map((c: CourseItem) => ({ ...c, isActive: c.isActive !== false })).sort((a: CourseItem, b: CourseItem) => (a.order || 0) - (b.order || 0));
       }
     }
     const bundled = (defaultSyncData as any)?.data?.[STORAGE_COURSES_KEY];
     if (Array.isArray(bundled) && bundled.length > 0) {
-      return [...bundled].sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+      return [...bundled].map((c: any) => ({ ...c, isActive: c.isActive !== false })).sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
     }
-    return [...COURSES_DATA];
+    return COURSES_DATA.map(c => ({ ...c, isActive: true }));
   } catch {
-    return [...COURSES_DATA];
+    return COURSES_DATA.map(c => ({ ...c, isActive: true }));
   }
 }
 
@@ -208,8 +233,38 @@ export function saveStoredCoursesData(courses: CourseItem[]): void {
   try {
     localStorage.setItem(STORAGE_COURSES_KEY, JSON.stringify(courses));
     savePersistentModule(STORAGE_COURSES_KEY, courses);
-    window.dispatchEvent(new CustomEvent('raba_courses_updated', { detail: courses }));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('raba_courses_updated', { detail: courses }));
+    }
   } catch (err) {
     console.error('Failed to save courses data', err);
+  }
+}
+
+export function getStoredCoursesSettings(): CoursesSectionSettings {
+  try {
+    const raw = localStorage.getItem(STORAGE_COURSES_SETTINGS_KEY);
+    if (raw) {
+      return { ...DEFAULT_COURSES_SETTINGS, ...JSON.parse(raw) };
+    }
+    const bundled = (defaultSyncData as any)?.data?.[STORAGE_COURSES_SETTINGS_KEY];
+    if (bundled && typeof bundled === 'object') {
+      return { ...DEFAULT_COURSES_SETTINGS, ...bundled };
+    }
+    return DEFAULT_COURSES_SETTINGS;
+  } catch {
+    return DEFAULT_COURSES_SETTINGS;
+  }
+}
+
+export function saveStoredCoursesSettings(settings: CoursesSectionSettings): void {
+  try {
+    localStorage.setItem(STORAGE_COURSES_SETTINGS_KEY, JSON.stringify(settings));
+    savePersistentModule(STORAGE_COURSES_SETTINGS_KEY, settings);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('raba_courses_settings_updated', { detail: settings }));
+    }
+  } catch (err) {
+    console.error('Failed to save courses settings', err);
   }
 }

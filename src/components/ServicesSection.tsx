@@ -262,7 +262,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
   return (
     <section 
       id="services" 
-      className="py-16 sm:py-24 bg-[#F8FAF9] dark:bg-[#071D18] relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10"
+      className="py-16 sm:py-24 bg-slate-50/50 dark:bg-white/[0.02] relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10"
       dir={isArabic ? 'rtl' : 'ltr'}
     >
       {/* Background ambient lighting */}

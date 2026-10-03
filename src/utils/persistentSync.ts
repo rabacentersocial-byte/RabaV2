@@ -43,8 +43,9 @@ export const SYNC_KEYS = {
   APPOINTMENTS: 'raba_appointments',
   NOTIFICATIONS: 'raba_notifications',
   ADMIN_USERS: 'raba_admin_users',
-  PARTNERS: 'raba_partners_list_v2',
-  PARTNERS_SETTINGS: 'raba_partners_settings_v2'
+  PARTNERS: 'raba_partners_list_v7',
+  PARTNERS_SETTINGS: 'raba_partners_settings_v7',
+  COURSES: 'raba_courses_data_v1'
 } as const;
 
 // Canonical primary keys used in the synchronization loop to prevent legacy collisions
@@ -69,7 +70,8 @@ export const PRIMARY_SYNC_KEYS = [
   SYNC_KEYS.NOTIFICATIONS,
   SYNC_KEYS.ADMIN_USERS,
   SYNC_KEYS.PARTNERS,
-  SYNC_KEYS.PARTNERS_SETTINGS
+  SYNC_KEYS.PARTNERS_SETTINGS,
+  SYNC_KEYS.COURSES
 ] as const;
 
 // Helper to mirror primary keys to legacy aliases with identical timestamps
@@ -116,7 +118,10 @@ const EVENT_MAP: Record<string, string> = {
   [SYNC_KEYS.SERVICES]: 'raba_services_updated',
   [SYNC_KEYS.SERVICES_LEGACY]: 'raba_services_updated',
   [SYNC_KEYS.APPOINTMENTS]: 'raba_appointments_updated',
-  [SYNC_KEYS.NOTIFICATIONS]: 'raba_notifications_updated'
+  [SYNC_KEYS.NOTIFICATIONS]: 'raba_notifications_updated',
+  [SYNC_KEYS.PARTNERS]: 'raba_partners_updated',
+  [SYNC_KEYS.PARTNERS_SETTINGS]: 'raba_partners_settings_updated',
+  [SYNC_KEYS.COURSES]: 'raba_courses_updated'
 };
 
 // In-memory fallback dictionary for private/incognito browsers where localStorage is restricted
@@ -140,7 +145,22 @@ export function hydratePersistentData(): void {
 
         try {
           const existing = localStorage.getItem(key);
-          if (!existing) {
+          let shouldHydrate = !existing;
+          if (existing && key === SYNC_KEYS.SPECIALISTS && Array.isArray(bundledVal)) {
+            try {
+              const currentArr = JSON.parse(existing);
+              if (
+                Array.isArray(currentArr) &&
+                (currentArr.length !== bundledVal.length ||
+                  currentArr.some((s: any) => s.id === 'spec-mohamed-omara' || s.id === 'spec-rawan-tablett' || s.id === 'spec-hossam-malki'))
+              ) {
+                shouldHydrate = true;
+              }
+            } catch {
+              shouldHydrate = true;
+            }
+          }
+          if (shouldHydrate) {
             const valStr = typeof bundledVal === 'string' ? bundledVal : JSON.stringify(bundledVal);
             localStorage.setItem(key, valStr);
             localStorage.setItem(`raba_ts_${key}`, '1');
@@ -261,11 +281,26 @@ export async function initPersistentSync(): Promise<void> {
     // Synchronize ONLY canonical primary keys to prevent legacy aliases from overwriting newer customizations
     for (const storageKey of PRIMARY_SYNC_KEYS) {
       const serverVal = serverData[storageKey];
-      const localValRaw = localStorage.getItem(storageKey);
+      let localValRaw = localStorage.getItem(storageKey);
       const localTsRaw = localStorage.getItem(`raba_ts_${storageKey}`);
       const localTs = localTsRaw ? Number(localTsRaw) : 0;
 
       // Check if local version has customized data (e.g. contains custom uploads or user edits)
+      const isSpecialistsKey = storageKey === SYNC_KEYS.SPECIALISTS;
+      if (isSpecialistsKey && Array.isArray(serverVal)) {
+        try {
+          const localSpecs = localValRaw ? JSON.parse(localValRaw) : null;
+          const hasStaleMocks = Array.isArray(localSpecs) && (
+            localSpecs.length !== serverVal.length ||
+            localSpecs.some((s: any) => s.id === 'spec-mohamed-omara' || s.id === 'spec-rawan-tablett' || s.id === 'spec-hossam-malki')
+          );
+          if (hasStaleMocks || !localSpecs || localSpecs.length === 0) {
+            localValRaw = JSON.stringify(serverVal);
+            localStorage.setItem(storageKey, localValRaw);
+          }
+        } catch { /* ignore */ }
+      }
+
       const hasLocalCustomization = Boolean(
         localValRaw && (
           localTs > 0 ||

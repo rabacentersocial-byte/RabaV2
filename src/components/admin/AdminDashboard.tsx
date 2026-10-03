@@ -29,7 +29,8 @@ import {
   Award,
   RefreshCw,
   Database,
-  Handshake
+  Handshake,
+  GraduationCap
 } from 'lucide-react';
 import { Appointment, ParentReview, AdminUser, PermissionId, ServiceItem, TherapyPackage, Specialist } from '../../types';
 import { syncAllToDiskNow, savePersistentModule } from '../../utils/persistentSync';
@@ -57,6 +58,7 @@ import { BlogManagementTab } from './BlogManagementTab';
 import { SiteSettingsTab } from './SiteSettingsTab';
 import { AccreditationsSettingsTab } from './AccreditationsSettingsTab';
 import { PartnersSettingsTab } from './PartnersSettingsTab';
+import { CoursesManagementTab } from './CoursesManagementTab';
 import { MarketingReviewsTab } from './MarketingReviewsTab';
 import { FinancesSettingsTab } from './FinancesSettingsTab';
 
@@ -87,7 +89,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Active navigation tab
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'users' | 'appointments' | 'services' | 'specialists' | 'slider' | 'blog' | 'accreditations' | 'partners' | 'site_settings' | 'marketing' | 'finances'
+    'overview' | 'users' | 'appointments' | 'services' | 'specialists' | 'slider' | 'courses' | 'blog' | 'accreditations' | 'partners' | 'site_settings' | 'marketing' | 'finances'
   >('overview');
 
   // Mobile sidebar toggle
@@ -234,6 +236,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       labelEn: 'Hero & Slider Photos',
       icon: SlidersHorizontal,
       badge: isArabic ? 'جديد' : 'New',
+      perm: null
+    },
+    {
+      id: 'courses',
+      labelAr: 'الكورسات والدورات التدريبية',
+      labelEn: 'Courses & Training',
+      icon: GraduationCap,
+      badge: isArabic ? 'تخصيص' : 'Custom',
       perm: null
     },
     {
@@ -628,6 +638,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
           {activeTab === 'slider' && (
             <SliderManagementTab
+              hasPermission={hasPermission}
+            />
+          )}
+
+          {activeTab === 'courses' && (
+            <CoursesManagementTab
               hasPermission={hasPermission}
             />
           )}

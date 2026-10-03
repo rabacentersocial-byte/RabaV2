@@ -12,8 +12,8 @@ export const AnimatedBackground: React.FC = () => {
       <div 
         className={`absolute inset-0 transition-colors duration-500 ${
           isDark 
-            ? 'bg-gradient-to-b from-[#080C16] via-[#0B1120] to-[#090D18]' 
-            : 'bg-gradient-to-b from-[#F8FAFC] via-[#F1F5F9] to-[#E2E8F0]'
+            ? 'bg-gradient-to-b from-[#061412] via-[#071915] to-[#05110E]' 
+            : 'bg-gradient-to-b from-[#F8FAFC] via-[#F4FBF8] to-[#F8FAFC]'
         }`} 
       />
 
@@ -147,11 +147,11 @@ export const AnimatedBackground: React.FC = () => {
       {/* Subtle Micro-Grid Texture */}
       <div 
         className={`absolute inset-0 pointer-events-none transition-opacity duration-500 ${
-          isDark ? 'opacity-[0.025]' : 'opacity-[0.04]'
+          isDark ? 'opacity-[0.035]' : 'opacity-[0.045]'
         }`} 
         style={{
-          backgroundImage: `radial-gradient(${isDark ? 'rgba(255, 255, 255, 0.9)' : 'rgba(15, 23, 42, 0.6)'} 1px, transparent 1px)`,
-          backgroundSize: '32px 32px'
+          backgroundImage: `radial-gradient(${isDark ? 'rgba(0, 229, 190, 0.3)' : 'rgba(13, 109, 84, 0.18)'} 1px, transparent 1px)`,
+          backgroundSize: '28px 28px'
         }}
       />
     </div>

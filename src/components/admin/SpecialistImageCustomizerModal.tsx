@@ -395,16 +395,6 @@ export const SpecialistImageCustomizerModal: React.FC<SpecialistImageCustomizerM
                   />
                   <span>{isArabic ? 'متاح للحجز الفوري اليوم' : 'Available Today'}</span>
                 </label>
-
-                <label className="flex items-center gap-2 text-xs font-bold text-amber-800 dark:text-amber-300 cursor-pointer bg-amber-500/10 dark:bg-amber-500/20 px-3 py-1.5 rounded-xl border border-amber-500/30">
-                  <input
-                    type="checkbox"
-                    checked={hideSessionPrice}
-                    onChange={(e) => setHideSessionPrice(e.target.checked)}
-                    className="w-4 h-4 rounded text-amber-600 focus:ring-amber-500 cursor-pointer"
-                  />
-                  <span>{isArabic ? 'إخفاء سعر الجلسة من هذه البطاقة' : 'Hide session fee on this card'}</span>
-                </label>
               </div>
 
             </div>
@@ -471,16 +461,11 @@ export const SpecialistImageCustomizerModal: React.FC<SpecialistImageCustomizerM
                     </span>
                   </div>
 
-                  <h4 className="text-lg font-black text-slate-900 dark:text-white tracking-tight leading-snug mb-1">
+                  <h4 className="text-lg font-black text-slate-900 dark:text-white tracking-tight leading-snug mb-3">
                     {specialist.name}
                   </h4>
 
-                  <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 mb-4">
-                    <MapPin className="w-3 h-3 text-slate-400" />
-                    <span>{isArabic ? 'عيادات رابا - الرياض' : 'Raba Clinics - Riyadh'}</span>
-                  </div>
-
-                  {/* 3-Column Metrics */}
+                  {/* 3-Column Metrics (Experience, Reviews, Rating - Without Session Price) */}
                   <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-white/10 rtl:divide-x-reverse py-2.5 border-y border-slate-100 dark:border-white/10 mb-4 text-center">
                     <div className="px-1">
                       <span className="text-base font-black text-slate-900 dark:text-white block font-sans">
@@ -501,25 +486,13 @@ export const SpecialistImageCustomizerModal: React.FC<SpecialistImageCustomizerM
                     </div>
 
                     <div className="px-1">
-                      {hideSessionPrice ? (
-                        <>
-                          <span className="text-xs font-black text-[#0B3B36] dark:text-[#00E5BE] block truncate py-0.5">
-                            {isArabic ? 'حسب التقييم' : 'Upon Consult'}
-                          </span>
-                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
-                            {isArabic ? 'الخطة' : 'PLAN'}
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="text-base font-black text-slate-900 dark:text-white block font-sans">
-                            {specialist.sessionPrice} ر.س
-                          </span>
-                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
-                            {isArabic ? 'الجلسة' : 'CONSULT'}
-                          </span>
-                        </>
-                      )}
+                      <span className="text-base font-black text-amber-500 dark:text-amber-400 flex items-center justify-center gap-1 font-sans">
+                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                        <span>{specialist.rating || 5.0}</span>
+                      </span>
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                        {isArabic ? 'التقييم' : 'RATING'}
+                      </span>
                     </div>
                   </div>
                 </div>

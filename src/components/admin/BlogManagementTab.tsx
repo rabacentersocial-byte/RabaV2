@@ -839,7 +839,7 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
                     </div>
 
                     <input
-                      type="url"
+                      type="text"
                       value={formAuthorAvatar}
                       onChange={(e) => setFormAuthorAvatar(e.target.value)}
                       placeholder={isArabic ? 'رابط صورة الكاتب (مثال: https://... أو /specialists/...)' : 'Author avatar URL'}

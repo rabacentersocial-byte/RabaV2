@@ -48,7 +48,6 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
     { id: 'sensory', labelAr: 'العلاج الوظيفي والحسي', labelEn: 'Cardiology & Sensory' },
     { id: 'speech', labelAr: 'النطق والتخاطب', labelEn: 'Speech & Language' },
     { id: 'aba', labelAr: 'تعديل السلوك ABA', labelEn: 'Mental Health & ABA' },
-    { id: 'physical', labelAr: 'العلاج الطبيعي', labelEn: 'Physical Rehab' },
   ], []);
 
   // Filtered packages
@@ -193,7 +192,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
   return (
     <section 
       id="packages" 
-      className="py-14 sm:py-20 relative overflow-hidden border-b border-slate-200/80 dark:border-white/10 bg-slate-50/40 dark:bg-slate-950/30"
+      className="py-14 sm:py-20 relative overflow-hidden border-b border-slate-200/80 dark:border-white/10 bg-transparent transition-colors"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         

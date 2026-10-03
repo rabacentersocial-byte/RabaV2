@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   UserCheck, 
   Star, 
   Award, 
   Calendar, 
-  DollarSign, 
   Edit3, 
   Plus, 
   CheckCircle2, 
@@ -19,7 +18,10 @@ import {
   Check,
   Building2,
   Brain,
-  MessageSquare
+  MessageSquare,
+  Trash2,
+  AlertTriangle,
+  FileText
 } from 'lucide-react';
 import { Specialist, PermissionId } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
@@ -27,11 +29,9 @@ import { SpecialistImageCustomizerModal } from './SpecialistImageCustomizerModal
 import { 
   getSpecialistImageSetting, 
   getStoredSpecialistSettings,
-  updateSpecialistCardSetting,
-  getStoredGlobalCardSettings,
-  saveStoredGlobalCardSettings,
-  GlobalCardSettings
+  updateSpecialistCardSetting
 } from '../../data/specialistCustomizer';
+import { deduplicateSpecialists } from '../../utils/specialistDeduplication';
 
 interface SpecialistsTabProps {
   specialists: Specialist[];
@@ -50,6 +50,26 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
   const [editingSpecialist, setEditingSpecialist] = useState<Specialist | null>(null);
   const [customizingSpecialist, setCustomizingSpecialist] = useState<Specialist | null>(null);
 
+  // Add Specialist state
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newNameEn, setNewNameEn] = useState('');
+  const [newTitle, setNewTitle] = useState('');
+  const [newTitleEn, setNewTitleEn] = useState('');
+  const [newRole, setNewRole] = useState('');
+  const [newCategory, setNewCategory] = useState<'aba' | 'occupational' | 'speech' | 'psychology'>('aba');
+  const [newExperienceYears, setNewExperienceYears] = useState(7);
+  const [newBio, setNewBio] = useState('');
+  const [newAvatar, setNewAvatar] = useState('/images/specialists/haneen_obaidi.jpg');
+  const [newSpecialties, setNewSpecialties] = useState('تحليل السلوك التطبيقي, التدخل المبكر, تنمية المهارات');
+  const [newEducation, setNewEducation] = useState('بكالوريوس في التأهيل والعلوم الطبية التطبيقية');
+  const [newCertifications, setNewCertifications] = useState('بورد معتمد في التأهيل والرعاية التخصصية');
+  const [isUploadingNewAvatar, setIsUploadingNewAvatar] = useState(false);
+  const addAvatarInputRef = useRef<HTMLInputElement>(null);
+
+  // Delete Specialist state
+  const [deletingSpecialist, setDeletingSpecialist] = useState<Specialist | null>(null);
+
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDept, setSelectedDept] = useState<'all' | 'aba' | 'occupational' | 'speech' | 'topRated'>('all');
@@ -58,13 +78,18 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
   const [name, setName] = useState('');
   const [title, setTitle] = useState('');
   const [role, setRole] = useState('');
-  const [sessionPrice, setSessionPrice] = useState(280);
-  const [licenseNumber, setLicenseNumber] = useState('');
   const [experienceYears, setExperienceYears] = useState(10);
   const [bio, setBio] = useState('');
 
-  // Global Card Pricing state
-  const [globalCardSettings, setGlobalCardSettings] = useState<GlobalCardSettings>(() => getStoredGlobalCardSettings());
+  // Toast notification feedback
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3500);
+  };
 
   // Re-render trigger when settings change in customizer
   const [settingsVersion, setSettingsVersion] = useState(0);
@@ -73,27 +98,11 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
     const handleSettingsUpdated = () => {
       setSettingsVersion((v) => v + 1);
     };
-    const handleGlobalUpdated = (e: any) => {
-      if (e?.detail) {
-        setGlobalCardSettings(e.detail);
-      } else {
-        setGlobalCardSettings(getStoredGlobalCardSettings());
-      }
-    };
     window.addEventListener('raba_specialist_settings_updated', handleSettingsUpdated);
-    window.addEventListener('raba_global_card_settings_updated', handleGlobalUpdated);
     return () => {
       window.removeEventListener('raba_specialist_settings_updated', handleSettingsUpdated);
-      window.removeEventListener('raba_global_card_settings_updated', handleGlobalUpdated);
     };
   }, []);
-
-  const handleToggleGlobalHidePrice = () => {
-    const nextVal = !globalCardSettings.hideAllSessionPrices;
-    const nextSettings = { ...globalCardSettings, hideAllSessionPrices: nextVal };
-    setGlobalCardSettings(nextSettings);
-    saveStoredGlobalCardSettings(nextSettings);
-  };
 
   const canManage = hasPermission('manage_specialists');
 
@@ -103,8 +112,6 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
     setName(spec.name);
     setTitle(spec.title);
     setRole(spec.role);
-    setSessionPrice(spec.sessionPrice);
-    setLicenseNumber(spec.licenseNumber);
     setExperienceYears(spec.experienceYears);
     setBio(spec.bio);
   };
@@ -118,13 +125,120 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
       name,
       title,
       role,
-      sessionPrice: Number(sessionPrice),
-      licenseNumber,
+      licenseNumber: '',
+      sessionPrice: 0,
       experienceYears: Number(experienceYears),
       bio
     } : s);
     onUpdateSpecialists(updated);
     setEditingSpecialist(null);
+    showToast(isArabic ? 'تم تحديث بيانات الأخصائي بنجاح' : 'Specialist profile updated successfully');
+  };
+
+  // Add new specialist handler
+  const handleCreateSpecialist = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newName.trim() || !newTitle.trim()) return;
+
+    const newId = `spec-${Date.now()}`;
+    const specialtiesList = newSpecialties.split(',').map(s => s.trim()).filter(Boolean);
+    const educationList = newEducation.split(',').map(s => s.trim()).filter(Boolean);
+    const certsList = newCertifications.split(',').map(s => s.trim()).filter(Boolean);
+
+    const newSpecialist: Specialist = {
+      id: newId,
+      name: newName.trim(),
+      nameEn: newNameEn.trim() || newName.trim(),
+      title: newTitle.trim(),
+      titleEn: newTitleEn.trim() || newTitle.trim(),
+      role: newRole.trim() || newTitle.trim(),
+      roleEn: newTitleEn.trim() || newTitle.trim(),
+      category: newCategory,
+      department: newCategory === 'aba' ? 'قسم تحليل السلوك التطبيقي والتدخل المبكر' : newCategory === 'occupational' ? 'قسم العلاج الوظيفي والتكامل الحسي' : newCategory === 'speech' ? 'قسم علاج النطق واللغة واضطرابات التواصل' : 'قسم الإرشاد النفسي وتعديل السلوك',
+      avatar: newAvatar,
+      experienceYears: Number(newExperienceYears) || 5,
+      licenseNumber: '',
+      specialties: specialtiesList.length > 0 ? specialtiesList : ['تأهيل متخصص', 'تدخل مبكر'],
+      specialtiesEn: specialtiesList.length > 0 ? specialtiesList : ['Specialized Rehabilitation', 'Early Intervention'],
+      education: educationList.length > 0 ? educationList : ['بكالوريوس في العلوم الطبية التطبيقية'],
+      educationEn: ['Bachelor of Applied Medical Sciences'],
+      bio: newBio.trim() || `أخصائي معتمد في مركز رابا للرعاية النهارية وتأهيل ذوي الإعاقة بخبرة تزيد عن ${newExperienceYears} سنوات.`,
+      bioEn: `Certified specialist at Raba Day Care Center with extensive clinical experience.`,
+      certifications: certsList.length > 0 ? certsList : ['بورد معتمد في التأهيل والرعاية'],
+      certificationsEn: ['Certified Board Accreditation'],
+      availableDays: ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'],
+      availableDaysEn: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'],
+      rating: 5.0,
+      reviewsCount: 1,
+      sessionPrice: 0
+    };
+
+    const updated = [newSpecialist, ...specialists];
+    onUpdateSpecialists(updated);
+
+    // Also register setting
+    updateSpecialistCardSetting(newId, {
+      avatar: newAvatar,
+      displayMode: 'cover',
+      focalPosition: 'top',
+      zoomLevel: 100,
+      isTopRated: true
+    });
+
+    setIsAddModalOpen(false);
+    // Reset form
+    setNewName('');
+    setNewNameEn('');
+    setNewTitle('');
+    setNewTitleEn('');
+    setNewRole('');
+    setNewBio('');
+    showToast(isArabic ? '✨ تمت إضافة الأخصائي الجديد بنجاح إلى القائمة والسلايدر' : 'Specialist added successfully to directory & slider');
+  };
+
+  // Delete specialist handler
+  const handleConfirmDelete = () => {
+    if (!deletingSpecialist) return;
+    const deletedName = deletingSpecialist.name;
+    const updated = specialists.filter(s => s.id !== deletingSpecialist.id);
+    onUpdateSpecialists(updated);
+    setDeletingSpecialist(null);
+    showToast(isArabic ? `تم حذف بطاقة الأخصائي (${deletedName}) بنجاح` : `Specialist ${deletedName} deleted successfully`);
+  };
+
+  // Upload avatar for new specialist
+  const handleNewAvatarFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingNewAvatar(true);
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const dataUrl = reader.result as string;
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+        if (res.ok) {
+          const json = await res.json();
+          if (json.url) {
+            setNewAvatar(json.url);
+          } else {
+            setNewAvatar(dataUrl);
+          }
+        } else {
+          setNewAvatar(dataUrl);
+        }
+      } catch {
+        setNewAvatar(dataUrl);
+      } finally {
+        setIsUploadingNewAvatar(false);
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   // Quick toggle for Top Rated status
@@ -133,32 +247,36 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
     setSettingsVersion((v) => v + 1);
   };
 
+  // Deduplicated unique specialists list
+  const uniqueSpecialists = useMemo(() => {
+    return deduplicateSpecialists(specialists);
+  }, [specialists]);
+
   // KPI calculations
   const stats = useMemo(() => {
-    const total = specialists.length;
+    const total = uniqueSpecialists.length;
     const allSettings = getStoredSpecialistSettings();
-    const topRatedCount = specialists.filter((s) => {
+    const topRatedCount = uniqueSpecialists.filter((s) => {
       const sett = allSettings[s.id];
       return sett ? sett.isTopRated : s.rating >= 4.9;
     }).length;
-    const abaCount = specialists.filter((s) => s.title.includes('ABA') || s.role.includes('ABA')).length;
-    const otCount = specialists.filter((s) => s.title.includes('الوظيفي') || s.role.includes('الوظيفي')).length;
-    const speechCount = specialists.filter((s) => s.title.includes('النطق') || s.role.includes('النطق')).length;
+    const abaCount = uniqueSpecialists.filter((s) => s.title.includes('ABA') || s.role.includes('ABA')).length;
+    const otCount = uniqueSpecialists.filter((s) => s.title.includes('الوظيفي') || s.role.includes('الوظيفي')).length;
+    const speechCount = uniqueSpecialists.filter((s) => s.title.includes('النطق') || s.role.includes('النطق')).length;
 
     return { total, topRatedCount, abaCount, otCount, speechCount };
-  }, [specialists, settingsVersion]);
+  }, [uniqueSpecialists, settingsVersion]);
 
   // Filtered specialists
   const filteredSpecialists = useMemo(() => {
     const allSettings = getStoredSpecialistSettings();
-    return specialists.filter((spec) => {
+    return uniqueSpecialists.filter((spec) => {
       // Search
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch = !q || 
         spec.name.toLowerCase().includes(q) ||
         spec.title.toLowerCase().includes(q) ||
-        spec.role.toLowerCase().includes(q) ||
-        spec.licenseNumber.toLowerCase().includes(q);
+        spec.role.toLowerCase().includes(q);
 
       if (!matchesSearch) return false;
 
@@ -179,28 +297,51 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
       }
       return true;
     });
-  }, [specialists, searchQuery, selectedDept, settingsVersion]);
+  }, [uniqueSpecialists, searchQuery, selectedDept, settingsVersion]);
 
   return (
     <div className="space-y-6">
       
-      {/* 1. Header & Title */}
+      {/* Toast Feedback */}
+      {toastMessage && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white dark:bg-emerald-500 dark:text-slate-950 px-5 py-3 rounded-2xl shadow-2xl text-xs sm:text-sm font-black flex items-center gap-2 animate-in fade-in slide-in-from-bottom-4">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 dark:text-slate-950" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
+      {/* 1. Header & Title with Add Specialist Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-white/10 pb-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-xs font-black">
-              {isArabic ? 'إدارة المظهر والكوادر' : 'Staff & Appearance Management'}
+              {isArabic ? 'إدارة الكوادر والتخصيص' : 'Staff & Card Directory'}
+            </span>
+            <span className="px-2.5 py-0.5 rounded-full bg-teal-500/10 text-teal-800 dark:text-teal-300 text-xs font-black">
+              {stats.total} {isArabic ? 'أخصائي معتمد' : 'Specialists'}
             </span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
-            {isArabic ? 'إدارة وتخصيص بطاقات الأخصائيين المعالجين' : 'Specialists & Card Customization'}
+            {isArabic ? 'إدارة وتخصيص بطاقات الأخصائيين' : 'Specialists & Card Management'}
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             {isArabic 
-              ? 'تخصيص صور البوسترات الرسمية، ضبط المحاذاة، رفع صور جديدة، وتعديل التراخيص والرسوم' 
-              : 'Customize official card poster crops, fit/zoom, upload new photos, and edit fees'}
+              ? 'إضافة وحذف وتعديل بطاقات الأخصائيين، رفع صور البوسترات، وضبط المحاذاة والتمييز' 
+              : 'Add, delete, and edit specialist cards, upload official photos, and customize cards'}
           </p>
         </div>
+
+        {/* Add Specialist Button */}
+        {canManage && (
+          <button
+            type="button"
+            onClick={() => setIsAddModalOpen(true)}
+            className="self-start sm:self-auto px-5 py-2.5 rounded-2xl bg-[#0B3B36] hover:bg-[#124d47] dark:bg-[#00E5BE] dark:hover:bg-[#00c9a7] text-white dark:text-slate-950 text-xs sm:text-sm font-black transition-all flex items-center gap-2 shadow-md cursor-pointer active:scale-95"
+          >
+            <Plus className="w-4 h-4" />
+            <span>{isArabic ? 'إضافة أخصائي جديد' : 'Add New Specialist'}</span>
+          </button>
+        )}
       </div>
 
       {/* 2. Executive KPI Cards Bar */}
@@ -252,55 +393,6 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
         </div>
       </div>
 
-      {/* Global Card Pricing & Visibility Settings Banner */}
-      <div className="bg-gradient-to-l from-teal-500/10 via-emerald-500/5 to-transparent dark:from-teal-950/40 dark:via-slate-900 border border-teal-500/30 rounded-3xl p-4 sm:p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-2xl bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-sm shrink-0">
-            <DollarSign className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white">
-                {isArabic ? 'إخفاء سعر الجلسة من جميع البطاقات' : 'Hide Session Price from All Cards'}
-              </h3>
-              <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full ${
-                globalCardSettings.hideAllSessionPrices
-                  ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300/40'
-                  : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-              }`}>
-                {globalCardSettings.hideAllSessionPrices 
-                  ? (isArabic ? 'مفعل (الأسعار مخفية)' : 'Active (Hidden)')
-                  : (isArabic ? 'معطل (الأسعار ظاهرة)' : 'Inactive (Visible)')}
-              </span>
-            </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
-              {isArabic 
-                ? 'عند التفعيل، لن يظهر السعر المالي على بطاقات الأخصائيين في الموقع العام أو السير الذاتية، وسيظهر بدلاً منه "حسب التقييم".' 
-                : 'When active, numeric session prices are hidden across all doctor cards and replaced with "Upon Consult".'}
-            </p>
-          </div>
-        </div>
-
-        <div className="shrink-0 flex items-center">
-          <button
-            type="button"
-            onClick={handleToggleGlobalHidePrice}
-            className={`w-full sm:w-auto px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-2.5 shadow-md cursor-pointer ${
-              globalCardSettings.hideAllSessionPrices
-                ? 'bg-[#00E5BE] text-slate-950 hover:brightness-105 ring-2 ring-[#00E5BE]/40'
-                : 'bg-[#0B3B36] text-white hover:bg-[#0d4741] dark:bg-slate-800 dark:text-white dark:border dark:border-white/15'
-            }`}
-          >
-            <div className={`w-2.5 h-2.5 rounded-full ${globalCardSettings.hideAllSessionPrices ? 'bg-slate-950 animate-pulse' : 'bg-white/80'}`} />
-            <span>
-              {globalCardSettings.hideAllSessionPrices 
-                ? (isArabic ? 'إلغاء الإخفاء وإظهار الأسعار' : 'Show All Session Prices') 
-                : (isArabic ? 'إخفاء سعر الجلسة من جميع البطاقات الآن' : 'Hide Session Price from All Cards')}
-            </span>
-          </button>
-        </div>
-      </div>
-
       {/* 3. Search & Filter Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3 rounded-2xl border border-slate-200 dark:border-white/10 shadow-xs">
         
@@ -311,7 +403,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={isArabic ? 'بحث بالاسم، التخصص، أو رقم الترخيص...' : 'Search by name, role, or license...'}
+            placeholder={isArabic ? 'بحث بالاسم أو التخصص...' : 'Search by name or specialty...'}
             className="w-full pl-9 rtl:pl-3 rtl:pr-9 pr-3 py-2 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-white/10 rounded-xl text-xs text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#00E5BE]/30"
           />
           {searchQuery && (
@@ -385,7 +477,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredSpecialists.map((spec) => {
           const setting = getSpecialistImageSetting(spec.id);
-          const activeAvatar = setting.avatar;
+          const activeAvatar = setting.avatar || spec.avatar;
           const isTop = setting.isTopRated ?? spec.rating >= 4.9;
 
           return (
@@ -426,7 +518,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
                     className="absolute bottom-3 right-3 z-10 px-3 py-1.5 rounded-xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-md text-slate-900 dark:text-white hover:bg-[#00E5BE] hover:text-slate-950 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
                   >
                     <Upload className="w-3.5 h-3.5 text-[#00E5BE] group-hover:text-slate-950" />
-                    <span>{isArabic ? 'رفع صورة أو ملف' : 'Upload Photo / File'}</span>
+                    <span>{isArabic ? 'تخصيص الصورة' : 'Customize Image'}</span>
                   </button>
                 </div>
 
@@ -448,25 +540,15 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
                     </div>
                   </div>
 
-                  {/* Quick Metrics */}
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl space-y-1.5 text-xs text-slate-600 dark:text-slate-300 mb-3">
+                  {/* Quick Metrics (WITHOUT SESSION PRICE AND WITHOUT LICENSE) */}
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl space-y-1 text-xs text-slate-600 dark:text-slate-300 mb-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400 text-[11px]">{isArabic ? 'رقم الترخيص:' : 'License:'}</span>
-                      <span className="font-mono font-bold text-slate-800 dark:text-slate-200 text-[11px]">{spec.licenseNumber}</span>
+                      <span className="text-slate-400 text-[11px]">{isArabic ? 'سنوات الخبرة السريرية:' : 'Experience:'}</span>
+                      <span className="font-bold text-[11px] text-slate-900 dark:text-white">{spec.experienceYears} {isArabic ? 'سنوات' : 'years'}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400 text-[11px]">{isArabic ? 'سنوات الخبرة:' : 'Experience:'}</span>
-                      <span className="font-bold text-[11px]">{spec.experienceYears} {isArabic ? 'سنوات' : 'years'}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-400 text-[11px]">{isArabic ? 'سعر الجلسة:' : 'Session Fee:'}</span>
-                      {globalCardSettings.hideAllSessionPrices || setting.hideSessionPrice ? (
-                        <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300 bg-amber-500/10 dark:bg-amber-500/20 px-2 py-0.5 rounded-md border border-amber-500/30">
-                          {isArabic ? 'مخفي من البطاقة (حسب التقييم)' : 'Hidden (Upon Consult)'}
-                        </span>
-                      ) : (
-                        <span className="font-black text-emerald-700 dark:text-emerald-300">{spec.sessionPrice} ر.س</span>
-                      )}
+                      <span className="text-slate-400 text-[11px]">{isArabic ? 'عدد التقييمات:' : 'Reviews:'}</span>
+                      <span className="font-bold text-[11px] text-slate-900 dark:text-white">{spec.reviewsCount} {isArabic ? 'تقييم معتمد' : 'reviews'}</span>
                     </div>
                   </div>
 
@@ -476,13 +558,13 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
                 </div>
               </div>
 
-              {/* Bottom Action Row */}
+              {/* Bottom Action Row with Edit and Delete */}
               <div className="p-4 pt-0 flex items-center justify-between gap-2 border-t border-slate-100 dark:border-white/10 pt-3 mt-1">
                 {/* Toggle Top Rated */}
                 <button
                   type="button"
                   onClick={() => handleToggleTopRated(spec, isTop)}
-                  className={`px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                  className={`px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer ${
                     isTop
                       ? 'bg-amber-400/15 text-amber-700 dark:text-amber-300 border border-amber-300/30'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
@@ -493,16 +575,30 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
                   <span>{isTop ? (isArabic ? 'مميز' : 'Featured') : (isArabic ? 'عادي' : 'Standard')}</span>
                 </button>
 
-                {/* Edit Profile Details */}
-                {canManage && (
-                  <button
-                    onClick={() => handleOpenEdit(spec)}
-                    className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-[#0B3B36] hover:text-white transition-all flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <Edit3 className="w-3.5 h-3.5" />
-                    <span>{isArabic ? 'تعديل البيانات' : 'Edit Info'}</span>
-                  </button>
-                )}
+                <div className="flex items-center gap-1.5">
+                  {/* Edit Profile Details */}
+                  {canManage && (
+                    <button
+                      onClick={() => handleOpenEdit(spec)}
+                      className="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-[#0B3B36] hover:text-white transition-all flex items-center gap-1 cursor-pointer"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      <span>{isArabic ? 'تعديل' : 'Edit'}</span>
+                    </button>
+                  )}
+
+                  {/* Delete Specialist Card */}
+                  {canManage && (
+                    <button
+                      onClick={() => setDeletingSpecialist(spec)}
+                      className="px-2.5 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200/50 dark:border-rose-900/50 hover:bg-rose-600 hover:text-white text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                      title={isArabic ? 'حذف بطاقة الأخصائي' : 'Delete Specialist Card'}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>{isArabic ? 'حذف' : 'Delete'}</span>
+                    </button>
+                  )}
+                </div>
               </div>
 
             </div>
@@ -522,9 +618,9 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
         />
       )}
 
-      {/* 6. Edit Info Modal */}
+      {/* 6. Edit Info Modal (Without Session Price and Without License) */}
       {editingSpecialist && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-6 w-full max-w-lg shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-4 mb-5">
               <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -568,37 +664,12 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    {isArabic ? 'رقم الترخيص:' : 'License Number:'}
-                  </label>
-                  <input
-                    type="text"
-                    value={licenseNumber}
-                    onChange={(e) => setLicenseNumber(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800 text-xs font-mono font-medium text-slate-900 dark:text-white"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    {isArabic ? 'سعر الجلسة (ر.س):' : 'Session Price (SAR):'}
-                  </label>
-                  <input
-                    type="number"
-                    value={sessionPrice}
-                    onChange={(e) => setSessionPrice(Number(e.target.value))}
-                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800 text-xs font-medium text-slate-900 dark:text-white"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                     {isArabic ? 'سنوات الخبرة:' : 'Experience (Years):'}
                   </label>
                   <input
                     type="number"
+                    min={1}
+                    max={40}
                     value={experienceYears}
                     onChange={(e) => setExperienceYears(Number(e.target.value))}
                     className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800 text-xs font-medium text-slate-900 dark:text-white"
@@ -609,13 +680,13 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  {isArabic ? 'النبذة المهنية:' : 'Bio:'}
+                  {isArabic ? 'النبذة المهنية والسيرة الذاتية:' : 'Bio:'}
                 </label>
                 <textarea
-                  rows={3}
+                  rows={4}
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800 text-xs font-medium text-slate-900 dark:text-white"
+                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800 text-xs font-medium text-slate-900 dark:text-white leading-relaxed"
                   required
                 />
               </div>
@@ -636,6 +707,234 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* 7. Add New Specialist Modal */}
+      {isAddModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm overflow-y-auto animate-in fade-in">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-6 w-full max-w-xl shadow-2xl my-8">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-4 mb-5">
+              <h3 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <Plus className="w-5 h-5 text-emerald-600 dark:text-[#00E5BE]" />
+                <span>{isArabic ? 'إضافة بطاقة أخصائي جديد' : 'Add New Specialist Card'}</span>
+              </h3>
+              <button
+                onClick={() => setIsAddModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-slate-200 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateSpecialist} className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
+              
+              {/* Avatar Preview & Upload */}
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-white/10 flex items-center gap-4">
+                <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-700 shrink-0 border-2 border-white dark:border-white/20 shadow-sm">
+                  <img
+                    src={newAvatar}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '/images/specialists/haneen_obaidi.jpg';
+                    }}
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                    {isArabic ? 'صورة الأخصائي:' : 'Specialist Photo:'}
+                  </span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <input
+                      type="file"
+                      ref={addAvatarInputRef}
+                      onChange={handleNewAvatarFileChange}
+                      accept="image/*"
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => addAvatarInputRef.current?.click()}
+                      disabled={isUploadingNewAvatar}
+                      className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-700 border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                    >
+                      <Upload className="w-3.5 h-3.5 text-[#00E5BE]" />
+                      <span>{isUploadingNewAvatar ? (isArabic ? 'جارِ الرفع...' : 'Uploading...') : (isArabic ? 'رفع صورة من جهازك' : 'Upload Image')}</span>
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={newAvatar}
+                    onChange={(e) => setNewAvatar(e.target.value)}
+                    placeholder="/images/specialists/..."
+                    className="w-full mt-2 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-[11px] font-mono text-slate-900 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              {/* Names */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    {isArabic ? 'الاسم الكامل (عربي) *:' : 'Full Name (Arabic) *:'}
+                  </label>
+                  <input
+                    type="text"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    placeholder="مثال: د. سارة القحطاني"
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800 text-xs font-medium text-slate-900 dark:text-white"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    {isArabic ? 'الاسم بالإنجليزية:' : 'Full Name (English):'}
+                  </label>
+                  <input
+                    type="text"
+                    value={newNameEn}
+                    onChange={(e) => setNewNameEn(e.target.value)}
+                    placeholder="e.g. Dr. Sara Al-Qahtani"
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800 text-xs font-medium text-slate-900 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              {/* Title & Department */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    {isArabic ? 'المسمى الوظيفي والتخصص *:' : 'Job Title & Specialty *:'}
+                  </label>
+                  <input
+                    type="text"
+                    value={newTitle}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                    placeholder="مثال: أخصائية أولى علاج النطق واللغة"
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800 text-xs font-medium text-slate-900 dark:text-white"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    {isArabic ? 'القسم التأهيلي:' : 'Department Category:'}
+                  </label>
+                  <select
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value as any)}
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800 text-xs font-bold text-slate-900 dark:text-white"
+                  >
+                    <option value="aba">{isArabic ? 'تحليل السلوك التطبيقي ABA' : 'ABA Therapy'}</option>
+                    <option value="occupational">{isArabic ? 'العلاج الوظيفي والتكامل الحسي' : 'Occupational Therapy'}</option>
+                    <option value="speech">{isArabic ? 'علاج النطق واللغة والتخاطب' : 'Speech & Language'}</option>
+                    <option value="psychology">{isArabic ? 'الاستشارات النفسية وصعوبات التعلم' : 'Child Psychology'}</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Experience Years */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  {isArabic ? 'عدد سنوات الخبرة السريرية *:' : 'Clinical Experience (Years) *:'}
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={40}
+                  value={newExperienceYears}
+                  onChange={(e) => setNewExperienceYears(Number(e.target.value))}
+                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800 text-xs font-medium text-slate-900 dark:text-white"
+                  required
+                />
+              </div>
+
+              {/* Bio */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  {isArabic ? 'السيرة الذاتية والنبذة المهنية *:' : 'Professional Bio *:'}
+                </label>
+                <textarea
+                  rows={3}
+                  value={newBio}
+                  onChange={(e) => setNewBio(e.target.value)}
+                  placeholder={isArabic ? 'اكتب نبذة توضح الخبرات السريرية، الجامعات، والشهادات التخصصية للأخصائي...' : 'Enter clinical background, credentials, and achievements...'}
+                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800 text-xs font-medium text-slate-900 dark:text-white leading-relaxed"
+                  required
+                />
+              </div>
+
+              {/* Specialties / Tags */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  {isArabic ? 'مجالات التركيز والتخصصات (مفصولة بفواصل):' : 'Specialties (Comma Separated):'}
+                </label>
+                <input
+                  type="text"
+                  value={newSpecialties}
+                  onChange={(e) => setNewSpecialties(e.target.value)}
+                  placeholder="مثال: تأخر الكلام, التأتأة, برامج PECS"
+                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800 text-xs font-medium text-slate-900 dark:text-white"
+                />
+              </div>
+
+              {/* Modal Buttons */}
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setIsAddModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                >
+                  {isArabic ? 'إلغاء' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 rounded-xl bg-[#0B3B36] hover:bg-[#082b27] dark:bg-[#00E5BE] dark:hover:bg-[#00c9a7] text-white dark:text-slate-950 text-xs font-black cursor-pointer transition-all shadow-md"
+                >
+                  {isArabic ? 'حفظ وإضافة الأخصائي' : 'Save & Add Specialist'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 8. Delete Confirmation Modal */}
+      {deletingSpecialist && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-6 w-full max-w-md shadow-2xl">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 text-rose-600 flex items-center justify-center mb-4">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+
+            <h3 className="text-lg font-black text-slate-900 dark:text-white mb-2">
+              {isArabic ? 'تأكيد حذف بطاقة الأخصائي' : 'Confirm Specialist Card Deletion'}
+            </h3>
+            
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+              {isArabic 
+                ? `هل أنت متأكد من رغبتك في حذف بطاقة الأخصائي "${deletingSpecialist.name}" نهائياً من دليل الكوادر والسلايدر في الموقع؟` 
+                : `Are you sure you want to permanently delete the card for "${deletingSpecialist.name}" from the directory and slider?`}
+            </p>
+
+            <div className="flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setDeletingSpecialist(null)}
+                className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+              >
+                {isArabic ? 'إلغاء' : 'Cancel'}
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black shadow-md cursor-pointer transition-all"
+              >
+                {isArabic ? 'نعم، حذف البطاقة' : 'Yes, Delete Card'}
+              </button>
+            </div>
           </div>
         </div>
       )}
