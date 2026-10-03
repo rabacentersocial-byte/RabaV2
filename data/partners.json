@@ -41,7 +41,7 @@
     "isActive": true,
     "imageFit": "contain",
     "imagePadding": "md",
-    "logoScale": 130,
+    "logoScale": 125,
     "canvasHeight": "md",
     "expandImageToEdges": false,
     "imageBgColor": "transparent",

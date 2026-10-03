@@ -11,8 +11,8 @@ export interface PartnerItem {
   badgeEn?: string;
   logoUrl?: string;
   cardCoverUrl?: string;
-  imageFit?: 'contain' | 'cover';
-  imagePadding?: 'none' | 'sm' | 'md' | 'lg';
+  imageFit?: 'contain' | 'cover' | 'fill';
+  imagePadding?: 'none' | 'xs' | 'sm' | 'md' | 'lg';
   logoScale?: number;
   canvasHeight?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
   expandImageToEdges?: boolean;

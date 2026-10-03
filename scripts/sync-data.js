@@ -43,8 +43,14 @@ const STORAGE_FILE_MAP = {
   raba_notifications: 'notifications.json',
   raba_branches_data_v1: 'branches.json',
   raba_courses_data_v1: 'courses.json',
+  raba_partners_list_v7: 'partners.json',
+  raba_partners_list_v6: 'partners.json',
   raba_partners_list_v5: 'partners.json',
+  raba_partners_data_v1: 'partners.json',
+  raba_partners_settings_v7: 'partners_settings.json',
+  raba_partners_settings_v6: 'partners_settings.json',
   raba_partners_settings_v5: 'partners_settings.json',
+  raba_partners_slider_settings: 'partners_settings.json',
   raba_admin_users: 'admin_users.json'
 };
 
