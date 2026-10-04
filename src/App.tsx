@@ -65,6 +65,11 @@ export default function App() {
     // Apply saved theme colors on startup
     applyGlobalTheme(getStoredThemeSettings());
 
+    // Dismiss splash overlay as soon as App component renders
+    if (typeof window !== 'undefined' && (window as any).dismissSplash) {
+      (window as any).dismissSplash();
+    }
+
     const handleThemeUpdate = () => applyGlobalTheme(getStoredThemeSettings());
     const handleModulesUpdate = () => {
       const next = getStoredModulesVisibility();

@@ -12,7 +12,16 @@ import {
   ExternalLink,
   Sparkles,
   Info,
-  X
+  X,
+  Search,
+  Landmark,
+  GraduationCap,
+  Stethoscope,
+  CreditCard,
+  ArrowUpRight,
+  CheckCircle2,
+  Award,
+  CalendarCheck
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
@@ -39,6 +48,7 @@ export const PartnersSection: React.FC = () => {
 
   const [settings, setSettings] = useState<PartnersSliderSettings>(() => getStoredPartnersSettings());
   const [selectedSector, setSelectedSector] = useState<'all' | 'government' | 'academic' | 'health' | 'corporate'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'slider' | 'grid'>('slider');
   const [activePartnerModal, setActivePartnerModal] = useState<PartnerItem | null>(null);
 
@@ -58,23 +68,38 @@ export const PartnersSection: React.FC = () => {
   const animFrameRef = useRef<number | null>(null);
   const lastTimeRef = useRef<number | null>(null);
 
-  // Card dimensions (Generous, professional dimensions)
+  // Card stride for responsive calculations
   const getCardStride = () => {
-    if (typeof window !== 'undefined' && window.innerWidth < 640) {
-      return 186; // 170px card + 16px gap
+    if (typeof window !== 'undefined') {
+      const w = window.innerWidth;
+      if (w < 640) {
+        // Mobile card: ~210px + 16px gap = 226px
+        return Math.min(Math.max(w * 0.58, 200), 235) + 16;
+      }
+      if (w < 1024) {
+        return 260 + 20; // 280px stride
+      }
+      return 280 + 24; // 304px stride
     }
-    return 236; // 212px card + 24px gap
+    return 280;
   };
 
   const getCardWidth = () => {
-    if (typeof window !== 'undefined' && window.innerWidth < 640) {
-      return 170;
+    if (typeof window !== 'undefined') {
+      const w = window.innerWidth;
+      if (w < 640) {
+        return Math.min(Math.max(w * 0.58, 200), 235);
+      }
+      if (w < 1024) {
+        return 260;
+      }
+      return 280;
     }
-    return 212;
+    return 260;
   };
 
   // Speed calculation
-  const speedPxPerSec = Math.max(30, Math.min(80, 1600 / (settings.speedSeconds || 32)));
+  const speedPxPerSec = Math.max(30, Math.min(75, 1600 / (settings.speedSeconds || 32)));
 
   // Sync with storage updates
   useEffect(() => {
@@ -97,18 +122,26 @@ export const PartnersSection: React.FC = () => {
     };
   }, []);
 
-  // Filter partners by sector if selected
+  // Filter partners by sector and search query
   const filteredPartners = useMemo(() => {
-    if (selectedSector === 'all') return partners;
-    return partners.filter(p => p.sector === selectedSector);
-  }, [partners, selectedSector]);
+    return partners.filter(p => {
+      const matchSector = selectedSector === 'all' || p.sector === selectedSector;
+      if (!matchSector) return false;
+
+      if (!searchQuery.trim()) return true;
+      const q = searchQuery.toLowerCase().trim();
+      const nameMatch = (p.name || '').toLowerCase().includes(q) || (p.nameEn || '').toLowerCase().includes(q);
+      const categoryMatch = (p.category || '').toLowerCase().includes(q) || (p.categoryEn || '').toLowerCase().includes(q);
+      const badgeMatch = (p.badge || '').toLowerCase().includes(q);
+      return nameMatch || categoryMatch || badgeMatch;
+    });
+  }, [partners, selectedSector, searchQuery]);
 
   const totalPartners = filteredPartners.length;
 
   // Triplicate list for continuous seamless infinite loop
   const displayList = useMemo(() => {
     if (filteredPartners.length === 0) return [];
-    // Ensure sufficient items in marquee for continuous flow
     const multiplier = Math.max(3, Math.ceil(30 / filteredPartners.length));
     const items: PartnerItem[] = [];
     for (let i = 0; i < multiplier; i++) {
@@ -231,14 +264,55 @@ export const PartnersSection: React.FC = () => {
     }
   };
 
-  // Sectors categories definitions
+  // Sector counts
+  const sectorCounts = useMemo(() => {
+    const counts = { all: partners.length, government: 0, academic: 0, health: 0, corporate: 0 };
+    partners.forEach(p => {
+      if (p.sector && p.sector in counts) {
+        counts[p.sector as keyof typeof counts]++;
+      }
+    });
+    return counts;
+  }, [partners]);
+
+  // Sectors categories definitions with counts and icons
   const sectors = useMemo(() => [
-    { id: 'all', labelAr: `جميع الشركاء (${partners.length})`, labelEn: `All Partners (${partners.length})` },
-    { id: 'government', labelAr: 'القطاعات الحكومية والرسمية', labelEn: 'Government & Ministries' },
-    { id: 'academic', labelAr: 'الجهات الأكاديمية والتعليم', labelEn: 'Academic & Schools' },
-    { id: 'health', labelAr: 'الرعاية الصحية والتشخيص', labelEn: 'Healthcare & Labs' },
-    { id: 'corporate', labelAr: 'كبرى الشركات والتمكين', labelEn: 'Corporate & Finance' },
-  ], [partners.length]);
+    { 
+      id: 'all', 
+      labelAr: `جميع الشركاء`, 
+      labelEn: `All Partners`,
+      count: sectorCounts.all,
+      icon: Sparkles
+    },
+    { 
+      id: 'government', 
+      labelAr: 'القطاع الحكومي والرسمي', 
+      labelEn: 'Government & Ministries',
+      count: sectorCounts.government,
+      icon: Landmark
+    },
+    { 
+      id: 'academic', 
+      labelAr: 'الجهات الأكاديمية والتعليم', 
+      labelEn: 'Academic & Schools',
+      count: sectorCounts.academic,
+      icon: GraduationCap
+    },
+    { 
+      id: 'health', 
+      labelAr: 'الرعاية الصحية والتشخيص', 
+      labelEn: 'Healthcare & Labs',
+      count: sectorCounts.health,
+      icon: Stethoscope
+    },
+    { 
+      id: 'corporate', 
+      labelAr: 'كبرى الشركات والتمكين', 
+      labelEn: 'Corporate & Finance',
+      count: sectorCounts.corporate,
+      icon: CreditCard
+    },
+  ], [sectorCounts]);
 
   return (
     <section 
@@ -285,21 +359,28 @@ export const PartnersSection: React.FC = () => {
               : (settings.sectionSubtitleEn || 'Proud strategic alliances with leading governmental, academic, healthcare, and educational institutions.')}
           </p>
 
-          {/* Category Filter Tabs */}
+          {/* Category Filter Tabs with Live Counts & Icons */}
           <div className="flex flex-wrap items-center justify-center gap-2 mt-6 sm:mt-8">
             {sectors.map((sec) => {
               const isSelected = selectedSector === sec.id;
+              const Icon = sec.icon;
               return (
                 <button
                   key={sec.id}
                   onClick={() => setSelectedSector(sec.id as any)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer ${
                     isSelected
-                      ? 'bg-[#0D6D54] text-white shadow-sm shadow-emerald-900/20 scale-102'
-                      : 'bg-white dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-white/10 hover:border-emerald-500/50 hover:text-emerald-700 dark:hover:text-emerald-300'
+                      ? 'bg-[#0D6D54] text-white shadow-md shadow-emerald-900/20 scale-102 ring-2 ring-emerald-500/30'
+                      : 'bg-white dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-white/10 hover:border-emerald-500/50 hover:text-emerald-700 dark:hover:text-emerald-300 hover:shadow-xs'
                   }`}
                 >
-                  {isArabic ? sec.labelAr : sec.labelEn}
+                  <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-white' : 'text-emerald-600 dark:text-emerald-400'}`} />
+                  <span>{isArabic ? sec.labelAr : sec.labelEn}</span>
+                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-sans ${
+                    isSelected ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
+                  }`}>
+                    {sec.count}
+                  </span>
                 </button>
               );
             })}
@@ -307,37 +388,63 @@ export const PartnersSection: React.FC = () => {
 
         </div>
 
-        {/* View Switcher: Slider vs Grid */}
-        <div className="flex items-center justify-between mb-4 px-2">
-          <div className="text-xs font-medium text-slate-500 dark:text-slate-400">
-            {isArabic ? `${filteredPartners.length} جهة وشريك معتمد` : `${filteredPartners.length} Verified Partners`}
+        {/* View Switcher & Quick Search Row */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-6 px-2">
+          
+          {/* Quick Search Input */}
+          <div className="relative flex-1 max-w-xs">
+            <Search className="w-3.5 h-3.5 absolute top-1/2 -translate-y-1/2 left-3 rtl:left-auto rtl:right-3 text-slate-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={isArabic ? 'ابحث عن جهة أو شريك...' : 'Search partners...'}
+              className="w-full pl-9 pr-3 rtl:pl-3 rtl:pr-9 py-1.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-white/10 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute top-1/2 -translate-y-1/2 right-2.5 rtl:right-auto rtl:left-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
-          <div className="flex items-center gap-1.5 bg-slate-200/60 dark:bg-slate-800/60 p-1 rounded-xl border border-slate-300/50 dark:border-white/10">
-            <button
-              onClick={() => setViewMode('slider')}
-              aria-label={isArabic ? 'عرض السلايدر' : 'Slider View'}
-              className={`p-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all cursor-pointer ${
-                viewMode === 'slider' 
-                  ? 'bg-white dark:bg-slate-900 text-[#0D6D54] dark:text-[#2DD4BF] shadow-xs' 
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <SlidersHorizontal className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">{isArabic ? 'سلايدر متدفق' : 'Slider'}</span>
-            </button>
-            <button
-              onClick={() => setViewMode('grid')}
-              aria-label={isArabic ? 'عرض الشبكة' : 'Grid View'}
-              className={`p-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all cursor-pointer ${
-                viewMode === 'grid' 
-                  ? 'bg-white dark:bg-slate-900 text-[#0D6D54] dark:text-[#2DD4BF] shadow-xs' 
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <LayoutGrid className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">{isArabic ? 'شبكة الشركاء' : 'Grid'}</span>
-            </button>
+          <div className="flex items-center justify-between sm:justify-end gap-3">
+            <div className="text-xs font-bold text-slate-500 dark:text-slate-400">
+              {isArabic 
+                ? `${filteredPartners.length} جهة وشريك معتمد` 
+                : `${filteredPartners.length} Verified Partners`}
+            </div>
+
+            {/* Switcher Buttons */}
+            <div className="flex items-center gap-1 bg-slate-200/60 dark:bg-slate-800/60 p-1 rounded-xl border border-slate-300/50 dark:border-white/10">
+              <button
+                onClick={() => setViewMode('slider')}
+                aria-label={isArabic ? 'عرض السلايدر' : 'Slider View'}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  viewMode === 'slider' 
+                    ? 'bg-white dark:bg-slate-900 text-[#0D6D54] dark:text-[#2DD4BF] shadow-xs' 
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+                <span>{isArabic ? 'متدفق' : 'Slider'}</span>
+              </button>
+              <button
+                onClick={() => setViewMode('grid')}
+                aria-label={isArabic ? 'عرض الشبكة' : 'Grid View'}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  viewMode === 'grid' 
+                    ? 'bg-white dark:bg-slate-900 text-[#0D6D54] dark:text-[#2DD4BF] shadow-xs' 
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span>{isArabic ? 'شبكة' : 'Grid'}</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -363,8 +470,8 @@ export const PartnersSection: React.FC = () => {
             <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/20 dark:via-emerald-400/25 to-transparent pointer-events-none z-0" />
 
             {/* Left and Right Fade Masks for seamless infinite flow */}
-            <div className="absolute top-0 right-0 bottom-0 w-16 sm:w-36 bg-gradient-to-l from-[#F8FAFC]/90 via-[#F8FAFC]/60 to-transparent dark:from-[#061412] dark:via-[#061412]/80 dark:to-transparent z-30 pointer-events-none" />
-            <div className="absolute top-0 left-0 bottom-0 w-16 sm:w-36 bg-gradient-to-r from-[#F8FAFC]/90 via-[#F8FAFC]/60 to-transparent dark:from-[#061412] dark:via-[#061412]/80 dark:to-transparent z-30 pointer-events-none" />
+            <div className="absolute top-0 right-0 bottom-0 w-12 sm:w-32 bg-gradient-to-l from-[#F8FAFC] via-[#F8FAFC]/70 to-transparent dark:from-[#061412] dark:via-[#061412]/80 dark:to-transparent z-30 pointer-events-none" />
+            <div className="absolute top-0 left-0 bottom-0 w-12 sm:w-32 bg-gradient-to-r from-[#F8FAFC] via-[#F8FAFC]/70 to-transparent dark:from-[#061412] dark:via-[#061412]/80 dark:to-transparent z-30 pointer-events-none" />
 
             {/* Moving Track */}
             <div
@@ -381,55 +488,41 @@ export const PartnersSection: React.FC = () => {
                     dir={isArabic ? 'rtl' : 'ltr'}
                     className="shrink-0 transition-all duration-300"
                   >
-                    {/* Modern Professional Partner Card */}
+                    {/* Modern Professional Partner Card - Matching high-prestige clinical standards */}
                     <div
                       onClick={() => setActivePartnerModal(partner)}
-                      className={`group w-[170px] ${partner.canvasHeight === 'xl' || partner.canvasHeight === 'full' ? 'h-[235px] sm:h-[260px]' : 'h-[215px] sm:h-[240px]'} rounded-2xl p-3.5 sm:p-4 bg-white dark:bg-slate-900/90 border border-slate-200/90 dark:border-white/10 hover:border-emerald-500/60 dark:hover:border-[#2DD4BF]/60 hover:shadow-xl hover:shadow-emerald-900/10 dark:hover:shadow-emerald-950/40 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between cursor-pointer relative overflow-hidden ${
+                      className={`group w-[58vw] min-w-[200px] max-w-[235px] sm:min-w-0 sm:max-w-none sm:w-[260px] lg:w-[280px] h-[215px] sm:h-[230px] rounded-2xl sm:rounded-3xl p-3.5 sm:p-4 bg-white/95 dark:bg-slate-900/90 backdrop-blur-xs border border-slate-200/90 dark:border-white/10 hover:border-emerald-500/60 dark:hover:border-[#2DD4BF]/60 hover:shadow-xl hover:shadow-emerald-900/10 dark:hover:shadow-emerald-950/40 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between cursor-pointer relative overflow-hidden ${
                         partner.cardStyle === 'glow' ? 'shadow-md ring-1 ring-emerald-500/20' : ''
                       }`}
                     >
-                      {/* Optional Card Top Cover Banner */}
-                      {partner.cardCoverUrl && (
-                        <div className="absolute top-0 inset-x-0 h-10 overflow-hidden opacity-30 group-hover:opacity-45 transition-opacity">
-                          <img src={partner.cardCoverUrl} alt="" className="w-full h-full object-cover" />
-                          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white dark:to-slate-900" />
-                        </div>
-                      )}
+                      {/* Subtle Top Ambient Gradient */}
+                      <div 
+                        className="absolute top-0 inset-x-0 h-1.5 opacity-80"
+                        style={{ backgroundColor: partner.accentColor || '#0D6D54' }}
+                      />
 
                       {/* Top Header Row: Sector icon indicator & verified badge */}
-                      <div className="flex items-center justify-between w-full relative z-10">
+                      <div className="flex items-center justify-between w-full pt-1 relative z-10">
                         <span 
-                          className="text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full truncate max-w-[85%]"
+                          className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full truncate max-w-[85%]"
                           style={{
                             backgroundColor: partner.accentColor ? `${partner.accentColor}15` : undefined,
                             color: partner.accentColor || undefined
                           }}
                         >
-                          {partner.badge || (isArabic ? 'شريك معتمد' : 'Verified')}
+                          <CheckCircle2 className="w-2.5 h-2.5 shrink-0" />
+                          <span className="truncate">{partner.badge || (isArabic ? 'شريك معتمد' : 'Verified')}</span>
                         </span>
+                        
                         <span 
-                          className="w-2.5 h-2.5 rounded-full shrink-0 shadow-xs" 
+                          className="w-2 h-2 rounded-full shrink-0 shadow-xs" 
                           style={{ backgroundColor: partner.accentColor || '#0D6D54' }}
                         />
                       </div>
 
                       {/* Clean Framed Canvas for Logo */}
                       <div 
-                        className={`w-full ${
-                          partner.canvasHeight === 'sm' 
-                            ? 'h-16 sm:h-18' 
-                            : partner.canvasHeight === 'lg' 
-                              ? 'h-24 sm:h-28' 
-                              : partner.canvasHeight === 'xl' 
-                                ? 'h-28 sm:h-32' 
-                                : partner.canvasHeight === 'full' 
-                                  ? 'h-32 sm:h-36' 
-                                  : 'h-20 sm:h-24'
-                        } rounded-xl ${
-                          partner.expandImageToEdges 
-                            ? 'border-0 p-0 shadow-none' 
-                            : 'border border-slate-200/80 dark:border-white/20 shadow-2xs group-hover:shadow-sm group-hover:border-emerald-400/60 dark:group-hover:border-[#2DD4BF]/60'
-                        } flex items-center justify-center overflow-hidden my-auto transition-all relative z-10`}
+                        className="w-full h-22 sm:h-24 rounded-xl border border-slate-200/80 dark:border-white/10 shadow-2xs group-hover:shadow-xs group-hover:border-emerald-400/50 dark:group-hover:border-[#2DD4BF]/50 flex items-center justify-center overflow-hidden my-auto transition-all relative z-10 p-2"
                         style={{
                           backgroundColor: partner.imageBgColor || (isDark ? 'rgba(255,255,255,0.96)' : '#ffffff')
                         }}
@@ -447,14 +540,17 @@ export const PartnersSection: React.FC = () => {
                         />
                       </div>
 
-                      {/* Partner Name & Subtitle */}
-                      <div className="w-full text-center mt-1 relative z-10">
+                      {/* Partner Name, Subtitle & Interactive Micro-Action */}
+                      <div className="w-full text-center mt-0.5 relative z-10">
                         <h3 className="text-xs sm:text-sm font-black text-slate-900 dark:text-white truncate group-hover:text-[#0D6D54] dark:group-hover:text-[#2DD4BF] transition-colors">
                           {isArabic ? partner.name : partner.nameEn}
                         </h3>
-                        <p className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5 font-medium">
-                          {isArabic ? partner.category : partner.categoryEn}
-                        </p>
+                        <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium px-1">
+                          <span className="truncate text-right rtl:text-right ltr:text-left">{isArabic ? partner.category : partner.categoryEn}</span>
+                          <span className="inline-flex items-center text-[#0D6D54] dark:text-[#2DD4BF] opacity-0 group-hover:opacity-100 transition-opacity font-bold shrink-0">
+                            <ArrowUpRight className="w-3 h-3" />
+                          </span>
+                        </div>
                       </div>
 
                     </div>
@@ -474,50 +570,35 @@ export const PartnersSection: React.FC = () => {
               <div
                 key={partner.id}
                 onClick={() => setActivePartnerModal(partner)}
-                className={`group rounded-2xl p-4 bg-white dark:bg-slate-900/90 border border-slate-200/90 dark:border-white/10 hover:border-emerald-500/60 dark:hover:border-[#2DD4BF]/60 hover:shadow-xl hover:shadow-emerald-900/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer relative overflow-hidden ${
+                className={`group rounded-2xl p-4 bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-white/10 hover:border-emerald-500/60 dark:hover:border-[#2DD4BF]/60 hover:shadow-xl hover:shadow-emerald-900/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer relative overflow-hidden ${
                   partner.cardStyle === 'glow' ? 'shadow-md ring-1 ring-emerald-500/20' : ''
                 }`}
               >
-                {/* Optional Card Top Cover Banner */}
-                {partner.cardCoverUrl && (
-                  <div className="absolute top-0 inset-x-0 h-10 overflow-hidden opacity-30 group-hover:opacity-45 transition-opacity">
-                    <img src={partner.cardCoverUrl} alt="" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white dark:to-slate-900" />
-                  </div>
-                )}
+                {/* Subtle Top Ambient Gradient */}
+                <div 
+                  className="absolute top-0 inset-x-0 h-1.5 opacity-80"
+                  style={{ backgroundColor: partner.accentColor || '#0D6D54' }}
+                />
 
-                <div className="flex items-center justify-between w-full mb-2 relative z-10">
+                <div className="flex items-center justify-between w-full mb-2 pt-1 relative z-10">
                   <span 
-                    className="text-[10px] font-bold px-2 py-0.5 rounded-full truncate max-w-[85%]"
+                    className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full truncate max-w-[85%]"
                     style={{
                       backgroundColor: partner.accentColor ? `${partner.accentColor}15` : undefined,
                       color: partner.accentColor || undefined
                     }}
                   >
-                    {partner.badge || (isArabic ? 'شريك معتمد' : 'Verified')}
+                    <CheckCircle2 className="w-2.5 h-2.5 shrink-0" />
+                    <span className="truncate">{partner.badge || (isArabic ? 'شريك معتمد' : 'Verified')}</span>
                   </span>
                   <span 
-                    className="w-2.5 h-2.5 rounded-full shrink-0 shadow-xs" 
+                    className="w-2 h-2 rounded-full shrink-0 shadow-xs" 
                     style={{ backgroundColor: partner.accentColor || '#0D6D54' }}
                   />
                 </div>
 
                 <div 
-                  className={`w-full ${
-                    partner.canvasHeight === 'sm' 
-                      ? 'h-16' 
-                      : partner.canvasHeight === 'lg' 
-                        ? 'h-24' 
-                        : partner.canvasHeight === 'xl' 
-                          ? 'h-28' 
-                          : partner.canvasHeight === 'full' 
-                            ? 'h-32' 
-                            : 'h-20'
-                  } rounded-xl ${
-                    partner.expandImageToEdges 
-                      ? 'border-0 p-0 shadow-none' 
-                      : 'border border-slate-200/80 dark:border-white/20 shadow-2xs group-hover:shadow-sm group-hover:border-emerald-400/60 dark:group-hover:border-[#2DD4BF]/60'
-                  } flex items-center justify-center overflow-hidden my-auto transition-all relative z-10`}
+                  className="w-full h-22 sm:h-24 rounded-xl border border-slate-200/80 dark:border-white/10 shadow-2xs group-hover:shadow-xs group-hover:border-emerald-400/50 dark:group-hover:border-[#2DD4BF]/50 flex items-center justify-center overflow-hidden my-auto transition-all relative z-10 p-2"
                   style={{
                     backgroundColor: partner.imageBgColor || (isDark ? 'rgba(255,255,255,0.96)' : '#ffffff')
                   }}
@@ -535,7 +616,7 @@ export const PartnersSection: React.FC = () => {
                   />
                 </div>
 
-                <div className="w-full text-center mt-3 relative z-10">
+                <div className="w-full text-center mt-2 relative z-10">
                   <h3 className="text-xs sm:text-sm font-black text-slate-900 dark:text-white truncate group-hover:text-[#0D6D54] dark:group-hover:text-[#2DD4BF] transition-colors">
                     {isArabic ? partner.name : partner.nameEn}
                   </h3>
@@ -545,6 +626,22 @@ export const PartnersSection: React.FC = () => {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Empty state when search matches nothing */}
+        {filteredPartners.length === 0 && (
+          <div className="py-12 text-center">
+            <Building2 className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+            <p className="text-sm font-bold text-slate-600 dark:text-slate-300">
+              {isArabic ? 'لم نتمكن من العثور على شركاء يطابقون بحثك' : 'No partners found matching your search'}
+            </p>
+            <button
+              onClick={() => { setSearchQuery(''); setSelectedSector('all'); }}
+              className="mt-3 text-xs font-black text-[#0D6D54] dark:text-[#2DD4BF] underline cursor-pointer"
+            >
+              {isArabic ? 'إعادة ضبط التصفية والبحث' : 'Reset filters'}
+            </button>
           </div>
         )}
 
@@ -601,36 +698,48 @@ export const PartnersSection: React.FC = () => {
         )}
 
         {/* Partnership Metrics Highlights */}
-        <div className="mt-12 sm:mt-16 pt-8 border-t border-slate-200/80 dark:border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/40 border border-slate-200/60 dark:border-white/5">
-            <span className="block text-2xl sm:text-3xl font-black text-[#0D6D54] dark:text-[#2DD4BF] mb-1">+٢٠</span>
+        <div className="mt-12 sm:mt-16 pt-8 border-t border-slate-200/80 dark:border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-center">
+          
+          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/40 border border-slate-200/60 dark:border-white/5 shadow-2xs hover:shadow-sm transition-shadow">
+            <span className="block text-2xl sm:text-3xl font-black text-[#0D6D54] dark:text-[#2DD4BF] mb-1 font-sans">+٢٠</span>
             <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 block">
-              {isArabic ? 'شراكة حكومية ومؤسسية رائدة' : 'Strategic Alliances'}
+              {isArabic ? 'شراكة حكومية ومؤسسية' : 'Strategic Alliances'}
             </span>
             <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 block">
-              {isArabic ? 'وزارات وهيئات وطنية وكبرى الجامعات' : 'Ministries, Authorities & Universities'}
+              {isArabic ? 'وزارات وهيئات وجامعات كبرى' : 'Ministries & Authorities'}
             </span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/40 border border-slate-200/60 dark:border-white/5">
-            <span className="block text-2xl sm:text-3xl font-black text-[#0D6D54] dark:text-[#2DD4BF] mb-1">١٠٠٪</span>
+          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/40 border border-slate-200/60 dark:border-white/5 shadow-2xs hover:shadow-sm transition-shadow">
+            <span className="block text-2xl sm:text-3xl font-black text-[#0D6D54] dark:text-[#2DD4BF] mb-1 font-sans">١٠٠٪</span>
             <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 block">
-              {isArabic ? 'تكامل في مسارات الدمج والتأهيل' : 'Inclusion & Care Integration'}
+              {isArabic ? 'تكامل في مسارات الدمج' : 'Inclusion & Integration'}
             </span>
             <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 block">
-              {isArabic ? 'دمج مدرسي ورعاية تخصصية شاملة' : 'School Readiness & Dedicated Care'}
+              {isArabic ? 'دمج مدرسي ورعاية تخصصية' : 'Classroom & Dedicated Care'}
             </span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/40 border border-slate-200/60 dark:border-white/5">
-            <span className="block text-2xl sm:text-3xl font-black text-[#0D6D54] dark:text-[#2DD4BF] mb-1">مرن</span>
+          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/40 border border-slate-200/60 dark:border-white/5 shadow-2xs hover:shadow-sm transition-shadow">
+            <span className="block text-2xl sm:text-3xl font-black text-[#0D6D54] dark:text-[#2DD4BF] mb-1 font-sans">٠٪</span>
             <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 block">
-              {isArabic ? 'تيسير مالي وتسهيلات سداد' : 'Flexible Payment Solutions'}
+              {isArabic ? 'تقسيط وتيسير مالي مرن' : '0% Interest Installments'}
             </span>
             <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 block">
-              {isArabic ? 'شراكات تمويلية وتقسيط بدون فوائد' : '0% Installment & Care Enablement'}
+              {isArabic ? 'شراكة تمارا وإمكان بدون فوائد' : 'Tamara & Emkan Enablement'}
             </span>
           </div>
+
+          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/40 border border-slate-200/60 dark:border-white/5 shadow-2xs hover:shadow-sm transition-shadow">
+            <span className="block text-2xl sm:text-3xl font-black text-[#0D6D54] dark:text-[#2DD4BF] mb-1 font-sans">٣</span>
+            <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 block">
+              {isArabic ? 'اعتمادات دولية لجودة التأهيل' : 'International Accreditations'}
+            </span>
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 block">
+              {isArabic ? 'IBAO و QABA و ISO 9001' : 'IBAO, QABA & ISO Standards'}
+            </span>
+          </div>
+
         </div>
 
       </div>
@@ -644,17 +753,15 @@ export const PartnersSection: React.FC = () => {
           onClick={() => setActivePartnerModal(null)}
         >
           <div 
-            className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-2xl relative overflow-hidden"
+            className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-7 border border-slate-200 dark:border-white/10 shadow-2xl relative overflow-hidden"
             onClick={(e) => e.stopPropagation()}
             dir={isArabic ? 'rtl' : 'ltr'}
           >
-            {/* Optional Cover Banner */}
-            {activePartnerModal.cardCoverUrl && (
-              <div className="absolute top-0 inset-x-0 h-24 overflow-hidden opacity-35">
-                <img src={activePartnerModal.cardCoverUrl} alt="" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white dark:to-slate-900" />
-              </div>
-            )}
+            {/* Top Accent Bar */}
+            <div 
+              className="absolute top-0 inset-x-0 h-2"
+              style={{ backgroundColor: activePartnerModal.accentColor || '#0D6D54' }}
+            />
 
             {/* Close button */}
             <button
@@ -666,19 +773,7 @@ export const PartnersSection: React.FC = () => {
 
             {/* Logo in Header */}
             <div 
-              className={`${
-                activePartnerModal.canvasHeight === 'xl' || activePartnerModal.canvasHeight === 'full'
-                  ? 'w-40 h-28 sm:w-48 sm:h-32'
-                  : activePartnerModal.canvasHeight === 'lg'
-                    ? 'w-32 h-24 sm:w-36 sm:h-26'
-                    : activePartnerModal.canvasHeight === 'sm'
-                      ? 'w-24 h-16 sm:w-28 sm:h-18'
-                      : 'w-28 h-20 sm:w-32 sm:h-22'
-              } mx-auto mb-4 rounded-2xl ${
-                activePartnerModal.expandImageToEdges 
-                  ? 'border-0 p-0 shadow-none' 
-                  : 'border border-slate-200/80 dark:border-white/20 p-2 sm:p-3 shadow-xs'
-              } flex items-center justify-center relative z-10 overflow-hidden transition-all`}
+              className="w-36 h-24 sm:w-44 sm:h-28 mx-auto mb-4 rounded-2xl border border-slate-200/80 dark:border-white/20 p-2 sm:p-3 shadow-xs flex items-center justify-center relative z-10 overflow-hidden transition-all"
               style={{
                 backgroundColor: activePartnerModal.imageBgColor || (isDark ? 'rgba(255,255,255,0.96)' : '#ffffff')
               }}
@@ -698,35 +793,55 @@ export const PartnersSection: React.FC = () => {
 
             {/* Partner Title & Category */}
             <div className="text-center mb-4 relative z-10">
-              <h3 className="text-lg font-black text-slate-900 dark:text-white">
+              <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white">
                 {isArabic ? activePartnerModal.name : activePartnerModal.nameEn}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">
                 {isArabic ? activePartnerModal.category : activePartnerModal.categoryEn}
               </p>
-              <div 
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold mt-3 border"
-                style={{
-                  backgroundColor: activePartnerModal.accentColor ? `${activePartnerModal.accentColor}15` : undefined,
-                  borderColor: activePartnerModal.accentColor ? `${activePartnerModal.accentColor}30` : undefined,
-                  color: activePartnerModal.accentColor || undefined
-                }}
-              >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>{activePartnerModal.badge || (isArabic ? 'شريك معتمد' : 'Verified Partner')}</span>
+              
+              <div className="flex items-center justify-center gap-2 mt-3">
+                <span 
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border"
+                  style={{
+                    backgroundColor: activePartnerModal.accentColor ? `${activePartnerModal.accentColor}15` : undefined,
+                    borderColor: activePartnerModal.accentColor ? `${activePartnerModal.accentColor}30` : undefined,
+                    color: activePartnerModal.accentColor || undefined
+                  }}
+                >
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>{activePartnerModal.badge || (isArabic ? 'شريك استراتيجي معتمد' : 'Verified Strategic Partner')}</span>
+                </span>
+
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>{isArabic ? 'شراكة سارية وفعالة' : 'Active Partnership'}</span>
+                </span>
               </div>
             </div>
 
             {/* Scope of Partnership Description */}
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-white/5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed text-center relative z-10">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-white/5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed text-center relative z-10">
               {isArabic 
                 ? (activePartnerModal.description || 'شراكة استراتيجية مستمرة تسهم في تمكين أطفال مركز رابا وتقديم الدعم التخصصي والدمج المجتمعي بأعلى المعايير.')
                 : (activePartnerModal.descriptionEn || 'Ongoing strategic alliance dedicated to empowering children with specialized care and community integration.')}
             </div>
 
+            {/* Key Partnership Highlights */}
+            <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-bold text-slate-600 dark:text-slate-300">
+              <div className="p-2.5 rounded-xl bg-slate-100/70 dark:bg-slate-800/40 flex items-center gap-2">
+                <Award className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span>{isArabic ? 'تسهيلات ورعاية مخصصة' : 'Dedicated Privileges'}</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-slate-100/70 dark:bg-slate-800/40 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span>{isArabic ? 'معايير إكلينيكية معتمدة' : 'Clinical Standards'}</span>
+              </div>
+            </div>
+
             {/* Modal Actions */}
-            <div className="mt-5 flex items-center gap-2 relative z-10">
-              {activePartnerModal.websiteUrl && (
+            <div className="mt-5 flex items-center gap-2.5 relative z-10">
+              {activePartnerModal.websiteUrl ? (
                 <a
                   href={activePartnerModal.websiteUrl}
                   target="_blank"
@@ -736,10 +851,11 @@ export const PartnersSection: React.FC = () => {
                   <ExternalLink className="w-3.5 h-3.5" />
                   <span>{isArabic ? 'زيارة الموقع الرسمي' : 'Visit Website'}</span>
                 </a>
-              )}
+              ) : null}
+              
               <button
                 onClick={() => setActivePartnerModal(null)}
-                className={`${activePartnerModal.websiteUrl ? 'flex-1' : 'w-full'} py-2.5 rounded-xl bg-[#0D6D54] hover:bg-[#09523F] text-white text-xs font-black shadow-sm transition-colors cursor-pointer`}
+                className="flex-1 py-2.5 rounded-xl bg-[#0D6D54] hover:bg-[#09523F] text-white text-xs font-black shadow-sm transition-colors cursor-pointer text-center"
               >
                 {isArabic ? 'إغلاق' : 'Close'}
               </button>

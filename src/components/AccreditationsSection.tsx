@@ -150,7 +150,7 @@ export const AccreditationsSection: React.FC = () => {
                 </span>
 
                 {/* Rounded Squircle Badge with Code (e.g. [ ISO ], [ BA ], [ QA ]) */}
-                <div className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl sm:rounded-2xl border border-slate-600/70 dark:border-slate-500/50 bg-[#0E1E34]/80 text-slate-200 dark:text-slate-200 font-extrabold text-xs sm:text-sm tracking-widest shadow-inner group-hover:border-amber-400/80 group-hover:text-amber-300 group-hover:scale-105 transition-all">
+                <div className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl sm:rounded-2xl border border-slate-300 dark:border-slate-500/50 bg-slate-100 dark:bg-[#0E1E34]/80 text-slate-800 dark:text-slate-200 font-extrabold text-xs sm:text-sm tracking-widest shadow-xs group-hover:border-amber-400/80 group-hover:text-amber-500 dark:group-hover:text-amber-300 group-hover:scale-105 transition-all">
                   {item.code}
                 </div>
               </div>
@@ -163,34 +163,34 @@ export const AccreditationsSection: React.FC = () => {
       {/* Accreditation Details Modal on Click */}
       {selectedItem && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/75 backdrop-blur-xs animate-in fade-in duration-200"
           onClick={() => setSelectedItem(null)}
         >
           <div 
-            className="bg-[#0B1526] text-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-white/10 relative overflow-hidden"
+            className="bg-white dark:bg-[#0B1526] text-slate-900 dark:text-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-white/10 relative overflow-hidden"
             onClick={(e) => e.stopPropagation()}
             dir={isArabic ? 'rtl' : 'ltr'}
           >
             {/* Top Close Button */}
             <button
               onClick={() => setSelectedItem(null)}
-              className="absolute top-4 start-auto end-4 sm:end-6 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center cursor-pointer transition-colors"
+              className="absolute top-4 start-auto end-4 sm:end-6 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center cursor-pointer transition-colors"
               aria-label="إغلاق"
             >
               <X className="w-4 h-4" />
             </button>
 
             {/* Modal Header Badge */}
-            <div className="flex items-center gap-3 pt-2 pb-4 border-b border-white/10">
-              <div className="w-14 h-14 rounded-2xl bg-[#14233D] border border-amber-500/30 flex items-center justify-center text-amber-400 font-black text-lg shrink-0 shadow-inner">
+            <div className="flex items-center gap-3 pt-2 pb-4 border-b border-slate-100 dark:border-white/10">
+              <div className="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-[#14233D] border border-amber-500/30 flex items-center justify-center text-amber-500 dark:text-amber-400 font-black text-lg shrink-0 shadow-inner">
                 {(selectedItem as any).code || 'AC'}
               </div>
               <div>
-                <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full mb-1">
+                <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full mb-1">
                   <CheckCircle2 className="w-3 h-3" />
                   <span>{isArabic ? 'اعتماد دولي موثق وساري' : 'Verified & Active Accreditation'}</span>
                 </span>
-                <h3 className="text-base sm:text-lg font-black text-white leading-snug">
+                <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug">
                   {isArabic ? selectedItem.nameAr : selectedItem.nameEn}
                 </h3>
               </div>

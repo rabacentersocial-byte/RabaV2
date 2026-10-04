@@ -1,30 +1,67 @@
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
-import App from './App.tsx';
+import App from './App';
 import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
-import { AuthProvider } from './context/AuthContext.tsx';
+import { AuthProvider } from './context/AuthContext';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { updateTabFavicon } from './data/siteCustomizer';
 import { initPersistentSync, hydratePersistentData } from './utils/persistentSync';
 import './index.css';
 
-// Instant synchronous hydration for incognito/private mode
-hydratePersistentData();
+console.log('[Raba main] Initializing core modules...');
 
-// Initialize tab favicon with brand logo
-updateTabFavicon();
+const rootEl = document.getElementById('root');
+if (rootEl) {
+  try {
+    console.log('[Raba main] Mounting React tree into #root...');
+    const root = createRoot(rootEl);
+    root.render(
+      <StrictMode>
+        <ErrorBoundary>
+          <ThemeProvider>
+            <LanguageProvider>
+              <AuthProvider>
+                <App />
+              </AuthProvider>
+            </LanguageProvider>
+          </ThemeProvider>
+        </ErrorBoundary>
+      </StrictMode>,
+    );
+    console.log('[Raba main] React tree successfully dispatched to renderer.');
 
-// Initialize full-stack persistent synchronization with server disk
-initPersistentSync();
+    // Dismiss overlay splash screen as soon as React mounts
+    if (typeof window !== 'undefined' && (window as any).dismissSplash) {
+      setTimeout(() => {
+        (window as any).dismissSplash();
+      }, 50);
+    }
+  } catch (err) {
+    console.error('[main] Fatal render mount error:', err);
+    if (typeof window !== 'undefined' && (window as any).showAppError) {
+      (window as any).showAppError(err);
+    }
+  }
+}
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ThemeProvider>
-      <LanguageProvider>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </LanguageProvider>
-    </ThemeProvider>
-  </StrictMode>,
-);
+// Safely execute initial hydration and favicon setup without blocking main thread mount
+setTimeout(() => {
+  try {
+    hydratePersistentData();
+  } catch (e) {
+    console.warn('[main] Hydration notice:', e);
+  }
+
+  try {
+    updateTabFavicon();
+  } catch (e) {
+    console.warn('[main] Favicon notice:', e);
+  }
+
+  try {
+    initPersistentSync();
+  } catch (e) {
+    console.warn('[main] Persistent sync notice:', e);
+  }
+}, 0);

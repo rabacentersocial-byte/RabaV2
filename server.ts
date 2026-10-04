@@ -1,9 +1,11 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
+import type { Request, Response } from 'express';
 import { createServer as createViteServer } from 'vite';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { requireAuth, AuthRequest } from './src/middleware/auth.ts';
+import { requireAuth } from './src/middleware/auth.ts';
+import type { AuthRequest } from './src/middleware/auth.ts';
 import { getUsers, getOrCreateUser } from './src/db/users.ts';
 import { saveDbSetting, getDbSetting, getAllDbSettings } from './src/db/settings.ts';
 import { createDbAppointment, getDbAppointments, syncDbAppointments } from './src/db/appointments.ts';
@@ -729,12 +731,11 @@ async function startServer() {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   } else {
-    const isHmrDisabled = process.env.DISABLE_HMR === 'true';
     viteInstance = await createViteServer({
       server: {
         middlewareMode: true,
-        hmr: isHmrDisabled ? false : undefined,
-        watch: isHmrDisabled ? null : undefined,
+        hmr: false,
+        watch: null,
       },
       appType: 'spa',
     });
