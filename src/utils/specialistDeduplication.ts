@@ -74,6 +74,50 @@ export function isSameSpecialist(
 }
 
 /**
+ * Returns strict user-requested priority sorting index for core specialists:
+ * 1. هناء بشير (0)
+ * 2. أحمد أبو زيد (1)
+ * 3. هشام علي (2)
+ * 4. حنين العبيدي (3)
+ * 5. عامر قادوس (4)
+ * 6. ضحى خالد (5)
+ * 7. حشمة المطيري (6)
+ * Other specialists: 999
+ */
+export function getSpecialistPriorityIndex(name: string, id?: string): number {
+  if (id) {
+    const cleanId = normalizeSpecialistId(id);
+    if (cleanId === 'hanaa-basheer') return 0;
+    if (cleanId === 'ahmed-abouzeid' || cleanId === '1') return 1;
+    if (cleanId === 'hesham-ali') return 2;
+    if (cleanId === 'haneen-obaidi') return 3;
+    if (cleanId === 'amer-qadoos') return 4;
+    if (cleanId === 'doha-khaled') return 5;
+    if (cleanId === 'heshmah-mutairi') return 6;
+  }
+  if (!name) return 999;
+  const n = normalizeSpecialistName(name);
+  if ((n.includes('هناء') || n.includes('هنا')) && (n.includes('بشير') || n.includes('علي'))) return 0;
+  if (n.includes('ابو زيد') || n.includes('ابوزيد') || n.includes('احمد ابو زيد')) return 1;
+  if (n.includes('هشام') && (n.includes('علي') || n.includes('سلامه') || n.includes('سلامة'))) return 2;
+  if (n.includes('حنين') && (n.includes('العبيدي') || n.includes('عبيدي'))) return 3;
+  if (n.includes('عامر') && (n.includes('قادوس') || n.includes('قدوس'))) return 4;
+  if ((n.includes('ضحي') || n.includes('ضحى')) && n.includes('خالد')) return 5;
+  if ((n.includes('حشمه') || n.includes('حشمة')) && (n.includes('المطيري') || n.includes('مطيري'))) return 6;
+  return 999;
+}
+
+export function sortSpecialistsByPriority<T extends { name: string; id?: string }>(list: T[]): T[] {
+  if (!Array.isArray(list)) return [];
+  return [...list].sort((a, b) => {
+    const pA = getSpecialistPriorityIndex(a.name, a.id);
+    const pB = getSpecialistPriorityIndex(b.name, b.id);
+    if (pA !== pB) return pA - pB;
+    return 0;
+  });
+}
+
+/**
  * Deduplicates an array of Specialists, merging duplicates so that the
  * most complete data (richest bio, image, specialties) is preserved.
  */
@@ -123,7 +167,7 @@ export function deduplicateSpecialists(list: Specialist[]): Specialist[] {
     }
   }
 
-  return result;
+  return sortSpecialistsByPriority(result);
 }
 
 /**
@@ -157,5 +201,5 @@ export function deduplicateDoctors(list: Doctor[]): Doctor[] {
     }
   }
 
-  return result;
+  return sortSpecialistsByPriority(result);
 }

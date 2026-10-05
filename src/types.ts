@@ -18,8 +18,10 @@ export interface Specialist {
   category?: 'all' | 'aba' | 'occupational' | 'speech' | 'psychology' | string;
   department?: string;
   avatar: string;
+  image?: string;
   cardImage?: string;
   fallbackAvatar?: string;
+  isTopRated?: boolean;
   orderIndex?: number;
   posterCrop?: string;
   portraitCrop?: string;

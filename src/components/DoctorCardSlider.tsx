@@ -19,7 +19,7 @@ import {
   findCustomSettingForDoctor
 } from '../data/specialistCustomizer';
 import { getResolvedImageUrl, handleImageErrorWithStore } from '../utils/persistentImageStore';
-import { isSameSpecialist, deduplicateDoctors } from '../utils/specialistDeduplication';
+import { isSameSpecialist, deduplicateDoctors, sortSpecialistsByPriority, normalizeSpecialistName } from '../utils/specialistDeduplication';
 
 // Doctor Interface
 export interface Doctor {
@@ -34,8 +34,9 @@ export interface Doctor {
   specialtyCode: string;
   specialtyCodeEn: string;
   category: 'all' | 'aba' | 'occupational' | 'speech' | 'psychology';
-  department: string;
+  department?: string;
   avatar: string;
+  image?: string;
   fallbackAvatar?: string;
   rating: number;
   reviewCount: number;
@@ -55,6 +56,115 @@ export interface Doctor {
 // 40 Realistic Medical Specialists matching Raba Center
 export const DOCTORS_DATA: Doctor[] = [
   {
+    "id": "doc-hanaa-basheer",
+    "name": "د. هناء بشير",
+    "arabicName": "د. هناء بشير",
+    "nameEn": "Dr. Hanaa Basheer",
+    "title": "أخصائي نفسي أول / المدير الطبي لمراكز رابا",
+    "titleEn": "Senior Clinical Psychologist & Medical Director",
+    "specialty": "أخصائي نفسي أول / المدير الطبي لمراكز رابا",
+    "specialtyEn": "Senior Clinical Psychologist & Medical Director",
+    "specialtyCode": "أخصائي نفسي أول / المدير الطبي لمراكز رابا",
+    "specialtyCodeEn": "Senior Clinical Psychologist & Medical Director",
+    "category": "psychology",
+    "department": "القسم الطبي والإرشاد النفسي الإكلينيكي",
+    "avatar": "/uploads/1790827426491_50_png.png",
+    "image": "/uploads/1790827426491_50_png.png",
+    "fallbackAvatar": "/uploads/1790827426491_50_png.png",
+    "rating": 4.98,
+    "reviewCount": 320,
+    "experienceYears": 15,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "أخصائي نفسي أول والمدير الطبي لمراكز رابا",
+      "حاصلة على دكتوراه في علم النفس تخصص داخلي سريري",
+      "ماجستير العلاج النفسي ودبلوم الاحتياجات الخاصة من جامعة النيلين",
+      "دبلومة العلاج السلوكي المعرفي CBT من جامعة القراءة ببريطانيا",
+      "إعتماد بورد التشخيص الأمريكي لمقياس ADOS-2",
+      "عضو في الجمعية النفسية الأمريكية APA",
+      "استشاري علم النفس في المجلس القومي للمهن الطبية والصحية",
+      "خبرة عملية أكثر من 15 سنة"
+    ],
+    "bio": "أخصائي نفسي أول والمدير الطبي لمراكز رابا. حاصلة على دكتوراه في علم النفس السريري من جامعة الرباط الوطني، وماجستير العلاج النفسي ودبلوم الاحتياجات الخاصة من جامعة النيلين، ودبلومة العلاج السلوكي المعرفي من جامعة القراءة في بريطانيا. معتمدة من بورد التشخيص الأمريكي لمقياس ADOS-2، وعضو في الجمعية النفسية الأمريكية APA، واستشاري علم النفس بالمجلس القومي للمهن الطبية والصحية بخبرة سريرية تتجاوز 15 عاماً.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-ahmed-abouzeid",
+    "name": "احمد أبو زيد أنور",
+    "arabicName": "احمد أبو زيد أنور",
+    "nameEn": "Ahmed Abouzeid Anwar",
+    "title": "المدير العام للبرامج التأهيلية | رئيس قسم ABA",
+    "titleEn": "General Director of Rehabilitation | Head of ABA",
+    "specialty": "المدير العام للبرامج التأهيلية ورئيس قسم تحليل السلوك",
+    "specialtyEn": "General Director of Programs & Head of ABA",
+    "specialtyCode": "المدير العام للبرامج التأهيلية | رئيس قسم ABA",
+    "specialtyCodeEn": "General Director of Rehabilitation | Head of ABA",
+    "category": "aba",
+    "avatar": "/uploads/1790826219680_16_png.png",
+    "image": "/uploads/1790826219680_16_png.png",
+    "fallbackAvatar": "/uploads/1790826219680_16_png.png",
+    "rating": 4.95,
+    "reviewCount": 220,
+    "experienceYears": 12,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "MA, QBA, IBA",
+      "خبرة 12 سنة ومقدم CEUs للبورد QABA",
+      "خطط التدخل السلوكي المكثفة",
+      "تعديل السلوك وتدريب الكوادر والأسر"
+    ],
+    "bio": "المدير العام للبرامج التأهيلية ورئيس قسم ABA بمركز رابا. حاصل على MA، QBA، IBA بخبرة 12 سنة، ومقدم وحدات التعليم المستمر CEUs للبورد الدولي QABA.",
+    "isTopRated": true
+  },
+  {
+    "id": "doc-hesham-ali",
+    "name": "هشام علي",
+    "arabicName": "هشام علي",
+    "nameEn": "Hesham Ali",
+    "title": "رئيس قسم النطق والتخاطب",
+    "titleEn": "Head of Speech and Language Department",
+    "specialty": "رئيس قسم النطق والتخاطب",
+    "specialtyEn": "Head of Speech & Language Pathology Department",
+    "specialtyCode": "رئيس قسم النطق والتخاطب",
+    "specialtyCodeEn": "Head of Speech and Language Department",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب واضطرابات التواصل",
+    "avatar": "/uploads/1791187379881_60_png.png",
+    "image": "/uploads/1791187379881_60_png.png",
+    "fallbackAvatar": "/uploads/1791187379881_60_png.png",
+    "rating": 4.97,
+    "reviewCount": 230,
+    "experienceYears": 20,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "رئيس قسم النطق والتخاطب بمراكز رابا",
+      "بكالوريوس التربية الخاصة - جامعة عين شمس",
+      "تمهيدي ماجستير في اضطرابات النطق والكلام",
+      "علاج التلعثم واضطرابات مخارج الحروف والنمو اللغوي",
+      "خبرة عملية أكثر من 20 سنة"
+    ],
+    "bio": "رئيس قسم النطق والتخاطب بمراكز رابا. خبير واستشاري علاج اضطرابات النطق والكلام وتأخر النمو اللغوي والعيّ والتلعثم، حاصل على بكالوريوس وتمهيدي ماجستير اضطرابات النطق والكلام من جامعة عين شمس بخبرة سريرية تفوق 20 عاماً.",
+    "isTopRated": false
+  },
+  {
     "id": "doc-haneen-obaidi",
     "name": "حنين العبيدي",
     "arabicName": "حنين العبيدي",
@@ -65,21 +175,20 @@ export const DOCTORS_DATA: Doctor[] = [
     "specialtyEn": "Head of Occupational Therapy Department",
     "specialtyCode": "رئيس قسم العلاج الوظيفي",
     "specialtyCodeEn": "Head of Occupational Therapy Department",
-    "category": "aba",
-    "department": "رئيس قسم العلاج الوظيفي والتكامل الحسي",
-    "avatar": "/specialists/cards/spec_01_haneen-obaidi.jpg",
-    "fallbackAvatar": "/specialists/cards/spec_01_haneen-obaidi.jpg",
+    "category": "occupational",
+    "avatar": "/uploads/1790357520279_________________jpg_jpeg.jpg",
+    "image": "/uploads/1790357520279_________________jpg_jpeg.jpg",
+    "fallbackAvatar": "/uploads/1790357520279_________________jpg_jpeg.jpg",
     "rating": 4.95,
     "reviewCount": 240,
     "experienceYears": 16,
-    "patientsCount": 1200,
+    "patientsCount": 1000,
     "sessionPrice": 0,
     "location": "",
     "locationEn": "",
     "isAvailable": true,
     "nextSlot": "متاح للحجز",
     "nextSlotEn": "Available for booking",
-    "isTopRated": true,
     "tags": [
       "بكالوريوس العلاج الوظيفي الجامعة الهاشمية",
       "شهادة ايرس العالمية في التكامل الحسي (Ayres SI)",
@@ -88,41 +197,45 @@ export const DOCTORS_DATA: Doctor[] = [
       "تقييم وعلاج المشاكل الحسية والتحديات النمائية لدى الأطفال",
       "خبرة أكثر من 16 سنة في تأهيل الأطفال"
     ],
-    "bio": "رئيس قسم العلاج الوظيفي بمركز رابا. حاصلة على بكالوريوس العلاج الوظيفي من الجامعة الهاشمية، شهادة ايرس العالمية في التكامل الحسي، شهادة Floortime 101، ومرخصة في اختبار EASI للتكامل الحسي. متخصصة في تقييم وعلاج المشاكل الحسية والتحديات النمائية لدى الأطفال بخبرة عريقة تتجاوز 16 عاماً."
+    "bio": "رئيس قسم العلاج الوظيفي بمركز رابا. حاصلة على بكالوريوس العلاج الوظيفي من الجامعة الهاشمية، شهادة ايرس العالمية في التكامل الحسي، شهادة Floortime 101، ومرخصة في اختبار EASI للتكامل الحسي. متخصصة في تقييم وعلاج المشاكل الحسية والتحديات النمائية لدى الأطفال بخبرة عريقة تتجاوز 16 عاماً.",
+    "isTopRated": true
   },
   {
-    "id": "doc-rahaf-doghmani",
-    "name": "رهف الدغماني",
-    "arabicName": "رهف الدغماني",
-    "nameEn": "Rahaf Al-Doghmani",
-    "title": "إشراف قسم الـ ABA",
-    "titleEn": "Supervisor of ABA Department",
-    "specialty": "مشرفة قسم تحليل السلوك التطبيقي ABA",
-    "specialtyEn": "Supervisor of ABA Department & QABA Analyst",
-    "specialtyCode": "إشراف قسم الـ ABA",
-    "specialtyCodeEn": "Supervisor of ABA Department",
-    "category": "aba",
-    "department": "مشرفة قسم تحليل السلوك التطبيقي ABA",
-    "avatar": "/specialists/cards/spec_02_rahaf-doghmani.jpg",
-    "fallbackAvatar": "/specialists/cards/spec_02_rahaf-doghmani.jpg",
-    "rating": 4.9,
-    "reviewCount": 175,
-    "experienceYears": 5,
-    "patientsCount": 1200,
+    "id": "doc-amer-qadoos",
+    "name": "عامر قادوس",
+    "arabicName": "عامر قادوس",
+    "nameEn": "Amer Qadous",
+    "title": "أخصائي التأهيل العصبي",
+    "titleEn": "Neuro-Rehabilitation Specialist",
+    "specialty": "أخصائي التأهيل العصبي ومحلل سلوك دولي IBA",
+    "specialtyEn": "Neuro-Rehabilitation Specialist & Behavior Analyst (IBA)",
+    "specialtyCode": "أخصائي التأهيل العصبي",
+    "specialtyCodeEn": "Neuro-Rehabilitation Specialist",
+    "category": "psychology",
+    "department": "قسم النطق والتخاطب والتأهيل السمعي",
+    "avatar": "/uploads/1791187395677_61_png.png",
+    "image": "/uploads/1791187395677_61_png.png",
+    "fallbackAvatar": "/uploads/1791187395677_61_png.png",
+    "rating": 4.95,
+    "reviewCount": 185,
+    "experienceYears": 10,
+    "patientsCount": 1000,
     "sessionPrice": 0,
     "location": "",
     "locationEn": "",
     "isAvailable": true,
     "nextSlot": "متاح للحجز",
     "nextSlotEn": "Available for booking",
-    "isTopRated": true,
     "tags": [
-      "بكالوريوس التربية الخاصة جامعة القصيم",
-      "ماجستير في الإضطرابات السلوكية والانفعالية من جامعة الملك سعود",
-      "محلل سلوك معتمد من منظمة QABA",
-      "خبرة أكثر من 5 سنوات في البرامج السلوكية"
+      "أخصائي التأهيل العصبي وباحث علم النفس العصبي",
+      "محلل سلوك دولي معتمد IBA من منظمة IBAO",
+      "البورد الدولي للعلاجات النفسية ACT - CBT - DBT من جامعة نيفادا",
+      "البورد البريطاني لمقاييس الذكاء والقدرات العقلية",
+      "معتمد ساعات CME بالهيئة السعودية للتخصصات الصحية",
+      "خبرة عملية أكثر من 10 سنوات في فرنسا وبريطانيا"
     ],
-    "bio": "مشرفة قسم تحليل السلوك التطبيقي (ABA) بمركز رابا. حاصلة على بكالوريوس التربية الخاصة من جامعة القصيم، وماجستير في الإضطرابات السلوكية والانفعالية من جامعة الملك سعود، ومحلل سلوك معتمد من منظمة QABA بخبرة تفوق 5 سنوات في قيادة وتصميم الخطط السلوكية الفردية للأطفال."
+    "bio": "أخصائي التأهيل العصبي وباحث ماجستير في علم النفس العصبي. محلل سلوك دولي معتمد IBA وحاصل على البورد الدولي للعلاجات النفسية (ACT, CBT, DBT) من جامعة نيفادا والبورد البريطاني للقدرات العقلية، بخبرة أكثر من 10 سنوات في مراكز التأهيل بفرنسا وبريطانيا.",
+    "isTopRated": false
   },
   {
     "id": "doc-doha-khaled",
@@ -136,825 +249,27 @@ export const DOCTORS_DATA: Doctor[] = [
     "specialtyCode": "إشراف قسم الـ ABA",
     "specialtyCodeEn": "Supervisor of ABA Department",
     "category": "aba",
-    "department": "مشرفة قسم تحليل السلوك التطبيقي ومحلل سلوكي معتمد",
-    "avatar": "/specialists/cards/spec_03_doha-khaled.jpg",
-    "fallbackAvatar": "/specialists/cards/spec_03_doha-khaled.jpg",
+    "avatar": "/uploads/1790357539758_____________jpg_jpeg.jpg",
+    "image": "/uploads/1790357539758_____________jpg_jpeg.jpg",
+    "fallbackAvatar": "/uploads/1790357539758_____________jpg_jpeg.jpg",
     "rating": 4.9,
     "reviewCount": 195,
     "experienceYears": 9,
-    "patientsCount": 1200,
+    "patientsCount": 1000,
     "sessionPrice": 0,
     "location": "",
     "locationEn": "",
     "isAvailable": true,
     "nextSlot": "متاح للحجز",
     "nextSlotEn": "Available for booking",
-    "isTopRated": true,
     "tags": [
       "بكالوريوس تربية خاصة من الجامعة العربية",
       "مشرف اخصائي توحد معتمد من البورد الامريكي من منظمة QABA",
       "حاصلة على محلل سلوكي معتمد من منظمة IBAO",
       "خبرة أكثر من 9 سنوات في رعاية وتأهيل التوحد"
     ],
-    "bio": "مشرفة قسم ABA بمركز رابا، حاصلة على بكالوريوس تربية خاصة من الجامعة العربية، ومشرف أخصائي توحد معتمد من البورد الأمريكي من منظمة QABA، ومحلل سلوكي معتمد من منظمة IBAO بخبرة تزيد عن 9 سنوات في الإشراف الإكلينيكي وتأهيل مهارات أطفال طيف التوحد."
-  },
-  {
-    "id": "doc-manar-wahba",
-    "name": "منار وهبه",
-    "arabicName": "منار وهبه",
-    "nameEn": "Manar Wahba",
-    "title": "إشراف قسم النطق والتخاطب",
-    "titleEn": "Supervisor of Speech & Language Pathology Department",
-    "specialty": "مشرفة قسم النطق والتخاطب والتأهيل اللغوي",
-    "specialtyEn": "Speech & Language Pathology Supervisor",
-    "specialtyCode": "إشراف قسم النطق والتخاطب",
-    "specialtyCodeEn": "Supervisor of Speech & Language Pathology Department",
-    "category": "aba",
-    "department": "مشرفة قسم النطق والتخاطب والتأهيل اللغوي",
-    "avatar": "/specialists/cards/spec_04_manar-wahba.jpg",
-    "fallbackAvatar": "/specialists/cards/spec_04_manar-wahba.jpg",
-    "rating": 4.88,
-    "reviewCount": 182,
-    "experienceYears": 10,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": false,
-    "tags": [
-      "بكالوريوس خدمة اجتماعية جامعة القاهرة",
-      "دبلومة تخاطب جامعة عين شمس",
-      "دبلومة تربية خاصة علوم إعاقة جامعة الزقازيق",
-      "متخصصة opt ومشاكل نطق وسمع",
-      "شهادة opt من منظمة ASHA الأمريكية",
-      "خبرة أكثر من 10 سنوات في علاج النطق واللغة"
-    ],
-    "bio": "مشرفة قسم النطق والتخاطب بمركز رابا. حاصلة على بكالوريوس خدمة اجتماعية من جامعة القاهرة، دبلومة تخاطب من جامعة عين شمس، دبلومة تربية خاصة علوم إعاقة من جامعة الزقازيق، ومتخصصة في العلاج الوظيفي الفموي opt ومشاكل النطق والسمع وحاصلة على شهادة opt من منظمة ASHA الأمريكية بخبرة تتجاوز 10 سنوات."
-  },
-  {
-    "id": "doc-ahmed-fathi",
-    "name": "أحمد فتحي",
-    "arabicName": "أحمد فتحي",
-    "nameEn": "Ahmed Fathi",
-    "title": "أخصائي ABA",
-    "titleEn": "ABA Specialist",
-    "specialty": "أخصائي تحليل السلوك التطبيقي المعتمد ABAT",
-    "specialtyEn": "ABA Specialist & Board Certified ABAT",
-    "specialtyCode": "أخصائي ABA",
-    "specialtyCodeEn": "ABA Specialist",
-    "category": "aba",
-    "department": "أخصائي تحليل السلوك التطبيقي المعتمد ABAT",
-    "avatar": "/specialists/cards/spec_05_ahmed-fathi.jpg",
-    "fallbackAvatar": "/specialists/cards/spec_05_ahmed-fathi.jpg",
-    "rating": 4.85,
-    "reviewCount": 168,
-    "experienceYears": 8,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": false,
-    "tags": [
-      "بكالوريوس تربية خاصة جامعة حلوان",
-      "دبلوم مهني اضطرابات تواصل وتخاطب جامعة عين شمس",
-      "اعتماد البورد الامريكي في تحليل السلوك التطبيقي ABAT",
-      "خبرة أكثر من 8 سنوات في البرامج السلوكية"
-    ],
-    "bio": "أخصائي تحليل السلوك التطبيقي (ABA) بمركز رابا. حاصل على بكالوريوس تربية خاصة من جامعة حلوان، ودبلوم مهني في اضطرابات التواصل والتخاطب من جامعة عين شمس، ومعتمد من البورد الأمريكي في تحليل السلوك التطبيقي ABAT بخبرة سريرية وميدانية تزيد عن 8 سنوات."
-  },
-  {
-    "id": "doc-mohamed-atef",
-    "name": "محمد عاطف",
-    "arabicName": "محمد عاطف",
-    "nameEn": "Mohamed Atef",
-    "title": "أخصائي ABA",
-    "titleEn": "ABA Specialist",
-    "specialty": "أخصائي تحليل السلوك التطبيقي ومشرف توحد مؤهل QASP-S",
-    "specialtyEn": "ABA Specialist & Qualified Autism Services Supervisor (QASP-S)",
-    "specialtyCode": "أخصائي ABA",
-    "specialtyCodeEn": "ABA Specialist",
-    "category": "aba",
-    "department": "أخصائي تحليل السلوك التطبيقي ومشرف توحد مؤهل QASP-S",
-    "avatar": "/specialists/cards/spec_06_mohamed-atef.jpg",
-    "fallbackAvatar": "/specialists/cards/spec_06_mohamed-atef.jpg",
-    "rating": 4.88,
-    "reviewCount": 154,
-    "experienceYears": 5,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": false,
-    "tags": [
-      "بكالوريوس علوم الاعاقة والتأهيل جامعة الزقازيق",
-      "دبلوم خاص من جامعة الزقازيق",
-      "مشرف توحد مؤهل من منظمة QASP-S",
-      "متخصص في الإعاقة العقلية",
-      "خبرة أكثر من 5 سنوات في تأهيل التوحد والإعاقات النمائية"
-    ],
-    "bio": "أخصائي تحليل السلوك التطبيقي (ABA) بمركز رابا. حاصل على بكالوريوس علوم الإعاقة والتأهيل من جامعة الزقازيق، ودبلوم خاص من جامعة الزقازيق، ومشرف توحد مؤهل من منظمة QASP-S الأمريكية، ومتخصص في تأهيل الإعاقة العقلية واضطرابات طيف التوحد بخبرة تزيد عن 5 سنوات."
-  },
-  {
-    "id": "doc-sadeem-mshari",
-    "name": "سديم احمد المشاري",
-    "arabicName": "سديم احمد المشاري",
-    "nameEn": "Sadeem Ahmed Al-Mashari",
-    "title": "أخصائي ABA",
-    "titleEn": "ABA Specialist",
-    "specialty": "أخصائي تحليل السلوك ومصنفة من الهيئة السعودية للتخصصات الصحية",
-    "specialtyEn": "ABA Specialist & SCFHS Licensed Psychologist",
-    "specialtyCode": "أخصائي ABA",
-    "specialtyCodeEn": "ABA Specialist",
-    "category": "aba",
-    "department": "أخصائي تحليل السلوك ومصنفة من الهيئة السعودية للتخصصات الصحية",
-    "avatar": "/specialists/cards/spec_07_sadeem-mshari.jpg",
-    "fallbackAvatar": "/specialists/cards/spec_07_sadeem-mshari.jpg",
-    "rating": 4.9,
-    "reviewCount": 142,
-    "experienceYears": 4,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": true,
-    "tags": [
-      "بكالوريوس علم النفس من جامعة الاميرة نورة",
-      "دبلوم المقاييس النفسية من أكاديمية النخبة الدولية",
-      "مصنفة من الهيئة السعودية للتخصصات الصحية",
-      "حاصلة على رخصة ABAT من البورد الامريكي"
-    ],
-    "bio": "أخصائي تحليل السلوك التطبيقي (ABA) بمركز رابا. حاصلة على بكالوريوس علم النفس من جامعة الأميرة نورة، ودبلوم المقاييس النفسية من أكاديمية النخبة الدولية، ومصنفة من الهيئة السعودية للتخصصات الصحية، وحاصلة على رخصة ABAT من البورد الأمريكي. متخصصة في القياس والتقييم السلوكي والتأهيل النفسي للأطفال."
-  },
-  {
-    "id": "doc-maram-mohamed",
-    "name": "مرام محمد",
-    "arabicName": "مرام محمد",
-    "nameEn": "Maram Mohamed",
-    "title": "أخصائية ABA",
-    "titleEn": "ABA Specialist",
-    "specialty": "أخصائية تحليل السلوك التطبيقي وعلم النفس الإكلينيكي",
-    "specialtyEn": "ABA Specialist & Clinical Psychologist",
-    "specialtyCode": "أخصائية ABA",
-    "specialtyCodeEn": "ABA Specialist",
-    "category": "aba",
-    "department": "أخصائية تحليل السلوك التطبيقي وعلم النفس الإكلينيكي",
-    "avatar": "/specialists/cards/spec_08_maram-mohamed.jpg",
-    "fallbackAvatar": "/specialists/cards/spec_08_maram-mohamed.jpg",
-    "rating": 4.85,
-    "reviewCount": 130,
-    "experienceYears": 3,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": false,
-    "tags": [
-      "بكالوريوس علم النفس الإكلينيكي جامعة الرباط الوطني",
-      "اعتماد البورد الأمريكي ABAT",
-      "متخصصة في العلاج عن طريق تحليل السلوك التطبيقي (ABA)",
-      "خبرة أكثر من 3 سنوات في الجلسات السلوكية"
-    ],
-    "bio": "أخصائية تحليل السلوك التطبيقي (ABA) بمركز رابا. حاصلة على بكالوريوس علم النفس الإكلينيكي من جامعة الرباط الوطني، وحاصلة على اعتماد البورد الأمريكي ABAT من منظمة QABA، متخصصة في العلاج والتأهيل عن طريق تحليل السلوك التطبيقي (ABA) للأطفال بخبرة تتجاوز 3 سنوات."
-  },
-  {
-    "id": "doc-ahmed-raad",
-    "name": "أحمد رعد",
-    "arabicName": "أحمد رعد",
-    "nameEn": "Ahmed Raad",
-    "title": "أخصائي ABA",
-    "titleEn": "ABA Specialist",
-    "specialty": "أخصائي تحليل السلوك التطبيقي ABAT والعلوم الصحية",
-    "specialtyEn": "ABA Specialist & Health Sciences Graduate",
-    "specialtyCode": "أخصائي ABA",
-    "specialtyCodeEn": "ABA Specialist",
-    "category": "aba",
-    "department": "أخصائي تحليل السلوك التطبيقي ABAT والعلوم الصحية",
-    "avatar": "/specialists/cards/spec_09_ahmed-raad.jpg",
-    "fallbackAvatar": "/specialists/cards/spec_09_ahmed-raad.jpg",
-    "rating": 4.82,
-    "reviewCount": 125,
-    "experienceYears": 3,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": false,
-    "tags": [
-      "بكالوريوس علوم صحية من جامعة حمص",
-      "شهادة أخصائي تحليل السلوك ABAT من البورد الأمريكي",
-      "خبرة أكثر من 3 سنوات في الجلسات الفردية وتعديل السلوك"
-    ],
-    "bio": "أخصائي تحليل السلوك التطبيقي (ABA) بمركز رابا. حاصل على بكالوريوس علوم صحية من جامعة حمص، وحاصل على شهادة أخصائي تحليل السلوك ABAT من البورد الأمريكي، بخبرة أكثر من 3 سنوات في تقديم جلسات التدخل السلوكي الفردية للأطفال وتطوير مهارات الاستقلالية والتواصل."
-  },
-  {
-    "id": "doc-1",
-    "name": "احمد أبو زيد أنور",
-    "arabicName": "احمد أبو زيد أنور",
-    "nameEn": "Ahmed Abouzeid Anwar",
-    "title": "المدير العام للبرامج التأهيلية | رئيس قسم ABA",
-    "titleEn": "General Director of Rehabilitation | Head of ABA",
-    "specialty": "المدير العام للبرامج التأهيلية ورئيس قسم تحليل السلوك",
-    "specialtyEn": "General Director of Programs & Head of ABA",
-    "specialtyCode": "المدير العام للبرامج التأهيلية | رئيس قسم ABA",
-    "specialtyCodeEn": "General Director of Rehabilitation | Head of ABA",
-    "category": "aba",
-    "department": "المدير العام للبرامج التأهيلية ورئيس قسم تحليل السلوك",
-    "avatar": "/specialists/cards/spec_10_1.png",
-    "fallbackAvatar": "/specialists/cards/spec_10_1.png",
-    "rating": 4.95,
-    "reviewCount": 220,
-    "experienceYears": 12,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": true,
-    "tags": [
-      "MA, QBA, IBA",
-      "خبرة 12 سنة ومقدم CEUs للبورد QABA",
-      "خطط التدخل السلوكي المكثفة",
-      "تعديل السلوك وتدريب الكوادر والأسر"
-    ],
-    "bio": "المدير العام للبرامج التأهيلية ورئيس قسم ABA بمركز رابا. حاصل على MA، QBA، IBA بخبرة 12 سنة، ومقدم وحدات التعليم المستمر CEUs للبورد الدولي QABA."
-  },
-  {
-    "id": "doc-mohamed-saad",
-    "name": "محمد سعد",
-    "arabicName": "محمد سعد",
-    "nameEn": "Mohamed Saad",
-    "title": "أخصائي النطق والتخاطب",
-    "titleEn": "Speech & Language Pathologist",
-    "specialty": "أخصائي تأهيل النطق والتخاطب وتنمية المهارات اللغوية",
-    "specialtyEn": "Speech & Language Pathologist & Early Intervention Lead",
-    "specialtyCode": "أخصائي النطق والتخاطب",
-    "specialtyCodeEn": "Speech & Language Pathologist",
-    "category": "aba",
-    "department": "أخصائي تأهيل النطق والتخاطب وتنمية المهارات اللغوية",
-    "avatar": "/specialists/cards/spec_11_mohamed-saad.png",
-    "fallbackAvatar": "/specialists/cards/spec_11_mohamed-saad.png",
-    "rating": 4.93,
-    "reviewCount": 195,
-    "experienceYears": 8,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": true,
-    "tags": [
-      "حاصل على ليسانس الآداب وتربية لغة عربية من جامعة طنطا",
-      "حاصل على دبلومة التخاطب واضطرابات النطق والكلام من كلية علوم ذوي الاحتياجات الخاصة جامعة بني سويف",
-      "حاصل على تمهيدي ماجستير في علوم التخاطب واضطرابات النطق والكلام",
-      "خبرة عملية أكثر من ٨ سنوات في تقييم وتشخيص اضطرابات النطق والكلام"
-    ],
-    "bio": "أخصائي النطق والتخاطب بمركز رابا. حاصل على ليسانس وماجستير في علوم التخاطب واضطرابات التواصل، بخبرة عملية تزيد عن 8 سنوات في تقييم وتشخيص اضطرابات النطق وتأخر نمو اللغة والتدخل المبكر لأطفال طيف التوحد ومتلازمة داون."
-  },
-  {
-    "id": "doc-alzahraa-farag",
-    "name": "الزهراء فرج",
-    "arabicName": "الزهراء فرج",
-    "nameEn": "Al-Zahraa Farag",
-    "title": "أخصائية نفسية إكلينيكية",
-    "titleEn": "Clinical Psychologist",
-    "specialty": "أخصائية علم النفس الإكلينيكي وتعديل السلوك",
-    "specialtyEn": "Clinical Child Psychologist & Behavioral Assessment Specialist",
-    "specialtyCode": "أخصائية نفسية إكلينيكية",
-    "specialtyCodeEn": "Clinical Psychologist",
-    "category": "aba",
-    "department": "أخصائية علم النفس الإكلينيكي وتعديل السلوك",
-    "avatar": "/specialists/cards/spec_12_alzahraa-farag.png",
-    "fallbackAvatar": "/specialists/cards/spec_12_alzahraa-farag.png",
-    "rating": 4.91,
-    "reviewCount": 182,
-    "experienceYears": 7,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": true,
-    "tags": [
-      "حاصلة على ليسانس الآداب قسم علم النفس من جامعة عين شمس",
-      "حاصلة على دبلومة علم النفس الإكلينيكي من كلية الآداب جامعة عين شمس",
-      "حاصلة على دبلومة التربية الخاصة من كلية التربية جامعة عين شمس",
-      "خبرة أكثر من ٧ سنوات في التقييم النفسي والتشخيص الإكلينيكي"
-    ],
-    "bio": "أخصائية نفسية إكلينيكية بمركز رابا. حاصلة على ماجستير علم النفس الإكلينيكي ودبلوم العلاج المعرفي السلوكي، بخبرة تتجاوز 7 سنوات في تقييم وتشخيص الاضطرابات النمائية والنفسية وتطبيق مقاييس الذكاء واختبارات الشخصية والسلوك التكيفي."
-  },
-  {
-    "id": "doc-noura-elbasyouni",
-    "name": "د/ نورا البسيوني",
-    "arabicName": "د/ نورا البسيوني",
-    "nameEn": "Dr. Noura El-Basyouni",
-    "title": "أخصائية نفسية",
-    "titleEn": "Ph.D. Pediatric Psychologist",
-    "specialty": "دكتوراه في علم النفس وأخصائية نفسية أطفال التوحد",
-    "specialtyEn": "Ph.D. in Clinical Child Psychology & Autism Specialist",
-    "specialtyCode": "أخصائية نفسية",
-    "specialtyCodeEn": "Ph.D. Pediatric Psychologist",
-    "category": "aba",
-    "department": "دكتوراه في علم النفس وأخصائية نفسية أطفال التوحد",
-    "avatar": "/specialists/cards/spec_13_noura-elbasyouni.png",
-    "fallbackAvatar": "/specialists/cards/spec_13_noura-elbasyouni.png",
-    "rating": 4.95,
-    "reviewCount": 215,
-    "experienceYears": 10,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": true,
-    "tags": [
-      "حاصلة على ليسانس الآداب قسم علم النفس من جامعة عين شمس",
-      "حاصلة على ماجستير في علم النفس تخصص أطفال التوحد",
-      "حاصلة على دكتوراه في علم النفس تخصص أطفال التوحد",
-      "مصنفة مهنياً من الهيئة السعودية للتخصصات الصحية",
-      "خبرة أكثر من ١٠ سنوات في القياس والتشخيص النفسي"
-    ],
-    "bio": "دكتوراه في علم النفس وأخصائية نفسية بمركز رابا. حاصلة على درجتي الماجستير والدكتوراه في علم النفس تخصص أطفال التوحد، ومصنفة مهنياً من الهيئة السعودية للتخصصات الصحية بخبرة تزيد عن 10 سنوات في التقييم النفسي والبرامج النمائية لأطفال التوحد."
-  },
-  {
-    "id": "doc-asmaa-moustafa",
-    "name": "أسماء مصطفى",
-    "arabicName": "أسماء مصطفى",
-    "nameEn": "Asmaa Moustafa",
-    "title": "مشرفة قسم الـ ABA",
-    "titleEn": "ABA Department Supervisor",
-    "specialty": "مشرفة قسم تحليل السلوك ومحلل سلوك دولي معتمد QBA-IBA",
-    "specialtyEn": "ABA Supervisor & International Behavior Analyst (QBA / IBA)",
-    "specialtyCode": "مشرفة قسم الـ ABA",
-    "specialtyCodeEn": "ABA Department Supervisor",
-    "category": "aba",
-    "department": "مشرفة قسم تحليل السلوك ومحلل سلوك دولي معتمد QBA-IBA",
-    "avatar": "/specialists/cards/spec_14_asmaa-moustafa.png",
-    "fallbackAvatar": "/specialists/cards/spec_14_asmaa-moustafa.png",
-    "rating": 4.96,
-    "reviewCount": 230,
-    "experienceYears": 10,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": true,
-    "tags": [
-      "حاصلة على ليسانس الآداب في علم الإجتماع من جامعة سوهاج",
-      "حاصلة على ماجستير في التربية الخاصة تخصص التوحد من جامعة أسيوط",
-      "باحثة دكتوراة في التربية الخاصة تخصص توحد",
-      "محلل سلوك دولي معتمد QBA-IBA",
-      "ممارس إدارة السلوك التنظيمي OBM-p",
-      "خبرة عملية أكثر من ١٠ سنوات"
-    ],
-    "bio": "مشرفة قسم ABA بمركز رابا ومحلل سلوك دولي معتمد (QBA-IBA). باحثة دكتوراه وحاصلة على ماجستير التربية الخاصة تخصص التوحد، وممارس إدارة السلوك التنظيمي OBM-p بخبرة تزيد عن 10 سنوات في قيادة الخطط السلوكية المكثفة وتأهيل الكوادر."
-  },
-  {
-    "id": "doc-ayman-elhoweity",
-    "name": "أيمن عطية الحويطي",
-    "arabicName": "أيمن عطية الحويطي",
-    "nameEn": "Ayman Attia Al-Howeity",
-    "title": "أخصائي ABA",
-    "titleEn": "Behavior Analyst (BACB / TOT)",
-    "specialty": "أخصائي تحليل السلوك ومدرب مدربين معتمد TOT",
-    "specialtyEn": "ABA Specialist, BACB Licensed & Certified TOT",
-    "specialtyCode": "أخصائي ABA",
-    "specialtyCodeEn": "Behavior Analyst (BACB / TOT)",
-    "category": "aba",
-    "department": "أخصائي تحليل السلوك ومدرب مدربين معتمد TOT",
-    "avatar": "/specialists/cards/spec_15_ayman-elhoweity.png",
-    "fallbackAvatar": "/specialists/cards/spec_15_ayman-elhoweity.png",
-    "rating": 4.88,
-    "reviewCount": 170,
-    "experienceYears": 10,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": false,
-    "tags": [
-      "حاصل على بكالوريوس التربية الخاصة من جامعة حلوان",
-      "حاصل على دراسات عليا في التربية الخاصة من جامعة حلوان",
-      "حاصل على رخصة البورد الأمريكي من بورد BACB",
-      "ممارس توحد مرخص من هيئة قياس",
-      "مدرب مدربين معتمد TOT",
-      "خبرة عملية أكثر من ١٠ سنوات"
-    ],
-    "bio": "أخصائي تحليل السلوك التطبيقي ABA بمركز رابا. حاصل على دراسات عليا في التربية الخاصة من جامعة حلوان، ورخصة بورد BACB الأمريكي، وترخيص ممارس توحد من قياس ومدرب مدربين TOT بخبرة تتجاوز 10 سنوات في تأهيل ذوي اضطراب طيف التوحد."
-  },
-  {
-    "id": "doc-mohamed-bakry",
-    "name": "محمد بكري",
-    "arabicName": "محمد بكري",
-    "nameEn": "Mohamed Bakry",
-    "title": "أخصائي العلاج الوظيفي والتكامل الحسي",
-    "titleEn": "Occupational & Sensory Therapist",
-    "specialty": "أخصائي العلاج الوظيفي والتكامل الحسي وماجستير علوم الصحة الرياضية",
-    "specialtyEn": "Occupational Therapist & Sensory Integration Practitioner",
-    "specialtyCode": "أخصائي العلاج الوظيفي والتكامل الحسي",
-    "specialtyCodeEn": "Occupational & Sensory Therapist",
-    "category": "aba",
-    "department": "أخصائي العلاج الوظيفي والتكامل الحسي وماجستير علوم الصحة الرياضية",
-    "avatar": "/specialists/cards/spec_16_mohamed-bakry.png",
-    "fallbackAvatar": "/specialists/cards/spec_16_mohamed-bakry.png",
-    "rating": 4.87,
-    "reviewCount": 145,
-    "experienceYears": 6,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": false,
-    "tags": [
-      "حاصل على بكالوريوس وماجستير علوم الصحة الرياضية وتأهيل الإصابات",
-      "حاصل على دبلومة العلاج الوظيفي من مركز الخدمة العامة جامعة طنطا",
-      "حاصل على تدريب معتمد في التكامل الحسي من مركز رابـا",
-      "خبرة أكثر من ٦ سنوات في العلاج الوظيفي والتكامل الحسي"
-    ],
-    "bio": "أخصائي العلاج الوظيفي والتكامل الحسي بمركز رابا. حاصل على ماجستير علوم الصحة الرياضية ودبلومة العلاج الوظيفي وتدريب معتمد في التكامل الحسي بخبرة تفوق 6 سنوات في تنمية المهارات الحركية الدقيقة والتكامل الحسي والبدني للأطفال."
-  },
-  {
-    "id": "doc-anwar-elmaghyouli",
-    "name": "أنوار المغيولي",
-    "arabicName": "أنوار المغيولي",
-    "nameEn": "Anwar Al-Maghyouli",
-    "title": "أخصائية النطق والتخاطب",
-    "titleEn": "Speech & Language Pathologist",
-    "specialty": "أخصائية علاج اضطرابات النطق والتخاطب واللغة",
-    "specialtyEn": "Speech-Language Pathologist & Communication Specialist",
-    "specialtyCode": "أخصائية النطق والتخاطب",
-    "specialtyCodeEn": "Speech & Language Pathologist",
-    "category": "aba",
-    "department": "أخصائية علاج اضطرابات النطق والتخاطب واللغة",
-    "avatar": "/specialists/cards/spec_17_anwar-elmaghyouli.png",
-    "fallbackAvatar": "/specialists/cards/spec_17_anwar-elmaghyouli.png",
-    "rating": 4.89,
-    "reviewCount": 138,
-    "experienceYears": 5,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": false,
-    "tags": [
-      "حاصلة على بكالوريوس علم النفس من جامعة الملك عبدالعزيز",
-      "حاصلة على دورة علاج التلعثم التخصصية",
-      "حاصلة على دورة مهارات الحوار والتواصل التفاعلي",
-      "خبرة أكثر من ٥ سنوات في تقييم وعلاج اضطرابات النطق واللغة"
-    ],
-    "bio": "أخصائية النطق والتخاطب بمركز رابا. حاصلة على بكالوريوس علم النفس من جامعة الملك عبدالعزيز، بخبرة عملية تفوق 5 سنوات في تقييم وعلاج التلعثم واضطرابات مخارج الحروف وتأخر الكلام وتطوير مهارات الحوار والتواصل لدى الأطفال."
-  },
-  {
-    "id": "doc-mohamed-abdelhamid",
-    "name": "محمد عبد الحميد",
-    "arabicName": "محمد عبد الحميد",
-    "nameEn": "Mohamed Abdelhamid",
-    "title": "أخصائي النطق والتخاطب",
-    "titleEn": "Speech Pathologist & OPT Specialist",
-    "specialty": "أخصائي علاج النطق والتخاطب ومتخصص OPT",
-    "specialtyEn": "Speech Pathologist & Oral Placement Therapy (OPT) Specialist",
-    "specialtyCode": "أخصائي النطق والتخاطب",
-    "specialtyCodeEn": "Speech Pathologist & OPT Specialist",
-    "category": "aba",
-    "department": "أخصائي علاج النطق والتخاطب ومتخصص OPT",
-    "avatar": "/specialists/cards/spec_18_mohamed-abdelhamid.png",
-    "fallbackAvatar": "/specialists/cards/spec_18_mohamed-abdelhamid.png",
-    "rating": 4.86,
-    "reviewCount": 152,
-    "experienceYears": 6,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": false,
-    "tags": [
-      "حاصل على بكالوريوس التربية الخاصة قسم اضطرابات التخاطب من جامعة المنصورة",
-      "حاصل على كورس معتمد في تقنية OPT لتأهيل عضلات النطق",
-      "خبرة أكثر من ٦ سنوات في تأهيل عيوب النطق والكلام ومخارج الحروف"
-    ],
-    "bio": "أخصائي النطق والتخاطب بمركز رابا. حاصل على بكالوريوس التربية الخاصة من جامعة المنصورة، وكورس معتمد في تقنية OPT لتأهيل عضلات النطق، بخبرة عملية تزيد عن 6 سنوات في علاج صعوبات النطق واللغة والتواصل لدى الأطفال ذوي التحديات النمائية."
-  },
-  {
-    "id": "doc-mohamed-elgayyar",
-    "name": "محمد الجيار",
-    "arabicName": "محمد الجيار",
-    "nameEn": "Mohamed Al-Gayyar",
-    "title": "أخصائي العلاج الوظيفي والتكامل الحسي",
-    "titleEn": "Occupational Therapy & Sensory Integration Specialist",
-    "specialty": "أخصائي العلاج الوظيفي والتكامل الحسي وتعديل السلوك ABAT",
-    "specialtyEn": "Occupational Therapist & Certified Behavior Technician (ABAT)",
-    "specialtyCode": "أخصائي العلاج الوظيفي والتكامل الحسي",
-    "specialtyCodeEn": "Occupational Therapy & Sensory Integration Specialist",
-    "category": "aba",
-    "department": "أخصائي العلاج الوظيفي والتكامل الحسي وتعديل السلوك ABAT",
-    "avatar": "/specialists/cards/spec_19_mohamed-elgayyar.png",
-    "fallbackAvatar": "/specialists/cards/spec_19_mohamed-elgayyar.png",
-    "rating": 4.88,
-    "reviewCount": 160,
-    "experienceYears": 7,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": false,
-    "tags": [
-      "حاصل كلية ليسانس الآداب من جامعة بورسعيد",
-      "حاصل على دبلومة مهنية لإضطرابات التواصل من كلية التربية جامعة عين شمس",
-      "حاصل علي دبلومة عامة قسم التوحد من كلية علوم إعاقة من جامعة الزقازيق",
-      "حاصل على دورة تحليل السلوك التطبيقي ABAT",
-      "حاصل على دورة في التكامل الحسي من د/دعاء عبد اللطيف",
-      "خبرة عملية أكثر من ٧ سنوات"
-    ],
-    "bio": "أخصائي العلاج الوظيفي والتكامل الحسي بمركز رابا. يجمع بين دبلومات اضطرابات التواصل من عين شمس والتوحد من الزقازيق وتدريب ABAT والتكامل الحسي بخبرة تزيد عن 7 سنوات في تحسين التآزر البصري الحركي والتكامل الحسي للأطفال."
-  },
-  {
-    "id": "doc-elsaeed-diab",
-    "name": "السعيد دياب",
-    "arabicName": "السعيد دياب",
-    "nameEn": "El-Saeed Diab",
-    "title": "أخصائي صعوبات تعلم",
-    "titleEn": "Learning Disabilities Specialist",
-    "specialty": "أخصائي صعوبات التعلم والتقييم والتشخيص النفسي والتربوي",
-    "specialtyEn": "Learning Disabilities Specialist & Psycho-Educational Evaluator",
-    "specialtyCode": "أخصائي صعوبات تعلم",
-    "specialtyCodeEn": "Learning Disabilities Specialist",
-    "category": "aba",
-    "department": "أخصائي صعوبات التعلم والتقييم والتشخيص النفسي والتربوي",
-    "avatar": "/specialists/cards/spec_20_elsaeed-diab.png",
-    "fallbackAvatar": "/specialists/cards/spec_20_elsaeed-diab.png",
-    "rating": 4.89,
-    "reviewCount": 164,
-    "experienceYears": 7,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": false,
-    "tags": [
-      "حاصل على ليسانس الآداب والتربية من جامعه الأزهر",
-      "حاصل على دبلومة الإختبارات والمقاييس النفسية من جامعة الزقازيق",
-      "حاصل على دبلومة التخاطب من جامعة عين شمس",
-      "حاصل على دبلومة التوحد من جامعة الزقازيق",
-      "حاصل على دبلومة إعداد أخصائي تربية خاصة من جامعة عين شمس",
-      "حاصل على دبلومة التربية الخاصة من جامعة عين شمس",
-      "خبرة عملية أكثر من ٧ سنوات"
-    ],
-    "bio": "أخصائي صعوبات التعلم بمركز رابا. حاصل على دبلومات متعددة في المقاييس النفسية والتخاطب والتوحد والتربية الخاصة من جامعتي عين شمس والزقازيق بخبرة تفوق 7 سنوات في التشخيص التربوي الدقيق وعلاج صعوبات القراءة والكتابة والحساب وتهيئة الأطفال للدمج."
-  },
-  {
-    "id": "doc-sara-abdelhamid",
-    "name": "يارا  أبو حمده",
-    "arabicName": "يارا  أبو حمده",
-    "nameEn": "Sara Abdelhamid",
-    "title": "أخصائية العلاج الوظيفي",
-    "titleEn": "Speech-Language Pathologist",
-    "specialty": "أخصائية نطق وتخاطب",
-    "specialtyEn": "Speech-Language Pathologist",
-    "specialtyCode": "أخصائية العلاج الوظيفي",
-    "specialtyCodeEn": "Speech-Language Pathologist",
-    "category": "speech",
-    "department": "قسم علاج النطق واللغة واضطرابات التواصل",
-    "avatar": "/specialists/cards/spec_21_sara-abdelhamid.png",
-    "fallbackAvatar": "/specialists/cards/spec_21_sara-abdelhamid.png",
-    "rating": 4.9,
-    "reviewCount": 135,
-    "experienceYears": 2,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": true,
-    "tags": [
-      "تأخر الكلام واللغة",
-      "برامج التواصل البديل PECS",
-      "التلعثم والتأتأة",
-      "تحفيز المهارات التعبيرية"
-    ],
-    "bio": "حاصلة علي بكالوريوس  العلاج الوظيفي من الجامعة الأردنية\nخبرة أكثر من سنة "
-  },
-  {
-    "id": "doc-hanaa-basheer",
-    "name": "هناء بشير",
-    "arabicName": "هناء بشير",
-    "nameEn": "Hanaa Basheer",
-    "title": "أخصائية العلاج الوظيفي والتأهيل العصبي الحسي",
-    "titleEn": "Occupational Therapist & Sensory Specialist",
-    "specialty": "أخصائية علاج وظيفي",
-    "specialtyEn": "Occupational Therapist",
-    "specialtyCode": "أخصائية العلاج الوظيفي والتأهيل العصبي الحسي",
-    "specialtyCodeEn": "Occupational Therapist & Sensory Specialist",
-    "category": "occupational",
-    "department": "قسم العلاج الوظيفي والتكامل الحسي",
-    "avatar": "/specialists/cards/spec_22_hanaa-basheer.png",
-    "fallbackAvatar": "/specialists/cards/spec_22_hanaa-basheer.png",
-    "rating": 4.95,
-    "reviewCount": 178,
-    "experienceYears": 9,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": true,
-    "tags": [
-      "التكامل الحسي Ayres SI",
-      "التخطيط الحركي الدقيق",
-      "تعديل البيئة الحسية",
-      "التنسيق العضلي العصبي"
-    ],
-    "bio": "أخصائية علاج وظيفي متميزة بخبرة 9 سنوات في تقييم وعلاج صعوبات المعالجة الحسية وفرط التحسس وتنمية التآزر البصري الحركي ومهارات الكتابة اليدوية والرعاية الذاتية للأطفال."
-  },
-  {
-    "id": "doc-bayan-alnajem",
-    "name": "بيان الناجم",
-    "arabicName": "بيان الناجم",
-    "nameEn": "Bayan Al-Najem",
-    "title": "أخصائية تربية خاصة",
-    "titleEn": "Special Education Specialist",
-    "specialty": "أخصائية تربية خاصة وتأهيل عوق سمعي",
-    "specialtyEn": "Special Education & Hearing Impairment Specialist",
-    "specialtyCode": "أخصائية تربية خاصة",
-    "specialtyCodeEn": "Special Education Specialist",
-    "category": "aba",
-    "department": "قسم التربية الخاصة والتأهيل",
-    "avatar": "/specialists/cards/spec_23_bayan-alnajem.png",
-    "fallbackAvatar": "/specialists/cards/spec_23_bayan-alnajem.png",
-    "rating": 4.9,
-    "reviewCount": 95,
-    "experienceYears": 2,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": true,
-    "tags": [
-      "حاصلة على بكالوريوس التربية الخاصة من جامعة الملك فيصل تخصص عوق سمعي",
-      "حاصلة على دبلوم إرشاد اسري من جامعة الإمام محمد بن سعود",
-      "تأهيل الأطفال ذوي الإعاقة السمعية وتطوير التواصل اللفظي والبديل",
-      "خبرة عملية أكثر من سنة"
-    ],
-    "bio": "أخصائية تربية خاصة بمركز رابا. حاصلة على بكالوريوس التربية الخاصة من جامعة الملك فيصل تخصص عوق سمعي، ودبلوم إرشاد أسري من جامعة الإمام محمد بن سعود، بخبرة عملية متقدمة في تأهيل الأطفال ودعم الأسر وتنمية التواصل."
-  },
-  {
-    "id": "doc-manar-obeid",
-    "name": "منار عبيد",
-    "arabicName": "منار عبيد",
-    "nameEn": "Manar Obeid",
-    "title": "مشرفة قسم الـ ABA",
-    "titleEn": "ABA Department Supervisor",
-    "specialty": "مشرفة قسم تحليل السلوك التطبيقي ABA | محلل سلوك معتمد QABA / IBAO",
-    "specialtyEn": "ABA Department Supervisor & Certified Behavior Analyst (QABA/IBAO)",
-    "specialtyCode": "مشرفة قسم الـ ABA",
-    "specialtyCodeEn": "ABA Department Supervisor",
-    "category": "aba",
-    "department": "قسم تحليل السلوك التطبيقي ABA",
-    "avatar": "/specialists/cards/spec_24_manar-obeid.png",
-    "fallbackAvatar": "/specialists/cards/spec_24_manar-obeid.png",
-    "rating": 4.98,
-    "reviewCount": 310,
-    "experienceYears": 17,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": true,
-    "tags": [
-      "حاصلة على ليسانس الآداب والتربية من جامعة المنوفية",
-      "حاصلة على دبلوم مهني في القياس النفسي من جامعة المنوفية",
-      "حاصلة على الدبلوم الخاص في القياس النفسي من جامعة المنوفية",
-      "حاصلة على ماجستير في التربية الخاصة من جامعة القاهرة",
-      "باحثة دكتوراه في التربية الخاصة في جامعة القاهرة",
-      "محلل سلوك معتمد من البورد الأمريكي من منظمات QABA / IBAO",
-      "خبرة عملية أكثر من ١٧ سنة"
-    ],
-    "bio": "مشرفة قسم تحليل السلوك التطبيقي ABA بمركز رابا ومحلل سلوك معتمد دولياً من البورد الأمريكي QABA ومنظمة IBAO. باحثة دكتوراه وحاصلة على الماجستير في التربية الخاصة من جامعة القاهرة، بخبرة عملية وتدريبية تتجاوز 17 عاماً في الإشراف الإكلينيكي وتصميم الخطط السلوكية."
-  },
-  {
-    "id": "doc-salma-abouelfadl",
-    "name": "سلمى أبو الفضل",
-    "arabicName": "سلمى أبو الفضل",
-    "nameEn": "Salma Abo El-Fadl",
-    "title": "أخصائية التكامل الحسي",
-    "titleEn": "Sensory Integration Specialist",
-    "specialty": "أخصائية التكامل الحسي والتخاطب والتربية الخاصة",
-    "specialtyEn": "Sensory Integration & Communication Specialist",
-    "specialtyCode": "أخصائية التكامل الحسي",
-    "specialtyCodeEn": "Sensory Integration Specialist",
-    "category": "occupational",
-    "department": "قسم العلاج الوظيفي والتكامل الحسي",
-    "avatar": "/specialists/cards/spec_25_salma-abouelfadl.png",
-    "fallbackAvatar": "/specialists/cards/spec_25_salma-abouelfadl.png",
-    "rating": 4.95,
-    "reviewCount": 165,
-    "experienceYears": 7,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": true,
-    "tags": [
-      "حاصلة على بكالوريوس تربية طفولة من جامعة المنوفية",
-      "حاصلة على دبلوم خاص في التربية الخاصة من جامعة المنوفية",
-      "حاصلة على دبلومة تخاطب 300 ساعة من جامعة عين شمس",
-      "باحثة ماجستير في التربية الخاصة في جامعة المنوفية",
-      "حاصلة على دورة في التكامل الحسي من جامعة عين شمس",
-      "خبرة عملية أكثر من 7 سنوات"
-    ],
-    "bio": "أخصائية التكامل الحسي بمركز رابا. باحثة ماجستير في التربية الخاصة، حاصلة على دبلومة التخاطب ودورة التكامل الحسي من جامعة عين شمس، مع خبرة سريرية تتجاوز 7 سنوات في معالجة الاضطرابات الحسية والتواصلية وتنمية مهارات الأطفال النمائية."
-  },
-  {
-    "id": "doc-ahmed-sayed",
-    "name": "أحمد سيد",
-    "arabicName": "أحمد سيد",
-    "nameEn": "Ahmed Sayed",
-    "title": "أخصائي النطق والتخاطب",
-    "titleEn": "Speech & Language Pathologist",
-    "specialty": "أخصائي النطق والتخاطب والعلاج الفموي OPT",
-    "specialtyEn": "Speech & Language Pathologist (OPT Certified)",
-    "specialtyCode": "أخصائي النطق والتخاطب",
-    "specialtyCodeEn": "Speech & Language Pathologist",
-    "category": "speech",
-    "department": "قسم النطق والتخاطب",
-    "avatar": "/specialists/cards/spec_26_ahmed-sayed.png",
-    "fallbackAvatar": "/specialists/cards/spec_26_ahmed-sayed.png",
-    "rating": 4.93,
-    "reviewCount": 140,
-    "experienceYears": 6,
-    "patientsCount": 1200,
-    "sessionPrice": 0,
-    "location": "",
-    "locationEn": "",
-    "isAvailable": true,
-    "nextSlot": "متاح للحجز",
-    "nextSlotEn": "Available for booking",
-    "isTopRated": true,
-    "tags": [
-      "حاصل على بكالوريوس علوم لذوي الإحتياجات الخاصة بتخصص النطق والتخاطب من جامعة بني سويف",
-      "حاصل على كورس العلاج الفموي OPT من الجمعية الأمريكية للنطق واللغة",
-      "تأهيل التأتأة والتأخر اللغوي واضطرابات مخارج الحروف والبلع",
-      "خبرة عملية أكثر من ٦ سنوات"
-    ],
-    "bio": "أخصائي النطق والتخاطب بمركز رابا. حاصل على بكالوريوس النطق والتخاطب من كلية علوم ذوي الاحتياجات الخاصة بجامعة بني سويف، ومعتمد في العلاج الفموي OPT، بخبرة عملية تتجاوز 6 سنوات في علاج عيوب النطق والتأخر اللغوي ومشاكل البلع والتنفس النطقي."
+    "bio": "مشرفة قسم ABA بمركز رابا، حاصلة على بكالوريوس تربية خاصة من الجامعة العربية، ومشرف أخصائي توحد معتمد من البورد الأمريكي من منظمة QABA، ومحلل سلوكي معتمد من منظمة IBAO بخبرة تزيد عن 9 سنوات في الإشراف الإكلينيكي وتأهيل مهارات أطفال طيف التوحد.",
+    "isTopRated": true
   },
   {
     "id": "doc-heshmah-mutairi",
@@ -969,26 +284,831 @@ export const DOCTORS_DATA: Doctor[] = [
     "specialtyCodeEn": "Administrative Director - Al-Rabwah Branch",
     "category": "aba",
     "department": "إدارة الفروع وتطوير البرامج السلوكية",
-    "avatar": "/specialists/cards/spec_27_heshmah-mutairi.png",
-    "fallbackAvatar": "/specialists/cards/spec_27_heshmah-mutairi.png",
+    "avatar": "/uploads/1790866017691_17_png.png",
+    "image": "/uploads/1790866017691_17_png.png",
+    "fallbackAvatar": "/uploads/1790866017691_17_png.png",
     "rating": 4.96,
     "reviewCount": 190,
     "experienceYears": 7,
-    "patientsCount": 1200,
+    "patientsCount": 1000,
     "sessionPrice": 0,
     "location": "",
     "locationEn": "",
     "isAvailable": true,
     "nextSlot": "متاح للحجز",
     "nextSlotEn": "Available for booking",
-    "isTopRated": true,
     "tags": [
       "حاصلة على بكالوريوس التربية الخاصة تخصص صعوبات التعلم من جامعة الملك فيصل",
       "فني تحليل سلوك تطبيقي معتمد ABAT من البورد الدولي QABA",
       "الإدارة الإكلينيكية وضمان جودة برامج التدخل المبكر وتوجيه الكادر التأهيلي",
       "خبرة عملية أكثر من ٧ سنوات"
     ],
-    "bio": "المدير الإداري لفرع الربوة بمركز رابا. تجمع بين الكفاءة القيادية الإدارية والتخصص الإكلينيكي في صعوبات التعلم وتحليل السلوك التطبيقي (ABAT معتمد)، بخبرة تمتد لأكثر من 7 سنوات في إدارة مراكز التأهيل وتطوير الخطط العلاجية."
+    "bio": "المدير الإداري لفرع الربوة بمركز رابا. تجمع بين الكفاءة القيادية الإدارية والتخصص الإكلينيكي في صعوبات التعلم وتحليل السلوك التطبيقي (ABAT معتمد)، بخبرة تمتد لأكثر من 7 سنوات في إدارة مراكز التأهيل وتطوير الخطط العلاجية.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-rahaf-doghmani",
+    "name": "رهف الدغماني",
+    "arabicName": "رهف الدغماني",
+    "nameEn": "Rahaf Al-Doghmani",
+    "title": "إشراف قسم الـ ABA",
+    "titleEn": "Supervisor of ABA Department",
+    "specialty": "مشرفة قسم تحليل السلوك التطبيقي ABA",
+    "specialtyEn": "Supervisor of ABA Department & QABA Analyst",
+    "specialtyCode": "إشراف قسم الـ ABA",
+    "specialtyCodeEn": "Supervisor of ABA Department",
+    "category": "aba",
+    "avatar": "/uploads/1790357530423_________________jpg_jpeg.jpg",
+    "image": "/uploads/1790357530423_________________jpg_jpeg.jpg",
+    "fallbackAvatar": "/uploads/1790357530423_________________jpg_jpeg.jpg",
+    "rating": 4.9,
+    "reviewCount": 175,
+    "experienceYears": 5,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "بكالوريوس التربية الخاصة جامعة القصيم",
+      "ماجستير في الإضطرابات السلوكية والانفعالية من جامعة الملك سعود",
+      "محلل سلوك معتمد من منظمة QABA",
+      "خبرة أكثر من 5 سنوات في البرامج السلوكية"
+    ],
+    "bio": "مشرفة قسم تحليل السلوك التطبيقي (ABA) بمركز رابا. حاصلة على بكالوريوس التربية الخاصة من جامعة القصيم، وماجستير في الإضطرابات السلوكية والانفعالية من جامعة الملك سعود، ومحلل سلوك معتمد من منظمة QABA بخبرة تفوق 5 سنوات في قيادة وتصميم الخطط السلوكية الفردية للأطفال.",
+    "isTopRated": true
+  },
+  {
+    "id": "doc-manar-wahba",
+    "name": "منار وهبه",
+    "arabicName": "منار وهبه",
+    "nameEn": "Manar Wahba",
+    "title": "إشراف قسم النطق والتخاطب",
+    "titleEn": "Supervisor of Speech & Language Pathology Department",
+    "specialty": "مشرفة قسم النطق والتخاطب والتأهيل اللغوي",
+    "specialtyEn": "Speech & Language Pathology Supervisor",
+    "specialtyCode": "إشراف قسم النطق والتخاطب",
+    "specialtyCodeEn": "Supervisor of Speech & Language Pathology Department",
+    "category": "speech",
+    "avatar": "/uploads/1790357549806______________jpg_jpeg.jpg",
+    "image": "/uploads/1790357549806______________jpg_jpeg.jpg",
+    "fallbackAvatar": "/uploads/1790357549806______________jpg_jpeg.jpg",
+    "rating": 4.88,
+    "reviewCount": 182,
+    "experienceYears": 10,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "بكالوريوس خدمة اجتماعية جامعة القاهرة",
+      "دبلومة تخاطب جامعة عين شمس",
+      "دبلومة تربية خاصة علوم إعاقة جامعة الزقازيق",
+      "متخصصة opt ومشاكل نطق وسمع",
+      "شهادة opt من منظمة ASHA الأمريكية",
+      "خبرة أكثر من 10 سنوات في علاج النطق واللغة"
+    ],
+    "bio": "مشرفة قسم النطق والتخاطب بمركز رابا. حاصلة على بكالوريوس خدمة اجتماعية من جامعة القاهرة، دبلومة تخاطب من جامعة عين شمس، دبلومة تربية خاصة علوم إعاقة من جامعة الزقازيق، ومتخصصة في العلاج الوظيفي الفموي opt ومشاكل النطق والسمع وحاصلة على شهادة opt من منظمة ASHA الأمريكية بخبرة تتجاوز 10 سنوات.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-ahmed-fathi",
+    "name": "أحمد فتحي",
+    "arabicName": "أحمد فتحي",
+    "nameEn": "Ahmed Fathi",
+    "title": "أخصائي ABA",
+    "titleEn": "ABA Specialist",
+    "specialty": "أخصائي تحليل السلوك التطبيقي المعتمد ABAT",
+    "specialtyEn": "ABA Specialist & Board Certified ABAT",
+    "specialtyCode": "أخصائي ABA",
+    "specialtyCodeEn": "ABA Specialist",
+    "category": "aba",
+    "avatar": "/uploads/1790357579245_______________jpg_jpeg.jpg",
+    "image": "/uploads/1790357579245_______________jpg_jpeg.jpg",
+    "fallbackAvatar": "/uploads/1790357579245_______________jpg_jpeg.jpg",
+    "rating": 4.85,
+    "reviewCount": 168,
+    "experienceYears": 8,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "بكالوريوس تربية خاصة جامعة حلوان",
+      "دبلوم مهني اضطرابات تواصل وتخاطب جامعة عين شمس",
+      "اعتماد البورد الامريكي في تحليل السلوك التطبيقي ABAT",
+      "خبرة أكثر من 8 سنوات في البرامج السلوكية"
+    ],
+    "bio": "أخصائي تحليل السلوك التطبيقي (ABA) بمركز رابا. حاصل على بكالوريوس تربية خاصة من جامعة حلوان، ودبلوم مهني في اضطرابات التواصل والتخاطب من جامعة عين شمس، ومعتمد من البورد الأمريكي في تحليل السلوك التطبيقي ABAT بخبرة سريرية وميدانية تزيد عن 8 سنوات.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-mohamed-atef",
+    "name": "محمد عاطف",
+    "arabicName": "محمد عاطف",
+    "nameEn": "Mohamed Atef",
+    "title": "أخصائي ABA",
+    "titleEn": "ABA Specialist",
+    "specialty": "أخصائي تحليل السلوك التطبيقي ومشرف توحد مؤهل QASP-S",
+    "specialtyEn": "ABA Specialist & Qualified Autism Services Supervisor (QASP-S)",
+    "specialtyCode": "أخصائي ABA",
+    "specialtyCodeEn": "ABA Specialist",
+    "category": "aba",
+    "avatar": "/uploads/1790357588113______________jpg_jpeg.jpg",
+    "image": "/uploads/1790357588113______________jpg_jpeg.jpg",
+    "fallbackAvatar": "/uploads/1790357588113______________jpg_jpeg.jpg",
+    "rating": 4.88,
+    "reviewCount": 154,
+    "experienceYears": 5,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "بكالوريوس علوم الاعاقة والتأهيل جامعة الزقازيق",
+      "دبلوم خاص من جامعة الزقازيق",
+      "مشرف توحد مؤهل من منظمة QASP-S",
+      "متخصص في الإعاقة العقلية",
+      "خبرة أكثر من 5 سنوات في تأهيل التوحد والإعاقات النمائية"
+    ],
+    "bio": "أخصائي تحليل السلوك التطبيقي (ABA) بمركز رابا. حاصل على بكالوريوس علوم الإعاقة والتأهيل من جامعة الزقازيق، ودبلوم خاص من جامعة الزقازيق، ومشرف توحد مؤهل من منظمة QASP-S الأمريكية، ومتخصص في تأهيل الإعاقة العقلية واضطرابات طيف التوحد بخبرة تزيد عن 5 سنوات.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-sadeem-mshari",
+    "name": "سديم احمد المشاري",
+    "arabicName": "سديم احمد المشاري",
+    "nameEn": "Sadeem Ahmed Al-Mashari",
+    "title": "أخصائي ABA",
+    "titleEn": "ABA Specialist",
+    "specialty": "أخصائي تحليل السلوك ومصنفة من الهيئة السعودية للتخصصات الصحية",
+    "specialtyEn": "ABA Specialist & SCFHS Licensed Psychologist",
+    "specialtyCode": "أخصائي ABA",
+    "specialtyCodeEn": "ABA Specialist",
+    "category": "aba",
+    "avatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
+    "image": "/uploads/1790357598308______________________jpg_jpeg.jpg",
+    "fallbackAvatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
+    "rating": 4.9,
+    "reviewCount": 142,
+    "experienceYears": 4,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "بكالوريوس علم النفس من جامعة الاميرة نورة",
+      "دبلوم المقاييس النفسية من أكاديمية النخبة الدولية",
+      "مصنفة من الهيئة السعودية للتخصصات الصحية",
+      "حاصلة على رخصة ABAT من البورد الامريكي"
+    ],
+    "bio": "أخصائي تحليل السلوك التطبيقي (ABA) بمركز رابا. حاصلة على بكالوريوس علم النفس من جامعة الأميرة نورة، ودبلوم المقاييس النفسية من أكاديمية النخبة الدولية، ومصنفة من الهيئة السعودية للتخصصات الصحية، وحاصلة على رخصة ABAT من البورد الأمريكي. متخصصة في القياس والتقييم السلوكي والتأهيل النفسي للأطفال.",
+    "isTopRated": true
+  },
+  {
+    "id": "doc-maram-mohamed",
+    "name": "مرام محمد",
+    "arabicName": "مرام محمد",
+    "nameEn": "Maram Mohamed",
+    "title": "أخصائية ABA",
+    "titleEn": "ABA Specialist",
+    "specialty": "أخصائية تحليل السلوك التطبيقي وعلم النفس الإكلينيكي",
+    "specialtyEn": "ABA Specialist & Clinical Psychologist",
+    "specialtyCode": "أخصائية ABA",
+    "specialtyCodeEn": "ABA Specialist",
+    "category": "aba",
+    "avatar": "/uploads/1790357606704______________jpg_jpeg.jpg",
+    "image": "/uploads/1790357606704______________jpg_jpeg.jpg",
+    "fallbackAvatar": "/uploads/1790357606704______________jpg_jpeg.jpg",
+    "rating": 4.85,
+    "reviewCount": 130,
+    "experienceYears": 3,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "بكالوريوس علم النفس الإكلينيكي جامعة الرباط الوطني",
+      "اعتماد البورد الأمريكي ABAT",
+      "متخصصة في العلاج عن طريق تحليل السلوك التطبيقي (ABA)",
+      "خبرة أكثر من 3 سنوات في الجلسات السلوكية"
+    ],
+    "bio": "أخصائية تحليل السلوك التطبيقي (ABA) بمركز رابا. حاصلة على بكالوريوس علم النفس الإكلينيكي من جامعة الرباط الوطني، وحاصلة على اعتماد البورد الأمريكي ABAT من منظمة QABA، متخصصة في العلاج والتأهيل عن طريق تحليل السلوك التطبيقي (ABA) للأطفال بخبرة تتجاوز 3 سنوات.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-ahmed-raad",
+    "name": "أحمد رعد",
+    "arabicName": "أحمد رعد",
+    "nameEn": "Ahmed Raad",
+    "title": "أخصائي ABA",
+    "titleEn": "ABA Specialist",
+    "specialty": "أخصائي تحليل السلوك التطبيقي ABAT والعلوم الصحية",
+    "specialtyEn": "ABA Specialist & Health Sciences Graduate",
+    "specialtyCode": "أخصائي ABA",
+    "specialtyCodeEn": "ABA Specialist",
+    "category": "aba",
+    "avatar": "/uploads/1790357615959______________jpg_jpeg.jpg",
+    "image": "/uploads/1790357615959______________jpg_jpeg.jpg",
+    "fallbackAvatar": "/uploads/1790357615959______________jpg_jpeg.jpg",
+    "rating": 4.82,
+    "reviewCount": 125,
+    "experienceYears": 3,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "بكالوريوس علوم صحية من جامعة حمص",
+      "شهادة أخصائي تحليل السلوك ABAT من البورد الأمريكي",
+      "خبرة أكثر من 3 سنوات في الجلسات الفردية وتعديل السلوك"
+    ],
+    "bio": "أخصائي تحليل السلوك التطبيقي (ABA) بمركز رابا. حاصل على بكالوريوس علوم صحية من جامعة حمص، وحاصل على شهادة أخصائي تحليل السلوك ABAT من البورد الأمريكي، بخبرة أكثر من 3 سنوات في تقديم جلسات التدخل السلوكي الفردية للأطفال وتطوير مهارات الاستقلالية والتواصل.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-mohamed-saad",
+    "name": "محمد سعد",
+    "arabicName": "محمد سعد",
+    "nameEn": "Mohamed Saad",
+    "title": "أخصائي النطق والتخاطب",
+    "titleEn": "Speech & Language Pathologist",
+    "specialty": "أخصائي تأهيل النطق والتخاطب وتنمية المهارات اللغوية",
+    "specialtyEn": "Speech & Language Pathologist & Early Intervention Lead",
+    "specialtyCode": "أخصائي النطق والتخاطب",
+    "specialtyCodeEn": "Speech & Language Pathologist",
+    "category": "speech",
+    "avatar": "/uploads/1790826142955_1_png.png",
+    "image": "/uploads/1790826142955_1_png.png",
+    "fallbackAvatar": "/uploads/1790826142955_1_png.png",
+    "rating": 4.93,
+    "reviewCount": 195,
+    "experienceYears": 8,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصل على ليسانس الآداب وتربية لغة عربية من جامعة طنطا",
+      "حاصل على دبلومة التخاطب واضطرابات النطق والكلام من كلية علوم ذوي الاحتياجات الخاصة جامعة بني سويف",
+      "حاصل على تمهيدي ماجستير في علوم التخاطب واضطرابات النطق والكلام",
+      "خبرة عملية أكثر من ٨ سنوات في تقييم وتشخيص اضطرابات النطق والكلام"
+    ],
+    "bio": "أخصائي النطق والتخاطب بمركز رابا. حاصل على ليسانس وماجستير في علوم التخاطب واضطرابات التواصل، بخبرة عملية تزيد عن 8 سنوات في تقييم وتشخيص اضطرابات النطق وتأخر نمو اللغة والتدخل المبكر لأطفال طيف التوحد ومتلازمة داون.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-alzahraa-farag",
+    "name": "الزهراء فرج",
+    "arabicName": "الزهراء فرج",
+    "nameEn": "Al-Zahraa Farag",
+    "title": "أخصائية نفسية إكلينيكية",
+    "titleEn": "Clinical Psychologist",
+    "specialty": "أخصائية علم النفس الإكلينيكي وتعديل السلوك",
+    "specialtyEn": "Clinical Child Psychologist & Behavioral Assessment Specialist",
+    "specialtyCode": "أخصائية نفسية إكلينيكية",
+    "specialtyCodeEn": "Clinical Psychologist",
+    "category": "psychology",
+    "avatar": "/uploads/1790826125079_2_png.png",
+    "image": "/uploads/1790826125079_2_png.png",
+    "fallbackAvatar": "/uploads/1790826125079_2_png.png",
+    "rating": 4.91,
+    "reviewCount": 182,
+    "experienceYears": 7,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصلة على ليسانس الآداب قسم علم النفس من جامعة عين شمس",
+      "حاصلة على دبلومة علم النفس الإكلينيكي من كلية الآداب جامعة عين شمس",
+      "حاصلة على دبلومة التربية الخاصة من كلية التربية جامعة عين شمس",
+      "خبرة أكثر من ٧ سنوات في التقييم النفسي والتشخيص الإكلينيكي"
+    ],
+    "bio": "أخصائية نفسية إكلينيكية بمركز رابا. حاصلة على ماجستير علم النفس الإكلينيكي ودبلوم العلاج المعرفي السلوكي، بخبرة تتجاوز 7 سنوات في تقييم وتشخيص الاضطرابات النمائية والنفسية وتطبيق مقاييس الذكاء واختبارات الشخصية والسلوك التكيفي.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-noura-elbasyouni",
+    "name": "د/ نورا البسيوني",
+    "arabicName": "د/ نورا البسيوني",
+    "nameEn": "Dr. Noura El-Basyouni",
+    "title": "أخصائية نفسية",
+    "titleEn": "Ph.D. Pediatric Psychologist",
+    "specialty": "دكتوراه في علم النفس وأخصائية نفسية أطفال التوحد",
+    "specialtyEn": "Ph.D. in Clinical Child Psychology & Autism Specialist",
+    "specialtyCode": "أخصائية نفسية",
+    "specialtyCodeEn": "Ph.D. Pediatric Psychologist",
+    "category": "psychology",
+    "avatar": "/uploads/1790826321411_3_png.png",
+    "image": "/uploads/1790826321411_3_png.png",
+    "fallbackAvatar": "/uploads/1790826321411_3_png.png",
+    "rating": 4.95,
+    "reviewCount": 215,
+    "experienceYears": 10,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصلة على ليسانس الآداب قسم علم النفس من جامعة عين شمس",
+      "حاصلة على ماجستير في علم النفس تخصص أطفال التوحد",
+      "حاصلة على دكتوراه في علم النفس تخصص أطفال التوحد",
+      "مصنفة مهنياً من الهيئة السعودية للتخصصات الصحية",
+      "خبرة أكثر من ١٠ سنوات في القياس والتشخيص النفسي"
+    ],
+    "bio": "دكتوراه في علم النفس وأخصائية نفسية بمركز رابا. حاصلة على درجتي الماجستير والدكتوراه في علم النفس تخصص أطفال التوحد، ومصنفة مهنياً من الهيئة السعودية للتخصصات الصحية بخبرة تزيد عن 10 سنوات في التقييم النفسي والبرامج النمائية لأطفال التوحد.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-asmaa-moustafa",
+    "name": "أسماء مصطفى",
+    "arabicName": "أسماء مصطفى",
+    "nameEn": "Asmaa Moustafa",
+    "title": "مشرفة قسم الـ ABA",
+    "titleEn": "ABA Department Supervisor",
+    "specialty": "مشرفة قسم تحليل السلوك ومحلل سلوك دولي معتمد QBA-IBA",
+    "specialtyEn": "ABA Supervisor & International Behavior Analyst (QBA / IBA)",
+    "specialtyCode": "مشرفة قسم الـ ABA",
+    "specialtyCodeEn": "ABA Department Supervisor",
+    "category": "aba",
+    "avatar": "/uploads/1790826279297_4_png.png",
+    "image": "/uploads/1790826279297_4_png.png",
+    "fallbackAvatar": "/uploads/1790826279297_4_png.png",
+    "rating": 4.96,
+    "reviewCount": 230,
+    "experienceYears": 10,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصلة على ليسانس الآداب في علم الإجتماع من جامعة سوهاج",
+      "حاصلة على ماجستير في التربية الخاصة تخصص التوحد من جامعة أسيوط",
+      "باحثة دكتوراة في التربية الخاصة تخصص توحد",
+      "محلل سلوك دولي معتمد QBA-IBA",
+      "ممارس إدارة السلوك التنظيمي OBM-p",
+      "خبرة عملية أكثر من ١٠ سنوات"
+    ],
+    "bio": "مشرفة قسم ABA بمركز رابا ومحلل سلوك دولي معتمد (QBA-IBA). باحثة دكتوراه وحاصلة على ماجستير التربية الخاصة تخصص التوحد، وممارس إدارة السلوك التنظيمي OBM-p بخبرة تزيد عن 10 سنوات في قيادة الخطط السلوكية المكثفة وتأهيل الكوادر.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-ayman-elhoweity",
+    "name": "أيمن عطية الحويطي",
+    "arabicName": "أيمن عطية الحويطي",
+    "nameEn": "Ayman Attia Al-Howeity",
+    "title": "أخصائي ABA",
+    "titleEn": "Behavior Analyst (BACB / TOT)",
+    "specialty": "أخصائي تحليل السلوك ومدرب مدربين معتمد TOT",
+    "specialtyEn": "ABA Specialist, BACB Licensed & Certified TOT",
+    "specialtyCode": "أخصائي ABA",
+    "specialtyCodeEn": "Behavior Analyst (BACB / TOT)",
+    "category": "aba",
+    "avatar": "/uploads/1790826241596_5_png.png",
+    "image": "/uploads/1790826241596_5_png.png",
+    "fallbackAvatar": "/uploads/1790826241596_5_png.png",
+    "rating": 4.88,
+    "reviewCount": 170,
+    "experienceYears": 10,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصل على بكالوريوس التربية الخاصة من جامعة حلوان",
+      "حاصل على دراسات عليا في التربية الخاصة من جامعة حلوان",
+      "حاصل على رخصة البورد الأمريكي من بورد BACB",
+      "ممارس توحد مرخص من هيئة قياس",
+      "مدرب مدربين معتمد TOT",
+      "خبرة عملية أكثر من ١٠ سنوات"
+    ],
+    "bio": "أخصائي تحليل السلوك التطبيقي ABA بمركز رابا. حاصل على دراسات عليا في التربية الخاصة من جامعة حلوان، ورخصة بورد BACB الأمريكي، وترخيص ممارس توحد من قياس ومدرب مدربين TOT بخبرة تتجاوز 10 سنوات في تأهيل ذوي اضطراب طيف التوحد.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-mohamed-bakry",
+    "name": "محمد بكري",
+    "arabicName": "محمد بكري",
+    "nameEn": "Mohamed Bakry",
+    "title": "أخصائي العلاج الوظيفي والتكامل الحسي",
+    "titleEn": "Occupational & Sensory Therapist",
+    "specialty": "أخصائي العلاج الوظيفي والتكامل الحسي وماجستير علوم الصحة الرياضية",
+    "specialtyEn": "Occupational Therapist & Sensory Integration Practitioner",
+    "specialtyCode": "أخصائي العلاج الوظيفي والتكامل الحسي",
+    "specialtyCodeEn": "Occupational & Sensory Therapist",
+    "category": "occupational",
+    "avatar": "/uploads/1790826439548_6_png.png",
+    "image": "/uploads/1790826439548_6_png.png",
+    "fallbackAvatar": "/uploads/1790826439548_6_png.png",
+    "rating": 4.87,
+    "reviewCount": 145,
+    "experienceYears": 6,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصل على بكالوريوس وماجستير علوم الصحة الرياضية وتأهيل الإصابات",
+      "حاصل على دبلومة العلاج الوظيفي من مركز الخدمة العامة جامعة طنطا",
+      "حاصل على تدريب معتمد في التكامل الحسي من مركز رابـا",
+      "خبرة أكثر من ٦ سنوات في العلاج الوظيفي والتكامل الحسي"
+    ],
+    "bio": "أخصائي العلاج الوظيفي والتكامل الحسي بمركز رابا. حاصل على ماجستير علوم الصحة الرياضية ودبلومة العلاج الوظيفي وتدريب معتمد في التكامل الحسي بخبرة تفوق 6 سنوات في تنمية المهارات الحركية الدقيقة والتكامل الحسي والبدني للأطفال.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-anwar-elmaghyouli",
+    "name": "أنوار المغيولي",
+    "arabicName": "أنوار المغيولي",
+    "nameEn": "Anwar Al-Maghyouli",
+    "title": "أخصائية النطق والتخاطب",
+    "titleEn": "Speech & Language Pathologist",
+    "specialty": "أخصائية علاج اضطرابات النطق والتخاطب واللغة",
+    "specialtyEn": "Speech-Language Pathologist & Communication Specialist",
+    "specialtyCode": "أخصائية النطق والتخاطب",
+    "specialtyCodeEn": "Speech & Language Pathologist",
+    "category": "speech",
+    "avatar": "/uploads/1790826509139_7_png.png",
+    "image": "/uploads/1790826509139_7_png.png",
+    "fallbackAvatar": "/uploads/1790826509139_7_png.png",
+    "rating": 4.89,
+    "reviewCount": 138,
+    "experienceYears": 5,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الملك عبدالعزيز",
+      "حاصلة على دورة علاج التلعثم التخصصية",
+      "حاصلة على دورة مهارات الحوار والتواصل التفاعلي",
+      "خبرة أكثر من ٥ سنوات في تقييم وعلاج اضطرابات النطق واللغة"
+    ],
+    "bio": "أخصائية النطق والتخاطب بمركز رابا. حاصلة على بكالوريوس علم النفس من جامعة الملك عبدالعزيز، بخبرة عملية تفوق 5 سنوات في تقييم وعلاج التلعثم واضطرابات مخارج الحروف وتأخر الكلام وتطوير مهارات الحوار والتواصل لدى الأطفال.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-mohamed-abdelhamid",
+    "name": "محمد عبد الحميد",
+    "arabicName": "محمد عبد الحميد",
+    "nameEn": "Mohamed Abdelhamid",
+    "title": "أخصائي النطق والتخاطب",
+    "titleEn": "Speech Pathologist & OPT Specialist",
+    "specialty": "أخصائي علاج النطق والتخاطب ومتخصص OPT",
+    "specialtyEn": "Speech Pathologist & Oral Placement Therapy (OPT) Specialist",
+    "specialtyCode": "أخصائي النطق والتخاطب",
+    "specialtyCodeEn": "Speech Pathologist & OPT Specialist",
+    "category": "speech",
+    "avatar": "/uploads/1790826577879_9_png.png",
+    "image": "/uploads/1790826577879_9_png.png",
+    "fallbackAvatar": "/uploads/1790826577879_9_png.png",
+    "rating": 4.86,
+    "reviewCount": 152,
+    "experienceYears": 6,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصل على بكالوريوس التربية الخاصة قسم اضطرابات التخاطب من جامعة المنصورة",
+      "حاصل على كورس معتمد في تقنية OPT لتأهيل عضلات النطق",
+      "خبرة أكثر من ٦ سنوات في تأهيل عيوب النطق والكلام ومخارج الحروف"
+    ],
+    "bio": "أخصائي النطق والتخاطب بمركز رابا. حاصل على بكالوريوس التربية الخاصة من جامعة المنصورة، وكورس معتمد في تقنية OPT لتأهيل عضلات النطق، بخبرة عملية تزيد عن 6 سنوات في علاج صعوبات النطق واللغة والتواصل لدى الأطفال ذوي التحديات النمائية.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-mohamed-elgayyar",
+    "name": "محمد الجيار",
+    "arabicName": "محمد الجيار",
+    "nameEn": "Mohamed Al-Gayyar",
+    "title": "أخصائي العلاج الوظيفي والتكامل الحسي",
+    "titleEn": "Occupational Therapy & Sensory Integration Specialist",
+    "specialty": "أخصائي العلاج الوظيفي والتكامل الحسي وتعديل السلوك ABAT",
+    "specialtyEn": "Occupational Therapist & Certified Behavior Technician (ABAT)",
+    "specialtyCode": "أخصائي العلاج الوظيفي والتكامل الحسي",
+    "specialtyCodeEn": "Occupational Therapy & Sensory Integration Specialist",
+    "category": "occupational",
+    "avatar": "/uploads/1790826687565_10_png.png",
+    "image": "/uploads/1790826687565_10_png.png",
+    "fallbackAvatar": "/uploads/1790826687565_10_png.png",
+    "rating": 4.88,
+    "reviewCount": 160,
+    "experienceYears": 7,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصل كلية ليسانس الآداب من جامعة بورسعيد",
+      "حاصل على دبلومة مهنية لإضطرابات التواصل من كلية التربية جامعة عين شمس",
+      "حاصل علي دبلومة عامة قسم التوحد من كلية علوم إعاقة من جامعة الزقازيق",
+      "حاصل على دورة تحليل السلوك التطبيقي ABAT",
+      "حاصل على دورة في التكامل الحسي من د/دعاء عبد اللطيف",
+      "خبرة عملية أكثر من ٧ سنوات"
+    ],
+    "bio": "أخصائي العلاج الوظيفي والتكامل الحسي بمركز رابا. يجمع بين دبلومات اضطرابات التواصل من عين شمس والتوحد من الزقازيق وتدريب ABAT والتكامل الحسي بخبرة تزيد عن 7 سنوات في تحسين التآزر البصري الحركي والتكامل الحسي للأطفال.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-elsaeed-diab",
+    "name": "السعيد دياب",
+    "arabicName": "السعيد دياب",
+    "nameEn": "El-Saeed Diab",
+    "title": "أخصائي صعوبات تعلم",
+    "titleEn": "Learning Disabilities Specialist",
+    "specialty": "أخصائي صعوبات التعلم والتقييم والتشخيص النفسي والتربوي",
+    "specialtyEn": "Learning Disabilities Specialist & Psycho-Educational Evaluator",
+    "specialtyCode": "أخصائي صعوبات تعلم",
+    "specialtyCodeEn": "Learning Disabilities Specialist",
+    "category": "psychology",
+    "avatar": "/uploads/1790826711609_11_png.png",
+    "image": "/uploads/1790826711609_11_png.png",
+    "fallbackAvatar": "/uploads/1790826711609_11_png.png",
+    "rating": 4.89,
+    "reviewCount": 164,
+    "experienceYears": 7,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصل على ليسانس الآداب والتربية من جامعه الأزهر",
+      "حاصل على دبلومة الإختبارات والمقاييس النفسية من جامعة الزقازيق",
+      "حاصل على دبلومة التخاطب من جامعة عين شمس",
+      "حاصل على دبلومة التوحد من جامعة الزقازيق",
+      "حاصل على دبلومة إعداد أخصائي تربية خاصة من جامعة عين شمس",
+      "حاصل على دبلومة التربية الخاصة من جامعة عين شمس",
+      "خبرة عملية أكثر من ٧ سنوات"
+    ],
+    "bio": "أخصائي صعوبات التعلم بمركز رابا. حاصل على دبلومات متعددة في المقاييس النفسية والتخاطب والتوحد والتربية الخاصة من جامعتي عين شمس والزقازيق بخبرة تفوق 7 سنوات في التشخيص التربوي الدقيق وعلاج صعوبات القراءة والكتابة والحساب وتهيئة الأطفال للدمج.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-yara-abouhamda",
+    "name": "يارا أبو حمده",
+    "arabicName": "يارا أبو حمده",
+    "nameEn": "Yara Abou Hamda",
+    "title": "أخصائية العلاج الوظيفي",
+    "titleEn": "Occupational Therapist",
+    "specialty": "أخصائية العلاج الوظيفي",
+    "specialtyEn": "Occupational Therapist",
+    "specialtyCode": "أخصائية العلاج الوظيفي",
+    "specialtyCodeEn": "Occupational Therapist",
+    "category": "occupational",
+    "department": "قسم العلاج الوظيفي والتكامل الحسي",
+    "avatar": "/specialists/cards/spec_21_yara-abouhamda.png",
+    "image": "/specialists/cards/spec_21_yara-abouhamda.png",
+    "fallbackAvatar": "/specialists/cards/spec_21_yara-abouhamda.png",
+    "rating": 4.9,
+    "reviewCount": 135,
+    "experienceYears": 1,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "بكالوريوس العلاج الوظيفي من الجامعة الأردنية",
+      "تنمية التآزر البصري الحركي والتخطيط الحركي الدقيق",
+      "تدريب مهارات الحياة اليومية والاستقلالية الذاتية للأطفال",
+      "خبرة أكثر من سنة"
+    ],
+    "bio": "أخصائية العلاج الوظيفي بمراكز رابا. حاصلة على بكالوريوس العلاج الوظيفي من الجامعة الأردنية، متخصصة في تنمية المهارات الحركية الدقيقة والتكامل الحسي وبرامج الاستقلالية الذاتية للأطفال.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-sara-abdelhamid",
+    "name": "سارة عبد الحميد",
+    "arabicName": "سارة عبد الحميد",
+    "nameEn": "Sara Abdelhamid",
+    "title": "أخصائية أولى نطق وتخاطب وتأهيل لغوي",
+    "titleEn": "Senior Speech-Language Pathologist",
+    "specialty": "أخصائية أولى نطق وتخاطب وتأهيل لغوي",
+    "specialtyEn": "Senior Speech-Language Pathologist",
+    "specialtyCode": "أخصائية أولى نطق وتخاطب وتأهيل لغوي",
+    "specialtyCodeEn": "Senior Speech-Language Pathologist",
+    "category": "speech",
+    "department": "قسم علاج النطق واللغة واضطرابات التواصل",
+    "avatar": "/uploads/1790827397368_38_png.png",
+    "image": "/uploads/1790827397368_38_png.png",
+    "fallbackAvatar": "/uploads/1790827397368_38_png.png",
+    "rating": 4.95,
+    "reviewCount": 145,
+    "experienceYears": 8,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "تأهيل لغوي متقدم",
+      "علاج تأخر الكلام",
+      "جلسات النطق والتخاطب وتنمية المهارات",
+      "التواصل اللفظي وغير اللفظي"
+    ],
+    "bio": "أخصائية أولى في علاج اضطرابات النطق واللغة والتخاطب بمراكز رابا، متخصصة في تنمية الحصيلة اللغوية، وعلاج تأخر الكلام، والخطط التأهيلية التفاعلية للأطفال.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-bayan-alnajem",
+    "name": "بيان الناجم",
+    "arabicName": "بيان الناجم",
+    "nameEn": "Bayan Al-Najem",
+    "title": "أخصائية تربية خاصة",
+    "titleEn": "Special Education Specialist",
+    "specialty": "أخصائية تربية خاصة وتأهيل عوق سمعي",
+    "specialtyEn": "Special Education & Hearing Impairment Specialist",
+    "specialtyCode": "أخصائية تربية خاصة",
+    "specialtyCodeEn": "Special Education Specialist",
+    "category": "speech",
+    "department": "قسم التربية الخاصة والتأهيل",
+    "avatar": "/uploads/1790863548373_12_png.png",
+    "image": "/uploads/1790863548373_12_png.png",
+    "fallbackAvatar": "/uploads/1790863548373_12_png.png",
+    "rating": 4.9,
+    "reviewCount": 95,
+    "experienceYears": 2,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصلة على بكالوريوس التربية الخاصة من جامعة الملك فيصل تخصص عوق سمعي",
+      "حاصلة على دبلوم إرشاد اسري من جامعة الإمام محمد بن سعود",
+      "تأهيل الأطفال ذوي الإعاقة السمعية وتطوير التواصل اللفظي والبديل",
+      "خبرة عملية أكثر من سنة"
+    ],
+    "bio": "أخصائية تربية خاصة بمركز رابا. حاصلة على بكالوريوس التربية الخاصة من جامعة الملك فيصل تخصص عوق سمعي، ودبلوم إرشاد أسري من جامعة الإمام محمد بن سعود، بخبرة عملية متقدمة في تأهيل الأطفال ودعم الأسر وتنمية التواصل.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-manar-obeid",
+    "name": "منار عبيد",
+    "arabicName": "منار عبيد",
+    "nameEn": "Manar Obeid",
+    "title": "مشرفة قسم الـ ABA",
+    "titleEn": "ABA Department Supervisor",
+    "specialty": "مشرفة قسم تحليل السلوك التطبيقي ABA | محلل سلوك معتمد QABA / IBAO",
+    "specialtyEn": "ABA Department Supervisor & Certified Behavior Analyst (QABA/IBAO)",
+    "specialtyCode": "مشرفة قسم الـ ABA",
+    "specialtyCodeEn": "ABA Department Supervisor",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/uploads/1790865956621_13_png.png",
+    "image": "/uploads/1790865956621_13_png.png",
+    "fallbackAvatar": "/uploads/1790865956621_13_png.png",
+    "rating": 4.98,
+    "reviewCount": 310,
+    "experienceYears": 17,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصلة على ليسانس الآداب والتربية من جامعة المنوفية",
+      "حاصلة على دبلوم مهني في القياس النفسي من جامعة المنوفية",
+      "حاصلة على الدبلوم الخاص في القياس النفسي من جامعة المنوفية",
+      "حاصلة على ماجستير في التربية الخاصة من جامعة القاهرة",
+      "باحثة دكتوراه في التربية الخاصة في جامعة القاهرة",
+      "محلل سلوك معتمد من البورد الأمريكي من منظمات QABA / IBAO",
+      "خبرة عملية أكثر من ١٧ سنة"
+    ],
+    "bio": "مشرفة قسم تحليل السلوك التطبيقي ABA بمركز رابا ومحلل سلوك معتمد دولياً من البورد الأمريكي QABA ومنظمة IBAO. باحثة دكتوراه وحاصلة على الماجستير في التربية الخاصة من جامعة القاهرة، بخبرة عملية وتدريبية تتجاوز 17 عاماً في الإشراف الإكلينيكي وتصميم الخطط السلوكية.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-salma-abouelfadl",
+    "name": "سلمى أبو الفضل",
+    "arabicName": "سلمى أبو الفضل",
+    "nameEn": "Salma Abo El-Fadl",
+    "title": "أخصائية التكامل الحسي",
+    "titleEn": "Sensory Integration Specialist",
+    "specialty": "أخصائية التكامل الحسي والتخاطب والتربية الخاصة",
+    "specialtyEn": "Sensory Integration & Communication Specialist",
+    "specialtyCode": "أخصائية التكامل الحسي",
+    "specialtyCodeEn": "Sensory Integration Specialist",
+    "category": "occupational",
+    "department": "قسم العلاج الوظيفي والتكامل الحسي",
+    "avatar": "/uploads/1790865973849_14_png.png",
+    "image": "/uploads/1790865973849_14_png.png",
+    "fallbackAvatar": "/uploads/1790865973849_14_png.png",
+    "rating": 4.95,
+    "reviewCount": 165,
+    "experienceYears": 7,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصلة على بكالوريوس تربية طفولة من جامعة المنوفية",
+      "حاصلة على دبلوم خاص في التربية الخاصة من جامعة المنوفية",
+      "حاصلة على دبلومة تخاطب 300 ساعة من جامعة عين شمس",
+      "باحثة ماجستير في التربية الخاصة في جامعة المنوفية",
+      "حاصلة على دورة في التكامل الحسي من جامعة عين شمس",
+      "خبرة عملية أكثر من 7 سنوات"
+    ],
+    "bio": "أخصائية التكامل الحسي بمركز رابا. باحثة ماجستير في التربية الخاصة، حاصلة على دبلومة التخاطب ودورة التكامل الحسي من جامعة عين شمس، مع خبرة سريرية تتجاوز 7 سنوات في معالجة الاضطرابات الحسية والتواصلية وتنمية مهارات الأطفال النمائية.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-ahmed-sayed",
+    "name": "أحمد سيد",
+    "arabicName": "أحمد سيد",
+    "nameEn": "Ahmed Sayed",
+    "title": "أخصائي النطق والتخاطب",
+    "titleEn": "Speech & Language Pathologist",
+    "specialty": "أخصائي النطق والتخاطب والعلاج الفموي OPT",
+    "specialtyEn": "Speech & Language Pathologist (OPT Certified)",
+    "specialtyCode": "أخصائي النطق والتخاطب",
+    "specialtyCodeEn": "Speech & Language Pathologist",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب",
+    "avatar": "/uploads/1790865993782_15_png.png",
+    "image": "/uploads/1790865993782_15_png.png",
+    "fallbackAvatar": "/uploads/1790865993782_15_png.png",
+    "rating": 4.93,
+    "reviewCount": 140,
+    "experienceYears": 6,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصل على بكالوريوس علوم لذوي الإحتياجات الخاصة بتخصص النطق والتخاطب من جامعة بني سويف",
+      "حاصل على كورس العلاج الفموي OPT من الجمعية الأمريكية للنطق واللغة",
+      "تأهيل التأتأة والتأخر اللغوي واضطرابات مخارج الحروف والبلع",
+      "خبرة عملية أكثر من ٦ سنوات"
+    ],
+    "bio": "أخصائي النطق والتخاطب بمركز رابا. حاصل على بكالوريوس النطق والتخاطب من كلية علوم ذوي الاحتياجات الخاصة بجامعة بني سويف، ومعتمد في العلاج الفموي OPT، بخبرة عملية تتجاوز 6 سنوات في علاج عيوب النطق والتأخر اللغوي ومشاكل البلع والتنفس النطقي.",
+    "isTopRated": false
   },
   {
     "id": "doc-aseel-yousef",
@@ -1003,26 +1123,27 @@ export const DOCTORS_DATA: Doctor[] = [
     "specialtyCodeEn": "Occupational Therapy Specialist",
     "category": "occupational",
     "department": "قسم العلاج الوظيفي والتكامل الحسي",
-    "avatar": "/specialists/cards/spec_28_aseel-yousef.png",
-    "fallbackAvatar": "/specialists/cards/spec_28_aseel-yousef.png",
+    "avatar": "/uploads/1790866040732_19_png.png",
+    "image": "/uploads/1790866040732_19_png.png",
+    "fallbackAvatar": "/uploads/1790866040732_19_png.png",
     "rating": 4.91,
     "reviewCount": 110,
     "experienceYears": 3,
-    "patientsCount": 1200,
+    "patientsCount": 1000,
     "sessionPrice": 0,
     "location": "",
     "locationEn": "",
     "isAvailable": true,
     "nextSlot": "متاح للحجز",
     "nextSlotEn": "Available for booking",
-    "isTopRated": true,
     "tags": [
       "حاصلة على بكالوريوس العلاج الوظيفي من كلية العلوم الطبية التطبيقية من الجامعة الهاشمية",
       "تأهيل المهارات الحركية الدقيقة والتناسق العضلي البصري",
       "تنمية مهارات الاعتماد على الذات والأنشطة الحياتية اليومية",
       "خبرة عملية أكثر من سنتين"
     ],
-    "bio": "أخصائية العلاج الوظيفي بمركز رابا، خريجة الجامعة الهاشمية في العلوم الطبية التطبيقية، متخصصة في تأهيل المهارات الحركية الدقيقة والتكامل الحسي واستقلالية الطفل في مهارات الحياة اليومية والمدرسية."
+    "bio": "أخصائية العلاج الوظيفي بمركز رابا، خريجة الجامعة الهاشمية في العلوم الطبية التطبيقية، متخصصة في تأهيل المهارات الحركية الدقيقة والتكامل الحسي واستقلالية الطفل في مهارات الحياة اليومية والمدرسية.",
+    "isTopRated": false
   },
   {
     "id": "doc-mohammed-shehri-clinical",
@@ -1037,26 +1158,27 @@ export const DOCTORS_DATA: Doctor[] = [
     "specialtyCodeEn": "Clinical Psychologist",
     "category": "psychology",
     "department": "قسم الإرشاد والتقييم النفسي",
-    "avatar": "/specialists/cards/spec_29_mohammed-shehri-clinical.png",
-    "fallbackAvatar": "/specialists/cards/spec_29_mohammed-shehri-clinical.png",
+    "avatar": "/uploads/1790866057132_21_png.png",
+    "image": "/uploads/1790866057132_21_png.png",
+    "fallbackAvatar": "/uploads/1790866057132_21_png.png",
     "rating": 4.92,
     "reviewCount": 115,
     "experienceYears": 3,
-    "patientsCount": 1200,
+    "patientsCount": 1000,
     "sessionPrice": 0,
     "location": "",
     "locationEn": "",
     "isAvailable": true,
     "nextSlot": "متاح للحجز",
     "nextSlotEn": "Available for booking",
-    "isTopRated": true,
     "tags": [
       "حاصل على بكالوريس علم النفس العام من جامعة الإمام محمد بن سعود الاسلامية",
       "التقييم الإكلينيكي والمقاييس النفسية النمائية",
       "برامج تعديل السلوك والإرشاد الأسري للأطفال",
       "خبرة أكثر من سنتين"
     ],
-    "bio": "أخصائي نفسي إكلينيكي بمركز رابا. حاصل على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الإسلامية، متخصص في التقييم والتشخيص النفسي وتصميم برامج تعديل السلوك للأطفال وتقديم الدعم الإرشادي للأسر."
+    "bio": "أخصائي نفسي إكلينيكي بمركز رابا. حاصل على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الإسلامية، متخصص في التقييم والتشخيص النفسي وتصميم برامج تعديل السلوك للأطفال وتقديم الدعم الإرشادي للأسر.",
+    "isTopRated": false
   },
   {
     "id": "doc-saad-dosari",
@@ -1071,26 +1193,27 @@ export const DOCTORS_DATA: Doctor[] = [
     "specialtyCodeEn": "Applied Behavior Analysis Specialist",
     "category": "aba",
     "department": "قسم تحليل السلوك التطبيقي ABA",
-    "avatar": "/specialists/cards/spec_30_saad-dosari.png",
-    "fallbackAvatar": "/specialists/cards/spec_30_saad-dosari.png",
+    "avatar": "/uploads/1790866075647_22_png.png",
+    "image": "/uploads/1790866075647_22_png.png",
+    "fallbackAvatar": "/uploads/1790866075647_22_png.png",
     "rating": 4.9,
     "reviewCount": 88,
     "experienceYears": 2,
-    "patientsCount": 1200,
+    "patientsCount": 1000,
     "sessionPrice": 0,
     "location": "",
     "locationEn": "",
     "isAvailable": true,
     "nextSlot": "متاح للحجز",
     "nextSlotEn": "Available for booking",
-    "isTopRated": true,
     "tags": [
       "حاصل على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الاسلامية",
       "حاصل على رخصة الهيئة السعودية للتخصصات الصحية",
       "حاصل على رخصة ABAT من البورد الامريكي QABA",
       "خبرة عملية أكثر من سنة في التدخل السلوكي الفردي"
     ],
-    "bio": "أخصائي تحليل سلوك تطبيقي ABA بمركز رابا. مرخص من هيئة التخصصات الصحية السعودية وحاصل على رخصة ABAT من البورد الأمريكي QABA، متخصص في بناء المهارات السلوكية والتواصلية للأطفال."
+    "bio": "أخصائي تحليل سلوك تطبيقي ABA بمركز رابا. مرخص من هيئة التخصصات الصحية السعودية وحاصل على رخصة ABAT من البورد الأمريكي QABA، متخصص في بناء المهارات السلوكية والتواصلية للأطفال.",
+    "isTopRated": false
   },
   {
     "id": "doc-fahad-juhani",
@@ -1105,26 +1228,27 @@ export const DOCTORS_DATA: Doctor[] = [
     "specialtyCodeEn": "Applied Behavior Analysis Specialist",
     "category": "aba",
     "department": "قسم تحليل السلوك التطبيقي ABA",
-    "avatar": "/specialists/cards/spec_31_fahad-juhani.png",
-    "fallbackAvatar": "/specialists/cards/spec_31_fahad-juhani.png",
+    "avatar": "/uploads/1790866092167_23_png.png",
+    "image": "/uploads/1790866092167_23_png.png",
+    "fallbackAvatar": "/uploads/1790866092167_23_png.png",
     "rating": 4.92,
     "reviewCount": 105,
     "experienceYears": 3,
-    "patientsCount": 1200,
+    "patientsCount": 1000,
     "sessionPrice": 0,
     "location": "",
     "locationEn": "",
     "isAvailable": true,
     "nextSlot": "متاح للحجز",
     "nextSlotEn": "Available for booking",
-    "isTopRated": true,
     "tags": [
       "حاصل على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الاسلامية",
       "حاصل على إعتماد ABAT في تحليل السلوك التطبيقي من QABA",
       "تطوير التواصل الوظيفي والحد من السلوكيات النمطية",
       "خبرة عملية أكثر من سنتين"
     ],
-    "bio": "أخصائي تحليل السلوك التطبيقي ABA بمركز رابا، معتمد دولياً من البورد الأمريكي QABA، خريج جامعة الإمام في علم النفس، بخبرة عملية تتجاوز سنتين في التدريب السلوكي والتواصل الوظيفي للأطفال."
+    "bio": "أخصائي تحليل السلوك التطبيقي ABA بمركز رابا، معتمد دولياً من البورد الأمريكي QABA، خريج جامعة الإمام في علم النفس، بخبرة عملية تتجاوز سنتين في التدريب السلوكي والتواصل الوظيفي للأطفال.",
+    "isTopRated": false
   },
   {
     "id": "doc-hala-enazi",
@@ -1139,19 +1263,19 @@ export const DOCTORS_DATA: Doctor[] = [
     "specialtyCodeEn": "Applied Behavior Analysis Specialist",
     "category": "aba",
     "department": "قسم تحليل السلوك التطبيقي ABA",
-    "avatar": "/specialists/cards/spec_32_hala-enazi.png",
-    "fallbackAvatar": "/specialists/cards/spec_32_hala-enazi.png",
+    "avatar": "/uploads/1790866107078_24_png.png",
+    "image": "/uploads/1790866107078_24_png.png",
+    "fallbackAvatar": "/uploads/1790866107078_24_png.png",
     "rating": 4.91,
     "reviewCount": 92,
     "experienceYears": 2,
-    "patientsCount": 1200,
+    "patientsCount": 1000,
     "sessionPrice": 0,
     "location": "",
     "locationEn": "",
     "isAvailable": true,
     "nextSlot": "متاح للحجز",
     "nextSlotEn": "Available for booking",
-    "isTopRated": true,
     "tags": [
       "حاصلة على بكالوريوس علم النفس من جامعة الأميرة نورة بنت عبدالرحمن",
       "حاصلة على تصنيف مهني من الهيئة السعودية للتخصصات الصحية",
@@ -1159,7 +1283,8 @@ export const DOCTORS_DATA: Doctor[] = [
       "متخصصة في تطبيق مبادئ تحليل السلوك التطبيقي (ABA) مع الأطفال",
       "خبرة عملية أكثر من سنة"
     ],
-    "bio": "أخصائية تحليل سلوك تطبيقي ABA بمركز رابا ومصنفة مهنياً من هيئة التخصصات الصحية. خريجة جامعة الأميرة نورة ومعتمدة من البورد الأمريكي QABA، متخصصة في الجلسات السلوكية الفردية وتنمية مهارات التواصل والتفاعل الاجتماعي."
+    "bio": "أخصائية تحليل سلوك تطبيقي ABA بمركز رابا ومصنفة مهنياً من هيئة التخصصات الصحية. خريجة جامعة الأميرة نورة ومعتمدة من البورد الأمريكي QABA، متخصصة في الجلسات السلوكية الفردية وتنمية مهارات التواصل والتفاعل الاجتماعي.",
+    "isTopRated": false
   },
   {
     "id": "doc-taif-subaie",
@@ -1174,26 +1299,27 @@ export const DOCTORS_DATA: Doctor[] = [
     "specialtyCodeEn": "Applied Behavior Analysis Specialist",
     "category": "aba",
     "department": "قسم تحليل السلوك التطبيقي ABA",
-    "avatar": "/specialists/cards/spec_33_taif-subaie.png",
-    "fallbackAvatar": "/specialists/cards/spec_33_taif-subaie.png",
+    "avatar": "/uploads/1790866122845_25_png.png",
+    "image": "/uploads/1790866122845_25_png.png",
+    "fallbackAvatar": "/uploads/1790866122845_25_png.png",
     "rating": 4.93,
     "reviewCount": 110,
     "experienceYears": 3,
-    "patientsCount": 1200,
+    "patientsCount": 1000,
     "sessionPrice": 0,
     "location": "",
     "locationEn": "",
     "isAvailable": true,
     "nextSlot": "متاح للحجز",
     "nextSlotEn": "Available for booking",
-    "isTopRated": true,
     "tags": [
       "حاصلة على بكالوريوس علم النفس من جامعة الطائف",
       "حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA",
       "حاصلة على ترخيص هيئة التخصصات الصحية بمسمى اخصائي نفسي.",
       "خبرة عملية أكثر من سنتين"
     ],
-    "bio": "أخصائية تحليل السلوك التطبيقي ABA بمركز رابا. مرخصة كأخصائية نفسية من هيئة التخصصات الصحية السعودية ومعتمدة كفني سلوك ABAT من البورد الأمريكي QABA، بخبرة سريرية متقدمة في رعاية وتأهيل الأطفال."
+    "bio": "أخصائية تحليل السلوك التطبيقي ABA بمركز رابا. مرخصة كأخصائية نفسية من هيئة التخصصات الصحية السعودية ومعتمدة كفني سلوك ABAT من البورد الأمريكي QABA، بخبرة سريرية متقدمة في رعاية وتأهيل الأطفال.",
+    "isTopRated": false
   },
   {
     "id": "doc-raghad-hawarneh",
@@ -1208,26 +1334,27 @@ export const DOCTORS_DATA: Doctor[] = [
     "specialtyCodeEn": "Occupational Therapy Specialist",
     "category": "occupational",
     "department": "قسم العلاج الوظيفي والتكامل الحسي",
-    "avatar": "/specialists/cards/spec_34_raghad-hawarneh.png",
-    "fallbackAvatar": "/specialists/cards/spec_34_raghad-hawarneh.png",
+    "avatar": "/uploads/1790866151823_26_png.png",
+    "image": "/uploads/1790866151823_26_png.png",
+    "fallbackAvatar": "/uploads/1790866151823_26_png.png",
     "rating": 4.9,
     "reviewCount": 85,
     "experienceYears": 2,
-    "patientsCount": 1200,
+    "patientsCount": 1000,
     "sessionPrice": 0,
     "location": "",
     "locationEn": "",
     "isAvailable": true,
     "nextSlot": "متاح للحجز",
     "nextSlotEn": "Available for booking",
-    "isTopRated": true,
     "tags": [
       "حاصلة على بكالوريوس علوم التأهيل الطبية من جامعة العلوم والتكنولوجيا الأردنية",
       "تأهيل التناسق الحركي والتكامل العصبي العضلي للأطفال",
       "تنمية الاستقلالية في البيئة المدرسية والمنزلية",
       "خبرة عملية أكثر من سنة"
     ],
-    "bio": "أخصائية العلاج الوظيفي بمركز رابا، خريجة جامعة العلوم والتكنولوجيا الأردنية في علوم التأهيل الطبي، متخصصة في تأهيل المهارات الوظيفية الحركية وتنمية استقلالية الأطفال في المهام اليومية والبيئة التعليمية."
+    "bio": "أخصائية العلاج الوظيفي بمركز رابا، خريجة جامعة العلوم والتكنولوجيا الأردنية في علوم التأهيل الطبي، متخصصة في تأهيل المهارات الوظيفية الحركية وتنمية استقلالية الأطفال في المهام اليومية والبيئة التعليمية.",
+    "isTopRated": false
   },
   {
     "id": "doc-eman-bahattab",
@@ -1242,26 +1369,27 @@ export const DOCTORS_DATA: Doctor[] = [
     "specialtyCodeEn": "Applied Behavior Analysis Specialist",
     "category": "aba",
     "department": "قسم تحليل السلوك التطبيقي ABA",
-    "avatar": "/specialists/cards/spec_35_eman-bahattab.png",
-    "fallbackAvatar": "/specialists/cards/spec_35_eman-bahattab.png",
+    "avatar": "/uploads/1790866167869_27_png.png",
+    "image": "/uploads/1790866167869_27_png.png",
+    "fallbackAvatar": "/uploads/1790866167869_27_png.png",
     "rating": 4.94,
     "reviewCount": 155,
     "experienceYears": 6,
-    "patientsCount": 1200,
+    "patientsCount": 1000,
     "sessionPrice": 0,
     "location": "",
     "locationEn": "",
     "isAvailable": true,
     "nextSlot": "متاح للحجز",
     "nextSlotEn": "Available for booking",
-    "isTopRated": true,
     "tags": [
       "حاصلة على بكالوريوس علم النفس من جامعة العلوم والتكنولوجيا",
       "حاصلة على شهادة فني تحليل سلوك تطبيقي ABA معتمد من البورد الأمريكي QABA",
       "تصميم وتنفيذ برامج التدخل المبكر وتعديل السلوك",
       "خبرة عملية أكثر من ٥ سنوات"
     ],
-    "bio": "أخصائية تحليل السلوك التطبيقي ABA بمركز رابا. حاصلة على بكالوريوس علم النفس ومعتمدة من البورد الأمريكي QABA، وتمتلك خبرة عملية واسعة تتجاوز 5 سنوات في تطبيق برامج تعديل السلوك والتدخل المبكر المبني على القياس الدقيق."
+    "bio": "أخصائية تحليل السلوك التطبيقي ABA بمركز رابا. حاصلة على بكالوريوس علم النفس ومعتمدة من البورد الأمريكي QABA، وتمتلك خبرة عملية واسعة تتجاوز 5 سنوات في تطبيق برامج تعديل السلوك والتدخل المبكر المبني على القياس الدقيق.",
+    "isTopRated": false
   },
   {
     "id": "doc-omar-saad-speech",
@@ -1276,26 +1404,27 @@ export const DOCTORS_DATA: Doctor[] = [
     "specialtyCodeEn": "Speech & Language Pathologist",
     "category": "speech",
     "department": "قسم النطق والتخاطب",
-    "avatar": "/specialists/cards/spec_36_omar-saad-speech.png",
-    "fallbackAvatar": "/specialists/cards/spec_36_omar-saad-speech.png",
+    "avatar": "/uploads/1790866182582_28_png.png",
+    "image": "/uploads/1790866182582_28_png.png",
+    "fallbackAvatar": "/uploads/1790866182582_28_png.png",
     "rating": 4.95,
     "reviewCount": 160,
     "experienceYears": 6,
-    "patientsCount": 1200,
+    "patientsCount": 1000,
     "sessionPrice": 0,
     "location": "",
     "locationEn": "",
     "isAvailable": true,
     "nextSlot": "متاح للحجز",
     "nextSlotEn": "Available for booking",
-    "isTopRated": true,
     "tags": [
       "حاصل على بكالوريوس التربية الخاصة من جامعة العريش",
       "حاصل على إعتمادات من البورد الأمريكي ABAT / QASP-S Candidate",
       "تأهيل النطق واضطرابات الصوت والكلام والتواصل اللفظي",
       "خبرة عملية أكثر من ٥ سنوات"
     ],
-    "bio": "أخصائي النطق والتخاطب بمركز رابا. يجمع بين التخصص الأكاديمي في التربية الخاصة والاعتمادات الدولية من البورد الأمريكي QABA (ABAT / QASP-S Candidate)، بخبرة تتجاوز 5 سنوات في علاج التأتأة والتأخر اللغوي واضطرابات الصوت والكلام."
+    "bio": "أخصائي النطق والتخاطب بمركز رابا. يجمع بين التخصص الأكاديمي في التربية الخاصة والاعتمادات الدولية من البورد الأمريكي QABA (ABAT / QASP-S Candidate)، بخبرة تتجاوز 5 سنوات في علاج التأتأة والتأخر اللغوي واضطرابات الصوت والكلام.",
+    "isTopRated": false
   },
   {
     "id": "doc-aliah-mutairi",
@@ -1310,26 +1439,27 @@ export const DOCTORS_DATA: Doctor[] = [
     "specialtyCodeEn": "Occupational Therapy Specialist",
     "category": "occupational",
     "department": "قسم العلاج الوظيفي والتكامل الحسي",
-    "avatar": "/specialists/cards/spec_37_aliah-mutairi.png",
-    "fallbackAvatar": "/specialists/cards/spec_37_aliah-mutairi.png",
+    "avatar": "/uploads/1790866202949_29_png.png",
+    "image": "/uploads/1790866202949_29_png.png",
+    "fallbackAvatar": "/uploads/1790866202949_29_png.png",
     "rating": 4.92,
     "reviewCount": 118,
     "experienceYears": 3,
-    "patientsCount": 1200,
+    "patientsCount": 1000,
     "sessionPrice": 0,
     "location": "",
     "locationEn": "",
     "isAvailable": true,
     "nextSlot": "متاح للحجز",
     "nextSlotEn": "Available for booking",
-    "isTopRated": true,
     "tags": [
       "حاصله على بكالوريوس العلاج الوظيفي من جامعة الملك سعود",
       "تأهيل التكامل الحسي والتناسق العضلي الحركي",
       "تدريب المهارات التكيفية والاعتماد على الذات",
       "خبرة عملية أكثر من سنتين"
     ],
-    "bio": "أخصائية العلاج الوظيفي بمركز رابا، خريجة جامعة الملك سعود المرموقة، متخصصة في تأهيل القدرات الحركية الدقيقة والتكامل الحسي وتعديل البيئة لدعم استقلالية الأطفال اليومية."
+    "bio": "أخصائية العلاج الوظيفي بمركز رابا، خريجة جامعة الملك سعود المرموقة، متخصصة في تأهيل القدرات الحركية الدقيقة والتكامل الحسي وتعديل البيئة لدعم استقلالية الأطفال اليومية.",
+    "isTopRated": false
   },
   {
     "id": "doc-haya-faleh",
@@ -1344,26 +1474,27 @@ export const DOCTORS_DATA: Doctor[] = [
     "specialtyCodeEn": "Psychologist & ABA Specialist",
     "category": "psychology",
     "department": "قسم الإرشاد النفسي والتدخل السلوكي ABA",
-    "avatar": "/specialists/cards/spec_38_haya-faleh.png",
-    "fallbackAvatar": "/specialists/cards/spec_38_haya-faleh.png",
+    "avatar": "/uploads/1790866269363_30_png.png",
+    "image": "/uploads/1790866269363_30_png.png",
+    "fallbackAvatar": "/uploads/1790866269363_30_png.png",
     "rating": 4.91,
     "reviewCount": 94,
     "experienceYears": 2,
-    "patientsCount": 1200,
+    "patientsCount": 1000,
     "sessionPrice": 0,
     "location": "",
     "locationEn": "",
     "isAvailable": true,
     "nextSlot": "متاح للحجز",
     "nextSlotEn": "Available for booking",
-    "isTopRated": true,
     "tags": [
       "حاصلة على بكالوريوس علم النفس من كلية التربية - جامعة الملك سعود",
       "حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA",
       "تعديل السلوك وتنمية المهارات التكيفية والنفسية للطفل",
       "خبرة عملية أكثر من سنة"
     ],
-    "bio": "أخصائية نفسية وأخصائية ABA بمركز رابا. خريجة جامعة الملك سعود ومعتمدة كفني تحليل سلوك تطبيقي من البورد الأمريكي QABA، متخصصة في معالجة القلق والمخاوف السلوكية وبناء المهارات التكيفية للأطفال."
+    "bio": "أخصائية نفسية وأخصائية ABA بمركز رابا. خريجة جامعة الملك سعود ومعتمدة كفني تحليل سلوك تطبيقي من البورد الأمريكي QABA، متخصصة في معالجة القلق والمخاوف السلوكية وبناء المهارات التكيفية للأطفال.",
+    "isTopRated": false
   },
   {
     "id": "doc-haya-dosari",
@@ -1378,60 +1509,741 @@ export const DOCTORS_DATA: Doctor[] = [
     "specialtyCodeEn": "Psychologist & ABA Specialist",
     "category": "psychology",
     "department": "قسم الإرشاد النفسي والتدخل السلوكي ABA",
-    "avatar": "/specialists/cards/spec_39_haya-dosari.png",
-    "fallbackAvatar": "/specialists/cards/spec_39_haya-dosari.png",
+    "avatar": "/uploads/1790866288993_31_png.png",
+    "image": "/uploads/1790866288993_31_png.png",
+    "fallbackAvatar": "/uploads/1790866288993_31_png.png",
     "rating": 4.91,
     "reviewCount": 96,
     "experienceYears": 2,
-    "patientsCount": 1200,
+    "patientsCount": 1000,
     "sessionPrice": 0,
     "location": "",
     "locationEn": "",
     "isAvailable": true,
     "nextSlot": "متاح للحجز",
     "nextSlotEn": "Available for booking",
-    "isTopRated": true,
     "tags": [
       "حاصلة على بكالوريوس علم النفس من كلية التربية - جامعة الملك سعود",
       "حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA",
       "التدخلات السلوكية الإيجابية وتطوير المهارات التفاعلية",
       "خبرة عملية أكثر من سنة"
     ],
-    "bio": "أخصائية نفسية وسلوكية ABA بمركز رابا. حاصلة على بكالوريوس علم النفس من جامعة الملك سعود واعتماد ABAT الدولي من QABA، متخصصة في التدخلات السلوكية الإيجابية وتطوير المهارات التفاعلية للأطفال."
+    "bio": "أخصائية نفسية وسلوكية ABA بمركز رابا. حاصلة على بكالوريوس علم النفس من جامعة الملك سعود واعتماد ABAT الدولي من QABA، متخصصة في التدخلات السلوكية الإيجابية وتطوير المهارات التفاعلية للأطفال.",
+    "isTopRated": false
   },
   {
-    "id": "doc-renad-otaibi",
-    "name": "ريناد العتيبي",
-    "arabicName": "ريناد العتيبي",
-    "nameEn": "Renad Al-Otaibi",
-    "title": "أخصائية نفسية",
-    "titleEn": "Psychological Specialist",
-    "specialty": "أخصائية نفسية وسلوكية معتمدة ABAT من QABA",
-    "specialtyEn": "Child Psychologist & Certified ABAT Technician",
-    "specialtyCode": "أخصائية نفسية",
-    "specialtyCodeEn": "Psychological Specialist",
-    "category": "psychology",
-    "department": "قسم الإرشاد والتقييم النفسي",
-    "avatar": "/specialists/cards/spec_40_renad-otaibi.png",
-    "fallbackAvatar": "/specialists/cards/spec_40_renad-otaibi.png",
-    "rating": 4.92,
-    "reviewCount": 98,
-    "experienceYears": 2,
-    "patientsCount": 1200,
+    "id": "doc-ahlam-alnoaman",
+    "name": "أحلام النعمان",
+    "arabicName": "أحلام النعمان",
+    "nameEn": "Ahlam Al-Noman",
+    "title": "أخصائية النطق والتخاطب",
+    "titleEn": "Speech & Language Pathologist",
+    "specialty": "أخصائية النطق والتخاطب",
+    "specialtyEn": "Speech & Language Pathologist",
+    "specialtyCode": "أخصائية النطق والتخاطب",
+    "specialtyCodeEn": "Speech & Language Pathologist",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب والتأهيل اللغوي",
+    "avatar": "/uploads/1791192101630________________png.png",
+    "image": "/uploads/1791192101630________________png.png",
+    "fallbackAvatar": "/uploads/1791192101630________________png.png",
+    "rating": 4.95,
+    "reviewCount": 160,
+    "experienceYears": 17,
+    "patientsCount": 1000,
     "sessionPrice": 0,
     "location": "",
     "locationEn": "",
     "isAvailable": true,
     "nextSlot": "متاح للحجز",
     "nextSlotEn": "Available for booking",
-    "isTopRated": true,
     "tags": [
-      "حاصلة على بكالوريوس علم النفس من كلية التربية - جامعة الملك سعود",
-      "حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA",
-      "جلسات الدعم النفسي وتعديل السلوك وتنمية الذكاء العاطفي",
+      "حاصلة على درجة البكالوريوس من جامعة عين شمس",
+      "حاصلة على دبلوم التوحد من جامعة القاهرة",
+      "حاصلة على دبلومة التربية الخاصة من جامعة القاهرة",
+      "حاصلة على دبلومة صعوبات التعلم من جامعة القاهرة",
+      "حاصلة على دبلومة إعداد أخصائي تربية خاصة",
+      "حاصلة على دورة تخصصية في العلاج الحركي اللمسي للنطق والكلام OPT",
+      "حاصلة على ترخيص الهيئة السعودية للتخصصات الصحية",
+      "خبرة عملية أكثر من 17 سنة"
+    ],
+    "bio": "أخصائية نطق وتخاطب بخبرة عملية تتجاوز 17 عاماً في علاج اضطرابات النطق والتواصل وتأخر النمو اللغوي. حاصلة على بكالوريوس من جامعة عين شمس ودبلومات تخصصية في التوحد وصعوبات التعلم والتربية الخاصة من جامعة القاهرة، ومرخصة من الهيئة السعودية للتخصصات الصحية مع اعتماد العلاج الحركي اللمسي OPT.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-atheer-alrasheed",
+    "name": "اثير آل رشيد",
+    "arabicName": "اثير آل رشيد",
+    "nameEn": "Atheer Al-Rasheed",
+    "title": "أخصائية ABA",
+    "titleEn": "ABA Specialist",
+    "specialty": "أخصائية تحليل السلوك التطبيقي ABA",
+    "specialtyEn": "Applied Behavior Analysis (ABA) Specialist",
+    "specialtyCode": "أخصائية ABA",
+    "specialtyCodeEn": "ABA Specialist",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/uploads/1791192114276_______________png.png",
+    "image": "/uploads/1791192114276_______________png.png",
+    "fallbackAvatar": "/uploads/1791192114276_______________png.png",
+    "rating": 4.9,
+    "reviewCount": 95,
+    "experienceYears": 3,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الاسلامية",
+      "حاصلة على تصنيف هيئة التخصصات الصحية",
+      "حاصلة على رخصة ABAT فني تحليل سلوك تطبيقي",
+      "حاصلة على دورة فعالية العلاج الطبي ومدى تأثيره على ذوي إضطرابات طيف التوحد",
+      "خبرة عملية أكثر من 3 سنوات"
+    ],
+    "bio": "أخصائية تحليل سلوك تطبيقي ABA مرخصة ومصنفة من الهيئة السعودية للتخصصات الصحية وحاصلة على رخصة ABAT. متخصصة في تعديل السلوك وتنمية المهارات الاستقلالية والتواصلية للأطفال ذوي اضطراب طيف التوحد.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-tasneem-sabry",
+    "name": "د. تسنيم صبري",
+    "arabicName": "د. تسنيم صبري",
+    "nameEn": "Dr. Tasneem Sabry",
+    "title": "مشرفة قسم الـ ABA",
+    "titleEn": "ABA Department Supervisor",
+    "specialty": "مشرفة قسم تحليل السلوك التطبيقي ABA",
+    "specialtyEn": "Applied Behavior Analysis Department Supervisor",
+    "specialtyCode": "مشرفة قسم الـ ABA",
+    "specialtyCodeEn": "ABA Department Supervisor",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/uploads/1791192126580____________png.png",
+    "image": "/uploads/1791192126580____________png.png",
+    "fallbackAvatar": "/uploads/1791192126580____________png.png",
+    "rating": 4.96,
+    "reviewCount": 190,
+    "experienceYears": 8,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصلة على بكالوريوس التربية والتربية الخاصة من جامعة قناة السويس",
+      "حاصلة على الماجستير المهني من جامعة القاهرة",
+      "حاصلة على الدكتوراه المهني من جامعة القاهرة",
+      "حاصلة على دبلوم التوحد وإضطرابات النطق من الجامعة الامريكية",
+      "حاصلة على دبلوم صعوبات التعلم والعلاج الوظيفي ومهارات النمو من الجامعة الامريكية",
+      "حاصلة على إعتماد في تحليل السلوك التطبيقي من QABA",
+      "خبرة عملية أكثر من 8 سنوات"
+    ],
+    "bio": "مشرفة قسم تحليل السلوك التطبيقي ABA بمراكز رابا، حاصلة على الدكتوراه والماجستير المهنيين من جامعة القاهرة ودبلومات متقدمة من الجامعة الأمريكية. تمتلك خبرة تفوق 8 سنوات في الإشراف الإكلينيكي وتصميم الخطط السلوكية المتقدمة.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-tasneem-abdelaziz",
+    "name": "تسنيم عبد العزيز",
+    "arabicName": "تسنيم عبد العزيز",
+    "nameEn": "Tasneem Abdelaziz",
+    "title": "اخصائية ABA",
+    "titleEn": "ABA Specialist",
+    "specialty": "أخصائية تحليل السلوك التطبيقي ABA",
+    "specialtyEn": "Applied Behavior Analysis Specialist",
+    "specialtyCode": "اخصائية ABA",
+    "specialtyCodeEn": "ABA Specialist",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/uploads/1791192139635__________________png.png",
+    "image": "/uploads/1791192139635__________________png.png",
+    "fallbackAvatar": "/uploads/1791192139635__________________png.png",
+    "rating": 4.93,
+    "reviewCount": 140,
+    "experienceYears": 10,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصلة على بكالوريوس العلوم الصحية من جامعة الرباط الوطني",
+      "حاصلة على رخصة ABAT من البورد الامريكي QABA",
+      "حاصلة على دورة أسس التشخيص والعلاج للإضطرابات النفسية بمركز مطمئنة",
+      "خبرة عملية أكثر من 10 سنوات"
+    ],
+    "bio": "أخصائية تحليل سلوك تطبيقي بخبرة سريرية تتجاوز 10 سنوات، حاصلة على بكالوريوس العلوم الصحية من جامعة الرباط الوطني ورخصة ABAT من بورد QABA الأمريكي، متخصصة في التدخل السلوكي المبكر وتأهيل الاضطرابات النمائية.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-jawaher-ibrahim",
+    "name": "جواهر إبراهيم",
+    "arabicName": "جواهر إبراهيم",
+    "nameEn": "Jawaher Ibrahim",
+    "title": "أخصائية نفسية",
+    "titleEn": "Psychologist",
+    "specialty": "أخصائية نفسية وسلوكية",
+    "specialtyEn": "Clinical Psychologist & Behavioral Therapist",
+    "specialtyCode": "أخصائية نفسية",
+    "specialtyCodeEn": "Psychologist",
+    "category": "psychology",
+    "department": "قسم علم النفس والإرشاد الأسري",
+    "avatar": "/uploads/1791192158941________________png.png",
+    "image": "/uploads/1791192158941________________png.png",
+    "fallbackAvatar": "/uploads/1791192158941________________png.png",
+    "rating": 4.91,
+    "reviewCount": 110,
+    "experienceYears": 3,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الملك سعود",
+      "مصنفة من الهيئة السعودية للتخصصات الصحية كأخصائية نفسية",
+      "حاصلة على شهادة ABAT في تحليل السلوك التطبيقي",
+      "حاصلة على دورة ABAT لمدة 40 ساعة",
+      "حاصلة على دورات في العلاج المعرفي السلوكي CBT",
+      "خبرة عملية أكثر من 3 سنوات"
+    ],
+    "bio": "أخصائية نفسية مصنفة من الهيئة السعودية للتخصصات الصحية وخريجة جامعة الملك سعود. تجمع بين العلاج النفسي المعرفي السلوكي CBT وتطبيقات تحليل السلوك التطبيقي ABAT لتقديم دعم نفسي وسلوكي شامل للأطفال وأسرهم.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-hossam-samy",
+    "name": "حسام سامي",
+    "arabicName": "حسام سامي",
+    "nameEn": "Hossam Samy",
+    "title": "أخصائي النطق والتخاطب",
+    "titleEn": "Speech & Language Pathologist",
+    "specialty": "أخصائي علاج اضطرابات النطق والتخاطب",
+    "specialtyEn": "Speech-Language Pathologist",
+    "specialtyCode": "أخصائي النطق والتخاطب",
+    "specialtyCodeEn": "Speech & Language Pathologist",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب والتأهيل اللغوي",
+    "avatar": "/uploads/1791192167745___________png.png",
+    "image": "/uploads/1791192167745___________png.png",
+    "fallbackAvatar": "/uploads/1791192167745___________png.png",
+    "rating": 4.92,
+    "reviewCount": 130,
+    "experienceYears": 7,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصل علي بكالوريوس العلوم في التربيه الخاصه من جامعة مصر للعلوم",
+      "حاصل علي دبلومة مهنية في إضطرابات التواصل من جامعة القاهرة",
+      "حاصل علي دبلومه خاصه في التربية الخاصة من جامعة القاهرة",
+      "خبرة عملية أكثر من 7 سنوات"
+    ],
+    "bio": "أخصائي نطق وتخاطب بخبرة تفوق 7 سنوات في علاج اضطرابات التواصل واللغة وتأخر النطق واضطرابات مخارج الحروف، حاصل على دبلومات تخصصية من جامعة القاهرة وبكالوريوس تربية خاصة.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-khaled-alharbi",
+    "name": "خالد الحربي",
+    "arabicName": "خالد الحربي",
+    "nameEn": "Khaled Al-Harbi",
+    "title": "أخصائي ABA",
+    "titleEn": "ABA Specialist",
+    "specialty": "أخصائي تحليل السلوك التطبيقي ABA",
+    "specialtyEn": "Applied Behavior Analysis Specialist",
+    "specialtyCode": "أخصائي ABA",
+    "specialtyCodeEn": "ABA Specialist",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/uploads/1791192175779_____________png.png",
+    "image": "/uploads/1791192175779_____________png.png",
+    "fallbackAvatar": "/uploads/1791192175779_____________png.png",
+    "rating": 4.89,
+    "reviewCount": 85,
+    "experienceYears": 2,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصل على بكالوريوس علم النفس الإكلينيكي من جامعة الملك سعود",
+      "حاصل على رخصة ABAT فني تحليل سلوك تطبيقي",
+      "حاصل على رخصة اخصائي نفسي مساعد من هيئة التخصصات الصحية",
+      "خبرة عملية أكثر من سنتين"
+    ],
+    "bio": "أخصائي تحليل سلوك تطبيقي ونفسي إكلينيكي مساعد مصنف من هيئة التخصصات الصحية وخريج جامعة الملك سعود. متخصص في تنفيذ البرامج السلوكية الفردية وتنمية مهارات التفاعل الاجتماعي والتواصل.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-reema-alhusseini",
+    "name": "ريمه الحسيني",
+    "arabicName": "ريمه الحسيني",
+    "nameEn": "Reema Al-Husseini",
+    "title": "أخصائية نفسية",
+    "titleEn": "Psychologist & QASP-S",
+    "specialty": "أخصائية نفسية ومشرف توحد ممارس",
+    "specialtyEn": "Psychologist & Qualified Autism Services Practitioner",
+    "specialtyCode": "أخصائية نفسية",
+    "specialtyCodeEn": "Psychologist & QASP-S",
+    "category": "psychology",
+    "department": "قسم علم النفس والإرشاد الأسري",
+    "avatar": "/uploads/1791192184198______________png.png",
+    "image": "/uploads/1791192184198______________png.png",
+    "fallbackAvatar": "/uploads/1791192184198______________png.png",
+    "rating": 4.95,
+    "reviewCount": 175,
+    "experienceYears": 10,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الإسلامية",
+      "حاصلة على شهادة مشرف توحد ممارس QASP-S من منظمة QABA",
+      "حاصلة على تصنيف مهني من الهيئة السعودية للتخصصات الصحية",
+      "خبرة أكثر من 10 سنوات"
+    ],
+    "bio": "أخصائية نفسية ومشرف توحد ممارس معتمد دولياً QASP-S بخبرة تتجاوز 10 أعوام في التقييم النفسي والتشخيص الإكلينيكي والإشراف على برامج التدخل التخصصية لأطفال التوحد.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-sultan-alshaye",
+    "name": "سلطان الشايع",
+    "arabicName": "سلطان الشايع",
+    "nameEn": "Sultan Al-Shaye",
+    "title": "أخصائي العلاج الوظيفي",
+    "titleEn": "Occupational Therapist",
+    "specialty": "أخصائي العلاج الوظيفي والتكامل الحسي",
+    "specialtyEn": "Occupational Therapist & Sensory Integration",
+    "specialtyCode": "أخصائي العلاج الوظيفي",
+    "specialtyCodeEn": "Occupational Therapist",
+    "category": "occupational",
+    "department": "قسم العلاج الوظيفي والتكامل الحسي",
+    "avatar": "/uploads/1791192194710______________png.png",
+    "image": "/uploads/1791192194710______________png.png",
+    "fallbackAvatar": "/uploads/1791192194710______________png.png",
+    "rating": 4.9,
+    "reviewCount": 105,
+    "experienceYears": 3,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصل على بكالوريوس العلوم التطبيقيه من جامعة الملك سعود تخصص علاج وظيفي",
+      "خبرة أكثر من 3 سنوات"
+    ],
+    "bio": "أخصائي علاج وظيفي متخرج من جامعة الملك سعود، متخصص في تطوير المهارات الحركية الدقيقة والتكامل الحسي ومساعدة الأطفال ذوي التحديات النمائية على تحقيق الاستقلالية اليومية.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-shaimaa-adel",
+    "name": "شيماء عادل",
+    "arabicName": "شيماء عادل",
+    "nameEn": "Shaimaa Adel",
+    "title": "أخصائية النطق والتخاطب",
+    "titleEn": "Senior Speech Pathologist & QASP-S",
+    "specialty": "أخصائية أولى نطق وتخاطب ومشرف توحد معتمد",
+    "specialtyEn": "Senior Speech Pathologist & Autism Supervisor",
+    "specialtyCode": "أخصائية النطق والتخاطب",
+    "specialtyCodeEn": "Senior Speech Pathologist & QASP-S",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب والتأهيل اللغوي",
+    "avatar": "/uploads/1791192202894____________png.png",
+    "image": "/uploads/1791192202894____________png.png",
+    "fallbackAvatar": "/uploads/1791192202894____________png.png",
+    "rating": 4.97,
+    "reviewCount": 210,
+    "experienceYears": 18,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصلة على درجة البكالوريوس من جامعة الإسكندرية",
+      "حاصلة على دراسات عليا علوم إعاقة مسار اضطرابات نطق وتخاطب من جامعة الزقازيق",
+      "حاصلة على الرخصة المهنية في النطق والتخاطب من هيئة التقويم والقياس",
+      "حاصلة على رخصة مشرف توحد سلوكي معتمد دولياً QASP-S",
+      "خبرة عملية أكثر من 18 سنة"
+    ],
+    "bio": "أخصائية أولى في علاج اضطرابات النطق والتخاطب ومشرف توحد سلوكي معتمد دولياً QASP-S بخبرة عريقة تفوق 18 عاماً في بناء البرامج اللغوية وتأهيل اضطرابات الكلام لدى أطفال التوحد.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-abdelilah-shakl",
+    "name": "عبدالاله شقل",
+    "arabicName": "عبدالاله شقل",
+    "nameEn": "Abdelilah Shakl",
+    "title": "أخصائي العلاج الوظيفي",
+    "titleEn": "Occupational Therapist",
+    "specialty": "أخصائي العلاج الوظيفي والتكامل الحسي",
+    "specialtyEn": "Occupational Therapist & Sensory Integration",
+    "specialtyCode": "أخصائي العلاج الوظيفي",
+    "specialtyCodeEn": "Occupational Therapist",
+    "category": "occupational",
+    "department": "قسم العلاج الوظيفي والتكامل الحسي",
+    "avatar": "/uploads/1791192213481______________png.png",
+    "image": "/uploads/1791192213481______________png.png",
+    "fallbackAvatar": "/uploads/1791192213481______________png.png",
+    "rating": 4.92,
+    "reviewCount": 115,
+    "experienceYears": 3,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصل على بكالوريوس العلاج الوظيفي من جامعة الملك سعود بن عبدالعزيز للعلوم الصحية",
+      "حاصل على شهادة Floortime 101",
+      "حاصل على ترخيص الهيئة السعودية للتخصصات الصحية",
+      "متخصص في علاج المشاكل الحسية والتحديات النمائية لدى الاطفال ومشاكل الأكل",
+      "خبرة عملية أكثر من 3 سنوات"
+    ],
+    "bio": "أخصائي علاج وظيفي مرخص من هيئة التخصصات الصحية وحاصل على اعتماد Floortime 101. متخصص في التحديات الحسية النمائية، وتأهيل المهارات الحركية، وعلاج صعوبات ومشاكل التغذية والأكل لدى الأطفال.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-alaa-eldin-nagy",
+    "name": "علاء الدين ناجي",
+    "arabicName": "علاء الدين ناجي",
+    "nameEn": "Alaa El-Din Nagy",
+    "title": "أخصائي ABA",
+    "titleEn": "ABA Specialist",
+    "specialty": "أخصائي تحليل السلوك التطبيقي ABA",
+    "specialtyEn": "Applied Behavior Analysis Specialist",
+    "specialtyCode": "أخصائي ABA",
+    "specialtyCodeEn": "ABA Specialist",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/uploads/1791192231188_________________png.png",
+    "image": "/uploads/1791192231188_________________png.png",
+    "fallbackAvatar": "/uploads/1791192231188_________________png.png",
+    "rating": 4.94,
+    "reviewCount": 155,
+    "experienceYears": 8,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصل على ليسانس آداب وتربية قسم تربية خاصة من جامعة العريش",
+      "حاصل على دبلومة مهنية في التربية الخاصة من جامعة العريش",
+      "حاصل على إعتماد البورد الأمريكي ABAT",
+      "خبرة عملية أكثر من 8 سنوات"
+    ],
+    "bio": "أخصائي تحليل سلوك تطبيقي معتمد ABAT بخبرة سريرية تتجاوز 8 سنوات في مراكز التأهيل المتخصصة، خبير في تطبيق برامج تعديل السلوك وتنمية مهارات التواصل الوظيفي والاستقلالية.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-ghalib-alotaibi",
+    "name": "غالب العتيبي",
+    "arabicName": "غالب العتيبي",
+    "nameEn": "Ghalib Al-Otaibi",
+    "title": "أخصائي ABA",
+    "titleEn": "ABA Specialist",
+    "specialty": "أخصائي تحليل السلوك التطبيقي ABA",
+    "specialtyEn": "Applied Behavior Analysis Specialist",
+    "specialtyCode": "أخصائي ABA",
+    "specialtyCodeEn": "ABA Specialist",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/uploads/1791192244901______________png.png",
+    "image": "/uploads/1791192244901______________png.png",
+    "fallbackAvatar": "/uploads/1791192244901______________png.png",
+    "rating": 4.9,
+    "reviewCount": 90,
+    "experienceYears": 2,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصل على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الاسلامية",
+      "حاصل على دورات في إختبارات الذكاء للأطفال",
+      "معتمد كأخصائي تحليل سلوك تطبيقي من QABA",
+      "مصنف من الهيئة السعوديه للتخصصات الصحيه",
+      "خبرة عملية أكثر من سنتين"
+    ],
+    "bio": "أخصائي تحليل سلوك تطبيقي مصنف من هيئة التخصصات الصحية ومعتمد من بورد QABA، متخصص في تطبيق مقاييس الذكاء والتقييم السلوكي وتصميم البرامج التدريبية المخصصة للأطفال.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-kareem-ragab",
+    "name": "كريم رجب",
+    "arabicName": "كريم رجب",
+    "nameEn": "Kareem Ragab",
+    "title": "أخصائي النطق والتخاطب",
+    "titleEn": "Speech & Language Pathologist",
+    "specialty": "أخصائي علاج النطق والتخاطب وتعديل السلوك",
+    "specialtyEn": "Speech & Language Pathologist",
+    "specialtyCode": "أخصائي النطق والتخاطب",
+    "specialtyCodeEn": "Speech & Language Pathologist",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب والتأهيل اللغوي",
+    "avatar": "/uploads/1791192253778__________png.png",
+    "image": "/uploads/1791192253778__________png.png",
+    "fallbackAvatar": "/uploads/1791192253778__________png.png",
+    "rating": 4.91,
+    "reviewCount": 100,
+    "experienceYears": 3,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصل على بكالوريوس العلوم في التربية الخاصة من جامعة مصر للعلوم",
+      "حاصل على دبلومة التخاطب لمدة عام من مركز الإشراق الطبي",
+      "حاصل على دبلومة التخاطب من جامعة الأزهر",
+      "حاصل على شهادة 40 ساعة لفني تحليل السلوك التطبيقي",
+      "خبرة عملية أكثر من 3 سنوات"
+    ],
+    "bio": "أخصائي نطق وتخاطب وتربية خاصة متخصص في تأهيل الاضطرابات النطقية وتنمية مهارات التواصل اللفظي لدى أطفال التوحد مع تطبيق استراتيجيات تحليل السلوك التطبيقي.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-marwa-alsharif",
+    "name": "مروة الشريف",
+    "arabicName": "مروة الشريف",
+    "nameEn": "Marwa Al-Sharif",
+    "title": "مشرفة أكاديمية",
+    "titleEn": "Academic Supervisor",
+    "specialty": "مشرفة برامج أكاديمية وتربية خاصة",
+    "specialtyEn": "Academic Programs Supervisor",
+    "specialtyCode": "مشرفة أكاديمية",
+    "specialtyCodeEn": "Academic Supervisor",
+    "category": "aba",
+    "department": "قسم البرامج الأكاديمية والتربية الخاصة",
+    "avatar": "/uploads/1791192261779_____________png.png",
+    "image": "/uploads/1791192261779_____________png.png",
+    "fallbackAvatar": "/uploads/1791192261779_____________png.png",
+    "rating": 4.93,
+    "reviewCount": 125,
+    "experienceYears": 4,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصلة على بكالوريوس التربية الخاصة من المعهد العالي للتربية المختصة",
+      "حاصلة على دورة في التعامل مع أطفال طيف التوحد",
+      "خبرة عملية أكثر من 4 سنوات"
+    ],
+    "bio": "مشرفة البرامج الأكاديمية والتربية الخاصة بمراكز رابا، خبيرة في تصميم الخطط التعليمية الفردية وتأهيل مهارات ما قبل الأكاديمية والدمج المدرسي الشامل لذوي الإعاقة.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-mostafa-mahmoud",
+    "name": "مصطفى محمود",
+    "arabicName": "مصطفى محمود",
+    "nameEn": "Mostafa Mahmoud",
+    "title": "أخصائي ABA",
+    "titleEn": "ABA Specialist & QASP-S",
+    "specialty": "أخصائي تحليل السلوك التطبيقي ومشرف توحد معتمد",
+    "specialtyEn": "Applied Behavior Analysis Specialist & QASP-S",
+    "specialtyCode": "أخصائي ABA",
+    "specialtyCodeEn": "ABA Specialist & QASP-S",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/uploads/1791192271638_____________png.png",
+    "image": "/uploads/1791192271638_____________png.png",
+    "fallbackAvatar": "/uploads/1791192271638_____________png.png",
+    "rating": 4.93,
+    "reviewCount": 135,
+    "experienceYears": 4,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصل علي درجة الـ ليسانس من جامعة أسيوط",
+      "حاصل علي اعتماد ABAT من البورد الأمريكي كفني تحليل سلوك تطبيقي",
+      "حاصل على اعتماد QASP-S كمشرف خدمات توحد معتمد من البورد الأمريكي",
+      "حاصل على برنامج تقييم معالم تطور السلوك اللفظي VB-MAPP",
+      "خبرة عملية أكثر من 4 سنوات"
+    ],
+    "bio": "أخصائي تحليل سلوك تطبيقي ومشرف خدمات توحد معتمد دولياً QASP-S و ABAT، متخصص في تطبيق مقياس VB-MAPP وبناء الخطط التأهيلية الفردية المبنية على تحليل السلوك اللفظي.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-mayar-alsaeed",
+    "name": "ميار السعيد",
+    "arabicName": "ميار السعيد",
+    "nameEn": "Mayar Al-Saeed",
+    "title": "أخصائية النطق والتخاطب",
+    "titleEn": "Speech & Language Pathologist",
+    "specialty": "أخصائية علاج اضطرابات النطق واللغة",
+    "specialtyEn": "Speech & Language Pathologist",
+    "specialtyCode": "أخصائية النطق والتخاطب",
+    "specialtyCodeEn": "Speech & Language Pathologist",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب والتأهيل اللغوي",
+    "avatar": "/uploads/1791192282250_____________png.png",
+    "image": "/uploads/1791192282250_____________png.png",
+    "fallbackAvatar": "/uploads/1791192282250_____________png.png",
+    "rating": 4.92,
+    "reviewCount": 130,
+    "experienceYears": 7,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصلة على بكالوريوس التربيه الخاصه تخصص إعاقة عقلية من جامعة الإمام محمد بن سعود",
+      "حاصلة على دوره نطق وتخاطب 70 ساعه من أكاديمية علم النفس تحت اشراف وزاره التعليم",
+      "خبرة عملية أكثر من 7 سنوات"
+    ],
+    "bio": "أخصائية نطق وتخاطب وتربية خاصة بخبرة تتجاوز 7 سنوات في تقييم وتأهيل اضطرابات اللغة والكلام لدى الأطفال، متخصصة في تأهيل حالات التأخر اللغوي ومتلازمة داون وطيف التوحد.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-hala-badran",
+    "name": "هالة بدران",
+    "arabicName": "هالة بدران",
+    "nameEn": "Hala Badran",
+    "title": "أخصائية النطق والتخاطب",
+    "titleEn": "Senior Speech & Clinical Psychologist",
+    "specialty": "أخصائية أولى نطق وتخاطب وعلم نفس إكلينيكي",
+    "specialtyEn": "Senior Speech Pathologist & Clinical Psychologist",
+    "specialtyCode": "أخصائية النطق والتخاطب",
+    "specialtyCodeEn": "Senior Speech & Clinical Psychologist",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب والتأهيل اللغوي",
+    "avatar": "/uploads/1791192291320____________png.png",
+    "image": "/uploads/1791192291320____________png.png",
+    "fallbackAvatar": "/uploads/1791192291320____________png.png",
+    "rating": 4.98,
+    "reviewCount": 260,
+    "experienceYears": 20,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصلة علي ليسانس آداب علم النفس من جامعة الزقازيق",
+      "حاصله علي ماجستير في التوحد من جامعة الزقازيق",
+      "حاصلة علي دبلومة مهنية تخصص نطق وتواصل من جامعة عين شمس",
+      "حاصلة علي دبلومة تدريبية في النطق والتخاطب من جامعة عين شمس",
+      "حاصلة علي دبلومة في علم النفس الإكلينيكي من جامعة بنها",
+      "خبرة عملية أكثر من 20 سنة"
+    ],
+    "bio": "استشارية وأخصائية أولى في النطق والتخاطب والتوحد بخبرة تزيد عن 20 عاماً، حاصلة على الماجستير في التوحد ودبلومات عليا في النطق والتواصل وعلم النفس الإكلينيكي من جامعات الزقازيق وعين شمس وبنها.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-hind-elsayed",
+    "name": "هند السيد",
+    "arabicName": "هند السيد",
+    "nameEn": "Hind El-Sayed",
+    "title": "أخصائية النطق والتخاطب",
+    "titleEn": "Speech & Language Pathologist",
+    "specialty": "أخصائية علاج النطق والتخاطب وتأهيل التوحد",
+    "specialtyEn": "Speech & Language Pathologist",
+    "specialtyCode": "أخصائية النطق والتخاطب",
+    "specialtyCodeEn": "Speech & Language Pathologist",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب والتأهيل اللغوي",
+    "avatar": "/uploads/1791192301426___________png.png",
+    "image": "/uploads/1791192301426___________png.png",
+    "fallbackAvatar": "/uploads/1791192301426___________png.png",
+    "rating": 4.94,
+    "reviewCount": 165,
+    "experienceYears": 12,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصله على درجة البكالوريوس من جامعة القاهرة",
+      "حاصله على دبلوم عام تربوي من جامعة طنطا",
+      "حاصلة على دبلومة تخاطب 300 ساعة من جامعة عين شمس",
+      "حاصله على دبلومة فى التوحد من جامعة عين شمس",
+      "حاصله على دبلومة صعوبات تعلم مع د/لبنى الشرقاوى",
+      "خبرة عملية أكثر من 12 سنة"
+    ],
+    "bio": "أخصائية نطق وتخاطب بخبرة سريرية تتجاوز 12 عاماً في علاج اضطرابات النطق والكلام وتأهيل الأطفال ذوي طيف التوحد وصعوبات التعلم، حاصلة على دبلومات تخصصية من جامعتي القاهرة وعين شمس.",
+    "isTopRated": false
+  },
+  {
+    "id": "doc-haitham-alzaidan",
+    "name": "هيثم الزيدان",
+    "arabicName": "هيثم الزيدان",
+    "nameEn": "Haitham Al-Zaidan",
+    "title": "أخصائي ABA",
+    "titleEn": "ABA Specialist",
+    "specialty": "أخصائي تحليل السلوك التطبيقي ABA",
+    "specialtyEn": "Applied Behavior Analysis Specialist",
+    "specialtyCode": "أخصائي ABA",
+    "specialtyCodeEn": "ABA Specialist",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/uploads/1791192310187______________png.png",
+    "image": "/uploads/1791192310187______________png.png",
+    "fallbackAvatar": "/uploads/1791192310187______________png.png",
+    "rating": 4.88,
+    "reviewCount": 75,
+    "experienceYears": 2,
+    "patientsCount": 1000,
+    "sessionPrice": 0,
+    "location": "",
+    "locationEn": "",
+    "isAvailable": true,
+    "nextSlot": "متاح للحجز",
+    "nextSlotEn": "Available for booking",
+    "tags": [
+      "حاصل على بكالوريوس علم النفس من جامعه الإمام محمد بن سعود الاسلامية",
+      "حاصل على شهادة فني تحليل سلوك تطبيقي ABAT",
       "خبرة عملية أكثر من سنة"
     ],
-    "bio": "أخصائية نفسية بمركز رابا. خريجة جامعة الملك سعود ومعتمدة دولياً من البورد الأمريكي QABA في تحليل السلوك التطبيقي (ABAT)، متخصصة في الدعم النفسي وتعديل السلوك وتنمية الذكاء العاطفي والتواصلي لدى الأطفال."
+    "bio": "أخصائي تحليل سلوك تطبيقي معتمد ABAT وخريج جامعة الإمام محمد بن سعود، متخصص في تطبيق برامج تعديل السلوك الفردية، وتنمية مهارات التفاعل الاجتماعي والتواصل لدى الأطفال.",
+    "isTopRated": false
   }
 ];
 
@@ -1542,19 +2354,13 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
     };
   }, []);
 
-  // Slider refs for Dual Slider (Upper & Lower tracks)
-  const upperSliderRef = useRef<HTMLDivElement>(null);
-  const lowerSliderRef = useRef<HTMLDivElement>(null);
+  // Single unified slider ref
+  const sliderRef = useRef<HTMLDivElement>(null);
 
-  // Dragging state for Upper Slider
-  const [isUpperDragging, setIsUpperDragging] = useState(false);
-  const upperStartXRef = useRef(0);
-  const upperScrollLeftRef = useRef(0);
-
-  // Dragging state for Lower Slider
-  const [isLowerDragging, setIsLowerDragging] = useState(false);
-  const lowerStartXRef = useRef(0);
-  const lowerScrollLeftRef = useRef(0);
+  // Dragging state for unified Slider
+  const [isDragging, setIsDragging] = useState(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
 
   // Merge doctors list with any specialists data passed dynamically, deduplicating rigorously
   const effectiveDoctors = useMemo(() => {
@@ -1595,27 +2401,53 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
           isTopRated: (spec.rating || matchingDoc?.rating || 0) >= 4.9
         };
       });
+
+      // Ensure any doctors from cleanSourceDoctors not already in baseDocs are added
+      const existingNames = new Set(baseDocs.map(d => normalizeSpecialistName(d.name)));
+      cleanSourceDoctors.forEach((doc) => {
+        if (!existingNames.has(normalizeSpecialistName(doc.name))) {
+          baseDocs.push(doc);
+        }
+      });
     } else {
       baseDocs = cleanSourceDoctors;
     }
 
-    // 2. Final strict deduplication pass to guarantee uniqueness
-    return deduplicateDoctors(baseDocs);
+    // 2. Strict deduplication and priority sorting:
+    // 1. هناء بشير, 2. أحمد أبو زيد, 3. هشام علي, 4. حنين العبيدي, 5. عامر قادوس, 6. ضحى خالد, 7. حشمة المطيري
+    return sortSpecialistsByPriority(deduplicateDoctors(baseDocs));
   }, [doctors, specialists]);
 
-  // Categories list
+  // Categories list for classification filter (حسب التخصص)
   const categories = useMemo(() => [
-    { id: 'all', labelAr: 'جميع الأخصائيين (٤٠)', labelEn: 'All specialists (40)' },
-    { id: 'aba', labelAr: 'تحليل السلوك ABA', labelEn: 'ABA Therapy' },
+    { id: 'all', labelAr: 'جميع التخصصات', labelEn: 'All Specialties' },
+    { id: 'aba', labelAr: 'تحليل السلوك التطبيقي (ABA)', labelEn: 'ABA Therapy' },
     { id: 'occupational', labelAr: 'العلاج الوظيفي والتكامل الحسي', labelEn: 'Occupational Therapy' },
-    { id: 'speech', labelAr: 'التخاطب والنطق', labelEn: 'Speech & Language' },
+    { id: 'speech', labelAr: 'النطق والتخاطب', labelEn: 'Speech & Language' },
     { id: 'psychology', labelAr: 'الاستشارات النفسية والإدراك', labelEn: 'Child Psychology' },
   ], []);
+
+  // Compute doctor count for each specialty category
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {
+      all: effectiveDoctors.length,
+      aba: 0,
+      occupational: 0,
+      speech: 0,
+      psychology: 0,
+    };
+    effectiveDoctors.forEach((doc) => {
+      if (counts[doc.category] !== undefined) {
+        counts[doc.category]++;
+      }
+    });
+    return counts;
+  }, [effectiveDoctors]);
 
   // Filtered & Sorted Doctors
   const filteredDoctors = useMemo(() => {
     let list = effectiveDoctors.filter((doc) => {
-      // Category filter
+      // Category filter (تصنيف حسب التخصص)
       if (selectedCategory !== 'all' && doc.category !== selectedCategory) {
         return false;
       }
@@ -1637,82 +2469,49 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
       list = [...list].sort((a, b) => b.rating - a.rating);
     } else if (sortBy === 'experience') {
       list = [...list].sort((a, b) => b.experienceYears - a.experienceYears);
+    } else {
+      // Default: Strict priority sorting (هناء بشير, أحمد أبو زيد, هشام علي, حنين العبيدي, عامر قادوس, ضحى خالد, حشمة المطيري)
+      list = sortSpecialistsByPriority(list);
     }
     return list;
   }, [effectiveDoctors, selectedCategory, searchQuery, sortBy]);
 
-  // Split into 2 Sliders: Upper Slider (30 cards) and Lower Slider (30 cards)
-  const { upperDoctors, lowerDoctors } = useMemo(() => {
-    const total = filteredDoctors.length;
-    if (total <= 1) {
-      return { upperDoctors: filteredDoctors, lowerDoctors: [] };
+  // Reset slider position when category or search changes
+  useEffect(() => {
+    if (sliderRef.current) {
+      sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' });
     }
-    const mid = Math.ceil(total / 2);
-    return {
-      upperDoctors: filteredDoctors.slice(0, mid),
-      lowerDoctors: filteredDoctors.slice(mid, total)
-    };
-  }, [filteredDoctors]);
+  }, [selectedCategory, searchQuery, sortBy]);
 
-  // Scroll handler for Upper Slider
-  const handleScrollUpper = (direction: 'next' | 'prev') => {
-    const el = upperSliderRef.current;
+  // Scroll handler for Single Slider
+  const handleScroll = (direction: 'next' | 'prev') => {
+    const el = sliderRef.current;
     if (!el) return;
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-    const scrollAmount = isMobile ? Math.round(el.clientWidth * 0.65) : 380;
+    const scrollAmount = isMobile ? Math.round(el.clientWidth * 0.75) : 380;
     let delta = direction === 'prev' ? -scrollAmount : scrollAmount;
     if (isArabic) delta = -delta;
     el.scrollBy({ left: delta, behavior: 'smooth' });
   };
 
-  // Scroll handler for Lower Slider
-  const handleScrollLower = (direction: 'next' | 'prev') => {
-    const el = lowerSliderRef.current;
+  // Drag handlers for Single Slider
+  const handleMouseDown = (e: React.MouseEvent) => {
+    const el = sliderRef.current;
     if (!el) return;
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-    const scrollAmount = isMobile ? Math.round(el.clientWidth * 0.65) : 380;
-    let delta = direction === 'prev' ? -scrollAmount : scrollAmount;
-    if (isArabic) delta = -delta;
-    el.scrollBy({ left: delta, behavior: 'smooth' });
+    setIsDragging(true);
+    startXRef.current = e.pageX - el.offsetLeft;
+    scrollLeftRef.current = el.scrollLeft;
   };
 
-  // Drag handlers for Upper Slider
-  const handleUpperMouseDown = (e: React.MouseEvent) => {
-    const el = upperSliderRef.current;
-    if (!el) return;
-    setIsUpperDragging(true);
-    upperStartXRef.current = e.pageX - el.offsetLeft;
-    upperScrollLeftRef.current = el.scrollLeft;
-  };
-
-  const handleUpperMouseMove = (e: React.MouseEvent) => {
-    if (!isUpperDragging || !upperSliderRef.current) return;
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !sliderRef.current) return;
     e.preventDefault();
-    const x = e.pageX - upperSliderRef.current.offsetLeft;
-    const walk = (x - upperStartXRef.current) * 1.5;
-    upperSliderRef.current.scrollLeft = upperScrollLeftRef.current - walk;
+    const x = e.pageX - sliderRef.current.offsetLeft;
+    const walk = (x - startXRef.current) * 1.5;
+    sliderRef.current.scrollLeft = scrollLeftRef.current - walk;
   };
 
-  const handleUpperMouseUp = () => setIsUpperDragging(false);
-
-  // Drag handlers for Lower Slider
-  const handleLowerMouseDown = (e: React.MouseEvent) => {
-    const el = lowerSliderRef.current;
-    if (!el) return;
-    setIsLowerDragging(true);
-    lowerStartXRef.current = e.pageX - el.offsetLeft;
-    lowerScrollLeftRef.current = el.scrollLeft;
-  };
-
-  const handleLowerMouseMove = (e: React.MouseEvent) => {
-    if (!isLowerDragging || !lowerSliderRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - lowerSliderRef.current.offsetLeft;
-    const walk = (x - lowerStartXRef.current) * 1.5;
-    lowerSliderRef.current.scrollLeft = lowerScrollLeftRef.current - walk;
-  };
-
-  const handleLowerMouseUp = () => setIsLowerDragging(false);
+  const handleMouseUp = () => setIsDragging(false);
 
   // Toggle favorite
   const toggleFavorite = (e: React.MouseEvent, docId: string) => {
@@ -1944,7 +2743,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
           <div className="flex items-center gap-2 mb-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-teal-50 dark:bg-teal-950/40 text-teal-800 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800/40 shadow-2xs">
               <Sparkles className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-              <span>{isArabic ? '٤٠ أخصائي واستشاري معتمد' : '40 Certified Specialists & Consultants'}</span>
+              <span>{isArabic ? `${effectiveDoctors.length} أخصائي واستشاري معتمد` : `${effectiveDoctors.length} Certified Specialists & Consultants`}</span>
             </span>
           </div>
 
@@ -1979,21 +2778,53 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
         </div>
       </div>
 
-      {/* 2. Sort Toolbar (Without category pills) */}
-      <div className="flex items-center justify-between gap-3.5 pb-3 mb-6 border-b border-slate-200/70 dark:border-white/10">
-        <div className="text-xs font-bold text-slate-500 dark:text-slate-400">
+      {/* 2. Category Classification Filter Tabs (فلتر تصنيف حسب التخصص) */}
+      <div className="mb-4 sm:mb-6">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+          {categories.map((cat) => {
+            const isSelected = selectedCategory === cat.id;
+            const count = categoryCounts[cat.id] ?? 0;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
+                  isSelected
+                    ? 'bg-[#0B3B36] text-white shadow-md dark:bg-[#00E5BE] dark:text-slate-950 font-black scale-[1.02]'
+                    : 'bg-white dark:bg-slate-900/90 text-slate-700 dark:text-slate-300 border border-slate-200/90 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 hover:border-slate-300'
+                }`}
+              >
+                <span>{isArabic ? cat.labelAr : cat.labelEn}</span>
+                <span
+                  className={`text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full font-bold tabular-nums ${
+                    isSelected
+                      ? 'bg-white/20 dark:bg-slate-950/20 text-white dark:text-slate-950'
+                      : 'bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-400'
+                  }`}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 3. Toolbar: Count, Sort Dropdown & Slider Navigation Controls */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-6 border-b border-slate-200/70 dark:border-white/10">
+        <div className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-400">
           {isArabic ? `${filteredDoctors.length} أخصائي متاح` : `${filteredDoctors.length} Specialists Available`}
         </div>
 
-        {/* Sort Dropdown */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Sort Dropdown */}
           <div className="relative">
             <button
               onClick={() => setIsSortOpen(!isSortOpen)}
-              className="flex items-center gap-2 px-3.5 py-1.5 sm:py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 shadow-2xs hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer"
+              className="flex items-center gap-2 px-3 sm:px-3.5 py-1.5 sm:py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 shadow-2xs hover:bg-slate-50 dark:hover:bg-white/5 cursor-pointer"
             >
               <span>
-                {sortBy === 'earliest' && (isArabic ? 'الترتيب: الأقرب موعداً' : 'Sort: Earliest')}
+                {sortBy === 'earliest' && (isArabic ? 'الترتيب: الموصى بهم' : 'Sort: Recommended')}
                 {sortBy === 'rating' && (isArabic ? 'الترتيب: الأعلى تقييماً' : 'Sort: Highest Rated')}
                 {sortBy === 'experience' && (isArabic ? 'الترتيب: الأكثر خبرة' : 'Sort: Most Experienced')}
               </span>
@@ -2001,14 +2832,14 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
             </button>
 
             {isSortOpen && (
-              <div className={`absolute top-full mt-2 w-44 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-2xl shadow-xl p-1.5 z-40 ${isArabic ? 'left-0' : 'right-0'}`}>
+              <div className={`absolute top-full mt-2 w-48 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-2xl shadow-xl p-1.5 z-40 ${isArabic ? 'left-0' : 'right-0'}`}>
                 <button
                   onClick={() => { setSortBy('earliest'); setIsSortOpen(false); }}
                   className={`w-full text-right rtl:text-right ltr:text-left px-3 py-2 rounded-xl text-xs font-bold transition-colors flex items-center justify-between cursor-pointer ${
                     sortBy === 'earliest' ? 'bg-slate-100 dark:bg-white/10 text-[#0B3B36] dark:text-[#00E5BE]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5'
                   }`}
                 >
-                  <span>{isArabic ? 'الأقرب موعداً' : 'Earliest available'}</span>
+                  <span>{isArabic ? 'الموصى بهم (الافتراضي)' : 'Recommended (Default)'}</span>
                   {sortBy === 'earliest' && <Check className="w-3.5 h-3.5" />}
                 </button>
                 <button
@@ -2032,104 +2863,56 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
               </div>
             )}
           </div>
-        </div>
 
+          {/* Slider Navigation Buttons (Prev / Next) */}
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => handleScroll('prev')}
+              aria-label={isArabic ? 'السابق' : 'Previous'}
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-white/10 shadow-xs active:scale-95 transition-all cursor-pointer"
+            >
+              {isArabic ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+            </button>
+            <button
+              onClick={() => handleScroll('next')}
+              aria-label={isArabic ? 'التالي' : 'Next'}
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-white/10 shadow-xs active:scale-95 transition-all cursor-pointer"
+            >
+              {isArabic ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* No Results Fallback */}
       {filteredDoctors.length === 0 ? (
         <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/10 p-8">
           <p className="text-slate-500 dark:text-slate-400 font-medium mb-3">
-            {isArabic ? 'لم يتم العثور على أخصائيين يطابقون خيارات البحث.' : 'No specialists match your search criteria.'}
+            {isArabic ? 'لم يتم العثور على أخصائيين يطابقون خيارات البحث أو التخصص المحدد.' : 'No specialists match your search criteria or selected specialty.'}
           </p>
           <button
             onClick={() => { setSearchQuery(''); setSelectedCategory('all'); }}
-            className="px-5 py-2 rounded-xl bg-[#0B3B36] text-white text-xs font-bold cursor-pointer"
+            className="px-5 py-2 rounded-xl bg-[#0B3B36] text-white text-xs font-bold cursor-pointer hover:bg-[#124d47] transition-all"
           >
             {isArabic ? 'إعادة تعيين الفلاتر' : 'Reset Filters'}
           </button>
         </div>
       ) : (
-        <div className="space-y-8 sm:space-y-10">
-
-          {/* 3. UPPER ROW (٣٠ بطاقة أخصائي) */}
-          <div className="bg-slate-50/60 dark:bg-slate-900/40 rounded-2xl sm:rounded-3xl p-2 sm:p-5 border border-slate-200/70 dark:border-white/5 shadow-2xs">
-            <div className="flex items-center justify-end mb-2 sm:mb-2.5 px-1">
-              {/* Upper Navigation Buttons */}
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={() => handleScrollUpper('prev')}
-                  aria-label={isArabic ? 'السابق' : 'Previous'}
-                  className="w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-white/10 shadow-xs active:scale-95 transition-all cursor-pointer"
-                >
-                  {isArabic ? <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
-                </button>
-                <button
-                  onClick={() => handleScrollUpper('next')}
-                  aria-label={isArabic ? 'التالي' : 'Next'}
-                  className="w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-white/10 shadow-xs active:scale-95 transition-all cursor-pointer"
-                >
-                  {isArabic ? <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
-                </button>
-              </div>
-            </div>
-
-            {/* Upper Track */}
-            <div
-              ref={upperSliderRef}
-              onMouseDown={handleUpperMouseDown}
-              onMouseMove={handleUpperMouseMove}
-              onMouseUp={handleUpperMouseUp}
-              onMouseLeave={handleUpperMouseUp}
-              className={`flex gap-2.5 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-1.5 sm:py-2 px-1 ${
-                isUpperDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
-              }`}
-              style={{ WebkitOverflowScrolling: 'touch' }}
-            >
-              {upperDoctors.map(renderDoctorCard)}
-            </div>
+        /* 4. Single Unified Slider Track (جميع الأخصائيين في سلايدر واحد) */
+        <div className="bg-slate-50/60 dark:bg-slate-900/40 rounded-2xl sm:rounded-3xl p-2 sm:p-5 border border-slate-200/70 dark:border-white/5 shadow-2xs">
+          <div
+            ref={sliderRef}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            className={`flex gap-2.5 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-1.5 sm:py-2 px-1 ${
+              isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
+            }`}
+            style={{ WebkitOverflowScrolling: 'touch' }}
+          >
+            {filteredDoctors.map(renderDoctorCard)}
           </div>
-
-          {/* 4. LOWER ROW (٣٠ بطاقة أخصائي) */}
-          {lowerDoctors.length > 0 && (
-            <div className="bg-slate-50/60 dark:bg-slate-900/40 rounded-2xl sm:rounded-3xl p-2 sm:p-5 border border-slate-200/70 dark:border-white/5 shadow-2xs">
-              <div className="flex items-center justify-end mb-2 sm:mb-2.5 px-1">
-                {/* Lower Navigation Buttons */}
-                <div className="flex items-center gap-1.5">
-                  <button
-                    onClick={() => handleScrollLower('prev')}
-                    aria-label={isArabic ? 'السابق' : 'Previous'}
-                    className="w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-white/10 shadow-xs active:scale-95 transition-all cursor-pointer"
-                  >
-                    {isArabic ? <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
-                  </button>
-                  <button
-                    onClick={() => handleScrollLower('next')}
-                    aria-label={isArabic ? 'التالي' : 'Next'}
-                    className="w-7 h-7 sm:w-9 sm:h-9 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-white/10 shadow-xs active:scale-95 transition-all cursor-pointer"
-                  >
-                    {isArabic ? <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Lower Track */}
-              <div
-                ref={lowerSliderRef}
-                onMouseDown={handleLowerMouseDown}
-                onMouseMove={handleLowerMouseMove}
-                onMouseUp={handleLowerMouseUp}
-                onMouseLeave={handleLowerMouseUp}
-                className={`flex gap-2.5 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-1.5 sm:py-2 px-1 ${
-                  isLowerDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
-                }`}
-                style={{ WebkitOverflowScrolling: 'touch' }}
-              >
-                {lowerDoctors.map(renderDoctorCard)}
-              </div>
-            </div>
-          )}
-
         </div>
       )}
 

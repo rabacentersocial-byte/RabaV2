@@ -153,13 +153,16 @@ export default function App() {
         if (savedSpec) {
           const parsed = JSON.parse(savedSpec);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            const hasStaleMocks = parsed.length > SPECIALISTS.length ||
-              parsed.some((s: any) => s.id === 'spec-mohamed-omara' || s.id === 'spec-rawan-tablett' || s.id === 'spec-hossam-malki');
+            const hasStaleMocks = parsed.length !== SPECIALISTS.length ||
+              parsed.some((s: any) => 
+                s.id === 'spec-rawan-tablett' || 
+                s.id === 'spec-hossam-malki' ||
+                (s.id === 'spec-hanaa-basheer' && (!s.education || s.education.length < 5 || s.category !== 'psychology' || s.experienceYears !== 15)) ||
+                (s.id === 'spec-sara-abdelhamid' && s.name && s.name.includes('يارا'))
+              );
             const fullList = hasStaleMocks
               ? SPECIALISTS
-              : (parsed.length < SPECIALISTS.length
-                  ? deduplicateSpecialists([...parsed, ...SPECIALISTS.filter(s => !parsed.some(p => p.id === s.id || p.name === s.name))])
-                  : parsed);
+              : parsed;
             setSpecialists((prev) => {
               if (prev.length === fullList.length && prev.every((s, i) => s.id === fullList[i].id && s.avatar === fullList[i].avatar)) {
                 return prev;
@@ -242,18 +245,17 @@ export default function App() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          const hasStaleMocks = parsed.length > SPECIALISTS.length ||
-            parsed.some((s: any) => s.id === 'spec-mohamed-omara' || s.id === 'spec-rawan-tablett' || s.id === 'spec-hossam-malki');
+          const hasStaleMocks = parsed.length !== SPECIALISTS.length ||
+            parsed.some((s: any) => 
+              s.id === 'spec-rawan-tablett' || 
+              s.id === 'spec-hossam-malki' ||
+              (s.id === 'spec-hanaa-basheer' && (!s.education || s.education.length < 5 || s.category !== 'psychology' || s.experienceYears !== 15)) ||
+              (s.id === 'spec-sara-abdelhamid' && s.name && s.name.includes('يارا'))
+            );
           if (hasStaleMocks) {
             return deduplicateSpecialists(SPECIALISTS);
           }
-          if (parsed.length < SPECIALISTS.length) {
-            const existingIds = new Set(parsed.map((s: Specialist) => s.id));
-            const existingNames = new Set(parsed.map((s: Specialist) => s.name));
-            const missing = SPECIALISTS.filter(s => !existingIds.has(s.id) && !existingNames.has(s.name));
-            return deduplicateSpecialists([...parsed, ...missing]);
-          }
-          return parsed;
+          return deduplicateSpecialists(parsed);
         }
       }
       return deduplicateSpecialists(SPECIALISTS);

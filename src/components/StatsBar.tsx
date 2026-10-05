@@ -98,7 +98,7 @@ export const StatsBar: React.FC = () => {
             <div className={isArabic ? 'text-right' : 'text-left'}>
               <div className="text-lg xs:text-xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-0.5">
                 <span className="text-[#D97706] dark:text-[#F59E0B] font-extrabold text-base xs:text-lg sm:text-3xl">+</span>
-                <span>48</span>
+                <span>60</span>
               </div>
               <p className="text-[11px] sm:text-sm text-slate-600 dark:text-slate-300 font-bold mt-0.5 sm:mt-1">
                 {t.stats.specialistsLabel}

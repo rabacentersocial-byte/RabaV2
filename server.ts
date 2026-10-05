@@ -458,8 +458,8 @@ async function startServer() {
           for (const [key, val] of Object.entries(dbSettings)) {
             if (!key.startsWith('upload:') && val !== null && val !== undefined) {
               if (key === 'raba_specialists') {
-                if (Array.isArray(result[key]) && result[key].length === 40) {
-                  if (!Array.isArray(val) || val.length !== 40) {
+                if (Array.isArray(result[key]) && result[key].length >= 40) {
+                  if (!Array.isArray(val) || val.length !== result[key].length) {
                     try {
                       await saveDbSetting(key, result[key]);
                     } catch { /* ignore */ }

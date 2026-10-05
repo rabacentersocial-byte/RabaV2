@@ -152,7 +152,12 @@ export function hydratePersistentData(): void {
               if (
                 Array.isArray(currentArr) &&
                 (currentArr.length !== bundledVal.length ||
-                  currentArr.some((s: any) => s.id === 'spec-mohamed-omara' || s.id === 'spec-rawan-tablett' || s.id === 'spec-hossam-malki'))
+                  currentArr.some((s: any) => 
+                    s.id === 'spec-rawan-tablett' || 
+                    s.id === 'spec-hossam-malki' ||
+                    (s.id === 'spec-hanaa-basheer' && (!s.education || s.education.length < 5 || s.category !== 'psychology' || s.experienceYears !== 15)) ||
+                    (s.id === 'spec-sara-abdelhamid' && s.name && s.name.includes('يارا'))
+                  ))
               ) {
                 shouldHydrate = true;
               }
@@ -292,7 +297,12 @@ export async function initPersistentSync(): Promise<void> {
           const localSpecs = localValRaw ? JSON.parse(localValRaw) : null;
           const hasStaleMocks = Array.isArray(localSpecs) && (
             localSpecs.length !== serverVal.length ||
-            localSpecs.some((s: any) => s.id === 'spec-mohamed-omara' || s.id === 'spec-rawan-tablett' || s.id === 'spec-hossam-malki')
+            localSpecs.some((s: any) => 
+              s.id === 'spec-rawan-tablett' || 
+              s.id === 'spec-hossam-malki' ||
+              (s.id === 'spec-hanaa-basheer' && (!s.education || s.education.length < 5 || s.category !== 'psychology' || s.experienceYears !== 15)) ||
+              (s.id === 'spec-sara-abdelhamid' && s.name && s.name.includes('يارا'))
+            )
           );
           if (hasStaleMocks || !localSpecs || localSpecs.length === 0) {
             localValRaw = JSON.stringify(serverVal);
