@@ -2557,10 +2557,10 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
     return (
       <div
         key={doctor.id}
-        className="w-[56vw] min-w-[195px] max-w-[225px] sm:min-w-0 sm:max-w-none sm:w-[325px] md:w-[350px] lg:w-[375px] shrink-0 snap-start bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+        className="w-[62vw] min-w-[220px] max-w-[250px] sm:min-w-0 sm:max-w-none sm:w-[325px] md:w-[350px] lg:w-[375px] shrink-0 snap-start bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
       >
-        {/* Upper Hero Image Area with Overlaid Badges */}
-        <div className="relative h-32 sm:h-48 md:h-56 overflow-hidden bg-slate-100 dark:bg-slate-800 border-b border-slate-100 dark:border-white/5">
+        {/* Upper Hero Image Area with Overlaid Badges - Maintained tall photo frame */}
+        <div className="relative h-48 sm:h-48 md:h-56 overflow-hidden bg-slate-100 dark:bg-slate-800 border-b border-slate-100 dark:border-white/5">
           <img
             src={activeAvatar}
             alt={isArabic ? doctor.name : (doctor.nameEn || doctor.name)}
@@ -2577,8 +2577,8 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
 
           {/* Top Left Badge: TOP RATED */}
           {isTop && (
-            <div className="absolute top-1.5 sm:top-3 left-1.5 sm:left-3 z-10">
-              <span className="bg-white/95 dark:bg-slate-950/90 backdrop-blur-xs text-slate-900 dark:text-white text-[7.5px] sm:text-[10px] font-black tracking-wider px-1.5 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-md uppercase">
+            <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-10">
+              <span className="bg-white/95 dark:bg-slate-950/90 backdrop-blur-xs text-slate-900 dark:text-white text-[8px] sm:text-[10px] font-black tracking-wider px-2 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-md uppercase">
                 {isArabic ? 'الأعلى تقييماً' : 'TOP RATED'}
               </span>
             </div>
@@ -2588,22 +2588,22 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
           <button
             onClick={(e) => toggleFavorite(e, doctor.id)}
             aria-label="Save to favorites"
-            className="absolute top-1.5 sm:top-3 right-1.5 sm:right-3 z-10 w-6 h-6 sm:w-9 sm:h-9 rounded-full bg-white/95 dark:bg-slate-900/90 shadow-md flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer text-slate-700 dark:text-slate-200 hover:text-rose-500"
+            className="absolute top-2 sm:top-3 right-2 sm:right-3 z-10 w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/95 dark:bg-slate-900/90 shadow-md flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer text-slate-700 dark:text-slate-200 hover:text-rose-500"
           >
             <Heart 
-              className={`w-3 h-3 sm:w-4 sm:h-4 transition-colors ${
+              className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors ${
                 isFav ? 'fill-rose-500 text-rose-500' : 'text-slate-600 dark:text-slate-300'
               }`} 
             />
           </button>
         </div>
 
-        {/* Lower Card Body */}
-        <div className="p-2 sm:p-4 md:p-5 flex flex-col justify-between flex-1">
+        {/* Lower Card Body - Compact, snug without empty dead space */}
+        <div className="p-2.5 sm:p-4 md:p-5 flex flex-col justify-between flex-1">
           <div>
             {/* 1. Specialty Code & Rating Pill */}
             <div className="flex items-center justify-between gap-1 mb-1 sm:mb-2">
-              <span className="text-[#0D9488] dark:text-[#00E5BE] text-[9px] sm:text-[11px] font-black uppercase tracking-wider truncate max-w-[68%]">
+              <span className="text-[#0D9488] dark:text-[#00E5BE] text-[9.5px] sm:text-[11px] font-black uppercase tracking-wider truncate max-w-[68%]">
                 {isArabic ? doctor.specialtyCode : doctor.specialtyCodeEn}
               </span>
 
@@ -2619,12 +2619,12 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
             </h3>
 
             {/* 3. 3-Column Metrics Row: Prominently Highlights Years of Experience */}
-            <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-white/10 rtl:divide-x-reverse py-1 sm:py-2.5 border-y border-slate-100 dark:border-white/10 mb-1 sm:mb-2.5 text-center">
+            <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-white/10 rtl:divide-x-reverse py-1.5 sm:py-2.5 border-y border-slate-100 dark:border-white/10 mb-1.5 sm:mb-2.5 text-center">
               <div className="px-0.5 sm:px-1">
                 <span className="text-xs sm:text-base md:text-lg font-black text-slate-900 dark:text-white block font-sans">
                   {doctor.experienceYears}
                 </span>
-                <span className="text-[7px] sm:text-[9.5px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-0.5">
+                <span className="text-[7.5px] sm:text-[9.5px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-0.5">
                   {isArabic ? 'سنوات خبرة' : 'YEARS EXP.'}
                 </span>
               </div>
@@ -2633,7 +2633,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
                 <span className="text-xs sm:text-base md:text-lg font-black text-slate-900 dark:text-white block font-sans">
                   {displayReviewCount}
                 </span>
-                <span className="text-[7px] sm:text-[9.5px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-0.5">
+                <span className="text-[7.5px] sm:text-[9.5px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-0.5">
                   {isArabic ? 'تقييم معتمد' : 'REVIEWS'}
                 </span>
               </div>
@@ -2643,7 +2643,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
                   <Star className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 fill-amber-400 text-amber-400" />
                   <span>{(displayRating || 4.9).toFixed(1)}</span>
                 </span>
-                <span className="text-[7px] sm:text-[9.5px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-0.5">
+                <span className="text-[7.5px] sm:text-[9.5px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-0.5">
                   {isArabic ? 'متوسط التقييم' : 'RATING'}
                 </span>
               </div>
@@ -2715,7 +2715,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
                   className="px-1.5 py-1 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl border border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-[#0B3B36] hover:border-[#0B3B36] dark:hover:text-[#00E5BE] dark:hover:border-[#00E5BE] font-bold text-[9px] sm:text-xs flex items-center gap-0.5 transition-colors cursor-pointer shadow-2xs"
                 >
                   <FileText className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" />
-                  <span className="hidden sm:inline">{isArabic ? 'السيرة' : 'CV'}</span>
+                  <span className="inline">{isArabic ? 'السيرة' : 'CV'}</span>
                 </button>
               )}
 

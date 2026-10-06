@@ -23,20 +23,9 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollYRef = useRef(0);
 
-  // Auto-hide bottom bar on fast scroll down, reveal on scroll up for cleaner view
+  // Keep bottom bar steadily visible for rock-solid UI stability
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > 200 && currentScrollY > lastScrollYRef.current + 20) {
-        setIsVisible(false);
-      } else if (currentScrollY < lastScrollYRef.current - 10 || currentScrollY < 100) {
-        setIsVisible(true);
-      }
-      lastScrollYRef.current = currentScrollY;
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    setIsVisible(true);
   }, []);
 
   const scrollToSection = (id: string, tab: 'home' | 'services' | 'specialists') => {

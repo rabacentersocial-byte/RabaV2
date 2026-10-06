@@ -52,6 +52,11 @@ export const PartnersSection: React.FC = () => {
   const [viewMode, setViewMode] = useState<'slider' | 'grid'>('slider');
   const [activePartnerModal, setActivePartnerModal] = useState<PartnerItem | null>(null);
 
+  // Dedicated Mobile Slider State matching user screenshot
+  const [selectedMobileCategory, setSelectedMobileCategory] = useState<string>('all');
+  const [activeMobileIndex, setActiveMobileIndex] = useState(0);
+  const mobileScrollRef = useRef<HTMLDivElement>(null);
+
   const [isDragging, setIsDragging] = useState(false);
   const [isPausedManually, setIsPausedManually] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -73,29 +78,28 @@ export const PartnersSection: React.FC = () => {
     if (typeof window !== 'undefined') {
       const w = window.innerWidth;
       if (w < 640) {
-        // Mobile card: ~245px + 16px gap = 261px
-        return Math.min(Math.max(w * 0.72, 230), 270) + 16;
+        return Math.min(Math.max(w * 0.72, 220), 250) + 16;
       }
       if (w < 1024) {
-        return 260 + 20; // 280px stride
+        return 240 + 20; // 260px stride
       }
-      return 270 + 24; // 294px stride
+      return 250 + 20; // 270px stride
     }
-    return 294;
+    return 270;
   };
 
   const getCardWidth = () => {
     if (typeof window !== 'undefined') {
       const w = window.innerWidth;
       if (w < 640) {
-        return Math.min(Math.max(w * 0.72, 230), 270);
+        return Math.min(Math.max(w * 0.72, 220), 250);
       }
       if (w < 1024) {
-        return 260;
+        return 240;
       }
-      return 270;
+      return 250;
     }
-    return 270;
+    return 250;
   };
 
   // Speed calculation
@@ -138,6 +142,75 @@ export const PartnersSection: React.FC = () => {
   }, [partners, selectedSector, searchQuery]);
 
   const totalPartners = filteredPartners.length;
+
+  // Mobile filter tabs: "الكل" + distinct categories with counts matching user screenshot
+  const mobileFilterTabs = useMemo(() => {
+    const counts: Record<string, number> = {};
+    partners.forEach(p => {
+      const b = p.badge || p.category || (isArabic ? 'شريك وطني' : 'Partner');
+      counts[b] = (counts[b] || 0) + 1;
+    });
+
+    const tabs = [
+      { id: 'all', label: isArabic ? 'الكل' : 'All', count: partners.length },
+    ];
+
+    // Priority badges matching user screenshot
+    const priority = ['شريك إعلامي', 'شريك تعليمي', 'شريك استراتيجي', 'قطاع صحي حكومي', 'قطاع حكومي', 'شريك أكاديمي', 'حلول تمويلية'];
+    priority.forEach(b => {
+      if (counts[b]) {
+        tabs.push({ id: b, label: b, count: counts[b] });
+      }
+    });
+
+    Object.keys(counts).forEach(b => {
+      if (!tabs.some(t => t.id === b)) {
+        tabs.push({ id: b, label: b, count: counts[b] });
+      }
+    });
+
+    return tabs;
+  }, [partners, isArabic]);
+
+  // Filtered partners for mobile slider
+  const mobileFilteredPartners = useMemo(() => {
+    if (selectedMobileCategory === 'all') {
+      return partners;
+    }
+    return partners.filter(p => {
+      const b = p.badge || p.category || '';
+      return b === selectedMobileCategory || p.sector === selectedMobileCategory;
+    });
+  }, [partners, selectedMobileCategory]);
+
+  const scrollMobile = (direction: 'next' | 'prev') => {
+    if (!mobileScrollRef.current) return;
+    const container = mobileScrollRef.current;
+    const cardStride = 176;
+    const isRtl = document.dir === 'rtl' || isArabic;
+    
+    // In RTL: '<' (direction === 'next') scrolls left (-cardStride)
+    const sign = direction === 'next' ? (isRtl ? -1 : 1) : (isRtl ? 1 : -1);
+    container.scrollBy({ left: sign * cardStride, behavior: 'smooth' });
+
+    setActiveMobileIndex(prev => {
+      if (direction === 'next') {
+        return Math.min(mobileFilteredPartners.length - 1, prev + 1);
+      } else {
+        return Math.max(0, prev - 1);
+      }
+    });
+  };
+
+  const handleMobileScroll = () => {
+    if (!mobileScrollRef.current) return;
+    const container = mobileScrollRef.current;
+    const cardStride = 176;
+    const currentScroll = Math.abs(container.scrollLeft);
+    const maxIdx = Math.max(0, mobileFilteredPartners.length - 1);
+    const idx = Math.min(maxIdx, Math.max(0, Math.round(currentScroll / cardStride)));
+    setActiveMobileIndex(idx);
+  };
 
   // Triplicate list for continuous seamless infinite loop
   const displayList = useMemo(() => {
@@ -359,8 +432,8 @@ export const PartnersSection: React.FC = () => {
               : (settings.sectionSubtitleEn || 'Proud strategic alliances with leading governmental, academic, healthcare, and educational institutions.')}
           </p>
 
-          {/* Category Filter Tabs with Live Counts & Icons */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mt-6 sm:mt-8">
+          {/* Category Filter Tabs with Live Counts & Icons (Desktop View) */}
+          <div className="hidden md:flex flex-wrap items-center justify-center gap-2 mt-6 sm:mt-8">
             {sectors.map((sec) => {
               const isSelected = selectedSector === sec.id;
               const Icon = sec.icon;
@@ -388,8 +461,8 @@ export const PartnersSection: React.FC = () => {
 
         </div>
 
-        {/* View Switcher & Quick Search Row */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-6 px-2">
+        {/* View Switcher & Quick Search Row (Desktop) */}
+        <div className="hidden md:flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-6 px-2">
           
           {/* Quick Search Input */}
           <div className="relative flex-1 max-w-xs">
@@ -449,105 +522,241 @@ export const PartnersSection: React.FC = () => {
         </div>
 
         {/* ========================================================================= */}
-        {/* VIEW 1: HORIZONTAL CONTINUOUS INFINITE SLIDER TRACK                        */}
+        {/* VIEW 1: SLIDER VIEW                                                       */}
         {/* ========================================================================= */}
         {viewMode === 'slider' && (
-          <div 
-            ref={viewportRef}
-            dir="ltr"
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerCancel={handlePointerUp}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            className={`relative w-full py-6 sm:py-8 overflow-hidden flex items-center touch-pan-y ${
-              isDragging ? 'cursor-grabbing' : 'cursor-grab'
-            }`}
-            style={{ touchAction: 'pan-y' }}
-          >
-            {/* Subtle Horizon line behind cards */}
-            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/20 dark:via-emerald-400/25 to-transparent pointer-events-none z-0" />
-
-            {/* Left and Right Fade Masks for seamless infinite flow */}
-            <div className="absolute top-0 right-0 bottom-0 w-12 sm:w-32 bg-gradient-to-l from-[#F8FAFC] via-[#F8FAFC]/70 to-transparent dark:from-[#061412] dark:via-[#061412]/80 dark:to-transparent z-30 pointer-events-none" />
-            <div className="absolute top-0 left-0 bottom-0 w-12 sm:w-32 bg-gradient-to-r from-[#F8FAFC] via-[#F8FAFC]/70 to-transparent dark:from-[#061412] dark:via-[#061412]/80 dark:to-transparent z-30 pointer-events-none" />
-
-            {/* Moving Track */}
-            <div
-              ref={trackRef}
-              className="flex items-center gap-4 sm:gap-6 will-change-transform z-10 shrink-0"
-              style={{
-                transition: isDragging ? 'none' : 'none',
-              }}
-            >
-              {displayList.map((partner, index) => {
-                return (
-                  <div
-                    key={`${partner.id}-${index}`}
-                    dir={isArabic ? 'rtl' : 'ltr'}
-                    className="shrink-0 transition-all duration-300"
+          <>
+            {/* --------------------------------------------------------------------- */}
+            {/* A. DEDICATED MOBILE PARTNER SLIDER (Exact design from user screenshot) */}
+            {/* --------------------------------------------------------------------- */}
+            <div className="block md:hidden py-1 mb-6" dir={isArabic ? 'rtl' : 'ltr'}>
+              
+              {/* Top Navigation Row: Arrow buttons (< and >) on top-left in RTL */}
+              <div className="flex items-center justify-between mb-4 px-1">
+                <div />
+                <div className="flex items-center gap-2.5">
+                  <button
+                    onClick={() => scrollMobile('next')}
+                    aria-label={isArabic ? 'السابق' : 'Previous'}
+                    className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-white/10 shadow-xs flex items-center justify-center text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95 transition-all cursor-pointer"
                   >
-                    {/* Modern Professional Partner Card - Matching high-prestige clinical standards from screenshot */}
-                    <div
-                      onClick={() => setActivePartnerModal(partner)}
-                      className={`group w-[72vw] min-w-[225px] max-w-[265px] sm:min-w-0 sm:max-w-none sm:w-[260px] md:w-[270px] h-[345px] sm:h-[370px] rounded-[30px] sm:rounded-[34px] p-4 sm:p-5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-lg shadow-slate-900/5 dark:shadow-black/40 hover:shadow-2xl hover:border-emerald-500/50 dark:hover:border-[#2DD4BF]/50 hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between cursor-pointer relative overflow-hidden`}
+                    <ChevronLeft className="w-5 h-5 rtl:rotate-0" />
+                  </button>
+                  <button
+                    onClick={() => scrollMobile('prev')}
+                    aria-label={isArabic ? 'التالي' : 'Next'}
+                    className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-white/10 shadow-xs flex items-center justify-center text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95 transition-all cursor-pointer"
+                  >
+                    <ChevronRight className="w-5 h-5 rtl:rotate-0" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Filter Tabs Capsule Bar */}
+              <div className="w-full bg-white dark:bg-slate-800/90 rounded-[28px] border border-slate-200/80 dark:border-white/10 p-1.5 shadow-xs mb-4 flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth">
+                {mobileFilterTabs.map((tab) => {
+                  const isSelected = selectedMobileCategory === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => {
+                        setSelectedMobileCategory(tab.id);
+                        setActiveMobileIndex(0);
+                        if (mobileScrollRef.current) {
+                          mobileScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+                        }
+                      }}
+                      className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
+                        isSelected
+                          ? 'bg-[#0D3B36] text-white shadow-xs'
+                          : 'bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50'
+                      }`}
                     >
-                      {/* Top Header Row: Sector circular dot (left) & Badge pill (right) */}
-                      <div className="flex items-center justify-between w-full pt-0.5 px-0.5 relative z-10">
-                        <span 
-                          className="w-3 h-3 rounded-full shrink-0 shadow-xs ring-2 ring-white/60 dark:ring-slate-800/80" 
-                          style={{ backgroundColor: partner.accentColor || '#006C35' }}
-                        />
-
-                        <span 
-                          className="inline-flex items-center text-xs sm:text-[13px] font-bold px-3 py-1 rounded-full truncate max-w-[80%]"
-                          style={{
-                            backgroundColor: partner.accentColor ? `${partner.accentColor}18` : '#E8F7F0',
-                            color: partner.accentColor || '#006C35',
-                            border: `1px solid ${partner.accentColor ? `${partner.accentColor}30` : '#A7F3D0'}`
-                          }}
-                        >
-                          <span className="truncate">{partner.badge || (isArabic ? 'شريك وطني' : 'Partner')}</span>
-                        </span>
-                      </div>
-
-                      {/* Center Framed Canvas for Logo - Large & Centered matching user screenshot */}
-                      <div 
-                        className="w-full h-48 sm:h-56 rounded-2xl border border-slate-100/90 dark:border-white/5 bg-slate-50/40 dark:bg-slate-800/25 flex items-center justify-center overflow-hidden my-auto transition-all relative z-10 p-2 sm:p-3 group-hover:bg-slate-50/70 dark:group-hover:bg-slate-800/40"
-                        style={{
-                          backgroundColor: partner.imageBgColor && partner.imageBgColor !== '#ffffff' ? partner.imageBgColor : undefined
-                        }}
+                      <span>{tab.label}</span>
+                      <span
+                        className={`px-1.5 py-0.2 rounded-md text-[11px] font-sans font-bold ${
+                          isSelected
+                            ? 'bg-white/20 text-white'
+                            : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                        }`}
                       >
-                        <PartnerLogoRenderer
-                          partnerId={partner.id}
-                          logoUrl={partner.logoUrl}
-                          name={partner.name}
-                          accentColor={partner.accentColor}
-                          letter={partner.letter}
-                          imageFit={partner.imageFit}
-                          imagePadding={partner.imagePadding || 'xs'}
-                          logoScale={partner.logoScale ? (partner.logoScale < 120 ? 120 : partner.logoScale) : 120}
-                          expandImageToEdges={partner.expandImageToEdges}
-                        />
-                      </div>
+                        {tab.count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
 
-                      {/* Bottom: Partner Name & Category - Exact styling from screenshot */}
-                      <div className="w-full text-center mt-2 mb-0.5 px-1 relative z-10">
-                        <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white truncate group-hover:text-emerald-700 dark:group-hover:text-[#2DD4BF] transition-colors leading-tight">
-                          {isArabic ? partner.name : partner.nameEn}
-                        </h3>
-                        <p className="text-xs sm:text-[13px] text-slate-400 dark:text-slate-400 font-medium truncate mt-1">
-                          {isArabic ? partner.category : partner.categoryEn}
-                        </p>
-                      </div>
+              {/* Mobile Carousel Track (Showing 2+ cards side by side with snap) */}
+              <div
+                ref={mobileScrollRef}
+                onScroll={handleMobileScroll}
+                className="flex items-center gap-3 overflow-x-auto no-scrollbar scroll-smooth py-2 px-0.5 snap-x snap-mandatory"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                {mobileFilteredPartners.map((partner, idx) => (
+                  <div
+                    key={`mob-card-${partner.id}-${idx}`}
+                    onClick={() => setActivePartnerModal(partner)}
+                    className="w-[156px] h-[174px] shrink-0 bg-white dark:bg-slate-900 rounded-[22px] p-2 border border-slate-200/90 dark:border-white/10 shadow-sm flex flex-col items-center justify-between cursor-pointer snap-start transition-all active:scale-[0.98]"
+                  >
+                    {/* Top Canvas with Logo - Pure White in both modes without excess padding */}
+                    <div 
+                      className="w-full h-[104px] rounded-xl border border-slate-100 dark:border-white/5 bg-white flex items-center justify-center p-1.5 overflow-hidden shadow-2xs shrink-0"
+                      style={{ backgroundColor: '#ffffff' }}
+                    >
+                      <PartnerLogoRenderer
+                        partnerId={partner.id}
+                        logoUrl={partner.logoUrl}
+                        name={partner.name}
+                        accentColor={partner.accentColor}
+                        letter={partner.letter}
+                        imageFit="contain"
+                        imagePadding="xs"
+                        logoScale={partner.logoScale ? (partner.logoScale < 120 ? 120 : partner.logoScale) : 120}
+                        expandImageToEdges={partner.expandImageToEdges}
+                      />
+                    </div>
 
+                    {/* Bottom Details - Centered in the card */}
+                    <div className="w-full flex-1 flex flex-col items-center justify-center text-center px-1">
+                      <span className="text-[11px] font-bold text-[#0D6D54] dark:text-[#2DD4BF] leading-tight block text-center truncate max-w-full">
+                        {partner.badge || partner.category || (isArabic ? 'شريك وطني' : 'Partner')}
+                      </span>
+                      <h4 className="text-xs sm:text-[13px] font-black text-slate-900 dark:text-white leading-tight mt-0.5 block text-center truncate max-w-full">
+                        {isArabic ? partner.name : partner.nameEn}
+                      </h4>
                     </div>
                   </div>
-                );
-              })}
+                ))}
+              </div>
+
+              {/* Bottom Progress Bar & Counter: "01 / 10" */}
+              <div className="flex items-center justify-between gap-4 mt-5 px-1">
+                {/* Horizontal Progress track */}
+                <div className="flex-1 h-[3.5px] bg-slate-200/90 dark:bg-slate-800 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-[#0D6D54] dark:bg-[#2DD4BF] rounded-full transition-all duration-300"
+                    style={{
+                      width: `${Math.min(100, Math.max(8, ((activeMobileIndex + 1) / Math.max(1, mobileFilteredPartners.length)) * 100))}%`
+                    }}
+                  />
+                </div>
+
+                {/* Number Counter */}
+                <div className="flex items-baseline gap-1 font-sans shrink-0">
+                  <span className="text-base font-black text-slate-900 dark:text-white">
+                    {String(activeMobileIndex + 1).padStart(2, '0')}
+                  </span>
+                  <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
+                    / {mobileFilteredPartners.length}
+                  </span>
+                </div>
+              </div>
+
             </div>
-          </div>
+
+            {/* --------------------------------------------------------------------- */}
+            {/* B. DESKTOP CONTINUOUS INFINITE SLIDER TRACK (On md and larger screens) */}
+            {/* --------------------------------------------------------------------- */}
+            <div className="hidden md:block">
+              <div 
+                ref={viewportRef}
+                dir="ltr"
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                className={`relative w-full py-6 sm:py-8 overflow-hidden flex items-center touch-pan-y ${
+                  isDragging ? 'cursor-grabbing' : 'cursor-grab'
+                }`}
+                style={{ touchAction: 'pan-y' }}
+              >
+                {/* Subtle Horizon line behind cards */}
+                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/20 dark:via-emerald-400/25 to-transparent pointer-events-none z-0" />
+
+                {/* Left and Right Fade Masks for seamless infinite flow */}
+                <div className="absolute top-0 right-0 bottom-0 w-12 sm:w-32 bg-gradient-to-l from-[#F8FAFC] via-[#F8FAFC]/70 to-transparent dark:from-[#061412] dark:via-[#061412]/80 dark:to-transparent z-30 pointer-events-none" />
+                <div className="absolute top-0 left-0 bottom-0 w-12 sm:w-32 bg-gradient-to-r from-[#F8FAFC] via-[#F8FAFC]/70 to-transparent dark:from-[#061412] dark:via-[#061412]/80 dark:to-transparent z-30 pointer-events-none" />
+
+                {/* Moving Track */}
+                <div
+                  ref={trackRef}
+                  className="flex items-center gap-4 sm:gap-6 will-change-transform z-10 shrink-0"
+                  style={{
+                    transition: isDragging ? 'none' : 'none',
+                  }}
+                >
+                  {displayList.map((partner, index) => {
+                    return (
+                      <div
+                        key={`${partner.id}-${index}`}
+                        dir={isArabic ? 'rtl' : 'ltr'}
+                        className="shrink-0 transition-all duration-300"
+                      >
+                        {/* Modern Professional Partner Card - Reduced empty spaces & centered texts */}
+                        <div
+                          onClick={() => setActivePartnerModal(partner)}
+                          className={`group w-[72vw] min-w-[210px] max-w-[245px] sm:min-w-0 sm:max-w-none sm:w-[240px] md:w-[250px] h-[265px] sm:h-[285px] rounded-[24px] sm:rounded-[28px] p-3 sm:p-3.5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-lg shadow-slate-900/5 dark:shadow-black/40 hover:shadow-2xl hover:border-emerald-500/50 dark:hover:border-[#2DD4BF]/50 hover:-translate-y-1.5 transition-all duration-300 flex flex-col items-center justify-between cursor-pointer relative overflow-hidden`}
+                        >
+                          {/* Top Badge: Centered in the card */}
+                          <div className="flex items-center justify-center w-full pt-0.5 px-0.5 relative z-10">
+                            <span 
+                              className="inline-flex items-center justify-center gap-1.5 text-xs sm:text-[12px] font-bold px-3 py-0.5 rounded-full truncate max-w-[90%] text-center"
+                              style={{
+                                backgroundColor: partner.accentColor ? `${partner.accentColor}18` : '#E8F7F0',
+                                color: partner.accentColor || '#006C35',
+                                border: `1px solid ${partner.accentColor ? `${partner.accentColor}30` : '#A7F3D0'}`
+                              }}
+                            >
+                              <span 
+                                className="w-2 h-2 rounded-full shrink-0 shadow-xs" 
+                                style={{ backgroundColor: partner.accentColor || '#006C35' }}
+                              />
+                              <span className="truncate">{partner.badge || (isArabic ? 'شريك وطني' : 'Partner')}</span>
+                            </span>
+                          </div>
+
+                          {/* Center Framed Canvas for Logo - Pure white in both light & dark mode */}
+                          <div 
+                            className="w-full h-32 sm:h-36 rounded-2xl border border-slate-200/90 dark:border-white/10 bg-white dark:bg-white flex items-center justify-center overflow-hidden transition-all relative z-10 p-2 sm:p-2.5 shadow-xs"
+                            style={{
+                              backgroundColor: '#ffffff'
+                            }}
+                          >
+                            <PartnerLogoRenderer
+                              partnerId={partner.id}
+                              logoUrl={partner.logoUrl}
+                              name={partner.name}
+                              accentColor={partner.accentColor}
+                              letter={partner.letter}
+                              imageFit={partner.imageFit}
+                              imagePadding={partner.imagePadding || 'xs'}
+                              logoScale={partner.logoScale ? (partner.logoScale < 120 ? 120 : partner.logoScale) : 120}
+                              expandImageToEdges={partner.expandImageToEdges}
+                            />
+                          </div>
+
+                          {/* Bottom: Partner Name & Category - Centered in the card */}
+                          <div className="w-full text-center flex flex-col items-center justify-center mt-1 mb-0.5 px-1 relative z-10">
+                            <h3 className="text-sm sm:text-[15px] font-black text-slate-900 dark:text-white truncate max-w-full group-hover:text-emerald-700 dark:group-hover:text-[#2DD4BF] transition-colors leading-tight text-center">
+                              {isArabic ? partner.name : partner.nameEn}
+                            </h3>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate max-w-full mt-0.5 text-center">
+                              {isArabic ? partner.category : partner.categoryEn}
+                            </p>
+                          </div>
+
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </>
         )}
 
         {/* ========================================================================= */}
@@ -559,32 +768,31 @@ export const PartnersSection: React.FC = () => {
               <div
                 key={partner.id}
                 onClick={() => setActivePartnerModal(partner)}
-                className={`group h-[345px] sm:h-[370px] rounded-[30px] sm:rounded-[34px] p-4 sm:p-5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-lg shadow-slate-900/5 dark:shadow-black/40 hover:shadow-2xl hover:border-emerald-500/50 dark:hover:border-[#2DD4BF]/50 hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between cursor-pointer relative overflow-hidden`}
+                className={`group h-[265px] sm:h-[285px] rounded-[24px] sm:rounded-[28px] p-3 sm:p-3.5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-lg shadow-slate-900/5 dark:shadow-black/40 hover:shadow-2xl hover:border-emerald-500/50 dark:hover:border-[#2DD4BF]/50 hover:-translate-y-1.5 transition-all duration-300 flex flex-col items-center justify-between cursor-pointer relative overflow-hidden`}
               >
-                {/* Top Header Row: Sector circular dot (left) & Badge pill (right) */}
-                <div className="flex items-center justify-between w-full pt-0.5 px-0.5 relative z-10">
+                {/* Top Badge: Centered in the card */}
+                <div className="flex items-center justify-center w-full pt-0.5 px-0.5 relative z-10">
                   <span 
-                    className="w-3 h-3 rounded-full shrink-0 shadow-xs ring-2 ring-white/60 dark:ring-slate-800/80" 
-                    style={{ backgroundColor: partner.accentColor || '#006C35' }}
-                  />
-
-                  <span 
-                    className="inline-flex items-center text-xs sm:text-[13px] font-bold px-3 py-1 rounded-full truncate max-w-[80%]"
+                    className="inline-flex items-center justify-center gap-1.5 text-xs sm:text-[12px] font-bold px-3 py-0.5 rounded-full truncate max-w-[90%] text-center"
                     style={{
                       backgroundColor: partner.accentColor ? `${partner.accentColor}18` : '#E8F7F0',
                       color: partner.accentColor || '#006C35',
                       border: `1px solid ${partner.accentColor ? `${partner.accentColor}30` : '#A7F3D0'}`
                     }}
                   >
+                    <span 
+                      className="w-2 h-2 rounded-full shrink-0 shadow-xs" 
+                      style={{ backgroundColor: partner.accentColor || '#006C35' }}
+                    />
                     <span className="truncate">{partner.badge || (isArabic ? 'شريك وطني' : 'Partner')}</span>
                   </span>
                 </div>
 
-                {/* Center Framed Canvas for Logo - Large & Centered matching user screenshot */}
+                {/* Center Framed Canvas for Logo - Pure white in both light & dark mode */}
                 <div 
-                  className="w-full h-48 sm:h-56 rounded-2xl border border-slate-100/90 dark:border-white/5 bg-slate-50/40 dark:bg-slate-800/25 flex items-center justify-center overflow-hidden my-auto transition-all relative z-10 p-2 sm:p-3 group-hover:bg-slate-50/70 dark:group-hover:bg-slate-800/40"
+                  className="w-full h-32 sm:h-36 rounded-2xl border border-slate-200/90 dark:border-white/10 bg-white dark:bg-white flex items-center justify-center overflow-hidden transition-all relative z-10 p-2 sm:p-2.5 shadow-xs"
                   style={{
-                    backgroundColor: partner.imageBgColor && partner.imageBgColor !== '#ffffff' ? partner.imageBgColor : undefined
+                    backgroundColor: '#ffffff'
                   }}
                 >
                   <PartnerLogoRenderer
@@ -600,12 +808,12 @@ export const PartnersSection: React.FC = () => {
                   />
                 </div>
 
-                {/* Bottom: Partner Name & Category - Exact styling from screenshot */}
-                <div className="w-full text-center mt-2 mb-0.5 px-1 relative z-10">
-                  <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white truncate group-hover:text-emerald-700 dark:group-hover:text-[#2DD4BF] transition-colors leading-tight">
+                {/* Bottom: Partner Name & Category - Centered in the card */}
+                <div className="w-full text-center flex flex-col items-center justify-center mt-1 mb-0.5 px-1 relative z-10">
+                  <h3 className="text-sm sm:text-[15px] font-black text-slate-900 dark:text-white truncate max-w-full group-hover:text-emerald-700 dark:group-hover:text-[#2DD4BF] transition-colors leading-tight text-center">
                     {isArabic ? partner.name : partner.nameEn}
                   </h3>
-                  <p className="text-xs sm:text-[13px] text-slate-400 dark:text-slate-400 font-medium truncate mt-1">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate max-w-full mt-0.5 text-center">
                     {isArabic ? partner.category : partner.categoryEn}
                   </p>
                 </div>
@@ -631,10 +839,10 @@ export const PartnersSection: React.FC = () => {
         )}
 
         {/* ========================================================================= */}
-        {/* BOTTOM CONTROLS & STATUS BAR                                              */}
+        {/* BOTTOM CONTROLS & STATUS BAR (Desktop Only)                               */}
         {/* ========================================================================= */}
         {viewMode === 'slider' && (
-          <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400 px-2">
+          <div className="hidden md:flex mt-4 flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400 px-2">
             
             {/* Live Status Hint */}
             <div className="flex items-center gap-2">
@@ -758,9 +966,9 @@ export const PartnersSection: React.FC = () => {
 
             {/* Logo in Header */}
             <div 
-              className="w-36 h-24 sm:w-44 sm:h-28 mx-auto mb-4 rounded-2xl border border-slate-200/80 dark:border-white/20 p-2 sm:p-3 shadow-xs flex items-center justify-center relative z-10 overflow-hidden transition-all"
+              className="w-36 h-24 sm:w-44 sm:h-28 mx-auto mb-4 rounded-2xl border border-slate-200/80 dark:border-white/20 p-2 sm:p-3 shadow-xs flex items-center justify-center relative z-10 overflow-hidden transition-all bg-white dark:bg-white"
               style={{
-                backgroundColor: activePartnerModal.imageBgColor || (isDark ? 'rgba(255,255,255,0.96)' : '#ffffff')
+                backgroundColor: '#ffffff'
               }}
             >
               <PartnerLogoRenderer

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   GraduationCap, 
@@ -51,6 +51,8 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
     phone: '',
     email: '',
   });
+
+  const birthDateInputRef = useRef<HTMLInputElement>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -324,12 +326,8 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
               {/* Benefits Checklist 2x2 Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {benefits.map((item, index) => (
-                  <motion.div 
+                  <div 
                     key={index}
-                    initial={{ opacity: 0, y: 8 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.08 }}
                     className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 hover:border-[#00E5BE]/30 transition-colors"
                   >
                     <div className="w-5 h-5 rounded-md bg-[#00E5BE]/15 text-[#00897B] dark:text-[#00E5BE] flex items-center justify-center shrink-0 mt-0.5 text-xs font-black">
@@ -343,7 +341,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                         {item.sub}
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -457,9 +455,9 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                           placeholder={isArabic ? 'اسم الطفل أو ولي الأمر' : 'Child or Parent Name'}
-                          className="w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white placeholder-slate-400 rounded-xl px-3.5 py-2 sm:py-2.5 text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all"
+                          className="w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white placeholder-slate-400 rounded-xl px-3.5 py-2 sm:py-2.5 text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all h-[38px] sm:h-[42px]"
                         />
-                        <User className={`w-3.5 h-3.5 text-slate-400 absolute top-1/2 -translate-y-1/2 ${isArabic ? 'left-3' : 'right-3'}`} />
+                        <User className={`w-3.5 h-3.5 text-slate-400 absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3' : 'right-3'}`} />
                       </div>
                     </div>
 
@@ -476,7 +474,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                             required
                             value={formData.city}
                             onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                            className="w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white rounded-xl px-3 py-2 sm:py-2.5 text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all cursor-pointer"
+                            className="w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white rounded-xl px-3.5 py-2 sm:py-2.5 text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all cursor-pointer h-[38px] sm:h-[42px]"
                           >
                             {SEWAR_AVAILABLE_CITIES.map((c) => (
                               <option 
@@ -488,7 +486,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                               </option>
                             ))}
                           </select>
-                          <MapPin className={`w-3.5 h-3.5 text-slate-400 absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-2.5' : 'right-2.5'}`} />
+                          <MapPin className={`w-3.5 h-3.5 text-slate-400 absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3' : 'right-3'}`} />
                         </div>
                       </div>
 
@@ -504,9 +502,9 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                             value={formData.phone}
                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                             placeholder="+966 5X XXX XXXX"
-                            className="w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white placeholder-slate-400 rounded-xl px-3 py-2 sm:py-2.5 text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all font-mono text-left"
+                            className="w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white placeholder-slate-400 rounded-xl px-3.5 py-2 sm:py-2.5 text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all font-mono text-left h-[38px] sm:h-[42px]"
                           />
-                          <PhoneIcon className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2" />
+                          <PhoneIcon className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                         </div>
                       </div>
 
@@ -520,14 +518,42 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                         <label className="block text-xs font-bold text-emerald-100 mb-1">
                           {isArabic ? 'تاريخ الميلاد' : 'Date of Birth'}
                         </label>
-                        <div className="relative">
+                        <div 
+                          className="relative cursor-pointer"
+                          onClick={() => {
+                            try {
+                              birthDateInputRef.current?.showPicker?.();
+                            } catch {}
+                            birthDateInputRef.current?.focus();
+                          }}
+                        >
                           <input
+                            ref={birthDateInputRef}
                             type="date"
                             value={formData.birthDate}
                             onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
-                            className="w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white placeholder-slate-400 rounded-xl px-3 py-2 sm:py-2.5 text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all"
+                            className={`w-full bg-white/95 dark:bg-slate-950/90 rounded-xl px-3.5 py-2 sm:py-2.5 text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all cursor-pointer h-[38px] sm:h-[42px] ${
+                              isArabic ? 'pl-9 text-right' : 'pr-9 text-left'
+                            } ${
+                              !formData.birthDate 
+                                ? 'text-transparent [&::-webkit-datetime-edit]:opacity-0 dark:[&::-webkit-datetime-edit]:opacity-0' 
+                                : 'text-slate-900 dark:text-white font-medium'
+                            } [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
                           />
-                          <Calendar className={`w-3.5 h-3.5 text-slate-400 absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-2.5' : 'right-2.5'}`} />
+
+                          {/* Placeholder matching other fields when empty */}
+                          {!formData.birthDate && (
+                            <span 
+                              className={`absolute top-1/2 -translate-y-1/2 text-slate-400 text-xs sm:text-sm pointer-events-none select-none ${
+                                isArabic ? 'right-3.5' : 'left-3.5'
+                              }`}
+                            >
+                              {isArabic ? 'تاريخ ميلاد الطفل' : 'Select Birth Date'}
+                            </span>
+                          )}
+
+                          {/* Single matching icon on the left */}
+                          <Calendar className={`w-3.5 h-3.5 text-slate-400 absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3' : 'right-3'}`} />
                         </div>
                       </div>
 
@@ -542,9 +568,9 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             placeholder="example@domain.com"
-                            className="w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white placeholder-slate-400 rounded-xl px-3 py-2 sm:py-2.5 text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all"
+                            className="w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white placeholder-slate-400 rounded-xl px-3.5 py-2 sm:py-2.5 text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all h-[38px] sm:h-[42px]"
                           />
-                          <Mail className={`w-3.5 h-3.5 text-slate-400 absolute top-1/2 -translate-y-1/2 ${isArabic ? 'left-2.5' : 'right-2.5'}`} />
+                          <Mail className={`w-3.5 h-3.5 text-slate-400 absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3' : 'right-3'}`} />
                         </div>
                       </div>
 

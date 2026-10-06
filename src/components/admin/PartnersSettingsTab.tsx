@@ -1271,21 +1271,22 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
                       </div>
                     )}
 
-                    {/* Top Header Row: Badge & Accent Dot */}
-                    <div className="flex items-center justify-between w-full relative z-10">
+                    {/* Top Header Row: Centered Badge & Dot */}
+                    <div className="flex items-center justify-center w-full relative z-10">
                       <span 
-                        className="text-[10px] font-bold px-2 py-0.5 rounded-full truncate max-w-[85%]"
+                        className="inline-flex items-center justify-center gap-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full truncate max-w-[90%] text-center"
                         style={{
                           backgroundColor: formData.accentColor ? `${formData.accentColor}18` : undefined,
-                          color: formData.accentColor || undefined
+                          color: formData.accentColor || undefined,
+                          border: `1px solid ${formData.accentColor ? `${formData.accentColor}30` : 'transparent'}`
                         }}
                       >
-                        {formData.badge || (isArabic ? 'شريك معتمد' : 'Verified')}
+                        <span 
+                          className="w-2 h-2 rounded-full shrink-0 shadow-xs" 
+                          style={{ backgroundColor: formData.accentColor || '#0D6D54' }}
+                        />
+                        <span className="truncate">{formData.badge || (isArabic ? 'شريك معتمد' : 'Verified')}</span>
                       </span>
-                      <span 
-                        className="w-2.5 h-2.5 rounded-full shrink-0 shadow-xs" 
-                        style={{ backgroundColor: formData.accentColor || '#0D6D54' }}
-                      />
                     </div>
 
                     {/* Clean Framed Canvas for Logo */}
