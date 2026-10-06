@@ -489,7 +489,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen relative flex flex-col font-sans text-slate-900 dark:text-white selection:bg-[#00E5BE] selection:text-slate-950 transition-colors duration-300 overflow-x-hidden w-full max-w-[100vw]" dir="rtl">
+    <div className="min-h-screen relative flex flex-col font-sans text-slate-900 dark:text-white selection:bg-[#00E5BE] selection:text-slate-950 transition-colors duration-300 overflow-x-clip w-full max-w-[100vw]" dir="rtl">
       
       {/* 1. Gentle Animated Background with floating pediatric shapes */}
       <AnimatedBackground />

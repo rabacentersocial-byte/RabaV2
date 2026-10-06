@@ -368,8 +368,9 @@ export const Hero: React.FC<HeroProps> = ({
                   {/* Floating Notification Card (Bottom-Right Corner) connected & interacting with the new children counter */}
                   <div 
                     onClick={onOpenBooking}
-                    className={`absolute -bottom-5 -right-2 sm:-right-8 z-30 bg-white/95 dark:bg-[#0B1120]/90 backdrop-blur-2xl border border-slate-200 dark:border-white/20 hover:border-emerald-400/60 dark:hover:border-emerald-400/60 rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-[0_16px_40px_rgba(0,0,0,0.25)] flex items-center gap-2.5 sm:gap-3 ${isArabic ? 'text-right' : 'text-left'} max-w-[240px] sm:max-w-[325px] cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 ${
-                      pulseNotification ? 'ring-2 ring-emerald-400 dark:ring-emerald-500 scale-102' : ''
+                    style={{ transform: 'translateZ(0)' }}
+                    className={`absolute -bottom-5 -right-2 sm:-right-8 z-30 bg-white/95 dark:bg-[#0B1120]/95 backdrop-blur-md border border-slate-200 dark:border-white/20 hover:border-emerald-400/60 dark:hover:border-emerald-400/60 rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-[0_16px_40px_rgba(0,0,0,0.25)] flex items-center gap-2.5 sm:gap-3 ${isArabic ? 'text-right' : 'text-left'} max-w-[240px] sm:max-w-[325px] cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 ${
+                      pulseNotification ? 'ring-2 ring-emerald-400 dark:ring-emerald-500 scale-[1.02]' : ''
                     }`}
                     title={isArabic ? 'انقر لتقديم طلب تسجيل جديد لطفلك' : 'Click to submit registration for your child'}
                   >

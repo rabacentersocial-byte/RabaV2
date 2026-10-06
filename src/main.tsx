@@ -11,6 +11,13 @@ import './index.css';
 
 console.log('[Raba main] Initializing core modules...');
 
+// Pre-hydrate persistent data synchronously before React renders so incognito mode has instant data
+try {
+  hydratePersistentData();
+} catch (e) {
+  console.warn('[main] Pre-mount hydration notice:', e);
+}
+
 const rootEl = document.getElementById('root');
 if (rootEl) {
   try {

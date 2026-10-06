@@ -354,16 +354,20 @@ export async function initPersistentSync(): Promise<void> {
         // Populate local cache from server if local has no overrides
         try {
           const stringified = typeof serverVal === 'string' ? serverVal : JSON.stringify(serverVal);
-          localStorage.setItem(storageKey, stringified);
-          localStorage.setItem(`raba_ts_${storageKey}`, Date.now().toString());
+          const isChanged = localValRaw !== stringified;
 
-          // Populate legacy aliases simultaneously to guarantee 100% component compatibility
-          mirrorAliases(storageKey, stringified, Date.now());
+          if (isChanged) {
+            localStorage.setItem(storageKey, stringified);
+            localStorage.setItem(`raba_ts_${storageKey}`, Date.now().toString());
 
-          // Dispatch reactive update event
-          const eventName = EVENT_MAP[storageKey];
-          if (eventName) {
-            window.dispatchEvent(new CustomEvent(eventName, { detail: serverVal }));
+            // Populate legacy aliases simultaneously to guarantee 100% component compatibility
+            mirrorAliases(storageKey, stringified, Date.now());
+
+            // Dispatch reactive update event only when content actually changed
+            const eventName = EVENT_MAP[storageKey];
+            if (eventName) {
+              window.dispatchEvent(new CustomEvent(eventName, { detail: serverVal }));
+            }
           }
         } catch (e) {
           console.warn(`[PersistentSync] Failed to cache ${storageKey}:`, e);

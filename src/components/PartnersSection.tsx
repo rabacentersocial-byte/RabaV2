@@ -73,29 +73,29 @@ export const PartnersSection: React.FC = () => {
     if (typeof window !== 'undefined') {
       const w = window.innerWidth;
       if (w < 640) {
-        // Mobile card: ~210px + 16px gap = 226px
-        return Math.min(Math.max(w * 0.58, 200), 235) + 16;
+        // Mobile card: ~245px + 16px gap = 261px
+        return Math.min(Math.max(w * 0.72, 230), 270) + 16;
       }
       if (w < 1024) {
         return 260 + 20; // 280px stride
       }
-      return 280 + 24; // 304px stride
+      return 270 + 24; // 294px stride
     }
-    return 280;
+    return 294;
   };
 
   const getCardWidth = () => {
     if (typeof window !== 'undefined') {
       const w = window.innerWidth;
       if (w < 640) {
-        return Math.min(Math.max(w * 0.58, 200), 235);
+        return Math.min(Math.max(w * 0.72, 230), 270);
       }
       if (w < 1024) {
         return 260;
       }
-      return 280;
+      return 270;
     }
-    return 260;
+    return 270;
   };
 
   // Speed calculation
@@ -488,43 +488,35 @@ export const PartnersSection: React.FC = () => {
                     dir={isArabic ? 'rtl' : 'ltr'}
                     className="shrink-0 transition-all duration-300"
                   >
-                    {/* Modern Professional Partner Card - Matching high-prestige clinical standards */}
+                    {/* Modern Professional Partner Card - Matching high-prestige clinical standards from screenshot */}
                     <div
                       onClick={() => setActivePartnerModal(partner)}
-                      className={`group w-[58vw] min-w-[200px] max-w-[235px] sm:min-w-0 sm:max-w-none sm:w-[260px] lg:w-[280px] h-[215px] sm:h-[230px] rounded-2xl sm:rounded-3xl p-3.5 sm:p-4 bg-white/95 dark:bg-slate-900/90 backdrop-blur-xs border border-slate-200/90 dark:border-white/10 hover:border-emerald-500/60 dark:hover:border-[#2DD4BF]/60 hover:shadow-xl hover:shadow-emerald-900/10 dark:hover:shadow-emerald-950/40 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between cursor-pointer relative overflow-hidden ${
-                        partner.cardStyle === 'glow' ? 'shadow-md ring-1 ring-emerald-500/20' : ''
-                      }`}
+                      className={`group w-[72vw] min-w-[225px] max-w-[265px] sm:min-w-0 sm:max-w-none sm:w-[260px] md:w-[270px] h-[345px] sm:h-[370px] rounded-[30px] sm:rounded-[34px] p-4 sm:p-5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-lg shadow-slate-900/5 dark:shadow-black/40 hover:shadow-2xl hover:border-emerald-500/50 dark:hover:border-[#2DD4BF]/50 hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between cursor-pointer relative overflow-hidden`}
                     >
-                      {/* Subtle Top Ambient Gradient */}
-                      <div 
-                        className="absolute top-0 inset-x-0 h-1.5 opacity-80"
-                        style={{ backgroundColor: partner.accentColor || '#0D6D54' }}
-                      />
-
-                      {/* Top Header Row: Sector icon indicator & verified badge */}
-                      <div className="flex items-center justify-between w-full pt-1 relative z-10">
+                      {/* Top Header Row: Sector circular dot (left) & Badge pill (right) */}
+                      <div className="flex items-center justify-between w-full pt-0.5 px-0.5 relative z-10">
                         <span 
-                          className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full truncate max-w-[85%]"
+                          className="w-3 h-3 rounded-full shrink-0 shadow-xs ring-2 ring-white/60 dark:ring-slate-800/80" 
+                          style={{ backgroundColor: partner.accentColor || '#006C35' }}
+                        />
+
+                        <span 
+                          className="inline-flex items-center text-xs sm:text-[13px] font-bold px-3 py-1 rounded-full truncate max-w-[80%]"
                           style={{
-                            backgroundColor: partner.accentColor ? `${partner.accentColor}15` : undefined,
-                            color: partner.accentColor || undefined
+                            backgroundColor: partner.accentColor ? `${partner.accentColor}18` : '#E8F7F0',
+                            color: partner.accentColor || '#006C35',
+                            border: `1px solid ${partner.accentColor ? `${partner.accentColor}30` : '#A7F3D0'}`
                           }}
                         >
-                          <CheckCircle2 className="w-2.5 h-2.5 shrink-0" />
-                          <span className="truncate">{partner.badge || (isArabic ? 'شريك معتمد' : 'Verified')}</span>
+                          <span className="truncate">{partner.badge || (isArabic ? 'شريك وطني' : 'Partner')}</span>
                         </span>
-                        
-                        <span 
-                          className="w-2 h-2 rounded-full shrink-0 shadow-xs" 
-                          style={{ backgroundColor: partner.accentColor || '#0D6D54' }}
-                        />
                       </div>
 
-                      {/* Clean Framed Canvas for Logo */}
+                      {/* Center Framed Canvas for Logo - Large & Centered matching user screenshot */}
                       <div 
-                        className="w-full h-22 sm:h-24 rounded-xl border border-slate-200/80 dark:border-white/10 shadow-2xs group-hover:shadow-xs group-hover:border-emerald-400/50 dark:group-hover:border-[#2DD4BF]/50 flex items-center justify-center overflow-hidden my-auto transition-all relative z-10 p-2"
+                        className="w-full h-48 sm:h-56 rounded-2xl border border-slate-100/90 dark:border-white/5 bg-slate-50/40 dark:bg-slate-800/25 flex items-center justify-center overflow-hidden my-auto transition-all relative z-10 p-2 sm:p-3 group-hover:bg-slate-50/70 dark:group-hover:bg-slate-800/40"
                         style={{
-                          backgroundColor: partner.imageBgColor || (isDark ? 'rgba(255,255,255,0.96)' : '#ffffff')
+                          backgroundColor: partner.imageBgColor && partner.imageBgColor !== '#ffffff' ? partner.imageBgColor : undefined
                         }}
                       >
                         <PartnerLogoRenderer
@@ -534,23 +526,20 @@ export const PartnersSection: React.FC = () => {
                           accentColor={partner.accentColor}
                           letter={partner.letter}
                           imageFit={partner.imageFit}
-                          imagePadding={partner.imagePadding}
-                          logoScale={partner.logoScale}
+                          imagePadding={partner.imagePadding || 'xs'}
+                          logoScale={partner.logoScale ? (partner.logoScale < 120 ? 120 : partner.logoScale) : 120}
                           expandImageToEdges={partner.expandImageToEdges}
                         />
                       </div>
 
-                      {/* Partner Name, Subtitle & Interactive Micro-Action */}
-                      <div className="w-full text-center mt-0.5 relative z-10">
-                        <h3 className="text-xs sm:text-sm font-black text-slate-900 dark:text-white truncate group-hover:text-[#0D6D54] dark:group-hover:text-[#2DD4BF] transition-colors">
+                      {/* Bottom: Partner Name & Category - Exact styling from screenshot */}
+                      <div className="w-full text-center mt-2 mb-0.5 px-1 relative z-10">
+                        <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white truncate group-hover:text-emerald-700 dark:group-hover:text-[#2DD4BF] transition-colors leading-tight">
                           {isArabic ? partner.name : partner.nameEn}
                         </h3>
-                        <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium px-1">
-                          <span className="truncate text-right rtl:text-right ltr:text-left">{isArabic ? partner.category : partner.categoryEn}</span>
-                          <span className="inline-flex items-center text-[#0D6D54] dark:text-[#2DD4BF] opacity-0 group-hover:opacity-100 transition-opacity font-bold shrink-0">
-                            <ArrowUpRight className="w-3 h-3" />
-                          </span>
-                        </div>
+                        <p className="text-xs sm:text-[13px] text-slate-400 dark:text-slate-400 font-medium truncate mt-1">
+                          {isArabic ? partner.category : partner.categoryEn}
+                        </p>
                       </div>
 
                     </div>
@@ -565,42 +554,37 @@ export const PartnersSection: React.FC = () => {
         {/* VIEW 2: FULL GRID VIEW OF ALL PARTNERS                                    */}
         {/* ========================================================================= */}
         {viewMode === 'grid' && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5 py-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 py-6">
             {filteredPartners.map((partner) => (
               <div
                 key={partner.id}
                 onClick={() => setActivePartnerModal(partner)}
-                className={`group rounded-2xl p-4 bg-white/95 dark:bg-slate-900/90 border border-slate-200/90 dark:border-white/10 hover:border-emerald-500/60 dark:hover:border-[#2DD4BF]/60 hover:shadow-xl hover:shadow-emerald-900/10 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer relative overflow-hidden ${
-                  partner.cardStyle === 'glow' ? 'shadow-md ring-1 ring-emerald-500/20' : ''
-                }`}
+                className={`group h-[345px] sm:h-[370px] rounded-[30px] sm:rounded-[34px] p-4 sm:p-5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-lg shadow-slate-900/5 dark:shadow-black/40 hover:shadow-2xl hover:border-emerald-500/50 dark:hover:border-[#2DD4BF]/50 hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between cursor-pointer relative overflow-hidden`}
               >
-                {/* Subtle Top Ambient Gradient */}
-                <div 
-                  className="absolute top-0 inset-x-0 h-1.5 opacity-80"
-                  style={{ backgroundColor: partner.accentColor || '#0D6D54' }}
-                />
-
-                <div className="flex items-center justify-between w-full mb-2 pt-1 relative z-10">
+                {/* Top Header Row: Sector circular dot (left) & Badge pill (right) */}
+                <div className="flex items-center justify-between w-full pt-0.5 px-0.5 relative z-10">
                   <span 
-                    className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full truncate max-w-[85%]"
+                    className="w-3 h-3 rounded-full shrink-0 shadow-xs ring-2 ring-white/60 dark:ring-slate-800/80" 
+                    style={{ backgroundColor: partner.accentColor || '#006C35' }}
+                  />
+
+                  <span 
+                    className="inline-flex items-center text-xs sm:text-[13px] font-bold px-3 py-1 rounded-full truncate max-w-[80%]"
                     style={{
-                      backgroundColor: partner.accentColor ? `${partner.accentColor}15` : undefined,
-                      color: partner.accentColor || undefined
+                      backgroundColor: partner.accentColor ? `${partner.accentColor}18` : '#E8F7F0',
+                      color: partner.accentColor || '#006C35',
+                      border: `1px solid ${partner.accentColor ? `${partner.accentColor}30` : '#A7F3D0'}`
                     }}
                   >
-                    <CheckCircle2 className="w-2.5 h-2.5 shrink-0" />
-                    <span className="truncate">{partner.badge || (isArabic ? 'شريك معتمد' : 'Verified')}</span>
+                    <span className="truncate">{partner.badge || (isArabic ? 'شريك وطني' : 'Partner')}</span>
                   </span>
-                  <span 
-                    className="w-2 h-2 rounded-full shrink-0 shadow-xs" 
-                    style={{ backgroundColor: partner.accentColor || '#0D6D54' }}
-                  />
                 </div>
 
+                {/* Center Framed Canvas for Logo - Large & Centered matching user screenshot */}
                 <div 
-                  className="w-full h-22 sm:h-24 rounded-xl border border-slate-200/80 dark:border-white/10 shadow-2xs group-hover:shadow-xs group-hover:border-emerald-400/50 dark:group-hover:border-[#2DD4BF]/50 flex items-center justify-center overflow-hidden my-auto transition-all relative z-10 p-2"
+                  className="w-full h-48 sm:h-56 rounded-2xl border border-slate-100/90 dark:border-white/5 bg-slate-50/40 dark:bg-slate-800/25 flex items-center justify-center overflow-hidden my-auto transition-all relative z-10 p-2 sm:p-3 group-hover:bg-slate-50/70 dark:group-hover:bg-slate-800/40"
                   style={{
-                    backgroundColor: partner.imageBgColor || (isDark ? 'rgba(255,255,255,0.96)' : '#ffffff')
+                    backgroundColor: partner.imageBgColor && partner.imageBgColor !== '#ffffff' ? partner.imageBgColor : undefined
                   }}
                 >
                   <PartnerLogoRenderer
@@ -610,17 +594,18 @@ export const PartnersSection: React.FC = () => {
                     accentColor={partner.accentColor}
                     letter={partner.letter}
                     imageFit={partner.imageFit}
-                    imagePadding={partner.imagePadding}
-                    logoScale={partner.logoScale}
+                    imagePadding={partner.imagePadding || 'xs'}
+                    logoScale={partner.logoScale ? (partner.logoScale < 120 ? 120 : partner.logoScale) : 120}
                     expandImageToEdges={partner.expandImageToEdges}
                   />
                 </div>
 
-                <div className="w-full text-center mt-2 relative z-10">
-                  <h3 className="text-xs sm:text-sm font-black text-slate-900 dark:text-white truncate group-hover:text-[#0D6D54] dark:group-hover:text-[#2DD4BF] transition-colors">
+                {/* Bottom: Partner Name & Category - Exact styling from screenshot */}
+                <div className="w-full text-center mt-2 mb-0.5 px-1 relative z-10">
+                  <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white truncate group-hover:text-emerald-700 dark:group-hover:text-[#2DD4BF] transition-colors leading-tight">
                     {isArabic ? partner.name : partner.nameEn}
                   </h3>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-0.5 font-medium">
+                  <p className="text-xs sm:text-[13px] text-slate-400 dark:text-slate-400 font-medium truncate mt-1">
                     {isArabic ? partner.category : partner.categoryEn}
                   </p>
                 </div>

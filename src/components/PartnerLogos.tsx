@@ -70,9 +70,7 @@ export const PartnerLogoRenderer: React.FC<{
     ? 'w-full h-full object-cover rounded-lg' 
     : imageFit === 'fill'
       ? 'w-full h-full object-fill'
-      : normalizedScale > 1.25
-        ? 'w-auto h-auto object-contain'
-        : 'max-h-full max-w-full h-auto w-auto object-contain';
+      : 'max-h-full max-w-full w-full h-full object-contain';
 
   return (
     <div className={`w-full h-full flex items-center justify-center select-none pointer-events-none overflow-hidden ${paddingClass} ${className}`}>
@@ -82,8 +80,8 @@ export const PartnerLogoRenderer: React.FC<{
         style={{
           transform: normalizedScale !== 1 ? `scale(${normalizedScale})` : undefined,
           transformOrigin: 'center center',
-          maxHeight: normalizedScale > 1.25 ? `${Math.min(Math.round(normalizedScale * 100), 220)}%` : undefined,
-          maxWidth: normalizedScale > 1.25 ? `${Math.min(Math.round(normalizedScale * 100), 220)}%` : undefined
+          maxHeight: normalizedScale > 1.25 ? `${Math.min(Math.round(normalizedScale * 100), 160)}%` : '100%',
+          maxWidth: normalizedScale > 1.25 ? `${Math.min(Math.round(normalizedScale * 100), 160)}%` : '100%'
         }}
         className={`${fitClass} mx-auto block transition-transform duration-300 group-hover:scale-105`}
         loading="eager"
