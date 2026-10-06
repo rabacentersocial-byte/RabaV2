@@ -328,7 +328,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
 
   // Restore Defaults
   const handleRestoreDefaults = () => {
-    if (!window.confirm(isArabic ? 'هل تريد استعادة الكورسات الافتراضية المعتمدة (4 كورسات) والإعدادات الأصلية؟' : 'Restore default 4 accredited courses and settings?')) {
+    if (!window.confirm(isArabic ? `هل تريد استعادة الكورسات المعتمدة (${COURSES_DATA.length} كورساً) والإعدادات الأصلية؟` : `Restore default ${COURSES_DATA.length} accredited courses and settings?`)) {
       return;
     }
     setCourses(COURSES_DATA);

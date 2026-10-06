@@ -328,6 +328,18 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
                         </div>
                       </div>
 
+                      {/* Price Display Badge */}
+                      {course.priceDisplayAr && (
+                        <div className="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 text-xs font-black">
+                          <span className="text-slate-500 dark:text-slate-400 font-bold">
+                            {isArabic ? 'رسوم الاستثمار:' : 'Tuition Fee:'}
+                          </span>
+                          <span className="text-teal-700 dark:text-[#00E5BE] font-black">
+                            {isArabic ? course.priceDisplayAr : course.priceDisplayEn}
+                          </span>
+                        </div>
+                      )}
+
                       {/* Bottom Section: Action Buttons */}
                       <div className="pt-4 border-t border-slate-100 dark:border-white/10">
                         {/* Action Buttons: Register & WhatsApp */}
@@ -444,6 +456,18 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
                         ))}
                       </div>
                     </div>
+
+                    {/* Price Display Badge */}
+                    {course.priceDisplayAr && (
+                      <div className="flex items-center justify-between py-1.5 px-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 text-[11px] font-black">
+                        <span className="text-slate-500 dark:text-slate-400 font-bold">
+                          {isArabic ? 'الرسوم:' : 'Fee:'}
+                        </span>
+                        <span className="text-teal-700 dark:text-[#00E5BE] font-black">
+                          {isArabic ? course.priceDisplayAr : course.priceDisplayEn}
+                        </span>
+                      </div>
+                    )}
 
                     <div className="pt-3 border-t border-slate-100 dark:border-white/10">
                       <div className="grid grid-cols-2 gap-2">

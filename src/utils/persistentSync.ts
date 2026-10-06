@@ -165,6 +165,16 @@ export function hydratePersistentData(): void {
               shouldHydrate = true;
             }
           }
+          if (existing && key === SYNC_KEYS.COURSES && Array.isArray(bundledVal)) {
+            try {
+              const currentArr = JSON.parse(existing);
+              if (Array.isArray(currentArr) && currentArr.length < bundledVal.length) {
+                shouldHydrate = true;
+              }
+            } catch {
+              shouldHydrate = true;
+            }
+          }
           if (shouldHydrate) {
             const valStr = typeof bundledVal === 'string' ? bundledVal : JSON.stringify(bundledVal);
             localStorage.setItem(key, valStr);
@@ -305,6 +315,17 @@ export async function initPersistentSync(): Promise<void> {
             )
           );
           if (hasStaleMocks || !localSpecs || localSpecs.length === 0) {
+            localValRaw = JSON.stringify(serverVal);
+            localStorage.setItem(storageKey, localValRaw);
+          }
+        } catch { /* ignore */ }
+      }
+
+      const isCoursesKey = storageKey === SYNC_KEYS.COURSES;
+      if (isCoursesKey && Array.isArray(serverVal)) {
+        try {
+          const localCourses = localValRaw ? JSON.parse(localValRaw) : null;
+          if (!localCourses || (Array.isArray(localCourses) && localCourses.length < serverVal.length)) {
             localValRaw = JSON.stringify(serverVal);
             localStorage.setItem(storageKey, localValRaw);
           }

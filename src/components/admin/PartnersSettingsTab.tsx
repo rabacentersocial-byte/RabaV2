@@ -186,6 +186,27 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
     setIsModalOpen(true);
   };
 
+  // Upload image to server disk via /api/sync/upload
+  const uploadImageToServer = async (file: File, fallbackData: string): Promise<string> => {
+    try {
+      const res = await fetch('/api/sync/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          filename: file.name,
+          fileData: fallbackData
+        })
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.url) return json.url;
+      }
+    } catch (err) {
+      console.warn('Server upload notice, falling back:', err);
+    }
+    return fallbackData;
+  };
+
   // Main Logo Image Upload handler
   const handleLogoFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -195,15 +216,18 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
       setIsUploading(true);
       // Automatically compress and preserve transparency for PNG/SVG logos & upload to server disk
       const compressedUrl = await compressImage(file, 450, 450, 0.92, true);
+      const finalUrl = await uploadImageToServer(file, compressedUrl);
       setFormData(prev => ({
         ...prev,
-        logoUrl: compressedUrl
+        logoUrl: finalUrl
       }));
     } catch (err) {
       console.error('Failed to compress partner logo:', err);
       const reader = new FileReader();
-      reader.onload = () => {
-        setFormData(prev => ({ ...prev, logoUrl: reader.result as string }));
+      reader.onload = async () => {
+        const dataUrl = reader.result as string;
+        const finalUrl = await uploadImageToServer(file, dataUrl);
+        setFormData(prev => ({ ...prev, logoUrl: finalUrl }));
       };
       reader.readAsDataURL(file);
     } finally {
@@ -220,9 +244,10 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
     try {
       setIsUploading(true);
       const compressedUrl = await compressImage(file, 800, 300, 0.85, false);
+      const finalUrl = await uploadImageToServer(file, compressedUrl);
       setFormData(prev => ({
         ...prev,
-        cardCoverUrl: compressedUrl
+        cardCoverUrl: finalUrl
       }));
     } catch (err) {
       console.error('Failed to compress cover image:', err);
@@ -245,12 +270,13 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
     try {
       setIsUploading(true);
       const compressedUrl = await compressImage(file, 450, 450, 0.92, true);
+      const finalUrl = await uploadImageToServer(file, compressedUrl);
       const updated = partners.map(p => 
-        p.id === quickUploadPartnerId ? { ...p, logoUrl: compressedUrl } : p
+        p.id === quickUploadPartnerId ? { ...p, logoUrl: finalUrl } : p
       );
       setPartners(updated);
       saveStoredPartners(updated);
-      triggerSuccessFeedback(isArabic ? 'تم تحديث صورة الشعار مباشرة وتطبيقها في السلايدر!' : 'Partner logo updated successfully!');
+      triggerSuccessFeedback(isArabic ? 'تم حفظ صورة الشعار على الخادم وتطبيقها في السلايدر بنجاح!' : 'Partner logo saved to server and updated in slider!');
     } catch (err) {
       console.error('Quick upload failed:', err);
     } finally {

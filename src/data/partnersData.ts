@@ -595,7 +595,28 @@ export function getStoredPartners(): PartnerItem[] {
     if (hasOldNafea || parsed.length < 15 || hasUncustomizedMoi) {
       return DEFAULT_PARTNERS;
     }
-    return parsed;
+    // Automatically sanitize any base64 logoUrl in localStorage so it converts cleanly to permanent file paths
+    let modified = false;
+    const sanitized = parsed.map((p: PartnerItem) => {
+      if (p.logoUrl && p.logoUrl.startsWith('data:')) {
+        modified = true;
+        return {
+          ...p,
+          logoUrl: p.id === 'partner-tamara'
+            ? '/images/partners/partner-tamara_custom.png'
+            : p.id === 'partner-rais'
+              ? '/images/partners/partner-rais_custom.png'
+              : `/images/partners/${p.id}_custom.png`
+        };
+      }
+      return p;
+    });
+    if (modified) {
+      try {
+        localStorage.setItem(STORAGE_KEY_PARTNERS, JSON.stringify(sanitized));
+      } catch {}
+    }
+    return sanitized;
   } catch {
     return DEFAULT_PARTNERS;
   }

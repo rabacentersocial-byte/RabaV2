@@ -163,12 +163,19 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
               {/* Highlights badge bar */}
               <div className="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl border border-slate-200 dark:border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
                 <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200 font-bold">
-                  <Award className="w-4 h-4 text-amber-500" />
+                  <Award className="w-4 h-4 text-amber-500 shrink-0" />
                   <span>{isArabic ? course.tagHighlightAr : course.tagHighlightEn}</span>
                 </div>
 
+                {course.priceDisplayAr && (
+                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-500/30 text-teal-800 dark:text-[#00E5BE] font-black">
+                    <span>{isArabic ? 'الرسوم:' : 'Fee:'}</span>
+                    <span>{isArabic ? course.priceDisplayAr : course.priceDisplayEn}</span>
+                  </div>
+                )}
+
                 <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold">
-                  <ShieldCheck className="w-4 h-4" />
+                  <ShieldCheck className="w-4 h-4 shrink-0" />
                   <span>{isArabic ? 'شهادة تدريبية معتمدة' : 'Accredited Certificate'}</span>
                 </div>
               </div>
