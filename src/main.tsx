@@ -31,11 +31,9 @@ if (rootEl) {
     );
     console.log('[Raba main] React tree successfully dispatched to renderer.');
 
-    // Dismiss overlay splash screen as soon as React mounts
+    // Dismiss overlay splash screen immediately as soon as React mounts
     if (typeof window !== 'undefined' && (window as any).dismissSplash) {
-      setTimeout(() => {
-        (window as any).dismissSplash();
-      }, 50);
+      (window as any).dismissSplash();
     }
   } catch (err) {
     console.error('[main] Fatal render mount error:', err);

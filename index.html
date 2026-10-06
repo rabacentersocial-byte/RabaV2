@@ -13,12 +13,12 @@
         window.__rabaReactMounted = true;
         var s = document.getElementById('raba-splash');
         if (s) {
-          s.style.transition = 'opacity 0.35s ease, visibility 0.35s';
+          s.style.transition = 'opacity 0.15s ease, visibility 0.15s';
           s.style.opacity = '0';
           s.style.pointerEvents = 'none';
           setTimeout(function() {
             if (s && s.parentNode) s.parentNode.removeChild(s);
-          }, 350);
+          }, 160);
         }
       };
 

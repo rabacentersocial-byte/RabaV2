@@ -436,12 +436,17 @@ async function startServer() {
     }
   });
 
+  // In-memory cache for Cloud SQL settings to make /api/sync/all respond in 1ms
+  let cachedDbSettings: Record<string, any> | null = null;
+  let lastDbSettingsTime = 0;
+  const DB_SETTINGS_CACHE_TTL = 30000; // 30s cache
+
   // Get all persistent customizations & data from disk AND Cloud SQL
   app.get('/api/sync/all', async (req: Request, res: Response) => {
     try {
       const result: Record<string, any> = {};
 
-      // 1. Read files from disk
+      // 1. Read files from disk (instant 0ms)
       for (const [key, filename] of Object.entries(STORAGE_FILE_MAP)) {
         const data = readJsonFile(filename, null);
         if (data !== null) {
@@ -449,12 +454,21 @@ async function startServer() {
         }
       }
 
-      // 2. Merge with Cloud SQL site_settings with a 2-second timeout guard
+      // 2. Merge with Cloud SQL site_settings using memory cache & fast timeout
       if (process.env.SQL_HOST) {
         try {
-          const dbPromise = getAllDbSettings();
-          const timeoutPromise = new Promise<Record<string, any>>((resolve) => setTimeout(() => resolve({}), 2000));
-          const dbSettings = await Promise.race([dbPromise, timeoutPromise]);
+          let dbSettings: Record<string, any> = {};
+          if (cachedDbSettings && Date.now() - lastDbSettingsTime < DB_SETTINGS_CACHE_TTL) {
+            dbSettings = cachedDbSettings;
+          } else {
+            const dbPromise = getAllDbSettings();
+            const timeoutPromise = new Promise<Record<string, any>>((resolve) => setTimeout(() => resolve({}), 400));
+            dbSettings = await Promise.race([dbPromise, timeoutPromise]);
+            if (Object.keys(dbSettings).length > 0) {
+              cachedDbSettings = dbSettings;
+              lastDbSettingsTime = Date.now();
+            }
+          }
           for (const [key, val] of Object.entries(dbSettings)) {
             if (!key.startsWith('upload:') && val !== null && val !== undefined) {
               if (key === 'raba_specialists') {
@@ -462,6 +476,7 @@ async function startServer() {
                   if (!Array.isArray(val) || val.length !== result[key].length) {
                     try {
                       await saveDbSetting(key, result[key]);
+                      cachedDbSettings = null;
                     } catch { /* ignore */ }
                   }
                 } else if (Array.isArray(val) && val.length > 0) {
@@ -501,6 +516,7 @@ async function startServer() {
 
       if (all && typeof all === 'object') {
         const savedKeys: string[] = [];
+        cachedDbSettings = null;
         for (const [itemKey, itemData] of Object.entries(all)) {
           const filename = STORAGE_FILE_MAP[itemKey] || `${itemKey.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`;
           if (writeJsonFile(filename, itemData)) {
@@ -531,6 +547,7 @@ async function startServer() {
 
       const filename = STORAGE_FILE_MAP[key] || `${key.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`;
       const ok = writeJsonFile(filename, data);
+      cachedDbSettings = null;
       
       let dbSaved = false;
       if (process.env.SQL_HOST) {

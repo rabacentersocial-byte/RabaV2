@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { BUNDLED_PARTNER_LOGOS } from '../data/partnerLogosBundle';
+import { getResolvedImageUrl } from '../utils/persistentImageStore';
 
 export const PartnerLogoRenderer: React.FC<{
   partnerId?: string;
@@ -25,13 +27,21 @@ export const PartnerLogoRenderer: React.FC<{
 }) => {
   const [hasError, setHasError] = useState(false);
 
-  // Reset error state when logoUrl changes
+  // Reset error state when logoUrl or partnerId changes
   useEffect(() => {
     setHasError(false);
-  }, [logoUrl]);
+  }, [logoUrl, partnerId]);
 
-  // Fallback to stylized monogram circle if image fails or is missing
-  if (hasError || !logoUrl) {
+  // Priority 1: Check inlined bundled logo (embedded in core JS bundle for 100% incognito reliability)
+  // Priority 2: In-memory / persistent store resolved image
+  // Priority 3: Direct logoUrl
+  const bundledSrc = partnerId ? BUNDLED_PARTNER_LOGOS[partnerId] : undefined;
+  const effectiveSrc = (hasError && bundledSrc)
+    ? bundledSrc
+    : (bundledSrc || (logoUrl ? getResolvedImageUrl(logoUrl) : '') || logoUrl || '');
+
+  // Fallback to stylized monogram circle ONLY if both external URL and bundled image are absent
+  if ((hasError && !bundledSrc) || !effectiveSrc) {
     return (
       <div 
         className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center font-black text-lg sm:text-xl text-white shadow-xs ring-2 ring-white/30 shrink-0"
@@ -67,7 +77,7 @@ export const PartnerLogoRenderer: React.FC<{
   return (
     <div className={`w-full h-full flex items-center justify-center select-none pointer-events-none overflow-hidden ${paddingClass} ${className}`}>
       <img
-        src={logoUrl}
+        src={effectiveSrc}
         alt={name}
         style={{
           transform: normalizedScale !== 1 ? `scale(${normalizedScale})` : undefined,
@@ -77,8 +87,14 @@ export const PartnerLogoRenderer: React.FC<{
         }}
         className={`${fitClass} mx-auto block transition-transform duration-300 group-hover:scale-105`}
         loading="eager"
-        decoding="async"
-        onError={() => setHasError(true)}
+        decoding="sync"
+        onError={() => {
+          if (!hasError && bundledSrc && effectiveSrc !== bundledSrc) {
+            setHasError(true);
+          } else if (!bundledSrc) {
+            setHasError(true);
+          }
+        }}
       />
     </div>
   );

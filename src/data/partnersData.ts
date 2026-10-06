@@ -1,4 +1,5 @@
 import { savePersistentModule } from '../utils/persistentSync';
+import { BUNDLED_PARTNER_LOGOS } from './partnerLogosBundle';
 
 export interface PartnerItem {
   id: string;
@@ -584,21 +585,33 @@ export const STORAGE_KEY_SETTINGS = 'raba_partners_settings_v7';
 export function getStoredPartners(): PartnerItem[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY_PARTNERS);
-    if (!raw) return DEFAULT_PARTNERS;
+    if (!raw) {
+      return DEFAULT_PARTNERS.map(p => ({
+        ...p,
+        logoUrl: BUNDLED_PARTNER_LOGOS[p.id] || p.logoUrl
+      }));
+    }
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed) || parsed.length === 0) {
-      return DEFAULT_PARTNERS;
+      return DEFAULT_PARTNERS.map(p => ({
+        ...p,
+        logoUrl: BUNDLED_PARTNER_LOGOS[p.id] || p.logoUrl
+      }));
     }
     // If old list with obsolete nafea / unsplash or uncustomized moi exists, migrate to customized 21 partners
     const hasOldNafea = parsed.some((p: PartnerItem) => p.id === 'partner-nafea');
     const hasUncustomizedMoi = parsed.some((p: PartnerItem) => p.id === 'partner-moi' && p.logoUrl === '/images/partners/moi.svg');
     if (hasOldNafea || parsed.length < 15 || hasUncustomizedMoi) {
-      return DEFAULT_PARTNERS;
+      return DEFAULT_PARTNERS.map(p => ({
+        ...p,
+        logoUrl: BUNDLED_PARTNER_LOGOS[p.id] || p.logoUrl
+      }));
     }
-    // Automatically sanitize any base64 logoUrl in localStorage so it converts cleanly to permanent file paths
+    // Automatically sanitize and guarantee bundled inlined logos in incognito and offline mode
     let modified = false;
     const sanitized = parsed.map((p: PartnerItem) => {
-      if (p.logoUrl && p.logoUrl.startsWith('data:')) {
+      const bundled = BUNDLED_PARTNER_LOGOS[p.id];
+      if (p.logoUrl && p.logoUrl.startsWith('data:') && !bundled) {
         modified = true;
         return {
           ...p,
@@ -609,7 +622,10 @@ export function getStoredPartners(): PartnerItem[] {
               : `/images/partners/${p.id}_custom.png`
         };
       }
-      return p;
+      return {
+        ...p,
+        logoUrl: bundled || p.logoUrl || `/images/partners/${p.id}_custom.png`
+      };
     });
     if (modified) {
       try {
@@ -618,7 +634,10 @@ export function getStoredPartners(): PartnerItem[] {
     }
     return sanitized;
   } catch {
-    return DEFAULT_PARTNERS;
+    return DEFAULT_PARTNERS.map(p => ({
+      ...p,
+      logoUrl: BUNDLED_PARTNER_LOGOS[p.id] || p.logoUrl
+    }));
   }
 }
 
