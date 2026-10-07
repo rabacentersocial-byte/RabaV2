@@ -29,6 +29,7 @@ export interface CourseItem {
   isActive?: boolean;
   cardCoverUrl?: string;
   // Professional screenshot & rich card fields
+  iconName?: string;
   floatingBadgeAr?: string;
   floatingBadgeEn?: string;
   accreditationBadgeAr?: string;
@@ -101,14 +102,15 @@ export const COURSES_DATA: CourseItem[] = [
     "order": 1,
     "isActive": true,
     "cardCoverUrl": "/images/courses/course_1_qba.jpg",
+    "iconName": "award",
     "floatingBadgeAr": "اعتماد دولي",
     "floatingBadgeEn": "International Accreditation",
     "accreditationBadgeAr": "اعتماد البورد الدولي QABA",
     "accreditationBadgeEn": "QABA International Certification",
     "rating": 4.9,
     "reviewsCount": 184,
-    "instructorAr": "بإشراف د. سارة العتيبي",
-    "instructorEn": "Supervised by Dr. Sara Al-Otaibi",
+    "instructorAr": "بإشراف نخبة من الأخصائيين المعتمدين",
+    "instructorEn": "Supervised by Certified Specialists",
     "lessonsCount": 36,
     "currentPrice": 2490,
     "originalPrice": 2990,
@@ -149,14 +151,15 @@ export const COURSES_DATA: CourseItem[] = [
     "order": 2,
     "isActive": true,
     "cardCoverUrl": "/images/courses/course_2_abat.jpg",
+    "iconName": "briefcase",
     "floatingBadgeAr": "مسار مهني",
     "floatingBadgeEn": "Professional Track",
     "accreditationBadgeAr": "الاعتماد المهني الأول في ABA",
     "accreditationBadgeEn": "First Professional ABA Credential",
     "rating": 4.8,
     "reviewsCount": 126,
-    "instructorAr": "بإشراف أ. ريم الحربي",
-    "instructorEn": "Supervised by Reem Al-Harbi",
+    "instructorAr": "بإشراف نخبة من الأخصائيين المعتمدين",
+    "instructorEn": "Supervised by Certified Specialists",
     "lessonsCount": 18,
     "currentPrice": 990,
     "originalPrice": 1290,
@@ -197,14 +200,15 @@ export const COURSES_DATA: CourseItem[] = [
     "order": 3,
     "isActive": true,
     "cardCoverUrl": "/images/courses/course_3_autism_inclusion.jpg",
+    "iconName": "school",
     "floatingBadgeAr": "جديد",
     "floatingBadgeEn": "New",
     "accreditationBadgeAr": "شهادة تطوير مهني",
     "accreditationBadgeEn": "Professional Development Certificate",
     "rating": 4.9,
     "reviewsCount": 98,
-    "instructorAr": "بإشراف د. نورة القحطاني",
-    "instructorEn": "Supervised by Dr. Noura Al-Qahtani",
+    "instructorAr": "بإشراف نخبة من الأخصائيين المعتمدين",
+    "instructorEn": "Supervised by Certified Specialists",
     "lessonsCount": 15,
     "currentPrice": 429,
     "originalPrice": 550,
@@ -245,14 +249,15 @@ export const COURSES_DATA: CourseItem[] = [
     "order": 4,
     "isActive": true,
     "cardCoverUrl": "/images/courses/course_4_qasp.jpg",
+    "iconName": "users-round",
     "floatingBadgeAr": "إشراف مهني",
     "floatingBadgeEn": "Supervision Track",
     "accreditationBadgeAr": "اعتماد البورد الدولي QABA",
     "accreditationBadgeEn": "International Board Certification",
     "rating": 4.9,
     "reviewsCount": 112,
-    "instructorAr": "بإشراف د. فهد العنزي",
-    "instructorEn": "Supervised by Dr. Fahad Al-Enezi",
+    "instructorAr": "بإشراف نخبة من الأخصائيين المعتمدين",
+    "instructorEn": "Supervised by Certified Specialists",
     "lessonsCount": 42,
     "currentPrice": 3500,
     "originalPrice": 5000,
@@ -281,7 +286,7 @@ export const COURSES_DATA: CourseItem[] = [
       "تعميم مهارات التواصل في البيئة"
     ],
     "featuresEn": [
-      "Identifying reinforcers and Motivating Operations",
+      "Identifying reinforcers and Motifying Operations",
       "Building verbal manding & PECS communication",
       "Generalizing requests across daily settings"
     ],
@@ -293,14 +298,15 @@ export const COURSES_DATA: CourseItem[] = [
     "order": 5,
     "isActive": true,
     "cardCoverUrl": "/images/courses/course_5_mand.jpg",
+    "iconName": "message-square-quote",
     "floatingBadgeAr": "ساعات CEUs",
     "floatingBadgeEn": "CEUs Credits",
     "accreditationBadgeAr": "تطوير التواصل اللغوي",
     "accreditationBadgeEn": "Functional Communication Protocol",
     "rating": 4.8,
     "reviewsCount": 76,
-    "instructorAr": "بإشراف أ. سارة عبد الحميد",
-    "instructorEn": "Supervised by Sara Abdelhamid",
+    "instructorAr": "بإشراف نخبة من الأخصائيين المعتمدين",
+    "instructorEn": "Supervised by Certified Specialists",
     "lessonsCount": 10,
     "currentPrice": 200,
     "originalPrice": 280,
@@ -341,14 +347,15 @@ export const COURSES_DATA: CourseItem[] = [
     "order": 6,
     "isActive": true,
     "cardCoverUrl": "/images/courses/course_6_toilet.jpg",
+    "iconName": "sparkles",
     "floatingBadgeAr": "استقلالية ذاتية",
     "floatingBadgeEn": "Independence Skills",
     "accreditationBadgeAr": "العناية بالذات والاستقلالية",
     "accreditationBadgeEn": "Self-Care & Independence",
     "rating": 4.9,
     "reviewsCount": 92,
-    "instructorAr": "بإشراف أ. منار العتيبي",
-    "instructorEn": "Supervised by Manar Al-Otaibi",
+    "instructorAr": "بإشراف نخبة من الأخصائيين المعتمدين",
+    "instructorEn": "Supervised by Certified Specialists",
     "lessonsCount": 6,
     "currentPrice": 150,
     "originalPrice": 220,
@@ -391,7 +398,8 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceAr": "أخصائيو التخاطب والنطق، محللو السلوك، ومعلمو برامج التدخل المبكر",
     "targetAudienceEn": "Speech-language pathologists, behavior analysts, and early intervention staff",
     "order": 6,
-    "isActive": true
+    "isActive": true,
+    "iconName": "languages"
   },
   {
     "id": "course-specialist-assessment",
@@ -430,7 +438,8 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceAr": "أخصائيو وفنيو تحليل السلوك، معلمو الظل، وممارسو التدخل المبكر",
     "targetAudienceEn": "Behavior technicians, ABAT clinicians, shadow teachers, and therapists",
     "order": 7,
-    "isActive": true
+    "isActive": true,
+    "iconName": "clipboard-check"
   },
   {
     "id": "course-medical-behavioral",
@@ -469,7 +478,8 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceAr": "الأطباء، محللو السلوك، أخصائيو التمريض، والمشرفون الإكلينيكيون",
     "targetAudienceEn": "Physicians, behavior analysts, pediatric nurses, and clinical directors",
     "order": 8,
-    "isActive": true
+    "isActive": true,
+    "iconName": "stethoscope"
   },
   {
     "id": "course-trauma-aba",
@@ -508,7 +518,8 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceAr": "محللو السلوك، الأخصائيون النفسيون، ومعلمو التربية الخاصة ومقدمو الرعاية",
     "targetAudienceEn": "Behavior analysts, clinical psychologists, special educators, and caregivers",
     "order": 9,
-    "isActive": true
+    "isActive": true,
+    "iconName": "hand-heart"
   },
   {
     "id": "course-comorbidities",
@@ -547,7 +558,8 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceAr": "أخصائيو التشخيص والتقييم، محللو السلوك، والأطباء النفسيون",
     "targetAudienceEn": "Diagnostic evaluators, clinical psychologists, and behavior analysts",
     "order": 10,
-    "isActive": true
+    "isActive": true,
+    "iconName": "layers"
   },
   {
     "id": "course-qaba-ethics",
@@ -586,7 +598,8 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceAr": "حاملو رخص ABAT, QASP-S, QBA والمرشحون لاختبارات البورد",
     "targetAudienceEn": "Certified ABAT, QASP-S, and QBA clinicians and certification candidates",
     "order": 11,
-    "isActive": true
+    "isActive": true,
+    "iconName": "scale"
   },
   {
     "id": "course-peak",
@@ -625,7 +638,8 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceAr": "محللو السلوك، أخصائيو التخاطب، معلمو التربية الخاصة، والمشرفون الإكلينيكيون",
     "targetAudienceEn": "Behavior analysts, speech therapists, special educators, and clinical directors",
     "order": 12,
-    "isActive": true
+    "isActive": true,
+    "iconName": "trending-up"
   },
   {
     "id": "course-bip",
@@ -664,7 +678,8 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceAr": "أخصائيو ومحللو السلوك، معلمو الدمج، والمشرفون التربويون والإكلينيكيون",
     "targetAudienceEn": "Behavior analysts, inclusion specialists, educational supervisors, and clinicians",
     "order": 13,
-    "isActive": true
+    "isActive": true,
+    "iconName": "file-text"
   },
   {
     "id": "course-data-graphing",
@@ -703,7 +718,8 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceAr": "فنيو ومحللو السلوك، أخصائيو القياس، والمشرفون الإكلينيكيون",
     "targetAudienceEn": "Behavior technicians, clinical analysts, and special education teachers",
     "order": 14,
-    "isActive": true
+    "isActive": true,
+    "iconName": "bar-chart-3"
   }
 ];
 
@@ -717,11 +733,13 @@ export function getStoredCoursesData(): CourseItem[] {
       ...def,
       ...c,
       cardCoverUrl: c.cardCoverUrl || def?.cardCoverUrl || '',
+      iconName: c.iconName || def?.iconName || undefined,
       floatingBadgeAr: c.floatingBadgeAr || def?.floatingBadgeAr || '',
       accreditationBadgeAr: c.accreditationBadgeAr || def?.accreditationBadgeAr || c.ribbonTagAr || '',
       rating: c.rating || def?.rating || 4.9,
       reviewsCount: c.reviewsCount || def?.reviewsCount || 120,
-      instructorAr: c.instructorAr || def?.instructorAr || '',
+      instructorAr: 'بإشراف نخبة من الأخصائيين المعتمدين',
+      instructorEn: 'Supervised by Certified Specialists',
       lessonsCount: c.lessonsCount || def?.lessonsCount || 20,
       currentPrice: c.currentPrice !== undefined ? c.currentPrice : (def?.currentPrice || 0),
       originalPrice: c.originalPrice !== undefined ? c.originalPrice : (def?.originalPrice || 0),

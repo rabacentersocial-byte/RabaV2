@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import { CourseItem } from '../data/coursesData';
 import { useLanguage } from '../context/LanguageContext';
+import { CourseCustomIcon } from './CourseCustomIcon';
+import { getCourseLogoTheme } from '../utils/courseLogoThemes';
 
 interface CourseDetailsModalProps {
   course: CourseItem | null;
@@ -57,7 +59,8 @@ export const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
   const tagHighlight = isArabic ? course.tagHighlightAr : course.tagHighlightEn;
   const description = isArabic ? course.descriptionAr : course.descriptionEn;
   const features = isArabic ? course.featuresAr : course.featuresEn;
-  const instructor = isArabic ? (course.instructorAr || 'بإشراف نخبة من الأخصائيين المعتمدين') : (course.instructorEn || 'Supervised by Certified Faculty');
+  const instructor = isArabic ? 'بإشراف نخبة من الأخصائيين المعتمدين' : 'Supervised by Certified Specialists';
+  const theme = getCourseLogoTheme(course);
 
   const whatsappMessage = encodeURIComponent(
     `السلام عليكم، أود الاستفسار والتسجيل في: ${course.titleAr} (${course.hoursBadgeAr}) عبر منصة رابا التعليمية.`
@@ -132,8 +135,11 @@ export const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
 
               {/* Title & Stats over Cover */}
               <div className="absolute bottom-4 right-6 left-6 z-10 text-white">
-                <div className="flex items-center gap-3 text-xs text-teal-300 font-bold mb-1.5">
-                  <span>{course.categoryAr}</span>
+                <div className="flex items-center gap-2 text-xs text-teal-300 font-bold mb-1.5 flex-wrap">
+                  <div className="inline-flex items-center gap-1.5 bg-black/40 backdrop-blur-xs px-2.5 py-0.5 rounded-lg border border-teal-500/30">
+                    <CourseCustomIcon course={course} className="w-3.5 h-3.5 text-teal-300 shrink-0" />
+                    <span>{course.categoryAr}</span>
+                  </div>
                   <span>·</span>
                   <div className="flex items-center gap-1 text-amber-300">
                     <Star className="w-3.5 h-3.5 fill-amber-300" />
@@ -272,8 +278,8 @@ export const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
           {activeTab === 'instructor' && (
             <div className="space-y-5 animate-fade-in">
               <div className="flex items-center gap-4 p-4 rounded-2xl bg-teal-50/50 dark:bg-teal-950/20 border border-teal-100 dark:border-teal-900/40">
-                <div className="w-14 h-14 rounded-2xl bg-[#0d5c52] text-white flex items-center justify-center font-black text-xl shadow-md">
-                  {instructor.charAt(instructor.indexOf('.') > -1 ? instructor.indexOf('.') + 2 : 0) || 'د'}
+                <div className="w-14 h-14 rounded-2xl bg-[#0d5c52] text-white flex items-center justify-center font-black shadow-md">
+                  <Users className="w-7 h-7" />
                 </div>
                 <div>
                   <div className="text-sm font-black text-slate-900 dark:text-white">
@@ -340,7 +346,7 @@ export const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
                 onClose();
                 onRegister(course);
               }}
-              className="py-3 px-6 bg-[#0d5c52] hover:bg-[#0a4840] text-white text-xs sm:text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-[#0d5c52]/20 active:scale-95 cursor-pointer flex-1 sm:flex-none"
+              className={`py-3 px-6 ${theme.buttonBg} text-white text-xs sm:text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-md active:scale-95 cursor-pointer flex-1 sm:flex-none`}
             >
               <Sparkles className="w-4 h-4 fill-white" />
               <span>{isArabic ? 'سجل الآن في الكورس' : 'Register Now'}</span>

@@ -4,9 +4,8 @@ import {
   ChevronRight, 
   ChevronLeft, 
   Check, 
-  Star, 
-  Play, 
-  PlayCircle, 
+  ShieldCheck, 
+  AlertCircle, 
   SlidersHorizontal, 
   LayoutGrid
 } from 'lucide-react';
@@ -18,6 +17,8 @@ import {
 } from '../data/coursesData';
 import { useLanguage } from '../context/LanguageContext';
 import { CourseDetailsModal } from './CourseDetailsModal';
+import { CourseCustomIcon } from './CourseCustomIcon';
+import { getCourseLogoTheme } from '../utils/courseLogoThemes';
 
 interface CoursesSliderSectionProps {
   onRegisterCourse: (course: CourseItem) => void;
@@ -104,7 +105,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
     if (direction === 'prev') {
       delta = -cardWidth;
     }
-    // In RTL, scrollLeft direction depends on browser RTL coordinate system
+    // In RTL, scroll direction depends on coordinates
     if (isArabic) {
       delta = -delta;
     }
@@ -147,6 +148,126 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
   const handleOpenDetails = (course: CourseItem) => {
     setSelectedCourseForDetails(course);
     setIsDetailsModalOpen(true);
+  };
+
+  // Render a course card with distinct logo-compatible theme
+  const renderCourseCard = (course: CourseItem, index: number) => {
+    const title = isArabic ? course.titleAr : course.titleEn;
+    const hoursBadge = isArabic ? course.hoursBadgeAr : course.hoursBadgeEn;
+    const description = isArabic ? course.descriptionAr : course.descriptionEn;
+    const features = isArabic ? course.featuresAr : course.featuresEn;
+    const instructor = isArabic ? 'بإشراف نخبة من الأخصائيين المعتمدين' : 'Supervised by Certified Specialists';
+    const theme = getCourseLogoTheme(course, index);
+
+    return (
+      <div
+        key={course.id}
+        className={`w-[86vw] max-w-[360px] sm:w-[370px] md:w-[380px] shrink-0 snap-start bg-white dark:bg-[#121c24] rounded-[32px] overflow-hidden border ${theme.cardBorderHover} shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-all duration-300 flex flex-col group relative`}
+      >
+        {/* Top Header Section: Distinct Logo Color Container */}
+        <div className={`${theme.headerBg} p-6 sm:p-7 pt-7 pb-6 rounded-t-[32px] border-b ${theme.headerBorder} relative transition-colors`}>
+          {/* Top Row: Floating Pill Badge & Icon Button */}
+          <div className="flex items-center justify-between gap-3">
+            {/* Right in RTL: Solid Logo Theme Pill Badge */}
+            <span className={`${theme.pillBg} text-xs font-bold px-3.5 py-1.5 rounded-full shadow-xs transition-colors`}>
+              {course.floatingBadgeAr || (isArabic ? 'الأكثر طلباً' : 'Top Choice')}
+            </span>
+
+            {/* Left in RTL: Rounded White Icon Button */}
+            <button
+              onClick={() => handleOpenDetails(course)}
+              className={`w-11 h-11 rounded-2xl bg-white dark:bg-slate-900 border ${theme.iconBoxBorder} shadow-xs flex items-center justify-center ${theme.iconColor} hover:scale-105 active:scale-95 transition-all cursor-pointer group/icon`}
+              title={isArabic ? 'معاينة وفيديو الكورس' : 'Course Video Preview'}
+            >
+              <CourseCustomIcon course={course} className={`w-5 h-5 ${theme.iconColor} group-hover/icon:scale-110 transition-transform`} />
+            </button>
+          </div>
+
+          {/* Category Kicker */}
+          <div className={`${theme.kickerColor} text-xs font-extrabold tracking-wide mt-4 mb-1.5 transition-colors`}>
+            {course.categoryAr || (isArabic ? 'التقييم والتشخيص النمائي' : 'Developmental Assessment')}
+          </div>
+
+          {/* Main Course Title */}
+          <h3 
+            onClick={() => handleOpenDetails(course)}
+            className={`text-2xl sm:text-[25px] font-black text-slate-900 dark:text-white leading-[1.3] tracking-tight ${theme.titleHover} transition-colors cursor-pointer`}
+          >
+            {title}
+          </h3>
+        </div>
+
+        {/* Lower Section: Pure White Body */}
+        <div className="bg-white dark:bg-[#121c22] p-6 sm:p-7 pt-5 rounded-b-[32px] flex-1 flex flex-col justify-between space-y-4">
+          
+          <div className="space-y-3.5">
+            {/* Price Row: Big number + Currency + Strikethrough Original Price */}
+            <div className="flex items-baseline gap-2 pt-1">
+              <span className={`text-4xl sm:text-[44px] font-black ${theme.priceColor} tracking-tight leading-none`}>
+                {course.currentPrice || course.priceDisplayAr || '650'}
+              </span>
+              <span className={`text-lg font-bold ${theme.priceSub}`}>
+                {isArabic ? 'ريال' : 'SAR'}
+              </span>
+              {course.originalPrice && (
+                <span className="text-sm font-semibold text-slate-400 dark:text-slate-500 line-through mr-1 font-medium">
+                  {course.originalPrice} {isArabic ? 'ريال' : 'SAR'}
+                </span>
+              )}
+            </div>
+
+            {/* Hours / Duration Badge */}
+            <div>
+              <div className={`inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl border ${theme.hoursBg} text-xs sm:text-sm font-bold transition-colors`}>
+                <Clock className={`w-4 h-4 ${theme.hoursIconColor} shrink-0`} />
+                <span>{hoursBadge}</span>
+              </div>
+            </div>
+
+            {/* Sub-note / Warning or Highlight Info */}
+            <div className="flex items-center gap-1.5 text-xs text-amber-800 dark:text-amber-300 font-semibold">
+              <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              <span className="truncate">{course.tagHighlightAr || (isArabic ? 'شهادة إتمام معتمدة ومسار مهني' : 'Accredited Certificate')}</span>
+            </div>
+
+            {/* Short Description */}
+            <p className="text-xs sm:text-[13px] text-slate-600 dark:text-slate-300 leading-relaxed min-h-[36px] line-clamp-2">
+              {description}
+            </p>
+
+            {/* Checklist of Features (4 items) */}
+            <div className="space-y-2.5 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+              {features.slice(0, 4).map((feat, idx) => (
+                <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-[13px] text-slate-700 dark:text-slate-200 font-medium">
+                  <span className={`w-4 h-4 rounded-full ${theme.checkBg} flex items-center justify-center shrink-0 mt-0.5 transition-colors`}>
+                    <Check className="w-2.5 h-2.5 stroke-[3]" />
+                  </span>
+                  <span className="leading-snug">{feat}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Instructor & Accreditation Note */}
+            <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400 pt-1 flex items-center gap-1.5 flex-wrap">
+              <span>{instructor}</span>
+              <span>·</span>
+              <span>{course.accreditationBadgeAr || 'اعتماد دولي'}</span>
+            </div>
+          </div>
+
+          {/* Full-Width Action Button */}
+          <div className="pt-2">
+            <button
+              onClick={() => handleOpenDetails(course)}
+              className={`w-full ${theme.buttonBg} active:scale-[0.98] text-white text-sm sm:text-base font-bold py-3.5 px-6 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center justify-center gap-2`}
+            >
+              <span>{isArabic ? 'حجز الكورس' : 'Book Course'}</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -275,149 +396,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
               }`}
               style={{ WebkitOverflowScrolling: 'touch' }}
             >
-              {activeCourses.map((course) => {
-                const title = isArabic ? course.titleAr : course.titleEn;
-                const hoursBadge = isArabic ? course.hoursBadgeAr : course.hoursBadgeEn;
-                const tagHighlight = isArabic ? course.tagHighlightAr : course.tagHighlightEn;
-                const description = isArabic ? course.descriptionAr : course.descriptionEn;
-                const features = isArabic ? course.featuresAr : course.featuresEn;
-                const instructor = isArabic ? (course.instructorAr || 'بإشراف نخبة من الأخصائيين المعتمدين') : (course.instructorEn || 'Supervised by Certified Clinicians');
-
-                return (
-                  <div
-                    key={course.id}
-                    className="w-[86vw] max-w-[360px] sm:w-[370px] md:w-[380px] shrink-0 snap-start bg-white dark:bg-[#131d24] rounded-[28px] overflow-hidden border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_16px_36px_rgba(13,92,82,0.12)] dark:hover:shadow-[0_16px_36px_rgba(0,229,190,0.06)] hover:-translate-y-1 transition-all duration-300 flex flex-col group relative"
-                  >
-                    {/* Top Image Container with Badges & Play Button */}
-                    <div className="relative h-56 w-full overflow-hidden bg-slate-100 dark:bg-slate-800 select-none">
-                      <img 
-                        src={course.cardCoverUrl || '/images/courses/course_1_qba.jpg'} 
-                        alt={title} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
-                      />
-                      
-                      {/* Floating Top Badge (Top-Right in RTL) */}
-                      <div className="absolute top-3.5 right-3.5 rtl:right-3.5 rtl:left-auto ltr:left-3.5 ltr:right-auto z-10 px-3.5 py-1 rounded-full bg-[#fefce8] dark:bg-amber-950/80 text-[#78350f] dark:text-amber-200 text-xs font-bold border border-[#fef08a] dark:border-amber-700/40 shadow-xs">
-                        {course.floatingBadgeAr || 'اعتماد دولي'}
-                      </div>
-
-                      {/* Video Play Button (Bottom-Left in RTL / Bottom-Right in LTR) */}
-                      <button 
-                        onClick={() => handleOpenDetails(course)}
-                        className="absolute bottom-3.5 left-3.5 rtl:left-3.5 rtl:right-auto ltr:right-3.5 ltr:left-auto z-10 w-10 h-10 rounded-full bg-white/95 dark:bg-slate-900/90 backdrop-blur text-[#0d5c52] dark:text-[#2dd4bf] shadow-md flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer border border-white/60 dark:border-white/10 group/play"
-                        title={isArabic ? 'معاينة وفيديو الكورس' : 'Course Video Preview'}
-                      >
-                        <Play className="w-4 h-4 fill-current ml-0.5 rtl:ml-0 rtl:mr-0.5 transition-transform group-hover/play:scale-110" />
-                      </button>
-                    </div>
-
-                    {/* Dual Badge Row Immediately Under Image */}
-                    <div className="px-5 pt-4 pb-1 grid grid-cols-2 gap-2.5">
-                      {/* Forest Teal Badge (Right in RTL) */}
-                      <div className="bg-[#0d5c52] text-white text-[11px] sm:text-xs font-bold py-2 px-2.5 rounded-xl text-center truncate shadow-xs">
-                        {course.accreditationBadgeAr || course.ribbonTagAr || 'اعتماد دولي'}
-                      </div>
-
-                      {/* Soft Light Gray Badge (Left in RTL) */}
-                      <div className="bg-slate-50 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-150 dark:border-slate-700/60 text-[11px] sm:text-xs font-medium py-2 px-2.5 rounded-xl text-center truncate">
-                        {hoursBadge}
-                      </div>
-                    </div>
-
-                    {/* Category & Rating Row */}
-                    <div className="px-5 pt-3 flex items-center justify-between">
-                      {/* Category in Teal */}
-                      <span className="text-[#0d5c52] dark:text-[#2dd4bf] text-xs font-bold tracking-wide">
-                        {course.categoryAr || 'تحليل السلوك التطبيقي'}
-                      </span>
-
-                      {/* Rating */}
-                      <div className="flex items-center gap-1 text-xs font-bold text-slate-800 dark:text-slate-200">
-                        <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                        <span>{course.rating || 4.9}</span>
-                        <span className="text-slate-400 dark:text-slate-500 font-normal">({course.reviewsCount || 120})</span>
-                      </div>
-                    </div>
-
-                    {/* Course Title */}
-                    <h3 
-                      onClick={() => handleOpenDetails(course)}
-                      className="px-5 pt-2 text-xl font-black text-slate-900 dark:text-white leading-snug group-hover:text-[#0d5c52] dark:group-hover:text-[#2dd4bf] transition-colors cursor-pointer"
-                    >
-                      {title}
-                    </h3>
-
-                    {/* Special Scope / Highlight Banner */}
-                    <div className="mx-5 mt-3 py-2 px-3 rounded-xl bg-[#fffdf0] dark:bg-amber-950/20 border border-[#fef08a] dark:border-amber-800/40 text-[#92400e] dark:text-amber-200 text-xs font-semibold text-center leading-relaxed truncate">
-                      {tagHighlight}
-                    </div>
-
-                    {/* Brief Description */}
-                    <p className="px-5 pt-2.5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2 min-h-[36px]">
-                      {description}
-                    </p>
-
-                    {/* Divider */}
-                    <div className="mx-5 my-3 border-t border-slate-100 dark:border-slate-800/80" />
-
-                    {/* 3 Checklist Outcomes */}
-                    <div className="px-5 space-y-2">
-                      {features.slice(0, 3).map((feat, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
-                          <span className="w-4 h-4 rounded-full bg-[#ecfdf5] dark:bg-emerald-950/50 text-[#059669] dark:text-emerald-400 flex items-center justify-center shrink-0">
-                            <Check className="w-2.5 h-2.5 stroke-[3]" />
-                          </span>
-                          <span className="truncate">{feat}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Instructor / Supervisor */}
-                    <div className="px-5 pt-3 text-xs font-medium text-slate-500 dark:text-slate-400">
-                      {instructor}
-                    </div>
-
-                    {/* Meta Stats Row (Hours & Lessons) */}
-                    <div className="px-5 pt-2.5 pb-1 flex items-center gap-4 text-xs text-slate-600 dark:text-slate-300 font-medium">
-                      <div className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-slate-400" />
-                        <span>{course.hoursCount || 40} {isArabic ? 'ساعة' : 'hours'}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <PlayCircle className="w-3.5 h-3.5 text-slate-400" />
-                        <span>{course.lessonsCount || 20} {isArabic ? 'درساً' : 'lessons'}</span>
-                      </div>
-                    </div>
-
-                    {/* Footer Row (Price & Action Button) */}
-                    <div className="p-5 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between mt-auto bg-slate-50/40 dark:bg-slate-900/30">
-                      {/* Price Section */}
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-2xl font-black text-slate-900 dark:text-white">
-                          {course.currentPrice || course.priceDisplayAr || '990'}
-                        </span>
-                        <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
-                          {isArabic ? 'ر.س' : 'SAR'}
-                        </span>
-                        {course.originalPrice && (
-                          <span className="text-xs text-slate-400 dark:text-slate-500 line-through font-normal">
-                            {course.originalPrice}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Course Details CTA Button */}
-                      <button
-                        onClick={() => handleOpenDetails(course)}
-                        className="bg-[#0d5c52] hover:bg-[#0a4840] active:scale-95 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5 hover:shadow-md"
-                      >
-                        <span>{isArabic ? 'تفاصيل الكورس' : 'Course Details'}</span>
-                      </button>
-                    </div>
-
-                  </div>
-                );
-              })}
+              {activeCourses.map(renderCourseCard)}
             </div>
 
             {/* Slider Indicator Dots */}
@@ -429,7 +408,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
                   aria-label={`الكورس ${idx + 1}`}
                   className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                     currentIndex === idx 
-                      ? 'w-8 bg-[#0d5c52] dark:bg-[#2dd4bf]' 
+                      ? 'w-8 bg-[#0a3530] dark:bg-[#2dd4bf]' 
                       : 'w-2 bg-slate-300 dark:bg-white/20 hover:bg-slate-400 dark:hover:bg-white/40'
                   }`}
                 />
@@ -439,130 +418,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
         ) : (
           /* GRID VIEW */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {activeCourses.map((course) => {
-              const title = isArabic ? course.titleAr : course.titleEn;
-              const hoursBadge = isArabic ? course.hoursBadgeAr : course.hoursBadgeEn;
-              const tagHighlight = isArabic ? course.tagHighlightAr : course.tagHighlightEn;
-              const description = isArabic ? course.descriptionAr : course.descriptionEn;
-              const features = isArabic ? course.featuresAr : course.featuresEn;
-              const instructor = isArabic ? (course.instructorAr || 'بإشراف نخبة من الأخصائيين المعتمدين') : (course.instructorEn || 'Supervised by Certified Clinicians');
-
-              return (
-                <div
-                  key={course.id}
-                  className="bg-white dark:bg-[#131d24] rounded-[28px] overflow-hidden border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_16px_36px_rgba(13,92,82,0.12)] dark:hover:shadow-[0_16px_36px_rgba(0,229,190,0.06)] hover:-translate-y-1 transition-all duration-300 flex flex-col group relative"
-                >
-                  <div className="relative h-56 w-full overflow-hidden bg-slate-100 dark:bg-slate-800 select-none">
-                    <img 
-                      src={course.cardCoverUrl || '/images/courses/course_1_qba.jpg'} 
-                      alt={title} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
-                    />
-                    
-                    <div className="absolute top-3.5 right-3.5 rtl:right-3.5 rtl:left-auto ltr:left-3.5 ltr:right-auto z-10 px-3.5 py-1 rounded-full bg-[#fefce8] dark:bg-amber-950/80 text-[#78350f] dark:text-amber-200 text-xs font-bold border border-[#fef08a] dark:border-amber-700/40 shadow-xs">
-                      {course.floatingBadgeAr || 'اعتماد دولي'}
-                    </div>
-
-                    <button 
-                      onClick={() => handleOpenDetails(course)}
-                      className="absolute bottom-3.5 left-3.5 rtl:left-3.5 rtl:right-auto ltr:right-3.5 ltr:left-auto z-10 w-10 h-10 rounded-full bg-white/95 dark:bg-slate-900/90 backdrop-blur text-[#0d5c52] dark:text-[#2dd4bf] shadow-md flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer border border-white/60 dark:border-white/10 group/play"
-                      title={isArabic ? 'معاينة وفيديو الكورس' : 'Course Video Preview'}
-                    >
-                      <Play className="w-4 h-4 fill-current ml-0.5 rtl:ml-0 rtl:mr-0.5 transition-transform group-hover/play:scale-110" />
-                    </button>
-                  </div>
-
-                  <div className="px-5 pt-4 pb-1 grid grid-cols-2 gap-2.5">
-                    <div className="bg-[#0d5c52] text-white text-[11px] sm:text-xs font-bold py-2 px-2.5 rounded-xl text-center truncate shadow-xs">
-                      {course.accreditationBadgeAr || course.ribbonTagAr || 'اعتماد دولي'}
-                    </div>
-
-                    <div className="bg-slate-50 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-150 dark:border-slate-700/60 text-[11px] sm:text-xs font-medium py-2 px-2.5 rounded-xl text-center truncate">
-                      {hoursBadge}
-                    </div>
-                  </div>
-
-                  <div className="px-5 pt-3 flex items-center justify-between">
-                    <span className="text-[#0d5c52] dark:text-[#2dd4bf] text-xs font-bold tracking-wide">
-                      {course.categoryAr || 'تحليل السلوك التطبيقي'}
-                    </span>
-
-                    <div className="flex items-center gap-1 text-xs font-bold text-slate-800 dark:text-slate-200">
-                      <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                      <span>{course.rating || 4.9}</span>
-                      <span className="text-slate-400 dark:text-slate-500 font-normal">({course.reviewsCount || 120})</span>
-                    </div>
-                  </div>
-
-                  <h3 
-                    onClick={() => handleOpenDetails(course)}
-                    className="px-5 pt-2 text-xl font-black text-slate-900 dark:text-white leading-snug group-hover:text-[#0d5c52] dark:group-hover:text-[#2dd4bf] transition-colors cursor-pointer"
-                  >
-                    {title}
-                  </h3>
-
-                  <div className="mx-5 mt-3 py-2 px-3 rounded-xl bg-[#fffdf0] dark:bg-amber-950/20 border border-[#fef08a] dark:border-amber-800/40 text-[#92400e] dark:text-amber-200 text-xs font-semibold text-center leading-relaxed truncate">
-                    {tagHighlight}
-                  </div>
-
-                  <p className="px-5 pt-2.5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2 min-h-[36px]">
-                    {description}
-                  </p>
-
-                  <div className="mx-5 my-3 border-t border-slate-100 dark:border-slate-800/80" />
-
-                  <div className="px-5 space-y-2">
-                    {features.slice(0, 3).map((feat, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
-                        <span className="w-4 h-4 rounded-full bg-[#ecfdf5] dark:bg-emerald-950/50 text-[#059669] dark:text-emerald-400 flex items-center justify-center shrink-0">
-                          <Check className="w-2.5 h-2.5 stroke-[3]" />
-                        </span>
-                        <span className="truncate">{feat}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="px-5 pt-3 text-xs font-medium text-slate-500 dark:text-slate-400">
-                    {instructor}
-                  </div>
-
-                  <div className="px-5 pt-2.5 pb-1 flex items-center gap-4 text-xs text-slate-600 dark:text-slate-300 font-medium">
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-slate-400" />
-                      <span>{course.hoursCount || 40} {isArabic ? 'ساعة' : 'hours'}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <PlayCircle className="w-3.5 h-3.5 text-slate-400" />
-                      <span>{course.lessonsCount || 20} {isArabic ? 'درساً' : 'lessons'}</span>
-                    </div>
-                  </div>
-
-                  <div className="p-5 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between mt-auto bg-slate-50/40 dark:bg-slate-900/30">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-black text-slate-900 dark:text-white">
-                        {course.currentPrice || course.priceDisplayAr || '990'}
-                      </span>
-                      <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
-                        {isArabic ? 'ر.س' : 'SAR'}
-                      </span>
-                      {course.originalPrice && (
-                        <span className="text-xs text-slate-400 dark:text-slate-500 line-through font-normal">
-                          {course.originalPrice}
-                        </span>
-                      )}
-                    </div>
-
-                    <button
-                      onClick={() => handleOpenDetails(course)}
-                      className="bg-[#0d5c52] hover:bg-[#0a4840] active:scale-95 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5 hover:shadow-md"
-                    >
-                      <span>{isArabic ? 'تفاصيل الكورس' : 'Course Details'}</span>
-                    </button>
-                  </div>
-
-                </div>
-              );
-            })}
+            {activeCourses.map(renderCourseCard)}
           </div>
         )}
 

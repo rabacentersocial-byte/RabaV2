@@ -1,0 +1,136 @@
+{
+  "entities": {
+    "Appointment": {
+      "title": "Appointment",
+      "description": "Clinical consultation and therapy booking request",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "patientName": { "type": "string" },
+        "parentName": { "type": "string" },
+        "phone": { "type": "string" },
+        "serviceId": { "type": "string" },
+        "serviceName": { "type": "string" },
+        "specialistId": { "type": "string" },
+        "specialistName": { "type": "string" },
+        "branch": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "completed", "cancelled"] },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["patientName", "phone", "date", "status"]
+    },
+    "Specialist": {
+      "title": "Specialist",
+      "description": "Rehabilitation therapist, psychologist or clinical consultant",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "nameEn": { "type": "string" },
+        "title": { "type": "string" },
+        "role": { "type": "string" },
+        "category": { "type": "string" },
+        "avatar": { "type": "string" },
+        "experienceYears": { "type": "number" },
+        "rating": { "type": "number" },
+        "reviewsCount": { "type": "number" },
+        "bio": { "type": "string" },
+        "specialties": { "type": "array" }
+      },
+      "required": ["id", "name", "title", "role"]
+    },
+    "Testimonial": {
+      "title": "Testimonial",
+      "description": "Parent review and testimonial for Raba Center services",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "parentName": { "type": "string" },
+        "parentNameEn": { "type": "string" },
+        "rating": { "type": "number" },
+        "comment": { "type": "string" },
+        "category": { "type": "string" },
+        "specialistName": { "type": "string" },
+        "location": { "type": "string" },
+        "date": { "type": "string" },
+        "isAnonymous": { "type": "boolean" },
+        "avatar": { "type": "string" }
+      },
+      "required": ["parentName", "rating", "comment"]
+    },
+    "BlogPost": {
+      "title": "BlogPost",
+      "description": "Clinical and educational article for parents",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "titleEn": { "type": "string" },
+        "slug": { "type": "string" },
+        "excerpt": { "type": "string" },
+        "category": { "type": "string" },
+        "categoryTitle": { "type": "string" },
+        "readTimeMinutes": { "type": "number" },
+        "publishDate": { "type": "string" },
+        "viewsCount": { "type": "number" },
+        "likesCount": { "type": "number" }
+      },
+      "required": ["id", "title", "category"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "System or booking alert notification",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "type": { "type": "string" },
+        "read": { "type": "boolean" }
+      },
+      "required": ["id", "title", "message"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Authorized administrative user record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["super_admin", "admin", "clinical_manager"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "/appointments/{appointmentId}": {
+      "schema": "Appointment",
+      "description": "Collection of patient booking requests and appointments"
+    },
+    "/specialists/{specialistId}": {
+      "schema": "Specialist",
+      "description": "Collection of certified medical and rehabilitation specialists"
+    },
+    "/testimonials/{testimonialId}": {
+      "schema": "Testimonial",
+      "description": "Collection of client reviews and testimonials"
+    },
+    "/blog_posts/{postId}": {
+      "schema": "BlogPost",
+      "description": "Collection of educational articles and clinical guides"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "Collection of system and appointment notifications"
+    },
+    "/admins/{adminId}": {
+      "schema": "Admin",
+      "description": "Collection of administrative users with privileged system access"
+    }
+  }
+}

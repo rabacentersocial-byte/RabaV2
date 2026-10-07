@@ -536,27 +536,37 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
         )}
 
         {/* Unified Contact Bar below Branches */}
-        <div className="mt-12 bg-slate-800/60 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3 text-center sm:text-right">
-            <div className="w-10 h-10 rounded-xl bg-[#00E5BE]/10 border border-[#00E5BE]/20 flex items-center justify-center text-[#00E5BE] shrink-0">
+        <div className="mt-12 bg-gradient-to-r from-[#0a3530] via-[#0d5c52] to-[#0a3e36] rounded-3xl p-5 sm:p-6 sm:px-8 border border-teal-600/30 shadow-[0_12px_36px_rgba(10,53,48,0.18)] flex flex-col sm:flex-row items-center justify-between gap-5 relative overflow-hidden text-white">
+          {/* Subtle ambient lighting glows */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-teal-400/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#00E5BE]/10 rounded-full blur-2xl pointer-events-none" />
+
+          <div className="flex items-center gap-3.5 text-center sm:text-right relative z-10">
+            <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-[#2dd4bf] shrink-0 shadow-xs backdrop-blur-xs">
               <Phone className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-xs text-slate-400 font-bold">{isArabic ? 'الرقم الموحد لكافة فروع المملكة:' : 'Unified Branch Call Center (KSA):'}</div>
-              <a href="tel:0575100100" className="text-base font-black text-white hover:text-[#00E5BE] transition-colors" dir="ltr">
+              <div className="text-xs sm:text-sm text-teal-100 font-bold mb-0.5">
+                {isArabic ? 'الرقم الموحد لكافة فروع المملكة:' : 'Unified Branch Call Center (KSA):'}
+              </div>
+              <a 
+                href="tel:0575100100" 
+                className="text-lg sm:text-xl font-black text-white hover:text-[#2dd4bf] transition-colors font-mono tracking-wider inline-block" 
+                dir="ltr"
+              >
                 0575100100
               </a>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3 relative z-10">
             <a
               href="https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20الاستفسار%20عن%20أقرب%20فرع%20لمركز%20رابا%20في%20المملكة"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-5 py-2.5 bg-[#00E5BE] hover:bg-[#00ffd2] text-slate-950 font-black rounded-xl text-xs flex items-center gap-2 transition-all shadow-md shadow-teal-500/20 cursor-pointer"
+              className="px-6 py-3.5 bg-[#00E5BE] hover:bg-[#2dd4bf] text-[#0a3530] font-black rounded-2xl text-xs sm:text-sm flex items-center gap-2.5 transition-all shadow-md shadow-teal-950/20 hover:scale-[1.02] active:scale-95 cursor-pointer"
             >
-              <MessageCircle className="w-4 h-4 fill-slate-950" />
+              <MessageCircle className="w-4 h-4 fill-[#0a3530] text-[#0a3530]" />
               <span>{isArabic ? 'استشرنا لتحديد أقرب فرع لطفلك' : 'Find Closest Branch'}</span>
             </a>
           </div>

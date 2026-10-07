@@ -32,6 +32,7 @@ import {
   updateSpecialistCardSetting
 } from '../../data/specialistCustomizer';
 import { deduplicateSpecialists } from '../../utils/specialistDeduplication';
+import { getSpecialistLogoTheme } from '../../utils/specialistCardThemes';
 
 interface SpecialistsTabProps {
   specialists: Specialist[];
@@ -475,19 +476,23 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
 
       {/* 4. Specialist Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredSpecialists.map((spec) => {
+        {filteredSpecialists.map((spec, idx) => {
           const setting = getSpecialistImageSetting(spec.id);
           const activeAvatar = setting.avatar || spec.avatar;
           const isTop = setting.isTopRated ?? spec.rating >= 4.9;
+          const theme = getSpecialistLogoTheme(spec, idx);
 
           return (
             <div
               key={spec.id}
-              className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group"
+              className={`bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border ${theme.cardBorderHover} shadow-sm hover:shadow-md transition-all flex flex-col justify-between group`}
             >
               <div>
+                {/* Top Slim Accent Strip in Logo Color */}
+                <div className={`h-1.5 w-full ${theme.topAccentBar}`} />
+
                 {/* Hero Card Image Display with Controls */}
-                <div className="relative h-48 bg-slate-100 dark:bg-slate-800 overflow-hidden border-b border-slate-100 dark:border-white/10">
+                <div className={`relative h-48 ${theme.photoBg} overflow-hidden border-b border-slate-100 dark:border-white/10 transition-colors`}>
                   <img
                     src={activeAvatar}
                     alt={spec.name}
@@ -529,7 +534,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
                       <h3 className="text-base font-black text-slate-900 dark:text-white leading-tight">
                         {spec.name}
                       </h3>
-                      <p className="text-xs text-emerald-700 dark:text-emerald-400 font-bold mt-0.5">
+                      <p className={`text-xs font-bold mt-1 px-2.5 py-0.5 rounded-lg inline-block ${theme.specialtyBadge}`}>
                         {spec.title}
                       </p>
                     </div>

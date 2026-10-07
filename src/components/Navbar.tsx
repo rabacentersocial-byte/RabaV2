@@ -18,6 +18,8 @@ interface NavbarProps {
   onOpenLogin?: () => void;
   onOpenAdmin?: () => void;
   onOpenStore?: () => void;
+  onOpenSpecialistsPage?: () => void;
+  onGoHome?: () => void;
   unreadCount?: number;
   cartCount?: number;
 }
@@ -27,6 +29,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenNotifications,
   onOpenLogin,
   onOpenAdmin,
+  onOpenSpecialistsPage,
+  onGoHome,
   unreadCount
 }) => {
   const { theme, toggleTheme } = useTheme();
@@ -79,6 +83,12 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* 1. Brand Identity & Logo (Right in RTL) */}
           <a 
             href="#hero" 
+            onClick={(e) => {
+              if (onGoHome) {
+                e.preventDefault();
+                onGoHome();
+              }
+            }}
             className="flex items-center group cursor-pointer shrink-0 transition-opacity hover:opacity-95" 
             id="header-logo-link"
             aria-label="الصفحة الرئيسية لمركز رابا"
@@ -92,6 +102,17 @@ export const Navbar: React.FC<NavbarProps> = ({
               <a
                 key={link.href}
                 href={link.href}
+                onClick={(e) => {
+                  if (link.href === '#specialists' && onOpenSpecialistsPage) {
+                    e.preventDefault();
+                    onOpenSpecialistsPage();
+                  } else if (link.href === '#hero' && onGoHome) {
+                    e.preventDefault();
+                    onGoHome();
+                  } else if (onGoHome) {
+                    onGoHome();
+                  }
+                }}
                 className={`px-3 py-2 text-xs xl:text-sm font-bold rounded-xl transition-all ${
                   isDark
                     ? 'text-slate-300 hover:text-white hover:bg-white/[0.08]'
@@ -227,7 +248,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               <a
                 key={link.href}
                 href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={(e) => {
+                  setMobileMenuOpen(false);
+                  if (link.href === '#specialists' && onOpenSpecialistsPage) {
+                    e.preventDefault();
+                    onOpenSpecialistsPage();
+                  } else if (link.href === '#hero' && onGoHome) {
+                    e.preventDefault();
+                    onGoHome();
+                  } else if (onGoHome) {
+                    onGoHome();
+                  }
+                }}
                 className={`px-4 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all min-h-[44px] flex items-center ${
                   isDark 
                     ? 'text-slate-200 hover:bg-white/10 hover:text-white' 

@@ -1,0 +1,111 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Global Default-Deny Catch-All Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Core Security Primitives & Helpers ---
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // --- Entity Validation Helpers ---
+    function isValidAppointment(data) {
+      return data.patientName is string && data.patientName.size() > 0 && data.patientName.size() <= 100
+        && data.phone is string && data.phone.size() >= 8 && data.phone.size() <= 30
+        && data.date is string && data.date.size() <= 50
+        && data.status is string && (data.status in ['pending', 'confirmed', 'completed', 'cancelled']);
+    }
+
+    function isValidSpecialist(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 100
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 150
+        && data.role is string && data.role.size() > 0 && data.role.size() <= 150;
+    }
+
+    function isValidTestimonial(data) {
+      return data.parentName is string && data.parentName.size() > 0 && data.parentName.size() <= 100
+        && data.rating is number && data.rating >= 1 && data.rating <= 5
+        && data.comment is string && data.comment.size() > 0 && data.comment.size() <= 1500;
+    }
+
+    function isValidBlogPost(data) {
+      return data.title is string && data.title.size() > 0 && data.title.size() <= 200
+        && data.category is string && data.category.size() > 0 && data.category.size() <= 50;
+    }
+
+    function isValidNotification(data) {
+      return data.title is string && data.title.size() > 0 && data.title.size() <= 200
+        && data.message is string && data.message.size() > 0 && data.message.size() <= 1000;
+    }
+
+    // --- Collection Rule Blocks ---
+
+    // 1. Appointments & Consultation Bookings
+    match /appointments/{appointmentId} {
+      allow get: if isAdmin() || (isSignedIn() && existing().userId == request.auth.uid);
+      allow list: if isAdmin();
+      allow create: if isValidId(appointmentId) && isValidAppointment(incoming());
+      allow update: if isValidId(appointmentId) && isValidAppointment(incoming()) && (
+        isAdmin() ||
+        (isSignedIn() && existing().userId == request.auth.uid && incoming().diff(existing()).affectedKeys().hasOnly(['notes', 'phone']))
+      );
+      allow delete: if isAdmin();
+    }
+
+    // 2. Specialists Directory
+    match /specialists/{specialistId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(specialistId) && (request.method == 'delete' || isValidSpecialist(incoming()));
+    }
+
+    // 3. Parent Reviews and Testimonials
+    match /testimonials/{testimonialId} {
+      allow get, list: if true;
+      allow create: if isValidId(testimonialId) && isValidTestimonial(incoming());
+      allow update, delete: if isAdmin() && isValidId(testimonialId);
+    }
+
+    // 4. Clinical Blog Posts
+    match /blog_posts/{postId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(postId) && (request.method == 'delete' || isValidBlogPost(incoming()));
+    }
+
+    // 5. System Notifications
+    match /notifications/{notificationId} {
+      allow get, list: if isAdmin();
+      allow create, update, delete: if isAdmin() && isValidId(notificationId) && (request.method == 'delete' || isValidNotification(incoming()));
+    }
+
+    // 6. Admin User Access Control
+    match /admins/{adminId} {
+      allow get, list: if isAdmin();
+      allow create, update, delete: if isAdmin() && isValidId(adminId);
+    }
+
+    // Connection test document
+    match /test/connection {
+      allow get: if true;
+    }
+  }
+}

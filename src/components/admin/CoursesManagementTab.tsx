@@ -30,7 +30,8 @@ import {
   ListPlus,
   MinusCircle,
   Play,
-  Star
+  Star,
+  ShieldCheck
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { compressImage } from '../../utils/imageCompressor';
@@ -44,6 +45,8 @@ import {
   getStoredCoursesSettings, 
   saveStoredCoursesSettings 
 } from '../../data/coursesData';
+import { CourseCustomIcon, COURSE_ICON_OPTIONS, resolveCourseIcon } from '../CourseCustomIcon';
+import { getCourseLogoTheme } from '../../utils/courseLogoThemes';
 
 interface CoursesManagementTabProps {
   hasPermission?: (perm: any) => boolean;
@@ -886,6 +889,44 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
                         />
                       </div>
                     </div>
+
+                    {/* Custom Course Content Icon Picker */}
+                    <div className="pt-3 border-t border-slate-200/60 dark:border-white/5 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                          {isArabic ? 'أيقونة محتوى الكورس المخصصة:' : 'Custom Course Content Icon:'}
+                        </label>
+                        <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#0a3530] dark:text-[#2dd4bf] bg-white dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700">
+                          <CourseCustomIcon course={formData} className="w-3.5 h-3.5" />
+                          <span>{isArabic ? 'الأيقونة الحالية' : 'Active Icon'}</span>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 max-h-48 overflow-y-auto p-1.5 border border-slate-200/80 dark:border-white/10 rounded-xl bg-white dark:bg-slate-900/60">
+                        {COURSE_ICON_OPTIONS.map((opt) => {
+                          const IconComp = opt.icon;
+                          const isSelected = formData.iconName === opt.id || (!formData.iconName && resolveCourseIcon(formData) === IconComp);
+                          return (
+                            <button
+                              key={opt.id}
+                              type="button"
+                              onClick={() => setFormData(prev => ({ ...prev, iconName: opt.id }))}
+                              className={`flex items-center gap-2 p-2 rounded-lg text-start transition-all cursor-pointer text-xs ${
+                                isSelected
+                                  ? 'bg-[#edf7f4] dark:bg-teal-950/70 border border-[#2dd4bf] text-[#0a3530] dark:text-[#2dd4bf] font-bold shadow-2xs'
+                                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 border border-transparent'
+                              }`}
+                            >
+                              <div className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 ${
+                                isSelected ? 'bg-[#0a3530] text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                              }`}>
+                                <IconComp className="w-3.5 h-3.5" />
+                              </div>
+                              <span className="truncate text-[11px]">{isArabic ? opt.labelAr : opt.labelEn}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -1035,108 +1076,113 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
                 </div>
 
                 {/* THE ACTUAL LIVE COURSE CARD */}
-                <div className={`w-full max-w-[360px] p-2 rounded-3xl transition-colors duration-300 ${previewTheme === 'dark' ? 'bg-slate-950' : 'bg-slate-100'}`}>
-                  
-                  <div
-                    className={`rounded-[28px] overflow-hidden border transition-all duration-300 flex flex-col justify-between shadow-xl relative ${
-                      previewTheme === 'dark' 
-                        ? 'bg-[#131d24] border-slate-800 text-white' 
-                        : 'bg-white border-slate-200/90 text-slate-900'
-                    }`}
-                  >
-                    {/* Card Top Cover Image */}
-                    <div className="h-48 w-full overflow-hidden relative bg-slate-200 dark:bg-slate-800">
-                      <img 
-                        src={formData.cardCoverUrl || '/images/courses/course_1_qba.jpg'} 
-                        alt="" 
-                        className="w-full h-full object-cover" 
-                      />
-                      
-                      {/* Floating Badge */}
-                      <div className="absolute top-3 right-3 z-10 px-3 py-0.5 rounded-full bg-[#fefce8] dark:bg-amber-950 text-[#78350f] dark:text-amber-200 text-[10px] font-bold border border-[#fef08a] shadow-xs">
-                        {formData.floatingBadgeAr || 'اعتماد دولي'}
-                      </div>
+                {(() => {
+                  const previewLogoTheme = getCourseLogoTheme(formData);
+                  return (
+                    <div className={`w-full max-w-[360px] p-2 rounded-3xl transition-colors duration-300 ${previewTheme === 'dark' ? 'bg-slate-950' : 'bg-slate-100'}`}>
+                      <div
+                        className={`rounded-[32px] overflow-hidden border transition-all duration-300 flex flex-col justify-between shadow-xl relative ${
+                          previewTheme === 'dark' 
+                            ? 'bg-[#121c24] border-slate-800 text-white' 
+                            : 'bg-white border-[#dceee8] text-slate-900'
+                        }`}
+                      >
+                        {/* Top Header Section: Distinct Logo Color Container */}
+                        <div className={`p-5 pt-6 pb-5 rounded-t-[32px] border-b relative ${previewLogoTheme.headerBg} ${previewLogoTheme.headerBorder}`}>
+                          {/* Top Row: Floating Pill Badge & Icon Button */}
+                          <div className="flex items-center justify-between gap-2">
+                            <span className={`${previewLogoTheme.pillBg} text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-xs`}>
+                              {formData.floatingBadgeAr || 'الأكثر طلباً'}
+                            </span>
 
-                      {/* Play Button */}
-                      <div className="absolute bottom-3 left-3 z-10 w-8 h-8 rounded-full bg-white/95 dark:bg-slate-900/90 text-[#0d5c52] dark:text-[#2dd4bf] shadow-md flex items-center justify-center">
-                        <Play className="w-3.5 h-3.5 fill-current" />
-                      </div>
-                    </div>
+                            <div className={`w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border ${previewLogoTheme.iconBoxBorder} shadow-xs flex items-center justify-center ${previewLogoTheme.iconColor}`}>
+                              <CourseCustomIcon course={formData} className="w-4 h-4" />
+                            </div>
+                          </div>
 
-                    {/* Dual Badge Row */}
-                    <div className="px-4 pt-3 pb-1 grid grid-cols-2 gap-2">
-                      <div className="bg-[#0d5c52] text-white text-[10px] font-bold py-1.5 px-2 rounded-xl text-center truncate">
-                        {formData.accreditationBadgeAr || formData.ribbonTagAr || 'اعتماد دولي'}
-                      </div>
-                      <div className="bg-slate-50 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-150 dark:border-slate-700 text-[10px] font-medium py-1.5 px-2 rounded-xl text-center truncate">
-                        {formData.hoursBadgeAr || '40 ساعة تدريبية معتمدة'}
-                      </div>
-                    </div>
+                          {/* Category Kicker */}
+                          <div className={`${previewLogoTheme.kickerColor} text-[11px] font-extrabold tracking-wide mt-3 mb-1`}>
+                            {formData.categoryAr || 'التقييم والتشخيص النمائي'}
+                          </div>
 
-                    {/* Category & Rating */}
-                    <div className="px-4 pt-2.5 flex items-center justify-between">
-                      <span className="text-[#0d5c52] dark:text-[#2dd4bf] text-[11px] font-bold">
-                        {formData.categoryAr || 'تحليل السلوك التطبيقي'}
-                      </span>
-                      <div className="flex items-center gap-1 text-[11px] font-bold">
-                        <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                        <span>{formData.rating || 4.9}</span>
-                        <span className="text-slate-400 font-normal">({formData.reviewsCount || 120})</span>
-                      </div>
-                    </div>
-
-                    {/* Title */}
-                    <h3 className="px-4 pt-1.5 text-base font-black leading-snug">
-                      {formData.titleAr || 'عنوان الكورس التدريبي'}
-                    </h3>
-
-                    {/* Highlight Banner */}
-                    <div className="mx-4 mt-2 py-1.5 px-2.5 rounded-xl bg-[#fffdf0] dark:bg-amber-950/20 border border-[#fef08a] text-[#92400e] dark:text-amber-200 text-[10px] font-semibold text-center truncate">
-                      {formData.tagHighlightAr || 'شهادة معتمدة دولياً ومسار مهني'}
-                    </div>
-
-                    {/* Description */}
-                    <p className="px-4 pt-2 text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2">
-                      {formData.descriptionAr || 'وصف ونبذة تعريفية عن الكورس ومخرجاته التدريبية المعتمدة...'}
-                    </p>
-
-                    <div className="mx-4 my-2.5 border-t border-slate-100 dark:border-slate-800" />
-
-                    {/* Features list */}
-                    <div className="px-4 space-y-1.5">
-                      {(formData.featuresAr || []).filter(f => f.trim().length > 0).slice(0, 3).map((feat, idx) => (
-                        <div key={idx} className="flex items-center gap-1.5 text-[10px] text-slate-700 dark:text-slate-300 font-medium">
-                          <span className="w-3.5 h-3.5 rounded-full bg-[#ecfdf5] dark:bg-emerald-950/50 text-[#059669] flex items-center justify-center shrink-0">
-                            <Check className="w-2 h-2 stroke-[3]" />
-                          </span>
-                          <span className="truncate">{feat}</span>
+                          {/* Title */}
+                          <h3 className="text-xl font-black text-slate-900 dark:text-white leading-[1.3] tracking-tight">
+                            {formData.titleAr || 'عنوان الكورس التدريبي'}
+                          </h3>
                         </div>
-                      ))}
-                    </div>
 
-                    {/* Instructor */}
-                    <div className="px-4 pt-2 text-[10px] text-slate-500">
-                      {formData.instructorAr || 'بإشراف نخبة من الأخصائيين المعتمدين'}
-                    </div>
+                        {/* Lower Section: Pure White Body */}
+                        <div className="p-5 pt-4 rounded-b-[32px] flex-1 flex flex-col justify-between space-y-3.5">
+                          <div className="space-y-3">
+                            {/* Price Row */}
+                            <div className="flex items-baseline gap-1.5 pt-0.5">
+                              <span className={`text-3xl font-black ${previewLogoTheme.priceColor} leading-none`}>
+                                {formData.currentPrice || formData.priceDisplayAr || '650'}
+                              </span>
+                              <span className={`text-base font-bold ${previewLogoTheme.priceSub}`}>
+                                {isArabic ? 'ريال' : 'SAR'}
+                              </span>
+                              {formData.originalPrice && (
+                                <span className="text-xs font-semibold text-slate-400 line-through mr-1">
+                                  {formData.originalPrice} {isArabic ? 'ريال' : 'SAR'}
+                                </span>
+                              )}
+                            </div>
 
-                    {/* Footer Row */}
-                    <div className="p-4 pt-2.5 mt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/40 dark:bg-slate-900/30">
-                      <div className="flex items-baseline gap-1.5">
-                        <span className="text-lg font-black">
-                          {formData.currentPrice || formData.priceDisplayAr || '990'}
-                        </span>
-                        <span className="text-[10px] font-bold text-slate-500">
-                          {isArabic ? 'ر.س' : 'SAR'}
-                        </span>
+                            {/* Hours Badge */}
+                            <div>
+                              <div className={`inline-flex items-center gap-1.5 py-1 px-3 rounded-xl border ${previewLogoTheme.hoursBg} text-xs font-bold`}>
+                                <Clock className={`w-3.5 h-3.5 ${previewLogoTheme.hoursIconColor}`} />
+                                <span>{formData.hoursBadgeAr || '40 ساعة تدريبية معتمدة'}</span>
+                              </div>
+                            </div>
+
+                            {/* Sub-note */}
+                            <div className="flex items-center gap-1.5 text-[11px] text-amber-800 dark:text-amber-300 font-semibold">
+                              <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                              <span className="truncate">{formData.tagHighlightAr || 'شهادة معتمدة دولياً ومسار مهني'}</span>
+                            </div>
+
+                            {/* Description */}
+                            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2">
+                              {formData.descriptionAr || 'وصف ونبذة تعريفية عن الكورس ومخرجاته التدريبية المعتمدة...'}
+                            </p>
+
+                            {/* Features list */}
+                            <div className="space-y-2 pt-2.5 border-t border-slate-100 dark:border-slate-800">
+                              {(formData.featuresAr || []).filter(f => f.trim().length > 0).slice(0, 4).map((feat, idx) => (
+                                <div key={idx} className="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-200 font-medium">
+                                  <span className={`w-3.5 h-3.5 rounded-full ${previewLogoTheme.checkBg} flex items-center justify-center shrink-0 mt-0.5`}>
+                                    <Check className="w-2 h-2 stroke-[3]" />
+                                  </span>
+                                  <span className="leading-snug">{feat}</span>
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Instructor & Accreditation Note */}
+                            <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400 pt-1 flex items-center gap-1.5 flex-wrap">
+                              <span>{isArabic ? 'بإشراف نخبة من الأخصائيين المعتمدين' : 'Supervised by Certified Specialists'}</span>
+                              <span>·</span>
+                              <span>{formData.accreditationBadgeAr || 'اعتماد دولي'}</span>
+                            </div>
+                          </div>
+
+                          {/* Action Button */}
+                          <div className="pt-2">
+                            <button
+                              type="button"
+                              className={`w-full ${previewLogoTheme.buttonBg} text-white text-xs font-bold py-3 px-4 rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer`}
+                            >
+                              <span>{isArabic ? 'حجز الكورس' : 'Book Course'}</span>
+                            </button>
+                          </div>
+                        </div>
+
                       </div>
-
-                      <div className="bg-[#0d5c52] text-white font-bold text-[10px] py-1.5 px-3 rounded-xl shadow-xs">
-                        {isArabic ? 'تفاصيل الكورس' : 'Course Details'}
-                      </div>
                     </div>
-
-                  </div>
-                </div>
+                  );
+                })()}
 
                 <div className="mt-4 text-center">
                   <span className="text-[11px] text-slate-500 dark:text-slate-400">

@@ -8,10 +8,10 @@ import { ServicesSection } from './components/ServicesSection';
 import { ShadowTeacherSection } from './components/ShadowTeacherSection';
 import { PackagesSection } from './components/PackagesSection';
 import { SpecialistsSection } from './components/SpecialistsSection';
+import { SpecialistsDirectoryPage } from './components/SpecialistsDirectoryPage';
 import { SpecialistCvModal } from './components/SpecialistCvModal';
 import { BookingModal } from './components/BookingModal';
 import { NotificationCenterModal } from './components/NotificationCenterModal';
-import { NotificationsInfoSection } from './components/NotificationsInfoSection';
 import { TestimonialsSection } from './components/TestimonialsSection';
 import { BlogSliderSection } from './components/BlogSliderSection';
 import { Footer } from './components/Footer';
@@ -30,6 +30,7 @@ import { AdminDashboard } from './components/admin/AdminDashboard';
 import { AdminLoginPage } from './components/admin/AdminLoginPage';
 import { getStoredAdminSession, clearStoredAdminSession } from './data/adminData';
 import { DISPATCH_REQUEST_EVENT } from './data/customerRequests';
+import { saveAppointmentToFirestore } from './services/firestoreService';
 
 import { 
   INITIAL_APPOINTMENTS, 
@@ -86,6 +87,7 @@ export default function App() {
       const req = e?.detail as Appointment;
       if (req) {
         setAppointments((prev) => [req, ...prev.filter(a => a.id !== req.id)]);
+        saveAppointmentToFirestore(req).catch(() => {});
       }
     };
     const handleNotifsUpdate = (e: any) => {
@@ -306,6 +308,9 @@ export default function App() {
   const [isAdminOpen, setIsAdminOpen] = useState(() => {
     return window.location.hash === '#admin';
   });
+  const [isSpecialistsPageOpen, setIsSpecialistsPageOpen] = useState(() => {
+    return window.location.hash === '#specialists-directory' || window.location.hash === '#specialists-page';
+  });
   const [adminSession, setAdminSession] = useState<AdminUser | null>(() => getStoredAdminSession());
   const [cartCount, setCartCount] = useState(0);
   const [selectedCourseForRegistration, setSelectedCourseForRegistration] = useState<CourseItem | null>(null);
@@ -316,9 +321,27 @@ export default function App() {
     setIsCourseRegistrationOpen(true);
   };
 
+  const handleOpenSpecialistsPage = () => {
+    setIsSpecialistsPageOpen(true);
+    window.location.hash = '#specialists-directory';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleBackToHome = () => {
+    setIsSpecialistsPageOpen(false);
+    if (window.location.hash === '#specialists-directory' || window.location.hash === '#specialists-page') {
+      window.history.pushState('', document.title, window.location.pathname + window.location.search);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   useEffect(() => {
     const handleHashChange = () => {
       setIsAdminOpen(window.location.hash === '#admin');
+      setIsSpecialistsPageOpen(
+        window.location.hash === '#specialists-directory' || 
+        window.location.hash === '#specialists-page'
+      );
     };
     const handleAuthChange = (e: any) => {
       setAdminSession(e?.detail || getStoredAdminSession());
@@ -414,6 +437,7 @@ export default function App() {
       id: confirmedAppointment.id || `apt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
     };
     setAppointments((prev) => [sanitizedApp, ...prev.filter(a => a.id !== sanitizedApp.id)]);
+    saveAppointmentToFirestore(sanitizedApp).catch(() => {});
 
     // Create immediate confirmation notification for user
     const newConfirmationNotif: NotificationItem = {
@@ -501,6 +525,8 @@ export default function App() {
         onOpenLogin={() => setIsLoginOpen(true)}
         onOpenAdmin={() => setIsAdminOpen(true)}
         onOpenStore={() => setIsStoreOpen(true)}
+        onOpenSpecialistsPage={handleOpenSpecialistsPage}
+        onGoHome={handleBackToHome}
         unreadCount={unreadCount}
         cartCount={cartCount}
       />
@@ -508,94 +534,101 @@ export default function App() {
       {/* Main Content Area */}
       <main className="flex-1">
         
-        {/* 3. Hero Section */}
-        {modules.hero && (
-          <Hero
-            onOpenBooking={handleOpenBooking}
-            onOpenNotifications={() => setIsNotificationsOpen(true)}
-            onOpenVideo={() => setIsVideoOpen(true)}
-            onBookSpecialist={handleSelectSpecialistForBooking}
+        {isSpecialistsPageOpen ? (
+          /* Dedicated Specialists Page with Specialty Filter and List Format Display */
+          <SpecialistsDirectoryPage
+            specialists={specialists}
+            onBackToHome={handleBackToHome}
             onViewCv={handleViewCv}
+            onBookSpecialist={handleSelectSpecialistForBooking}
           />
-        )}
-
-        {/* 5. Center Achievements & Statistics Bar (from image) */}
-        {modules.stats && (
-          <StatsBar />
-        )}
-
-        {/* 7. Center Offers & Discounts (from image) */}
-        {modules.offers && (
-          <OffersSection
-            onClaimOffer={handleClaimOffer}
-          />
-        )}
-
-        {/* 8. Occupational & ABA Therapy Programs */}
-        {modules.services && (
+        ) : (
           <>
-            <ServicesSection
-              onSelectService={handleSelectServiceForBooking}
-            />
-            {modules.courses && (
-              <CoursesSliderSection
-                onRegisterCourse={handleOpenCourseRegistration}
+            {/* 3. Hero Section */}
+            {modules.hero && (
+              <Hero
+                onOpenBooking={handleOpenBooking}
+                onOpenNotifications={() => setIsNotificationsOpen(true)}
+                onOpenVideo={() => setIsVideoOpen(true)}
+                onBookSpecialist={handleSelectSpecialistForBooking}
+                onViewCv={handleViewCv}
               />
             )}
-            <ShadowTeacherSection 
-              onSubmitRequest={handleConfirmBooking}
-            />
-            <PackagesSection
-              onSelectPackage={handleSelectPackageForBooking}
-            />
+
+            {/* 5. Center Achievements & Statistics Bar (from image) */}
+            {modules.stats && (
+              <StatsBar />
+            )}
+
+            {/* 7. Center Offers & Discounts (from image) */}
+            {modules.offers && (
+              <OffersSection
+                onClaimOffer={handleClaimOffer}
+              />
+            )}
+
+            {/* 8. Occupational & ABA Therapy Programs */}
+            {modules.services && (
+              <>
+                <ServicesSection
+                  onSelectService={handleSelectServiceForBooking}
+                />
+                {modules.courses && (
+                  <CoursesSliderSection
+                    onRegisterCourse={handleOpenCourseRegistration}
+                  />
+                )}
+                <ShadowTeacherSection 
+                  onSubmitRequest={handleConfirmBooking}
+                />
+                <PackagesSection
+                  onSelectPackage={handleSelectPackageForBooking}
+                />
+              </>
+            )}
+
+            {/* 10. Medical Specialists & CV Exploration */}
+            {modules.specialists && (
+              <SpecialistsSection
+                specialists={specialists}
+                onViewCv={handleViewCv}
+                onBookSpecialist={handleSelectSpecialistForBooking}
+                onOpenSpecialistsPage={handleOpenSpecialistsPage}
+              />
+            )}
+
+            {/* 11.4. Branches Network Slider (فروع الرياض والخرج) directly above Accreditations */}
+            {modules.branches && (
+              <BranchesSection />
+            )}
+
+            {/* 11.45. Partners Horizontal Slider (شركاء النجاح والرعايات) directly above Accreditations */}
+            {modules.partners !== false && (
+              <PartnersSection />
+            )}
+
+            {/* 11.5. Accreditations & Certifications Section (معترف بنا من) in the footer of the blogs & branches */}
+            {modules.accreditations && (
+              <AccreditationsSection />
+            )}
+
+            {/* 12. Client Testimonials & Success Stories */}
+            {modules.reviews && (
+              <TestimonialsSection
+                testimonials={testimonials}
+                onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
+              />
+            )}
+
+            {/* 13. Clinical Blog & Articles Slider (تم نقله هنا مكان قسم المتابعة والتنبيهات) */}
+            {modules.blog && (
+              <BlogSliderSection
+                onOpenBooking={handleOpenBooking}
+                onBookSpecialist={handleSelectSpecialistForBooking}
+              />
+            )}
           </>
         )}
-
-        {/* 10. Medical Specialists & CV Exploration */}
-        {modules.specialists && (
-          <SpecialistsSection
-            specialists={specialists}
-            onViewCv={handleViewCv}
-            onBookSpecialist={handleSelectSpecialistForBooking}
-          />
-        )}
-
-        {/* 11. Clinical Blog & Articles Slider */}
-        {modules.blog && (
-          <BlogSliderSection
-            onOpenBooking={handleOpenBooking}
-            onBookSpecialist={handleSelectSpecialistForBooking}
-          />
-        )}
-
-        {/* 11.4. Branches Network Slider (فروع الرياض والخرج) directly above Accreditations */}
-        {modules.branches && (
-          <BranchesSection />
-        )}
-
-        {/* 11.45. Partners Horizontal Slider (شركاء النجاح والرعايات) directly above Accreditations */}
-        {modules.partners !== false && (
-          <PartnersSection />
-        )}
-
-        {/* 11.5. Accreditations & Certifications Section (معترف بنا من) in the footer of the blogs & branches */}
-        {modules.accreditations && (
-          <AccreditationsSection />
-        )}
-
-        {/* 12. Client Testimonials & Success Stories */}
-        {modules.reviews && (
-          <TestimonialsSection
-            testimonials={testimonials}
-            onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
-          />
-        )}
-
-        {/* 13. Automated Follow-up & Notifications Info Showcase (نظام المتابعة والتنبيهات الذكي - آخر جزء بالموقع) */}
-        <NotificationsInfoSection
-          onOpenNotifications={() => setIsNotificationsOpen(true)}
-          onOpenBooking={handleOpenBooking}
-        />
 
       </main>
 

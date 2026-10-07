@@ -8,12 +8,14 @@ interface SpecialistsSectionProps {
   specialists?: Specialist[];
   onViewCv: (specialist: Specialist) => void;
   onBookSpecialist: (specialist: Specialist) => void;
+  onOpenSpecialistsPage?: () => void;
 }
 
 export const SpecialistsSection: React.FC<SpecialistsSectionProps> = ({
   specialists = SPECIALISTS,
   onViewCv,
-  onBookSpecialist
+  onBookSpecialist,
+  onOpenSpecialistsPage
 }) => {
   const findSpecialist = (doctor: Doctor): Specialist => {
     // 1. Direct or normalized match across ID & Name
@@ -62,6 +64,7 @@ export const SpecialistsSection: React.FC<SpecialistsSectionProps> = ({
         specialists={specialists}
         onBookAppointment={handleBookFromDoctorSlider}
         onViewCv={handleViewCvFromDoctorSlider}
+        onOpenSpecialistsPage={onOpenSpecialistsPage}
       />
     </section>
   );

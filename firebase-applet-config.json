@@ -3,6 +3,7 @@
   "appId": "1:247507283493:web:bf9dba3d38d3f89e0c19cc",
   "apiKey": "AIzaSyDj0RU8sx7ClSj0vMvyaYdSbBRRZ6Iszgc",
   "authDomain": "tidal-antonym-5cb1c.firebaseapp.com",
+  "firestoreDatabaseId": "ai-studio-aba-997fb578-7190-4c0a-be4e-598b912acba8",
   "storageBucket": "tidal-antonym-5cb1c.firebasestorage.app",
   "messagingSenderId": "247507283493",
   "measurementId": "",
