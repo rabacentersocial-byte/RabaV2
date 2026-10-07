@@ -62,14 +62,14 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header 
       id="main-sticky-header"
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+      className={`sticky top-0 z-50 w-full py-2 sm:py-2.5 transition-none sm:transition-colors sm:duration-300 ${
         isScrolled 
           ? isDark 
-            ? 'bg-[#061412]/92 backdrop-blur-2xl border-b border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] py-2.5' 
-            : 'bg-white/95 backdrop-blur-2xl border-b border-slate-200/90 shadow-[0_8px_25px_rgba(0,0,0,0.06)] py-2.5'
+            ? 'bg-[#061412]/95 backdrop-blur-2xl border-b border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]' 
+            : 'bg-white/95 backdrop-blur-2xl border-b border-slate-200/90 shadow-[0_8px_25px_rgba(0,0,0,0.06)]'
           : isDark 
-            ? 'bg-[#061412]/80 backdrop-blur-xl border-b border-white/10 py-3.5' 
-            : 'bg-white/85 backdrop-blur-xl border-b border-slate-200/70 py-3.5'
+            ? 'bg-[#061412]/85 backdrop-blur-xl border-b border-white/10' 
+            : 'bg-white/90 backdrop-blur-xl border-b border-slate-200/70'
       }`}
       style={{ position: 'sticky', top: 0, zIndex: 50 }}
     >

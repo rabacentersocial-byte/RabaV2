@@ -1,15 +1,14 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { 
-  Sparkles, 
   Clock, 
-  Award, 
   ChevronRight, 
   ChevronLeft, 
-  MessageCircle, 
-  CheckCircle2, 
+  Check, 
+  Star, 
+  Play, 
+  PlayCircle, 
   SlidersHorizontal, 
-  LayoutGrid, 
-  BookOpen
+  LayoutGrid
 } from 'lucide-react';
 import { 
   getStoredCoursesData, 
@@ -18,6 +17,7 @@ import {
   CoursesSectionSettings 
 } from '../data/coursesData';
 import { useLanguage } from '../context/LanguageContext';
+import { CourseDetailsModal } from './CourseDetailsModal';
 
 interface CoursesSliderSectionProps {
   onRegisterCourse: (course: CourseItem) => void;
@@ -29,6 +29,10 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
   const [sectionSettings, setSectionSettings] = useState<CoursesSectionSettings>(() => getStoredCoursesSettings());
   const [viewMode, setViewMode] = useState<'slider' | 'grid'>('slider');
   
+  // Selected course for details modal
+  const [selectedCourseForDetails, setSelectedCourseForDetails] = useState<CourseItem | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+
   // Filter active courses
   const activeCourses = courses.filter(c => c.isActive !== false);
 
@@ -72,7 +76,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
     setCanScrollPrev(current > 15);
     setCanScrollNext(current < maxScroll - 15);
 
-    const slideWidth = 380;
+    const slideWidth = 390;
     const index = Math.round(current / slideWidth);
     setCurrentIndex(Math.min(Math.max(0, index), Math.max(0, activeCourses.length - 1)));
   }, [activeCourses.length]);
@@ -94,12 +98,13 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
   const handleScroll = (direction: 'prev' | 'next') => {
     const el = sliderRef.current;
     if (!el) return;
-    const scrollAmount = 390;
+    const cardWidth = 390;
 
-    let delta = scrollAmount;
+    let delta = cardWidth;
     if (direction === 'prev') {
-      delta = -scrollAmount;
+      delta = -cardWidth;
     }
+    // In RTL, scrollLeft direction depends on browser RTL coordinate system
     if (isArabic) {
       delta = -delta;
     }
@@ -116,7 +121,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
     el.scrollTo({ left: target, behavior: 'smooth' });
   };
 
-  // Drag handlers
+  // Drag handlers for mouse swipe
   const handleMouseDown = (e: React.MouseEvent) => {
     const el = sliderRef.current;
     if (!el) return;
@@ -139,7 +144,10 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
     setIsDragging(false);
   };
 
-  const whatsappNum = sectionSettings.whatsappNumber || '966575100100';
+  const handleOpenDetails = (course: CourseItem) => {
+    setSelectedCourseForDetails(course);
+    setIsDetailsModalOpen(true);
+  };
 
   return (
     <section 
@@ -147,47 +155,56 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
       className="py-16 sm:py-24 bg-transparent text-slate-900 dark:text-white relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10"
       dir={isArabic ? 'rtl' : 'ltr'}
     >
-      {/* Background Ambience & Lighting */}
-      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-br from-pink-500/10 via-purple-500/5 to-transparent rounded-full blur-3xl pointer-events-none -z-10 opacity-40 dark:opacity-100" />
-      <div className="absolute bottom-10 left-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -z-10 opacity-30 dark:opacity-100" />
+      {/* Background Ambience */}
+      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-br from-teal-500/10 via-[#0d5c52]/5 to-transparent rounded-full blur-3xl pointer-events-none -z-10 opacity-50 dark:opacity-40" />
+      <div className="absolute bottom-10 left-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -z-10 opacity-40 dark:opacity-30" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* 1. HEADER & CONTROLS BAR */}
-        <div className="mb-10 space-y-6">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div className="max-w-3xl space-y-2">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 border border-teal-500/30 text-teal-700 dark:text-[#00E5BE] text-xs font-black shadow-2xs">
-                <BookOpen className="w-4 h-4 text-teal-600 dark:text-[#00E5BE]" />
+        {/* 1. HEADER SECTION MATCHING EXACT SCREENSHOT */}
+        <div className="mb-10 sm:mb-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            
+            {/* Right Side in RTL: Badge, Title, Subtitle */}
+            <div className="max-w-3xl space-y-3">
+              {/* Soft Sage Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#dff1ec] dark:bg-teal-950/60 text-[#0d5c52] dark:text-[#2dd4bf] text-xs sm:text-sm font-bold shadow-2xs">
                 <span>{isArabic ? sectionSettings.badgeAr : sectionSettings.badgeEn}</span>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-tight [text-wrap:balance]">
+              {/* Main Headline */}
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#0f2d29] dark:text-white tracking-tight leading-[1.2] [text-wrap:balance]">
                 {isArabic ? (
                   <>
                     <span>{sectionSettings.titlePart1Ar}</span>{' '}
-                    <span className="bg-gradient-to-r from-teal-600 to-cyan-600 dark:from-[#00E5BE] dark:to-[#38BDF8] bg-clip-text text-transparent">
-                      {sectionSettings.titleHighlightAr}
-                    </span>
+                    <span>{sectionSettings.titleHighlightAr}</span>
                   </>
                 ) : (
                   <span>{sectionSettings.titleEn}</span>
                 )}
               </h2>
 
-              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-medium leading-relaxed [text-wrap:pretty]">
+              {/* Subtitle */}
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 font-normal leading-relaxed max-w-2xl [text-wrap:pretty]">
                 {isArabic ? sectionSettings.subtitleAr : sectionSettings.subtitleEn}
               </p>
             </div>
 
-            {/* View Mode Toggle & Slider Controls */}
-            <div className="flex items-center gap-3 self-end md:self-auto shrink-0 pt-2">
-              <div className="bg-white dark:bg-slate-800/90 p-1 rounded-2xl border border-slate-200 dark:border-white/10 flex items-center shadow-xs">
+            {/* Left Side in RTL: Counter, View Toggle & Arrow Navigation */}
+            <div className="flex items-center gap-4 self-end md:self-auto shrink-0 pt-2">
+              
+              {/* Courses Count */}
+              <span className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400">
+                {isArabic ? `${activeCourses.length} كورسات متاحة` : `${activeCourses.length} Courses Available`}
+              </span>
+
+              {/* View Mode Toggle */}
+              <div className="bg-slate-100 dark:bg-slate-800/90 p-1 rounded-2xl border border-slate-200 dark:border-white/10 flex items-center shadow-xs">
                 <button
                   onClick={() => setViewMode('slider')}
                   className={`p-2 rounded-xl transition-all cursor-pointer ${
                     viewMode === 'slider' 
-                      ? 'bg-gradient-to-r from-teal-500 to-[#00E5BE] text-slate-950 font-black shadow-xs' 
+                      ? 'bg-white dark:bg-[#0d5c52] text-[#0d5c52] dark:text-white shadow-xs font-bold' 
                       : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                   title={isArabic ? 'عرض سلايدر' : 'Slider View'}
@@ -198,7 +215,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
                   onClick={() => setViewMode('grid')}
                   className={`p-2 rounded-xl transition-all cursor-pointer ${
                     viewMode === 'grid' 
-                      ? 'bg-gradient-to-r from-teal-500 to-[#00E5BE] text-slate-950 font-black shadow-xs' 
+                      ? 'bg-white dark:bg-[#0d5c52] text-[#0d5c52] dark:text-white shadow-xs font-bold' 
                       : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                   title={isArabic ? 'عرض شبكي' : 'Grid View'}
@@ -207,28 +224,31 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
                 </button>
               </div>
 
+              {/* Navigation Arrows (Prev / Next) */}
               {viewMode === 'slider' && (
                 <div className="flex items-center gap-2">
+                  {/* In RTL: Right button goes to previous items (scrolls right) */}
                   <button
                     onClick={() => handleScroll('prev')}
                     disabled={!canScrollPrev}
                     aria-label={isArabic ? 'الكورس السابق' : 'Previous course'}
-                    className={`w-10 h-10 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs transition-all cursor-pointer ${
+                    className={`w-11 h-11 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-sm transition-all cursor-pointer ${
                       canScrollPrev 
-                        ? 'hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white active:scale-95' 
+                        ? 'hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white active:scale-95' 
                         : 'opacity-40 cursor-not-allowed'
                     }`}
                   >
                     {isArabic ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
                   </button>
 
+                  {/* In RTL: Left button goes to next items (scrolls left) */}
                   <button
                     onClick={() => handleScroll('next')}
                     disabled={!canScrollNext}
                     aria-label={isArabic ? 'الكورس التالي' : 'Next course'}
-                    className={`w-10 h-10 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs transition-all cursor-pointer ${
+                    className={`w-11 h-11 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-sm transition-all cursor-pointer ${
                       canScrollNext 
-                        ? 'hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white active:scale-95' 
+                        ? 'hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white active:scale-95' 
                         : 'opacity-40 cursor-not-allowed'
                     }`}
                   >
@@ -241,7 +261,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
           </div>
         </div>
 
-        {/* 3. COURSES SLIDER / GRID DISPLAY */}
+        {/* 2. COURSES CAROUSEL TRACK / GRID DISPLAY */}
         {viewMode === 'slider' ? (
           <div className="relative">
             <div
@@ -250,7 +270,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
-              className={`flex gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-4 px-1 ${
+              className={`flex gap-5 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-4 px-1 ${
                 isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
               }`}
               style={{ WebkitOverflowScrolling: 'touch' }}
@@ -261,118 +281,146 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
                 const tagHighlight = isArabic ? course.tagHighlightAr : course.tagHighlightEn;
                 const description = isArabic ? course.descriptionAr : course.descriptionEn;
                 const features = isArabic ? course.featuresAr : course.featuresEn;
+                const instructor = isArabic ? (course.instructorAr || 'بإشراف نخبة من الأخصائيين المعتمدين') : (course.instructorEn || 'Supervised by Certified Clinicians');
 
                 return (
                   <div
                     key={course.id}
-                    className="w-[88vw] max-w-[370px] sm:w-[370px] md:w-[380px] shrink-0 snap-start bg-white dark:bg-[#16202C] rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-lg dark:shadow-2xl hover:border-teal-400 dark:hover:border-[#00E5BE]/40 hover:shadow-xl transition-all duration-300 flex flex-col justify-between group relative"
+                    className="w-[86vw] max-w-[360px] sm:w-[370px] md:w-[380px] shrink-0 snap-start bg-white dark:bg-[#131d24] rounded-[28px] overflow-hidden border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_16px_36px_rgba(13,92,82,0.12)] dark:hover:shadow-[0_16px_36px_rgba(0,229,190,0.06)] hover:-translate-y-1 transition-all duration-300 flex flex-col group relative"
                   >
-                    {/* Optional Card Top Cover Banner */}
-                    {course.cardCoverUrl && (
-                      <div className="h-28 w-full overflow-hidden relative">
-                        <img src={course.cardCoverUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" />
-                      </div>
-                    )}
-
-                    {/* Top Ribbon & Category Banner */}
-                    <div className="relative p-6 pb-4 bg-gradient-to-br from-slate-50 via-teal-50/20 to-slate-100/70 dark:from-[#1E293B] dark:to-[#16202C] border-b border-slate-200/80 dark:border-white/10 overflow-hidden">
-                      {/* Top Ribbon Tag */}
-                      <div className="flex items-center justify-between gap-2 mb-3">
-                        <span 
-                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-white text-[11px] font-black shadow-xs"
-                          style={{
-                            background: course.badgeColor && course.badgeColor.startsWith('#') 
-                              ? course.badgeColor 
-                              : (course.accentColor || '#E5007D')
-                          }}
-                        >
-                          <Sparkles className="w-3 h-3" />
-                          <span>{isArabic ? course.ribbonTagAr : course.ribbonTagEn}</span>
-                        </span>
-
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white dark:bg-slate-900/80 border border-slate-200/90 dark:border-white/10 text-teal-700 dark:text-cyan-400 text-xs font-black shadow-2xs">
-                          <Clock className="w-3.5 h-3.5 text-teal-600 dark:text-[#00E5BE]" />
-                          <span>{hoursBadge}</span>
-                        </span>
-                      </div>
-
-                      {/* Main Course Title */}
-                      <h3 className="text-xl font-black text-slate-900 dark:text-white leading-tight group-hover:text-teal-600 dark:group-hover:text-[#00E5BE] transition-colors mb-2">
-                        {title}
-                      </h3>
-
-                      {/* Tag Highlight Badge */}
-                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-white/5 border border-amber-200/80 dark:border-white/10 text-amber-800 dark:text-amber-300 text-xs font-bold">
-                        <Award className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 shrink-0" />
-                        <span className="truncate">{tagHighlight}</span>
-                      </div>
-                    </div>
-
-                    {/* Body Content */}
-                    <div className="p-6 flex-1 flex flex-col justify-between space-y-5 bg-white dark:bg-[#16202C]">
+                    {/* Top Image Container with Badges & Play Button */}
+                    <div className="relative h-56 w-full overflow-hidden bg-slate-100 dark:bg-slate-800 select-none">
+                      <img 
+                        src={course.cardCoverUrl || '/images/courses/course_1_qba.jpg'} 
+                        alt={title} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
+                      />
                       
-                      <div className="space-y-4">
-                        <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed min-h-[44px]">
-                          {description}
-                        </p>
-
-                        {/* Features List */}
-                        <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-white/10">
-                          {features.slice(0, 4).map((feat, idx) => (
-                            <div key={idx} className="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 dark:text-[#00E5BE] shrink-0 mt-0.5" />
-                              <span className="leading-snug">{feat}</span>
-                            </div>
-                          ))}
-                        </div>
+                      {/* Floating Top Badge (Top-Right in RTL) */}
+                      <div className="absolute top-3.5 right-3.5 rtl:right-3.5 rtl:left-auto ltr:left-3.5 ltr:right-auto z-10 px-3.5 py-1 rounded-full bg-[#fefce8] dark:bg-amber-950/80 text-[#78350f] dark:text-amber-200 text-xs font-bold border border-[#fef08a] dark:border-amber-700/40 shadow-xs">
+                        {course.floatingBadgeAr || 'اعتماد دولي'}
                       </div>
 
-                      {/* Price Display Badge */}
-                      {course.priceDisplayAr && (
-                        <div className="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 text-xs font-black">
-                          <span className="text-slate-500 dark:text-slate-400 font-bold">
-                            {isArabic ? 'رسوم الاستثمار:' : 'Tuition Fee:'}
-                          </span>
-                          <span className="text-teal-700 dark:text-[#00E5BE] font-black">
-                            {isArabic ? course.priceDisplayAr : course.priceDisplayEn}
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Bottom Section: Action Buttons */}
-                      <div className="pt-4 border-t border-slate-100 dark:border-white/10">
-                        {/* Action Buttons: Register & WhatsApp */}
-                        <div className="grid grid-cols-2 gap-2.5">
-                          <button
-                            onClick={() => onRegisterCourse(course)}
-                            className="py-3 px-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-md shadow-teal-500/20 active:scale-95 cursor-pointer"
-                          >
-                            <Sparkles className="w-3.5 h-3.5 fill-slate-950 shrink-0" />
-                            <span>{isArabic ? 'سجل الآن' : 'Register Now'}</span>
-                          </button>
-
-                          <a
-                            href={`https://wa.me/${whatsappNum}?text=${encodeURIComponent(
-                              `السلام عليكم، أود الاستفسار والتسجيل في: ${course.titleAr} عبر منصة رابا التعليمية.`
-                            )}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="py-3 px-3 bg-slate-100 dark:bg-[#0F2438] hover:bg-slate-200 dark:hover:bg-[#15324d] text-slate-800 dark:text-white text-xs font-bold rounded-xl border border-slate-200 dark:border-white/15 hover:border-teal-500 dark:hover:border-cyan-500/40 transition-all flex items-center justify-center gap-1.5 text-center shadow-xs active:scale-95 cursor-pointer"
-                          >
-                            <MessageCircle className="w-3.5 h-3.5 text-teal-600 dark:text-cyan-400 shrink-0" />
-                            <span>{isArabic ? 'استفسار واتساب' : 'WhatsApp'}</span>
-                          </a>
-                        </div>
-                      </div>
-
+                      {/* Video Play Button (Bottom-Left in RTL / Bottom-Right in LTR) */}
+                      <button 
+                        onClick={() => handleOpenDetails(course)}
+                        className="absolute bottom-3.5 left-3.5 rtl:left-3.5 rtl:right-auto ltr:right-3.5 ltr:left-auto z-10 w-10 h-10 rounded-full bg-white/95 dark:bg-slate-900/90 backdrop-blur text-[#0d5c52] dark:text-[#2dd4bf] shadow-md flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer border border-white/60 dark:border-white/10 group/play"
+                        title={isArabic ? 'معاينة وفيديو الكورس' : 'Course Video Preview'}
+                      >
+                        <Play className="w-4 h-4 fill-current ml-0.5 rtl:ml-0 rtl:mr-0.5 transition-transform group-hover/play:scale-110" />
+                      </button>
                     </div>
+
+                    {/* Dual Badge Row Immediately Under Image */}
+                    <div className="px-5 pt-4 pb-1 grid grid-cols-2 gap-2.5">
+                      {/* Forest Teal Badge (Right in RTL) */}
+                      <div className="bg-[#0d5c52] text-white text-[11px] sm:text-xs font-bold py-2 px-2.5 rounded-xl text-center truncate shadow-xs">
+                        {course.accreditationBadgeAr || course.ribbonTagAr || 'اعتماد دولي'}
+                      </div>
+
+                      {/* Soft Light Gray Badge (Left in RTL) */}
+                      <div className="bg-slate-50 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-150 dark:border-slate-700/60 text-[11px] sm:text-xs font-medium py-2 px-2.5 rounded-xl text-center truncate">
+                        {hoursBadge}
+                      </div>
+                    </div>
+
+                    {/* Category & Rating Row */}
+                    <div className="px-5 pt-3 flex items-center justify-between">
+                      {/* Category in Teal */}
+                      <span className="text-[#0d5c52] dark:text-[#2dd4bf] text-xs font-bold tracking-wide">
+                        {course.categoryAr || 'تحليل السلوك التطبيقي'}
+                      </span>
+
+                      {/* Rating */}
+                      <div className="flex items-center gap-1 text-xs font-bold text-slate-800 dark:text-slate-200">
+                        <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                        <span>{course.rating || 4.9}</span>
+                        <span className="text-slate-400 dark:text-slate-500 font-normal">({course.reviewsCount || 120})</span>
+                      </div>
+                    </div>
+
+                    {/* Course Title */}
+                    <h3 
+                      onClick={() => handleOpenDetails(course)}
+                      className="px-5 pt-2 text-xl font-black text-slate-900 dark:text-white leading-snug group-hover:text-[#0d5c52] dark:group-hover:text-[#2dd4bf] transition-colors cursor-pointer"
+                    >
+                      {title}
+                    </h3>
+
+                    {/* Special Scope / Highlight Banner */}
+                    <div className="mx-5 mt-3 py-2 px-3 rounded-xl bg-[#fffdf0] dark:bg-amber-950/20 border border-[#fef08a] dark:border-amber-800/40 text-[#92400e] dark:text-amber-200 text-xs font-semibold text-center leading-relaxed truncate">
+                      {tagHighlight}
+                    </div>
+
+                    {/* Brief Description */}
+                    <p className="px-5 pt-2.5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2 min-h-[36px]">
+                      {description}
+                    </p>
+
+                    {/* Divider */}
+                    <div className="mx-5 my-3 border-t border-slate-100 dark:border-slate-800/80" />
+
+                    {/* 3 Checklist Outcomes */}
+                    <div className="px-5 space-y-2">
+                      {features.slice(0, 3).map((feat, idx) => (
+                        <div key={idx} className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
+                          <span className="w-4 h-4 rounded-full bg-[#ecfdf5] dark:bg-emerald-950/50 text-[#059669] dark:text-emerald-400 flex items-center justify-center shrink-0">
+                            <Check className="w-2.5 h-2.5 stroke-[3]" />
+                          </span>
+                          <span className="truncate">{feat}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Instructor / Supervisor */}
+                    <div className="px-5 pt-3 text-xs font-medium text-slate-500 dark:text-slate-400">
+                      {instructor}
+                    </div>
+
+                    {/* Meta Stats Row (Hours & Lessons) */}
+                    <div className="px-5 pt-2.5 pb-1 flex items-center gap-4 text-xs text-slate-600 dark:text-slate-300 font-medium">
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-slate-400" />
+                        <span>{course.hoursCount || 40} {isArabic ? 'ساعة' : 'hours'}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <PlayCircle className="w-3.5 h-3.5 text-slate-400" />
+                        <span>{course.lessonsCount || 20} {isArabic ? 'درساً' : 'lessons'}</span>
+                      </div>
+                    </div>
+
+                    {/* Footer Row (Price & Action Button) */}
+                    <div className="p-5 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between mt-auto bg-slate-50/40 dark:bg-slate-900/30">
+                      {/* Price Section */}
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-2xl font-black text-slate-900 dark:text-white">
+                          {course.currentPrice || course.priceDisplayAr || '990'}
+                        </span>
+                        <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                          {isArabic ? 'ر.س' : 'SAR'}
+                        </span>
+                        {course.originalPrice && (
+                          <span className="text-xs text-slate-400 dark:text-slate-500 line-through font-normal">
+                            {course.originalPrice}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Course Details CTA Button */}
+                      <button
+                        onClick={() => handleOpenDetails(course)}
+                        className="bg-[#0d5c52] hover:bg-[#0a4840] active:scale-95 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5 hover:shadow-md"
+                      >
+                        <span>{isArabic ? 'تفاصيل الكورس' : 'Course Details'}</span>
+                      </button>
+                    </div>
+
                   </div>
                 );
               })}
             </div>
 
-            {/* Slider Dots */}
+            {/* Slider Indicator Dots */}
             <div className="flex justify-center items-center gap-2 mt-6">
               {activeCourses.map((_, idx) => (
                 <button
@@ -381,7 +429,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
                   aria-label={`الكورس ${idx + 1}`}
                   className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                     currentIndex === idx 
-                      ? 'w-8 bg-teal-600 dark:bg-[#00E5BE]' 
+                      ? 'w-8 bg-[#0d5c52] dark:bg-[#2dd4bf]' 
                       : 'w-2 bg-slate-300 dark:bg-white/20 hover:bg-slate-400 dark:hover:bg-white/40'
                   }`}
                 />
@@ -390,109 +438,128 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
           </div>
         ) : (
           /* GRID VIEW */
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {activeCourses.map((course) => {
               const title = isArabic ? course.titleAr : course.titleEn;
               const hoursBadge = isArabic ? course.hoursBadgeAr : course.hoursBadgeEn;
               const tagHighlight = isArabic ? course.tagHighlightAr : course.tagHighlightEn;
               const description = isArabic ? course.descriptionAr : course.descriptionEn;
               const features = isArabic ? course.featuresAr : course.featuresEn;
+              const instructor = isArabic ? (course.instructorAr || 'بإشراف نخبة من الأخصائيين المعتمدين') : (course.instructorEn || 'Supervised by Certified Clinicians');
 
               return (
                 <div
                   key={course.id}
-                  className="bg-white dark:bg-[#16202C] rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-lg dark:shadow-2xl hover:border-teal-400 dark:hover:border-[#00E5BE]/40 hover:shadow-xl transition-all duration-300 flex flex-col justify-between group relative"
+                  className="bg-white dark:bg-[#131d24] rounded-[28px] overflow-hidden border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_16px_36px_rgba(13,92,82,0.12)] dark:hover:shadow-[0_16px_36px_rgba(0,229,190,0.06)] hover:-translate-y-1 transition-all duration-300 flex flex-col group relative"
                 >
-                  {/* Optional Card Top Cover Banner */}
-                  {course.cardCoverUrl && (
-                    <div className="h-28 w-full overflow-hidden relative">
-                      <img src={course.cardCoverUrl} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" />
-                    </div>
-                  )}
-
-                  <div className="p-5 pb-3 bg-gradient-to-br from-slate-50 via-teal-50/20 to-slate-100/70 dark:from-[#1E293B] dark:to-[#16202C] border-b border-slate-200/80 dark:border-white/10">
-                    <div className="flex items-center justify-between gap-2 mb-2.5">
-                      <span 
-                        className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-white text-[10px] font-black shadow-xs"
-                        style={{
-                          background: course.badgeColor && course.badgeColor.startsWith('#') 
-                            ? course.badgeColor 
-                            : (course.accentColor || '#E5007D')
-                        }}
-                      >
-                        <Sparkles className="w-3 h-3" />
-                        <span>{isArabic ? course.ribbonTagAr : course.ribbonTagEn}</span>
-                      </span>
-
-                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white dark:bg-slate-900/80 border border-slate-200/90 dark:border-white/10 text-teal-700 dark:text-cyan-400 text-[11px] font-black shadow-2xs">
-                        <Clock className="w-3 h-3 text-teal-600 dark:text-[#00E5BE]" />
-                        <span>{hoursBadge}</span>
-                      </span>
+                  <div className="relative h-56 w-full overflow-hidden bg-slate-100 dark:bg-slate-800 select-none">
+                    <img 
+                      src={course.cardCoverUrl || '/images/courses/course_1_qba.jpg'} 
+                      alt={title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
+                    />
+                    
+                    <div className="absolute top-3.5 right-3.5 rtl:right-3.5 rtl:left-auto ltr:left-3.5 ltr:right-auto z-10 px-3.5 py-1 rounded-full bg-[#fefce8] dark:bg-amber-950/80 text-[#78350f] dark:text-amber-200 text-xs font-bold border border-[#fef08a] dark:border-amber-700/40 shadow-xs">
+                      {course.floatingBadgeAr || 'اعتماد دولي'}
                     </div>
 
-                    <h3 className="text-lg font-black text-slate-900 dark:text-white leading-tight group-hover:text-teal-600 dark:group-hover:text-[#00E5BE] transition-colors mb-2">
-                      {title}
-                    </h3>
+                    <button 
+                      onClick={() => handleOpenDetails(course)}
+                      className="absolute bottom-3.5 left-3.5 rtl:left-3.5 rtl:right-auto ltr:right-3.5 ltr:left-auto z-10 w-10 h-10 rounded-full bg-white/95 dark:bg-slate-900/90 backdrop-blur text-[#0d5c52] dark:text-[#2dd4bf] shadow-md flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer border border-white/60 dark:border-white/10 group/play"
+                      title={isArabic ? 'معاينة وفيديو الكورس' : 'Course Video Preview'}
+                    >
+                      <Play className="w-4 h-4 fill-current ml-0.5 rtl:ml-0 rtl:mr-0.5 transition-transform group-hover/play:scale-110" />
+                    </button>
+                  </div>
 
-                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-amber-50 dark:bg-white/5 border border-amber-200/80 dark:border-white/10 text-amber-800 dark:text-amber-300 text-[11px] font-bold">
-                      <Award className="w-3 h-3 text-amber-500 dark:text-amber-400 shrink-0" />
-                      <span className="truncate">{tagHighlight}</span>
+                  <div className="px-5 pt-4 pb-1 grid grid-cols-2 gap-2.5">
+                    <div className="bg-[#0d5c52] text-white text-[11px] sm:text-xs font-bold py-2 px-2.5 rounded-xl text-center truncate shadow-xs">
+                      {course.accreditationBadgeAr || course.ribbonTagAr || 'اعتماد دولي'}
+                    </div>
+
+                    <div className="bg-slate-50 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 border border-slate-150 dark:border-slate-700/60 text-[11px] sm:text-xs font-medium py-2 px-2.5 rounded-xl text-center truncate">
+                      {hoursBadge}
                     </div>
                   </div>
 
-                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4 bg-white dark:bg-[#16202C]">
-                    <div className="space-y-3">
-                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed min-h-[44px]">
-                        {description}
-                      </p>
+                  <div className="px-5 pt-3 flex items-center justify-between">
+                    <span className="text-[#0d5c52] dark:text-[#2dd4bf] text-xs font-bold tracking-wide">
+                      {course.categoryAr || 'تحليل السلوك التطبيقي'}
+                    </span>
 
-                      <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-white/10">
-                        {features.slice(0, 3).map((feat, idx) => (
-                          <div key={idx} className="flex items-start gap-1.5 text-[11px] text-slate-700 dark:text-slate-300">
-                            <CheckCircle2 className="w-3 h-3 text-teal-600 dark:text-[#00E5BE] shrink-0 mt-0.5" />
-                            <span className="leading-snug">{feat}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Price Display Badge */}
-                    {course.priceDisplayAr && (
-                      <div className="flex items-center justify-between py-1.5 px-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-white/10 text-[11px] font-black">
-                        <span className="text-slate-500 dark:text-slate-400 font-bold">
-                          {isArabic ? 'الرسوم:' : 'Fee:'}
-                        </span>
-                        <span className="text-teal-700 dark:text-[#00E5BE] font-black">
-                          {isArabic ? course.priceDisplayAr : course.priceDisplayEn}
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="pt-3 border-t border-slate-100 dark:border-white/10">
-                      <div className="grid grid-cols-2 gap-2">
-                        <button
-                          onClick={() => onRegisterCourse(course)}
-                          className="py-2.5 px-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer shadow-md shadow-teal-500/20 active:scale-95"
-                        >
-                          <Sparkles className="w-3 h-3 fill-slate-950" />
-                          <span>{isArabic ? 'سجل الآن' : 'Register'}</span>
-                        </button>
-
-                        <a
-                          href={`https://wa.me/${whatsappNum}?text=${encodeURIComponent(
-                            `السلام عليكم، أود الاستفسار والتسجيل في: ${course.titleAr} عبر منصة رابا التعليمية.`
-                          )}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="py-2.5 px-2 bg-slate-100 dark:bg-[#0F2438] hover:bg-slate-200 dark:hover:bg-[#15324d] text-slate-800 dark:text-white text-xs font-bold rounded-xl border border-slate-200 dark:border-white/15 flex items-center justify-center gap-1 shadow-xs active:scale-95"
-                        >
-                          <MessageCircle className="w-3.5 h-3.5 text-teal-600 dark:text-cyan-400" />
-                          <span>{isArabic ? 'واتساب' : 'WhatsApp'}</span>
-                        </a>
-                      </div>
+                    <div className="flex items-center gap-1 text-xs font-bold text-slate-800 dark:text-slate-200">
+                      <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                      <span>{course.rating || 4.9}</span>
+                      <span className="text-slate-400 dark:text-slate-500 font-normal">({course.reviewsCount || 120})</span>
                     </div>
                   </div>
+
+                  <h3 
+                    onClick={() => handleOpenDetails(course)}
+                    className="px-5 pt-2 text-xl font-black text-slate-900 dark:text-white leading-snug group-hover:text-[#0d5c52] dark:group-hover:text-[#2dd4bf] transition-colors cursor-pointer"
+                  >
+                    {title}
+                  </h3>
+
+                  <div className="mx-5 mt-3 py-2 px-3 rounded-xl bg-[#fffdf0] dark:bg-amber-950/20 border border-[#fef08a] dark:border-amber-800/40 text-[#92400e] dark:text-amber-200 text-xs font-semibold text-center leading-relaxed truncate">
+                    {tagHighlight}
+                  </div>
+
+                  <p className="px-5 pt-2.5 text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2 min-h-[36px]">
+                    {description}
+                  </p>
+
+                  <div className="mx-5 my-3 border-t border-slate-100 dark:border-slate-800/80" />
+
+                  <div className="px-5 space-y-2">
+                    {features.slice(0, 3).map((feat, idx) => (
+                      <div key={idx} className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300 font-medium">
+                        <span className="w-4 h-4 rounded-full bg-[#ecfdf5] dark:bg-emerald-950/50 text-[#059669] dark:text-emerald-400 flex items-center justify-center shrink-0">
+                          <Check className="w-2.5 h-2.5 stroke-[3]" />
+                        </span>
+                        <span className="truncate">{feat}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="px-5 pt-3 text-xs font-medium text-slate-500 dark:text-slate-400">
+                    {instructor}
+                  </div>
+
+                  <div className="px-5 pt-2.5 pb-1 flex items-center gap-4 text-xs text-slate-600 dark:text-slate-300 font-medium">
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-slate-400" />
+                      <span>{course.hoursCount || 40} {isArabic ? 'ساعة' : 'hours'}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <PlayCircle className="w-3.5 h-3.5 text-slate-400" />
+                      <span>{course.lessonsCount || 20} {isArabic ? 'درساً' : 'lessons'}</span>
+                    </div>
+                  </div>
+
+                  <div className="p-5 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between mt-auto bg-slate-50/40 dark:bg-slate-900/30">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-black text-slate-900 dark:text-white">
+                        {course.currentPrice || course.priceDisplayAr || '990'}
+                      </span>
+                      <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                        {isArabic ? 'ر.س' : 'SAR'}
+                      </span>
+                      {course.originalPrice && (
+                        <span className="text-xs text-slate-400 dark:text-slate-500 line-through font-normal">
+                          {course.originalPrice}
+                        </span>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => handleOpenDetails(course)}
+                      className="bg-[#0d5c52] hover:bg-[#0a4840] active:scale-95 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5 hover:shadow-md"
+                    >
+                      <span>{isArabic ? 'تفاصيل الكورس' : 'Course Details'}</span>
+                    </button>
+                  </div>
+
                 </div>
               );
             })}
@@ -500,6 +567,21 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
         )}
 
       </div>
+
+      {/* Interactive Course Details & Preview Modal */}
+      <CourseDetailsModal
+        course={selectedCourseForDetails}
+        isOpen={isDetailsModalOpen}
+        onClose={() => {
+          setIsDetailsModalOpen(false);
+          setSelectedCourseForDetails(null);
+        }}
+        onRegister={(course) => {
+          setIsDetailsModalOpen(false);
+          onRegisterCourse(course);
+        }}
+        whatsappNumber={sectionSettings.whatsappNumber}
+      />
     </section>
   );
 };

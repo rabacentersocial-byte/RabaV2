@@ -54,9 +54,7 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
     <nav
       aria-label="شريط التنقل السفلي للجوال"
       id="mobile-bottom-navigation-bar"
-      className={`md:hidden fixed bottom-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
-      }`}
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 translate-y-0 opacity-100 transition-none"
     >
       {/* Frosted Glass Container with top border & subtle shadow */}
       <div className="mx-3 mb-2 rounded-2xl bg-white/95 dark:bg-[#071D18]/95 backdrop-blur-2xl border border-slate-200/90 dark:border-white/15 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_-8px_35px_rgba(0,0,0,0.45)] px-2 py-1.5 flex items-center justify-around">

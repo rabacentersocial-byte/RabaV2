@@ -28,6 +28,19 @@ export interface CourseItem {
   order: number;
   isActive?: boolean;
   cardCoverUrl?: string;
+  // Professional screenshot & rich card fields
+  floatingBadgeAr?: string;
+  floatingBadgeEn?: string;
+  accreditationBadgeAr?: string;
+  accreditationBadgeEn?: string;
+  rating?: number;
+  reviewsCount?: number;
+  instructorAr?: string;
+  instructorEn?: string;
+  lessonsCount?: number;
+  currentPrice?: number | string;
+  originalPrice?: number | string;
+  videoPreviewUrl?: string;
 }
 
 export interface CoursesSectionSettings {
@@ -42,13 +55,13 @@ export interface CoursesSectionSettings {
 }
 
 export const DEFAULT_COURSES_SETTINGS: CoursesSectionSettings = {
-  badgeAr: 'الكورسات والدورات التدريبية',
-  badgeEn: 'COURSES & PROFESSIONAL TRAINING',
-  titlePart1Ar: 'طوّر مسارك المهني في',
-  titleHighlightAr: 'تحليل السلوك التطبيقي (ABA)',
-  titleEn: 'Advance Your Clinical Career in Applied Behavior Analysis',
-  subtitleAr: 'برامج تدريبية معتمدة دولياً ومصممة بأعلى المعايير الإكلينيكية لتزويدك بالمعرفة النظرية والمهارات التطبيقية في التقييم والتدخل السلوكي.',
-  subtitleEn: 'Internationally accredited training programs designed to build rigorous clinical competencies in behavior assessment and intervention.',
+  badgeAr: 'تعلَم على يد خبراء',
+  badgeEn: 'LEARN FROM EXPERTS',
+  titlePart1Ar: 'كورسات تصنع',
+  titleHighlightAr: 'فرقاً حقيقياً',
+  titleEn: 'Courses That Make a Real Difference',
+  subtitleAr: 'برامج تدريبية عملية للمتخصصين والأسر، مصممة لتطوير المهارات وتحويل المعرفة إلى أثر يومي.',
+  subtitleEn: 'Practical training programs for professionals and families, designed to develop competencies and transform knowledge into daily impact.',
   whatsappNumber: '966575100100'
 };
 
@@ -63,34 +76,43 @@ export const COURSES_DATA: CourseItem[] = [
     "hoursCount": 270,
     "ribbonTagAr": "اعتماد البورد الدولي QABA",
     "ribbonTagEn": "QABA International Certification",
-    "categoryAr": "اعتماد البورد العالمي QABA",
-    "categoryEn": "QABA International Certification",
-    "badgeColor": "#E11D48",
-    "tagHighlightAr": "يشمل: VB-MAPP - ABLLS-R - PEAK",
-    "tagHighlightEn": "Includes: VB-MAPP - ABLLS-R - PEAK",
-    "descriptionAr": "ابدأ رحلتك الاحترافية في تحليل السلوك التطبيقي مع محتوى تدريبي متكامل يؤهلك للحصول على اعتماد QBA الدولي والعمل كمحلل سلوك مؤهل ومستقل.",
-    "descriptionEn": "Begin your professional career in Applied Behavior Analysis with comprehensive curriculum qualifying you for international QBA certification.",
+    "categoryAr": "تحليل السلوك التطبيقي",
+    "categoryEn": "Applied Behavior Analysis",
+    "badgeColor": "#0d5c52",
+    "tagHighlightAr": "يشمل: VB-MAPP · ABLLS-R · PEAK",
+    "tagHighlightEn": "Includes: VB-MAPP · ABLLS-R · PEAK",
+    "descriptionAr": "ابدأ رحلتك الاحترافية في تحليل السلوك التطبيقي بمحتوى متكامل يؤهلك للحصول على اعتماد QBA الدولي.",
+    "descriptionEn": "Begin your professional journey in Applied Behavior Analysis with comprehensive curriculum qualifying you for international QBA certification.",
     "featuresAr": [
-      "270 ساعة تدريبية معتمدة دولياً ومستوفية لمتطلبات QABA",
-      "يشمل أدوات التقييم الشاملة: VB-MAPP و ABLLS-R و PEAK",
-      "تدريب عملي على تصميم الخطط العلاجية وتحليل البيانات الإكلينيكية",
-      "إشراف مباشر من محللي سلوك معتمدين دولياً ومصنفين",
-      "شهادة معتمدة دولياً ومسار مهني معترف به عالمياً"
+      "متوافق مع متطلبات البورد الدولي QABA",
+      "إتقان أدوات التقييم السلوكي الشاملة",
+      "تصميم الخطط العلاجية وتحليل البيانات"
     ],
     "featuresEn": [
-      "270 QABA-accredited training hours meeting board criteria",
-      "Includes core assessment tools: VB-MAPP, ABLLS-R, and PEAK",
-      "Clinical case planning and behavior intervention strategy design",
-      "Mentorship by board-certified behavioral analysts",
-      "Internationally recognized certification & career path"
+      "Compliant with international QABA board standards",
+      "Mastery of comprehensive behavioral assessment tools",
+      "Treatment plan design and clinical data analysis"
     ],
-    "priceDisplayAr": "شامل المنهج المعتمد والاختبارات",
-    "priceDisplayEn": "Includes Accredited Curriculum & Exams",
-    "accentColor": "#E11D48",
+    "priceDisplayAr": "2490 ر.س",
+    "priceDisplayEn": "2490 SAR",
+    "accentColor": "#0d5c52",
     "targetAudienceAr": "أخصائيو التربية الخاصة، علم النفس، العلاج الوظيفي، والراغبون في رخصة QBA الدولية",
     "targetAudienceEn": "Special educators, psychologists, and clinicians seeking QBA credentials",
     "order": 1,
-    "isActive": true
+    "isActive": true,
+    "cardCoverUrl": "/images/courses/course_1_qba.jpg",
+    "floatingBadgeAr": "اعتماد دولي",
+    "floatingBadgeEn": "International Accreditation",
+    "accreditationBadgeAr": "اعتماد البورد الدولي QABA",
+    "accreditationBadgeEn": "QABA International Certification",
+    "rating": 4.9,
+    "reviewsCount": 184,
+    "instructorAr": "بإشراف د. سارة العتيبي",
+    "instructorEn": "Supervised by Dr. Sara Al-Otaibi",
+    "lessonsCount": 36,
+    "currentPrice": 2490,
+    "originalPrice": 2990,
+    "videoPreviewUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
   },
   {
     "id": "course-abat",
@@ -102,34 +124,91 @@ export const COURSES_DATA: CourseItem[] = [
     "hoursCount": 40,
     "ribbonTagAr": "الاعتماد المهني الأول في ABA",
     "ribbonTagEn": "Entry-Level Credential",
-    "categoryAr": "الاعتماد المهني الأول في ABA",
-    "categoryEn": "Entry-Level Professional Credential",
-    "badgeColor": "#00E5BE",
+    "categoryAr": "تحليل السلوك التطبيقي",
+    "categoryEn": "Applied Behavior Analysis",
+    "badgeColor": "#0d5c52",
     "tagHighlightAr": "تأهيل لاختبار البورد QABA - فني سلوك",
     "tagHighlightEn": "Prepares for QABA ABAT Board Exam",
-    "descriptionAr": "ابدأ مسارك المهني في تحليل السلوك التطبيقي مع شهادة ABAT الدولية المؤهلة للعمل المباشر كفني سلوك تحت إشراف إكلينيكي معتمد.",
-    "descriptionEn": "Launch your career in ABA with the recognized ABAT qualification for direct 1-on-1 behavioral therapy implementation.",
+    "descriptionAr": "ابدأ مسارك المهني في تحليل السلوك التطبيقي مع شهادة ABAT الدولية المؤهلة للعمل المباشر كفني سلوك.",
+    "descriptionEn": "Launch your career in ABA with the recognized ABAT qualification for direct behavioral therapy work.",
     "featuresAr": [
-      "40 ساعة تدريبية معتمدة دولياً وفق معايير QABA",
-      "التأهيل الشامل لاجتياز اختبار بورد ABAT بنجاح",
-      "فهم أساليب التعزيز الإيجابي وإجراءات تعديل السلوك",
-      "تطبيق استراتيجيات التدخل المبكر ومساعدة معلم الظل",
-      "تطبيق عملي ونماذج تدريبية محاكية للميدان"
+      "ساعات تدريبية وفق معايير QABA",
+      "تأهيل شامل لاجتياز اختبار ABAT",
+      "فهم التعزيز والإجراءات السلوكية"
     ],
     "featuresEn": [
-      "40 QABA-accredited curriculum hours",
-      "Full prep for the ABAT international certification exam",
-      "Positive reinforcement and behavioral modification protocols",
-      "Early intervention and shadow teaching methodologies",
-      "Hands-on practice & simulated field models"
+      "Accredited training hours aligned with QABA standards",
+      "Comprehensive preparation to pass the ABAT exam",
+      "Deep understanding of reinforcement & behavioral protocols"
     ],
-    "priceDisplayAr": "شامل المادة العلمية والتدريب",
-    "priceDisplayEn": "Includes Course Material & Training",
-    "accentColor": "#00E5BE",
+    "priceDisplayAr": "990 ر.س",
+    "priceDisplayEn": "990 SAR",
+    "accentColor": "#0d5c52",
     "targetAudienceAr": "الخريجون الجدد، معلمو الظل، ومقدمو الرعاية المهتمون بالتدخل العملي",
     "targetAudienceEn": "Recent graduates, shadow teachers, and therapists seeking certified entry",
     "order": 2,
-    "isActive": true
+    "isActive": true,
+    "cardCoverUrl": "/images/courses/course_2_abat.jpg",
+    "floatingBadgeAr": "مسار مهني",
+    "floatingBadgeEn": "Professional Track",
+    "accreditationBadgeAr": "الاعتماد المهني الأول في ABA",
+    "accreditationBadgeEn": "First Professional ABA Credential",
+    "rating": 4.8,
+    "reviewsCount": 126,
+    "instructorAr": "بإشراف أ. ريم الحربي",
+    "instructorEn": "Supervised by Reem Al-Harbi",
+    "lessonsCount": 18,
+    "currentPrice": 990,
+    "originalPrice": 1290,
+    "videoPreviewUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
+  },
+  {
+    "id": "course-autism-inclusion",
+    "titleAr": "دمج أطفال التوحد في الصف",
+    "titleEn": "Autism Inclusion in the Classroom",
+    "shortTitle": "دمج التوحد في الصف",
+    "hoursBadgeAr": "10 ساعات تدريبية معتمدة",
+    "hoursBadgeEn": "10 Certified Training Hours",
+    "hoursCount": 10,
+    "ribbonTagAr": "شهادة تطوير مهني",
+    "ribbonTagEn": "Professional Development Certificate",
+    "categoryAr": "اضطراب طيف التوحد",
+    "categoryEn": "Autism Spectrum Disorder",
+    "badgeColor": "#0d5c52",
+    "tagHighlightAr": "استراتيجيات الدمج والتدخل داخل الصف",
+    "tagHighlightEn": "Inclusion Strategies & Classroom Interventions",
+    "descriptionAr": "برنامج تطبيقي لبناء بيئة صفية دامجة تراعي احتياجات أطفال طيف التوحد وتدعم مشاركتهم.",
+    "descriptionEn": "Applied training program to build an inclusive classroom environment supporting autism students.",
+    "featuresAr": [
+      "تكييف البيئة الصفية",
+      "إدارة التحديات الحسية",
+      "تصميم خطة دمج فردية"
+    ],
+    "featuresEn": [
+      "Adapting the classroom physical & sensory environment",
+      "Managing sensory challenges and behavioral triggers",
+      "Designing individualized inclusion plans"
+    ],
+    "priceDisplayAr": "429 ر.س",
+    "priceDisplayEn": "429 SAR",
+    "accentColor": "#0d5c52",
+    "targetAudienceAr": "معلمو المدارس العادية والدمج، الأخصائيون النفسيون، وأولياء الأمور",
+    "targetAudienceEn": "Mainstream teachers, school psychologists, and parents",
+    "order": 3,
+    "isActive": true,
+    "cardCoverUrl": "/images/courses/course_3_autism_inclusion.jpg",
+    "floatingBadgeAr": "جديد",
+    "floatingBadgeEn": "New",
+    "accreditationBadgeAr": "شهادة تطوير مهني",
+    "accreditationBadgeEn": "Professional Development Certificate",
+    "rating": 4.9,
+    "reviewsCount": 98,
+    "instructorAr": "بإشراف د. نورة القحطاني",
+    "instructorEn": "Supervised by Dr. Noura Al-Qahtani",
+    "lessonsCount": 15,
+    "currentPrice": 429,
+    "originalPrice": 550,
+    "videoPreviewUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
   },
   {
     "id": "course-qasp-s",
@@ -141,112 +220,139 @@ export const COURSES_DATA: CourseItem[] = [
     "hoursCount": 188,
     "ribbonTagAr": "اعتماد البورد الأمريكي QABA",
     "ribbonTagEn": "American Board Certification",
-    "categoryAr": "اعتماد البورد الأمريكي QABA",
-    "categoryEn": "QABA American Board Credential",
-    "badgeColor": "#7C3AED",
-    "tagHighlightAr": "188 ساعة تدريبية - خصم 30% لفترة محدودة",
-    "tagHighlightEn": "188 Training Hours - 30% Discount",
-    "descriptionAr": "يتناول الكورس متطلبات اعتماد البورد الأمريكي لهذا المستوى والمكون من 188 ساعة تدريبية لتأهيل وإعداد مشرفي خدمات التوحد وتصميم برامج التدخل والإشراف الإكلينيكي.",
-    "descriptionEn": "Comprehensive 188-hour training program meeting American QABA Board requirements for supervisory autism service credentials.",
+    "categoryAr": "إشراف وبرامج التوحد",
+    "categoryEn": "Supervision & Autism Programs",
+    "badgeColor": "#0d5c52",
+    "tagHighlightAr": "تأهيل معتمد لمشرفي خدمات التوحد",
+    "tagHighlightEn": "Advanced Supervision Qualification",
+    "descriptionAr": "يتناول الكورس متطلبات اعتماد البورد الأمريكي لتأهيل وإعداد مشرفي خدمات التوحد وتصميم برامج التدخل والإشراف الإكلينيكي.",
+    "descriptionEn": "Comprehensive training program meeting American QABA Board requirements for supervisory autism service credentials.",
     "featuresAr": [
-      "اساسيات تحليل السلوك التطبيقي ABA المتقدمة",
-      "جمع وتحليل البيانات وأنظمة القياس الإكلينيكي",
-      "تدخلات إكساب المهارات وتدخلات خفض السلوك والتدخل في السوابق",
-      "التقييم الشامل والتدريب والإشراف الإكلينيكي الميداني",
-      "الأخلاقيات والقوانين المهنية والمعرفة الأساسية باضطراب طيف التوحد"
+      "متطلبات البورد الأمريكي 188 ساعة",
+      "تصميم وتحليل برامج التدخل الإكلينيكي",
+      "الإشراف الميداني وتدريب الكوادر"
     ],
     "featuresEn": [
-      "Advanced ABA behavioral principles and methodologies",
-      "Behavioral data collection, graphing, and measurement systems",
-      "Skill acquisition protocols, behavior reduction, and antecedent strategies",
-      "Comprehensive clinical assessment, staff training, and supervision",
-      "Professional ethics, regulatory compliance, and core ASD foundations"
+      "188 QABA Board requirement curriculum hours",
+      "Designing clinical intervention and assessment plans",
+      "Field supervision and team clinical coaching"
     ],
-    "priceDisplayAr": "3500 ريال (بعد خصم 30% - الأصل 5000 ريال)",
-    "priceDisplayEn": "3500 SAR (After 30% Off - Orig. 5000 SAR)",
-    "accentColor": "#7C3AED",
-    "targetAudienceAr": "أخصائيو التربية الخاصة، مشرفو البرامج السلوكية، وممارسو التوحد الساعون لرخصة QASP-S",
-    "targetAudienceEn": "Special education supervisors, behavior therapists, and autism practitioners",
-    "order": 3,
-    "isActive": true
+    "priceDisplayAr": "3500 ر.س",
+    "priceDisplayEn": "3500 SAR",
+    "accentColor": "#0d5c52",
+    "targetAudienceAr": "أخصائيو التربية الخاصة، مشرفو البرامج السلوكية، وممارسو التوحد",
+    "targetAudienceEn": "Special education supervisors and autism practitioners",
+    "order": 4,
+    "isActive": true,
+    "cardCoverUrl": "/images/courses/course_4_qasp.jpg",
+    "floatingBadgeAr": "إشراف مهني",
+    "floatingBadgeEn": "Supervision Track",
+    "accreditationBadgeAr": "اعتماد البورد الدولي QABA",
+    "accreditationBadgeEn": "International Board Certification",
+    "rating": 4.9,
+    "reviewsCount": 112,
+    "instructorAr": "بإشراف د. فهد العنزي",
+    "instructorEn": "Supervised by Dr. Fahad Al-Enezi",
+    "lessonsCount": 42,
+    "currentPrice": 3500,
+    "originalPrice": 5000,
+    "videoPreviewUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
   },
   {
     "id": "course-mand-training",
     "titleAr": "كورس التدريب على الطلب (Mand Training)",
     "titleEn": "Mand Training Course: Functional Request Development",
     "shortTitle": "التدريب على الطلب (Mand)",
-    "hoursBadgeAr": "6 ساعات معتمدة (6 CEUs)",
+    "hoursBadgeAr": "6 ساعات تدريبية معتمدة",
     "hoursBadgeEn": "6 Certified CEUs",
     "hoursCount": 6,
-    "ribbonTagAr": "ساعات تعلم مستمر CEUs",
-    "ribbonTagEn": "Continuous Education Units",
-    "categoryAr": "تطوير التواصل اللغوي والطلب",
+    "ribbonTagAr": "تطوير التواصل اللغوي",
+    "ribbonTagEn": "Communication Development",
+    "categoryAr": "التواصل وتحليل السلوك",
     "categoryEn": "Functional Communication & Mand",
-    "badgeColor": "#0284C7",
-    "tagHighlightAr": "6 CEUs معتمدة - بناء مهارات الطلب الوظيفي",
-    "tagHighlightEn": "6 Accredited CEUs - Mand Mastery",
-    "descriptionAr": "يتناول الكورس أسس ومهارات تعليم الطفل كيفية التعبير عن احتياجاته ورغباته بطريقة وظيفية، مع التركيز على الدافعية، وتطبيقات PECS، والتواصل البديل.",
-    "descriptionEn": "Teaches essential skills to help non-verbal and minimally verbal learners express wants and needs functionally through motivation and AAC.",
+    "badgeColor": "#0d5c52",
+    "tagHighlightAr": "تطبيقات عملية لبناء الطلب الوظيفي",
+    "tagHighlightEn": "Practical Applications for Functional Requests",
+    "descriptionAr": "أسس ومهارات تعليم الطفل كيفية التعبير عن احتياجاته ورغباته بطريقة وظيفية مع تطبيقات عملية.",
+    "descriptionEn": "Teaches essential skills to help learners express wants and needs functionally through motivation and AAC.",
     "featuresAr": [
-      "مفهوم الـ Mand وأهميته المحورية في تحليل السلوك وسكنر",
-      "تحديد المعززات الفعالة وتقييم الدافعية (MO) لدى المتعلم",
-      "بناء مهارات الطلب اللفظي وغير اللفظي واستخدام PECS والوسائل البديلة",
-      "استراتيجيات زيادة الاستقلالية وتعميم مهارات الطلب في بيئات متعددة",
-      "التعامل مع أخطاء ومشكلات التواصل أثناء التدريب وتطبيقات عملية ونماذج تدريبية"
+      "تحديد المعززات وتقييم الدافعية MO",
+      "بناء مهارات الطلب اللفظي وPECS",
+      "تعميم مهارات التواصل في البيئة"
     ],
     "featuresEn": [
-      "Mand conceptual framework and its core value in verbal behavior",
-      "Motivating Operations (MO) analysis and preference assessment",
-      "Verbal, vocal, and non-verbal manding with PECS and AAC integration",
-      "Systematic prompt fading, mand generalization, and spontaneity",
-      "Troubleshooting communication barriers & hands-on case simulations"
+      "Identifying reinforcers and Motivating Operations",
+      "Building verbal manding & PECS communication",
+      "Generalizing requests across daily settings"
     ],
-    "priceDisplayAr": "200 ريال",
+    "priceDisplayAr": "200 ر.س",
     "priceDisplayEn": "200 SAR",
-    "accentColor": "#0284C7",
+    "accentColor": "#0d5c52",
     "targetAudienceAr": "أخصائيو السلوك، أخصائيو النطق والتخاطب، ومعلمو التربية الخاصة ومقدمو الرعاية",
-    "targetAudienceEn": "Behavior therapists, SLPs, special education teachers, and shadow staff",
-    "order": 4,
-    "isActive": true
+    "targetAudienceEn": "Behavior therapists, SLPs, and special education teachers",
+    "order": 5,
+    "isActive": true,
+    "cardCoverUrl": "/images/courses/course_5_mand.jpg",
+    "floatingBadgeAr": "ساعات CEUs",
+    "floatingBadgeEn": "CEUs Credits",
+    "accreditationBadgeAr": "تطوير التواصل اللغوي",
+    "accreditationBadgeEn": "Functional Communication Protocol",
+    "rating": 4.8,
+    "reviewsCount": 76,
+    "instructorAr": "بإشراف أ. سارة عبد الحميد",
+    "instructorEn": "Supervised by Sara Abdelhamid",
+    "lessonsCount": 10,
+    "currentPrice": 200,
+    "originalPrice": 280,
+    "videoPreviewUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
   },
   {
     "id": "course-toilet-training",
-    "titleAr": "كورس التدريب على مهارات الحمام (Toilet Training)",
-    "titleEn": "Toilet Training Protocol for Autism & Developmental Delays",
+    "titleAr": "كورس التدريب على مهارات الحمام",
+    "titleEn": "Toilet Training Protocol for Autism",
     "shortTitle": "مهارات الحمام (Toilet Training)",
-    "hoursBadgeAr": "2 ساعة معتمدة (2 CEUs)",
+    "hoursBadgeAr": "2 ساعة تدريبية معتمدة",
     "hoursBadgeEn": "2 Certified CEUs",
     "hoursCount": 2,
-    "ribbonTagAr": "مهارات الاستقلالية الذاتية",
-    "ribbonTagEn": "Independent Living Skills",
-    "categoryAr": "الاستقلالية والعناية بالذات",
+    "ribbonTagAr": "العناية بالذات والاستقلالية",
+    "ribbonTagEn": "Self-Care & Independence",
+    "categoryAr": "الاستقلالية الذاتية",
     "categoryEn": "Self-Care & Independence",
-    "badgeColor": "#10B981",
-    "tagHighlightAr": "2 CEUs معتمدة - خطة تدريب عملية فردية",
-    "tagHighlightEn": "2 Accredited CEUs - Individualized Plan",
-    "descriptionAr": "كورس عملي تطبيقي لتصميم وتنفيذ برامج تدريب استخدام الحمام، وتقييم الجاهزية، والجدولة والتعزيز والتلقين، وخفض الاعتماد على المساعدة تدريجياً.",
-    "descriptionEn": "Practical, evidence-based workshop to design and implement successful toilet training programs for learners with autism.",
+    "badgeColor": "#0d5c52",
+    "tagHighlightAr": "بروتوكول تطبيقي فردي متكامل",
+    "tagHighlightEn": "Individualized Practical Protocol",
+    "descriptionAr": "كورس عملي تطبيقي لتصميم وتنفيذ برامج تدريب استخدام الحمام وتقييم الجاهزية وخفض المساعدة تدريجياً.",
+    "descriptionEn": "Practical workshop to design and implement successful toilet training programs for learners with autism.",
     "featuresAr": [
-      "تقييم الجاهزية الفسيولوجية والسلوكية للتدريب",
-      "تحليل السلوكيات والحواجز المرتبطة باستخدام الحمام",
-      "إعداد خطة تدريب فردية متكاملة (الجدولة، التعزيز، والتلقين)",
-      "التعامل الفعال مع حالات الرفض والحوادث الطارئة",
-      "خفض الاعتماد على المساعدة تدريجياً وتعميم المهارة ومتابعة البيانات"
+      "تقييم الجاهزية الفسيولوجية والسلوكية",
+      "إعداد خطة تدريب فردية وجدولة التعزيز",
+      "خفض الاعتماد على المساعدة تدريجياً"
     ],
     "featuresEn": [
       "Physiological and behavioral readiness evaluation",
-      "Functional task analysis of toileting sequences & barrier identification",
-      "Comprehensive individualized plan: scheduling, reinforcement, and prompting",
-      "Managing resistance, fear, accidents, and nighttime routines",
-      "Systematic prompt fading, skill generalization, and longitudinal data tracking"
+      "Individualized routine & reinforcement scheduling",
+      "Systematic prompt fading and accident management"
     ],
-    "priceDisplayAr": "150 ريال",
+    "priceDisplayAr": "150 ر.س",
     "priceDisplayEn": "150 SAR",
-    "accentColor": "#10B981",
+    "accentColor": "#0d5c52",
     "targetAudienceAr": "أخصائيو العلاج السلوكي والوظيفي، أولياء الأمور، ومعلمو التربية الخاصة",
-    "targetAudienceEn": "Behavior analysts, occupational therapists, parents, and educators",
-    "order": 5,
-    "isActive": true
+    "targetAudienceEn": "Behavior analysts, occupational therapists, and parents",
+    "order": 6,
+    "isActive": true,
+    "cardCoverUrl": "/images/courses/course_6_toilet.jpg",
+    "floatingBadgeAr": "استقلالية ذاتية",
+    "floatingBadgeEn": "Independence Skills",
+    "accreditationBadgeAr": "العناية بالذات والاستقلالية",
+    "accreditationBadgeEn": "Self-Care & Independence",
+    "rating": 4.9,
+    "reviewsCount": 92,
+    "instructorAr": "بإشراف أ. منار العتيبي",
+    "instructorEn": "Supervised by Manar Al-Otaibi",
+    "lessonsCount": 6,
+    "currentPrice": 150,
+    "originalPrice": 220,
+    "videoPreviewUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
   },
   {
     "id": "course-verbal-behavior",
@@ -605,23 +711,41 @@ export const STORAGE_COURSES_KEY = 'raba_courses_data_v1';
 export const STORAGE_COURSES_SETTINGS_KEY = 'raba_courses_settings_v1';
 
 export function getStoredCoursesData(): CourseItem[] {
+  const enrichItem = (c: any): CourseItem => {
+    const def = COURSES_DATA.find(d => d.id === c.id);
+    return {
+      ...def,
+      ...c,
+      cardCoverUrl: c.cardCoverUrl || def?.cardCoverUrl || '',
+      floatingBadgeAr: c.floatingBadgeAr || def?.floatingBadgeAr || '',
+      accreditationBadgeAr: c.accreditationBadgeAr || def?.accreditationBadgeAr || c.ribbonTagAr || '',
+      rating: c.rating || def?.rating || 4.9,
+      reviewsCount: c.reviewsCount || def?.reviewsCount || 120,
+      instructorAr: c.instructorAr || def?.instructorAr || '',
+      lessonsCount: c.lessonsCount || def?.lessonsCount || 20,
+      currentPrice: c.currentPrice !== undefined ? c.currentPrice : (def?.currentPrice || 0),
+      originalPrice: c.originalPrice !== undefined ? c.originalPrice : (def?.originalPrice || 0),
+      isActive: c.isActive !== false
+    };
+  };
+
   try {
     const raw = localStorage.getItem(STORAGE_COURSES_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length >= COURSES_DATA.length) {
-        return parsed.map((c: CourseItem) => ({ ...c, isActive: c.isActive !== false })).sort((a: CourseItem, b: CourseItem) => (a.order || 0) - (b.order || 0));
-      } else if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed) && parsed.length > 0) {
         const existingIds = new Set(parsed.map((p: any) => p.id));
         const missing = COURSES_DATA.filter(c => !existingIds.has(c.id));
-        const merged = [...parsed, ...missing].map((c: CourseItem) => ({ ...c, isActive: c.isActive !== false })).sort((a: CourseItem, b: CourseItem) => (a.order || 0) - (b.order || 0));
-        localStorage.setItem(STORAGE_COURSES_KEY, JSON.stringify(merged));
-        return merged;
+        const combined = [...parsed, ...missing];
+        return combined.map(enrichItem).sort((a: CourseItem, b: CourseItem) => (a.order || 0) - (b.order || 0));
       }
     }
     const bundled = (defaultSyncData as any)?.data?.[STORAGE_COURSES_KEY];
     if (Array.isArray(bundled) && bundled.length > 0) {
-      return [...bundled].map((c: any) => ({ ...c, isActive: c.isActive !== false })).sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+      const existingIds = new Set(bundled.map((p: any) => p.id));
+      const missing = COURSES_DATA.filter(c => !existingIds.has(c.id));
+      const combined = [...bundled, ...missing];
+      return combined.map(enrichItem).sort((a: CourseItem, b: CourseItem) => (a.order || 0) - (b.order || 0));
     }
     return COURSES_DATA.map(c => ({ ...c, isActive: true }));
   } catch {
@@ -645,7 +769,15 @@ export function getStoredCoursesSettings(): CoursesSectionSettings {
   try {
     const raw = localStorage.getItem(STORAGE_COURSES_SETTINGS_KEY);
     if (raw) {
-      return { ...DEFAULT_COURSES_SETTINGS, ...JSON.parse(raw) };
+      const parsed = JSON.parse(raw);
+      return {
+        ...DEFAULT_COURSES_SETTINGS,
+        ...parsed,
+        badgeAr: parsed.badgeAr === 'الكورسات والدورات التدريبية' ? DEFAULT_COURSES_SETTINGS.badgeAr : (parsed.badgeAr || DEFAULT_COURSES_SETTINGS.badgeAr),
+        titlePart1Ar: parsed.titlePart1Ar === 'طوّر مسارك المهني في' ? DEFAULT_COURSES_SETTINGS.titlePart1Ar : (parsed.titlePart1Ar || DEFAULT_COURSES_SETTINGS.titlePart1Ar),
+        titleHighlightAr: parsed.titleHighlightAr === 'تحليل السلوك التطبيقي (ABA)' ? DEFAULT_COURSES_SETTINGS.titleHighlightAr : (parsed.titleHighlightAr || DEFAULT_COURSES_SETTINGS.titleHighlightAr),
+        subtitleAr: (parsed.subtitleAr && parsed.subtitleAr.includes('بأعلى المعايير الإكلينيكية')) ? DEFAULT_COURSES_SETTINGS.subtitleAr : (parsed.subtitleAr || DEFAULT_COURSES_SETTINGS.subtitleAr)
+      };
     }
     const bundled = (defaultSyncData as any)?.data?.[STORAGE_COURSES_SETTINGS_KEY];
     if (bundled && typeof bundled === 'object') {

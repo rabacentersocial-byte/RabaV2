@@ -130,9 +130,10 @@ body {
   *::before,
   *::after {
     animation-delay: 0s !important;
+    transition-delay: 0s !important;
   }
 
-  /* Specifically force all entrance animations, fades, and delayed transforms to immediate 100% visibility */
+  /* Specifically force all entrance animations, fades, bounces, and pings to immediate 100% visibility */
   .animate-in,
   .animate-fadeIn,
   .animate-fade-in,
@@ -143,20 +144,25 @@ body {
   .slide-in-from-bottom-3,
   .slide-in-from-bottom-4,
   .slide-in-from-bottom-5,
+  .animate-bounce,
+  .animate-bounce-subtle,
+  .animate-pulse,
+  .animate-ping,
   [data-animate],
+  [data-aos],
   [class*="animate-in"],
-  [class*="fade-in"] {
+  [class*="fade-in"],
+  [class*="slide-in"],
+  [class*="zoom-in"] {
     animation: none !important;
     opacity: 1 !important;
-    transform: none !important;
     transition: none !important;
   }
 
-  /* Keep functional indicator animations (spinners, pulsers, marquee) intact */
-  .animate-spin,
-  .animate-pulse,
-  .animate-ping,
-  .animate-bounce,
+  /* Keep functional indicator animations (spinners & marquee) intact */
+  .animate-spin {
+    animation: spin 1s linear infinite !important;
+  }
   .animate-accreditation-loop {
     animation-duration: revert !important;
   }
@@ -165,6 +171,8 @@ body {
   section,
   main,
   article,
+  header,
+  nav,
   .glass-card,
   .glass-panel,
   .glass-card-teal,
@@ -172,10 +180,23 @@ body {
     transition: none !important;
     animation: none !important;
     opacity: 1 !important;
-    transform: none !important;
   }
 
-  /* Disable transition-colors on body and root to prevent color rendering delay while scrolling */
+  /* Prevent card jumping/scaling while scrolling on touch devices */
+  .glass-card:hover,
+  .glass-card-teal:hover,
+  .glass-panel:hover,
+  .hover\:-translate-y-1:hover,
+  .hover\:-translate-y-0\.5:hover,
+  .hover\:scale-105:hover,
+  .hover\:scale-110:hover,
+  .group:hover .group-hover\:scale-105,
+  .group:hover .group-hover\:-translate-y-1 {
+    transform: none !important;
+    transition: none !important;
+  }
+
+  /* Disable transition-colors on body and root to prevent rendering delay while scrolling */
   html,
   body,
   #root,
