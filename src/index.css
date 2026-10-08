@@ -50,11 +50,11 @@ body {
 }
 
 /* ==========================================================================
-   MOBILE DIMENSIONS & 75% TYPOGRAPHY TUNING (ضبط أبعاد الجوال وتصغير الخط 75%)
+   MOBILE DIMENSIONS & BALANCED TYPOGRAPHY (ضبط أبعاد الجوال وتجاوب الخطوط والأداء)
    ========================================================================== */
 @media screen and (max-width: 768px) {
   html {
-    font-size: 75% !important; /* تقليل حجم كافة النصوص والأبعاد النسبية (rem) بدقة إلى 75% */
+    font-size: 87.5% !important; /* تحسين قراءة الخطوط وتجاوب الأبعاد بدقة على الجوال (14px) لضمان وضوح فائق واجتياز معايير الأداء */
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -62,6 +62,15 @@ body {
     overflow-x: clip;
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
+  }
+
+  /* Eliminate 300ms mobile touch delay */
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    touch-action: manipulation;
   }
 
   /* Prevent automatic iOS zoom when tapping inputs */

@@ -293,6 +293,10 @@ export const Hero: React.FC<HeroProps> = ({
                     <img
                       src={getResolvedImageUrl(currentSlide.src)}
                       alt={currentSlide.alt}
+                      width={460}
+                      height={460}
+                      fetchPriority="high"
+                      decoding="async"
                       onError={(e) => handleImageErrorWithStore(e, currentSlide.src, '/specialists/ahmed_abouzeid.jpg')}
                       className={`w-full h-full object-cover transition-transform duration-300 ${
                         currentSlide.objectPosition === 'center'
@@ -348,8 +352,8 @@ export const Hero: React.FC<HeroProps> = ({
                       <div className="min-w-6 h-6 sm:min-w-7 sm:h-7 px-1 rounded-full border-2 border-white bg-amber-400 flex items-center justify-center text-[9px] sm:text-[10px] font-black text-slate-900 shadow-xs z-10 transition-transform">
                         +{dailyChildrenCount}
                       </div>
-                      <img className="inline-block h-6 w-6 sm:h-7 sm:w-7 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="child" />
-                      <img className="inline-block h-6 w-6 sm:h-7 sm:w-7 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="child" />
+                      <img width={28} height={28} loading="lazy" decoding="async" className="inline-block h-6 w-6 sm:h-7 sm:w-7 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="child" />
+                      <img width={28} height={28} loading="lazy" decoding="async" className="inline-block h-6 w-6 sm:h-7 sm:w-7 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="child" />
                     </div>
 
                     <div className="flex flex-col items-start leading-tight">

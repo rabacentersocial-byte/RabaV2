@@ -13,8 +13,6 @@ import {
   ChevronLeft,
   Award,
   Phone,
-  LayoutGrid,
-  SlidersHorizontal,
   Sparkles,
   MessageCircle,
   ShieldCheck,
@@ -34,9 +32,6 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [favorites, setFavorites] = useState<Record<string, boolean>>({});
   
-  // Default to poster view (matches the uploaded flyer), with options for grid and slider
-  const [viewMode, setViewMode] = useState<'poster' | 'grid' | 'slider'>('poster');
-  
   // Slider drag & scroll states
   const sliderRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -45,6 +40,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
   const movedDistanceRef = useRef(0);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   // Sync with localStorage updates from Admin Dashboard
   useEffect(() => {
@@ -204,7 +200,11 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
     const current = Math.abs(el.scrollLeft);
     setCanScrollPrev(current > 15);
     setCanScrollNext(current < maxScroll - 15);
-  }, []);
+
+    const cardWidth = 380;
+    const index = Math.round(current / cardWidth);
+    setCurrentIndex(Math.min(Math.max(0, index), Math.max(0, filteredServices.length - 1)));
+  }, [filteredServices.length]);
 
   useEffect(() => {
     const el = sliderRef.current;
@@ -230,6 +230,15 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
       delta = -delta;
     }
     el.scrollBy({ left: delta, behavior: 'smooth' });
+  };
+
+  const scrollToIndex = (index: number) => {
+    const el = sliderRef.current;
+    if (!el) return;
+    const slideWidth = 390;
+    let target = index * slideWidth;
+    if (isArabic) target = -target;
+    el.scrollTo({ left: target, behavior: 'smooth' });
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -302,69 +311,41 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
             </div>
           </div>
 
-          {/* Right Controls: View mode switcher (Poster flyer style / Detailed grid / Slider) */}
-          <div className="flex items-center gap-2 shrink-0 self-start md:self-end">
-            <div className="bg-white dark:bg-slate-800 p-1 rounded-2xl border border-slate-200 dark:border-white/10 flex items-center shadow-xs">
-              {/* Poster Mode: Matches Flyer directly */}
+          {/* Right Controls: Services Count & Slider Navigation Arrows */}
+          <div className="flex items-center gap-3 self-end md:self-auto shrink-0 pt-2">
+            {/* Services Count Badge */}
+            <span className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400">
+              {isArabic ? `${filteredServices.length} خدمات معتمدة` : `${filteredServices.length} Specialized Services`}
+            </span>
+
+            {/* Slider Navigation Arrows */}
+            <div className="flex items-center gap-1.5">
               <button
-                onClick={() => setViewMode('poster')}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-black transition-all cursor-pointer ${
-                  viewMode === 'poster' 
-                    ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-xs' 
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                onClick={() => handleScroll('prev')}
+                disabled={!canScrollPrev}
+                aria-label={isArabic ? 'الخدمة السابقة' : 'Previous program'}
+                className={`w-10 h-10 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs transition-all cursor-pointer ${
+                  canScrollPrev
+                    ? 'hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95'
+                    : 'opacity-40 cursor-not-allowed'
                 }`}
-                title={isArabic ? 'تصميم البوستر المعتمد' : 'Official Flyer View'}
               >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>{isArabic ? 'البوستر المعتمد' : 'Flyer Style'}</span>
+                {isArabic ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
               </button>
 
-              {/* Grid Mode: Detailed cards with photos */}
               <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-xl transition-all cursor-pointer ${
-                  viewMode === 'grid' 
-                    ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-xs' 
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                onClick={() => handleScroll('next')}
+                disabled={!canScrollNext}
+                aria-label={isArabic ? 'الخدمة التالية' : 'Next program'}
+                className={`w-10 h-10 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs transition-all cursor-pointer ${
+                  canScrollNext
+                    ? 'hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95'
+                    : 'opacity-40 cursor-not-allowed'
                 }`}
-                title={isArabic ? 'البطاقات التفصيلية المصورة' : 'Detailed Cards'}
               >
-                <LayoutGrid className="w-4 h-4" />
-              </button>
-
-              {/* Slider Mode: Horizontal carousel */}
-              <button
-                onClick={() => setViewMode('slider')}
-                className={`p-2 rounded-xl transition-all cursor-pointer ${
-                  viewMode === 'slider' 
-                    ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-xs' 
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-                title={isArabic ? 'عرض شرائح متحرك' : 'Slider View'}
-              >
-                <SlidersHorizontal className="w-4 h-4" />
+                {isArabic ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
               </button>
             </div>
-
-            {viewMode === 'slider' && (
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={() => handleScroll('prev')}
-                  aria-label={isArabic ? 'الخدمة السابقة' : 'Previous program'}
-                  className="w-9 h-9 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer"
-                >
-                  {isArabic ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-                </button>
-
-                <button
-                  onClick={() => handleScroll('next')}
-                  aria-label={isArabic ? 'الخدمة التالية' : 'Next program'}
-                  className="w-9 h-9 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer"
-                >
-                  {isArabic ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                </button>
-              </div>
-            )}
           </div>
         </div>
 
@@ -394,201 +375,16 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         </div>
 
         {/* ================================================================= */}
-        {/* 3.1. VIEW MODE: POSTER STYLE (DIRECTLY MATCHING THE FLYER IMAGE)   */}
+        {/* 3. EXCLUSIVE SLIDER VIEW (CUSTOM ICONS ONLY, NO IMAGES, NO GRID)   */}
         {/* ================================================================= */}
-        {viewMode === 'poster' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-            {filteredServices.map((service) => {
-              const visual = getServiceVisuals(service.id);
-              const isFav = !!favorites[service.id];
-
-              return (
-                <div
-                  key={service.id}
-                  className={`bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border-2 border-slate-200/90 dark:border-white/10 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${visual.colorClassHover} relative`}
-                >
-                  {/* Top content: Icon + Title + Description */}
-                  <div className="flex items-start gap-4 sm:gap-5">
-                    
-                    {/* The prominent colored square matching the flyer */}
-                    <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl ${visual.colorClass} flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform duration-300`}>
-                      {renderFlyerIcon(service.id)}
-                    </div>
-
-                    {/* Text block */}
-                    <div className="flex-1 min-w-0">
-                      
-                      {/* Category mini-badge & Favorite button */}
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-black ${visual.lightBg} ${visual.textAccent}`}>
-                          {visual.badgeText || (isArabic ? service.categoryAr : service.categoryEn)}
-                        </span>
-                        
-                        <button
-                          onClick={(e) => toggleFavorite(e, service.id)}
-                          aria-label={isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
-                          className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-rose-500 transition-colors cursor-pointer"
-                        >
-                          <Heart className={`w-3.5 h-3.5 ${isFav ? 'fill-rose-500 text-rose-500' : ''}`} />
-                        </button>
-                      </div>
-
-                      {/* Main Service Title */}
-                      <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-snug group-hover:text-[#0B3B36] dark:group-hover:text-[#00E5BE] transition-colors mb-1.5">
-                        {isArabic ? service.title : (service.titleEn || service.title)}
-                      </h3>
-
-                      {/* Exact Bullet/Description Text from Flyer */}
-                      <p className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 leading-relaxed">
-                        {isArabic ? (visual.flyerText || service.description) : (service.descriptionEn || service.description)}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Highlights Bar & Action Buttons */}
-                  <div className="mt-5 pt-4 border-t border-slate-100 dark:border-white/10 flex flex-wrap items-center justify-between gap-3">
-                    
-                    {/* Meta stats: Age group only */}
-                    <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                      <span className="flex items-center gap-1.5">
-                        <Users className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                        <span className="line-clamp-1">{isArabic ? service.targetAges : (service.targetAgesEn || service.targetAges)}</span>
-                      </span>
-                    </div>
-
-                    {/* Booking Button */}
-                    <button
-                      id={`book-flyer-service-${service.id}`}
-                      onClick={() => onSelectService(service)}
-                      className={`px-4 py-2.5 rounded-xl ${visual.colorClass} hover:opacity-95 text-white font-black text-xs sm:text-sm flex items-center gap-2 cursor-pointer transition-all shadow-xs active:scale-95`}
-                    >
-                      <Calendar className="w-3.5 h-3.5" />
-                      <span>{isArabic ? 'احجز تقييم البرنامج' : 'Book Assessment'}</span>
-                      {isArabic ? <ArrowLeft className="w-3 h-3" /> : <ArrowRight className="w-3 h-3" />}
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* ================================================================= */}
-        {/* 3.2. VIEW MODE: GRID (DETAILED PHOTO CARDS WITH CHECKLISTS)       */}
-        {/* ================================================================= */}
-        {viewMode === 'grid' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredServices.map((service) => {
-              const visual = getServiceVisuals(service.id);
-              const isFav = !!favorites[service.id];
-
-              return (
-                <div
-                  key={service.id}
-                  className={`bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${visual.colorClassHover} relative`}
-                >
-                  {/* Upper Hero Image Area */}
-                  <div className="relative h-48 sm:h-52 overflow-hidden bg-slate-100 dark:bg-slate-800">
-                    <img
-                      src={service.image}
-                      alt={isArabic ? service.title : (service.titleEn || service.title)}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/20" />
-
-                    {/* Category Pill Tag */}
-                    <div className="absolute top-3.5 right-3.5 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-full text-xs font-black text-white shadow-xs border border-white/10">
-                      {isArabic ? service.categoryAr : (service.categoryEn || service.categoryAr)}
-                    </div>
-
-                    {/* Bookmark / Favorite Heart */}
-                    <button
-                      onClick={(e) => toggleFavorite(e, service.id)}
-                      aria-label={isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
-                      className="absolute top-3.5 left-3.5 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-rose-500 dark:hover:text-rose-400 transition-colors shadow-xs cursor-pointer"
-                    >
-                      <Heart className={`w-3.5 h-3.5 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
-                    </button>
-
-                    {/* Flyer Icon Square Badge */}
-                    <div className={`absolute bottom-3 right-4 w-12 h-12 rounded-2xl ${visual.colorClass} flex items-center justify-center shadow-lg border-2 border-white dark:border-slate-900`}>
-                      {renderFlyerIcon(service.id)}
-                    </div>
-                  </div>
-
-                  {/* Card Body */}
-                  <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
-                    <div className="space-y-3">
-                      <div>
-                        <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-tight group-hover:text-[#0B3B36] dark:group-hover:text-[#00E5BE] transition-colors">
-                          {isArabic ? service.title : (service.titleEn || service.title)}
-                        </h3>
-                        {service.titleEn && isArabic && (
-                          <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500 block mt-0.5" dir="ltr">
-                            {service.titleEn}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Exact Summary Text from the Flyer */}
-                      <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200/70 dark:border-white/5">
-                        <p className="text-xs font-bold text-slate-800 dark:text-slate-200 leading-relaxed">
-                          {isArabic ? (visual.flyerText || service.description) : (service.descriptionEn || service.description)}
-                        </p>
-                      </div>
-
-                      {/* Key Clinical Benefits */}
-                      <div className="space-y-1.5 pt-1">
-                        <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 block uppercase tracking-wider">
-                          {isArabic ? 'أبرز مخرجات البرنامج:' : 'Key Outcomes:'}
-                        </span>
-                        {(isArabic ? service.benefits : (service.benefitsEn || service.benefits)).slice(0, 3).map((benefit, bIdx) => (
-                          <div key={bIdx} className="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300">
-                            <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-[#00E5BE] shrink-0 mt-0.5 stroke-[2.5]" />
-                            <span className="line-clamp-1">{benefit}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Metadata & Direct Booking Button */}
-                    <div className="pt-3 border-t border-slate-100 dark:border-white/10 space-y-3">
-                      <div className="flex items-center text-xs font-semibold text-slate-600 dark:text-slate-400">
-                        <span className="flex items-center gap-1.5">
-                          <Users className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 shrink-0" />
-                          <span>{isArabic ? service.targetAges : (service.targetAgesEn || service.targetAges)}</span>
-                        </span>
-                      </div>
-
-                      <button
-                        id={`book-service-${service.id}`}
-                        onClick={() => onSelectService(service)}
-                        className="w-full py-3 px-4 bg-[#0B3B36] hover:bg-[#0f4d47] dark:bg-[#00E5BE] dark:hover:bg-[#00ffd2] text-white dark:text-slate-950 font-black rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xs active:scale-95"
-                      >
-                        <Calendar className="w-4 h-4" />
-                        <span>{isArabic ? 'احجز تقييم البرنامج' : 'Book Evaluation Session'}</span>
-                        {isArabic ? <ArrowLeft className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* ================================================================= */}
-        {/* 3.3. VIEW MODE: SLIDER (HORIZONTAL SCROLLING CAROUSEL)            */}
-        {/* ================================================================= */}
-        {viewMode === 'slider' && (
+        <div className="relative">
           <div
             ref={sliderRef}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
-            className={`flex gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-2 ${
+            className={`flex gap-5 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-3 px-1 ${
               isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
             }`}
             style={{ WebkitOverflowScrolling: 'touch' }}
@@ -600,70 +396,76 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
               return (
                 <div
                   key={service.id}
-                  className={`w-[86vw] max-w-[370px] sm:w-[350px] md:w-[365px] lg:w-[380px] shrink-0 snap-start bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${visual.colorClassHover}`}
+                  className={`w-[86vw] max-w-[370px] sm:w-[350px] md:w-[365px] lg:w-[380px] shrink-0 snap-start bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${visual.colorClassHover}`}
                 >
-                  <div className="relative h-52 sm:h-56 overflow-hidden bg-slate-100 dark:bg-slate-800">
-                    <img
-                      src={service.image}
-                      alt={isArabic ? service.title : (service.titleEn || service.title)}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/20" />
+                  {/* Top Slim Accent Strip in Service Brand Color */}
+                  <div className={`h-2 w-full ${visual.colorClass}`} />
 
-                    <div className="absolute top-4 right-4 bg-slate-950/80 backdrop-blur-md px-3.5 py-1 rounded-full text-xs font-black text-white shadow-xs border border-white/10">
-                      {isArabic ? service.categoryAr : (service.categoryEn || service.categoryAr)}
+                  {/* Header: Coordinated Custom Icon Container (No Images) */}
+                  <div className={`p-6 pb-5 ${visual.lightBg} border-b ${visual.accentBorder} relative transition-colors`}>
+                    {/* Top Row: Category Pill & Favorite Heart */}
+                    <div className="flex items-center justify-between gap-2 mb-4">
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-black ${visual.colorClass} text-white shadow-xs`}>
+                        {visual.badgeText || (isArabic ? service.categoryAr : service.categoryEn)}
+                      </span>
+
+                      <button
+                        onClick={(e) => toggleFavorite(e, service.id)}
+                        aria-label={isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
+                        className="w-8 h-8 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-xs flex items-center justify-center text-slate-500 hover:text-rose-500 transition-colors cursor-pointer"
+                      >
+                        <Heart className={`w-4 h-4 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
+                      </button>
                     </div>
 
-                    <button
-                      onClick={(e) => toggleFavorite(e, service.id)}
-                      aria-label={isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
-                      className="absolute top-4 left-4 w-9 h-9 rounded-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-rose-500 dark:hover:text-rose-400 transition-colors shadow-xs cursor-pointer"
-                    >
-                      <Heart className={`w-4 h-4 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
-                    </button>
+                    {/* Prominent Custom Icon Box with Title */}
+                    <div className="flex items-center gap-4">
+                      <div className={`w-16 h-16 sm:w-18 sm:h-18 rounded-2xl ${visual.colorClass} text-white flex items-center justify-center shadow-lg shadow-black/10 group-hover:scale-105 transition-transform duration-300 shrink-0`}>
+                        {renderFlyerIcon(service.id)}
+                      </div>
 
-                    <div className={`absolute bottom-3 right-4 w-12 h-12 rounded-2xl ${visual.colorClass} flex items-center justify-center shadow-lg border-2 border-white dark:border-slate-900`}>
-                      {renderFlyerIcon(service.id)}
-                    </div>
-                  </div>
-
-                  <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
-                    <div className="space-y-3">
-                      <div>
-                        <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-tight group-hover:text-[#0B3B36] dark:group-hover:text-[#00E5BE] transition-colors">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-xl sm:text-[22px] font-black text-slate-900 dark:text-white leading-tight group-hover:text-[#0B3B36] dark:group-hover:text-[#00E5BE] transition-colors">
                           {isArabic ? service.title : (service.titleEn || service.title)}
                         </h3>
                         {service.titleEn && isArabic && (
-                          <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500 block mt-0.5" dir="ltr">
+                          <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 block mt-0.5" dir="ltr">
                             {service.titleEn}
                           </span>
                         )}
                       </div>
+                    </div>
+                  </div>
 
-                      <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200/70 dark:border-white/5">
-                        <p className="text-xs font-bold text-slate-800 dark:text-slate-200 leading-relaxed">
+                  {/* Body Content */}
+                  <div className="p-6 pt-5 flex-1 flex flex-col justify-between space-y-4">
+                    <div className="space-y-3.5">
+                      {/* Clinical Purpose Highlight Box */}
+                      <div className={`p-3 rounded-2xl ${visual.lightBg} border ${visual.accentBorder}`}>
+                        <p className={`text-xs sm:text-sm font-bold ${visual.textAccent} leading-relaxed`}>
                           {isArabic ? (visual.flyerText || service.description) : (service.descriptionEn || service.description)}
                         </p>
                       </div>
 
-                      <div className="space-y-1.5 pt-1">
-                        <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 block uppercase tracking-wider">
+                      {/* Key Clinical Benefits Checklist */}
+                      <div className="space-y-2 pt-1">
+                        <span className="text-[11px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">
                           {isArabic ? 'أبرز مخرجات البرنامج:' : 'Key Outcomes:'}
                         </span>
                         {(isArabic ? service.benefits : (service.benefitsEn || service.benefits)).slice(0, 3).map((benefit, bIdx) => (
-                          <div key={bIdx} className="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-300">
-                            <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-[#00E5BE] shrink-0 mt-0.5 stroke-[2.5]" />
-                            <span className="line-clamp-1">{benefit}</span>
+                          <div key={bIdx} className="flex items-start gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                            <Check className="w-4 h-4 text-emerald-600 dark:text-[#00E5BE] shrink-0 mt-0.5 stroke-[2.5]" />
+                            <span className="line-clamp-2 leading-relaxed">{benefit}</span>
                           </div>
                         ))}
                       </div>
                     </div>
 
-                    <div className="pt-3 border-t border-slate-100 dark:border-white/10 space-y-3">
+                    {/* Metadata & Direct Booking Button */}
+                    <div className="pt-4 border-t border-slate-100 dark:border-white/10 space-y-3">
                       <div className="flex items-center text-xs font-semibold text-slate-600 dark:text-slate-400">
                         <span className="flex items-center gap-1.5">
-                          <Users className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 shrink-0" />
+                          <Users className="w-4 h-4 text-amber-500 dark:text-amber-400 shrink-0" />
                           <span>{isArabic ? service.targetAges : (service.targetAgesEn || service.targetAges)}</span>
                         </span>
                       </div>
@@ -671,11 +473,11 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                       <button
                         id={`book-slider-service-${service.id}`}
                         onClick={() => onSelectService(service)}
-                        className="w-full py-3 px-4 bg-[#0B3B36] hover:bg-[#0f4d47] dark:bg-[#00E5BE] dark:hover:bg-[#00ffd2] text-white dark:text-slate-950 font-black rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xs active:scale-95"
+                        className={`w-full py-3.5 px-4 ${visual.colorClass} hover:opacity-95 text-white font-black rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md active:scale-95`}
                       >
                         <Calendar className="w-4 h-4" />
                         <span>{isArabic ? 'احجز تقييم البرنامج' : 'Book Evaluation Session'}</span>
-                        {isArabic ? <ArrowLeft className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
+                        {isArabic ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
                       </button>
                     </div>
                   </div>
@@ -683,7 +485,23 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
               );
             })}
           </div>
-        )}
+
+          {/* Slider Indicator Dots */}
+          <div className="flex justify-center items-center gap-2 mt-6">
+            {filteredServices.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => scrollToIndex(idx)}
+                aria-label={`الخدمة ${idx + 1}`}
+                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                  currentIndex === idx 
+                    ? 'w-8 bg-[#0B3B36] dark:bg-[#00E5BE]' 
+                    : 'w-2 bg-slate-300 dark:bg-white/20 hover:bg-slate-400 dark:hover:bg-white/40'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
 
         {/* ================================================================= */}
         {/* 4. BOTTOM BANNER MATCHING THE ATTACHED FLYER FOOTER               */}

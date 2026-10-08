@@ -261,6 +261,8 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
             src="/images/shadow_teacher.jpg"
             alt={isArabic ? 'أخصائية معلم الظل مع طفلة في بيئة تعليمية' : 'Shadow teacher with child in classroom'}
             className="w-full h-[240px] sm:h-[300px] md:h-[350px] object-cover object-center group-hover:scale-[1.01] transition-transform duration-700"
+            loading="lazy"
+            decoding="async"
             referrerPolicy="no-referrer"
           />
           

@@ -298,6 +298,9 @@ export const RabaLogo: React.FC<RabaLogoProps> = ({
         <img
           src={getResolvedImageUrl(currentSettings.customLogoUrl)}
           alt={isArabic ? currentSettings.titleAr : currentSettings.titleEn}
+          width={iconPx}
+          height={iconPx}
+          decoding="async"
           style={{ maxHeight: `${iconPx}px`, width: 'auto', height: 'auto' }}
           className={`max-h-full max-w-full object-${currentSettings.iconObjectFit || 'contain'}`}
           onError={async (e) => {

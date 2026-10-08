@@ -117,6 +117,7 @@ export const SmartAccreditationLogo: React.FC<SmartAccreditationLogoProps> = ({
           onError={(e) => handleImageErrorWithStore(e, src)}
           className={`${className} object-contain rounded-xl transition-transform duration-300 group-hover:scale-105`}
           loading="lazy"
+          decoding="async"
         />
         {/* Subtle metallic sheen accent */}
         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.04] to-transparent rounded-2xl pointer-events-none" />
@@ -136,6 +137,7 @@ export const SmartAccreditationLogo: React.FC<SmartAccreditationLogoProps> = ({
           onError={(e) => handleImageErrorWithStore(e, src)}
           className={`${className} object-contain transition-transform duration-300 group-hover:scale-105 mix-blend-multiply`}
           loading="lazy"
+          decoding="async"
         />
       </div>
     );
@@ -150,6 +152,7 @@ export const SmartAccreditationLogo: React.FC<SmartAccreditationLogoProps> = ({
         onError={(e) => handleImageErrorWithStore(e, src)}
         className={`${className} object-contain transition-transform duration-300 group-hover:scale-105 filter dark:brightness-105`}
         loading="lazy"
+        decoding="async"
       />
     </div>
   );

@@ -1,5 +1,6 @@
 import express from 'express';
 import type { Request, Response } from 'express';
+import compression from 'compression';
 import { createServer as createViteServer } from 'vite';
 import path from 'path';
 import fs from 'fs';
@@ -216,15 +217,18 @@ async function startServer() {
   const app = express();
   const PORT = getPort();
 
+  // Compress all responses for enhanced mobile network performance
+  app.use(compression());
+
   // JSON and URL-encoded body parser with generous limit for attachments
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-  // Static directories for uploads, images, logo, and specialists
-  app.use('/uploads', express.static(UPLOADS_DIR));
-  app.use('/images', express.static(IMAGES_DIR));
-  app.use('/logo', express.static(LOGO_DIR));
-  app.use('/specialists', express.static(path.join(process.cwd(), 'public', 'specialists')));
+  // Static directories with HTTP cache headers (reduces repeat downloads & improves PageSpeed score)
+  app.use('/uploads', express.static(UPLOADS_DIR, { maxAge: '7d' }));
+  app.use('/images', express.static(IMAGES_DIR, { maxAge: '7d' }));
+  app.use('/logo', express.static(LOGO_DIR, { maxAge: '7d' }));
+  app.use('/specialists', express.static(path.join(process.cwd(), 'public', 'specialists'), { maxAge: '7d' }));
   app.get('/uploads/:filename', async (req: Request, res: Response, next) => {
     const filename = req.params.filename;
     const filePath = path.join(UPLOADS_DIR, filename);
@@ -743,8 +747,22 @@ async function startServer() {
   let viteInstance: any = null;
   if (process.env.NODE_ENV === 'production') {
     const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
+    // Long immutable cache on hashed JS & CSS assets
+    app.use('/assets', express.static(path.join(distPath, 'assets'), {
+      maxAge: '1y',
+      immutable: true,
+    }));
+    // 7-day cache on other static files, with no-cache on HTML
+    app.use(express.static(distPath, {
+      maxAge: '7d',
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.html')) {
+          res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+        }
+      }
+    }));
     app.get('*', (req: Request, res: Response) => {
+      res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
       res.sendFile(path.join(distPath, 'index.html'));
     });
   } else {

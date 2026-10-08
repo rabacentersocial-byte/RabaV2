@@ -1,19 +1,18 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 
 interface Props {
   children: ReactNode;
+  fallback?: ReactNode;
 }
 
 interface State {
   hasError: boolean;
-  error: Error | null;
+  error?: Error;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
   public state: State = {
-    hasError: false,
-    error: null,
+    hasError: false
   };
 
   public static getDerivedStateFromError(error: Error): State {
@@ -24,53 +23,39 @@ export class ErrorBoundary extends Component<Props, State> {
     console.error('[ErrorBoundary] Uncaught error:', error, errorInfo);
   }
 
-  private handleReload = () => {
-    try {
-      window.location.reload();
-    } catch {
-      window.location.href = '/';
-    }
-  };
-
-  private handleReset = () => {
-    try {
-      this.setState({ hasError: false, error: null });
-    } catch {
-      this.handleReload();
-    }
-  };
-
   public render() {
     if (this.state.hasError) {
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
+
       return (
-        <div className="min-h-screen bg-[#0B1320] text-slate-100 flex items-center justify-center p-4" dir="rtl">
-          <div className="max-w-md w-full bg-slate-900/90 border border-slate-700/60 rounded-3xl p-6 sm:p-8 text-center shadow-2xl backdrop-blur-md">
-            <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto mb-4">
-              <AlertTriangle className="w-8 h-8" />
+        <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-6 text-center" dir="rtl">
+          <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-4">
+            <div className="w-16 h-16 rounded-2xl bg-teal-500/10 text-teal-400 flex items-center justify-center mx-auto text-2xl font-bold">
+              ✨
             </div>
-
-            <h2 className="text-xl sm:text-2xl font-black text-white mb-2">
-              مركز رابا للرعاية والتأهيل
-            </h2>
-            <p className="text-sm text-slate-400 mb-6 leading-relaxed">
-              حدث خطأ غير متوقع أثناء تحميل الصفحة. يرجى إعادة تحديث الصفحة أو العودة للرئيسية.
+            <h2 className="text-xl font-black text-white">مركز رابا للتأهيل</h2>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              حدث تنبيه غير متوقع أثناء عرض هذه الصفحة. يمكنك المحاولة مجدداً عبر تحديث الصفحة.
             </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
               <button
-                onClick={this.handleReload}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#0D9488] hover:bg-[#0f766e] text-white font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md active:scale-95"
+                onClick={() => window.location.reload()}
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-teal-500 text-white text-xs font-black shadow-lg cursor-pointer hover:brightness-110 active:scale-95 transition-all"
               >
-                <RefreshCw className="w-4 h-4" />
-                <span>إعادة تحميل الصفحة</span>
+                تحديث الصفحة ↻
               </button>
-
               <button
-                onClick={this.handleReset}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm flex items-center justify-center gap-2 border border-slate-700 transition-all cursor-pointer active:scale-95"
+                onClick={() => {
+                  try {
+                    localStorage.removeItem('raba_specialist_settings');
+                  } catch {}
+                  this.setState({ hasError: false });
+                }}
+                className="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-bold border border-slate-700 hover:bg-slate-700 cursor-pointer transition-colors"
               >
-                <Home className="w-4 h-4" />
-                <span>المتابعة</span>
+                إعادة المحاولة
               </button>
             </div>
           </div>

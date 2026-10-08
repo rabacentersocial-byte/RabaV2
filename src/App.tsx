@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Navbar } from './components/Navbar';
 import { AnimatedBackground } from './components/AnimatedBackground';
 import { Hero } from './components/Hero';
@@ -8,29 +8,32 @@ import { ServicesSection } from './components/ServicesSection';
 import { ShadowTeacherSection } from './components/ShadowTeacherSection';
 import { PackagesSection } from './components/PackagesSection';
 import { SpecialistsSection } from './components/SpecialistsSection';
-import { SpecialistsDirectoryPage } from './components/SpecialistsDirectoryPage';
-import { SpecialistCvModal } from './components/SpecialistCvModal';
-import { BookingModal } from './components/BookingModal';
-import { NotificationCenterModal } from './components/NotificationCenterModal';
-import { TestimonialsSection } from './components/TestimonialsSection';
-import { BlogSliderSection } from './components/BlogSliderSection';
 import { Footer } from './components/Footer';
 import { FloatingActions } from './components/FloatingActions';
-import { AccreditationsSection } from './components/AccreditationsSection';
-import { PartnersSection } from './components/PartnersSection';
-import { BranchesSection } from './components/BranchesSection';
-import { CoursesSliderSection } from './components/CoursesSliderSection';
-import { CourseRegistrationModal } from './components/CourseRegistrationModal';
+import { MobileBottomBar } from './components/MobileBottomBar';
 import { CourseItem } from './data/coursesData';
-import { LoginModal } from './components/LoginModal';
-import { StoreModal } from './components/StoreModal';
-import { VideoModal } from './components/VideoModal';
-import { QuickConsultationModal } from './components/QuickConsultationModal';
-import { AdminDashboard } from './components/admin/AdminDashboard';
-import { AdminLoginPage } from './components/admin/AdminLoginPage';
 import { getStoredAdminSession, clearStoredAdminSession } from './data/adminData';
 import { DISPATCH_REQUEST_EVENT } from './data/customerRequests';
 import { saveAppointmentToFirestore } from './services/firestoreService';
+
+// Lazy-loaded components for optimal mobile bundle splitting and low TBT
+const SpecialistsDirectoryPage = lazy(() => import('./components/SpecialistsDirectoryPage'));
+const SpecialistCvModal = lazy(() => import('./components/SpecialistCvModal').then(m => ({ default: m.SpecialistCvModal })));
+const BookingModal = lazy(() => import('./components/BookingModal').then(m => ({ default: m.BookingModal })));
+const NotificationCenterModal = lazy(() => import('./components/NotificationCenterModal').then(m => ({ default: m.NotificationCenterModal })));
+const TestimonialsSection = lazy(() => import('./components/TestimonialsSection').then(m => ({ default: m.TestimonialsSection })));
+const BlogSliderSection = lazy(() => import('./components/BlogSliderSection').then(m => ({ default: m.BlogSliderSection })));
+const AccreditationsSection = lazy(() => import('./components/AccreditationsSection').then(m => ({ default: m.AccreditationsSection })));
+const PartnersSection = lazy(() => import('./components/PartnersSection').then(m => ({ default: m.PartnersSection })));
+const BranchesSection = lazy(() => import('./components/BranchesSection').then(m => ({ default: m.BranchesSection })));
+const CoursesSliderSection = lazy(() => import('./components/CoursesSliderSection').then(m => ({ default: m.CoursesSliderSection })));
+const CourseRegistrationModal = lazy(() => import('./components/CourseRegistrationModal').then(m => ({ default: m.CourseRegistrationModal })));
+const LoginModal = lazy(() => import('./components/LoginModal').then(m => ({ default: m.LoginModal })));
+const StoreModal = lazy(() => import('./components/StoreModal').then(m => ({ default: m.StoreModal })));
+const VideoModal = lazy(() => import('./components/VideoModal').then(m => ({ default: m.VideoModal })));
+const QuickConsultationModal = lazy(() => import('./components/QuickConsultationModal').then(m => ({ default: m.QuickConsultationModal })));
+const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const AdminLoginPage = lazy(() => import('./components/admin/AdminLoginPage').then(m => ({ default: m.AdminLoginPage })));
 
 import { 
   INITIAL_APPOINTMENTS, 
@@ -476,44 +479,48 @@ export default function App() {
   if (isAdminOpen) {
     if (!adminSession) {
       return (
-        <AdminLoginPage
-          onLoginSuccess={(user) => {
-            setAdminSession(user);
+        <Suspense fallback={<div className="min-h-screen bg-[#061412] flex items-center justify-center text-teal-400 font-bold">جاري تحميل تسجيل الدخول...</div>}>
+          <AdminLoginPage
+            onLoginSuccess={(user) => {
+              setAdminSession(user);
+            }}
+            onBackToWebsite={() => {
+              setIsAdminOpen(false);
+              if (window.location.hash === '#admin') {
+                window.location.hash = '';
+              }
+            }}
+          />
+        </Suspense>
+      );
+    }
+
+    return (
+      <Suspense fallback={<div className="min-h-screen bg-[#061412] flex items-center justify-center text-teal-400 font-bold">جاري تحميل لوحة التحكم...</div>}>
+        <AdminDashboard
+          appointments={appointments}
+          onUpdateAppointments={setAppointments}
+          reviews={testimonials}
+          onUpdateReviews={setTestimonials}
+          specialists={specialists}
+          onUpdateSpecialists={setSpecialists}
+          onLogout={() => {
+            setAdminSession(null);
+            clearStoredAdminSession();
           }}
-          onBackToWebsite={() => {
+          onClose={() => {
             setIsAdminOpen(false);
             if (window.location.hash === '#admin') {
               window.location.hash = '';
             }
           }}
         />
-      );
-    }
-
-    return (
-      <AdminDashboard
-        appointments={appointments}
-        onUpdateAppointments={setAppointments}
-        reviews={testimonials}
-        onUpdateReviews={setTestimonials}
-        specialists={specialists}
-        onUpdateSpecialists={setSpecialists}
-        onLogout={() => {
-          setAdminSession(null);
-          clearStoredAdminSession();
-        }}
-        onClose={() => {
-          setIsAdminOpen(false);
-          if (window.location.hash === '#admin') {
-            window.location.hash = '';
-          }
-        }}
-      />
+      </Suspense>
     );
   }
 
   return (
-    <div className="min-h-screen relative flex flex-col font-sans text-slate-900 dark:text-white selection:bg-[#00E5BE] selection:text-slate-950 md:transition-colors md:duration-300 overflow-x-clip w-full max-w-[100vw]" dir="rtl">
+    <div className="min-h-screen relative flex flex-col font-sans text-slate-900 dark:text-white selection:bg-[#00E5BE] selection:text-slate-950 md:transition-colors md:duration-300 overflow-x-clip w-full max-w-[100vw] pb-16 md:pb-0" dir="rtl">
       
       {/* 1. Gentle Animated Background with floating pediatric shapes */}
       <AnimatedBackground />
@@ -536,12 +543,14 @@ export default function App() {
         
         {isSpecialistsPageOpen ? (
           /* Dedicated Specialists Page with Specialty Filter and List Format Display */
-          <SpecialistsDirectoryPage
-            specialists={specialists}
-            onBackToHome={handleBackToHome}
-            onViewCv={handleViewCv}
-            onBookSpecialist={handleSelectSpecialistForBooking}
-          />
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-teal-500 font-bold">جاري تحميل دليل الأخصائيين...</div>}>
+            <SpecialistsDirectoryPage
+              specialists={specialists}
+              onBackToHome={handleBackToHome}
+              onViewCv={handleViewCv}
+              onBookSpecialist={handleSelectSpecialistForBooking}
+            />
+          </Suspense>
         ) : (
           <>
             {/* 3. Hero Section */}
@@ -574,9 +583,11 @@ export default function App() {
                   onSelectService={handleSelectServiceForBooking}
                 />
                 {modules.courses && (
-                  <CoursesSliderSection
-                    onRegisterCourse={handleOpenCourseRegistration}
-                  />
+                  <Suspense fallback={null}>
+                    <CoursesSliderSection
+                      onRegisterCourse={handleOpenCourseRegistration}
+                    />
+                  </Suspense>
                 )}
                 <ShadowTeacherSection 
                   onSubmitRequest={handleConfirmBooking}
@@ -599,33 +610,43 @@ export default function App() {
 
             {/* 11.4. Branches Network Slider (فروع الرياض والخرج) directly above Accreditations */}
             {modules.branches && (
-              <BranchesSection />
+              <Suspense fallback={null}>
+                <BranchesSection />
+              </Suspense>
             )}
 
             {/* 11.45. Partners Horizontal Slider (شركاء النجاح والرعايات) directly above Accreditations */}
             {modules.partners !== false && (
-              <PartnersSection />
+              <Suspense fallback={null}>
+                <PartnersSection />
+              </Suspense>
             )}
 
             {/* 11.5. Accreditations & Certifications Section (معترف بنا من) in the footer of the blogs & branches */}
             {modules.accreditations && (
-              <AccreditationsSection />
+              <Suspense fallback={null}>
+                <AccreditationsSection />
+              </Suspense>
             )}
 
             {/* 12. Client Testimonials & Success Stories */}
             {modules.reviews && (
-              <TestimonialsSection
-                testimonials={testimonials}
-                onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
-              />
+              <Suspense fallback={null}>
+                <TestimonialsSection
+                  testimonials={testimonials}
+                  onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
+                />
+              </Suspense>
             )}
 
-            {/* 13. Clinical Blog & Articles Slider (تم نقله هنا مكان قسم المتابعة والتنبيهات) */}
+            {/* 13. Clinical Blog & Articles Slider */}
             {modules.blog && (
-              <BlogSliderSection
-                onOpenBooking={handleOpenBooking}
-                onBookSpecialist={handleSelectSpecialistForBooking}
-              />
+              <Suspense fallback={null}>
+                <BlogSliderSection
+                  onOpenBooking={handleOpenBooking}
+                  onBookSpecialist={handleSelectSpecialistForBooking}
+                />
+              </Suspense>
             )}
           </>
         )}
@@ -644,72 +665,82 @@ export default function App() {
         onOpenQuickConsult={() => setIsQuickConsultOpen(true)}
       />
 
-      {/* Modals */}
-      {/* Quick Consultation Request Modal */}
-      <QuickConsultationModal
-        isOpen={isQuickConsultOpen}
-        onClose={() => setIsQuickConsultOpen(false)}
-        onSuccessSubmit={handleConfirmBooking}
-      />
-      {/* Login Modal */}
-      <LoginModal
-        isOpen={isLoginOpen}
-        onClose={() => setIsLoginOpen(false)}
-        onOpenAdmin={() => setIsAdminOpen(true)}
+      {/* Mobile Bottom Navigation Bar for Instant Mobile Access */}
+      <MobileBottomBar
+        onOpenBooking={handleOpenBooking}
+        onOpenSpecialistsPage={handleOpenSpecialistsPage}
+        onGoHome={handleBackToHome}
+        isSpecialistsPageOpen={isSpecialistsPageOpen}
       />
 
-      {/* Store Modal */}
-      <StoreModal
-        isOpen={isStoreOpen}
-        onClose={() => setIsStoreOpen(false)}
-        onAddToCart={() => setCartCount((prev) => prev + 1)}
-      />
+      {/* Modals wrapped in Suspense for zero initial blocking time */}
+      <Suspense fallback={null}>
+        {/* Quick Consultation Request Modal */}
+        <QuickConsultationModal
+          isOpen={isQuickConsultOpen}
+          onClose={() => setIsQuickConsultOpen(false)}
+          onSuccessSubmit={handleConfirmBooking}
+        />
+        {/* Login Modal */}
+        <LoginModal
+          isOpen={isLoginOpen}
+          onClose={() => setIsLoginOpen(false)}
+          onOpenAdmin={() => setIsAdminOpen(true)}
+        />
 
-      {/* Course Registration Modal */}
-      <CourseRegistrationModal
-        course={selectedCourseForRegistration}
-        isOpen={isCourseRegistrationOpen}
-        onClose={() => {
-          setIsCourseRegistrationOpen(false);
-          setSelectedCourseForRegistration(null);
-        }}
-      />
+        {/* Store Modal */}
+        <StoreModal
+          isOpen={isStoreOpen}
+          onClose={() => setIsStoreOpen(false)}
+          onAddToCart={() => setCartCount((prev) => prev + 1)}
+        />
 
-      {/* Video Presentation Modal */}
-      <VideoModal
-        isOpen={isVideoOpen}
-        onClose={() => setIsVideoOpen(false)}
-        onBookNow={handleOpenBooking}
-      />
+        {/* Course Registration Modal */}
+        <CourseRegistrationModal
+          course={selectedCourseForRegistration}
+          isOpen={isCourseRegistrationOpen}
+          onClose={() => {
+            setIsCourseRegistrationOpen(false);
+            setSelectedCourseForRegistration(null);
+          }}
+        />
 
-      {/* Specialist CV Modal */}
-      <SpecialistCvModal
-        specialist={selectedCvSpecialist}
-        onClose={() => setSelectedCvSpecialist(null)}
-        onBookSpecialist={handleSelectSpecialistForBooking}
-      />
+        {/* Video Presentation Modal */}
+        <VideoModal
+          isOpen={isVideoOpen}
+          onClose={() => setIsVideoOpen(false)}
+          onBookNow={handleOpenBooking}
+        />
 
-      {/* Booking Appointment Modal (Direct Booking - No Payment) */}
-      <BookingModal
-        isOpen={isBookingOpen}
-        onClose={() => setIsBookingOpen(false)}
-        initialService={bookingInitialService}
-        initialPackage={bookingInitialPackage}
-        initialSpecialist={bookingInitialSpecialist}
-        initialNotes={bookingInitialNotes}
-        initialDate={bookingInitialDate}
-        onConfirmBooking={handleConfirmBooking}
-      />
+        {/* Specialist CV Modal */}
+        <SpecialistCvModal
+          specialist={selectedCvSpecialist}
+          onClose={() => setSelectedCvSpecialist(null)}
+          onBookSpecialist={handleSelectSpecialistForBooking}
+        />
 
-      {/* Client Automated Session Notifications Center */}
-      <NotificationCenterModal
-        isOpen={isNotificationsOpen}
-        onClose={() => setIsNotificationsOpen(false)}
-        notifications={notifications}
-        appointments={appointments}
-        onMarkAllAsRead={handleMarkAllNotificationsAsRead}
-        onAddTestNotification={handleAddTestNotification}
-      />
+        {/* Booking Appointment Modal (Direct Booking - No Payment) */}
+        <BookingModal
+          isOpen={isBookingOpen}
+          onClose={() => setIsBookingOpen(false)}
+          initialService={bookingInitialService}
+          initialPackage={bookingInitialPackage}
+          initialSpecialist={bookingInitialSpecialist}
+          initialNotes={bookingInitialNotes}
+          initialDate={bookingInitialDate}
+          onConfirmBooking={handleConfirmBooking}
+        />
+
+        {/* Client Automated Session Notifications Center */}
+        <NotificationCenterModal
+          isOpen={isNotificationsOpen}
+          onClose={() => setIsNotificationsOpen(false)}
+          notifications={notifications}
+          appointments={appointments}
+          onMarkAllAsRead={handleMarkAllNotificationsAsRead}
+          onAddTestNotification={handleAddTestNotification}
+        />
+      </Suspense>
 
     </div>
   );

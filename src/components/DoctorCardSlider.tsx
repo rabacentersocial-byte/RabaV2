@@ -13,6 +13,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { Specialist } from '../types';
 import { 
   getStoredSpecialistSettings, 
   SpecialistImageSetting,
@@ -2250,6 +2251,116 @@ export const DOCTORS_DATA: Doctor[] = [
   }
 ];
 
+// Reusable function to compute unified, deduplicated and priority-sorted doctors
+export function getUnifiedDoctors(sourceDoctors: Doctor[] = DOCTORS_DATA, extraSpecialists?: any[]): Doctor[] {
+  const cleanSourceDoctors = deduplicateDoctors(sourceDoctors);
+
+  let baseDocs: Doctor[];
+  if (extraSpecialists && extraSpecialists.length > 0) {
+    baseDocs = extraSpecialists.map((spec) => {
+      const matchingDoc = cleanSourceDoctors.find(d => isSameSpecialist(d, spec));
+      return {
+        id: spec.id.startsWith('spec-') ? spec.id.replace('spec-', 'doc-') : (matchingDoc?.id || `doc-${spec.id}`),
+        name: spec.name,
+        arabicName: spec.name,
+        nameEn: spec.nameEn || matchingDoc?.nameEn || spec.name,
+        title: spec.title || matchingDoc?.title || '',
+        titleEn: spec.titleEn || matchingDoc?.titleEn || spec.title || '',
+        specialty: spec.role || matchingDoc?.specialty || spec.title || '',
+        specialtyEn: spec.roleEn || matchingDoc?.specialtyEn || spec.titleEn || spec.title || '',
+        specialtyCode: spec.title || matchingDoc?.specialtyCode || '',
+        specialtyCodeEn: spec.titleEn || matchingDoc?.specialtyCodeEn || 'SPECIALIST',
+        category: (spec.category as any) || matchingDoc?.category || ((spec.title?.includes('نطق') || spec.title?.includes('تخاطب')) ? 'speech' : (spec.title?.includes('وظيفي') || spec.title?.includes('حركي')) ? 'occupational' : (spec.title?.includes('نفس')) ? 'psychology' : 'aba'),
+        department: spec.department || matchingDoc?.department || spec.role || spec.title,
+        avatar: spec.avatar || matchingDoc?.avatar || '/uploads/1790827426491_50_png.png',
+        fallbackAvatar: spec.avatar || matchingDoc?.fallbackAvatar || '/uploads/1790827426491_50_png.png',
+        rating: spec.rating || matchingDoc?.rating || 4.9,
+        reviewCount: spec.reviewsCount || matchingDoc?.reviewCount || 120,
+        experienceYears: spec.experienceYears || matchingDoc?.experienceYears || 5,
+        patientsCount: matchingDoc?.patientsCount || 1000,
+        sessionPrice: 0,
+        location: matchingDoc?.location || '',
+        locationEn: matchingDoc?.locationEn || '',
+        isAvailable: true,
+        nextSlot: matchingDoc?.nextSlot || 'متاح للحجز',
+        nextSlotEn: matchingDoc?.nextSlotEn || 'Available for booking',
+        tags: (spec.specialties && spec.specialties.length > 0) ? spec.specialties : (matchingDoc?.tags || []),
+        bio: spec.bio || matchingDoc?.bio || '',
+        isTopRated: (spec.rating || matchingDoc?.rating || 0) >= 4.9
+      };
+    });
+
+    const existingNames = new Set(baseDocs.map(d => normalizeSpecialistName(d.name)));
+    cleanSourceDoctors.forEach((doc) => {
+      if (!existingNames.has(normalizeSpecialistName(doc.name))) {
+        baseDocs.push(doc);
+      }
+    });
+  } else {
+    baseDocs = cleanSourceDoctors;
+  }
+
+  return sortSpecialistsByPriority(deduplicateDoctors(baseDocs));
+}
+
+// Convert a Doctor record into a full Specialist record for CV modal and booking
+export function doctorToSpecialist(doctor: Doctor, allSpecialists?: any[]): Specialist {
+  if (allSpecialists && allSpecialists.length > 0) {
+    const matched = allSpecialists.find((s) => isSameSpecialist(s, doctor));
+    if (matched) {
+      return {
+        ...matched,
+        avatar: doctor.avatar || matched.avatar,
+        title: doctor.title || matched.title,
+        role: doctor.specialty || matched.role,
+        bio: doctor.bio || matched.bio,
+        experienceYears: doctor.experienceYears || matched.experienceYears,
+        rating: doctor.rating || matched.rating,
+        specialties: (doctor.tags && doctor.tags.length > 0) ? doctor.tags : matched.specialties,
+      };
+    }
+  }
+
+  return {
+    id: doctor.id.startsWith('spec-') ? doctor.id : `spec-${doctor.id.replace('doc-', '')}`,
+    name: doctor.name,
+    nameEn: doctor.nameEn || doctor.name,
+    role: doctor.specialty || doctor.title,
+    roleEn: doctor.specialtyEn || doctor.titleEn || doctor.title,
+    title: doctor.title,
+    titleEn: doctor.titleEn || doctor.title,
+    licenseNumber: 'SCFHS-24-1022',
+    category: doctor.category,
+    avatar: doctor.avatar,
+    bio: doctor.bio || 'أخصائي معتمد في مركز رابا للرعاية النهارية وتأهيل ذوي الإعاقة. يمتلك خبرة سريرية متقدمة في تطبيق الخطط التأهيلية الفردية المبنية على الأدلة والقياس الدقيق للنتائج وتطوير مهارات الأطفال التكيفية والتواصلية.',
+    bioEn: 'Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.',
+    rating: doctor.rating || 4.9,
+    reviewsCount: doctor.reviewCount || 120,
+    experienceYears: doctor.experienceYears || 5,
+    education: [
+      'بكالوريوس في علوم التأهيل والرعاية الطبية التطبيقية',
+      'دبلوم مهني متقدم في برامج التدخل المبكر وتعديل السلوك'
+    ],
+    educationEn: [
+      'Bachelor of Rehabilitation & Applied Medical Sciences',
+      'Advanced Diploma in Early Intervention & Behavioral Therapy'
+    ],
+    certifications: [
+      'ترخيص الهيئة السعودية للتخصصات الصحية (SCFHS)',
+      'اعتماد بورد التأهيل الإكلينيكي'
+    ],
+    certificationsEn: [
+      'Saudi Commission for Health Specialties (SCFHS) License',
+      'Clinical Board Accreditation'
+    ],
+    specialties: (doctor.tags && doctor.tags.length > 0) ? doctor.tags : ['تأهيل متخصص', 'تدخل مبكر', 'خطط فردية'],
+    specialtiesEn: ['Specialized Rehabilitation', 'Early Intervention', 'Individual Treatment Plans'],
+    availableDays: ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'],
+    availableDaysEn: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday'],
+    sessionPrice: 0,
+  };
+}
+
 interface DoctorCardSliderProps {
   doctors?: Doctor[];
   specialists?: any[];
@@ -2275,8 +2386,29 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
   const [sortBy, setSortBy] = useState<'earliest' | 'rating' | 'experience'>('earliest');
   const [isSortOpen, setIsSortOpen] = useState(false);
   
-  // Favorites state
-  const [favorites, setFavorites] = useState<Record<string, boolean>>({});
+  // Favorites state synced across slider and directory
+  const [favorites, setFavorites] = useState<Record<string, boolean>>(() => {
+    try {
+      const saved = localStorage.getItem('raba_favorite_doctors');
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    const handleFavUpdate = (e: any) => {
+      if (e?.detail) setFavorites(e.detail);
+      else {
+        try {
+          const saved = localStorage.getItem('raba_favorite_doctors');
+          if (saved) setFavorites(JSON.parse(saved));
+        } catch {}
+      }
+    };
+    window.addEventListener('raba_favorite_doctors_updated', handleFavUpdate);
+    return () => window.removeEventListener('raba_favorite_doctors_updated', handleFavUpdate);
+  }, []);
 
   // Interactive user star ratings state (persisted in localStorage)
   const [userRatings, setUserRatings] = useState<Record<string, number>>(() => {
@@ -2369,58 +2501,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
 
   // Merge doctors list with any specialists data passed dynamically, deduplicating rigorously
   const effectiveDoctors = useMemo(() => {
-    // 1. Initial deduplication of source doctors
-    const cleanSourceDoctors = deduplicateDoctors(doctors);
-
-    let baseDocs: Doctor[];
-    if (specialists && specialists.length > 0) {
-      baseDocs = specialists.map((spec) => {
-        const matchingDoc = cleanSourceDoctors.find(d => isSameSpecialist(d, spec));
-        return {
-          id: spec.id.startsWith('spec-') ? spec.id.replace('spec-', 'doc-') : (matchingDoc?.id || `doc-${spec.id}`),
-          name: spec.name,
-          arabicName: spec.name,
-          nameEn: spec.nameEn || matchingDoc?.nameEn || spec.name,
-          title: spec.title,
-          titleEn: spec.titleEn || matchingDoc?.titleEn || spec.title,
-          specialty: spec.role || matchingDoc?.specialty || spec.title,
-          specialtyEn: spec.roleEn || matchingDoc?.specialtyEn || spec.titleEn || spec.title,
-          specialtyCode: spec.title,
-          specialtyCodeEn: spec.titleEn || 'SPECIALIST',
-          category: (spec.category as any) || ((spec.title.includes('نطق') || spec.title.includes('تخاطب')) ? 'speech' : (spec.title.includes('وظيفي') || spec.title.includes('حركي')) ? 'occupational' : (spec.title.includes('نفس')) ? 'psychology' : 'aba'),
-          department: spec.department || spec.role || spec.title,
-          avatar: spec.avatar || matchingDoc?.avatar || '/images/specialists/haneen_obaidi.jpg',
-          fallbackAvatar: spec.avatar || matchingDoc?.fallbackAvatar || '/images/specialists/haneen_obaidi.jpg',
-          rating: spec.rating || matchingDoc?.rating || 4.9,
-          reviewCount: spec.reviewsCount || matchingDoc?.reviewCount || 120,
-          experienceYears: spec.experienceYears || matchingDoc?.experienceYears || 5,
-          patientsCount: matchingDoc?.patientsCount || 1000,
-          sessionPrice: 0,
-          location: '',
-          locationEn: '',
-          isAvailable: true,
-          nextSlot: 'متاح للحجز',
-          nextSlotEn: 'Available for booking',
-          tags: (spec.specialties && spec.specialties.length > 0) ? spec.specialties : (matchingDoc?.tags || []),
-          bio: spec.bio || matchingDoc?.bio || '',
-          isTopRated: (spec.rating || matchingDoc?.rating || 0) >= 4.9
-        };
-      });
-
-      // Ensure any doctors from cleanSourceDoctors not already in baseDocs are added
-      const existingNames = new Set(baseDocs.map(d => normalizeSpecialistName(d.name)));
-      cleanSourceDoctors.forEach((doc) => {
-        if (!existingNames.has(normalizeSpecialistName(doc.name))) {
-          baseDocs.push(doc);
-        }
-      });
-    } else {
-      baseDocs = cleanSourceDoctors;
-    }
-
-    // 2. Strict deduplication and priority sorting:
-    // 1. هناء بشير, 2. أحمد أبو زيد, 3. هشام علي, 4. حنين العبيدي, 5. عامر قادوس, 6. ضحى خالد, 7. حشمة المطيري
-    return sortSpecialistsByPriority(deduplicateDoctors(baseDocs));
+    return getUnifiedDoctors(doctors, specialists);
   }, [doctors, specialists]);
 
   // Categories list for classification filter (حسب التخصص)
@@ -2518,10 +2599,17 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
 
   const handleMouseUp = () => setIsDragging(false);
 
-  // Toggle favorite
+  // Toggle favorite with cross-page sync
   const toggleFavorite = (e: React.MouseEvent, docId: string) => {
     e.stopPropagation();
-    setFavorites((prev) => ({ ...prev, [docId]: !prev[docId] }));
+    setFavorites((prev) => {
+      const next = { ...prev, [docId]: !prev[docId] };
+      try {
+        localStorage.setItem('raba_favorite_doctors', JSON.stringify(next));
+        window.dispatchEvent(new CustomEvent('raba_favorite_doctors_updated', { detail: next }));
+      } catch {}
+      return next;
+    });
   };
 
   // Book visit action
@@ -2565,6 +2653,10 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
       <div
         key={doctor.id}
         className={`w-[62vw] min-w-[220px] max-w-[250px] sm:min-w-0 sm:max-w-none sm:w-[325px] md:w-[350px] lg:w-[375px] shrink-0 snap-start bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl overflow-hidden border ${theme.cardBorderHover} shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group`}
+        style={{
+          contentVisibility: 'auto',
+          containIntrinsicSize: '240px 460px'
+        }}
       >
         {/* Top Slim Accent Strip in Doctor's Brand/Logo Color */}
         <div className={`h-1.5 w-full ${theme.topAccentBar}`} />
@@ -2574,6 +2666,10 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
           <img
             src={activeAvatar}
             alt={isArabic ? doctor.name : (doctor.nameEn || doctor.name)}
+            width={375}
+            height={224}
+            loading="lazy"
+            decoding="async"
             onError={(e) => {
               handleImageErrorWithStore(e, rawAvatar, doctor.fallbackAvatar || doctor.avatar);
             }}
@@ -2581,7 +2677,6 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
             style={{
               transform: zoomScale !== 1 ? `scale(${zoomScale})` : undefined
             }}
-            loading="lazy"
             referrerPolicy="no-referrer"
           />
 
@@ -2933,7 +3028,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
             className={`flex gap-2.5 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-1.5 sm:py-2 px-1 ${
               isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
             }`}
-            style={{ WebkitOverflowScrolling: 'touch' }}
+            style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-x pan-y' }}
           >
             {filteredDoctors.map((doc, idx) => renderDoctorCard(doc, idx))}
           </div>

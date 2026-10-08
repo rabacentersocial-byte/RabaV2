@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { Specialist } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { getResolvedImageUrl, handleImageErrorWithStore } from '../utils/persistentImageStore';
 
 interface SpecialistCvModalProps {
   specialist: Specialist | null;
@@ -64,9 +65,10 @@ export const SpecialistCvModal: React.FC<SpecialistCvModalProps> = ({
             {/* Avatar */}
             <div className="relative">
               <img
-                src={specialist.avatar}
+                src={getResolvedImageUrl(specialist.avatar)}
                 alt={displayName}
-                className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-4 border-white dark:border-white/20 shadow-md"
+                onError={(e) => handleImageErrorWithStore(e, specialist.avatar, specialist.avatar)}
+                className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover object-top border-4 border-white dark:border-white/20 shadow-md"
                 referrerPolicy="no-referrer"
               />
               <span className={`absolute -bottom-2 ${isArabic ? '-left-2' : '-right-2'} bg-[#00E5BE] text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm`}>

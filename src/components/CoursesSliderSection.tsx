@@ -5,9 +5,7 @@ import {
   ChevronLeft, 
   Check, 
   ShieldCheck, 
-  AlertCircle, 
-  SlidersHorizontal, 
-  LayoutGrid
+  AlertCircle
 } from 'lucide-react';
 import { 
   getStoredCoursesData, 
@@ -28,7 +26,6 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
   const { isArabic } = useLanguage();
   const [courses, setCourses] = useState<CourseItem[]>(() => getStoredCoursesData());
   const [sectionSettings, setSectionSettings] = useState<CoursesSectionSettings>(() => getStoredCoursesSettings());
-  const [viewMode, setViewMode] = useState<'slider' | 'grid'>('slider');
   
   // Selected course for details modal
   const [selectedCourseForDetails, setSelectedCourseForDetails] = useState<CourseItem | null>(null);
@@ -319,108 +316,73 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
                 {isArabic ? `${activeCourses.length} كورسات متاحة` : `${activeCourses.length} Courses Available`}
               </span>
 
-              {/* View Mode Toggle */}
-              <div className="bg-slate-100 dark:bg-slate-800/90 p-1 rounded-2xl border border-slate-200 dark:border-white/10 flex items-center shadow-xs">
+              {/* Navigation Arrows (Prev / Next) */}
+              <div className="flex items-center gap-2">
+                {/* In RTL: Right button goes to previous items (scrolls right) */}
                 <button
-                  onClick={() => setViewMode('slider')}
-                  className={`p-2 rounded-xl transition-all cursor-pointer ${
-                    viewMode === 'slider' 
-                      ? 'bg-white dark:bg-[#0d5c52] text-[#0d5c52] dark:text-white shadow-xs font-bold' 
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  onClick={() => handleScroll('prev')}
+                  disabled={!canScrollPrev}
+                  aria-label={isArabic ? 'الكورس السابق' : 'Previous course'}
+                  className={`w-11 h-11 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-sm transition-all cursor-pointer ${
+                    canScrollPrev 
+                      ? 'hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white active:scale-95' 
+                      : 'opacity-40 cursor-not-allowed'
                   }`}
-                  title={isArabic ? 'عرض سلايدر' : 'Slider View'}
                 >
-                  <SlidersHorizontal className="w-4 h-4" />
+                  {isArabic ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
                 </button>
+
+                {/* In RTL: Left button goes to next items (scrolls left) */}
                 <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-xl transition-all cursor-pointer ${
-                    viewMode === 'grid' 
-                      ? 'bg-white dark:bg-[#0d5c52] text-[#0d5c52] dark:text-white shadow-xs font-bold' 
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  onClick={() => handleScroll('next')}
+                  disabled={!canScrollNext}
+                  aria-label={isArabic ? 'الكورس التالي' : 'Next course'}
+                  className={`w-11 h-11 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-sm transition-all cursor-pointer ${
+                    canScrollNext 
+                      ? 'hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white active:scale-95' 
+                      : 'opacity-40 cursor-not-allowed'
                   }`}
-                  title={isArabic ? 'عرض شبكي' : 'Grid View'}
                 >
-                  <LayoutGrid className="w-4 h-4" />
+                  {isArabic ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
                 </button>
               </div>
-
-              {/* Navigation Arrows (Prev / Next) */}
-              {viewMode === 'slider' && (
-                <div className="flex items-center gap-2">
-                  {/* In RTL: Right button goes to previous items (scrolls right) */}
-                  <button
-                    onClick={() => handleScroll('prev')}
-                    disabled={!canScrollPrev}
-                    aria-label={isArabic ? 'الكورس السابق' : 'Previous course'}
-                    className={`w-11 h-11 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-sm transition-all cursor-pointer ${
-                      canScrollPrev 
-                        ? 'hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white active:scale-95' 
-                        : 'opacity-40 cursor-not-allowed'
-                    }`}
-                  >
-                    {isArabic ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-                  </button>
-
-                  {/* In RTL: Left button goes to next items (scrolls left) */}
-                  <button
-                    onClick={() => handleScroll('next')}
-                    disabled={!canScrollNext}
-                    aria-label={isArabic ? 'الكورس التالي' : 'Next course'}
-                    className={`w-11 h-11 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-sm transition-all cursor-pointer ${
-                      canScrollNext 
-                        ? 'hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white active:scale-95' 
-                        : 'opacity-40 cursor-not-allowed'
-                    }`}
-                  >
-                    {isArabic ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
-                  </button>
-                </div>
-              )}
             </div>
 
           </div>
         </div>
 
-        {/* 2. COURSES CAROUSEL TRACK / GRID DISPLAY */}
-        {viewMode === 'slider' ? (
-          <div className="relative">
-            <div
-              ref={sliderRef}
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-              className={`flex gap-5 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-4 px-1 ${
-                isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
-              }`}
-              style={{ WebkitOverflowScrolling: 'touch' }}
-            >
-              {activeCourses.map(renderCourseCard)}
-            </div>
-
-            {/* Slider Indicator Dots */}
-            <div className="flex justify-center items-center gap-2 mt-6">
-              {activeCourses.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => scrollToIndex(idx)}
-                  aria-label={`الكورس ${idx + 1}`}
-                  className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                    currentIndex === idx 
-                      ? 'w-8 bg-[#0a3530] dark:bg-[#2dd4bf]' 
-                      : 'w-2 bg-slate-300 dark:bg-white/20 hover:bg-slate-400 dark:hover:bg-white/40'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-        ) : (
-          /* GRID VIEW */
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* 2. COURSES CAROUSEL TRACK */}
+        <div className="relative">
+          <div
+            ref={sliderRef}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            className={`flex gap-5 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-4 px-1 ${
+              isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
+            }`}
+            style={{ WebkitOverflowScrolling: 'touch' }}
+          >
             {activeCourses.map(renderCourseCard)}
           </div>
-        )}
+
+          {/* Slider Indicator Dots */}
+          <div className="flex justify-center items-center gap-2 mt-6">
+            {activeCourses.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => scrollToIndex(idx)}
+                aria-label={`الكورس ${idx + 1}`}
+                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                  currentIndex === idx 
+                    ? 'w-8 bg-[#0a3530] dark:bg-[#2dd4bf]' 
+                    : 'w-2 bg-slate-300 dark:bg-white/20 hover:bg-slate-400 dark:hover:bg-white/40'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
 
       </div>
 
