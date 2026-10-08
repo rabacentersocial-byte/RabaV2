@@ -2652,17 +2652,13 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
     return (
       <div
         key={doctor.id}
-        className={`w-[62vw] min-w-[220px] max-w-[250px] sm:min-w-0 sm:max-w-none sm:w-[325px] md:w-[350px] lg:w-[375px] shrink-0 snap-start bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl overflow-hidden border ${theme.cardBorderHover} shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group`}
-        style={{
-          contentVisibility: 'auto',
-          containIntrinsicSize: '240px 460px'
-        }}
+        className={`w-[66vw] min-w-[220px] max-w-[260px] sm:min-w-0 sm:max-w-none sm:w-[325px] md:w-[350px] lg:w-[375px] shrink-0 snap-start self-start bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl overflow-hidden border ${theme.cardBorderHover} shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group`}
       >
         {/* Top Slim Accent Strip in Doctor's Brand/Logo Color */}
         <div className={`h-1.5 w-full ${theme.topAccentBar}`} />
 
-        {/* Upper Hero Image Area with Overlaid Badges - Maintained tall photo frame */}
-        <div className={`relative h-48 sm:h-48 md:h-56 overflow-hidden ${theme.photoBg} border-b border-slate-100 dark:border-white/5 transition-colors`}>
+        {/* Upper Hero Image Area with Overlaid Badges */}
+        <div className={`relative h-40 sm:h-48 md:h-56 overflow-hidden ${theme.photoBg} border-b border-slate-100 dark:border-white/5 transition-colors`}>
           <img
             src={activeAvatar}
             alt={isArabic ? doctor.name : (doctor.nameEn || doctor.name)}
@@ -2704,27 +2700,27 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
         </div>
 
         {/* Lower Card Body - Compact, snug without empty dead space */}
-        <div className="p-2.5 sm:p-4 md:p-5 flex flex-col justify-between flex-1">
+        <div className="p-2.5 sm:p-4 md:p-5 flex flex-col">
           <div>
             {/* 1. Specialty Code & Rating Pill */}
             <div className="flex items-center justify-between gap-1 mb-1 sm:mb-2">
-              <span className={`text-[9.5px] sm:text-[11px] font-black uppercase tracking-wider truncate max-w-[68%] px-2.5 py-0.5 rounded-lg transition-colors ${theme.specialtyBadge}`}>
+              <span className={`text-[9px] sm:text-[11px] font-black uppercase tracking-wider truncate max-w-[68%] px-2 sm:px-2.5 py-0.5 rounded-lg transition-colors ${theme.specialtyBadge}`}>
                 {isArabic ? doctor.specialtyCode : doctor.specialtyCodeEn}
               </span>
 
-              <span className="flex items-center gap-0.5 sm:gap-1 bg-amber-400/10 text-slate-900 dark:text-amber-300 px-1.5 sm:px-2.5 py-0.5 rounded-full text-[9.5px] sm:text-xs font-black shrink-0">
+              <span className="flex items-center gap-0.5 sm:gap-1 bg-amber-400/10 text-slate-900 dark:text-amber-300 px-1.5 sm:px-2.5 py-0.5 rounded-full text-[9px] sm:text-xs font-black shrink-0">
                 <Star className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 fill-amber-400 text-amber-400" />
                 <span>{(displayRating || 4.9).toFixed(1)}</span>
               </span>
             </div>
 
             {/* 2. Doctor Name */}
-            <h3 className="text-xs sm:text-lg md:text-xl font-black text-slate-900 dark:text-white tracking-tight leading-snug mb-1 sm:mb-2.5 truncate">
+            <h3 className="text-xs sm:text-lg md:text-xl font-black text-slate-900 dark:text-white tracking-tight leading-snug mb-0.5 sm:mb-2.5 truncate">
               {isArabic ? doctor.name : (doctor.nameEn || doctor.name)}
             </h3>
 
             {/* 3. 3-Column Metrics Row: Prominently Highlights Years of Experience */}
-            <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-white/10 rtl:divide-x-reverse py-1.5 sm:py-2.5 border-y border-slate-100 dark:border-white/10 mb-1.5 sm:mb-2.5 text-center">
+            <div className="grid grid-cols-3 divide-x divide-slate-100 dark:divide-white/10 rtl:divide-x-reverse py-1 sm:py-2.5 border-y border-slate-100 dark:border-white/10 mb-1 sm:mb-2 text-center">
               <div className="px-0.5 sm:px-1">
                 <span className={`text-xs sm:text-base md:text-lg font-black block font-sans ${theme.expMetricColor}`}>
                   {doctor.experienceYears}
@@ -2755,7 +2751,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
             </div>
 
             {/* 5. Interactive Star Rating Widget directly on the Card */}
-            <div className="bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-500/20 rounded-xl sm:rounded-2xl p-1 sm:p-2.5 my-1 sm:my-2 flex items-center justify-between gap-1 transition-all shadow-2xs">
+            <div className="bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-500/20 rounded-xl sm:rounded-2xl p-1 sm:p-2.5 my-1 sm:my-1.5 flex items-center justify-between gap-1 transition-all shadow-2xs">
               <div className="min-w-0">
                 <span className="text-[8.5px] sm:text-[11px] font-bold text-slate-800 dark:text-slate-200 block truncate">
                   {ratingToast?.docId === doctor.id
@@ -2803,8 +2799,8 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
             </div>
           </div>
 
-          {/* Footer Row: Actions (Without Location or Branch) */}
-          <div className="flex items-center justify-between gap-1 pt-1.5 sm:pt-2 border-t border-slate-100 dark:border-white/5">
+          {/* Footer Row: Actions (Without Location or Branch) - Sits tightly right below rating widget */}
+          <div className="flex items-center justify-between gap-1 mt-1.5 sm:mt-2 pt-1.5 sm:pt-2 border-t border-slate-100 dark:border-white/5">
             <div className={`flex items-center gap-1 text-xs font-bold min-w-0 ${theme.availableText}`}>
               <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${theme.availableDot} animate-pulse shrink-0`}></span>
               <span className="text-[8.5px] sm:text-[11px] truncate">
@@ -3025,7 +3021,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
-            className={`flex gap-2.5 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-1.5 sm:py-2 px-1 ${
+            className={`flex items-start gap-2.5 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-1.5 sm:py-2 px-1 ${
               isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
             }`}
             style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-x pan-y' }}

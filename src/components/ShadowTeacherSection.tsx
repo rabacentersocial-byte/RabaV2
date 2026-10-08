@@ -1,13 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   GraduationCap, 
   CheckCircle2, 
   Send, 
-  Calendar, 
   User, 
   Phone as PhoneIcon, 
-  Mail, 
   MapPin,
   MessageCircle,
   Sparkles,
@@ -47,12 +45,8 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
   const [formData, setFormData] = useState({
     name: '',
     city: 'الرياض',
-    birthDate: '',
     phone: '',
-    email: '',
   });
-
-  const birthDateInputRef = useRef<HTMLInputElement>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -112,23 +106,14 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
 
     const ref = generateRequestReference('shadow_teacher');
     
-    // Estimate age from birthdate if provided
-    let approxAge = 6;
-    if (formData.birthDate) {
-      const birthYear = new Date(formData.birthDate).getFullYear();
-      if (!isNaN(birthYear) && birthYear > 1990) {
-        approxAge = Math.max(1, 2026 - birthYear);
-      }
-    }
-
     const newRequest: Appointment = {
       id: `req-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       referenceNumber: ref,
       childName: isArabic ? `طفل (${formData.name})` : `Child of (${formData.name})`,
-      childAge: approxAge,
+      childAge: 6,
       guardianName: formData.name.trim(),
       guardianPhone: formData.phone.trim(),
-      guardianEmail: formData.email.trim() || 'shadow.teacher@customer.com',
+      guardianEmail: 'sewar@rabacenter.com',
       serviceId: 'srv-shadow-teacher',
       serviceTitle: isArabic ? 'خدمة سِوار – معلم الظل المدرسي (Shadow Teacher)' : 'Sewar Service – School Shadow Teacher',
       specialistId: 'spec-inclusion',
@@ -136,8 +121,8 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
       date: new Date().toISOString().split('T')[0],
       timeSlot: isArabic ? 'الفترة الصباحية (الدوام المدرسي)' : 'Morning School Shift',
       notes: isArabic 
-        ? `طلب تسجيل خدمة سِوار (معلم ظل مدرسي) من الموقع. المدينة: ${formData.city} - تاريخ ميلاد الطفل: ${formData.birthDate || 'غير محدد'} - البريد: ${formData.email || 'غير محدد'}`
-        : `Sewar Shadow Teacher application from website. City: ${formData.city}, Child birthdate: ${formData.birthDate || 'N/A'}, Email: ${formData.email || 'N/A'}`,
+        ? `طلب تسجيل خدمة سِوار (معلم ظل مدرسي) من الموقع. المدينة: ${formData.city}`
+        : `Sewar Shadow Teacher application from website. City: ${formData.city}`,
       city: formData.city,
       status: 'new', // Flagged as new request in Admin Dashboard
       paymentStatus: 'unpaid',
@@ -150,7 +135,6 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
       createdAt: new Date().toISOString(),
       requestType: 'shadow_teacher',
       requestSource: `استمارة خدمة سِوار - ${formData.city}`,
-      childBirthDate: formData.birthDate || undefined,
       readByAdmin: false
     };
 
@@ -427,7 +411,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                       <button
                         onClick={() => {
                           setIsSubmitted(false);
-                          setFormData({ name: '', city: 'الرياض', birthDate: '', phone: '', email: '' });
+                          setFormData({ name: '', city: 'الرياض', phone: '' });
                         }}
                         className="text-[11px] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium underline py-0.5 cursor-pointer"
                       >
@@ -457,9 +441,9 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                           value={formData.name}
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                           placeholder={isArabic ? 'اسم الطفل أو ولي الأمر' : 'Child or Parent Name'}
-                          className="w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white placeholder-slate-400 rounded-xl px-3.5 py-2 sm:py-2.5 text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all h-[38px] sm:h-[42px]"
+                          className={`w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white placeholder-slate-400 rounded-xl px-3.5 py-2.5 ${isArabic ? 'pl-10' : 'pr-10'} text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all h-11`}
                         />
-                        <User className={`w-3.5 h-3.5 text-slate-400 absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3' : 'right-3'}`} />
+                        <User className={`w-3.5 h-3.5 text-slate-400 absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3.5' : 'right-3.5'}`} />
                       </div>
                     </div>
 
@@ -476,7 +460,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                             required
                             value={formData.city}
                             onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                            className="w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white rounded-xl px-3.5 py-2 sm:py-2.5 text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all cursor-pointer h-[38px] sm:h-[42px]"
+                            className={`w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white rounded-xl px-3.5 py-2.5 ${isArabic ? 'pl-10' : 'pr-10'} text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all cursor-pointer h-11`}
                           >
                             {SEWAR_AVAILABLE_CITIES.map((c) => (
                               <option 
@@ -488,7 +472,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                               </option>
                             ))}
                           </select>
-                          <MapPin className={`w-3.5 h-3.5 text-slate-400 absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3' : 'right-3'}`} />
+                          <MapPin className={`w-3.5 h-3.5 text-slate-400 absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3.5' : 'right-3.5'}`} />
                         </div>
                       </div>
 
@@ -504,75 +488,9 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                             value={formData.phone}
                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                             placeholder="+966 5X XXX XXXX"
-                            className="w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white placeholder-slate-400 rounded-xl px-3.5 py-2 sm:py-2.5 text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all font-mono text-left h-[38px] sm:h-[42px]"
+                            className="w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white placeholder-slate-400 rounded-xl px-3.5 py-2.5 pr-10 text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all font-mono text-left h-11"
                           />
-                          <PhoneIcon className="w-3.5 h-3.5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        </div>
-                      </div>
-
-                    </div>
-
-                    {/* Row 3: Date of Birth & Email (2 columns) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                      
-                      {/* Field 4: Date of Birth */}
-                      <div>
-                        <label className="block text-xs font-bold text-emerald-100 mb-1">
-                          {isArabic ? 'تاريخ الميلاد' : 'Date of Birth'}
-                        </label>
-                        <div 
-                          className="relative cursor-pointer"
-                          onClick={() => {
-                            try {
-                              birthDateInputRef.current?.showPicker?.();
-                            } catch {}
-                            birthDateInputRef.current?.focus();
-                          }}
-                        >
-                          <input
-                            ref={birthDateInputRef}
-                            type="date"
-                            value={formData.birthDate}
-                            onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
-                            className={`w-full bg-white/95 dark:bg-slate-950/90 rounded-xl px-3.5 py-2 sm:py-2.5 text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all cursor-pointer h-[38px] sm:h-[42px] ${
-                              isArabic ? 'pl-9 text-right' : 'pr-9 text-left'
-                            } ${
-                              !formData.birthDate 
-                                ? 'text-transparent [&::-webkit-datetime-edit]:opacity-0 dark:[&::-webkit-datetime-edit]:opacity-0' 
-                                : 'text-slate-900 dark:text-white font-medium'
-                            } [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
-                          />
-
-                          {/* Placeholder matching other fields when empty */}
-                          {!formData.birthDate && (
-                            <span 
-                              className={`absolute top-1/2 -translate-y-1/2 text-slate-400 text-xs sm:text-sm pointer-events-none select-none ${
-                                isArabic ? 'right-3.5' : 'left-3.5'
-                              }`}
-                            >
-                              {isArabic ? 'تاريخ ميلاد الطفل' : 'Select Birth Date'}
-                            </span>
-                          )}
-
-                          {/* Single matching icon on the left */}
-                          <Calendar className={`w-3.5 h-3.5 text-slate-400 absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3' : 'right-3'}`} />
-                        </div>
-                      </div>
-
-                      {/* Field 5: Email */}
-                      <div>
-                        <label className="block text-xs font-bold text-emerald-100 mb-1">
-                          {isArabic ? 'البريد الإلكتروني' : 'Email Address'}
-                        </label>
-                        <div className="relative">
-                          <input
-                            type="email"
-                            value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            placeholder="example@domain.com"
-                            className="w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white placeholder-slate-400 rounded-xl px-3.5 py-2 sm:py-2.5 text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/30 outline-none transition-all h-[38px] sm:h-[42px]"
-                          />
-                          <Mail className={`w-3.5 h-3.5 text-slate-400 absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3' : 'right-3'}`} />
+                          <PhoneIcon className="w-3.5 h-3.5 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                         </div>
                       </div>
 
@@ -583,7 +501,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full bg-gradient-to-r from-[#00E5BE] to-[#00bfa5] hover:from-[#26ffd8] hover:to-[#00d6b9] active:scale-[0.98] text-slate-950 font-black py-2.5 sm:py-3 px-5 rounded-xl shadow-[0_8px_20px_rgba(0,229,190,0.35)] transition-all duration-200 flex items-center justify-center gap-2 text-sm cursor-pointer disabled:opacity-60"
+                        className="w-full bg-gradient-to-r from-[#00E5BE] to-[#00bfa5] hover:from-[#26ffd8] hover:to-[#00d6b9] active:scale-[0.98] text-slate-950 font-black h-11 sm:h-12 px-5 rounded-xl shadow-[0_8px_20px_rgba(0,229,190,0.35)] transition-all duration-200 flex items-center justify-center gap-2 text-sm cursor-pointer disabled:opacity-60"
                       >
                         {isSubmitting ? (
                           <div className="w-4 h-4 border-2 border-slate-950/30 border-t-slate-950 rounded-full animate-spin" />

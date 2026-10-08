@@ -212,7 +212,7 @@ export const TRANSLATIONS: Record<'ar' | 'en', SiteTranslations> = {
     nav: {
       home: 'الرئيسية',
       about: 'عن المركز',
-      services: 'برامج التأهيل',
+      services: 'الخدمات',
       packages: 'الباقات والأسعار',
       specialists: 'الأخصائيون',
       blog: 'المدونة',
@@ -421,7 +421,7 @@ export const TRANSLATIONS: Record<'ar' | 'en', SiteTranslations> = {
     nav: {
       home: 'Home',
       about: 'About',
-      services: 'Therapy Programs',
+      services: 'Services',
       packages: 'Packages & Pricing',
       specialists: 'Specialists',
       blog: 'Blog',

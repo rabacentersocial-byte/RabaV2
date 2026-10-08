@@ -18,6 +18,7 @@ import { saveAppointmentToFirestore } from './services/firestoreService';
 
 // Lazy-loaded components for optimal mobile bundle splitting and low TBT
 const SpecialistsDirectoryPage = lazy(() => import('./components/SpecialistsDirectoryPage'));
+const ServicesDirectoryPage = lazy(() => import('./components/ServicesDirectoryPage'));
 const SpecialistCvModal = lazy(() => import('./components/SpecialistCvModal').then(m => ({ default: m.SpecialistCvModal })));
 const BookingModal = lazy(() => import('./components/BookingModal').then(m => ({ default: m.BookingModal })));
 const NotificationCenterModal = lazy(() => import('./components/NotificationCenterModal').then(m => ({ default: m.NotificationCenterModal })));
@@ -314,6 +315,9 @@ export default function App() {
   const [isSpecialistsPageOpen, setIsSpecialistsPageOpen] = useState(() => {
     return window.location.hash === '#specialists-directory' || window.location.hash === '#specialists-page';
   });
+  const [isServicesPageOpen, setIsServicesPageOpen] = useState(() => {
+    return window.location.hash === '#services-directory' || window.location.hash === '#services-page';
+  });
   const [adminSession, setAdminSession] = useState<AdminUser | null>(() => getStoredAdminSession());
   const [cartCount, setCartCount] = useState(0);
   const [selectedCourseForRegistration, setSelectedCourseForRegistration] = useState<CourseItem | null>(null);
@@ -326,13 +330,27 @@ export default function App() {
 
   const handleOpenSpecialistsPage = () => {
     setIsSpecialistsPageOpen(true);
+    setIsServicesPageOpen(false);
     window.location.hash = '#specialists-directory';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenServicesPage = () => {
+    setIsServicesPageOpen(true);
+    setIsSpecialistsPageOpen(false);
+    window.location.hash = '#services-directory';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToHome = () => {
     setIsSpecialistsPageOpen(false);
-    if (window.location.hash === '#specialists-directory' || window.location.hash === '#specialists-page') {
+    setIsServicesPageOpen(false);
+    if (
+      window.location.hash === '#specialists-directory' || 
+      window.location.hash === '#specialists-page' ||
+      window.location.hash === '#services-directory' ||
+      window.location.hash === '#services-page'
+    ) {
       window.history.pushState('', document.title, window.location.pathname + window.location.search);
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -344,6 +362,10 @@ export default function App() {
       setIsSpecialistsPageOpen(
         window.location.hash === '#specialists-directory' || 
         window.location.hash === '#specialists-page'
+      );
+      setIsServicesPageOpen(
+        window.location.hash === '#services-directory' || 
+        window.location.hash === '#services-page'
       );
     };
     const handleAuthChange = (e: any) => {
@@ -533,7 +555,10 @@ export default function App() {
         onOpenAdmin={() => setIsAdminOpen(true)}
         onOpenStore={() => setIsStoreOpen(true)}
         onOpenSpecialistsPage={handleOpenSpecialistsPage}
+        onOpenServicesPage={handleOpenServicesPage}
         onGoHome={handleBackToHome}
+        isSpecialistsPageOpen={isSpecialistsPageOpen}
+        isServicesPageOpen={isServicesPageOpen}
         unreadCount={unreadCount}
         cartCount={cartCount}
       />
@@ -542,13 +567,23 @@ export default function App() {
       <main className="flex-1">
         
         {isSpecialistsPageOpen ? (
-          /* Dedicated Specialists Page with Specialty Filter and List Format Display */
+          /* Dedicated Specialists Page with Specialty Filter and Grid Format Display */
           <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-teal-500 font-bold">جاري تحميل دليل الأخصائيين...</div>}>
             <SpecialistsDirectoryPage
               specialists={specialists}
               onBackToHome={handleBackToHome}
               onViewCv={handleViewCv}
               onBookSpecialist={handleSelectSpecialistForBooking}
+            />
+          </Suspense>
+        ) : isServicesPageOpen ? (
+          /* Dedicated Comprehensive Services Directory Page (Rehab Programs, Courses, Packages & Pricing in Grid) */
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-teal-500 font-bold">جاري تحميل دليل الخدمات الشامل...</div>}>
+            <ServicesDirectoryPage
+              onBackToHome={handleBackToHome}
+              onSelectService={handleSelectServiceForBooking}
+              onSelectPackage={handleSelectPackageForBooking}
+              onRegisterCourse={handleOpenCourseRegistration}
             />
           </Suspense>
         ) : (
@@ -669,8 +704,10 @@ export default function App() {
       <MobileBottomBar
         onOpenBooking={handleOpenBooking}
         onOpenSpecialistsPage={handleOpenSpecialistsPage}
+        onOpenServicesPage={handleOpenServicesPage}
         onGoHome={handleBackToHome}
         isSpecialistsPageOpen={isSpecialistsPageOpen}
+        isServicesPageOpen={isServicesPageOpen}
       />
 
       {/* Modals wrapped in Suspense for zero initial blocking time */}

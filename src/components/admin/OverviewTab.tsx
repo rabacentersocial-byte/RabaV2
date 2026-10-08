@@ -73,6 +73,14 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
           {/* Quick Actions in Banner */}
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
             <button
+              onClick={() => onNavigateTab('pricing')}
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-black text-xs flex items-center gap-2 shadow-md hover:brightness-110 transition-all cursor-pointer"
+            >
+              <DollarSign className="w-3.5 h-3.5 text-slate-950" />
+              <span>{isArabic ? 'تخصيص الأسعار والباقات' : 'Customize Pricing'}</span>
+            </button>
+
+            <button
               onClick={() => onNavigateTab('site_settings')}
               className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-2 backdrop-blur-md transition-all cursor-pointer"
             >

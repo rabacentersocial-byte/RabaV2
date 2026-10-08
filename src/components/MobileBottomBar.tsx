@@ -13,29 +13,39 @@ interface MobileBottomBarProps {
   onOpenBooking: () => void;
   onOpenWhatsApp?: () => void;
   onOpenSpecialistsPage?: () => void;
+  onOpenServicesPage?: () => void;
   onGoHome?: () => void;
   isSpecialistsPageOpen?: boolean;
+  isServicesPageOpen?: boolean;
 }
 
 export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
   onOpenBooking,
   onOpenWhatsApp,
   onOpenSpecialistsPage,
+  onOpenServicesPage,
   onGoHome,
-  isSpecialistsPageOpen = false
+  isSpecialistsPageOpen = false,
+  isServicesPageOpen = false
 }) => {
   const { isArabic } = useLanguage();
   const [activeTab, setActiveTab] = useState<'home' | 'services' | 'specialists' | 'chat'>(
-    isSpecialistsPageOpen ? 'specialists' : 'home'
+    isSpecialistsPageOpen ? 'specialists' : isServicesPageOpen ? 'services' : 'home'
   );
 
   useEffect(() => {
-    setActiveTab(isSpecialistsPageOpen ? 'specialists' : 'home');
-  }, [isSpecialistsPageOpen]);
+    if (isSpecialistsPageOpen) {
+      setActiveTab('specialists');
+    } else if (isServicesPageOpen) {
+      setActiveTab('services');
+    } else {
+      setActiveTab('home');
+    }
+  }, [isSpecialistsPageOpen, isServicesPageOpen]);
 
   const handleHomeClick = () => {
     setActiveTab('home');
-    if (isSpecialistsPageOpen && onGoHome) {
+    if ((isSpecialistsPageOpen || isServicesPageOpen) && onGoHome) {
       onGoHome();
     } else {
       const element = document.getElementById('hero');
@@ -49,7 +59,9 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
 
   const handleServicesClick = () => {
     setActiveTab('services');
-    if (isSpecialistsPageOpen && onGoHome) {
+    if (onOpenServicesPage) {
+      onOpenServicesPage();
+    } else if (isSpecialistsPageOpen && onGoHome) {
       onGoHome();
       setTimeout(() => {
         const element = document.getElementById('services');
@@ -118,7 +130,7 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
           }`}
         >
           <Layers className="w-5 h-5 mb-0.5" />
-          <span className="text-[11px] font-bold tracking-tight">{isArabic ? 'البرامج' : 'Programs'}</span>
+          <span className="text-[11px] font-bold tracking-tight">{isArabic ? 'الخدمات' : 'Services'}</span>
         </button>
 
         {/* 3. Center CTA: Book Appointment */}

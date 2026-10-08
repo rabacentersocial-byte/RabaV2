@@ -16,7 +16,7 @@ import {
   Gift,
   AlertCircle
 } from 'lucide-react';
-import { THERAPY_PACKAGES } from '../data/mockData';
+import { THERAPY_PACKAGES, getStoredPackages } from '../data/mockData';
 import { TherapyPackage } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 import { TamaraLogo, EmkanLogo } from './InstallmentLogos';
@@ -27,6 +27,7 @@ interface PackagesSectionProps {
 
 export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackage }) => {
   const { isArabic } = useLanguage();
+  const [packages, setPackages] = useState<TherapyPackage[]>(() => getStoredPackages());
 
   // Filter state
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -39,6 +40,15 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
   const movedDistanceRef = useRef(0);
+
+  // Sync with updates from Admin Dashboard
+  useEffect(() => {
+    const handleUpdate = () => {
+      setPackages(getStoredPackages());
+    };
+    window.addEventListener('raba_packages_updated', handleUpdate);
+    return () => window.removeEventListener('raba_packages_updated', handleUpdate);
+  }, []);
 
   // Category filter tabs matching the user's reference design
   const categories = useMemo(() => [
@@ -53,10 +63,10 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
   // Filtered packages
   const filteredPackages = useMemo(() => {
     if (selectedCategory === 'all') {
-      return THERAPY_PACKAGES;
+      return packages;
     }
-    return THERAPY_PACKAGES.filter((pkg) => pkg.category === selectedCategory);
-  }, [selectedCategory]);
+    return packages.filter((pkg) => pkg.category === selectedCategory);
+  }, [packages, selectedCategory]);
 
   // Update scroll button states
   const updateScrollButtons = useCallback(() => {
@@ -210,11 +220,11 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-none mb-3">
               {isArabic ? (
                 <span>
-                  الباقات والخدمات<span className="text-[#0D6D54] dark:text-[#2DD4BF]">.</span>
+                  الباقات<span className="text-[#0D6D54] dark:text-[#2DD4BF]">.</span>
                 </span>
               ) : (
                 <span>
-                  Packages & services<span className="text-[#0D6D54] dark:text-[#2DD4BF]">.</span>
+                  Packages<span className="text-[#0D6D54] dark:text-[#2DD4BF]">.</span>
                 </span>
               )}
             </h2>

@@ -123,7 +123,7 @@ export function getCustomerWhatsAppMessage(request: Appointment, isArabic = true
   switch (request.requestType) {
     case 'shadow_teacher':
       text = isArabic
-        ? `السلام عليكم ورحمة الله، أود تأكيد طلبي لـ «خدمة سِوار» (معلم الظل والدمج المدرسي والتربوي Shadow Teacher) بمركز رابا للأطفال.\n🔖 رقم الطلب: ${request.referenceNumber}\n👤 ولي الأمر: ${request.guardianName}\n📱 الجوال: ${request.guardianPhone}\n📍 المدينة: ${request.city || 'الرياض'}\n👶 الطفل: ${request.childName} (تاريخ الميلاد: ${request.childBirthDate || 'غير محدد'})\n📧 الإيميل: ${request.guardianEmail}\nأرجو إفادتي بالخطوة القادمة وتحديد موعد المقابلة والتقييم.`
+        ? `السلام عليكم ورحمة الله، أود تأكيد طلبي لـ «خدمة سِوار» (معلم الظل والدمج المدرسي والتربوي Shadow Teacher) بمركز رابا للأطفال.\n🔖 رقم الطلب: ${request.referenceNumber}\n👤 ولي الأمر: ${request.guardianName}\n📱 الجوال: ${request.guardianPhone}\n📍 المدينة: ${request.city || 'الرياض'}\nأرجو إفادتي بالخطوة القادمة وتحديد موعد المقابلة والتقييم.`
         : `Hello, I submitted a Sewar Program request (School Shadow Teacher) at Raba Center. Ref: ${request.referenceNumber}, Parent: ${request.guardianName}, Phone: ${request.guardianPhone}, City: ${request.city || 'Riyadh'}. Please confirm next steps.`;
       break;
 

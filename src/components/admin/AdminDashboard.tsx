@@ -44,7 +44,7 @@ import {
   clearStoredAdminSession,
   SYSTEM_PERMISSIONS 
 } from '../../data/adminData';
-import { SERVICES, THERAPY_PACKAGES, SPECIALISTS, getStoredServices, saveStoredServices } from '../../data/mockData';
+import { SERVICES, THERAPY_PACKAGES, SPECIALISTS, getStoredServices, saveStoredServices, getStoredPackages, saveStoredPackages } from '../../data/mockData';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -52,6 +52,7 @@ import { OverviewTab } from './OverviewTab';
 import { UserManagementTab } from './UserManagementTab';
 import { AppointmentsTab } from './AppointmentsTab';
 import { ServicesPackagesTab } from './ServicesPackagesTab';
+import { PricingManagementTab } from './PricingManagementTab';
 import { SpecialistsTab } from './SpecialistsTab';
 import { SliderManagementTab } from './SliderManagementTab';
 import { BlogManagementTab } from './BlogManagementTab';
@@ -89,7 +90,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Active navigation tab
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'users' | 'appointments' | 'services' | 'specialists' | 'slider' | 'courses' | 'blog' | 'accreditations' | 'partners' | 'site_settings' | 'marketing' | 'finances'
+    'overview' | 'users' | 'appointments' | 'services' | 'pricing' | 'specialists' | 'slider' | 'courses' | 'blog' | 'accreditations' | 'partners' | 'site_settings' | 'marketing' | 'finances'
   >('overview');
 
   // Mobile sidebar toggle
@@ -102,11 +103,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Services, Packages, Specialists
   const [servicesList, setServicesList] = useState<ServiceItem[]>(() => getStoredServices());
-  const [packagesList, setPackagesList] = useState<TherapyPackage[]>(THERAPY_PACKAGES);
+  const [packagesList, setPackagesList] = useState<TherapyPackage[]>(() => getStoredPackages());
 
   const handleUpdateServices = (updated: ServiceItem[]) => {
     setServicesList(updated);
     saveStoredServices(updated);
+  };
+
+  const handleUpdatePackages = (updated: TherapyPackage[]) => {
+    setPackagesList(updated);
+    saveStoredPackages(updated);
   };
   const [specialistsList, setSpecialistsList] = useState<Specialist[]>(() => {
     if (specialists && specialists.length > 0) return specialists;
@@ -223,6 +229,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       perm: 'manage_services' as PermissionId
     },
     {
+      id: 'pricing',
+      labelAr: 'إدارة وتخصيص الأسعار',
+      labelEn: 'Pricing Management',
+      icon: DollarSign,
+      badge: isArabic ? 'تخصيص مباشر' : 'Rates',
+      perm: 'manage_services' as PermissionId
+    },
+    {
       id: 'specialists',
       labelAr: 'الكوادر الطبية والأخصائيين',
       labelEn: 'Specialists Directory',
@@ -309,27 +323,34 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
       )}
       
-      {/* Top Navbar */}
-      <header className="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-white/10 px-4 sm:px-6 py-3 flex items-center justify-between shadow-xs">
+      {/* Top Navbar - Fully Responsive & Mobile-Optimized */}
+      <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-white/10 px-3 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between shadow-xs gap-2">
         
         {/* Left: Mobile Menu Toggle + Logo & Dashboard Title */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+            className="lg:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer shrink-0"
+            aria-label="Toggle admin navigation menu"
           >
-            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {isMobileMenuOpen ? <X className="w-5 h-5 text-emerald-600 dark:text-[#00E5BE]" /> : <Menu className="w-5 h-5" />}
           </button>
 
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-[#0B3B36] to-[#00E5BE] flex items-center justify-center text-white font-black text-sm shadow-md">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-[#0B3B36] to-[#00E5BE] flex items-center justify-center text-white font-black text-xs sm:text-sm shadow-md shrink-0">
               رابا
             </div>
-            <div>
-              <div className="text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-[#00E5BE]">
-                {isArabic ? 'لوحة التحكم الإدارية' : 'Admin Operations Control'}
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs sm:text-xs font-black uppercase tracking-wider text-emerald-700 dark:text-[#00E5BE] truncate">
+                  {isArabic ? 'لوحة التحكم' : 'Admin Panel'}
+                </span>
+                {/* Active Tab indicator pill on mobile */}
+                <span className="sm:hidden text-[9px] px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-[#00E5BE] font-bold truncate max-w-[85px]">
+                  {navItems.find(i => i.id === activeTab)?.[isArabic ? 'labelAr' : 'labelEn']}
+                </span>
               </div>
-              <h1 className="text-sm sm:text-base font-black text-slate-900 dark:text-white leading-none">
+              <h1 className="hidden sm:block text-sm font-black text-slate-900 dark:text-white leading-tight truncate">
                 {isArabic ? 'مركز رابا لتأهيل أطفال التوحد' : 'Raba Rehabilitation Center'}
               </h1>
             </div>
@@ -337,19 +358,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
 
         {/* Right: Quick Switch User, Theme, Lang, Return to Website */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           
           {/* Active User Impersonation / Selector Dropdown */}
           <div className="relative">
             <button
               onClick={() => setIsSwitchUserDropdownOpen(!isSwitchUserDropdownOpen)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all border border-slate-200/80 dark:border-white/10 text-xs cursor-pointer"
+              className="flex items-center gap-1.5 sm:gap-2 p-1.5 sm:px-3 sm:py-1.5 rounded-xl sm:rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all border border-slate-200/80 dark:border-white/10 text-xs cursor-pointer"
               title={isArabic ? 'تبديل المستخدم النشط لتجربة الصلاحيات' : 'Switch active user to test RBAC'}
             >
               {currentUser.avatar ? (
-                <img src={currentUser.avatar} alt={currentUser.name} className="w-6 h-6 rounded-full object-cover" />
+                <img src={currentUser.avatar} alt={currentUser.name} className="w-6 h-6 rounded-full object-cover shrink-0" />
               ) : (
-                <div className="w-6 h-6 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-[10px]">
+                <div className="w-6 h-6 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0">
                   {currentUser.name.slice(0, 1)}
                 </div>
               )}
@@ -361,12 +382,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   {currentUser.roleTitleAr}
                 </div>
               </div>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
             </button>
 
             {/* Dropdown Menu */}
             {isSwitchUserDropdownOpen && (
-              <div className={`absolute top-full mt-2 ${isArabic ? 'left-0' : 'right-0'} w-72 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-white/15 p-2 z-50 animate-in fade-in zoom-in-95`}>
+              <div className={`absolute top-full mt-2 ${isArabic ? 'left-0 sm:left-auto sm:right-auto' : 'right-0 sm:right-auto'} w-72 max-w-[calc(100vw-24px)] bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-white/15 p-2 z-50 animate-in fade-in zoom-in-95`}>
                 <div className="p-2 border-b border-slate-100 dark:border-white/10 mb-1">
                   <div className="text-[11px] font-bold text-slate-400">
                     {isArabic ? 'تبديل الحساب التجريبي واختبار الصلاحيات:' : 'Switch Role to Test RBAC:'}
@@ -437,8 +458,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-1.5 sm:p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             title={isDark ? 'الوضع المضيء' : 'الوضع الليلي'}
+            aria-label="Toggle Dark/Light Mode"
           >
             {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
           </button>
@@ -446,28 +468,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {/* Language Toggle */}
           <button
             onClick={toggleLanguage}
-            className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1 text-xs font-bold cursor-pointer"
+            className="p-1.5 sm:p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1 text-xs font-bold cursor-pointer"
             title="تغيير اللغة"
+            aria-label="Toggle Language"
           >
-            <Globe className="w-4 h-4" />
-            <span>{isArabic ? 'EN' : 'عربي'}</span>
+            <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span className="text-[11px] sm:text-xs">{isArabic ? 'EN' : 'عربي'}</span>
           </button>
 
           {/* Exit / Return to Website */}
           <button
             onClick={onClose}
-            className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#0B3B36] to-[#00E5BE] text-white hover:opacity-95 text-xs font-black flex items-center gap-2 shadow-md transition-all cursor-pointer hover:shadow-lg active:scale-95"
+            className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#0B3B36] to-[#00E5BE] text-white hover:opacity-95 text-xs font-black flex items-center gap-1 sm:gap-2 shadow-xs transition-all cursor-pointer active:scale-95"
             title={isArabic ? 'معاينة التغييرات على الموقع المباشر' : 'Preview changes on live website'}
           >
-            <ExternalLink className="w-3.5 h-3.5 text-[#00E5BE] group-hover:text-white" />
-            <span>{isArabic ? 'معاينة الموقع المباشر ↗' : 'View Live Website'}</span>
+            <ExternalLink className="w-3.5 h-3.5 text-[#00E5BE] shrink-0" />
+            <span className="hidden sm:inline">{isArabic ? 'معاينة الموقع المباشر ↗' : 'View Live Website'}</span>
+            <span className="sm:hidden text-[11px] font-black">{isArabic ? 'الموقع ↗' : 'Site ↗'}</span>
           </button>
 
           {/* Direct Logout Button */}
           <button
             onClick={handleLogout}
-            className="px-3 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-950/60 border border-rose-200/80 dark:border-rose-800/40 text-rose-600 dark:text-rose-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+            className="p-1.5 sm:px-3 sm:py-2 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-950/60 border border-rose-200/80 dark:border-rose-800/40 text-rose-600 dark:text-rose-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shrink-0"
             title={isArabic ? 'تسجيل الخروج والعودة لصفحة الدخول' : 'Sign out to login page'}
+            aria-label="Sign Out"
           >
             <LogOut className="w-3.5 h-3.5 text-rose-500" />
             <span className="hidden sm:inline">{isArabic ? 'خروج' : 'Logout'}</span>
@@ -623,7 +648,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               services={servicesList}
               packages={packagesList}
               onUpdateServices={handleUpdateServices}
-              onUpdatePackages={setPackagesList}
+              onUpdatePackages={handleUpdatePackages}
+              hasPermission={hasPermission}
+            />
+          )}
+
+          {activeTab === 'pricing' && (
+            <PricingManagementTab
+              packages={packagesList}
+              services={servicesList}
+              specialists={specialistsList}
+              onUpdatePackages={handleUpdatePackages}
+              onUpdateServices={handleUpdateServices}
+              onUpdateSpecialists={handleUpdateSpecialists}
               hasPermission={hasPermission}
             />
           )}

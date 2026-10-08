@@ -19,7 +19,10 @@ interface NavbarProps {
   onOpenAdmin?: () => void;
   onOpenStore?: () => void;
   onOpenSpecialistsPage?: () => void;
+  onOpenServicesPage?: () => void;
   onGoHome?: () => void;
+  isSpecialistsPageOpen?: boolean;
+  isServicesPageOpen?: boolean;
   unreadCount?: number;
   cartCount?: number;
 }
@@ -30,7 +33,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenLogin,
   onOpenAdmin,
   onOpenSpecialistsPage,
+  onOpenServicesPage,
   onGoHome,
+  isSpecialistsPageOpen = false,
+  isServicesPageOpen = false,
   unreadCount
 }) => {
   const { theme, toggleTheme } = useTheme();
@@ -51,10 +57,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   // Focused, professional navigation links strictly representing the core sections
   const navLinks = [
     { label: t('nav.home'), href: '#hero' },
-    { label: t('nav.services'), href: '#services' },
-    { label: isArabic ? 'الكورسات والدورات' : 'Courses', href: '#courses' },
+    { label: isArabic ? 'الخدمات' : 'Services', href: '#services' },
     { label: isArabic ? 'خدمة سِوار (معلم الظل)' : 'Sewar (Shadow Teacher)', href: '#shadow-teacher' },
-    { label: t('nav.packages'), href: '#packages' },
     { label: t('nav.specialists'), href: '#specialists' },
     { label: isArabic ? 'فروعنا بالمملكة' : 'Branches', href: '#branches' },
     { label: t('nav.blog'), href: '#blog' },
@@ -98,30 +102,42 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* 2. Primary Navigation (Desktop - Balanced & Clean) */}
           <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5" aria-label="القائمة الرئيسية">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={(e) => {
-                  if (link.href === '#specialists' && onOpenSpecialistsPage) {
-                    e.preventDefault();
-                    onOpenSpecialistsPage();
-                  } else if (link.href === '#hero' && onGoHome) {
-                    e.preventDefault();
-                    onGoHome();
-                  } else if (onGoHome) {
-                    onGoHome();
-                  }
-                }}
-                className={`px-3 py-2 text-xs xl:text-sm font-bold rounded-xl transition-all ${
-                  isDark
-                    ? 'text-slate-300 hover:text-white hover:bg-white/[0.08]'
-                    : 'text-slate-700 hover:text-slate-950 hover:bg-slate-100'
-                }`}
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const isLinkActive = 
+                (link.href === '#services' && isServicesPageOpen) || 
+                (link.href === '#specialists' && isSpecialistsPageOpen) ||
+                (link.href === '#hero' && !isServicesPageOpen && !isSpecialistsPageOpen);
+
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => {
+                    if (link.href === '#services' && onOpenServicesPage) {
+                      e.preventDefault();
+                      onOpenServicesPage();
+                    } else if (link.href === '#specialists' && onOpenSpecialistsPage) {
+                      e.preventDefault();
+                      onOpenSpecialistsPage();
+                    } else if (link.href === '#hero' && onGoHome) {
+                      e.preventDefault();
+                      onGoHome();
+                    } else if (onGoHome && (isSpecialistsPageOpen || isServicesPageOpen)) {
+                      onGoHome();
+                    }
+                  }}
+                  className={`px-3 py-2 text-xs xl:text-sm font-bold rounded-xl transition-all ${
+                    isLinkActive
+                      ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-sm'
+                      : isDark
+                        ? 'text-slate-300 hover:text-white hover:bg-white/[0.08]'
+                        : 'text-slate-700 hover:text-slate-950 hover:bg-slate-100'
+                  }`}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
           </nav>
 
           {/* 3. Streamlined Executive Actions */}
@@ -244,31 +260,43 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           <nav className="flex flex-col gap-1">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={(e) => {
-                  setMobileMenuOpen(false);
-                  if (link.href === '#specialists' && onOpenSpecialistsPage) {
-                    e.preventDefault();
-                    onOpenSpecialistsPage();
-                  } else if (link.href === '#hero' && onGoHome) {
-                    e.preventDefault();
-                    onGoHome();
-                  } else if (onGoHome) {
-                    onGoHome();
-                  }
-                }}
-                className={`px-4 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all min-h-[44px] flex items-center ${
-                  isDark 
-                    ? 'text-slate-200 hover:bg-white/10 hover:text-white' 
-                    : 'text-slate-800 hover:bg-slate-100 hover:text-slate-950'
-                }`}
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const isLinkActive = 
+                (link.href === '#services' && isServicesPageOpen) || 
+                (link.href === '#specialists' && isSpecialistsPageOpen) ||
+                (link.href === '#hero' && !isServicesPageOpen && !isSpecialistsPageOpen);
+
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => {
+                    setMobileMenuOpen(false);
+                    if (link.href === '#services' && onOpenServicesPage) {
+                      e.preventDefault();
+                      onOpenServicesPage();
+                    } else if (link.href === '#specialists' && onOpenSpecialistsPage) {
+                      e.preventDefault();
+                      onOpenSpecialistsPage();
+                    } else if (link.href === '#hero' && onGoHome) {
+                      e.preventDefault();
+                      onGoHome();
+                    } else if (onGoHome && (isSpecialistsPageOpen || isServicesPageOpen)) {
+                      onGoHome();
+                    }
+                  }}
+                  className={`px-4 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all min-h-[44px] flex items-center ${
+                    isLinkActive
+                      ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 font-black shadow-xs'
+                      : isDark 
+                        ? 'text-slate-200 hover:bg-white/10 hover:text-white' 
+                        : 'text-slate-800 hover:bg-slate-100 hover:text-slate-950'
+                  }`}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
 
             {/* Language switch button in mobile drawer */}
             <button

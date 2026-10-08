@@ -4513,6 +4513,34 @@ export const saveStoredServices = (services: ServiceItem[]) => {
   savePersistentModule(STORAGE_SERVICES_KEY, services);
 };
 
+const STORAGE_PACKAGES_KEY = 'raba_custom_packages_v2';
+
+export const getStoredPackages = (): TherapyPackage[] => {
+  if (typeof window === 'undefined') return THERAPY_PACKAGES;
+  try {
+    const raw = localStorage.getItem(STORAGE_PACKAGES_KEY);
+    if (!raw) return THERAPY_PACKAGES;
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed;
+    }
+  } catch (e) {
+    console.error('Failed to load stored packages', e);
+  }
+  return THERAPY_PACKAGES;
+};
+
+export const saveStoredPackages = (packages: TherapyPackage[]) => {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(STORAGE_PACKAGES_KEY, JSON.stringify(packages));
+    window.dispatchEvent(new Event('raba_packages_updated'));
+  } catch (e) {
+    console.error('Failed to save stored packages', e);
+  }
+  savePersistentModule(STORAGE_PACKAGES_KEY, packages);
+};
+
 export const THERAPY_PACKAGES: TherapyPackage[] = [
   {
     id: 'pkg-summer-speech',

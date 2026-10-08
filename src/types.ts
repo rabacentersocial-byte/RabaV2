@@ -62,6 +62,12 @@ export interface ServiceItem {
   iconName: string;
   image: string;
   featured?: boolean;
+  sessionPrice?: number;
+  assessmentPrice?: number;
+  originalPrice?: number;
+  priceDisplayAr?: string;
+  priceDisplayEn?: string;
+  showPrice?: boolean;
 }
 
 export interface TherapyPackage {
