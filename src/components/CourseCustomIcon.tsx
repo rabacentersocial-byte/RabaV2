@@ -92,8 +92,6 @@ export function resolveCourseIcon(course?: Partial<CourseItem> | null, explicitI
 
   // Course ID specific mapping
   const id = course?.id || '';
-  if (id === 'course-qba') return Award;
-  if (id === 'course-abat') return Briefcase;
   if (id === 'course-autism-inclusion') return School;
   if (id === 'course-qasp-s') return UsersRound;
   if (id === 'course-mand-training') return MessageSquareQuote;

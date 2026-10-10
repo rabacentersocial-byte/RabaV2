@@ -5,9 +5,6 @@ import { Hero } from './components/Hero';
 import { StatsBar } from './components/StatsBar';
 import { OffersSection } from './components/OffersSection';
 import { ServicesSection } from './components/ServicesSection';
-import { ShadowTeacherSection } from './components/ShadowTeacherSection';
-import { PackagesSection } from './components/PackagesSection';
-import { SpecialistsSection } from './components/SpecialistsSection';
 import { Footer } from './components/Footer';
 import { FloatingActions } from './components/FloatingActions';
 import { MobileBottomBar } from './components/MobileBottomBar';
@@ -16,7 +13,10 @@ import { getStoredAdminSession, clearStoredAdminSession } from './data/adminData
 import { DISPATCH_REQUEST_EVENT } from './data/customerRequests';
 import { saveAppointmentToFirestore } from './services/firestoreService';
 
-// Lazy-loaded components for optimal mobile bundle splitting and low TBT
+// Lazy-loaded components for optimal mobile bundle splitting, fast paint, and low TBT
+const ShadowTeacherSection = lazy(() => import('./components/ShadowTeacherSection').then(m => ({ default: m.ShadowTeacherSection })));
+const PackagesSection = lazy(() => import('./components/PackagesSection').then(m => ({ default: m.PackagesSection })));
+const SpecialistsSection = lazy(() => import('./components/SpecialistsSection').then(m => ({ default: m.SpecialistsSection })));
 const SpecialistsDirectoryPage = lazy(() => import('./components/SpecialistsDirectoryPage'));
 const ServicesDirectoryPage = lazy(() => import('./components/ServicesDirectoryPage'));
 const BranchesDirectoryPage = lazy(() => import('./components/BranchesDirectoryPage'));
@@ -622,6 +622,7 @@ export default function App() {
               onSelectService={handleSelectServiceForBooking}
               onSelectPackage={handleSelectPackageForBooking}
               onRegisterCourse={handleOpenCourseRegistration}
+              onOpenSpecialistsPage={handleOpenSpecialistsPage}
             />
           </Suspense>
         ) : isBranchesPageOpen ? (
@@ -677,23 +678,29 @@ export default function App() {
                     />
                   </Suspense>
                 )}
-                <ShadowTeacherSection 
-                  onSubmitRequest={handleConfirmBooking}
-                />
-                <PackagesSection
-                  onSelectPackage={handleSelectPackageForBooking}
-                />
+                <Suspense fallback={null}>
+                  <ShadowTeacherSection 
+                    onSubmitRequest={handleConfirmBooking}
+                  />
+                </Suspense>
+                <Suspense fallback={null}>
+                  <PackagesSection
+                    onSelectPackage={handleSelectPackageForBooking}
+                  />
+                </Suspense>
               </>
             )}
 
             {/* 10. Medical Specialists & CV Exploration */}
             {modules.specialists && (
-              <SpecialistsSection
-                specialists={specialists}
-                onViewCv={handleViewCv}
-                onBookSpecialist={handleSelectSpecialistForBooking}
-                onOpenSpecialistsPage={handleOpenSpecialistsPage}
-              />
+              <Suspense fallback={null}>
+                <SpecialistsSection
+                  specialists={specialists}
+                  onViewCv={handleViewCv}
+                  onBookSpecialist={handleSelectSpecialistForBooking}
+                  onOpenSpecialistsPage={handleOpenSpecialistsPage}
+                />
+              </Suspense>
             )}
 
             {/* 11.4. Branches Network Slider (فروع الرياض والخرج) directly above Accreditations */}

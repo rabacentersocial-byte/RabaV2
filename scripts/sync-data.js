@@ -16,11 +16,9 @@ if (!fs.existsSync(PUBLIC_DATA_DIR)) {
   fs.mkdirSync(PUBLIC_DATA_DIR, { recursive: true });
 }
 
-// Storage Key to File mapping
+// Canonical Storage Key to File mapping (avoids duplicate payloads for legacy aliases)
 const STORAGE_FILE_MAP = {
   raba_site_logo_v3: 'site_logo.json',
-  raba_site_logo_v2: 'site_logo.json',
-  raba_site_logo_v1: 'site_logo.json',
   raba_site_theme_v1: 'site_theme.json',
   raba_social_links_v1: 'site_social.json',
   raba_program_pillars_v1: 'site_pillars.json',
@@ -28,29 +26,20 @@ const STORAGE_FILE_MAP = {
   raba_site_modules_v1: 'site_modules.json',
   raba_hero_slides_v2: 'hero_slides.json',
   raba_hero_slider_config_v2: 'hero_config.json',
-  raba_offers_data_v1: 'offers.json',
   raba_offers_data: 'offers.json',
   raba_blog_posts_v1: 'blog_posts.json',
   raba_specialists: 'specialists.json',
-  raba_specialists_settings: 'specialist_settings.json',
   raba_specialists_card_customizations: 'specialist_settings.json',
   raba_global_card_settings: 'global_card_settings.json',
   raba_accreditations: 'accreditations.json',
   raba_accreditations_settings: 'accreditations_settings.json',
-  raba_custom_services_v1: 'services.json',
   raba_custom_services_v2: 'services.json',
   raba_appointments: 'appointments.json',
   raba_notifications: 'notifications.json',
   raba_branches_data_v1: 'branches.json',
   raba_courses_data_v1: 'courses.json',
   raba_partners_list_v7: 'partners.json',
-  raba_partners_list_v6: 'partners.json',
-  raba_partners_list_v5: 'partners.json',
-  raba_partners_data_v1: 'partners.json',
   raba_partners_settings_v7: 'partners_settings.json',
-  raba_partners_settings_v6: 'partners_settings.json',
-  raba_partners_settings_v5: 'partners_settings.json',
-  raba_partners_slider_settings: 'partners_settings.json',
   raba_admin_users: 'admin_users.json'
 };
 

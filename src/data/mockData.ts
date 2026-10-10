@@ -4576,7 +4576,7 @@ export const THERAPY_PACKAGES: TherapyPackage[] = [
     recommendedFor: 'الأطفال الذين يعانون من تأخر لغوي، التأتأة، أو صعوبة مخارج الحروف خلال الصيف',
     recommendedForEn: 'Children needing summer speech acceleration and language enrichment',
     popular: true,
-    colorTheme: 'amber',
+    colorTheme: 'sky',
     isSummer: true,
     disclaimerText: 'الغياب غير معوض',
     disclaimerTextEn: 'Absence is non-compensated',

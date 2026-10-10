@@ -68,104 +68,6 @@ export const DEFAULT_COURSES_SETTINGS: CoursesSectionSettings = {
 
 export const COURSES_DATA: CourseItem[] = [
   {
-    "id": "course-qba",
-    "titleAr": "كورس محلل سلوكي مؤهل (QBA)",
-    "titleEn": "Qualified Behavior Analyst (QBA) Course",
-    "shortTitle": "محلل سلوكي مؤهل QBA",
-    "hoursBadgeAr": "270 ساعة تدريبية معتمدة",
-    "hoursBadgeEn": "270 Certified Training Hours",
-    "hoursCount": 270,
-    "ribbonTagAr": "اعتماد البورد الدولي QABA",
-    "ribbonTagEn": "QABA International Certification",
-    "categoryAr": "تحليل السلوك التطبيقي",
-    "categoryEn": "Applied Behavior Analysis",
-    "badgeColor": "#0d5c52",
-    "tagHighlightAr": "يشمل: VB-MAPP · ABLLS-R · PEAK",
-    "tagHighlightEn": "Includes: VB-MAPP · ABLLS-R · PEAK",
-    "descriptionAr": "ابدأ رحلتك الاحترافية في تحليل السلوك التطبيقي بمحتوى متكامل يؤهلك للحصول على اعتماد QBA الدولي.",
-    "descriptionEn": "Begin your professional journey in Applied Behavior Analysis with comprehensive curriculum qualifying you for international QBA certification.",
-    "featuresAr": [
-      "متوافق مع متطلبات البورد الدولي QABA",
-      "إتقان أدوات التقييم السلوكي الشاملة",
-      "تصميم الخطط العلاجية وتحليل البيانات"
-    ],
-    "featuresEn": [
-      "Compliant with international QABA board standards",
-      "Mastery of comprehensive behavioral assessment tools",
-      "Treatment plan design and clinical data analysis"
-    ],
-    "priceDisplayAr": "2490 ر.س",
-    "priceDisplayEn": "2490 SAR",
-    "accentColor": "#0d5c52",
-    "targetAudienceAr": "أخصائيو التربية الخاصة، علم النفس، العلاج الوظيفي، والراغبون في رخصة QBA الدولية",
-    "targetAudienceEn": "Special educators, psychologists, and clinicians seeking QBA credentials",
-    "order": 1,
-    "isActive": true,
-    "cardCoverUrl": "/images/courses/course_1_qba.jpg",
-    "iconName": "award",
-    "floatingBadgeAr": "اعتماد دولي",
-    "floatingBadgeEn": "International Accreditation",
-    "accreditationBadgeAr": "اعتماد البورد الدولي QABA",
-    "accreditationBadgeEn": "QABA International Certification",
-    "rating": 4.9,
-    "reviewsCount": 184,
-    "instructorAr": "بإشراف نخبة من الأخصائيين المعتمدين",
-    "instructorEn": "Supervised by Certified Specialists",
-    "lessonsCount": 36,
-    "currentPrice": 2490,
-    "originalPrice": 2990,
-    "videoPreviewUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
-  },
-  {
-    "id": "course-abat",
-    "titleAr": "كورس فني تحليل سلوك تطبيقي (ABAT)",
-    "titleEn": "Applied Behavior Analysis Technician (ABAT)",
-    "shortTitle": "فني تحليل سلوك تطبيقي ABAT",
-    "hoursBadgeAr": "40 ساعة تدريبية معتمدة",
-    "hoursBadgeEn": "40 Certified Training Hours",
-    "hoursCount": 40,
-    "ribbonTagAr": "الاعتماد المهني الأول في ABA",
-    "ribbonTagEn": "Entry-Level Credential",
-    "categoryAr": "تحليل السلوك التطبيقي",
-    "categoryEn": "Applied Behavior Analysis",
-    "badgeColor": "#0d5c52",
-    "tagHighlightAr": "تأهيل لاختبار البورد QABA - فني سلوك",
-    "tagHighlightEn": "Prepares for QABA ABAT Board Exam",
-    "descriptionAr": "ابدأ مسارك المهني في تحليل السلوك التطبيقي مع شهادة ABAT الدولية المؤهلة للعمل المباشر كفني سلوك.",
-    "descriptionEn": "Launch your career in ABA with the recognized ABAT qualification for direct behavioral therapy work.",
-    "featuresAr": [
-      "ساعات تدريبية وفق معايير QABA",
-      "تأهيل شامل لاجتياز اختبار ABAT",
-      "فهم التعزيز والإجراءات السلوكية"
-    ],
-    "featuresEn": [
-      "Accredited training hours aligned with QABA standards",
-      "Comprehensive preparation to pass the ABAT exam",
-      "Deep understanding of reinforcement & behavioral protocols"
-    ],
-    "priceDisplayAr": "990 ر.س",
-    "priceDisplayEn": "990 SAR",
-    "accentColor": "#0d5c52",
-    "targetAudienceAr": "الخريجون الجدد، معلمو الظل، ومقدمو الرعاية المهتمون بالتدخل العملي",
-    "targetAudienceEn": "Recent graduates, shadow teachers, and therapists seeking certified entry",
-    "order": 2,
-    "isActive": true,
-    "cardCoverUrl": "/images/courses/course_2_abat.jpg",
-    "iconName": "briefcase",
-    "floatingBadgeAr": "مسار مهني",
-    "floatingBadgeEn": "Professional Track",
-    "accreditationBadgeAr": "الاعتماد المهني الأول في ABA",
-    "accreditationBadgeEn": "First Professional ABA Credential",
-    "rating": 4.8,
-    "reviewsCount": 126,
-    "instructorAr": "بإشراف نخبة من الأخصائيين المعتمدين",
-    "instructorEn": "Supervised by Certified Specialists",
-    "lessonsCount": 18,
-    "currentPrice": 990,
-    "originalPrice": 1290,
-    "videoPreviewUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
-  },
-  {
     "id": "course-autism-inclusion",
     "titleAr": "دمج أطفال التوحد في الصف",
     "titleEn": "Autism Inclusion in the Classroom",
@@ -197,7 +99,7 @@ export const COURSES_DATA: CourseItem[] = [
     "accentColor": "#0d5c52",
     "targetAudienceAr": "معلمو المدارس العادية والدمج، الأخصائيون النفسيون، وأولياء الأمور",
     "targetAudienceEn": "Mainstream teachers, school psychologists, and parents",
-    "order": 3,
+    "order": 2,
     "isActive": true,
     "cardCoverUrl": "/images/courses/course_3_autism_inclusion.jpg",
     "iconName": "school",
@@ -246,7 +148,7 @@ export const COURSES_DATA: CourseItem[] = [
     "accentColor": "#0d5c52",
     "targetAudienceAr": "أخصائيو التربية الخاصة، مشرفو البرامج السلوكية، وممارسو التوحد",
     "targetAudienceEn": "Special education supervisors and autism practitioners",
-    "order": 4,
+    "order": 1,
     "isActive": true,
     "cardCoverUrl": "/images/courses/course_4_qasp.jpg",
     "iconName": "users-round",
@@ -399,7 +301,9 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceEn": "Speech-language pathologists, behavior analysts, and early intervention staff",
     "order": 6,
     "isActive": true,
-    "iconName": "languages"
+    "iconName": "languages",
+    "currentPrice": 250,
+    "originalPrice": 350
   },
   {
     "id": "course-specialist-assessment",
@@ -439,7 +343,9 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceEn": "Behavior technicians, ABAT clinicians, shadow teachers, and therapists",
     "order": 7,
     "isActive": true,
-    "iconName": "clipboard-check"
+    "iconName": "clipboard-check",
+    "currentPrice": 300,
+    "originalPrice": 400
   },
   {
     "id": "course-medical-behavioral",
@@ -479,7 +385,9 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceEn": "Physicians, behavior analysts, pediatric nurses, and clinical directors",
     "order": 8,
     "isActive": true,
-    "iconName": "stethoscope"
+    "iconName": "stethoscope",
+    "currentPrice": 150,
+    "originalPrice": 200
   },
   {
     "id": "course-trauma-aba",
@@ -519,7 +427,9 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceEn": "Behavior analysts, clinical psychologists, special educators, and caregivers",
     "order": 9,
     "isActive": true,
-    "iconName": "hand-heart"
+    "iconName": "hand-heart",
+    "currentPrice": 100,
+    "originalPrice": 150
   },
   {
     "id": "course-comorbidities",
@@ -559,7 +469,9 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceEn": "Diagnostic evaluators, clinical psychologists, and behavior analysts",
     "order": 10,
     "isActive": true,
-    "iconName": "layers"
+    "iconName": "layers",
+    "currentPrice": 100,
+    "originalPrice": 150
   },
   {
     "id": "course-qaba-ethics",
@@ -599,7 +511,9 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceEn": "Certified ABAT, QASP-S, and QBA clinicians and certification candidates",
     "order": 11,
     "isActive": true,
-    "iconName": "scale"
+    "iconName": "scale",
+    "currentPrice": 150,
+    "originalPrice": 220
   },
   {
     "id": "course-peak",
@@ -639,7 +553,9 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceEn": "Behavior analysts, speech therapists, special educators, and clinical directors",
     "order": 12,
     "isActive": true,
-    "iconName": "trending-up"
+    "iconName": "trending-up",
+    "currentPrice": 350,
+    "originalPrice": 500
   },
   {
     "id": "course-bip",
@@ -679,7 +595,9 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceEn": "Behavior analysts, inclusion specialists, educational supervisors, and clinicians",
     "order": 13,
     "isActive": true,
-    "iconName": "file-text"
+    "iconName": "file-text",
+    "currentPrice": 350,
+    "originalPrice": 450
   },
   {
     "id": "course-data-graphing",
@@ -719,16 +637,45 @@ export const COURSES_DATA: CourseItem[] = [
     "targetAudienceEn": "Behavior technicians, clinical analysts, and special education teachers",
     "order": 14,
     "isActive": true,
-    "iconName": "bar-chart-3"
+    "iconName": "bar-chart-3",
+    "currentPrice": 100,
+    "originalPrice": 160
   }
 ];
 
 export const STORAGE_COURSES_KEY = 'raba_courses_data_v1';
 export const STORAGE_COURSES_SETTINGS_KEY = 'raba_courses_settings_v1';
 
+/**
+ * Extracts the numeric price of a course for accurate sorting and comparisons.
+ */
+export function getCourseNumericPrice(course: CourseItem | null | undefined): number {
+  if (!course) return 0;
+  if (typeof course.currentPrice === 'number' && !isNaN(course.currentPrice) && course.currentPrice > 0) {
+    return course.currentPrice;
+  }
+  if (typeof course.currentPrice === 'string' && course.currentPrice.trim() !== '') {
+    const parsed = parseFloat(course.currentPrice.replace(/[^0-9.]/g, ''));
+    if (!isNaN(parsed) && parsed > 0) return parsed;
+  }
+  if (course.priceDisplayAr) {
+    const parsed = parseFloat(course.priceDisplayAr.replace(/[^0-9.]/g, ''));
+    if (!isNaN(parsed) && parsed > 0) return parsed;
+  }
+  if (course.priceDisplayEn) {
+    const parsed = parseFloat(course.priceDisplayEn.replace(/[^0-9.]/g, ''));
+    if (!isNaN(parsed) && parsed > 0) return parsed;
+  }
+  return 0;
+}
+
 export function getStoredCoursesData(): CourseItem[] {
   const enrichItem = (c: any): CourseItem => {
     const def = COURSES_DATA.find(d => d.id === c.id);
+    const numericPrice = (c.currentPrice !== undefined && c.currentPrice !== 0) 
+      ? (typeof c.currentPrice === 'number' ? c.currentPrice : parseFloat(String(c.currentPrice).replace(/[^0-9.]/g, '')) || 0)
+      : (def?.currentPrice || getCourseNumericPrice(c) || getCourseNumericPrice(def as any) || 0);
+
     return {
       ...def,
       ...c,
@@ -741,7 +688,7 @@ export function getStoredCoursesData(): CourseItem[] {
       instructorAr: 'بإشراف نخبة من الأخصائيين المعتمدين',
       instructorEn: 'Supervised by Certified Specialists',
       lessonsCount: c.lessonsCount || def?.lessonsCount || 20,
-      currentPrice: c.currentPrice !== undefined ? c.currentPrice : (def?.currentPrice || 0),
+      currentPrice: numericPrice,
       originalPrice: c.originalPrice !== undefined ? c.originalPrice : (def?.originalPrice || 0),
       isActive: c.isActive !== false
     };
@@ -752,10 +699,15 @@ export function getStoredCoursesData(): CourseItem[] {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        const existingIds = new Set(parsed.map((p: any) => p.id));
+        // Purge deleted courses from stored cache
+        const cleaned = parsed.filter((p: any) => p && p.id !== 'course-qba' && p.id !== 'course-abat');
+        if (cleaned.length !== parsed.length) {
+          localStorage.setItem(STORAGE_COURSES_KEY, JSON.stringify(cleaned));
+        }
+        const existingIds = new Set(cleaned.map((p: any) => p.id));
         const missing = COURSES_DATA.filter(c => !existingIds.has(c.id));
-        const combined = [...parsed, ...missing];
-        return combined.map(enrichItem).sort((a: CourseItem, b: CourseItem) => (a.order || 0) - (b.order || 0));
+        const combined = [...cleaned, ...missing];
+        return combined.map(enrichItem).sort((a: CourseItem, b: CourseItem) => getCourseNumericPrice(b) - getCourseNumericPrice(a));
       }
     }
     const bundled = (defaultSyncData as any)?.data?.[STORAGE_COURSES_KEY];
@@ -763,11 +715,11 @@ export function getStoredCoursesData(): CourseItem[] {
       const existingIds = new Set(bundled.map((p: any) => p.id));
       const missing = COURSES_DATA.filter(c => !existingIds.has(c.id));
       const combined = [...bundled, ...missing];
-      return combined.map(enrichItem).sort((a: CourseItem, b: CourseItem) => (a.order || 0) - (b.order || 0));
+      return combined.map(enrichItem).sort((a: CourseItem, b: CourseItem) => getCourseNumericPrice(b) - getCourseNumericPrice(a));
     }
-    return COURSES_DATA.map(c => ({ ...c, isActive: true }));
+    return COURSES_DATA.map(enrichItem).sort((a: CourseItem, b: CourseItem) => getCourseNumericPrice(b) - getCourseNumericPrice(a));
   } catch {
-    return COURSES_DATA.map(c => ({ ...c, isActive: true }));
+    return COURSES_DATA.map(enrichItem).sort((a: CourseItem, b: CourseItem) => getCourseNumericPrice(b) - getCourseNumericPrice(a));
   }
 }
 

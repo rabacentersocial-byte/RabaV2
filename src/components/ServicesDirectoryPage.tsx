@@ -42,6 +42,7 @@ interface ServicesDirectoryPageProps {
   onSelectService: (service: ServiceItem) => void;
   onSelectPackage: (pkg: TherapyPackage) => void;
   onRegisterCourse: (course: CourseItem) => void;
+  onOpenSpecialistsPage?: () => void;
 }
 
 export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
@@ -49,6 +50,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
   onSelectService,
   onSelectPackage,
   onRegisterCourse,
+  onOpenSpecialistsPage,
 }) => {
   const { isArabic } = useLanguage();
 
@@ -109,6 +111,42 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'recommended' | 'priceAsc' | 'priceDesc' | 'name'>('recommended');
   const [isSortOpen, setIsSortOpen] = useState(false);
+
+  // Scroll direction detection: Auto-hide controls bar on scroll down, reveal on scroll up
+  const [isControlsBarVisible, setIsControlsBarVisible] = useState(true);
+  const lastScrollYRef = useRef(0);
+
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY || document.documentElement.scrollTop;
+          const diff = currentScrollY - lastScrollYRef.current;
+
+          // Always visible near top of the page
+          if (currentScrollY < 90) {
+            setIsControlsBarVisible(true);
+          } else if (diff > 8) {
+            // Scrolling DOWN -> hide controls bar to give user full unhindered view
+            setIsControlsBarVisible(false);
+            setIsSortOpen(false);
+          } else if (diff < -8) {
+            // Scrolling UP -> reveal controls bar smoothly
+            setIsControlsBarVisible(true);
+          }
+
+          lastScrollYRef.current = currentScrollY;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Default view mode per section:
   // On Mobile (< 768px): 'slider'
@@ -302,9 +340,9 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
     // Dedicated filter for Courses
     if (coursesFilter !== 'all') {
       result = result.filter(c => {
-        if (coursesFilter === 'qba') return c.id === 'course-qba' || c.titleAr.includes('QBA') || c.shortTitle.includes('QBA');
-        if (coursesFilter === 'abat') return c.id === 'course-abat' || c.titleAr.includes('ABAT') || c.shortTitle.includes('ABAT');
         if (coursesFilter === 'cas') return c.id === 'course-autism-inclusion' || c.categoryAr?.includes('توحد') || c.titleAr.includes('توحد');
+        if (coursesFilter === 'qasp') return c.id === 'course-qasp-s' || c.categoryAr?.includes('إشراف') || c.titleAr.includes('QASP');
+        if (coursesFilter === 'communication') return c.id === 'course-mand-training' || c.categoryAr?.includes('تواصل') || c.titleAr.includes('Mand');
         if (coursesFilter === 'parents') return c.targetAudienceAr?.includes('أسر') || c.categoryAr?.includes('أسر') || c.targetAudienceAr?.includes('أولياء');
         return true;
       });
@@ -467,50 +505,56 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
         </div>
       </div>
 
-      {/* 2. STICKY TOP CONTROLS BAR (SEARCH + SECTION SWITCHER) */}
-      <div className="sticky top-16 z-30 bg-white/95 dark:bg-[#071D18]/95 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 shadow-xs py-3.5 px-4 sm:px-6 lg:px-8">
+      {/* 2. STICKY TOP CONTROLS BAR (SEARCH + SECTION SWITCHER) - Hides on scroll down */}
+      <div 
+        className={`sticky top-16 z-30 bg-white/95 dark:bg-[#071D18]/95 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 shadow-xs py-3.5 px-4 sm:px-6 lg:px-8 transition-all duration-300 ease-in-out ${
+          isControlsBarVisible 
+            ? 'translate-y-0 opacity-100 pointer-events-auto' 
+            : '-translate-y-[140%] opacity-0 pointer-events-none'
+        }`}
+      >
         <div className="max-w-7xl mx-auto space-y-3.5">
           
-          {/* Top Row: Search Input + Sort Dropdown */}
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          {/* Top Row: Search Input + Sort Dropdown ON THE SAME LINE */}
+          <div className="flex flex-row items-center justify-between gap-2 sm:gap-3 w-full">
             
             {/* Search Input Box */}
-            <div className="relative flex-1 max-w-xl">
+            <div className="relative flex-1 min-w-0">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={isArabic ? 'ابحث عن برنامج، كورس، باقة، أو تخصص...' : 'Search programs, courses, packages, or specialties...'}
-                className={`w-full py-2.5 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder-slate-400 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#00E5BE] transition-all ${
-                  isArabic ? 'pr-10 pl-10' : 'pl-10 pr-10'
+                className={`w-full py-2 sm:py-2.5 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder-slate-400 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#00E5BE] transition-all truncate ${
+                  isArabic ? 'pr-8 pl-7 sm:pr-10 sm:pl-10' : 'pl-8 pr-7 sm:pl-10 sm:pr-10'
                 }`}
               />
-              <Search className={`w-4 h-4 text-slate-400 absolute top-1/2 -translate-y-1/2 ${isArabic ? 'right-3.5' : 'left-3.5'}`} />
+              <Search className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400 absolute top-1/2 -translate-y-1/2 ${isArabic ? 'right-2.5 sm:right-3.5' : 'left-2.5 sm:left-3.5'}`} />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className={`absolute top-1/2 -translate-y-1/2 ${isArabic ? 'left-3.5' : 'right-3.5'} p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 transition-colors cursor-pointer`}
+                  className={`absolute top-1/2 -translate-y-1/2 ${isArabic ? 'left-2 sm:left-3' : 'right-2 sm:right-3'} p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 transition-colors cursor-pointer`}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
 
-            {/* Right Controls: Sort & Quick Reset */}
-            <div className="flex items-center gap-2 shrink-0 justify-end">
+            {/* Right Controls: Sort & Quick Reset on the Same Line */}
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               
               {/* Sort Menu */}
               <div className="relative">
                 <button
                   onClick={() => setIsSortOpen(!isSortOpen)}
-                  className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 text-xs font-bold border border-slate-200 dark:border-white/10 transition-colors cursor-pointer"
+                  className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-200 text-[11px] sm:text-xs font-bold border border-slate-200 dark:border-white/10 transition-colors cursor-pointer whitespace-nowrap shadow-2xs"
                 >
-                  <SlidersHorizontal className="w-3.5 h-3.5 text-[#0B3B36] dark:text-[#00E5BE]" />
+                  <SlidersHorizontal className="w-3.5 h-3.5 text-[#0B3B36] dark:text-[#00E5BE] shrink-0" />
                   <span>
                     {sortBy === 'recommended' && (isArabic ? 'الترتيب: الموصى به' : 'Sort: Recommended')}
                     {sortBy === 'name' && (isArabic ? 'أبجدياً (أ-ي)' : 'Alphabetical')}
                   </span>
-                  <ChevronDown className="w-3 h-3 text-slate-400" />
+                  <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
                 </button>
 
                 {isSortOpen && (
@@ -546,10 +590,11 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                     setCoursesFilter('all');
                     setPackagesFilter('all');
                   }}
-                  className="flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
+                  className="flex items-center gap-1 px-2 sm:px-2.5 py-2 rounded-xl text-[11px] sm:text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer shrink-0 whitespace-nowrap"
+                  title={isArabic ? 'مسح الفلاتر' : 'Reset'}
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
-                  <span>{isArabic ? 'مسح الفلاتر' : 'Reset'}</span>
+                  <span className="hidden xs:inline">{isArabic ? 'مسح' : 'Reset'}</span>
                 </button>
               )}
 
@@ -636,28 +681,29 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
         )}
 
         {/* ========================================================================= */}
+        {/* ========================================================================= */}
         {/* PART 1: REHABILITATION PROGRAMS (الجزء الأول: برامج التأهيل التخصصية)      */}
         {/* ========================================================================= */}
         {(activeTab === 'all' || activeTab === 'programs') && (
-          <section className="mb-16 bg-white/60 dark:bg-slate-900/40 rounded-3xl p-4 sm:p-7 border border-slate-200/80 dark:border-white/5 shadow-xs">
+          <section className="mb-10 sm:mb-16 bg-white/60 dark:bg-slate-900/40 rounded-2xl sm:rounded-3xl p-3 sm:p-7 border border-slate-200/80 dark:border-white/5 shadow-xs">
             
             {/* 1.1 Section Header & Controls (View mode switch + Slider Arrows) */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 pb-4 border-b border-slate-200/60 dark:border-white/10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-5 pb-3 sm:pb-4 border-b border-slate-200/60 dark:border-white/10">
               
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
-                  <Puzzle className="w-6 h-6 stroke-[2.2]" />
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                  <Puzzle className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.2]" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                    <h2 className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                       {isArabic ? 'برامج التأهيل التخصصية' : 'Rehabilitation Programs'}
                     </h2>
-                    <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                    <span className="text-[10px] sm:text-xs font-black px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
                       {filteredServices.length} {isArabic ? 'برامج' : 'programs'}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                     {isArabic ? 'جلسات وخطط تدخل علاجية معتمدة وفق أحدث المقاييس الإكلينيكية' : 'Clinical intervention and developmental therapy plans'}
                   </p>
                 </div>
@@ -690,7 +736,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                 <div className="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
                   <button
                     onClick={() => setProgramsViewMode('slider')}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
                       programsViewMode === 'slider'
                         ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-xs'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -701,7 +747,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                   </button>
                   <button
                     onClick={() => setProgramsViewMode('grid')}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
                       programsViewMode === 'grid'
                         ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-xs'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -772,8 +818,8 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                 ref={programsSliderRef}
                 className={
                   programsViewMode === 'slider'
-                    ? "flex overflow-x-auto gap-4 sm:gap-6 pb-4 pt-1 snap-x snap-mandatory scroll-smooth no-scrollbar -mx-2 px-2 sm:mx-0 sm:px-0"
-                    : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    ? "flex overflow-x-auto gap-3 sm:gap-6 pb-2.5 pt-1 snap-x snap-mandatory scroll-smooth no-scrollbar -mx-1 px-1 sm:mx-0 sm:px-0"
+                    : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6"
                 }
               >
                 {filteredServices.map((service) => {
@@ -783,10 +829,10 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                   return (
                     <div
                       key={service.id}
-                      className={`bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[28px] overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${visual.colorClassHover} ${
+                      className={`bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[28px] overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-2xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${visual.colorClassHover} ${
                         programsViewMode === 'slider'
-                          ? "w-[78vw] min-w-[270px] max-w-[315px] sm:w-[350px] sm:max-w-none md:w-[370px] shrink-0 snap-start"
-                          : ""
+                          ? "w-[72vw] min-w-[245px] max-w-[280px] sm:w-[330px] sm:max-w-none md:w-[350px] shrink-0 snap-start"
+                          : "w-full max-w-[320px] mx-auto sm:max-w-none"
                       }`}
                     >
                       {/* Top Accent Strip */}
@@ -907,28 +953,29 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
         )}
 
         {/* ========================================================================= */}
+        {/* ========================================================================= */}
         {/* PART 2: COURSES & WORKSHOPS (الجزء الثاني: الكورسات والدورات التدريبية)   */}
         {/* ========================================================================= */}
         {(activeTab === 'all' || activeTab === 'courses') && (
-          <section className="mb-16 bg-white/60 dark:bg-slate-900/40 rounded-3xl p-4 sm:p-7 border border-slate-200/80 dark:border-white/5 shadow-xs">
+          <section className="mb-10 sm:mb-16 bg-white/60 dark:bg-slate-900/40 rounded-2xl sm:rounded-3xl p-3 sm:p-7 border border-slate-200/80 dark:border-white/5 shadow-xs">
             
             {/* 2.1 Section Header & Controls */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 pb-4 border-b border-slate-200/60 dark:border-white/10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-5 pb-3 sm:pb-4 border-b border-slate-200/60 dark:border-white/10">
               
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-teal-500/10 text-[#00E5BE] flex items-center justify-center shrink-0">
-                  <GraduationCap className="w-6 h-6 stroke-[2.2]" />
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-teal-500/10 text-[#00E5BE] flex items-center justify-center shrink-0">
+                  <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.2]" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                    <h2 className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                       {isArabic ? 'الكورسات والدورات التدريبية المعتمدة' : 'Accredited Training Courses'}
                     </h2>
-                    <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-teal-500/10 text-[#00E5BE] border border-[#00E5BE]/20">
+                    <span className="text-[10px] sm:text-xs font-black px-2 py-0.5 rounded-full bg-teal-500/10 text-[#00E5BE] border border-[#00E5BE]/20">
                       {filteredCourses.length} {isArabic ? 'دورات' : 'courses'}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                     {isArabic ? 'برامج مهنية معتمدة من البورد الدولي QABA وIBCCES للمتخصصين والأسر' : 'International board certified qualifications for practitioners and families'}
                   </p>
                 </div>
@@ -961,7 +1008,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                 <div className="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
                   <button
                     onClick={() => setCoursesViewMode('slider')}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
                       coursesViewMode === 'slider'
                         ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-xs'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -972,7 +1019,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                   </button>
                   <button
                     onClick={() => setCoursesViewMode('grid')}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
                       coursesViewMode === 'grid'
                         ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-xs'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -988,21 +1035,21 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
             </div>
 
             {/* 2.2 DEDICATED FILTER FOR COURSES (فلتر مخصص لقسم الكورسات) */}
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
                 {[
                   { id: 'all', labelAr: 'جميع الدورات التدريبية', labelEn: 'All Courses', count: activeCourses.length },
-                  { id: 'qba', labelAr: 'محلل سلوكي مؤهل QBA', labelEn: 'QBA Course', count: activeCourses.filter(c => c.id === 'course-qba' || c.titleAr.includes('QBA')).length },
-                  { id: 'abat', labelAr: 'فني سلوك تطبيقي معتمد ABAT', labelEn: 'ABAT Course', count: activeCourses.filter(c => c.id === 'course-abat' || c.titleAr.includes('ABAT')).length },
                   { id: 'cas', labelAr: 'أخصائي توحد ودمج مدرسي', labelEn: 'Autism & Inclusion', count: activeCourses.filter(c => c.id === 'course-autism-inclusion' || c.categoryAr?.includes('توحد')).length },
+                  { id: 'qasp', labelAr: 'مشرف خدمات التوحد QASP-S', labelEn: 'QASP-S Supervision', count: activeCourses.filter(c => c.id === 'course-qasp-s' || c.categoryAr?.includes('إشراف')).length },
+                  { id: 'communication', labelAr: 'التواصل والطلب Mand', labelEn: 'Mand Communication', count: activeCourses.filter(c => c.id === 'course-mand-training' || c.categoryAr?.includes('تواصل')).length },
                   { id: 'parents', labelAr: 'برامج أولياء الأمور والأسرة', labelEn: 'Parent Programs', count: activeCourses.filter(c => c.targetAudienceAr?.includes('أسر') || c.categoryAr?.includes('أسر')).length },
-                ].map(f => {
+                ].filter(f => f.count > 0 || f.id === 'all').map(f => {
                   const isActive = coursesFilter === f.id;
                   return (
                     <button
                       key={f.id}
                       onClick={() => setCoursesFilter(f.id)}
-                      className={`shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                      className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                         isActive
                           ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 font-black shadow-xs ring-2 ring-teal-500/40'
                           : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10'
@@ -1041,8 +1088,8 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                 ref={coursesSliderRef}
                 className={
                   coursesViewMode === 'slider'
-                    ? "flex overflow-x-auto gap-4 sm:gap-6 pb-4 pt-1 snap-x snap-mandatory scroll-smooth no-scrollbar -mx-2 px-2 sm:mx-0 sm:px-0"
-                    : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    ? "flex overflow-x-auto gap-3 sm:gap-6 pb-2.5 pt-1 snap-x snap-mandatory scroll-smooth no-scrollbar -mx-1 px-1 sm:mx-0 sm:px-0"
+                    : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6"
                 }
               >
                 {filteredCourses.map((course) => {
@@ -1055,101 +1102,102 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                   return (
                     <div
                       key={course.id}
-                      className={`bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[28px] overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:border-[#00E5BE]/40 ${
+                      className={`bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[28px] overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-2xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:border-[#00E5BE]/40 ${
                         coursesViewMode === 'slider'
-                          ? "w-[78vw] min-w-[270px] max-w-[315px] sm:w-[350px] sm:max-w-none md:w-[370px] shrink-0 snap-start"
-                          : ""
+                          ? "w-[70vw] min-w-[230px] max-w-[270px] sm:w-[320px] sm:max-w-none md:w-[340px] shrink-0 snap-start"
+                          : "w-full max-w-[320px] mx-auto sm:max-w-none"
                       }`}
                     >
                       {/* Top Accent Strip */}
-                      <div className="h-1.5 sm:h-2 w-full bg-gradient-to-r from-[#0B3B36] to-[#00E5BE]" />
+                      <div className="h-1 sm:h-1.5 w-full bg-gradient-to-r from-[#0B3B36] to-[#00E5BE]" />
 
                       {/* Header */}
-                      <div className="p-4 sm:p-6 pb-3.5 sm:pb-5 bg-teal-500/5 dark:bg-teal-950/20 border-b border-teal-500/15 relative">
-                        <div className="flex items-center justify-between gap-2 mb-2.5 sm:mb-4">
-                          <span className="inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[11px] sm:text-xs font-black bg-[#0B3B36] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs">
+                      <div className="p-2.5 sm:p-4 pb-2 sm:pb-3 bg-teal-500/5 dark:bg-teal-950/20 border-b border-teal-500/15 relative">
+                        <div className="flex items-center justify-between gap-1 mb-1.5 sm:mb-2.5">
+                          <span className="inline-block px-2 py-0.5 rounded-full text-[9.5px] sm:text-xs font-black bg-[#0B3B36] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-2xs truncate max-w-[170px]">
                             {ribbon}
                           </span>
 
                           <button
                             onClick={(e) => toggleFavorite(course.id, e)}
                             aria-label={isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
-                            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-xs flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
+                            className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-2xs flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors cursor-pointer shrink-0"
                           >
-                            <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
+                            <Heart className={`w-3.5 h-3.5 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
                           </button>
                         </div>
 
-                        <div className="flex items-center gap-3 sm:gap-4">
-                          <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#0B3B36] to-[#0f766e] text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform shrink-0">
-                            <CourseCustomIcon iconName={course.iconName || 'award'} className="w-6 h-6 sm:w-8 sm:h-8" />
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-[#0B3B36] to-[#0f766e] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform shrink-0">
+                            <CourseCustomIcon iconName={course.iconName || 'award'} className="w-4.5 h-4.5 sm:w-6 sm:h-6" />
                           </div>
 
                           <div className="min-w-0 flex-1">
-                            <h3 className="text-base sm:text-xl font-black text-slate-900 dark:text-white leading-tight group-hover:text-[#0B3B36] dark:group-hover:text-[#00E5BE] transition-colors">
+                            <h3 className="text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-snug group-hover:text-[#0B3B36] dark:group-hover:text-[#00E5BE] transition-colors line-clamp-2">
                               {title}
                             </h3>
-                            <div className="flex items-center gap-1.5 mt-0.5 sm:mt-1 text-[11px] sm:text-xs font-bold text-teal-700 dark:text-[#00E5BE]">
-                              <Clock className="w-3.5 h-3.5" />
-                              <span>{hoursBadge}</span>
+                            <div className="flex items-center gap-1 mt-0.5 text-[9.5px] sm:text-[11px] font-bold text-teal-700 dark:text-[#00E5BE]">
+                              <Clock className="w-3 h-3 shrink-0" />
+                              <span className="truncate">{hoursBadge}</span>
                             </div>
                           </div>
                         </div>
                       </div>
 
                       {/* Body */}
-                      <div className="p-4 sm:p-6 pt-3.5 sm:pt-5 flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
-                        <div className="space-y-2.5 sm:space-y-3.5">
+                      <div className="p-2.5 sm:p-4 pt-2 sm:pt-3 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3">
+                        <div className="space-y-1.5 sm:space-y-2">
                           
                           {/* Overview */}
-                          <p className="text-[11px] sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium line-clamp-2">
+                          <p className="text-[10px] sm:text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium line-clamp-2">
                             {isArabic ? course.descriptionAr : course.descriptionEn}
                           </p>
 
                           {/* Syllabus */}
-                          <div className="space-y-1.5 sm:space-y-2 pt-0.5">
-                            <span className="text-[10px] sm:text-[11px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">
-                              {isArabic ? 'محاور ومخرجات الدورة:' : 'Key Syllabus:'}
+                          <div className="space-y-1 pt-0.5">
+                            <span className="text-[9px] sm:text-[10px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">
+                              {isArabic ? 'محاور الدورة:' : 'Key Syllabus:'}
                             </span>
-                            {(isArabic ? course.featuresAr : course.featuresEn).slice(0, 3).map((feat, fIdx) => (
-                              <div key={fIdx} className="flex items-start gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300">
-                                <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 dark:text-[#00E5BE] shrink-0 mt-0.5" />
-                                <span className="line-clamp-2 leading-relaxed">{feat}</span>
+                            {(isArabic ? course.featuresAr : course.featuresEn).slice(0, 2).map((feat, fIdx) => (
+                              <div key={fIdx} className="flex items-center gap-1.5 text-[9.5px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                <CheckCircle2 className="w-3 h-3 text-teal-600 dark:text-[#00E5BE] shrink-0" />
+                                <span className="truncate leading-normal">{feat}</span>
                               </div>
                             ))}
                           </div>
 
                           {/* Target Audience */}
                           {course.targetAudienceAr && (
-                            <div className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-slate-100 dark:bg-white/5 text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-relaxed">
-                              <span className="font-bold text-slate-700 dark:text-slate-300">{isArabic ? 'الفئة المستهدفة: ' : 'Audience: '}</span>
+                            <div className="flex items-center gap-1.5 text-[9px] sm:text-[10.5px] text-slate-500 dark:text-slate-400 font-medium truncate pt-0.5">
+                              <Users className="w-3 h-3 text-teal-600 dark:text-[#00E5BE] shrink-0" />
+                              <span className="font-bold text-slate-700 dark:text-slate-300 shrink-0">{isArabic ? 'المستهدف:' : 'Audience:'}</span>
                               <span className="truncate">{isArabic ? course.targetAudienceAr : course.targetAudienceEn}</span>
                             </div>
                           )}
                         </div>
 
                         {/* Pricing & Registration */}
-                        <div className="pt-3 sm:pt-4 border-t border-slate-100 dark:border-white/10 space-y-2 sm:space-y-2.5">
+                        <div className="pt-2 sm:pt-2.5 border-t border-slate-100 dark:border-white/10 space-y-1.5 sm:space-y-2">
                           <div className="flex items-center justify-between">
-                            <span className="text-[11px] sm:text-xs font-bold text-slate-400">{isArabic ? 'رسوم الدورة:' : 'Tuition:'}</span>
-                            <span className="text-base sm:text-lg font-black text-[#0B3B36] dark:text-[#00E5BE]">{price}</span>
+                            <span className="text-[9.5px] sm:text-xs font-bold text-slate-400">{isArabic ? 'رسوم الدورة:' : 'Tuition:'}</span>
+                            <span className="text-xs sm:text-sm font-black text-[#0B3B36] dark:text-[#00E5BE]">{price}</span>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-2">
+                          <div className="grid grid-cols-2 gap-1.5">
                             <button
                               onClick={() => setSelectedCourseForDetails(course)}
-                              className="py-2 sm:py-2.5 px-2.5 sm:px-3 rounded-lg sm:rounded-xl border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/10 text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-200 flex items-center justify-center gap-1 sm:gap-1.5 transition-colors cursor-pointer"
+                              className="py-1.5 px-2 rounded-lg border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/10 text-[10px] sm:text-xs font-black text-slate-700 dark:text-slate-200 flex items-center justify-center gap-1 transition-colors cursor-pointer"
                             >
-                              <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-teal-600 dark:text-[#00E5BE]" />
-                              <span>{isArabic ? 'تفاصيل الدورة' : 'Details'}</span>
+                              <BookOpen className="w-3 h-3 text-teal-600 dark:text-[#00E5BE]" />
+                              <span>{isArabic ? 'تفاصيل' : 'Details'}</span>
                             </button>
 
                             <button
                               onClick={() => onRegisterCourse(course)}
-                              className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#0B3B36] to-[#0f766e] hover:brightness-110 text-white text-xs font-black flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95"
+                              className="py-1.5 px-2 rounded-lg bg-gradient-to-r from-[#0B3B36] to-[#0f766e] hover:brightness-110 text-white text-[10px] sm:text-xs font-black flex items-center justify-center gap-1 transition-all shadow-2xs cursor-pointer active:scale-95"
                             >
-                              <GraduationCap className="w-3.5 h-3.5" />
-                              <span>{isArabic ? 'سجل بالدورة' : 'Register'}</span>
+                              <GraduationCap className="w-3 h-3" />
+                              <span>{isArabic ? 'سجل الآن' : 'Register'}</span>
                             </button>
                           </div>
                         </div>
@@ -1163,7 +1211,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
 
             {/* Slider visual hint on mobile */}
             {coursesViewMode === 'slider' && filteredCourses.length > 1 && (
-              <div className="mt-3 flex items-center justify-center gap-1.5 text-[11px] font-bold text-slate-400 sm:hidden">
+              <div className="mt-2.5 flex items-center justify-center gap-1.5 text-[10.5px] font-bold text-slate-400 sm:hidden">
                 <span>{isArabic ? 'اسحب لليمين واليسار للتنقل بين الكورسات' : 'Swipe left/right to view courses'}</span>
               </div>
             )}
@@ -1172,28 +1220,29 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
         )}
 
         {/* ========================================================================= */}
+        {/* ========================================================================= */}
         {/* PART 3: PACKAGES & PRICING (الجزء الثالث: باقات التأهيل والأسعار)         */}
         {/* ========================================================================= */}
         {(activeTab === 'all' || activeTab === 'packages') && (
-          <section className="mb-16 bg-white/60 dark:bg-slate-900/40 rounded-3xl p-4 sm:p-7 border border-slate-200/80 dark:border-white/5 shadow-xs">
+          <section className="mb-10 sm:mb-16 bg-white/60 dark:bg-slate-900/40 rounded-2xl sm:rounded-3xl p-3 sm:p-7 border border-slate-200/80 dark:border-white/5 shadow-xs">
             
             {/* 3.1 Section Header & Controls */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 pb-4 border-b border-slate-200/60 dark:border-white/10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-5 pb-3 sm:pb-4 border-b border-slate-200/60 dark:border-white/10">
               
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
-                  <Package className="w-6 h-6 stroke-[2.2]" />
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
+                  <Package className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.2]" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                    <h2 className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                       {isArabic ? 'باقات التأهيل والأسعار' : 'Therapy Packages & Pricing'}
                     </h2>
-                    <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+                    <span className="text-[10px] sm:text-xs font-black px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
                       {filteredPackages.length} {isArabic ? 'باقات' : 'packages'}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                     {isArabic ? 'باقات رعاية متكاملة ومصممة بعناية مع شفافية في الأسعار وتقسيط بدون فوائد' : 'All-inclusive bundled care plans with interest-free installment support'}
                   </p>
                 </div>
@@ -1226,7 +1275,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                 <div className="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
                   <button
                     onClick={() => setPackagesViewMode('slider')}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
                       packagesViewMode === 'slider'
                         ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-xs'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -1237,7 +1286,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                   </button>
                   <button
                     onClick={() => setPackagesViewMode('grid')}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
                       packagesViewMode === 'grid'
                         ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-xs'
                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -1253,7 +1302,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
             </div>
 
             {/* 3.2 DEDICATED FILTER FOR PACKAGES (فلتر مخصص لقسم الباقات) */}
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
                 {[
                   { id: 'all', labelAr: 'جميع الباقات', labelEn: 'All Packages', count: packages.length },
@@ -1264,14 +1313,19 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                   { id: 'assessment', labelAr: 'التقييم والتشخيص', labelEn: 'Assessment & Diagnosis', count: packages.filter(p => p.category === 'assessment' || p.name.includes('تقييم')).length },
                 ].map(f => {
                   const isActive = packagesFilter === f.id;
+                  const isSummerTab = f.id === 'summer';
                   return (
                     <button
                       key={f.id}
                       onClick={() => setPackagesFilter(f.id)}
-                      className={`shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                      className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                         isActive
-                          ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 font-black shadow-xs ring-2 ring-sky-500/40'
-                          : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10'
+                          ? isSummerTab
+                            ? 'bg-gradient-to-r from-sky-600 via-cyan-600 to-blue-600 text-white font-black shadow-xs ring-2 ring-sky-400/40'
+                            : 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 font-black shadow-xs ring-2 ring-sky-500/40'
+                          : isSummerTab
+                            ? 'bg-sky-50/80 dark:bg-sky-950/30 text-sky-800 dark:text-sky-300 hover:bg-sky-100 border border-sky-200/80 dark:border-sky-800/40'
+                            : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10'
                       }`}
                     >
                       <span>{isArabic ? f.labelAr : f.labelEn}</span>
@@ -1307,8 +1361,8 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                 ref={packagesSliderRef}
                 className={
                   packagesViewMode === 'slider'
-                    ? "flex overflow-x-auto gap-4 sm:gap-6 pb-4 pt-1 snap-x snap-mandatory scroll-smooth no-scrollbar -mx-2 px-2 sm:mx-0 sm:px-0"
-                    : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    ? "flex overflow-x-auto gap-3 sm:gap-6 pb-2.5 pt-1 snap-x snap-mandatory scroll-smooth no-scrollbar -mx-1 px-1 sm:mx-0 sm:px-0"
+                    : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6"
                 }
               >
                 {filteredPackages.map((pkg) => {
@@ -1319,31 +1373,31 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                   return (
                     <div
                       key={pkg.id}
-                      className={`bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[28px] overflow-hidden border shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${
+                      className={`bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[28px] overflow-hidden border shadow-2xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${
                         isSummer
-                          ? 'border-amber-200 dark:border-amber-500/30 ring-1 ring-amber-400/20'
+                          ? 'border-sky-300 dark:border-sky-500/40 ring-1 ring-sky-400/25 shadow-sky-500/5'
                           : 'border-slate-200/90 dark:border-white/10'
                       } ${
                         packagesViewMode === 'slider'
-                          ? "w-[78vw] min-w-[270px] max-w-[315px] sm:w-[350px] sm:max-w-none md:w-[370px] shrink-0 snap-start"
-                          : ""
+                          ? "w-[72vw] min-w-[245px] max-w-[280px] sm:w-[330px] sm:max-w-none md:w-[350px] shrink-0 snap-start"
+                          : "w-full max-w-[320px] mx-auto sm:max-w-none"
                       }`}
                     >
                       {/* Top Slim Strip */}
-                      <div className={`h-1.5 sm:h-2 w-full ${isSummer ? 'bg-gradient-to-r from-amber-500 to-orange-500' : 'bg-gradient-to-r from-[#0B3B36] to-[#0284C7]'}`} />
+                      <div className={`h-1 sm:h-1.5 w-full ${isSummer ? 'bg-gradient-to-r from-sky-500 via-cyan-500 to-blue-600' : 'bg-gradient-to-r from-[#0B3B36] to-[#0284C7]'}`} />
 
                       {/* Header */}
-                      <div className={`p-4 sm:p-6 pb-3.5 sm:pb-5 ${isSummer ? 'bg-amber-500/10 dark:bg-amber-950/20 border-amber-300/20' : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200/50 dark:border-white/5'} border-b relative`}>
-                        <div className="flex items-center justify-between gap-2 mb-2.5 sm:mb-4">
-                          <div className="flex items-center gap-1.5 flex-wrap">
+                      <div className={`p-2.5 sm:p-5 pb-2 sm:pb-3.5 ${isSummer ? 'bg-gradient-to-br from-sky-50/90 via-cyan-50/50 to-blue-50/30 dark:from-sky-950/40 dark:via-slate-900/90 dark:to-cyan-950/30 border-sky-200/60 dark:border-sky-500/20' : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200/50 dark:border-white/5'} border-b relative`}>
+                        <div className="flex items-center justify-between gap-1.5 mb-1.5 sm:mb-3">
+                          <div className="flex items-center gap-1 flex-wrap">
                             {isSummer && (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 sm:py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] sm:text-[11px] font-black shadow-xs">
-                                <Sun className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-sky-600 via-cyan-600 to-blue-600 text-white text-[9.5px] sm:text-[10.5px] font-black shadow-2xs">
+                                <Sun className="w-3 h-3 text-sky-100" />
                                 <span>{isArabic ? 'باقة الصيف' : 'Summer'}</span>
                               </span>
                             )}
                             {pkg.popular && (
-                              <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-[#0B3B36] text-white text-[9.5px] sm:text-[10px] font-black tracking-wider uppercase">
+                              <span className="px-2 py-0.5 rounded-full bg-[#0B3B36] text-white text-[9px] sm:text-[10px] font-black tracking-wider uppercase">
                                 {isArabic ? 'الأكثر طلباً' : 'POPULAR'}
                               </span>
                             )}
@@ -1352,86 +1406,101 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                           <button
                             onClick={(e) => toggleFavorite(pkg.id, e)}
                             aria-label={isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
-                            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-xs flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
+                            className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-2xs flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors cursor-pointer shrink-0"
                           >
-                            <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
+                            <Heart className={`w-3.5 h-3.5 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
                           </button>
                         </div>
 
-                        <span className="text-[10px] sm:text-[11px] font-black text-teal-700 dark:text-[#00E5BE] tracking-widest uppercase block mb-1">
+                        <span className={`text-[9.5px] sm:text-[10.5px] font-black ${isSummer ? 'text-sky-700 dark:text-sky-400' : 'text-teal-700 dark:text-[#00E5BE]'} tracking-wider uppercase block mb-0.5`}>
                           {isArabic ? (pkg.categoryCode || 'باقة تأهيلية متكاملة') : (pkg.categoryCodeEn || 'CARE PLAN')}
                         </span>
 
-                        <h3 className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white leading-tight">
+                        <h3 className="text-sm sm:text-lg font-black text-slate-900 dark:text-white leading-tight">
                           {isArabic ? pkg.name : (pkg.nameEn || pkg.name)}
                         </h3>
 
-                        <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-1 font-medium">
+                        <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1 font-medium">
                           {isArabic ? pkg.tagline : (pkg.taglineEn || pkg.tagline)}
                         </p>
                       </div>
 
                       {/* Body */}
-                      <div className="p-4 sm:p-6 pt-3.5 sm:pt-5 flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
-                        <div className="space-y-2.5 sm:space-y-3.5">
+                      <div className="p-2.5 sm:p-5 pt-2 sm:pt-3.5 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3">
+                        <div className="space-y-1.5 sm:space-y-2.5">
                           
                           {/* Plan Duration & Sessions */}
-                          <div className="flex items-center gap-2 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-teal-500/10 dark:bg-teal-950/20 text-[11px] sm:text-xs font-black text-teal-800 dark:text-teal-200">
-                            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0B3B36] dark:text-[#00E5BE] shrink-0" />
-                            <span className="leading-tight">
+                          <div className={`flex items-center gap-1.5 p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl ${isSummer ? 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-200' : 'bg-teal-500/10 dark:bg-teal-950/20 text-teal-800 dark:text-teal-200'} text-[10px] sm:text-xs font-black`}>
+                            <Clock className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${isSummer ? 'text-sky-600 dark:text-sky-400' : 'text-[#0B3B36] dark:text-[#00E5BE]'} shrink-0`} />
+                            <span className="leading-tight truncate">
                               {isArabic 
-                                ? `${pkg.sessionsCount} جلسة علاجية وتأهيلية مكثفة · ${pkg.durationWeeks} أسابيع`
-                                : `${pkg.sessionsCount} Clinical Sessions · ${pkg.durationWeeks} Weeks`}
+                                ? `${pkg.sessionsCount} جلسة علاجية مكثفة · ${pkg.durationWeeks} أسابيع`
+                                : `${pkg.sessionsCount} Sessions · ${pkg.durationWeeks} Weeks`}
                             </span>
                           </div>
 
                           {/* Features Checklist */}
-                          <div className="space-y-1.5 sm:space-y-2">
-                            <span className="text-[10px] sm:text-[11px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">
-                              {isArabic ? 'مميزات ومشتملات الباقة:' : 'Package Inclusions:'}
-                            </span>
-                            {(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).slice(0, 4).map((feat, fIdx) => (
-                              <div key={fIdx} className="flex items-start gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300">
-                                <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-[#00E5BE] shrink-0 mt-0.5 stroke-[2.5]" />
-                                <span className="leading-relaxed line-clamp-2">{feat}</span>
+                          <div className="space-y-1 sm:space-y-1.5">
+                            {(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).slice(0, 2).map((feat, fIdx) => (
+                              <div key={fIdx} className="flex items-center gap-1.5 text-[10px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                <Check className={`w-3 h-3 ${isSummer ? 'text-sky-600 dark:text-sky-400' : 'text-emerald-600 dark:text-[#00E5BE]'} shrink-0 stroke-[2.5]`} />
+                                <span className="truncate leading-normal">{feat}</span>
                               </div>
                             ))}
+                            {(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).slice(2, 3).map((feat, fIdx) => (
+                              <div key={fIdx + 2} className="hidden sm:flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                <Check className={`w-3.5 h-3.5 ${isSummer ? 'text-sky-600 dark:text-sky-400' : 'text-emerald-600 dark:text-[#00E5BE]'} shrink-0 stroke-[2.5]`} />
+                                <span className="truncate leading-normal">{feat}</span>
+                              </div>
+                            ))}
+                            {(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).length > 2 && (
+                              <span className={`text-[9px] font-bold ${isSummer ? 'text-sky-700 dark:text-sky-400' : 'text-teal-700 dark:text-[#00E5BE]'} block sm:hidden`}>
+                                {isArabic 
+                                  ? `+ ${(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).length - 2} مميزات إضافية بالباقة` 
+                                  : `+ ${(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).length - 2} more features`}
+                              </span>
+                            )}
                           </div>
 
                           {/* Installment Logos */}
-                          <div className="pt-1 flex items-center gap-2 flex-wrap text-slate-400 text-[10px] sm:text-xs">
-                            <span className="text-[10px] sm:text-[11px] font-bold text-slate-500">{isArabic ? 'تقسيط عبر:' : 'Installments:'}</span>
-                            <TamaraLogo height={20} />
-                            <EmkanLogo height={20} />
+                          <div className="pt-0.5 flex items-center gap-1.5 flex-wrap text-slate-400 text-[9.5px] sm:text-xs">
+                            <span className="text-[9.5px] sm:text-[10px] font-bold text-slate-500 shrink-0">{isArabic ? 'تقسيط:' : 'Installments:'}</span>
+                            <TamaraLogo height={18} className="h-4.5 sm:h-5" />
+                            <EmkanLogo height={18} className="h-4.5 sm:h-5" />
                           </div>
                         </div>
 
                         {/* Pricing & Action */}
-                        <div className="pt-3 sm:pt-4 border-t border-slate-100 dark:border-white/10 space-y-2.5 sm:space-y-3">
-                          <div className="flex items-end justify-between">
+                        <div className="pt-2 sm:pt-2.5 border-t border-slate-100 dark:border-white/10">
+                          <div className="flex items-center justify-between gap-2">
                             <div>
                               {pkg.originalPrice && pkg.originalPrice > pkg.price && (
-                                <div className="flex items-center gap-1.5 mb-0.5">
-                                  <span className="text-[11px] sm:text-xs text-slate-400 line-through font-bold">
+                                <div className="flex items-center gap-1 mb-0.5">
+                                  <span className="text-[9.5px] sm:text-[11px] text-slate-400 line-through font-bold">
                                     {pkg.originalPrice} {isArabic ? 'ر.س' : 'SAR'}
                                   </span>
-                                  <span className="text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded-md bg-rose-500/10 text-rose-600 dark:text-rose-400">
-                                    {isArabic ? `وفر ${savings} ر.س` : `Save ${savings} SAR`}
+                                  <span className="text-[8.5px] sm:text-[9.5px] font-black px-1.5 py-0.2 rounded-md bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                                    {isArabic ? `وفر ${savings}` : `Save ${savings}`}
                                   </span>
                                 </div>
                               )}
-                              <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-baseline gap-1">
+                              <div className="text-base sm:text-xl font-black text-slate-900 dark:text-white flex items-baseline gap-1">
                                 <span>{pkg.price}</span>
-                                <span className="text-[11px] sm:text-xs font-bold text-slate-500">{isArabic ? 'ر.س' : 'SAR'}</span>
+                                <span className="text-[10px] sm:text-xs font-bold text-slate-500">{isArabic ? 'ر.س' : 'SAR'}</span>
                               </div>
                             </div>
 
                             <button
                               onClick={() => onSelectPackage(pkg)}
-                              className="py-2.5 sm:py-3 px-3.5 sm:px-5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-[#0B3B36] to-[#0f766e] hover:brightness-110 active:scale-95 text-white text-[11px] sm:text-sm font-black flex items-center gap-1.5 shadow-md shadow-teal-950/20 transition-all cursor-pointer"
+                              className={`py-1.5 sm:py-2 px-3 sm:px-4 rounded-xl ${
+                                isSummer
+                                  ? 'bg-gradient-to-r from-sky-600 via-cyan-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 shadow-sky-600/20'
+                                  : 'bg-gradient-to-r from-[#0B3B36] to-[#0f766e]'
+                              } hover:brightness-110 active:scale-95 text-white text-[10.5px] sm:text-xs font-black flex items-center gap-1 shadow-2xs transition-all cursor-pointer shrink-0`}
                             >
-                              <span>{isArabic ? 'حجز الباقة' : 'Book Package'}</span>
-                              {isArabic ? <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+                              {isSummer && <Sun className="w-3 h-3 text-sky-100 shrink-0" />}
+                              <span>{isArabic ? (isSummer ? 'حجز باقة الصيف' : 'حجز الباقة') : (isSummer ? 'Book Summer' : 'Book')}</span>
+                              {isArabic ? <ArrowLeft className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> : <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />}
                             </button>
                           </div>
                         </div>
@@ -1445,7 +1514,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
 
             {/* Slider visual hint on mobile */}
             {packagesViewMode === 'slider' && filteredPackages.length > 1 && (
-              <div className="mt-3 flex items-center justify-center gap-1.5 text-[11px] font-bold text-slate-400 sm:hidden">
+              <div className="mt-2.5 flex items-center justify-center gap-1.5 text-[10.5px] font-bold text-slate-400 sm:hidden">
                 <span>{isArabic ? 'اسحب لليمين واليسار للتنقل بين الباقات' : 'Swipe left/right to view packages'}</span>
               </div>
             )}
@@ -1482,8 +1551,15 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
             </button>
 
             <button
-              onClick={onBackToHome}
-              className="px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-xs sm:text-sm flex items-center gap-2 border border-white/15 transition-all cursor-pointer"
+              onClick={() => {
+                if (onOpenSpecialistsPage) {
+                  onOpenSpecialistsPage();
+                } else {
+                  window.location.hash = '#specialists-directory';
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
+              className="px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-xs sm:text-sm flex items-center gap-2 border border-white/15 transition-all cursor-pointer active:scale-95"
             >
               <span>{isArabic ? 'استكشاف الأخصائيين' : 'Explore Specialists'}</span>
               {isArabic ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}

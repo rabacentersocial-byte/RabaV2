@@ -201,10 +201,8 @@ export const COURSE_LOGO_THEMES: CourseLogoTheme[] = [
 
 // Mapping specific course IDs to their ideal matching logo color theme
 const COURSE_ID_THEME_MAP: Record<string, string> = {
-  'course-qba': 'teal',             // 1. QBA Board: Raba Teal
-  'course-abat': 'blue',            // 2. ABAT Technician: Sky Blue
-  'course-autism-inclusion': 'amber', // 3. Autism Classroom Inclusion: Warm Amber
-  'course-qasp-s': 'rose',          // 4. QASP-S Supervisor: Rose Magenta
+  'course-autism-inclusion': 'amber', // 1. Autism Classroom Inclusion: Warm Amber
+  'course-qasp-s': 'rose',          // 2. QASP-S Supervisor: Rose Magenta
   'course-mand-training': 'purple', // 5. Mand & Speech: Royal Purple
   'course-toilet-training': 'emerald', // 6. Toilet Training & Independence: Emerald Green
   'course-verbal-behavior': 'cyan', // 7. Verbal Behavior: Turquoise Cyan

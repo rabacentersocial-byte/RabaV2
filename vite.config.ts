@@ -82,8 +82,11 @@ export default defineConfig(() => {
               if (id.includes('lucide-react')) {
                 return 'vendor-icons';
               }
-              if (id.includes('framer-motion')) {
+              if (id.includes('framer-motion') || id.includes('/motion/')) {
                 return 'vendor-motion';
+              }
+              if (id.includes('canvas-confetti')) {
+                return 'vendor-confetti';
               }
               return 'vendor-libs';
             }

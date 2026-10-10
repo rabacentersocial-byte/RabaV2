@@ -259,17 +259,22 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
         </div>
 
         {/* 2. Category Filter Pills */}
-        <div className="flex items-center gap-2.5 overflow-x-auto no-scrollbar pb-3 mb-8" style={{ WebkitOverflowScrolling: 'touch' }}>
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 mb-6" style={{ WebkitOverflowScrolling: 'touch' }}>
           {categories.map((cat) => {
             const isActive = selectedCategory === cat.id;
+            const isSummerTab = cat.id === 'summer';
             return (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`px-5 py-2.5 rounded-full text-xs sm:text-sm whitespace-nowrap transition-all duration-200 font-bold cursor-pointer ${
+                className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm whitespace-nowrap transition-all duration-200 font-bold cursor-pointer ${
                   isActive
-                    ? 'bg-[#0B3B36] text-white shadow-sm'
-                    : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 border border-slate-200 dark:border-white/15'
+                    ? isSummerTab
+                      ? 'bg-gradient-to-r from-sky-600 via-cyan-600 to-blue-600 text-white shadow-sm ring-2 ring-sky-300/40'
+                      : 'bg-[#0B3B36] text-white shadow-sm'
+                    : isSummerTab
+                      ? 'bg-sky-50/80 dark:bg-sky-950/30 text-sky-800 dark:text-sky-300 hover:bg-sky-100 border border-sky-200 dark:border-sky-800/40'
+                      : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 border border-slate-200 dark:border-white/15'
                 }`}
               >
                 {isArabic ? cat.labelAr : cat.labelEn}
@@ -285,7 +290,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
-          className={`flex gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-2 ${
+          className={`flex gap-3.5 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-2 ${
             isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
           }`}
           style={{ WebkitOverflowScrolling: 'touch' }}
@@ -301,40 +306,43 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
             return (
               <div
                 key={pkg.id}
-                className={`w-[88vw] max-w-[375px] sm:w-[360px] md:w-[375px] lg:w-[390px] shrink-0 snap-start bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between relative ${
+                className={`w-[76vw] min-w-[255px] max-w-[295px] sm:w-[350px] md:w-[370px] lg:w-[385px] shrink-0 snap-start bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl overflow-hidden border shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between relative group ${
                   isSummer 
-                    ? 'border-amber-200 dark:border-amber-500/30 ring-1 ring-amber-400/20' 
+                    ? 'border-sky-300 dark:border-sky-500/40 ring-1 ring-sky-400/25 shadow-sky-500/5' 
                     : 'border-slate-200/90 dark:border-white/10'
                 }`}
               >
+                {/* Decorative Slim Top Strip */}
+                <div className={`h-1 sm:h-1.5 w-full ${isSummer ? 'bg-gradient-to-r from-sky-500 via-cyan-500 to-blue-600' : 'bg-gradient-to-r from-[#0B3B36] to-[#0284C7]'}`} />
+
                 {/* Upper Header Section */}
-                <div className={`${isSummer ? 'bg-gradient-to-br from-amber-50/80 via-orange-50/40 to-yellow-50/30 dark:from-amber-950/30 dark:to-slate-900' : theme.headerBg} p-6 sm:p-7 rounded-t-3xl transition-colors`}>
+                <div className={`${isSummer ? 'bg-gradient-to-br from-sky-50/90 via-cyan-50/50 to-blue-50/30 dark:from-sky-950/40 dark:via-slate-900/90 dark:to-cyan-950/30' : theme.headerBg} p-3 sm:p-6 pb-2.5 sm:pb-4 transition-colors relative`}>
                   
                   {/* Top Row: Icon Container and Badges */}
-                  <div className="flex items-center justify-between gap-2.5 mb-4">
+                  <div className="flex items-center justify-between gap-2 mb-2 sm:mb-3">
                     
                     {/* Rounded Icon Box */}
-                    <div className={`w-11 h-11 rounded-2xl ${isSummer ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : theme.iconBg} shadow-xs border border-white/60 dark:border-white/10 flex items-center justify-center shrink-0`}>
-                      {isSummer ? <Sun className="w-5 h-5 fill-amber-500/20 stroke-[2.2]" /> : theme.icon}
+                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl ${isSummer ? 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-300/30' : theme.iconBg} shadow-2xs border border-white/60 dark:border-white/10 flex items-center justify-center shrink-0`}>
+                      {isSummer ? <Sun className="w-4 h-4 sm:w-5 sm:h-5 fill-sky-500/15 stroke-[2.2]" /> : theme.icon}
                     </div>
 
-                    {/* Badges Container (Non-overlapping, neatly aligned side-by-side) */}
-                    <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                    {/* Badges Container */}
+                    <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap justify-end">
                       {isSummer && (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white shadow-xs text-xs font-black tracking-wide border border-white/30 select-none">
-                          <Sun className="w-3.5 h-3.5 text-yellow-100 fill-yellow-200 shrink-0" />
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-gradient-to-r from-sky-600 via-cyan-600 to-blue-600 text-white shadow-2xs text-[9.5px] sm:text-xs font-black tracking-wide border border-white/30 select-none">
+                          <Sun className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-100 fill-sky-200/50 shrink-0" />
                           <span>{isArabic ? 'باقات الصيف' : 'Summer Packages'}</span>
                         </span>
                       )}
 
                       {pkg.popular && isSummer && (
-                        <span className="bg-amber-600 dark:bg-amber-500/20 text-white dark:text-amber-300 text-[10px] font-black tracking-wider px-2.5 py-1 rounded-full shadow-xs uppercase border border-amber-500/30">
+                        <span className="bg-blue-600/15 text-blue-700 dark:text-blue-300 text-[9px] sm:text-[10px] font-black tracking-wider px-2 py-0.5 rounded-full shadow-2xs uppercase border border-blue-400/30">
                           {isArabic ? 'عرض مميز' : 'SPECIAL OFFER'}
                         </span>
                       )}
 
                       {pkg.popular && !isSummer && (
-                        <span className="bg-[#0B3B36] text-white text-[10px] font-black tracking-wider px-3.5 py-1.5 rounded-full shadow-xs uppercase">
+                        <span className="bg-[#0B3B36] text-white text-[9px] sm:text-[10px] font-black tracking-wider px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-2xs uppercase">
                           {isArabic ? 'الأكثر طلباً' : 'MOST POPULAR'}
                         </span>
                       )}
@@ -343,93 +351,116 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                   </div>
 
                   {/* Category Tracked Label */}
-                  <span className={`${isSummer ? 'text-amber-700 dark:text-amber-400' : theme.categoryText} text-[11px] font-black tracking-widest uppercase block mb-1.5`}>
+                  <span className={`${isSummer ? 'text-sky-700 dark:text-sky-400' : theme.categoryText} text-[9.5px] sm:text-[11px] font-black tracking-widest uppercase block mb-1 sm:mb-1.5`}>
                     {isArabic 
                       ? (isSummer ? 'باقات الصيف المميزة' : (pkg.categoryCode || 'باقة علاجية متكاملة')) 
                       : (isSummer ? 'SUMMER SPECIAL' : (pkg.categoryCodeEn || 'PREVENTIVE CARE'))}
                   </span>
 
-                  {/* Package Title: بخط كبير و Bold */}
-                  <h3 className={`text-2xl sm:text-3xl font-black ${isSummer ? 'text-slate-900 dark:text-white' : theme.titleText} tracking-tight leading-snug min-h-[58px] flex items-center`}>
+                  {/* Package Title */}
+                  <h3 className={`text-base sm:text-2xl font-black ${isSummer ? 'text-slate-900 dark:text-white' : theme.titleText} tracking-tight leading-snug min-h-[auto] sm:min-h-[54px] flex items-center`}>
                     {isArabic ? pkg.name : (pkg.nameEn || pkg.name)}
                   </h3>
 
                 </div>
 
                 {/* Lower Body Section */}
-                <div className="p-6 sm:p-7 flex flex-col justify-between flex-1 bg-white dark:bg-slate-900 rounded-b-3xl">
+                <div className="p-3 sm:p-6 pt-2.5 sm:pt-4 flex flex-col justify-between flex-1 bg-white dark:bg-slate-900 rounded-b-2xl sm:rounded-b-3xl">
                   
                   <div>
-                    {/* Price in Big Bold Numbers */}
-                    <div className="flex items-baseline gap-2 mb-3">
-                      <span className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                    {/* Price Row */}
+                    <div className="flex items-baseline gap-1.5 sm:gap-2 mb-2 sm:mb-3 flex-wrap">
+                      <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
                         {pkg.price.toLocaleString()}
                       </span>
-                      <span className="text-base sm:text-lg font-black text-slate-700 dark:text-slate-300">
+                      <span className="text-xs sm:text-base font-black text-slate-700 dark:text-slate-300">
                         {isArabic ? 'ريال' : 'SAR'}
                       </span>
                       {pkg.originalPrice && (
-                        <span className="text-xs sm:text-sm line-through text-slate-400 font-medium ms-1">
-                          {pkg.originalPrice.toLocaleString()} {isArabic ? 'ريال' : 'SAR'}
-                        </span>
+                        <div className="flex items-center gap-1 ms-1">
+                          <span className="text-[11px] sm:text-sm line-through text-slate-400 font-semibold">
+                            {pkg.originalPrice.toLocaleString()} {isArabic ? 'ريال' : 'SAR'}
+                          </span>
+                          {savings > 0 && (
+                            <span className="text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
+                              {isArabic ? `وفر ${savings.toLocaleString()}` : `Save ${savings.toLocaleString()}`}
+                            </span>
+                          )}
+                        </div>
                       )}
                     </div>
 
                     {/* Duration / Offer Highlight: ٣ شهور + شهر مجاناً */}
-                    <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-black text-xs sm:text-sm border border-emerald-500/30">
-                        <Gift className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+                      <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 font-black text-[10.5px] sm:text-xs border border-emerald-500/30">
+                        <Gift className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                         <span>{isArabic ? (pkg.durationText || '٣ شهور + شهر مجاناً') : (pkg.durationTextEn || '3 Months + 1 Month Free')}</span>
                       </div>
 
                       {/* If Card 3 or 4: مدة الجلسة ساعة / ساعتين */}
                       {pkg.sessionDurationText && (
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-sky-50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300 text-xs font-bold border border-sky-200 dark:border-sky-800/40">
-                          <Clock className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 shrink-0" />
+                        <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg sm:rounded-xl bg-sky-50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300 text-[10px] sm:text-xs font-bold border border-sky-200 dark:border-sky-800/40">
+                          <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-600 dark:text-sky-400 shrink-0" />
                           <span>{isArabic ? pkg.sessionDurationText : pkg.sessionDurationTextEn}</span>
                         </div>
                       )}
                     </div>
 
-                    {/* Disclaimer: الغياب غير معوض (بخط صغير) */}
-                    <div className="flex items-center gap-1 text-[11px] text-slate-400 dark:text-slate-500 font-medium mb-5">
-                      <AlertCircle className="w-3 h-3 text-amber-500/80 shrink-0" />
+                    {/* Disclaimer: الغياب غير معوض */}
+                    <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 font-medium mb-2 sm:mb-3">
+                      <AlertCircle className={`w-3 h-3 ${isSummer ? 'text-sky-600/70 dark:text-sky-400/70' : 'text-slate-400'} shrink-0`} />
                       <span>{isArabic ? (pkg.disclaimerText || 'الغياب غير معوض') : (pkg.disclaimerTextEn || 'Absence is non-compensated')}</span>
                     </div>
 
                     {/* Short Description */}
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+                    <p className="text-[11px] sm:text-xs md:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-2.5 sm:mb-3.5 line-clamp-2">
                       {isArabic ? pkg.tagline : (pkg.taglineEn || pkg.tagline)}
                     </p>
 
                     {/* Checklist (Features) */}
-                    <div className="space-y-2.5 mb-6">
-                      {(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).slice(0, 4).map((feat, idx) => (
-                        <div key={idx} className="flex items-start gap-2.5">
-                          <div className={`w-4 h-4 rounded-full ${isSummer ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400' : theme.checkBg} flex items-center justify-center shrink-0 mt-0.5`}>
+                    <div className="space-y-1 sm:space-y-2 mb-2.5 sm:mb-4">
+                      {(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).slice(0, 2).map((feat, idx) => (
+                        <div key={idx} className="flex items-center gap-1.5 sm:gap-2">
+                          <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full ${isSummer ? 'bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-400' : theme.checkBg} flex items-center justify-center shrink-0`}>
                             <Check className="w-2.5 h-2.5 stroke-[3]" />
                           </div>
-                          <span className="text-xs sm:text-sm text-slate-700 dark:text-slate-200 font-medium leading-tight">
+                          <span className="text-[10.5px] sm:text-xs md:text-sm text-slate-700 dark:text-slate-200 font-medium leading-snug truncate">
                             {feat}
                           </span>
                         </div>
                       ))}
+                      {(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).slice(2, 4).map((feat, idx) => (
+                        <div key={idx + 2} className="hidden sm:flex items-center gap-2">
+                          <div className={`w-4 h-4 rounded-full ${isSummer ? 'bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-400' : theme.checkBg} flex items-center justify-center shrink-0`}>
+                            <Check className="w-2.5 h-2.5 stroke-[3]" />
+                          </div>
+                          <span className="text-xs md:text-sm text-slate-700 dark:text-slate-200 font-medium leading-snug truncate">
+                            {feat}
+                          </span>
+                        </div>
+                      ))}
+                      {(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).length > 2 && (
+                        <span className={`text-[9.5px] font-bold ${isSummer ? 'text-sky-700 dark:text-sky-400' : 'text-teal-700 dark:text-teal-400'} block sm:hidden`}>
+                          {isArabic 
+                            ? `+ ${(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).length - 2} مميزات إضافية معتمدة`
+                            : `+ ${(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).length - 2} more features`}
+                        </span>
+                      )}
                     </div>
                   </div>
 
                   {/* Bottom Area: Installments Notice with Tamara & Emkan Logos - ONLY for Summer Packages */}
                   <div>
                     {isSummer && (
-                      <div className="pt-3.5 border-t border-slate-100 dark:border-white/10 mb-4 bg-slate-50/70 dark:bg-slate-800/50 p-3 rounded-2xl border border-slate-200/70 dark:border-white/10">
+                      <div className="pt-2 sm:pt-3 border-t border-slate-100 dark:border-white/10 mb-2.5 sm:mb-3.5 bg-slate-50/80 dark:bg-slate-800/60 p-2 sm:p-2.5 rounded-xl border border-slate-200/70 dark:border-white/10">
                         <div className="flex items-center justify-between gap-2">
-                          <span className="text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-200 leading-tight">
+                          <span className="text-[10px] sm:text-xs font-bold text-slate-700 dark:text-slate-200 leading-tight">
                             {isArabic ? 'متاح التقسيط :' : 'Installments Available:'}
                           </span>
                           
-                          {/* تحت على اليسار لوجو تمارا ولوجو إمكان */}
                           <div className="flex items-center gap-1.5 shrink-0">
-                            <TamaraLogo height={23} />
-                            <EmkanLogo height={23} />
+                            <TamaraLogo height={18} className="h-4 sm:h-5" />
+                            <EmkanLogo height={18} className="h-4 sm:h-5" />
                           </div>
                         </div>
                       </div>
@@ -439,13 +470,13 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                     <button
                       id={`book-package-${pkg.id}`}
                       onClick={() => onSelectPackage(pkg)}
-                      className={`w-full py-3.5 sm:py-4 rounded-2xl font-black text-xs sm:text-sm transition-all duration-200 shadow-sm active:scale-98 cursor-pointer flex items-center justify-center gap-2 ${
+                      className={`w-full py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm transition-all duration-200 shadow-sm active:scale-98 cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 ${
                         isSummer
-                          ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:brightness-110 text-white shadow-amber-500/20'
+                          ? 'bg-gradient-to-r from-sky-600 via-cyan-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white shadow-md shadow-sky-600/20'
                           : theme.btnBg
                       }`}
                     >
-                      {isSummer && <Sun className="w-4 h-4 fill-white/20" />}
+                      {isSummer && <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-100 shrink-0" />}
                       <span>{isArabic ? (isSummer ? 'حجز باقة الصيف' : 'حجز الباقة') : (isSummer ? 'Book Summer Package' : 'Book package')}</span>
                     </button>
 
@@ -457,6 +488,13 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
             );
           })}
         </div>
+
+        {/* Mobile Swipe Guidance Hint */}
+        {filteredPackages.length > 1 && (
+          <div className="mt-2.5 flex items-center justify-center gap-1.5 text-[10.5px] font-bold text-slate-400 sm:hidden">
+            <span>{isArabic ? 'اسحب للتنقل بين الباقات المتوفرة' : 'Swipe to explore all packages'}</span>
+          </div>
+        )}
 
       </div>
     </section>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { 
   Clock, 
   ChevronRight, 
@@ -10,6 +10,7 @@ import {
 import { 
   getStoredCoursesData, 
   getStoredCoursesSettings, 
+  getCourseNumericPrice,
   CourseItem, 
   CoursesSectionSettings 
 } from '../data/coursesData';
@@ -31,8 +32,12 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
   const [selectedCourseForDetails, setSelectedCourseForDetails] = useState<CourseItem | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
-  // Filter active courses
-  const activeCourses = courses.filter(c => c.isActive !== false);
+  // Filter active courses and sort from highest price to lowest (من الأعلى سعراً إلى الأقل)
+  const activeCourses = useMemo(() => {
+    return courses
+      .filter(c => c.isActive !== false)
+      .sort((a, b) => getCourseNumericPrice(b) - getCourseNumericPrice(a));
+  }, [courses]);
 
   // Slider reference & navigation state
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -209,7 +214,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
             {/* Price Row: Big number + Currency + Strikethrough Original Price */}
             <div className="flex items-baseline gap-1.5 sm:gap-2 pt-0.5 sm:pt-1">
               <span className={`text-2xl sm:text-4xl md:text-[44px] font-black ${theme.priceColor} tracking-tight leading-none`}>
-                {course.currentPrice || course.priceDisplayAr || '650'}
+                {getCourseNumericPrice(course) || course.currentPrice || course.priceDisplayAr?.replace(/[^0-9]/g, '') || '100'}
               </span>
               <span className={`text-sm sm:text-lg font-bold ${theme.priceSub}`}>
                 {isArabic ? 'ريال' : 'SAR'}
