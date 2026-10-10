@@ -291,6 +291,24 @@ export interface OfferTerm {
   textEn: string;
 }
 
+export interface OfferCustomStyling {
+  bgGradientFrom?: string;   // Start background hex/rgba
+  bgGradientVia?: string;    // Middle background hex/rgba
+  bgGradientTo?: string;     // End background hex/rgba
+  borderColor?: string;      // Card border color
+  borderHoverColor?: string; // Card border hover color
+  accentColor?: string;      // Primary highlight / accent color (e.g. #00E5BE)
+  badgeBgColor?: string;     // Badge pill background
+  badgeTextColor?: string;   // Badge pill text color
+  ribbonBgColor?: string;    // Ribbon background color
+  ribbonTextColor?: string;  // Ribbon text color
+  glowColor?: string;        // Ambient glow color
+  subcardBg?: string;        // Inner details card background
+  subcardBorder?: string;    // Inner details card border
+  textColor?: string;        // Main text color
+  themePreset?: 'emerald' | 'teal' | 'indigo' | 'amber' | 'rose' | 'navy' | 'custom';
+}
+
 export interface OfferData {
   id: string;
   titleAr: string;
@@ -305,10 +323,25 @@ export interface OfferData {
   dateLabelEn: string;
   discountType: 'percentage' | 'free_day' | 'fixed_amount';
   discountValue: number;
-  theme?: 'emerald' | 'teal' | 'indigo' | 'amber' | 'rose';
+  theme?: 'emerald' | 'teal' | 'indigo' | 'amber' | 'rose' | 'navy' | 'custom';
   isNationalDay?: boolean;
   active: boolean;
   descriptionAr?: string;
   descriptionEn?: string;
   terms?: OfferTerm[];
+
+  // Detailed Customization Extensions
+  ribbonAr?: string;             // e.g. 'لجميع عملائنا' أو 'للعملاء الجدد'
+  ribbonEn?: string;
+  headerTagAr?: string;          // e.g. 'عزّنا بطبعنا'
+  headerTagEn?: string;
+  headerTagSubAr?: string;       // e.g. 'اليوم الوطني 96'
+  headerTagSubEn?: string;
+  graphicType?: 'falcon' | 'gift' | 'percent' | 'sparkles' | 'award';
+  graphicUrl?: string;
+  showCountdown?: boolean;       // whether to display countdown timer (default true)
+  claimButtonTextAr?: string;    // e.g. 'الاستفادة من العرض الآن'
+  claimButtonTextEn?: string;
+  phone?: string;                // e.g. '966550000000'
+  styling?: OfferCustomStyling;  // Detailed color & card style customizer
 }

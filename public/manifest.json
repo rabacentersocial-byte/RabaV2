@@ -1,7 +1,14 @@
 {
+  "id": "/",
   "name": "مركز رابا للعلاج بتحليل السلوك التطبيقي | RABA CENTER",
-  "short_name": "RABA",
+  "short_name": "مركز رابا",
   "description": "مركز رابا من أقدم المراكز التي تقدم خدمات التأهيل والدعم لذوي الإحتياجات الخاصة وبرامج تحليل السلوك التطبيقي ABA",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#00E5BE",
+  "background_color": "#0B1320",
   "icons": [
     {
       "src": "/favicon-192x192.png",
@@ -13,16 +20,18 @@
       "src": "/favicon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     }
-  ],
-  "start_url": "/",
-  "theme_color": "#00E5BE",
-  "background_color": "#0B1320",
-  "display": "standalone"
+  ]
 }

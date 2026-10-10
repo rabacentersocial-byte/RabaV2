@@ -15,11 +15,15 @@ import {
   X,
   Calendar,
   Gift,
-  Clock
+  Clock,
+  Palette,
+  Sliders,
+  CopyPlus
 } from 'lucide-react';
 import { ParentReview, PermissionId, OfferData } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
 import { getStoredOffers, saveStoredOffers } from '../../data/offersData';
+import { OfferCustomizerModal } from './OfferCustomizerModal';
 
 interface MarketingReviewsTabProps {
   reviews: ParentReview[];
@@ -47,7 +51,10 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
     return propOffers || getStoredOffers();
   });
 
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  // Customizer modal state
+  const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
+  const [editingOffer, setEditingOffer] = useState<OfferData | null>(null);
+
   const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -55,17 +62,6 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
     setFeedbackMsg({ text, type });
     setTimeout(() => setFeedbackMsg(null), 3500);
   };
-
-  // New offer form state
-  const [newTitleAr, setNewTitleAr] = useState('');
-  const [newTitleEn, setNewTitleEn] = useState('');
-  const [newSubtitleAr, setNewSubtitleAr] = useState('');
-  const [newCouponCode, setNewCouponCode] = useState('');
-  const [newDiscountType, setNewDiscountType] = useState<'percentage' | 'free_day' | 'fixed_amount'>('percentage');
-  const [newDiscountValue, setNewDiscountValue] = useState<number>(20);
-  const [newTargetDate, setNewTargetDate] = useState('2026-10-31T23:59:59');
-  const [newDateLabelAr, setNewDateLabelAr] = useState('ساري حتى 31/10/2026');
-  const [newDescriptionAr, setNewDescriptionAr] = useState('');
 
   const syncOffers = (updated: OfferData[]) => {
     setOffersList(updated);
@@ -96,7 +92,7 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
     if (!canManageOffers) return;
     const updated = offersList.map((o) => o.id === offerId ? { ...o, active: !o.active } : o);
     syncOffers(updated);
-    showFeedback(isArabic ? 'تم تحديث حالة العرض' : 'Offer status updated');
+    showFeedback(isArabic ? 'تم تحديث حالة العرض في السلايدر' : 'Offer slider status updated');
   };
 
   // Delete Offer
@@ -107,47 +103,40 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
     showFeedback(isArabic ? '✓ تم حذف العرض بنجاح' : 'Offer deleted successfully');
   };
 
-  // Add New Offer
-  const handleAddOfferSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTitleAr || !newCouponCode) return;
-
-    const newOffer: OfferData = {
-      id: 'offer-' + Date.now(),
-      titleAr: newTitleAr,
-      titleEn: newTitleEn || newTitleAr,
-      subtitleAr: newSubtitleAr || (isArabic ? 'عرض خاص لفترة محدودة' : 'Limited time offer'),
-      subtitleEn: 'Exclusive limited time offer',
-      badgeAr: newDiscountType === 'percentage' ? `خصم ${newDiscountValue}%` : (newDiscountType === 'free_day' ? 'يوم مجاني' : `خصم ${newDiscountValue} ر.س`),
-      badgeEn: newDiscountType === 'percentage' ? `${newDiscountValue}% OFF` : 'SPECIAL OFFER',
-      couponCode: newCouponCode.trim().toUpperCase(),
-      targetDate: newTargetDate,
-      dateLabelAr: newDateLabelAr,
-      dateLabelEn: 'Valid until ' + newTargetDate.split('T')[0],
-      discountType: newDiscountType,
-      discountValue: newDiscountValue,
-      theme: 'teal',
-      active: true,
-      descriptionAr: newDescriptionAr || 'عرض ترويجي وتأهيلي مخصص لعملاء مركز رابا.',
-      descriptionEn: 'Promotional therapy offer for Raba Center clients.',
-      terms: [
-        { textAr: 'الخصم يطبق على السعر الأصلي للخدمة أو الباقة.', textEn: 'Discount applies to original price.' },
-        { textAr: 'الحجز المسبق مطلوب للاستفادة من الكوبون.', textEn: 'Advance reservation required.' }
-      ]
+  // Duplicate Offer for quick customization
+  const handleDuplicateOffer = (offer: OfferData) => {
+    if (!canManageOffers) return;
+    const duplicated: OfferData = {
+      ...offer,
+      id: `offer-${Date.now()}`,
+      titleAr: `${offer.titleAr} (نسخة جديدة)`,
+      titleEn: `${offer.titleEn} (Copy)`,
+      couponCode: `${offer.couponCode}-COPY`,
+      active: false
     };
-
-    const updated = [newOffer, ...offersList];
+    const updated = [duplicated, ...offersList];
     syncOffers(updated);
+    showFeedback(isArabic ? '✓ تم تكرار العرض - يمكنك تخصيص ألوانه وتفاصيله الآن' : 'Offer duplicated');
+  };
 
-    // Reset Form
-    setNewTitleAr('');
-    setNewTitleEn('');
-    setNewSubtitleAr('');
-    setNewCouponCode('');
-    setNewDiscountType('percentage');
-    setNewDiscountValue(20);
-    setNewDescriptionAr('');
-    setIsAddModalOpen(false);
+  // Save Customized Offer from Modal
+  const handleSaveCustomizedOffer = (savedOffer: OfferData) => {
+    const exists = offersList.some(o => o.id === savedOffer.id);
+    let updated: OfferData[];
+    if (exists) {
+      updated = offersList.map(o => o.id === savedOffer.id ? savedOffer : o);
+    } else {
+      updated = [savedOffer, ...offersList];
+    }
+
+    syncOffers(updated);
+    setIsCustomizerOpen(false);
+    setEditingOffer(null);
+    showFeedback(
+      isArabic 
+        ? '✓ تم حفظ وتطبيق تخصيص بطاقة العرض الحصري بنجاح على السلايدر' 
+        : 'Offer customization saved successfully'
+    );
   };
 
   const handleCopyCode = (code: string) => {
@@ -188,11 +177,15 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
 
         {activeSubTab === 'offers' && canManageOffers && (
           <button
-            onClick={() => setIsAddModalOpen(true)}
+            onClick={() => {
+              setEditingOffer(null);
+              setIsCustomizerOpen(true);
+            }}
             className="flex items-center gap-1.5 bg-[#00E5BE] hover:brightness-105 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl shadow-sm transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            <span>{isArabic ? 'إضافة عرض جديد إلى السلايدر' : 'Add New Offer to Slider'}</span>
+            <Palette className="w-3.5 h-3.5" />
+            <span>{isArabic ? 'إضافة وتخصيص عرض جديد' : 'Add & Customize Offer'}</span>
           </button>
         )}
       </div>
@@ -265,265 +258,224 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-xs space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  {isArabic ? 'العروض النشطة وحملات الخصومات في السلايدر' : 'Active Promotions & Slider Offers'}
+                <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <span>{isArabic ? 'إدارة وتخصيص بطاقات العروض الحصرية' : 'Exclusive Offer Cards Management'}</span>
+                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#00E5BE]/10 text-[#00E5BE] border border-[#00E5BE]/30">
+                    {isArabic ? 'ألوان وتفاصيل كاملة' : 'Colors & Details Customizer'}
+                  </span>
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-slate-500 mt-1">
                   {isArabic 
-                    ? 'يمكنك تفعيل أو إيقاف أو حذف أو إضافة أي عروض جديدة وستظهر فوراً في سلايدر العروض بالصفحة الرئيسية.'
-                    : 'Manage promotional offers. Any added or updated offer appears immediately in the homepage offers slider.'}
+                    ? 'يمكنك تخصيص لون كل بطاقة، التدرجات اللونية، النصوص، الشارات، نسب الخصم والشروط مع ظهور التغييرات فوراً في سلايدر الصفحة الرئيسية.'
+                    : 'Customize each card background, colors, gradients, labels, badges, discount calculation & terms with live sync to homepage.'}
                 </p>
               </div>
 
-              <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/40 px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                <Sparkles className="w-3.5 h-3.5 text-[#00E5BE]" />
-                <span>{offersList.filter(o => o.active).length} {isArabic ? 'عروض معروضة الآن' : 'Offers Live'}</span>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/40 px-3 py-1.5 rounded-xl text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                  <Sparkles className="w-3.5 h-3.5 text-[#00E5BE]" />
+                  <span>{offersList.filter(o => o.active).length} {isArabic ? 'عروض نشطة' : 'Live Offers'}</span>
+                </div>
+
+                {canManageOffers && (
+                  <button
+                    onClick={() => {
+                      setEditingOffer(null);
+                      setIsCustomizerOpen(true);
+                    }}
+                    className="flex items-center gap-1.5 bg-[#00E5BE] hover:brightness-105 text-slate-950 font-black text-xs px-3.5 py-2 rounded-xl shadow-xs transition-all cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>{isArabic ? 'عرض جديد' : 'New Offer'}</span>
+                  </button>
+                )}
               </div>
             </div>
 
             {/* List of Offers */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2">
-              {offersList.map((offer) => (
-                <div 
-                  key={offer.id}
-                  className={`p-5 rounded-3xl border transition-all flex flex-col justify-between ${
-                    offer.active
-                      ? 'bg-gradient-to-br from-emerald-50/60 to-teal-50/40 dark:from-emerald-950/20 dark:to-teal-950/20 border-emerald-200 dark:border-emerald-800/40'
-                      : 'bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10 opacity-60'
-                  }`}
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${offer.isNationalDay ? 'bg-emerald-700 text-white' : 'bg-slate-200 dark:bg-white/10 text-slate-800 dark:text-slate-200'}`}>
-                            {offer.isNationalDay ? '🇸🇦 اليوم الوطني 96' : 'عرض خاص'}
-                          </span>
-                          <span className={`text-xs font-bold ${offer.active ? 'text-emerald-600' : 'text-slate-400'}`}>
-                            {offer.active ? (isArabic ? '• نشط في السلايدر' : '• Live') : (isArabic ? '• معطل' : '• Disabled')}
-                          </span>
+              {offersList.map((offer) => {
+                const styling = offer.styling || {};
+                const fromColor = styling.bgGradientFrom || '#062c22';
+                const accentColor = styling.accentColor || '#00E5BE';
+
+                return (
+                  <div 
+                    key={offer.id}
+                    className={`p-5 rounded-3xl border transition-all flex flex-col justify-between ${
+                      offer.active
+                        ? 'bg-slate-50/70 dark:bg-slate-950/50 border-slate-200 dark:border-white/10 shadow-xs'
+                        : 'bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/5 opacity-60'
+                    }`}
+                  >
+                    <div className="space-y-3.5">
+                      
+                      {/* Top Bar: Color preview chip + Badges */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            
+                            {/* Color Theme Swatch Pill */}
+                            <div 
+                              className="flex items-center gap-1.5 px-2 py-0.5 rounded-full border border-white/20 text-[10px] font-bold text-white shadow-xs"
+                              style={{ 
+                                background: `linear-gradient(135deg, ${fromColor}, ${styling.bgGradientTo || fromColor})` 
+                              }}
+                            >
+                              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: accentColor }} />
+                              <span className="font-mono text-[9px]">
+                                {styling.themePreset ? styling.themePreset.toUpperCase() : 'THEME'}
+                              </span>
+                            </div>
+
+                            <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${offer.isNationalDay ? 'bg-emerald-700 text-white' : 'bg-slate-200 dark:bg-white/10 text-slate-800 dark:text-slate-200'}`}>
+                              {offer.isNationalDay ? '🇸🇦 اليوم الوطني 96' : 'عرض خاص'}
+                            </span>
+
+                            <span className={`text-xs font-bold ${offer.active ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>
+                              {offer.active ? (isArabic ? '• نشط في السلايدر' : '• Live') : (isArabic ? '• معطل' : '• Disabled')}
+                            </span>
+                          </div>
+
+                          <h4 className="text-base font-black text-slate-900 dark:text-white pt-1">
+                            {isArabic ? offer.titleAr : offer.titleEn}
+                          </h4>
+
+                          <p className="text-xs text-slate-500 line-clamp-1">
+                            {isArabic ? offer.subtitleAr : offer.subtitleEn}
+                          </p>
                         </div>
-                        <h4 className="text-base font-black text-slate-900 dark:text-white mt-1.5">
-                          {isArabic ? offer.titleAr : offer.titleEn}
-                        </h4>
-                        <p className="text-xs text-slate-500 mt-0.5">
-                          {isArabic ? offer.subtitleAr : offer.subtitleEn}
-                        </p>
+
+                        {/* Coupon code pill */}
+                        <button
+                          onClick={() => handleCopyCode(offer.couponCode)}
+                          title="Copy code"
+                          className="flex items-center gap-1 border border-dashed border-emerald-500/50 bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-xl font-mono text-xs font-black text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-white/10 cursor-pointer shrink-0"
+                        >
+                          {copiedCoupon === offer.couponCode ? (
+                            <>
+                              <Check className="w-3 h-3 text-emerald-500" />
+                              <span className="text-[10px]">تم!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3 h-3 text-emerald-500" />
+                              <span>{offer.couponCode}</span>
+                            </>
+                          )}
+                        </button>
                       </div>
 
-                      {/* Coupon code pill */}
-                      <button
-                        onClick={() => handleCopyCode(offer.couponCode)}
-                        title="Copy code"
-                        className="flex items-center gap-1 border border-dashed border-emerald-500/50 bg-white dark:bg-slate-800 px-2.5 py-1.5 rounded-xl font-mono text-xs font-black text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-white/10 cursor-pointer shrink-0"
-                      >
-                        {copiedCoupon === offer.couponCode ? (
-                          <>
-                            <Check className="w-3 h-3 text-emerald-500" />
-                            <span className="text-[10px]">تم!</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3 text-emerald-500" />
-                            <span>{offer.couponCode}</span>
-                          </>
+                      {/* Card meta summary */}
+                      <div className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-400 pt-1 flex-wrap">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-3.5 h-3.5 text-amber-500" />
+                          <span>{isArabic ? offer.dateLabelAr : offer.dateLabelEn}</span>
+                        </div>
+
+                        <div className="flex items-center gap-1">
+                          <Percent className="w-3.5 h-3.5 text-[#00E5BE]" />
+                          <span>{offer.discountType === 'free_day' ? 'يوم مجاني 100%' : (offer.discountType === 'fixed_amount' ? `${offer.discountValue} ر.س` : `${offer.discountValue}% خصم`)}</span>
+                        </div>
+
+                        {offer.terms && (
+                          <div className="flex items-center gap-1 text-[11px] text-slate-400">
+                            <span>•</span>
+                            <span>{offer.terms.length} {isArabic ? 'شروط مسجلة' : 'terms'}</span>
+                          </div>
                         )}
-                      </button>
+                      </div>
+
+                      {/* Card Visual Color Strip */}
+                      <div 
+                        className="h-2 w-full rounded-full border border-white/10"
+                        style={{
+                          background: `linear-gradient(90deg, ${styling.bgGradientFrom || '#062c22'}, ${styling.accentColor || '#00E5BE'}, ${styling.bgGradientTo || '#041d17'})`
+                        }}
+                      />
                     </div>
 
-                    <div className="flex items-center gap-3 text-xs text-slate-600 dark:text-slate-400 pt-1">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5 text-amber-500" />
-                        <span>{isArabic ? offer.dateLabelAr : offer.dateLabelEn}</span>
+                    {/* Actions Row */}
+                    {canManageOffers && (
+                      <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-200/60 dark:border-white/10 gap-2 flex-wrap">
+                        
+                        <div className="flex items-center gap-1.5">
+                          {/* Primary Customize Button */}
+                          <button
+                            onClick={() => {
+                              setEditingOffer(offer);
+                              setIsCustomizerOpen(true);
+                            }}
+                            className="text-xs font-black px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition-all cursor-pointer flex items-center gap-1.5 shadow-sm active:scale-95"
+                          >
+                            <Palette className="w-3.5 h-3.5" />
+                            <span>{isArabic ? 'تخصيص البطاقة والألوان' : 'Customize Colors & Details'}</span>
+                          </button>
+
+                          {/* Duplicate */}
+                          <button
+                            onClick={() => handleDuplicateOffer(offer)}
+                            title={isArabic ? 'تكرار هذا العرض' : 'Duplicate offer'}
+                            className="p-1.5 text-slate-500 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition-all cursor-pointer"
+                          >
+                            <CopyPlus className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div className="flex items-center gap-1.5">
+                          {/* Toggle Active */}
+                          <button
+                            onClick={() => handleToggleOfferActive(offer.id)}
+                            className={`text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1 ${
+                              offer.active
+                                ? 'bg-amber-100 hover:bg-amber-200 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300'
+                                : 'bg-slate-200 hover:bg-slate-300 text-slate-700 dark:bg-white/10 dark:text-slate-300'
+                            }`}
+                          >
+                            {offer.active ? (
+                              <>
+                                <EyeOff className="w-3.5 h-3.5" />
+                                <span>{isArabic ? 'إيقاف' : 'Deactivate'}</span>
+                              </>
+                            ) : (
+                              <>
+                                <Eye className="w-3.5 h-3.5" />
+                                <span>{isArabic ? 'تفعيل' : 'Activate'}</span>
+                              </>
+                            )}
+                          </button>
+
+                          {/* Delete */}
+                          <button
+                            onClick={() => handleDeleteOffer(offer.id)}
+                            className="text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 p-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>{isArabic ? 'حذف' : 'Delete'}</span>
+                          </button>
+                        </div>
+
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Percent className="w-3.5 h-3.5 text-[#00E5BE]" />
-                        <span>{offer.discountType === 'free_day' ? 'يوم مجاني 100%' : `${offer.discountValue}% خصم`}</span>
-                      </div>
-                    </div>
+                    )}
                   </div>
-
-                  {/* Actions */}
-                  {canManageOffers && (
-                    <div className="flex items-center justify-between pt-4 mt-3 border-t border-slate-200/60 dark:border-white/5">
-                      <button
-                        onClick={() => handleToggleOfferActive(offer.id)}
-                        className={`text-xs font-bold px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1 ${
-                          offer.active
-                            ? 'bg-amber-100 hover:bg-amber-200 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300'
-                            : 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                        }`}
-                      >
-                        {offer.active ? (
-                          <>
-                            <EyeOff className="w-3.5 h-3.5" />
-                            <span>{isArabic ? 'إيقاف مؤقت' : 'Deactivate'}</span>
-                          </>
-                        ) : (
-                          <>
-                            <Eye className="w-3.5 h-3.5" />
-                            <span>{isArabic ? 'تفعيل في السلايدر' : 'Activate in Slider'}</span>
-                          </>
-                        )}
-                      </button>
-
-                      <button
-                        onClick={() => handleDeleteOffer(offer.id)}
-                        className="text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 p-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        <span>{isArabic ? 'حذف' : 'Delete'}</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal: Add New Offer */}
-      {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl p-6 border border-slate-200 dark:border-white/10 shadow-2xl relative">
-            
-            <button
-              onClick={() => setIsAddModalOpen(false)}
-              className="absolute top-5 left-5 text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <h3 className="text-lg font-black text-slate-900 dark:text-white mb-1">
-              {isArabic ? 'إضافة عرض جديد إلى السلايدر' : 'Add New Offer to Slider'}
-            </h3>
-            <p className="text-xs text-slate-500 mb-5">
-              {isArabic ? 'سيتم إدراج العرض مباشرة في شريط العروض بالصفحة الرئيسية.' : 'This offer will appear directly in the homepage slider.'}
-            </p>
-
-            <form onSubmit={handleAddOfferSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  {isArabic ? 'عنوان العرض الرئيسي (بالعربية)*' : 'Offer Title (Arabic)*'}
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder={isArabic ? 'مثال: خصم 20% على جلسات التكامل الحسي' : 'e.g. 20% Off Sensory Therapy'}
-                  value={newTitleAr}
-                  onChange={(e) => setNewTitleAr(e.target.value)}
-                  className="w-full text-xs p-3 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white focus:outline-emerald-500"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    {isArabic ? 'كود الكوبون*' : 'Coupon Code*'}
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="SENSORY20"
-                    value={newCouponCode}
-                    onChange={(e) => setNewCouponCode(e.target.value.toUpperCase())}
-                    className="w-full text-xs p-3 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 font-mono text-slate-900 dark:text-white focus:outline-emerald-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    {isArabic ? 'نوع الخصم' : 'Discount Type'}
-                  </label>
-                  <select
-                    value={newDiscountType}
-                    onChange={(e) => setNewDiscountType(e.target.value as any)}
-                    className="w-full text-xs p-3 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white focus:outline-emerald-500"
-                  >
-                    <option value="percentage">{isArabic ? 'نسبة مئوية (%)' : 'Percentage (%)'}</option>
-                    <option value="free_day">{isArabic ? 'يوم مجاني (100%)' : 'Free Day'}</option>
-                    <option value="fixed_amount">{isArabic ? 'مبلغ نقدي مقطوع (ر.س)' : 'Fixed Amount (SAR)'}</option>
-                  </select>
-                </div>
-              </div>
-
-              {newDiscountType !== 'free_day' && (
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    {isArabic ? 'قيمة الخصم' : 'Discount Value'}
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="100"
-                    value={newDiscountValue}
-                    onChange={(e) => setNewDiscountValue(Number(e.target.value))}
-                    className="w-full text-xs p-3 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white focus:outline-emerald-500"
-                  />
-                </div>
-              )}
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    {isArabic ? 'تاريخ الانتهاء للعداد' : 'Expiry Date for Countdown'}
-                  </label>
-                  <input
-                    type="datetime-local"
-                    value={newTargetDate.replace('Z', '')}
-                    onChange={(e) => setNewTargetDate(e.target.value)}
-                    className="w-full text-xs p-2.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white focus:outline-emerald-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                    {isArabic ? 'نص التاريخ المعروض' : 'Display Date Label'}
-                  </label>
-                  <input
-                    type="text"
-                    value={newDateLabelAr}
-                    onChange={(e) => setNewDateLabelAr(e.target.value)}
-                    placeholder="ساري حتى 31/10/2026"
-                    className="w-full text-xs p-3 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white focus:outline-emerald-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                  {isArabic ? 'وصف العرض / الشروط' : 'Description / Terms'}
-                </label>
-                <textarea
-                  rows={2}
-                  value={newDescriptionAr}
-                  onChange={(e) => setNewDescriptionAr(e.target.value)}
-                  placeholder={isArabic ? 'ساري للعملاء الجدد، أو عند حجز جلستين معاً...' : 'Notes and conditions...'}
-                  className="w-full text-xs p-3 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-900 dark:text-white focus:outline-emerald-500"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-white/10">
-                <button
-                  type="button"
-                  onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 cursor-pointer"
-                >
-                  {isArabic ? 'إلغاء' : 'Cancel'}
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2.5 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow-md cursor-pointer transition-all active:scale-95"
-                >
-                  {isArabic ? 'حفظ وإضافة للسلايدر' : 'Save & Publish to Slider'}
-                </button>
-              </div>
-            </form>
-
-          </div>
-        </div>
-      )}
+      {/* Comprehensive Offer Customizer Modal */}
+      <OfferCustomizerModal
+        isOpen={isCustomizerOpen}
+        onClose={() => {
+          setIsCustomizerOpen(false);
+          setEditingOffer(null);
+        }}
+        onSave={handleSaveCustomizedOffer}
+        offerToEdit={editingOffer}
+        isArabic={isArabic}
+      />
 
     </div>
   );

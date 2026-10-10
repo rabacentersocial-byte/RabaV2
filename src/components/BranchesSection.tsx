@@ -25,9 +25,10 @@ const LedClubBadge: React.FC = () => (
 
 interface BranchesSectionProps {
   onSelectBranch?: (branch: BranchItem) => void;
+  onOpenBranchesPage?: () => void;
 }
 
-export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch }) => {
+export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch, onOpenBranchesPage }) => {
   const { isArabic } = useLanguage();
   const [branches, setBranches] = useState<BranchItem[]>(() => getStoredBranchesData());
   const [selectedCity, setSelectedCity] = useState<'all' | 'riyadh' | 'jeddah' | 'khobar' | 'ahsa' | 'kharj'>('all');
@@ -69,6 +70,14 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
   const ahsaCount = branches.filter(b => b.city === 'ahsa').length;
   const kharjCount = branches.filter(b => b.city === 'kharj').length;
 
+  const getSlideWidth = () => {
+    if (typeof window === 'undefined') return 360;
+    if (window.innerWidth < 640) {
+      return Math.min(window.innerWidth * 0.76, 310) + 14;
+    }
+    return 370;
+  };
+
   const updateScrollState = useCallback(() => {
     const el = sliderRef.current;
     if (!el) return;
@@ -79,7 +88,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
     setCanScrollPrev(current > 15);
     setCanScrollNext(current < maxScroll - 15);
 
-    const slideWidth = 360;
+    const slideWidth = getSlideWidth();
     const index = Math.round(current / slideWidth);
     setCurrentIndex(Math.min(Math.max(0, index), filteredBranches.length - 1));
   }, [filteredBranches.length]);
@@ -101,7 +110,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
   const handleScroll = (direction: 'prev' | 'next') => {
     const el = sliderRef.current;
     if (!el) return;
-    const scrollAmount = 370;
+    const scrollAmount = getSlideWidth();
 
     let delta = scrollAmount;
     if (direction === 'prev') {
@@ -117,7 +126,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
   const scrollToIndex = (index: number) => {
     const el = sliderRef.current;
     if (!el) return;
-    const slideWidth = 370;
+    const slideWidth = getSlideWidth();
     let target = index * slideWidth;
     if (isArabic) target = -target;
     el.scrollTo({ left: target, behavior: 'smooth' });
@@ -149,7 +158,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
   return (
     <section 
       id="branches" 
-      className="py-16 sm:py-24 bg-slate-50/70 dark:bg-[#071915]/60 text-slate-900 dark:text-white relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10"
+      className="py-10 sm:py-24 bg-slate-50/70 dark:bg-[#071915]/60 text-slate-900 dark:text-white relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10"
       dir={isArabic ? 'rtl' : 'ltr'}
     >
       {/* Background Ambience & Lighting */}
@@ -187,6 +196,18 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                 ? 'مراكز وعيادات مجهزة بأعلى المعايير العالمية لتقديم خدمات التأهيل وتحليل السلوك في بيئة مهيأة وآمنة لطفلك في الرياض، وجدة، والخبر، والأحساء، والخرج.'
                 : 'Clinics equipped with international clinical standards for behavioral and occupational rehabilitation across Riyadh, Jeddah, Al-Khobar, Al-Ahsa, and Al-Kharj.'}
             </p>
+
+            {onOpenBranchesPage && (
+              <div className="pt-3">
+                <button
+                  onClick={onOpenBranchesPage}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-[#0D6D54]/10 dark:bg-[#00E5BE]/10 text-[#0D6D54] dark:text-[#00E5BE] hover:bg-[#0D6D54]/20 border border-[#0D6D54]/20 transition-all cursor-pointer shadow-xs active:scale-95"
+                >
+                  <MapPin className="w-4 h-4 text-[#0D6D54] dark:text-[#00E5BE]" />
+                  <span>{isArabic ? 'عرض صفحة الفروع المخصصة مع خيارات العرض المتقدمة ←' : 'Explore Dedicated Branches Directory Page →'}</span>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Controls: Filter tabs & Slider Navigation */}
@@ -363,7 +384,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
-              className={`flex gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-4 px-1 ${
+              className={`flex gap-3.5 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-2 sm:py-4 px-1 ${
                 isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
               }`}
               style={{ WebkitOverflowScrolling: 'touch' }}
@@ -371,59 +392,59 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
               {filteredBranches.map((branch) => (
                 <div
                   key={branch.id}
-                  className="w-[85vw] max-w-[360px] sm:w-[350px] md:w-[365px] shrink-0 snap-start bg-white dark:bg-[#0C1F1A] rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-xl hover:border-emerald-500/50 dark:hover:border-[#00E5BE]/40 transition-all duration-300 flex flex-col justify-between group relative"
+                  className="w-[76vw] min-w-[260px] max-w-[310px] sm:w-[350px] sm:max-w-none md:w-[365px] shrink-0 snap-start bg-white dark:bg-[#0C1F1A] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-lg hover:border-emerald-500/50 dark:hover:border-[#00E5BE]/40 transition-all duration-300 flex flex-col justify-between group relative"
                 >
                   {/* Top: 3D Map Pin Graphic */}
-                  <div className="relative h-60 overflow-hidden bg-slate-100 dark:bg-[#071713]">
+                  <div className="relative h-36 sm:h-56 md:h-60 overflow-hidden bg-slate-100 dark:bg-[#071713]">
                     <BranchMapPinGraphic branchName={branch.name} />
 
                     {/* City Tag Indicator Overlay */}
-                    <div className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-slate-300 border border-white/10 flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-[#00E5BE]" />
+                    <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 bg-slate-900/80 backdrop-blur-md px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold text-slate-300 border border-white/10 flex items-center gap-1 sm:gap-1.5">
+                      <MapPin className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-[#00E5BE]" />
                       <span>{isArabic ? branch.cityNameAr : branch.cityNameEn}</span>
                     </div>
                   </div>
 
                   {/* Body Content */}
-                  <div className="p-6 flex-1 flex flex-col justify-between space-y-5 bg-white dark:bg-[#0C1F1A]">
+                  <div className="p-3.5 sm:p-6 flex-1 flex flex-col justify-between space-y-3 sm:space-y-5 bg-white dark:bg-[#0C1F1A]">
                     
-                    <div className="space-y-3">
+                    <div className="space-y-2.5 sm:space-y-3">
                       {/* Region Tag Pill */}
                       <div className="flex items-center justify-between">
-                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-black border ${branch.badgeColorClass}`}>
+                        <span className={`inline-block px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black border ${branch.badgeColorClass}`}>
                           {isArabic ? branch.regionBadgeAr : branch.regionBadgeEn}
                         </span>
 
-                        <span className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold flex items-center gap-1">
+                        <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-semibold flex items-center gap-1">
                           <Clock className="w-3 h-3 text-[#0D6D54] dark:text-[#00E5BE]" />
                           <span>{isArabic ? branch.hoursAr : branch.hoursEn}</span>
                         </span>
                       </div>
 
                       {/* Branch Name with single LedClubBadge */}
-                      <div className="flex items-center gap-2.5 flex-wrap">
-                        <h3 className="text-xl font-black text-slate-900 dark:text-white group-hover:text-[#0D6D54] dark:group-hover:text-[#00E5BE] transition-colors leading-snug">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="text-base sm:text-xl font-black text-slate-900 dark:text-white group-hover:text-[#0D6D54] dark:group-hover:text-[#00E5BE] transition-colors leading-snug line-clamp-1">
                           {isArabic ? branch.name : branch.nameEn}
                         </h3>
                         {branch.hasClubBadge && <LedClubBadge />}
                       </div>
 
                       {/* Branch Address */}
-                      <div className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed min-h-[48px]">
+                      <div className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-relaxed min-h-[36px] sm:min-h-[48px] line-clamp-2">
                         <span className="font-bold text-slate-900 dark:text-white ml-1">{isArabic ? 'العنوان:' : 'Address:'}</span>
                         <span>{isArabic ? branch.address : branch.addressEn}</span>
                       </div>
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100 dark:border-white/10">
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3 pt-2 border-t border-slate-100 dark:border-white/10">
                       
                       {/* Google Maps Button */}
                       <a
                         href={branch.googleMapsUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="py-3 px-3 bg-[#0F2438] hover:bg-[#15324d] text-white text-xs font-bold rounded-xl border border-white/15 hover:border-cyan-500/40 transition-all flex items-center justify-center gap-1.5 text-center shadow-xs active:scale-95 cursor-pointer"
+                        className="py-2.5 sm:py-3 px-2 sm:px-3 bg-[#0F2438] hover:bg-[#15324d] text-white text-xs font-bold rounded-xl border border-white/15 hover:border-cyan-500/40 transition-all flex items-center justify-center gap-1 sm:gap-1.5 text-center shadow-xs active:scale-95 cursor-pointer"
                         title={isArabic ? `عرض موقع ${branch.name} على خرائط Google` : 'View on Google Maps'}
                       >
                         <Navigation className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
@@ -435,7 +456,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                         href={branch.whatsappUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="py-3 px-3 bg-[#00E5BE] hover:bg-[#00ffd2] text-slate-950 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1.5 text-center shadow-lg shadow-teal-500/20 active:scale-95 cursor-pointer"
+                        className="py-2.5 sm:py-3 px-2 sm:px-3 bg-[#00E5BE] hover:bg-[#00ffd2] text-slate-950 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1 sm:gap-1.5 text-center shadow-lg shadow-teal-500/20 active:scale-95 cursor-pointer"
                         title={isArabic ? `تواصل واتساب مع ${branch.name}` : 'Chat on WhatsApp'}
                       >
                         <MessageCircle className="w-3.5 h-3.5 fill-slate-950 shrink-0" />
@@ -467,25 +488,25 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
           </div>
         ) : (
           /* GRID VIEW */
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {filteredBranches.map((branch) => (
               <div
                 key={branch.id}
-                className="bg-white dark:bg-[#0C1F1A] rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-xl hover:border-emerald-500/50 dark:hover:border-[#00E5BE]/40 transition-all duration-300 flex flex-col justify-between group relative"
+                className="bg-white dark:bg-[#0C1F1A] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-lg hover:border-emerald-500/50 dark:hover:border-[#00E5BE]/40 transition-all duration-300 flex flex-col justify-between group relative"
               >
-                <div className="relative h-56 overflow-hidden bg-slate-100 dark:bg-[#071713]">
+                <div className="relative h-36 sm:h-56 overflow-hidden bg-slate-100 dark:bg-[#071713]">
                   <BranchMapPinGraphic branchName={branch.name} />
-                  <div className="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-bold text-slate-300 border border-white/10 flex items-center gap-1">
+                  <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 bg-slate-900/80 backdrop-blur-md px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-slate-300 border border-white/10 flex items-center gap-1">
                     <MapPin className="w-3 h-3 text-[#00E5BE]" />
                     <span>{isArabic ? branch.cityNameAr : branch.cityNameEn}</span>
                   </div>
                 </div>
 
-                <div className="p-5 flex-1 flex flex-col justify-between space-y-4 bg-white dark:bg-[#0C1F1A]">
-                  <div className="space-y-2.5">
+                <div className="p-3.5 sm:p-5 flex-1 flex flex-col justify-between space-y-3 sm:space-y-4 bg-white dark:bg-[#0C1F1A]">
+                  <div className="space-y-2 sm:space-y-2.5">
                     {/* Region Tag Pill */}
                     <div className="flex items-center justify-between">
-                      <span className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-black border ${branch.badgeColorClass}`}>
+                      <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-black border ${branch.badgeColorClass}`}>
                         {isArabic ? branch.regionBadgeAr : branch.regionBadgeEn}
                       </span>
 
@@ -496,13 +517,13 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                     </div>
 
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-[#0D6D54] dark:group-hover:text-[#00E5BE] transition-colors leading-snug">
+                      <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white group-hover:text-[#0D6D54] dark:group-hover:text-[#00E5BE] transition-colors leading-snug line-clamp-1">
                         {isArabic ? branch.name : branch.nameEn}
                       </h3>
                       {branch.hasClubBadge && <LedClubBadge />}
                     </div>
 
-                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed min-h-[48px]">
+                    <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 leading-relaxed min-h-[36px] sm:min-h-[48px] line-clamp-2">
                       <span className="font-bold text-slate-900 dark:text-white ml-1">{isArabic ? 'العنوان:' : 'Address:'}</span>
                       <span>{isArabic ? branch.address : branch.addressEn}</span>
                     </p>
@@ -513,7 +534,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                       href={branch.googleMapsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="py-2.5 px-2 bg-[#0F2438] hover:bg-[#15324d] text-white text-xs font-bold rounded-xl border border-white/15 transition-all flex items-center justify-center gap-1 text-center cursor-pointer"
+                      className="py-2 sm:py-2.5 px-2 bg-[#0F2438] hover:bg-[#15324d] text-white text-xs font-bold rounded-xl border border-white/15 transition-all flex items-center justify-center gap-1 text-center cursor-pointer"
                     >
                       <Navigation className="w-3.5 h-3.5 text-cyan-400" />
                       <span>{isArabic ? 'خرائط Google' : 'Maps'}</span>
@@ -523,7 +544,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                       href={branch.whatsappUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="py-2.5 px-2 bg-[#00E5BE] hover:bg-[#00ffd2] text-slate-950 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1 text-center cursor-pointer shadow-md shadow-teal-500/20"
+                      className="py-2 sm:py-2.5 px-2 bg-[#00E5BE] hover:bg-[#00ffd2] text-slate-950 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1 text-center cursor-pointer shadow-md shadow-teal-500/20"
                     >
                       <MessageCircle className="w-3.5 h-3.5 fill-slate-950" />
                       <span>{isArabic ? 'واتساب' : 'WhatsApp'}</span>

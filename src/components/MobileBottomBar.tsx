@@ -5,7 +5,8 @@ import {
   UserCheck, 
   MessageCircle, 
   CalendarCheck,
-  Sparkles
+  Sparkles,
+  MapPin
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -14,9 +15,11 @@ interface MobileBottomBarProps {
   onOpenWhatsApp?: () => void;
   onOpenSpecialistsPage?: () => void;
   onOpenServicesPage?: () => void;
+  onOpenBranchesPage?: () => void;
   onGoHome?: () => void;
   isSpecialistsPageOpen?: boolean;
   isServicesPageOpen?: boolean;
+  isBranchesPageOpen?: boolean;
 }
 
 export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
@@ -24,28 +27,32 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
   onOpenWhatsApp,
   onOpenSpecialistsPage,
   onOpenServicesPage,
+  onOpenBranchesPage,
   onGoHome,
   isSpecialistsPageOpen = false,
-  isServicesPageOpen = false
+  isServicesPageOpen = false,
+  isBranchesPageOpen = false
 }) => {
   const { isArabic } = useLanguage();
-  const [activeTab, setActiveTab] = useState<'home' | 'services' | 'specialists' | 'chat'>(
-    isSpecialistsPageOpen ? 'specialists' : isServicesPageOpen ? 'services' : 'home'
+  const [activeTab, setActiveTab] = useState<'home' | 'services' | 'specialists' | 'branches'>(
+    isBranchesPageOpen ? 'branches' : isSpecialistsPageOpen ? 'specialists' : isServicesPageOpen ? 'services' : 'home'
   );
 
   useEffect(() => {
-    if (isSpecialistsPageOpen) {
+    if (isBranchesPageOpen) {
+      setActiveTab('branches');
+    } else if (isSpecialistsPageOpen) {
       setActiveTab('specialists');
     } else if (isServicesPageOpen) {
       setActiveTab('services');
     } else {
       setActiveTab('home');
     }
-  }, [isSpecialistsPageOpen, isServicesPageOpen]);
+  }, [isBranchesPageOpen, isSpecialistsPageOpen, isServicesPageOpen]);
 
   const handleHomeClick = () => {
     setActiveTab('home');
-    if ((isSpecialistsPageOpen || isServicesPageOpen) && onGoHome) {
+    if ((isSpecialistsPageOpen || isServicesPageOpen || isBranchesPageOpen) && onGoHome) {
       onGoHome();
     } else {
       const element = document.getElementById('hero');
@@ -61,7 +68,7 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
     setActiveTab('services');
     if (onOpenServicesPage) {
       onOpenServicesPage();
-    } else if (isSpecialistsPageOpen && onGoHome) {
+    } else if ((isSpecialistsPageOpen || isBranchesPageOpen) && onGoHome) {
       onGoHome();
       setTimeout(() => {
         const element = document.getElementById('services');
@@ -87,13 +94,15 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
     }
   };
 
-  const handleWhatsAppClick = () => {
-    setActiveTab('chat');
-    if (onOpenWhatsApp) {
-      onOpenWhatsApp();
+  const handleBranchesClick = () => {
+    setActiveTab('branches');
+    if (onOpenBranchesPage && !isBranchesPageOpen) {
+      onOpenBranchesPage();
     } else {
-      const msg = encodeURIComponent('السلام عليكم، أود الاستفسار عن برامج وجلسات مركز رابا لتأهيل الطفل');
-      window.open(`https://wa.me/966575100100?text=${msg}`, '_blank', 'noopener,noreferrer');
+      const element = document.getElementById('branches');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
 
@@ -158,17 +167,17 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
           <span className="text-[11px] font-bold tracking-tight">{isArabic ? 'الأخصائيين' : 'Specialists'}</span>
         </button>
 
-        {/* 5. WhatsApp Support */}
+        {/* 5. Our Branches (replaced WhatsApp) */}
         <button
-          onClick={handleWhatsAppClick}
+          onClick={handleBranchesClick}
           className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer min-w-[56px] min-h-[44px] ${
-            activeTab === 'chat'
-              ? 'text-emerald-600 dark:text-[#10B981] font-black scale-105'
-              : 'text-slate-500 dark:text-slate-400 font-semibold hover:text-emerald-600 dark:hover:text-emerald-400'
+            activeTab === 'branches'
+              ? 'text-[#0B3B36] dark:text-[#00E5BE] font-black scale-105'
+              : 'text-slate-500 dark:text-slate-400 font-semibold hover:text-slate-800 dark:hover:text-white'
           }`}
         >
-          <MessageCircle className="w-5 h-5 mb-0.5 text-emerald-500 dark:text-emerald-400" />
-          <span className="text-[11px] font-bold tracking-tight">{isArabic ? 'واتساب' : 'WhatsApp'}</span>
+          <MapPin className="w-5 h-5 mb-0.5 text-emerald-600 dark:text-[#00E5BE]" />
+          <span className="text-[11px] font-bold tracking-tight">{isArabic ? 'فروعنا' : 'Branches'}</span>
         </button>
 
       </div>

@@ -7,7 +7,7 @@ interface BranchMapPinGraphicProps {
 
 export const BranchMapPinGraphic: React.FC<BranchMapPinGraphicProps> = ({ branchName = '', className = '' }) => {
   return (
-    <div className={`relative w-full h-full min-h-[200px] flex items-center justify-center overflow-hidden select-none ${className}`}>
+    <div className={`relative w-full h-full min-h-[120px] sm:min-h-[200px] flex items-center justify-center overflow-hidden select-none ${className}`}>
       {/* Background radial gradient & ambient bokeh lighting */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#1a2c3d] via-[#10202e] to-[#0b141d]" />
       
@@ -19,7 +19,7 @@ export const BranchMapPinGraphic: React.FC<BranchMapPinGraphicProps> = ({ branch
       {/* SVG 3D Isometric Map and Pin */}
       <svg 
         viewBox="0 0 400 320" 
-        className="relative z-10 w-full h-full max-h-[220px] object-contain drop-shadow-2xl"
+        className="relative z-10 w-full h-full max-h-[135px] sm:max-h-[220px] object-contain drop-shadow-2xl"
         preserveAspectRatio="xMidYMid meet"
         aria-hidden="true"
       >

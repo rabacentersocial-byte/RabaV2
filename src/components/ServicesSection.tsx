@@ -396,40 +396,40 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
               return (
                 <div
                   key={service.id}
-                  className={`w-[86vw] max-w-[370px] sm:w-[350px] md:w-[365px] lg:w-[380px] shrink-0 snap-start bg-white dark:bg-slate-900 rounded-[32px] overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${visual.colorClassHover}`}
+                  className={`w-[78vw] min-w-[270px] max-w-[315px] sm:w-[350px] sm:max-w-none md:w-[365px] lg:w-[380px] shrink-0 snap-start bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[32px] overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${visual.colorClassHover}`}
                 >
                   {/* Top Slim Accent Strip in Service Brand Color */}
-                  <div className={`h-2 w-full ${visual.colorClass}`} />
+                  <div className={`h-1.5 sm:h-2 w-full ${visual.colorClass}`} />
 
                   {/* Header: Coordinated Custom Icon Container (No Images) */}
-                  <div className={`p-6 pb-5 ${visual.lightBg} border-b ${visual.accentBorder} relative transition-colors`}>
+                  <div className={`p-4 sm:p-6 pb-3.5 sm:pb-5 ${visual.lightBg} border-b ${visual.accentBorder} relative transition-colors`}>
                     {/* Top Row: Category Pill & Favorite Heart */}
-                    <div className="flex items-center justify-between gap-2 mb-4">
-                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-black ${visual.colorClass} text-white shadow-xs`}>
+                    <div className="flex items-center justify-between gap-2 mb-2.5 sm:mb-4">
+                      <span className={`inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[11px] sm:text-xs font-black ${visual.colorClass} text-white shadow-xs`}>
                         {visual.badgeText || (isArabic ? service.categoryAr : service.categoryEn)}
                       </span>
 
                       <button
                         onClick={(e) => toggleFavorite(e, service.id)}
                         aria-label={isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
-                        className="w-8 h-8 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-xs flex items-center justify-center text-slate-500 hover:text-rose-500 transition-colors cursor-pointer"
+                        className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-xs flex items-center justify-center text-slate-500 hover:text-rose-500 transition-colors cursor-pointer"
                       >
-                        <Heart className={`w-4 h-4 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
+                        <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
                       </button>
                     </div>
 
                     {/* Prominent Custom Icon Box with Title */}
-                    <div className="flex items-center gap-4">
-                      <div className={`w-16 h-16 sm:w-18 sm:h-18 rounded-2xl ${visual.colorClass} text-white flex items-center justify-center shadow-lg shadow-black/10 group-hover:scale-105 transition-transform duration-300 shrink-0`}>
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl ${visual.colorClass} text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-300 shrink-0`}>
                         {renderFlyerIcon(service.id)}
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <h3 className="text-xl sm:text-[22px] font-black text-slate-900 dark:text-white leading-tight group-hover:text-[#0B3B36] dark:group-hover:text-[#00E5BE] transition-colors">
+                        <h3 className="text-base sm:text-xl font-black text-slate-900 dark:text-white leading-tight group-hover:text-[#0B3B36] dark:group-hover:text-[#00E5BE] transition-colors">
                           {isArabic ? service.title : (service.titleEn || service.title)}
                         </h3>
                         {service.titleEn && isArabic && (
-                          <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 block mt-0.5" dir="ltr">
+                          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 dark:text-slate-500 block mt-0.5 truncate" dir="ltr">
                             {service.titleEn}
                           </span>
                         )}
@@ -438,23 +438,23 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                   </div>
 
                   {/* Body Content */}
-                  <div className="p-6 pt-5 flex-1 flex flex-col justify-between space-y-4">
-                    <div className="space-y-3.5">
+                  <div className="p-4 sm:p-6 pt-3.5 sm:pt-5 flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
+                    <div className="space-y-2.5 sm:space-y-3.5">
                       {/* Clinical Purpose Highlight Box */}
-                      <div className={`p-3 rounded-2xl ${visual.lightBg} border ${visual.accentBorder}`}>
-                        <p className={`text-xs sm:text-sm font-bold ${visual.textAccent} leading-relaxed`}>
+                      <div className={`p-2.5 sm:p-3 rounded-xl sm:rounded-2xl ${visual.lightBg} border ${visual.accentBorder}`}>
+                        <p className={`text-[11px] sm:text-sm font-bold ${visual.textAccent} leading-relaxed`}>
                           {isArabic ? (visual.flyerText || service.description) : (service.descriptionEn || service.description)}
                         </p>
                       </div>
 
                       {/* Key Clinical Benefits Checklist */}
-                      <div className="space-y-2 pt-1">
-                        <span className="text-[11px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">
+                      <div className="space-y-1.5 sm:space-y-2 pt-0.5">
+                        <span className="text-[10px] sm:text-[11px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">
                           {isArabic ? 'أبرز مخرجات البرنامج:' : 'Key Outcomes:'}
                         </span>
                         {(isArabic ? service.benefits : (service.benefitsEn || service.benefits)).slice(0, 3).map((benefit, bIdx) => (
-                          <div key={bIdx} className="flex items-start gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
-                            <Check className="w-4 h-4 text-emerald-600 dark:text-[#00E5BE] shrink-0 mt-0.5 stroke-[2.5]" />
+                          <div key={bIdx} className="flex items-start gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300">
+                            <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-[#00E5BE] shrink-0 mt-0.5 stroke-[2.5]" />
                             <span className="line-clamp-2 leading-relaxed">{benefit}</span>
                           </div>
                         ))}
@@ -462,22 +462,22 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                     </div>
 
                     {/* Metadata & Direct Booking Button */}
-                    <div className="pt-4 border-t border-slate-100 dark:border-white/10 space-y-3">
-                      <div className="flex items-center text-xs font-semibold text-slate-600 dark:text-slate-400">
+                    <div className="pt-3 sm:pt-4 border-t border-slate-100 dark:border-white/10 space-y-2.5 sm:space-y-3">
+                      <div className="flex items-center text-[11px] sm:text-xs font-semibold text-slate-600 dark:text-slate-400">
                         <span className="flex items-center gap-1.5">
-                          <Users className="w-4 h-4 text-amber-500 dark:text-amber-400 shrink-0" />
-                          <span>{isArabic ? service.targetAges : (service.targetAgesEn || service.targetAges)}</span>
+                          <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 dark:text-amber-400 shrink-0" />
+                          <span className="truncate">{isArabic ? service.targetAges : (service.targetAgesEn || service.targetAges)}</span>
                         </span>
                       </div>
 
                       <button
                         id={`book-slider-service-${service.id}`}
                         onClick={() => onSelectService(service)}
-                        className={`w-full py-3.5 px-4 ${visual.colorClass} hover:opacity-95 text-white font-black rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md active:scale-95`}
+                        className={`w-full py-2.5 sm:py-3.5 px-3 sm:px-4 ${visual.colorClass} hover:opacity-95 text-white font-black rounded-xl sm:rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md active:scale-95`}
                       >
-                        <Calendar className="w-4 h-4" />
+                        <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         <span>{isArabic ? 'احجز تقييم البرنامج' : 'Book Evaluation Session'}</span>
-                        {isArabic ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
+                        {isArabic ? <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
                       </button>
                     </div>
                   </div>

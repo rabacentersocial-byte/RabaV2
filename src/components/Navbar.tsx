@@ -20,9 +20,11 @@ interface NavbarProps {
   onOpenStore?: () => void;
   onOpenSpecialistsPage?: () => void;
   onOpenServicesPage?: () => void;
+  onOpenBranchesPage?: () => void;
   onGoHome?: () => void;
   isSpecialistsPageOpen?: boolean;
   isServicesPageOpen?: boolean;
+  isBranchesPageOpen?: boolean;
   unreadCount?: number;
   cartCount?: number;
 }
@@ -34,9 +36,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenAdmin,
   onOpenSpecialistsPage,
   onOpenServicesPage,
+  onOpenBranchesPage,
   onGoHome,
   isSpecialistsPageOpen = false,
   isServicesPageOpen = false,
+  isBranchesPageOpen = false,
   unreadCount
 }) => {
   const { theme, toggleTheme } = useTheme();
@@ -106,7 +110,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               const isLinkActive = 
                 (link.href === '#services' && isServicesPageOpen) || 
                 (link.href === '#specialists' && isSpecialistsPageOpen) ||
-                (link.href === '#hero' && !isServicesPageOpen && !isSpecialistsPageOpen);
+                (link.href === '#branches' && isBranchesPageOpen) ||
+                (link.href === '#hero' && !isServicesPageOpen && !isSpecialistsPageOpen && !isBranchesPageOpen);
 
               return (
                 <a
@@ -119,10 +124,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                     } else if (link.href === '#specialists' && onOpenSpecialistsPage) {
                       e.preventDefault();
                       onOpenSpecialistsPage();
+                    } else if (link.href === '#branches' && onOpenBranchesPage) {
+                      e.preventDefault();
+                      onOpenBranchesPage();
                     } else if (link.href === '#hero' && onGoHome) {
                       e.preventDefault();
                       onGoHome();
-                    } else if (onGoHome && (isSpecialistsPageOpen || isServicesPageOpen)) {
+                    } else if (onGoHome && (isSpecialistsPageOpen || isServicesPageOpen || isBranchesPageOpen)) {
                       onGoHome();
                     }
                   }}
@@ -264,7 +272,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               const isLinkActive = 
                 (link.href === '#services' && isServicesPageOpen) || 
                 (link.href === '#specialists' && isSpecialistsPageOpen) ||
-                (link.href === '#hero' && !isServicesPageOpen && !isSpecialistsPageOpen);
+                (link.href === '#branches' && isBranchesPageOpen) ||
+                (link.href === '#hero' && !isServicesPageOpen && !isSpecialistsPageOpen && !isBranchesPageOpen);
 
               return (
                 <a
@@ -278,10 +287,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                     } else if (link.href === '#specialists' && onOpenSpecialistsPage) {
                       e.preventDefault();
                       onOpenSpecialistsPage();
+                    } else if (link.href === '#branches' && onOpenBranchesPage) {
+                      e.preventDefault();
+                      onOpenBranchesPage();
                     } else if (link.href === '#hero' && onGoHome) {
                       e.preventDefault();
                       onGoHome();
-                    } else if (onGoHome && (isSpecialistsPageOpen || isServicesPageOpen)) {
+                    } else if (onGoHome && (isSpecialistsPageOpen || isServicesPageOpen || isBranchesPageOpen)) {
                       onGoHome();
                     }
                   }}

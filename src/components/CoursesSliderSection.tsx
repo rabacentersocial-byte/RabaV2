@@ -64,6 +64,14 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
     };
   }, []);
 
+  const getSlideWidth = () => {
+    if (typeof window === 'undefined') return 380;
+    if (window.innerWidth < 640) {
+      return Math.min(window.innerWidth * 0.78, 315) + 16;
+    }
+    return 390;
+  };
+
   const updateScrollState = useCallback(() => {
     const el = sliderRef.current;
     if (!el) return;
@@ -74,7 +82,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
     setCanScrollPrev(current > 15);
     setCanScrollNext(current < maxScroll - 15);
 
-    const slideWidth = 390;
+    const slideWidth = getSlideWidth();
     const index = Math.round(current / slideWidth);
     setCurrentIndex(Math.min(Math.max(0, index), Math.max(0, activeCourses.length - 1)));
   }, [activeCourses.length]);
@@ -96,7 +104,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
   const handleScroll = (direction: 'prev' | 'next') => {
     const el = sliderRef.current;
     if (!el) return;
-    const cardWidth = 390;
+    const cardWidth = getSlideWidth();
 
     let delta = cardWidth;
     if (direction === 'prev') {
@@ -113,7 +121,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
   const scrollToIndex = (index: number) => {
     const el = sliderRef.current;
     if (!el) return;
-    const slideWidth = 390;
+    const slideWidth = getSlideWidth();
     let target = index * slideWidth;
     if (isArabic) target = -target;
     el.scrollTo({ left: target, behavior: 'smooth' });
@@ -159,55 +167,55 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
     return (
       <div
         key={course.id}
-        className={`w-[86vw] max-w-[360px] sm:w-[370px] md:w-[380px] shrink-0 snap-start bg-white dark:bg-[#121c24] rounded-[32px] overflow-hidden border ${theme.cardBorderHover} shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-all duration-300 flex flex-col group relative`}
+        className={`w-[78vw] min-w-[270px] max-w-[315px] sm:w-[350px] sm:max-w-none md:w-[370px] lg:w-[380px] shrink-0 snap-start bg-white dark:bg-[#121c24] rounded-2xl sm:rounded-[32px] overflow-hidden border ${theme.cardBorderHover} shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-all duration-300 flex flex-col group relative`}
       >
         {/* Top Header Section: Distinct Logo Color Container */}
-        <div className={`${theme.headerBg} p-6 sm:p-7 pt-7 pb-6 rounded-t-[32px] border-b ${theme.headerBorder} relative transition-colors`}>
+        <div className={`${theme.headerBg} p-4 sm:p-7 pt-5 sm:pt-7 pb-4 sm:pb-6 rounded-t-2xl sm:rounded-t-[32px] border-b ${theme.headerBorder} relative transition-colors`}>
           {/* Top Row: Floating Pill Badge & Icon Button */}
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-2.5">
             {/* Right in RTL: Solid Logo Theme Pill Badge */}
-            <span className={`${theme.pillBg} text-xs font-bold px-3.5 py-1.5 rounded-full shadow-xs transition-colors`}>
+            <span className={`${theme.pillBg} text-[11px] sm:text-xs font-bold px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full shadow-xs transition-colors truncate max-w-[70%]`}>
               {course.floatingBadgeAr || (isArabic ? 'الأكثر طلباً' : 'Top Choice')}
             </span>
 
             {/* Left in RTL: Rounded White Icon Button */}
             <button
               onClick={() => handleOpenDetails(course)}
-              className={`w-11 h-11 rounded-2xl bg-white dark:bg-slate-900 border ${theme.iconBoxBorder} shadow-xs flex items-center justify-center ${theme.iconColor} hover:scale-105 active:scale-95 transition-all cursor-pointer group/icon`}
+              className={`w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border ${theme.iconBoxBorder} shadow-xs flex items-center justify-center ${theme.iconColor} hover:scale-105 active:scale-95 transition-all cursor-pointer group/icon shrink-0`}
               title={isArabic ? 'معاينة وفيديو الكورس' : 'Course Video Preview'}
             >
-              <CourseCustomIcon course={course} className={`w-5 h-5 ${theme.iconColor} group-hover/icon:scale-110 transition-transform`} />
+              <CourseCustomIcon course={course} className={`w-4 h-4 sm:w-5 sm:h-5 ${theme.iconColor} group-hover/icon:scale-110 transition-transform`} />
             </button>
           </div>
 
           {/* Category Kicker */}
-          <div className={`${theme.kickerColor} text-xs font-extrabold tracking-wide mt-4 mb-1.5 transition-colors`}>
+          <div className={`${theme.kickerColor} text-[11px] sm:text-xs font-extrabold tracking-wide mt-2.5 sm:mt-4 mb-1 sm:mb-1.5 transition-colors`}>
             {course.categoryAr || (isArabic ? 'التقييم والتشخيص النمائي' : 'Developmental Assessment')}
           </div>
 
           {/* Main Course Title */}
           <h3 
             onClick={() => handleOpenDetails(course)}
-            className={`text-2xl sm:text-[25px] font-black text-slate-900 dark:text-white leading-[1.3] tracking-tight ${theme.titleHover} transition-colors cursor-pointer`}
+            className={`text-base sm:text-2xl md:text-[25px] font-black text-slate-900 dark:text-white leading-[1.3] tracking-tight ${theme.titleHover} transition-colors cursor-pointer line-clamp-2`}
           >
             {title}
           </h3>
         </div>
 
         {/* Lower Section: Pure White Body */}
-        <div className="bg-white dark:bg-[#121c22] p-6 sm:p-7 pt-5 rounded-b-[32px] flex-1 flex flex-col justify-between space-y-4">
+        <div className="bg-white dark:bg-[#121c22] p-4 sm:p-7 pt-4 sm:pt-5 rounded-b-2xl sm:rounded-b-[32px] flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
           
-          <div className="space-y-3.5">
+          <div className="space-y-2.5 sm:space-y-3.5">
             {/* Price Row: Big number + Currency + Strikethrough Original Price */}
-            <div className="flex items-baseline gap-2 pt-1">
-              <span className={`text-4xl sm:text-[44px] font-black ${theme.priceColor} tracking-tight leading-none`}>
+            <div className="flex items-baseline gap-1.5 sm:gap-2 pt-0.5 sm:pt-1">
+              <span className={`text-2xl sm:text-4xl md:text-[44px] font-black ${theme.priceColor} tracking-tight leading-none`}>
                 {course.currentPrice || course.priceDisplayAr || '650'}
               </span>
-              <span className={`text-lg font-bold ${theme.priceSub}`}>
+              <span className={`text-sm sm:text-lg font-bold ${theme.priceSub}`}>
                 {isArabic ? 'ريال' : 'SAR'}
               </span>
               {course.originalPrice && (
-                <span className="text-sm font-semibold text-slate-400 dark:text-slate-500 line-through mr-1 font-medium">
+                <span className="text-xs sm:text-sm font-semibold text-slate-400 dark:text-slate-500 line-through mr-1 font-medium">
                   {course.originalPrice} {isArabic ? 'ريال' : 'SAR'}
                 </span>
               )}
@@ -215,37 +223,37 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
 
             {/* Hours / Duration Badge */}
             <div>
-              <div className={`inline-flex items-center gap-2 py-1.5 px-3.5 rounded-xl border ${theme.hoursBg} text-xs sm:text-sm font-bold transition-colors`}>
-                <Clock className={`w-4 h-4 ${theme.hoursIconColor} shrink-0`} />
+              <div className={`inline-flex items-center gap-1.5 sm:gap-2 py-1 sm:py-1.5 px-2.5 sm:px-3.5 rounded-lg sm:rounded-xl border ${theme.hoursBg} text-[11px] sm:text-sm font-bold transition-colors`}>
+                <Clock className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${theme.hoursIconColor} shrink-0`} />
                 <span>{hoursBadge}</span>
               </div>
             </div>
 
             {/* Sub-note / Warning or Highlight Info */}
-            <div className="flex items-center gap-1.5 text-xs text-amber-800 dark:text-amber-300 font-semibold">
+            <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-amber-800 dark:text-amber-300 font-semibold">
               <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
               <span className="truncate">{course.tagHighlightAr || (isArabic ? 'شهادة إتمام معتمدة ومسار مهني' : 'Accredited Certificate')}</span>
             </div>
 
             {/* Short Description */}
-            <p className="text-xs sm:text-[13px] text-slate-600 dark:text-slate-300 leading-relaxed min-h-[36px] line-clamp-2">
+            <p className="text-[11px] sm:text-[13px] text-slate-600 dark:text-slate-300 leading-relaxed min-h-[30px] sm:min-h-[36px] line-clamp-2">
               {description}
             </p>
 
             {/* Checklist of Features (4 items) */}
-            <div className="space-y-2.5 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+            <div className="space-y-1.5 sm:space-y-2.5 pt-2 sm:pt-3 border-t border-slate-100 dark:border-slate-800/80">
               {features.slice(0, 4).map((feat, idx) => (
-                <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-[13px] text-slate-700 dark:text-slate-200 font-medium">
-                  <span className={`w-4 h-4 rounded-full ${theme.checkBg} flex items-center justify-center shrink-0 mt-0.5 transition-colors`}>
-                    <Check className="w-2.5 h-2.5 stroke-[3]" />
+                <div key={idx} className="flex items-start gap-2 text-[11px] sm:text-[13px] text-slate-700 dark:text-slate-200 font-medium">
+                  <span className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full ${theme.checkBg} flex items-center justify-center shrink-0 mt-0.5 transition-colors`}>
+                    <Check className="w-2 h-2 sm:w-2.5 sm:h-2.5 stroke-[3]" />
                   </span>
-                  <span className="leading-snug">{feat}</span>
+                  <span className="leading-snug line-clamp-1">{feat}</span>
                 </div>
               ))}
             </div>
 
             {/* Instructor & Accreditation Note */}
-            <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400 pt-1 flex items-center gap-1.5 flex-wrap">
+            <div className="text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400 pt-0.5 sm:pt-1 flex items-center gap-1.5 flex-wrap">
               <span>{instructor}</span>
               <span>·</span>
               <span>{course.accreditationBadgeAr || 'اعتماد دولي'}</span>
@@ -253,10 +261,10 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
           </div>
 
           {/* Full-Width Action Button */}
-          <div className="pt-2">
+          <div className="pt-1.5 sm:pt-2">
             <button
               onClick={() => handleOpenDetails(course)}
-              className={`w-full ${theme.buttonBg} active:scale-[0.98] text-white text-sm sm:text-base font-bold py-3.5 px-6 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center justify-center gap-2`}
+              className={`w-full ${theme.buttonBg} active:scale-[0.98] text-white text-xs sm:text-base font-bold py-2.5 sm:py-3.5 px-4 sm:px-6 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2`}
             >
               <span>{isArabic ? 'حجز الكورس' : 'Book Course'}</span>
             </button>
@@ -270,7 +278,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
   return (
     <section 
       id="courses" 
-      className="py-16 sm:py-24 bg-transparent text-slate-900 dark:text-white relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10"
+      className="py-10 sm:py-24 bg-transparent text-slate-900 dark:text-white relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10"
       dir={isArabic ? 'rtl' : 'ltr'}
     >
       {/* Background Ambience */}
@@ -359,7 +367,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
-            className={`flex gap-5 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-4 px-1 ${
+            className={`flex gap-3.5 sm:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-2 sm:py-4 px-1 ${
               isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
             }`}
             style={{ WebkitOverflowScrolling: 'touch' }}

@@ -19,6 +19,7 @@ import { saveAppointmentToFirestore } from './services/firestoreService';
 // Lazy-loaded components for optimal mobile bundle splitting and low TBT
 const SpecialistsDirectoryPage = lazy(() => import('./components/SpecialistsDirectoryPage'));
 const ServicesDirectoryPage = lazy(() => import('./components/ServicesDirectoryPage'));
+const BranchesDirectoryPage = lazy(() => import('./components/BranchesDirectoryPage'));
 const SpecialistCvModal = lazy(() => import('./components/SpecialistCvModal').then(m => ({ default: m.SpecialistCvModal })));
 const BookingModal = lazy(() => import('./components/BookingModal').then(m => ({ default: m.BookingModal })));
 const NotificationCenterModal = lazy(() => import('./components/NotificationCenterModal').then(m => ({ default: m.NotificationCenterModal })));
@@ -309,19 +310,37 @@ export default function App() {
   const [isStoreOpen, setIsStoreOpen] = useState(false);
   const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [isQuickConsultOpen, setIsQuickConsultOpen] = useState(false);
+  // Page states - Home page is always the default view on startup/load
   const [isAdminOpen, setIsAdminOpen] = useState(() => {
     return window.location.hash === '#admin';
   });
-  const [isSpecialistsPageOpen, setIsSpecialistsPageOpen] = useState(() => {
-    return window.location.hash === '#specialists-directory' || window.location.hash === '#specialists-page';
-  });
-  const [isServicesPageOpen, setIsServicesPageOpen] = useState(() => {
-    return window.location.hash === '#services-directory' || window.location.hash === '#services-page';
-  });
+  const [isSpecialistsPageOpen, setIsSpecialistsPageOpen] = useState(false);
+  const [isServicesPageOpen, setIsServicesPageOpen] = useState(false);
+  const [isBranchesPageOpen, setIsBranchesPageOpen] = useState(false);
   const [adminSession, setAdminSession] = useState<AdminUser | null>(() => getStoredAdminSession());
   const [cartCount, setCartCount] = useState(0);
   const [selectedCourseForRegistration, setSelectedCourseForRegistration] = useState<CourseItem | null>(null);
   const [isCourseRegistrationOpen, setIsCourseRegistrationOpen] = useState(false);
+
+  // Ensure default view on initial mount is strictly the Home page
+  useEffect(() => {
+    const initialHash = window.location.hash;
+    if (
+      initialHash === '#specialists-directory' || 
+      initialHash === '#specialists-page' ||
+      initialHash === '#services-directory' || 
+      initialHash === '#services-page' ||
+      initialHash === '#branches-directory' || 
+      initialHash === '#branches-page'
+    ) {
+      window.history.replaceState('', document.title, window.location.pathname + window.location.search);
+      setIsSpecialistsPageOpen(false);
+      setIsServicesPageOpen(false);
+      setIsBranchesPageOpen(false);
+    }
+    // Scroll to top of the Home page on initial load
+    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+  }, []);
 
   const handleOpenCourseRegistration = (course: CourseItem) => {
     setSelectedCourseForRegistration(course);
@@ -331,6 +350,7 @@ export default function App() {
   const handleOpenSpecialistsPage = () => {
     setIsSpecialistsPageOpen(true);
     setIsServicesPageOpen(false);
+    setIsBranchesPageOpen(false);
     window.location.hash = '#specialists-directory';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -338,18 +358,30 @@ export default function App() {
   const handleOpenServicesPage = () => {
     setIsServicesPageOpen(true);
     setIsSpecialistsPageOpen(false);
+    setIsBranchesPageOpen(false);
     window.location.hash = '#services-directory';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenBranchesPage = () => {
+    setIsBranchesPageOpen(true);
+    setIsSpecialistsPageOpen(false);
+    setIsServicesPageOpen(false);
+    window.location.hash = '#branches-directory';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToHome = () => {
     setIsSpecialistsPageOpen(false);
     setIsServicesPageOpen(false);
+    setIsBranchesPageOpen(false);
     if (
       window.location.hash === '#specialists-directory' || 
       window.location.hash === '#specialists-page' ||
       window.location.hash === '#services-directory' ||
-      window.location.hash === '#services-page'
+      window.location.hash === '#services-page' ||
+      window.location.hash === '#branches-directory' ||
+      window.location.hash === '#branches-page'
     ) {
       window.history.pushState('', document.title, window.location.pathname + window.location.search);
     }
@@ -366,6 +398,10 @@ export default function App() {
       setIsServicesPageOpen(
         window.location.hash === '#services-directory' || 
         window.location.hash === '#services-page'
+      );
+      setIsBranchesPageOpen(
+        window.location.hash === '#branches-directory' || 
+        window.location.hash === '#branches-page'
       );
     };
     const handleAuthChange = (e: any) => {
@@ -556,9 +592,11 @@ export default function App() {
         onOpenStore={() => setIsStoreOpen(true)}
         onOpenSpecialistsPage={handleOpenSpecialistsPage}
         onOpenServicesPage={handleOpenServicesPage}
+        onOpenBranchesPage={handleOpenBranchesPage}
         onGoHome={handleBackToHome}
         isSpecialistsPageOpen={isSpecialistsPageOpen}
         isServicesPageOpen={isServicesPageOpen}
+        isBranchesPageOpen={isBranchesPageOpen}
         unreadCount={unreadCount}
         cartCount={cartCount}
       />
@@ -584,6 +622,21 @@ export default function App() {
               onSelectService={handleSelectServiceForBooking}
               onSelectPackage={handleSelectPackageForBooking}
               onRegisterCourse={handleOpenCourseRegistration}
+            />
+          </Suspense>
+        ) : isBranchesPageOpen ? (
+          /* Dedicated Branches Directory Page with Cities Filter and Slider/Grid Switcher */
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-teal-500 font-bold">جاري تحميل دليل فروع مركز رابا...</div>}>
+            <BranchesDirectoryPage
+              onBackToHome={handleBackToHome}
+              onSelectBranch={(branch) => {
+                setBookingInitialNotes(`استفسار وحجز في فرع: ${branch.name} (${branch.cityNameAr})`);
+                setIsBookingOpen(true);
+              }}
+              onOpenBooking={(branchNotes) => {
+                if (branchNotes) setBookingInitialNotes(branchNotes);
+                setIsBookingOpen(true);
+              }}
             />
           </Suspense>
         ) : (
@@ -646,7 +699,7 @@ export default function App() {
             {/* 11.4. Branches Network Slider (فروع الرياض والخرج) directly above Accreditations */}
             {modules.branches && (
               <Suspense fallback={null}>
-                <BranchesSection />
+                <BranchesSection onOpenBranchesPage={handleOpenBranchesPage} />
               </Suspense>
             )}
 
@@ -705,9 +758,11 @@ export default function App() {
         onOpenBooking={handleOpenBooking}
         onOpenSpecialistsPage={handleOpenSpecialistsPage}
         onOpenServicesPage={handleOpenServicesPage}
+        onOpenBranchesPage={handleOpenBranchesPage}
         onGoHome={handleBackToHome}
         isSpecialistsPageOpen={isSpecialistsPageOpen}
         isServicesPageOpen={isServicesPageOpen}
+        isBranchesPageOpen={isBranchesPageOpen}
       />
 
       {/* Modals wrapped in Suspense for zero initial blocking time */}

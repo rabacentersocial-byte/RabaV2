@@ -61,7 +61,7 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
   return (
     <aside 
       aria-label={isArabic ? 'إجراءات التواصل السريع' : 'Quick Contact Actions'}
-      className={`fixed bottom-20 sm:bottom-6 ${isArabic ? 'left-3 sm:left-6' : 'right-3 sm:right-6'} z-40 flex flex-col items-center gap-3`}
+      className={`fixed bottom-[5.5rem] sm:bottom-6 ${isArabic ? 'left-3.5 sm:left-6' : 'right-3.5 sm:right-6'} z-40 flex flex-col items-center gap-3 transition-all duration-300`}
     >
       {/* 1. Scroll To Top Button (Appears gracefully on scroll) */}
       {showScrollTop && (

@@ -10,7 +10,10 @@ import {
   Youtube,
   Linkedin,
   MessageCircle,
-  BookOpen
+  BookOpen,
+  Smartphone,
+  Download,
+  Sparkles
 } from 'lucide-react';
 import { RabaLogo } from './RabaLogo';
 import { useLanguage } from '../context/LanguageContext';
@@ -20,6 +23,8 @@ import {
   SocialLinksSettings, 
   FooterSettings 
 } from '../data/siteCustomizer';
+import { PWAInstallModal, AppleIcon, AndroidIcon } from './PWAInstallModal';
+import { usePWAInstall } from '../hooks/usePWAInstall';
 
 interface FooterProps {
   onOpenAdmin?: () => void;
@@ -46,8 +51,11 @@ const SnapchatIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' 
 
 export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
   const { t, isArabic } = useLanguage();
+  const { isIOS } = usePWAInstall();
   const [social, setSocial] = useState<SocialLinksSettings>(() => getStoredSocialSettings());
   const [footer, setFooter] = useState<FooterSettings>(() => getStoredFooterSettings());
+  const [isPwaModalOpen, setIsPwaModalOpen] = useState(false);
+  const [pwaModalTab, setPwaModalTab] = useState<'ios' | 'android'>('android');
 
   useEffect(() => {
     const handleSocialUpdate = () => setSocial(getStoredSocialSettings());
@@ -179,6 +187,80 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                 })}
               </div>
             </div>
+
+            {/* PWA Web App Download / Add to Home Screen for Apple & Android */}
+            <div className="pt-4 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <h5 className="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <Smartphone className="w-4 h-4 text-[#00E5BE]" />
+                  <span>{isArabic ? 'تطبيق مركز رابا (Web App)' : 'Raba Center Web App'}</span>
+                </h5>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-500/15 text-teal-800 dark:text-[#00E5BE] border border-teal-500/25">
+                  {isArabic ? 'آبل وأندرويد' : 'iOS & Android'}
+                </span>
+              </div>
+
+              {/* Install Card Button */}
+              <div className="p-3 rounded-2xl bg-slate-100/90 dark:bg-white/[0.04] border border-slate-200/90 dark:border-white/10 hover:border-teal-500/50 transition-all duration-200 shadow-xs">
+                <div className="flex items-center justify-between gap-3 mb-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#00E5BE] to-teal-600 flex items-center justify-center text-slate-950 font-black shadow-xs shrink-0">
+                      <Download className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-extrabold text-slate-900 dark:text-white leading-tight">
+                        {isArabic ? 'تثبيت التطبيق على الجوال' : 'Install on Mobile Device'}
+                      </div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                        {isArabic ? 'إضافة إلى الشاشة الرئيسية كـ تطبيق' : 'Add to Home Screen as Web App'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPwaModalTab(isIOS ? 'ios' : 'android');
+                      setIsPwaModalOpen(true);
+                    }}
+                    className="px-3 py-1.5 rounded-xl bg-[#00E5BE] hover:bg-[#00c9a7] text-slate-950 text-xs font-black transition-all cursor-pointer shadow-xs active:scale-95 flex items-center gap-1 shrink-0"
+                    title={isArabic ? 'تثبيت التطبيق' : 'Install App'}
+                  >
+                    <span>{isArabic ? 'تحميل' : 'Install'}</span>
+                    <Sparkles className="w-3 h-3" />
+                  </button>
+                </div>
+
+                {/* Direct Platform Quick Badges (Apple & Android) */}
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200/70 dark:border-white/5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPwaModalTab('ios');
+                      setIsPwaModalOpen(true);
+                    }}
+                    className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 text-[11px] font-bold transition-all cursor-pointer active:scale-95"
+                    aria-label="Apple iOS Web App"
+                  >
+                    <AppleIcon className="w-3.5 h-3.5 text-slate-800 dark:text-white" />
+                    <span>{isArabic ? 'جوالات آبل (iOS)' : 'Apple (iOS)'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPwaModalTab('android');
+                      setIsPwaModalOpen(true);
+                    }}
+                    className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 text-[11px] font-bold transition-all cursor-pointer active:scale-95"
+                    aria-label="Android Web App"
+                  >
+                    <AndroidIcon className="w-3.5 h-3.5 text-emerald-600 dark:text-[#00E5BE]" />
+                    <span>{isArabic ? 'أندرويد (Android)' : 'Android'}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Col 2: Services & Blog Quick Links */}
@@ -283,6 +365,16 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                 <span>{isArabic ? 'لوحة تحكم المنظومة (الإدارة)' : 'Staff & Admin Portal'}</span>
               </button>
             )}
+            <button
+              onClick={() => {
+                setPwaModalTab(isIOS ? 'ios' : 'android');
+                setIsPwaModalOpen(true);
+              }}
+              className="text-teal-700 dark:text-[#00E5BE] hover:underline font-bold flex items-center gap-1.5 cursor-pointer"
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+              <span>{isArabic ? 'تثبيت تطبيق الويب (Web App)' : 'Install Web App'}</span>
+            </button>
           </div>
           
           <button
@@ -296,6 +388,13 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
         </div>
 
       </div>
+
+      {/* PWA Install Guide Modal for Apple & Android */}
+      <PWAInstallModal
+        isOpen={isPwaModalOpen}
+        onClose={() => setIsPwaModalOpen(false)}
+        defaultTab={pwaModalTab}
+      />
     </footer>
   );
 };

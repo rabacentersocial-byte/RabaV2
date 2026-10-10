@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { 
   Search, 
-  Filter, 
   SlidersHorizontal, 
+  LayoutGrid, 
   Sparkles, 
   Puzzle, 
   Hand, 
@@ -21,15 +21,13 @@ import {
   Check, 
   X, 
   Home, 
-  PhoneCall, 
   MessageCircle, 
-  Tag, 
   Sun, 
   ShieldCheck, 
-  Zap, 
   BookOpen, 
   Heart,
-  ChevronDown
+  ChevronDown,
+  RotateCcw
 } from 'lucide-react';
 import { ServiceItem, TherapyPackage } from '../types';
 import { CourseItem, getStoredCoursesData } from '../data/coursesData';
@@ -106,20 +104,49 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
     };
   }, []);
 
-  // Filter States
+  // Top Global Search & Tab Filters
   const [activeTab, setActiveTab] = useState<'all' | 'programs' | 'courses' | 'packages'>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [subFilter, setSubFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'recommended' | 'priceAsc' | 'priceDesc' | 'name'>('recommended');
   const [isSortOpen, setIsSortOpen] = useState(false);
 
-  // Reset subfilter when switching main tab
-  const handleTabChange = (tab: 'all' | 'programs' | 'courses' | 'packages') => {
-    setActiveTab(tab);
-    setSubFilter('all');
+  // Default view mode per section:
+  // On Mobile (< 768px): 'slider'
+  // On Desktop (>= 768px): 'grid'
+  const getInitialViewMode = (): 'slider' | 'grid' => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768 ? 'slider' : 'grid';
+    }
+    return 'grid';
   };
 
-  // Category counts
+  const [programsViewMode, setProgramsViewMode] = useState<'slider' | 'grid'>(getInitialViewMode);
+  const [coursesViewMode, setCoursesViewMode] = useState<'slider' | 'grid'>(getInitialViewMode);
+  const [packagesViewMode, setPackagesViewMode] = useState<'slider' | 'grid'>(getInitialViewMode);
+
+  // Dedicated filter for each part (كل جزء يشمل فلتر مخصص له)
+  const [programsFilter, setProgramsFilter] = useState<string>('all');
+  const [coursesFilter, setCoursesFilter] = useState<string>('all');
+  const [packagesFilter, setPackagesFilter] = useState<string>('all');
+
+  // Slider refs for horizontal scrolling
+  const programsSliderRef = useRef<HTMLDivElement>(null);
+  const coursesSliderRef = useRef<HTMLDivElement>(null);
+  const packagesSliderRef = useRef<HTMLDivElement>(null);
+
+  // Scroll function for sliders with RTL support
+  const handleScrollSlider = (ref: React.RefObject<HTMLDivElement | null>, direction: 'prev' | 'next') => {
+    const el = ref.current;
+    if (!el) return;
+    const cardStep = Math.min(el.clientWidth * 0.85, 360);
+    // In RTL, moving forward ('next') scrolls leftwards (negative), 'prev' scrolls rightwards (positive)
+    const offset = isArabic 
+      ? (direction === 'next' ? -cardStep : cardStep)
+      : (direction === 'next' ? cardStep : -cardStep);
+    el.scrollBy({ left: offset, behavior: 'smooth' });
+  };
+
+  // Active courses list
   const activeCourses = useMemo(() => courses.filter(c => c.isActive !== false), [courses]);
 
   // Visual helper for services
@@ -225,9 +252,11 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
     }
   };
 
-  // Filtering Logic
+  // 1. FILTERING REHAB PROGRAMS (برامج التأهيل)
   const filteredServices = useMemo(() => {
     let result = services;
+
+    // Search filter
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
       result = result.filter(s => 
@@ -237,14 +266,28 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
         (s.categoryAr && s.categoryAr.toLowerCase().includes(q))
       );
     }
-    if (subFilter !== 'all' && (activeTab === 'programs' || activeTab === 'all')) {
-      result = result.filter(s => s.category === subFilter);
-    }
-    return result;
-  }, [services, searchQuery, subFilter, activeTab]);
 
+    // Dedicated filter for Programs
+    if (programsFilter !== 'all') {
+      result = result.filter(s => {
+        if (programsFilter === 'aba') return s.category === 'aba' || s.id === 'srv-aba';
+        if (programsFilter === 'speech') return s.category === 'speech' || s.id === 'srv-speech';
+        if (programsFilter === 'occupational') return s.category === 'occupational' || s.id === 'srv-occupational';
+        if (programsFilter === 'sensory') return s.category === 'sensory' || s.id === 'srv-sensory';
+        if (programsFilter === 'learning') return s.category === 'learning' || s.id === 'srv-learning-difficulties';
+        if (programsFilter === 'psychological') return s.category === 'psychological' || s.id === 'srv-psychological';
+        return s.category === programsFilter;
+      });
+    }
+
+    return result;
+  }, [services, searchQuery, programsFilter]);
+
+  // 2. FILTERING COURSES (الكورسات والدورات)
   const filteredCourses = useMemo(() => {
     let result = activeCourses;
+
+    // Search filter
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
       result = result.filter(c => 
@@ -255,20 +298,26 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
         (c.ribbonTagAr && c.ribbonTagAr.toLowerCase().includes(q))
       );
     }
-    if (subFilter !== 'all' && activeTab === 'courses') {
+
+    // Dedicated filter for Courses
+    if (coursesFilter !== 'all') {
       result = result.filter(c => {
-        if (subFilter === 'qba') return c.id === 'course-qba' || c.titleAr.includes('QBA');
-        if (subFilter === 'abat') return c.id === 'course-abat' || c.titleAr.includes('ABAT');
-        if (subFilter === 'cas') return c.id === 'course-cas' || c.titleAr.includes('CAS') || c.categoryAr.includes('توحد');
-        if (subFilter === 'parents') return c.targetAudienceAr?.includes('أسر') || c.categoryAr.includes('أسر');
+        if (coursesFilter === 'qba') return c.id === 'course-qba' || c.titleAr.includes('QBA') || c.shortTitle.includes('QBA');
+        if (coursesFilter === 'abat') return c.id === 'course-abat' || c.titleAr.includes('ABAT') || c.shortTitle.includes('ABAT');
+        if (coursesFilter === 'cas') return c.id === 'course-autism-inclusion' || c.categoryAr?.includes('توحد') || c.titleAr.includes('توحد');
+        if (coursesFilter === 'parents') return c.targetAudienceAr?.includes('أسر') || c.categoryAr?.includes('أسر') || c.targetAudienceAr?.includes('أولياء');
         return true;
       });
     }
-    return result;
-  }, [activeCourses, searchQuery, subFilter, activeTab]);
 
+    return result;
+  }, [activeCourses, searchQuery, coursesFilter]);
+
+  // 3. FILTERING PACKAGES (الباقات والأسعار)
   const filteredPackages = useMemo(() => {
     let result = packages;
+
+    // Search filter
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
       result = result.filter(p => 
@@ -278,11 +327,21 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
         (p.features && p.features.some(f => f.toLowerCase().includes(q)))
       );
     }
-    if (subFilter !== 'all' && (activeTab === 'packages' || activeTab === 'all')) {
-      result = result.filter(p => p.category === subFilter);
+
+    // Dedicated filter for Packages
+    if (packagesFilter !== 'all') {
+      result = result.filter(p => {
+        if (packagesFilter === 'summer') return p.isSummer || p.category === 'summer' || (p.badge && p.badge.includes('الصيف'));
+        if (packagesFilter === 'aba') return p.category === 'aba' || p.name.toLowerCase().includes('aba') || p.tagline?.toLowerCase().includes('aba') || (p.categoryCode && p.categoryCode.includes('ABA'));
+        if (packagesFilter === 'speech') return p.category === 'speech' || p.name.includes('النطق') || p.name.includes('تخاطب');
+        if (packagesFilter === 'sensory') return p.category === 'sensory' || p.name.includes('الحسي') || p.name.includes('الوظيفي') || p.tagline?.includes('حسي');
+        if (packagesFilter === 'assessment') return p.category === 'assessment' || p.name.includes('تقييم') || p.name.includes('تشخيص');
+        return p.category === packagesFilter;
+      });
     }
+
     return result;
-  }, [packages, searchQuery, subFilter, activeTab]);
+  }, [packages, searchQuery, packagesFilter]);
 
   // Overall results count
   const totalResultsCount = useMemo(() => {
@@ -408,7 +467,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
         </div>
       </div>
 
-      {/* 2. STICKY CONTROLS & FILTER BAR */}
+      {/* 2. STICKY TOP CONTROLS BAR (SEARCH + SECTION SWITCHER) */}
       <div className="sticky top-16 z-30 bg-white/95 dark:bg-[#071D18]/95 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 shadow-xs py-3.5 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-3.5">
           
@@ -437,7 +496,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
               )}
             </div>
 
-            {/* Right Controls: Sort Dropdown & Clear */}
+            {/* Right Controls: Sort & Quick Reset */}
             <div className="flex items-center gap-2 shrink-0 justify-end">
               
               {/* Sort Menu */}
@@ -478,15 +537,18 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                 )}
               </div>
 
-              {(searchQuery || subFilter !== 'all') && (
+              {/* Global Reset if filters/search active */}
+              {(searchQuery || programsFilter !== 'all' || coursesFilter !== 'all' || packagesFilter !== 'all') && (
                 <button
                   onClick={() => {
                     setSearchQuery('');
-                    setSubFilter('all');
+                    setProgramsFilter('all');
+                    setCoursesFilter('all');
+                    setPackagesFilter('all');
                   }}
                   className="flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <RotateCcw className="w-3.5 h-3.5" />
                   <span>{isArabic ? 'مسح الفلاتر' : 'Reset'}</span>
                 </button>
               )}
@@ -495,7 +557,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
 
           </div>
 
-          {/* Main Section Filter Tabs (الكل · برامج التأهيل · الكورسات والدورات · الباقات والأسعار) */}
+          {/* Section Navigation Tabs: (الكل · برامج التأهيل · الكورسات والدورات · الباقات والأسعار) */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
             {[
               { id: 'all', labelAr: 'الكل (جميع الأقسام)', labelEn: 'All Services & Plans', icon: Sparkles, count: services.length + activeCourses.length + packages.length },
@@ -508,7 +570,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
               return (
                 <button
                   key={tab.id}
-                  onClick={() => handleTabChange(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as any)}
                   className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer border ${
                     isActive
                       ? 'bg-gradient-to-r from-[#0B3B36] via-[#0D4D46] to-[#00E5BE] text-white border-transparent shadow-md shadow-teal-950/20 scale-[1.02]'
@@ -527,76 +589,10 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
             })}
           </div>
 
-          {/* Contextual Sub-Filters Row based on active tab */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar pt-1">
-            {activeTab === 'programs' && [
-              { id: 'all', labelAr: 'جميع برامج التأهيل', labelEn: 'All Programs' },
-              { id: 'aba', labelAr: 'تحليل السلوك التطبيقي ABA', labelEn: 'ABA Therapy' },
-              { id: 'speech', labelAr: 'النطق والتخاطب', labelEn: 'Speech & Language' },
-              { id: 'occupational', labelAr: 'العلاج الوظيفي', labelEn: 'Occupational Therapy' },
-              { id: 'sensory', labelAr: 'التكامل الحسي', labelEn: 'Sensory Integration' },
-              { id: 'learning', labelAr: 'صعوبات التعلم والواجبات', labelEn: 'Learning Support' },
-              { id: 'psychological', labelAr: 'التشخيص والعلاج النفسي', labelEn: 'Psychological Care' },
-            ].map(f => (
-              <button
-                key={f.id}
-                onClick={() => setSubFilter(f.id)}
-                className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                  subFilter === f.id
-                    ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 font-black shadow-xs'
-                    : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-                }`}
-              >
-                {isArabic ? f.labelAr : f.labelEn}
-              </button>
-            ))}
-
-            {activeTab === 'courses' && [
-              { id: 'all', labelAr: 'جميع الدورات التدريبية', labelEn: 'All Courses' },
-              { id: 'qba', labelAr: 'محلل سلوكي مؤهل QBA', labelEn: 'QBA Course' },
-              { id: 'abat', labelAr: 'فني سلوك تطبيقي معتمد ABAT', labelEn: 'ABAT Course' },
-              { id: 'cas', labelAr: 'أخصائي توحد معتمد CAS', labelEn: 'Autism Specialist' },
-              { id: 'parents', labelAr: 'برامج أولياء الأمور والأسرة', labelEn: 'Parent Training' },
-            ].map(f => (
-              <button
-                key={f.id}
-                onClick={() => setSubFilter(f.id)}
-                className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                  subFilter === f.id
-                    ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 font-black shadow-xs'
-                    : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-                }`}
-              >
-                {isArabic ? f.labelAr : f.labelEn}
-              </button>
-            ))}
-
-            {activeTab === 'packages' && [
-              { id: 'all', labelAr: 'جميع الباقات', labelEn: 'All Packages' },
-              { id: 'summer', labelAr: 'باقات الصيف ☀️', labelEn: 'Summer Packages' },
-              { id: 'assessment', labelAr: 'التقييم والتشخيص', labelEn: 'Assessment & Diagnosis' },
-              { id: 'aba', labelAr: 'باقات ABA المكثفة', labelEn: 'ABA Packages' },
-              { id: 'speech', labelAr: 'النطق والتخاطب', labelEn: 'Speech Packages' },
-              { id: 'sensory', labelAr: 'العلاج الوظيفي والحسي', labelEn: 'Sensory & OT' },
-            ].map(f => (
-              <button
-                key={f.id}
-                onClick={() => setSubFilter(f.id)}
-                className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                  subFilter === f.id
-                    ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 font-black shadow-xs'
-                    : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-                }`}
-              >
-                {isArabic ? f.labelAr : f.labelEn}
-              </button>
-            ))}
-          </div>
-
         </div>
       </div>
 
-      {/* 3. MAIN CONTENT: ORGANIZED GRID LAYOUT (آلية عرض شبكة متقنة) */}
+      {/* 3. MAIN CONTENT: ORGANIZED SECTIONS (EACH WITH ITS OWN DEDICATED FILTER AND SLIDER/GRID SWITCH) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         
         {/* Results Counter Header */}
@@ -607,12 +603,12 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
             <span>{isArabic ? 'عنصر في الدليل' : 'items'}</span>
           </div>
 
-          <div className="text-xs font-semibold text-slate-400">
-            {isArabic ? 'عرض شبكة منظم ومباشر' : 'Structured Grid View'}
+          <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
+            <span>{isArabic ? 'العرض الافتراضي للجوال: سلايدر · للكمبيوتر: شبكة' : 'Mobile Default: Slider · Desktop: Grid'}</span>
           </div>
         </div>
 
-        {/* Empty State */}
+        {/* Global Empty State */}
         {totalResultsCount === 0 && (
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/10 p-12 text-center max-w-lg mx-auto shadow-sm my-10">
             <div className="w-16 h-16 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-[#0B3B36] dark:text-[#00E5BE] flex items-center justify-center mx-auto mb-4">
@@ -627,7 +623,9 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
             <button
               onClick={() => {
                 setSearchQuery('');
-                setSubFilter('all');
+                setProgramsFilter('all');
+                setCoursesFilter('all');
+                setPackagesFilter('all');
                 setActiveTab('all');
               }}
               className="px-6 py-2.5 rounded-xl bg-[#0B3B36] hover:bg-[#0D4D46] text-white font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer"
@@ -638,448 +636,820 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
         )}
 
         {/* ========================================================================= */}
-        {/* PART 1: REHABILITATION PROGRAMS GRID (برامج التأهيل التخصصية)            */}
+        {/* PART 1: REHABILITATION PROGRAMS (الجزء الأول: برامج التأهيل التخصصية)      */}
         {/* ========================================================================= */}
-        {(activeTab === 'all' || activeTab === 'programs') && filteredServices.length > 0 && (
-          <section className="mb-14">
+        {(activeTab === 'all' || activeTab === 'programs') && (
+          <section className="mb-16 bg-white/60 dark:bg-slate-900/40 rounded-3xl p-4 sm:p-7 border border-slate-200/80 dark:border-white/5 shadow-xs">
             
-            {/* Section Header */}
-            <div className="flex items-center justify-between mb-6">
+            {/* 1.1 Section Header & Controls (View mode switch + Slider Arrows) */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 pb-4 border-b border-slate-200/60 dark:border-white/10">
+              
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-                  <Puzzle className="w-5 h-5 stroke-[2.2]" />
+                <div className="w-11 h-11 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                  <Puzzle className="w-6 h-6 stroke-[2.2]" />
                 </div>
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-                    {isArabic ? 'برامج التأهيل التخصصية' : 'Rehabilitation Programs'}
-                  </h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                      {isArabic ? 'برامج التأهيل التخصصية' : 'Rehabilitation Programs'}
+                    </h2>
+                    <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                      {filteredServices.length} {isArabic ? 'برامج' : 'programs'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                     {isArabic ? 'جلسات وخطط تدخل علاجية معتمدة وفق أحدث المقاييس الإكلينيكية' : 'Clinical intervention and developmental therapy plans'}
                   </p>
                 </div>
               </div>
 
-              <span className="text-xs font-black px-3 py-1 rounded-full bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300">
-                {filteredServices.length} {isArabic ? 'برامج' : 'programs'}
-              </span>
+              {/* View Switcher: Slider vs Grid + Scroll Arrows */}
+              <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                
+                {/* Navigation arrows when in slider mode */}
+                {programsViewMode === 'slider' && filteredServices.length > 0 && (
+                  <div className="flex items-center gap-1 bg-slate-100 dark:bg-white/5 p-1 rounded-xl border border-slate-200 dark:border-white/10">
+                    <button
+                      onClick={() => handleScrollSlider(programsSliderRef, 'prev')}
+                      aria-label={isArabic ? 'السابق' : 'Previous'}
+                      className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+                    >
+                      {isArabic ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                    </button>
+                    <button
+                      onClick={() => handleScrollSlider(programsSliderRef, 'next')}
+                      aria-label={isArabic ? 'التالي' : 'Next'}
+                      className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+                    >
+                      {isArabic ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                    </button>
+                  </div>
+                )}
+
+                {/* Segmented Toggle: Slider vs Grid */}
+                <div className="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
+                  <button
+                    onClick={() => setProgramsViewMode('slider')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                      programsViewMode === 'slider'
+                        ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-xs'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <SlidersHorizontal className="w-3.5 h-3.5" />
+                    <span>{isArabic ? 'سلايدر' : 'Slider'}</span>
+                  </button>
+                  <button
+                    onClick={() => setProgramsViewMode('grid')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                      programsViewMode === 'grid'
+                        ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-xs'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                    <span>{isArabic ? 'شبكة' : 'Grid'}</span>
+                  </button>
+                </div>
+
+              </div>
+
             </div>
 
-            {/* Grid Container */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredServices.map((service) => {
-                const visual = getServiceVisuals(service.id);
-                const isFav = !!favorites[service.id];
+            {/* 1.2 DEDICATED FILTER FOR PROGRAMS (فلتر مخصص لقسم البرامج) */}
+            <div className="mb-6">
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+                {[
+                  { id: 'all', labelAr: 'جميع برامج التأهيل', labelEn: 'All Programs', count: services.length },
+                  { id: 'aba', labelAr: 'تحليل السلوك التطبيقي ABA', labelEn: 'ABA Therapy', count: services.filter(s => s.category === 'aba' || s.id === 'srv-aba').length },
+                  { id: 'speech', labelAr: 'النطق والتخاطب', labelEn: 'Speech & Language', count: services.filter(s => s.category === 'speech' || s.id === 'srv-speech').length },
+                  { id: 'occupational', labelAr: 'العلاج الوظيفي', labelEn: 'Occupational Therapy', count: services.filter(s => s.category === 'occupational' || s.id === 'srv-occupational').length },
+                  { id: 'sensory', labelAr: 'التكامل الحسي', labelEn: 'Sensory Integration', count: services.filter(s => s.category === 'sensory' || s.id === 'srv-sensory').length },
+                  { id: 'learning', labelAr: 'صعوبات التعلم والواجبات', labelEn: 'Learning Support', count: services.filter(s => s.category === 'learning' || s.id === 'srv-learning-difficulties').length },
+                  { id: 'psychological', labelAr: 'التشخيص والعلاج النفسي', labelEn: 'Psychological Care', count: services.filter(s => s.category === 'psychological' || s.id === 'srv-psychological').length },
+                ].map(f => {
+                  const isActive = programsFilter === f.id;
+                  return (
+                    <button
+                      key={f.id}
+                      onClick={() => setProgramsFilter(f.id)}
+                      className={`shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                        isActive
+                          ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 font-black shadow-xs ring-2 ring-amber-500/40'
+                          : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10'
+                      }`}
+                    >
+                      <span>{isArabic ? f.labelAr : f.labelEn}</span>
+                      <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                        isActive ? 'bg-white/25 text-white dark:text-slate-950' : 'bg-slate-200 dark:bg-white/10 text-slate-500'
+                      }`}>
+                        {f.count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
-                return (
-                  <div
-                    key={service.id}
-                    className={`bg-white dark:bg-slate-900 rounded-[28px] overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${visual.colorClassHover}`}
-                  >
-                    {/* Top Slim Accent Strip in Service Brand Color */}
-                    <div className={`h-2 w-full ${visual.colorClass}`} />
+            {/* 1.3 Programs Empty State */}
+            {filteredServices.length === 0 && (
+              <div className="p-8 text-center bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-dashed border-slate-300 dark:border-white/10">
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-3">
+                  {isArabic ? 'لا توجد برامج تأهيل مطابقة لهذا الفلتر' : 'No rehab programs match this filter'}
+                </p>
+                <button
+                  onClick={() => setProgramsFilter('all')}
+                  className="px-4 py-1.5 rounded-xl bg-amber-500 text-white font-bold text-xs hover:bg-amber-600 transition-colors cursor-pointer"
+                >
+                  {isArabic ? 'إظهار كافة برامج التأهيل' : 'Show All Programs'}
+                </button>
+              </div>
+            )}
 
-                    {/* Header: Custom Vector Icon Container (Zero Photography) */}
-                    <div className={`p-6 pb-5 ${visual.lightBg} border-b ${visual.accentBorder} relative transition-colors`}>
-                      <div className="flex items-center justify-between gap-2 mb-4">
-                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-black ${visual.colorClass} text-white shadow-xs`}>
-                          {visual.badgeText || (isArabic ? service.categoryAr : service.categoryEn)}
-                        </span>
+            {/* 1.4 Programs Content Container (Slider or Grid) */}
+            {filteredServices.length > 0 && (
+              <div
+                ref={programsSliderRef}
+                className={
+                  programsViewMode === 'slider'
+                    ? "flex overflow-x-auto gap-4 sm:gap-6 pb-4 pt-1 snap-x snap-mandatory scroll-smooth no-scrollbar -mx-2 px-2 sm:mx-0 sm:px-0"
+                    : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                }
+              >
+                {filteredServices.map((service) => {
+                  const visual = getServiceVisuals(service.id);
+                  const isFav = !!favorites[service.id];
 
-                        <button
-                          onClick={(e) => toggleFavorite(service.id, e)}
-                          aria-label={isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
-                          className="w-8 h-8 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-xs flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
-                        >
-                          <Heart className={`w-4 h-4 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
-                        </button>
-                      </div>
+                  return (
+                    <div
+                      key={service.id}
+                      className={`bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[28px] overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${visual.colorClassHover} ${
+                        programsViewMode === 'slider'
+                          ? "w-[78vw] min-w-[270px] max-w-[315px] sm:w-[350px] sm:max-w-none md:w-[370px] shrink-0 snap-start"
+                          : ""
+                      }`}
+                    >
+                      {/* Top Accent Strip */}
+                      <div className={`h-1.5 sm:h-2 w-full ${visual.colorClass}`} />
 
-                      <div className="flex items-center gap-4">
-                        <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl ${visual.colorClass} text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform shrink-0`}>
-                          {visual.icon}
+                      {/* Header */}
+                      <div className={`p-4 sm:p-6 pb-3.5 sm:pb-5 ${visual.lightBg} border-b ${visual.accentBorder} relative transition-colors`}>
+                        <div className="flex items-center justify-between gap-2 mb-2.5 sm:mb-4">
+                          <span className={`inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[11px] sm:text-xs font-black ${visual.colorClass} text-white shadow-xs`}>
+                            {visual.badgeText || (isArabic ? service.categoryAr : service.categoryEn)}
+                          </span>
+
+                          <button
+                            onClick={(e) => toggleFavorite(service.id, e)}
+                            aria-label={isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
+                            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-xs flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
+                          >
+                            <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
+                          </button>
                         </div>
 
-                        <div className="min-w-0 flex-1">
-                          <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-tight group-hover:text-[#0B3B36] dark:group-hover:text-[#00E5BE] transition-colors">
-                            {isArabic ? service.title : (service.titleEn || service.title)}
-                          </h3>
-                          {service.titleEn && isArabic && (
-                            <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 block mt-0.5" dir="ltr">
-                              {service.titleEn}
+                        <div className="flex items-center gap-3 sm:gap-4">
+                          <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl ${visual.colorClass} text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform shrink-0`}>
+                            {visual.icon}
+                          </div>
+
+                          <div className="min-w-0 flex-1">
+                            <h3 className="text-base sm:text-xl font-black text-slate-900 dark:text-white leading-tight group-hover:text-[#0B3B36] dark:group-hover:text-[#00E5BE] transition-colors">
+                              {isArabic ? service.title : (service.titleEn || service.title)}
+                            </h3>
+                            {service.titleEn && isArabic && (
+                              <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 dark:text-slate-500 block mt-0.5 truncate" dir="ltr">
+                                {service.titleEn}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Card Body */}
+                      <div className="p-4 sm:p-6 pt-3.5 sm:pt-5 flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
+                        <div className="space-y-2.5 sm:space-y-3.5">
+                          
+                          {/* Clinical Purpose */}
+                          <div className={`p-2.5 sm:p-3 rounded-xl sm:rounded-2xl ${visual.lightBg} border ${visual.accentBorder}`}>
+                            <p className={`text-[11px] sm:text-sm font-bold ${visual.textAccent} leading-relaxed`}>
+                              {isArabic ? (visual.flyerText || service.description) : (service.descriptionEn || service.description)}
+                            </p>
+                          </div>
+
+                          {/* Key Outcomes */}
+                          <div className="space-y-1.5 sm:space-y-2 pt-0.5">
+                            <span className="text-[10px] sm:text-[11px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">
+                              {isArabic ? 'أبرز مخرجات البرنامج:' : 'Key Outcomes:'}
                             </span>
+                            {(isArabic ? service.benefits : (service.benefitsEn || service.benefits)).slice(0, 3).map((benefit, bIdx) => (
+                              <div key={bIdx} className="flex items-start gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-[#00E5BE] shrink-0 mt-0.5 stroke-[2.5]" />
+                                <span className="line-clamp-2 leading-relaxed">{benefit}</span>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Target Age */}
+                          <div className="pt-1 flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">
+                            <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 shrink-0" />
+                            <span className="truncate">{isArabic ? service.targetAges : (service.targetAgesEn || service.targetAges)}</span>
+                          </div>
+
+                          {/* Price */}
+                          {(service.sessionPrice || service.assessmentPrice || service.priceDisplayAr) && (
+                            <div className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-teal-50/70 dark:bg-teal-950/20 border border-teal-200/60 dark:border-teal-800/30 flex items-center justify-between text-[11px] sm:text-xs">
+                              <span className="font-bold text-teal-800 dark:text-teal-200">
+                                {service.sessionPrice ? (isArabic ? 'سعر الجلسة العلاجية:' : 'Session Rate:') : (isArabic ? 'التقييم الأولي:' : 'Evaluation:')}
+                              </span>
+                              <span className="font-black text-[#0B3B36] dark:text-[#00E5BE]">
+                                {service.sessionPrice ? `${service.sessionPrice} ${isArabic ? 'ر.س' : 'SAR'}` : (service.priceDisplayAr || `${service.assessmentPrice} ${isArabic ? 'ر.س' : 'SAR'}`)}
+                              </span>
+                            </div>
                           )}
                         </div>
+
+                        {/* Actions */}
+                        <div className="pt-3 sm:pt-4 border-t border-slate-100 dark:border-white/10 space-y-2">
+                          <button
+                            onClick={() => onSelectService(service)}
+                            className={`w-full py-2.5 sm:py-3 px-3 sm:px-4 ${visual.colorClass} hover:brightness-105 text-white font-black rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-sm active:scale-95`}
+                          >
+                            <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                            <span>{isArabic ? 'احجز تقييم البرنامج' : 'Book Evaluation Session'}</span>
+                            {isArabic ? <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+                          </button>
+
+                          <button
+                            onClick={() => openWhatsAppInquiry(service.title)}
+                            className="w-full py-2 sm:py-2.5 px-3 sm:px-4 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-[11px] sm:text-xs flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                          >
+                            <MessageCircle className="w-3.5 h-3.5 text-emerald-500" />
+                            <span>{isArabic ? 'استفسار عبر واتساب' : 'Inquire via WhatsApp'}</span>
+                          </button>
+                        </div>
+
                       </div>
                     </div>
+                  );
+                })}
+              </div>
+            )}
 
-                    {/* Card Body */}
-                    <div className="p-6 pt-5 flex-1 flex flex-col justify-between space-y-4">
-                      <div className="space-y-3.5">
-                        
-                        {/* Clinical Purpose Highlight Box */}
-                        <div className={`p-3 rounded-2xl ${visual.lightBg} border ${visual.accentBorder}`}>
-                          <p className={`text-xs sm:text-sm font-bold ${visual.textAccent} leading-relaxed`}>
-                            {isArabic ? (visual.flyerText || service.description) : (service.descriptionEn || service.description)}
-                          </p>
-                        </div>
+            {/* Slider visual hint on mobile when in slider mode */}
+            {programsViewMode === 'slider' && filteredServices.length > 1 && (
+              <div className="mt-3 flex items-center justify-center gap-1.5 text-[11px] font-bold text-slate-400 sm:hidden">
+                <span>{isArabic ? 'اسحب لليمين واليسار للتنقل بين البرامج' : 'Swipe left/right to view programs'}</span>
+              </div>
+            )}
 
-                        {/* Key Clinical Outcomes Checklist */}
-                        <div className="space-y-2 pt-1">
-                          <span className="text-[11px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">
-                            {isArabic ? 'أبرز مخرجات البرنامج:' : 'Key Outcomes:'}
-                          </span>
-                          {(isArabic ? service.benefits : (service.benefitsEn || service.benefits)).slice(0, 3).map((benefit, bIdx) => (
-                            <div key={bIdx} className="flex items-start gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
-                              <Check className="w-4 h-4 text-emerald-600 dark:text-[#00E5BE] shrink-0 mt-0.5 stroke-[2.5]" />
-                              <span className="line-clamp-2 leading-relaxed">{benefit}</span>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Target Age Metadata */}
-                        <div className="pt-2 flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                          <Users className="w-4 h-4 text-amber-500 shrink-0" />
-                          <span>{isArabic ? service.targetAges : (service.targetAgesEn || service.targetAges)}</span>
-                        </div>
-
-                        {/* Price metadata if configured */}
-                        {(service.sessionPrice || service.assessmentPrice || service.priceDisplayAr) && (
-                          <div className="p-2.5 rounded-xl bg-teal-50/70 dark:bg-teal-950/20 border border-teal-200/60 dark:border-teal-800/30 flex items-center justify-between text-xs">
-                            <span className="font-bold text-teal-800 dark:text-teal-200">
-                              {service.sessionPrice ? (isArabic ? 'سعر الجلسة العلاجية:' : 'Session Rate:') : (isArabic ? 'التقييم الأولي:' : 'Evaluation:')}
-                            </span>
-                            <span className="font-black text-[#0B3B36] dark:text-[#00E5BE]">
-                              {service.sessionPrice ? `${service.sessionPrice} ${isArabic ? 'ر.س' : 'SAR'}` : (service.priceDisplayAr || `${service.assessmentPrice} ${isArabic ? 'ر.س' : 'SAR'}`)}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="pt-4 border-t border-slate-100 dark:border-white/10 space-y-2">
-                        <button
-                          onClick={() => onSelectService(service)}
-                          className={`w-full py-3 px-4 ${visual.colorClass} hover:brightness-105 text-white font-black rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-sm active:scale-95`}
-                        >
-                          <Calendar className="w-4 h-4" />
-                          <span>{isArabic ? 'احجز تقييم البرنامج' : 'Book Evaluation Session'}</span>
-                          {isArabic ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
-                        </button>
-
-                        <button
-                          onClick={() => openWhatsAppInquiry(service.title)}
-                          className="w-full py-2.5 px-4 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer transition-colors"
-                        >
-                          <MessageCircle className="w-3.5 h-3.5 text-emerald-500" />
-                          <span>{isArabic ? 'استفسار عبر واتساب' : 'Inquire via WhatsApp'}</span>
-                        </button>
-                      </div>
-
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
           </section>
         )}
 
         {/* ========================================================================= */}
-        {/* PART 2: COURSES & WORKSHOPS GRID (الكورسات والدورات التدريبية)            */}
+        {/* PART 2: COURSES & WORKSHOPS (الجزء الثاني: الكورسات والدورات التدريبية)   */}
         {/* ========================================================================= */}
-        {(activeTab === 'all' || activeTab === 'courses') && filteredCourses.length > 0 && (
-          <section className="mb-14">
+        {(activeTab === 'all' || activeTab === 'courses') && (
+          <section className="mb-16 bg-white/60 dark:bg-slate-900/40 rounded-3xl p-4 sm:p-7 border border-slate-200/80 dark:border-white/5 shadow-xs">
             
-            {/* Section Header */}
-            <div className="flex items-center justify-between mb-6">
+            {/* 2.1 Section Header & Controls */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 pb-4 border-b border-slate-200/60 dark:border-white/10">
+              
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-teal-500/10 text-[#00E5BE] flex items-center justify-center">
-                  <GraduationCap className="w-5 h-5 stroke-[2.2]" />
+                <div className="w-11 h-11 rounded-2xl bg-teal-500/10 text-[#00E5BE] flex items-center justify-center shrink-0">
+                  <GraduationCap className="w-6 h-6 stroke-[2.2]" />
                 </div>
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-                    {isArabic ? 'الكورسات والدورات التدريبية المعتمدة' : 'Accredited Training Courses'}
-                  </h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                      {isArabic ? 'الكورسات والدورات التدريبية المعتمدة' : 'Accredited Training Courses'}
+                    </h2>
+                    <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-teal-500/10 text-[#00E5BE] border border-[#00E5BE]/20">
+                      {filteredCourses.length} {isArabic ? 'دورات' : 'courses'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                     {isArabic ? 'برامج مهنية معتمدة من البورد الدولي QABA وIBCCES للمتخصصين والأسر' : 'International board certified qualifications for practitioners and families'}
                   </p>
                 </div>
               </div>
 
-              <span className="text-xs font-black px-3 py-1 rounded-full bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300">
-                {filteredCourses.length} {isArabic ? 'دورات' : 'courses'}
-              </span>
-            </div>
-
-            {/* Grid Container */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredCourses.map((course) => {
-                const isFav = !!favorites[course.id];
-                const title = isArabic ? course.titleAr : course.titleEn;
-                const ribbon = isArabic ? course.ribbonTagAr : course.ribbonTagEn;
-                const hoursBadge = isArabic ? course.hoursBadgeAr : course.hoursBadgeEn;
-                const price = isArabic ? course.priceDisplayAr : course.priceDisplayEn;
-
-                return (
-                  <div
-                    key={course.id}
-                    className="bg-white dark:bg-slate-900 rounded-[28px] overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:border-[#00E5BE]/40"
-                  >
-                    {/* Top Slim Accent Strip in Course Accent Color */}
-                    <div className="h-2 w-full bg-gradient-to-r from-[#0B3B36] to-[#00E5BE]" />
-
-                    {/* Header */}
-                    <div className="p-6 pb-5 bg-teal-500/5 dark:bg-teal-950/20 border-b border-teal-500/15 relative">
-                      <div className="flex items-center justify-between gap-2 mb-4">
-                        <span className="inline-block px-3 py-1 rounded-full text-xs font-black bg-[#0B3B36] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs">
-                          {ribbon}
-                        </span>
-
-                        <button
-                          onClick={(e) => toggleFavorite(course.id, e)}
-                          aria-label={isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
-                          className="w-8 h-8 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-xs flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
-                        >
-                          <Heart className={`w-4 h-4 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
-                        </button>
-                      </div>
-
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-[#0B3B36] to-[#0f766e] text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform shrink-0">
-                          <CourseCustomIcon iconName={course.iconName || 'award'} className="w-7 h-7 sm:w-8 sm:h-8" />
-                        </div>
-
-                        <div className="min-w-0 flex-1">
-                          <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white leading-tight group-hover:text-[#0B3B36] dark:group-hover:text-[#00E5BE] transition-colors">
-                            {title}
-                          </h3>
-                          <div className="flex items-center gap-1.5 mt-1 text-xs font-bold text-teal-700 dark:text-[#00E5BE]">
-                            <Clock className="w-3.5 h-3.5" />
-                            <span>{hoursBadge}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Body */}
-                    <div className="p-6 pt-5 flex-1 flex flex-col justify-between space-y-4">
-                      <div className="space-y-3.5">
-                        
-                        {/* Course Overview */}
-                        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
-                          {isArabic ? course.descriptionAr : course.descriptionEn}
-                        </p>
-
-                        {/* Key Syllabus Outcomes */}
-                        <div className="space-y-2 pt-1">
-                          <span className="text-[11px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">
-                            {isArabic ? 'محاور ومخرجات الدورة:' : 'Key Syllabus:'}
-                          </span>
-                          {(isArabic ? course.featuresAr : course.featuresEn).slice(0, 3).map((feat, fIdx) => (
-                            <div key={fIdx} className="flex items-start gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
-                              <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-[#00E5BE] shrink-0 mt-0.5" />
-                              <span className="line-clamp-2 leading-relaxed">{feat}</span>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Audience Info */}
-                        {course.targetAudienceAr && (
-                          <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/5 text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-relaxed">
-                            <span className="font-bold text-slate-700 dark:text-slate-300">{isArabic ? 'الفئة المستهدفة: ' : 'Audience: '}</span>
-                            {isArabic ? course.targetAudienceAr : course.targetAudienceEn}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Pricing & Registration */}
-                      <div className="pt-4 border-t border-slate-100 dark:border-white/10 space-y-2.5">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-slate-400">{isArabic ? 'رسوم الدورة:' : 'Tuition:'}</span>
-                          <span className="text-lg font-black text-[#0B3B36] dark:text-[#00E5BE]">{price}</span>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2">
-                          <button
-                            onClick={() => setSelectedCourseForDetails(course)}
-                            className="py-2.5 px-3 rounded-xl border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/10 text-xs font-black text-slate-700 dark:text-slate-200 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                          >
-                            <BookOpen className="w-3.5 h-3.5 text-teal-600 dark:text-[#00E5BE]" />
-                            <span>{isArabic ? 'تفاصيل الدورة' : 'Details'}</span>
-                          </button>
-
-                          <button
-                            onClick={() => onRegisterCourse(course)}
-                            className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#0B3B36] to-[#0f766e] hover:brightness-110 text-white text-xs font-black flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95"
-                          >
-                            <GraduationCap className="w-3.5 h-3.5" />
-                            <span>{isArabic ? 'سجل بالدورة' : 'Register'}</span>
-                          </button>
-                        </div>
-                      </div>
-
-                    </div>
+              {/* View Switcher: Slider vs Grid + Scroll Arrows */}
+              <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                
+                {/* Navigation arrows when in slider mode */}
+                {coursesViewMode === 'slider' && filteredCourses.length > 0 && (
+                  <div className="flex items-center gap-1 bg-slate-100 dark:bg-white/5 p-1 rounded-xl border border-slate-200 dark:border-white/10">
+                    <button
+                      onClick={() => handleScrollSlider(coursesSliderRef, 'prev')}
+                      aria-label={isArabic ? 'السابق' : 'Previous'}
+                      className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+                    >
+                      {isArabic ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                    </button>
+                    <button
+                      onClick={() => handleScrollSlider(coursesSliderRef, 'next')}
+                      aria-label={isArabic ? 'التالي' : 'Next'}
+                      className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+                    >
+                      {isArabic ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                    </button>
                   </div>
-                );
-              })}
+                )}
+
+                {/* Segmented Toggle: Slider vs Grid */}
+                <div className="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
+                  <button
+                    onClick={() => setCoursesViewMode('slider')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                      coursesViewMode === 'slider'
+                        ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-xs'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <SlidersHorizontal className="w-3.5 h-3.5" />
+                    <span>{isArabic ? 'سلايدر' : 'Slider'}</span>
+                  </button>
+                  <button
+                    onClick={() => setCoursesViewMode('grid')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                      coursesViewMode === 'grid'
+                        ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-xs'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                    <span>{isArabic ? 'شبكة' : 'Grid'}</span>
+                  </button>
+                </div>
+
+              </div>
+
             </div>
+
+            {/* 2.2 DEDICATED FILTER FOR COURSES (فلتر مخصص لقسم الكورسات) */}
+            <div className="mb-6">
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+                {[
+                  { id: 'all', labelAr: 'جميع الدورات التدريبية', labelEn: 'All Courses', count: activeCourses.length },
+                  { id: 'qba', labelAr: 'محلل سلوكي مؤهل QBA', labelEn: 'QBA Course', count: activeCourses.filter(c => c.id === 'course-qba' || c.titleAr.includes('QBA')).length },
+                  { id: 'abat', labelAr: 'فني سلوك تطبيقي معتمد ABAT', labelEn: 'ABAT Course', count: activeCourses.filter(c => c.id === 'course-abat' || c.titleAr.includes('ABAT')).length },
+                  { id: 'cas', labelAr: 'أخصائي توحد ودمج مدرسي', labelEn: 'Autism & Inclusion', count: activeCourses.filter(c => c.id === 'course-autism-inclusion' || c.categoryAr?.includes('توحد')).length },
+                  { id: 'parents', labelAr: 'برامج أولياء الأمور والأسرة', labelEn: 'Parent Programs', count: activeCourses.filter(c => c.targetAudienceAr?.includes('أسر') || c.categoryAr?.includes('أسر')).length },
+                ].map(f => {
+                  const isActive = coursesFilter === f.id;
+                  return (
+                    <button
+                      key={f.id}
+                      onClick={() => setCoursesFilter(f.id)}
+                      className={`shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                        isActive
+                          ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 font-black shadow-xs ring-2 ring-teal-500/40'
+                          : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10'
+                      }`}
+                    >
+                      <span>{isArabic ? f.labelAr : f.labelEn}</span>
+                      <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                        isActive ? 'bg-white/25 text-white dark:text-slate-950' : 'bg-slate-200 dark:bg-white/10 text-slate-500'
+                      }`}>
+                        {f.count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 2.3 Courses Empty State */}
+            {filteredCourses.length === 0 && (
+              <div className="p-8 text-center bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-dashed border-slate-300 dark:border-white/10">
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-3">
+                  {isArabic ? 'لا توجد كورسات مطابقة لهذا الفلتر' : 'No courses match this filter'}
+                </p>
+                <button
+                  onClick={() => setCoursesFilter('all')}
+                  className="px-4 py-1.5 rounded-xl bg-teal-600 text-white font-bold text-xs hover:bg-teal-700 transition-colors cursor-pointer"
+                >
+                  {isArabic ? 'إظهار كافة الكورسات' : 'Show All Courses'}
+                </button>
+              </div>
+            )}
+
+            {/* 2.4 Courses Content Container (Slider or Grid) */}
+            {filteredCourses.length > 0 && (
+              <div
+                ref={coursesSliderRef}
+                className={
+                  coursesViewMode === 'slider'
+                    ? "flex overflow-x-auto gap-4 sm:gap-6 pb-4 pt-1 snap-x snap-mandatory scroll-smooth no-scrollbar -mx-2 px-2 sm:mx-0 sm:px-0"
+                    : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                }
+              >
+                {filteredCourses.map((course) => {
+                  const isFav = !!favorites[course.id];
+                  const title = isArabic ? course.titleAr : course.titleEn;
+                  const ribbon = isArabic ? course.ribbonTagAr : course.ribbonTagEn;
+                  const hoursBadge = isArabic ? course.hoursBadgeAr : course.hoursBadgeEn;
+                  const price = isArabic ? course.priceDisplayAr : course.priceDisplayEn;
+
+                  return (
+                    <div
+                      key={course.id}
+                      className={`bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[28px] overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:border-[#00E5BE]/40 ${
+                        coursesViewMode === 'slider'
+                          ? "w-[78vw] min-w-[270px] max-w-[315px] sm:w-[350px] sm:max-w-none md:w-[370px] shrink-0 snap-start"
+                          : ""
+                      }`}
+                    >
+                      {/* Top Accent Strip */}
+                      <div className="h-1.5 sm:h-2 w-full bg-gradient-to-r from-[#0B3B36] to-[#00E5BE]" />
+
+                      {/* Header */}
+                      <div className="p-4 sm:p-6 pb-3.5 sm:pb-5 bg-teal-500/5 dark:bg-teal-950/20 border-b border-teal-500/15 relative">
+                        <div className="flex items-center justify-between gap-2 mb-2.5 sm:mb-4">
+                          <span className="inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[11px] sm:text-xs font-black bg-[#0B3B36] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs">
+                            {ribbon}
+                          </span>
+
+                          <button
+                            onClick={(e) => toggleFavorite(course.id, e)}
+                            aria-label={isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
+                            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-xs flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
+                          >
+                            <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
+                          </button>
+                        </div>
+
+                        <div className="flex items-center gap-3 sm:gap-4">
+                          <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#0B3B36] to-[#0f766e] text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform shrink-0">
+                            <CourseCustomIcon iconName={course.iconName || 'award'} className="w-6 h-6 sm:w-8 sm:h-8" />
+                          </div>
+
+                          <div className="min-w-0 flex-1">
+                            <h3 className="text-base sm:text-xl font-black text-slate-900 dark:text-white leading-tight group-hover:text-[#0B3B36] dark:group-hover:text-[#00E5BE] transition-colors">
+                              {title}
+                            </h3>
+                            <div className="flex items-center gap-1.5 mt-0.5 sm:mt-1 text-[11px] sm:text-xs font-bold text-teal-700 dark:text-[#00E5BE]">
+                              <Clock className="w-3.5 h-3.5" />
+                              <span>{hoursBadge}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Body */}
+                      <div className="p-4 sm:p-6 pt-3.5 sm:pt-5 flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
+                        <div className="space-y-2.5 sm:space-y-3.5">
+                          
+                          {/* Overview */}
+                          <p className="text-[11px] sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium line-clamp-2">
+                            {isArabic ? course.descriptionAr : course.descriptionEn}
+                          </p>
+
+                          {/* Syllabus */}
+                          <div className="space-y-1.5 sm:space-y-2 pt-0.5">
+                            <span className="text-[10px] sm:text-[11px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">
+                              {isArabic ? 'محاور ومخرجات الدورة:' : 'Key Syllabus:'}
+                            </span>
+                            {(isArabic ? course.featuresAr : course.featuresEn).slice(0, 3).map((feat, fIdx) => (
+                              <div key={fIdx} className="flex items-start gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 dark:text-[#00E5BE] shrink-0 mt-0.5" />
+                                <span className="line-clamp-2 leading-relaxed">{feat}</span>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Target Audience */}
+                          {course.targetAudienceAr && (
+                            <div className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-slate-100 dark:bg-white/5 text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-relaxed">
+                              <span className="font-bold text-slate-700 dark:text-slate-300">{isArabic ? 'الفئة المستهدفة: ' : 'Audience: '}</span>
+                              <span className="truncate">{isArabic ? course.targetAudienceAr : course.targetAudienceEn}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Pricing & Registration */}
+                        <div className="pt-3 sm:pt-4 border-t border-slate-100 dark:border-white/10 space-y-2 sm:space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[11px] sm:text-xs font-bold text-slate-400">{isArabic ? 'رسوم الدورة:' : 'Tuition:'}</span>
+                            <span className="text-base sm:text-lg font-black text-[#0B3B36] dark:text-[#00E5BE]">{price}</span>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2">
+                            <button
+                              onClick={() => setSelectedCourseForDetails(course)}
+                              className="py-2 sm:py-2.5 px-2.5 sm:px-3 rounded-lg sm:rounded-xl border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/10 text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-200 flex items-center justify-center gap-1 sm:gap-1.5 transition-colors cursor-pointer"
+                            >
+                              <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-teal-600 dark:text-[#00E5BE]" />
+                              <span>{isArabic ? 'تفاصيل الدورة' : 'Details'}</span>
+                            </button>
+
+                            <button
+                              onClick={() => onRegisterCourse(course)}
+                              className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#0B3B36] to-[#0f766e] hover:brightness-110 text-white text-xs font-black flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-95"
+                            >
+                              <GraduationCap className="w-3.5 h-3.5" />
+                              <span>{isArabic ? 'سجل بالدورة' : 'Register'}</span>
+                            </button>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Slider visual hint on mobile */}
+            {coursesViewMode === 'slider' && filteredCourses.length > 1 && (
+              <div className="mt-3 flex items-center justify-center gap-1.5 text-[11px] font-bold text-slate-400 sm:hidden">
+                <span>{isArabic ? 'اسحب لليمين واليسار للتنقل بين الكورسات' : 'Swipe left/right to view courses'}</span>
+              </div>
+            )}
+
           </section>
         )}
 
         {/* ========================================================================= */}
-        {/* PART 3: PACKAGES & PRICING GRID (الباقات والأسعار)                        */}
+        {/* PART 3: PACKAGES & PRICING (الجزء الثالث: باقات التأهيل والأسعار)         */}
         {/* ========================================================================= */}
-        {(activeTab === 'all' || activeTab === 'packages') && filteredPackages.length > 0 && (
-          <section className="mb-14">
+        {(activeTab === 'all' || activeTab === 'packages') && (
+          <section className="mb-16 bg-white/60 dark:bg-slate-900/40 rounded-3xl p-4 sm:p-7 border border-slate-200/80 dark:border-white/5 shadow-xs">
             
-            {/* Section Header */}
-            <div className="flex items-center justify-between mb-6">
+            {/* 3.1 Section Header & Controls */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 pb-4 border-b border-slate-200/60 dark:border-white/10">
+              
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center">
-                  <Package className="w-5 h-5 stroke-[2.2]" />
+                <div className="w-11 h-11 rounded-2xl bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
+                  <Package className="w-6 h-6 stroke-[2.2]" />
                 </div>
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-                    {isArabic ? 'باقات التأهيل والأسعار' : 'Therapy Packages & Pricing'}
-                  </h2>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                      {isArabic ? 'باقات التأهيل والأسعار' : 'Therapy Packages & Pricing'}
+                    </h2>
+                    <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+                      {filteredPackages.length} {isArabic ? 'باقات' : 'packages'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                     {isArabic ? 'باقات رعاية متكاملة ومصممة بعناية مع شفافية في الأسعار وتقسيط بدون فوائد' : 'All-inclusive bundled care plans with interest-free installment support'}
                   </p>
                 </div>
               </div>
 
-              <span className="text-xs font-black px-3 py-1 rounded-full bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300">
-                {filteredPackages.length} {isArabic ? 'باقات' : 'packages'}
-              </span>
-            </div>
+              {/* View Switcher: Slider vs Grid + Scroll Arrows */}
+              <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                
+                {/* Navigation arrows when in slider mode */}
+                {packagesViewMode === 'slider' && filteredPackages.length > 0 && (
+                  <div className="flex items-center gap-1 bg-slate-100 dark:bg-white/5 p-1 rounded-xl border border-slate-200 dark:border-white/10">
+                    <button
+                      onClick={() => handleScrollSlider(packagesSliderRef, 'prev')}
+                      aria-label={isArabic ? 'السابق' : 'Previous'}
+                      className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+                    >
+                      {isArabic ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                    </button>
+                    <button
+                      onClick={() => handleScrollSlider(packagesSliderRef, 'next')}
+                      aria-label={isArabic ? 'التالي' : 'Next'}
+                      className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+                    >
+                      {isArabic ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                    </button>
+                  </div>
+                )}
 
-            {/* Grid Container */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredPackages.map((pkg) => {
-                const isSummer = pkg.isSummer || pkg.category === 'summer';
-                const isFav = !!favorites[pkg.id];
-                const savings = pkg.originalPrice ? pkg.originalPrice - pkg.price : 0;
-
-                return (
-                  <div
-                    key={pkg.id}
-                    className={`bg-white dark:bg-slate-900 rounded-[28px] overflow-hidden border shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${
-                      isSummer
-                        ? 'border-amber-200 dark:border-amber-500/30 ring-1 ring-amber-400/20'
-                        : 'border-slate-200/90 dark:border-white/10'
+                {/* Segmented Toggle: Slider vs Grid */}
+                <div className="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
+                  <button
+                    onClick={() => setPackagesViewMode('slider')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                      packagesViewMode === 'slider'
+                        ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-xs'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                     }`}
                   >
-                    {/* Top Slim Strip */}
-                    <div className={`h-2 w-full ${isSummer ? 'bg-gradient-to-r from-amber-500 to-orange-500' : 'bg-gradient-to-r from-[#0B3B36] to-[#0284C7]'}`} />
+                    <SlidersHorizontal className="w-3.5 h-3.5" />
+                    <span>{isArabic ? 'سلايدر' : 'Slider'}</span>
+                  </button>
+                  <button
+                    onClick={() => setPackagesViewMode('grid')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
+                      packagesViewMode === 'grid'
+                        ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-xs'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <LayoutGrid className="w-3.5 h-3.5" />
+                    <span>{isArabic ? 'شبكة' : 'Grid'}</span>
+                  </button>
+                </div>
 
-                    {/* Header */}
-                    <div className={`p-6 pb-5 ${isSummer ? 'bg-amber-500/10 dark:bg-amber-950/20 border-amber-300/20' : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200/50 dark:border-white/5'} border-b relative`}>
-                      <div className="flex items-center justify-between gap-2 mb-4">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          {isSummer && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[11px] font-black shadow-xs">
-                              <Sun className="w-3.5 h-3.5" />
-                              <span>{isArabic ? 'باقة الصيف' : 'Summer'}</span>
-                            </span>
-                          )}
-                          {pkg.popular && (
-                            <span className="px-2.5 py-1 rounded-full bg-[#0B3B36] text-white text-[10px] font-black tracking-wider uppercase">
-                              {isArabic ? 'الأكثر طلباً' : 'POPULAR'}
-                            </span>
-                          )}
-                        </div>
+              </div>
 
-                        <button
-                          onClick={(e) => toggleFavorite(pkg.id, e)}
-                          aria-label={isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
-                          className="w-8 h-8 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-xs flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
-                        >
-                          <Heart className={`w-4 h-4 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
-                        </button>
-                      </div>
+            </div>
 
-                      <span className="text-[11px] font-black text-teal-700 dark:text-[#00E5BE] tracking-widest uppercase block mb-1">
-                        {isArabic ? (pkg.categoryCode || 'باقة تأهيلية متكاملة') : (pkg.categoryCodeEn || 'CARE PLAN')}
+            {/* 3.2 DEDICATED FILTER FOR PACKAGES (فلتر مخصص لقسم الباقات) */}
+            <div className="mb-6">
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+                {[
+                  { id: 'all', labelAr: 'جميع الباقات', labelEn: 'All Packages', count: packages.length },
+                  { id: 'summer', labelAr: 'باقات الصيف ☀️', labelEn: 'Summer Packages', count: packages.filter(p => p.isSummer || p.category === 'summer').length },
+                  { id: 'aba', labelAr: 'باقات الـ ABA المكثفة', labelEn: 'ABA Packages', count: packages.filter(p => p.category === 'aba' || p.name.includes('ABA')).length },
+                  { id: 'speech', labelAr: 'باقات النطق والتخاطب', labelEn: 'Speech Packages', count: packages.filter(p => p.category === 'speech' || p.name.includes('النطق')).length },
+                  { id: 'sensory', labelAr: 'العلاج الوظيفي والحسي', labelEn: 'Sensory & OT', count: packages.filter(p => p.category === 'sensory' || p.name.includes('الوظيفي') || p.name.includes('الحسي')).length },
+                  { id: 'assessment', labelAr: 'التقييم والتشخيص', labelEn: 'Assessment & Diagnosis', count: packages.filter(p => p.category === 'assessment' || p.name.includes('تقييم')).length },
+                ].map(f => {
+                  const isActive = packagesFilter === f.id;
+                  return (
+                    <button
+                      key={f.id}
+                      onClick={() => setPackagesFilter(f.id)}
+                      className={`shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                        isActive
+                          ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 font-black shadow-xs ring-2 ring-sky-500/40'
+                          : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10'
+                      }`}
+                    >
+                      <span>{isArabic ? f.labelAr : f.labelEn}</span>
+                      <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                        isActive ? 'bg-white/25 text-white dark:text-slate-950' : 'bg-slate-200 dark:bg-white/10 text-slate-500'
+                      }`}>
+                        {f.count}
                       </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
-                      <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white leading-tight">
-                        {isArabic ? pkg.name : (pkg.nameEn || pkg.name)}
-                      </h3>
+            {/* 3.3 Packages Empty State */}
+            {filteredPackages.length === 0 && (
+              <div className="p-8 text-center bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-dashed border-slate-300 dark:border-white/10">
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-3">
+                  {isArabic ? 'لا توجد باقات مطابقة لهذا الفلتر' : 'No packages match this filter'}
+                </p>
+                <button
+                  onClick={() => setPackagesFilter('all')}
+                  className="px-4 py-1.5 rounded-xl bg-sky-600 text-white font-bold text-xs hover:bg-sky-700 transition-colors cursor-pointer"
+                >
+                  {isArabic ? 'إظهار كافة الباقات' : 'Show All Packages'}
+                </button>
+              </div>
+            )}
 
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-1 font-medium">
-                        {isArabic ? pkg.tagline : (pkg.taglineEn || pkg.tagline)}
-                      </p>
-                    </div>
+            {/* 3.4 Packages Content Container (Slider or Grid) */}
+            {filteredPackages.length > 0 && (
+              <div
+                ref={packagesSliderRef}
+                className={
+                  packagesViewMode === 'slider'
+                    ? "flex overflow-x-auto gap-4 sm:gap-6 pb-4 pt-1 snap-x snap-mandatory scroll-smooth no-scrollbar -mx-2 px-2 sm:mx-0 sm:px-0"
+                    : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                }
+              >
+                {filteredPackages.map((pkg) => {
+                  const isSummer = pkg.isSummer || pkg.category === 'summer';
+                  const isFav = !!favorites[pkg.id];
+                  const savings = pkg.originalPrice ? pkg.originalPrice - pkg.price : 0;
 
-                    {/* Body */}
-                    <div className="p-6 pt-5 flex-1 flex flex-col justify-between space-y-4">
-                      <div className="space-y-3.5">
-                        
-                        {/* Plan Duration & Sessions */}
-                        <div className="flex items-center gap-2 p-3 rounded-2xl bg-teal-500/10 dark:bg-teal-950/20 text-xs font-black text-teal-800 dark:text-teal-200">
-                          <Clock className="w-4 h-4 text-[#0B3B36] dark:text-[#00E5BE] shrink-0" />
-                          <span>
-                            {isArabic 
-                              ? `${pkg.sessionsCount} جلسة علاجية وتأهيلية مكثفة · ${pkg.durationWeeks} أسابيع`
-                              : `${pkg.sessionsCount} Clinical Sessions · ${pkg.durationWeeks} Weeks`}
-                          </span>
-                        </div>
+                  return (
+                    <div
+                      key={pkg.id}
+                      className={`bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[28px] overflow-hidden border shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${
+                        isSummer
+                          ? 'border-amber-200 dark:border-amber-500/30 ring-1 ring-amber-400/20'
+                          : 'border-slate-200/90 dark:border-white/10'
+                      } ${
+                        packagesViewMode === 'slider'
+                          ? "w-[78vw] min-w-[270px] max-w-[315px] sm:w-[350px] sm:max-w-none md:w-[370px] shrink-0 snap-start"
+                          : ""
+                      }`}
+                    >
+                      {/* Top Slim Strip */}
+                      <div className={`h-1.5 sm:h-2 w-full ${isSummer ? 'bg-gradient-to-r from-amber-500 to-orange-500' : 'bg-gradient-to-r from-[#0B3B36] to-[#0284C7]'}`} />
 
-                        {/* Features Checklist */}
-                        <div className="space-y-2">
-                          <span className="text-[11px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">
-                            {isArabic ? 'مميزات ومشتملات الباقة:' : 'Package Inclusions:'}
-                          </span>
-                          {(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).slice(0, 4).map((feat, fIdx) => (
-                            <div key={fIdx} className="flex items-start gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
-                              <Check className="w-4 h-4 text-emerald-600 dark:text-[#00E5BE] shrink-0 mt-0.5 stroke-[2.5]" />
-                              <span className="leading-relaxed">{feat}</span>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Installment Logos */}
-                        <div className="pt-2 flex items-center gap-2 flex-wrap text-slate-400 text-xs">
-                          <span className="text-[11px] font-bold text-slate-500">{isArabic ? 'تقسيط عبر:' : 'Installments:'}</span>
-                          <TamaraLogo height={22} />
-                          <EmkanLogo height={22} />
-                        </div>
-                      </div>
-
-                      {/* Pricing Section & Action Button */}
-                      <div className="pt-4 border-t border-slate-100 dark:border-white/10 space-y-3">
-                        <div className="flex items-end justify-between">
-                          <div>
-                            {pkg.originalPrice && pkg.originalPrice > pkg.price && (
-                              <div className="flex items-center gap-2 mb-0.5">
-                                <span className="text-xs text-slate-400 line-through font-bold">
-                                  {pkg.originalPrice} {isArabic ? 'ر.س' : 'SAR'}
-                                </span>
-                                <span className="text-[10px] font-black px-1.5 py-0.5 rounded-md bg-rose-500/10 text-rose-600 dark:text-rose-400">
-                                  {isArabic ? `وفر ${savings} ر.س` : `Save ${savings} SAR`}
-                                </span>
-                              </div>
+                      {/* Header */}
+                      <div className={`p-4 sm:p-6 pb-3.5 sm:pb-5 ${isSummer ? 'bg-amber-500/10 dark:bg-amber-950/20 border-amber-300/20' : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200/50 dark:border-white/5'} border-b relative`}>
+                        <div className="flex items-center justify-between gap-2 mb-2.5 sm:mb-4">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            {isSummer && (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 sm:py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] sm:text-[11px] font-black shadow-xs">
+                                <Sun className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                                <span>{isArabic ? 'باقة الصيف' : 'Summer'}</span>
+                              </span>
                             )}
-                            <div className="text-2xl font-black text-slate-900 dark:text-white flex items-baseline gap-1">
-                              <span>{pkg.price}</span>
-                              <span className="text-xs font-bold text-slate-500">{isArabic ? 'ر.س' : 'SAR'}</span>
-                            </div>
+                            {pkg.popular && (
+                              <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-[#0B3B36] text-white text-[9.5px] sm:text-[10px] font-black tracking-wider uppercase">
+                                {isArabic ? 'الأكثر طلباً' : 'POPULAR'}
+                              </span>
+                            )}
                           </div>
 
                           <button
-                            onClick={() => onSelectPackage(pkg)}
-                            className="py-3 px-5 rounded-2xl bg-gradient-to-r from-[#0B3B36] to-[#0f766e] hover:brightness-110 active:scale-95 text-white text-xs sm:text-sm font-black flex items-center gap-1.5 shadow-md shadow-teal-950/20 transition-all cursor-pointer"
+                            onClick={(e) => toggleFavorite(pkg.id, e)}
+                            aria-label={isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
+                            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-xs flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
                           >
-                            <span>{isArabic ? 'حجز الباقة' : 'Book Package'}</span>
-                            {isArabic ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
+                            <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
                           </button>
                         </div>
+
+                        <span className="text-[10px] sm:text-[11px] font-black text-teal-700 dark:text-[#00E5BE] tracking-widest uppercase block mb-1">
+                          {isArabic ? (pkg.categoryCode || 'باقة تأهيلية متكاملة') : (pkg.categoryCodeEn || 'CARE PLAN')}
+                        </span>
+
+                        <h3 className="text-lg sm:text-2xl font-black text-slate-900 dark:text-white leading-tight">
+                          {isArabic ? pkg.name : (pkg.nameEn || pkg.name)}
+                        </h3>
+
+                        <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-1 font-medium">
+                          {isArabic ? pkg.tagline : (pkg.taglineEn || pkg.tagline)}
+                        </p>
                       </div>
 
+                      {/* Body */}
+                      <div className="p-4 sm:p-6 pt-3.5 sm:pt-5 flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
+                        <div className="space-y-2.5 sm:space-y-3.5">
+                          
+                          {/* Plan Duration & Sessions */}
+                          <div className="flex items-center gap-2 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl bg-teal-500/10 dark:bg-teal-950/20 text-[11px] sm:text-xs font-black text-teal-800 dark:text-teal-200">
+                            <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0B3B36] dark:text-[#00E5BE] shrink-0" />
+                            <span className="leading-tight">
+                              {isArabic 
+                                ? `${pkg.sessionsCount} جلسة علاجية وتأهيلية مكثفة · ${pkg.durationWeeks} أسابيع`
+                                : `${pkg.sessionsCount} Clinical Sessions · ${pkg.durationWeeks} Weeks`}
+                            </span>
+                          </div>
+
+                          {/* Features Checklist */}
+                          <div className="space-y-1.5 sm:space-y-2">
+                            <span className="text-[10px] sm:text-[11px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">
+                              {isArabic ? 'مميزات ومشتملات الباقة:' : 'Package Inclusions:'}
+                            </span>
+                            {(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).slice(0, 4).map((feat, fIdx) => (
+                              <div key={fIdx} className="flex items-start gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-[#00E5BE] shrink-0 mt-0.5 stroke-[2.5]" />
+                                <span className="leading-relaxed line-clamp-2">{feat}</span>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Installment Logos */}
+                          <div className="pt-1 flex items-center gap-2 flex-wrap text-slate-400 text-[10px] sm:text-xs">
+                            <span className="text-[10px] sm:text-[11px] font-bold text-slate-500">{isArabic ? 'تقسيط عبر:' : 'Installments:'}</span>
+                            <TamaraLogo height={20} />
+                            <EmkanLogo height={20} />
+                          </div>
+                        </div>
+
+                        {/* Pricing & Action */}
+                        <div className="pt-3 sm:pt-4 border-t border-slate-100 dark:border-white/10 space-y-2.5 sm:space-y-3">
+                          <div className="flex items-end justify-between">
+                            <div>
+                              {pkg.originalPrice && pkg.originalPrice > pkg.price && (
+                                <div className="flex items-center gap-1.5 mb-0.5">
+                                  <span className="text-[11px] sm:text-xs text-slate-400 line-through font-bold">
+                                    {pkg.originalPrice} {isArabic ? 'ر.س' : 'SAR'}
+                                  </span>
+                                  <span className="text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded-md bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                                    {isArabic ? `وفر ${savings} ر.س` : `Save ${savings} SAR`}
+                                  </span>
+                                </div>
+                              )}
+                              <div className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-baseline gap-1">
+                                <span>{pkg.price}</span>
+                                <span className="text-[11px] sm:text-xs font-bold text-slate-500">{isArabic ? 'ر.س' : 'SAR'}</span>
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() => onSelectPackage(pkg)}
+                              className="py-2.5 sm:py-3 px-3.5 sm:px-5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-[#0B3B36] to-[#0f766e] hover:brightness-110 active:scale-95 text-white text-[11px] sm:text-sm font-black flex items-center gap-1.5 shadow-md shadow-teal-950/20 transition-all cursor-pointer"
+                            >
+                              <span>{isArabic ? 'حجز الباقة' : 'Book Package'}</span>
+                              {isArabic ? <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
+                            </button>
+                          </div>
+                        </div>
+
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Slider visual hint on mobile */}
+            {packagesViewMode === 'slider' && filteredPackages.length > 1 && (
+              <div className="mt-3 flex items-center justify-center gap-1.5 text-[11px] font-bold text-slate-400 sm:hidden">
+                <span>{isArabic ? 'اسحب لليمين واليسار للتنقل بين الباقات' : 'Swipe left/right to view packages'}</span>
+              </div>
+            )}
+
           </section>
         )}
 
