@@ -10,7 +10,8 @@ import {
   FileText, 
   Check,
   ChevronDown,
-  Sparkles
+  Sparkles,
+  Stethoscope
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { Specialist } from '../types';
@@ -3073,7 +3074,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 p-5 sm:p-6 bg-white dark:bg-slate-900/90 rounded-3xl border border-slate-200/90 dark:border-white/10 shadow-xs">
           <div className="flex items-center gap-3 text-right">
             <div className="w-11 h-11 rounded-2xl bg-[#dff1ec] dark:bg-teal-950/60 text-[#0d5c52] dark:text-[#2dd4bf] flex items-center justify-center shrink-0">
-              <Sparkles className="w-5 h-5" />
+              <Stethoscope className="w-5 h-5 stroke-[2.2]" />
             </div>
             <div>
               <h4 className="text-sm font-black text-slate-900 dark:text-white">

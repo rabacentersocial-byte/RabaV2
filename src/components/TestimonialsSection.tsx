@@ -7,7 +7,10 @@ import {
   Plus, 
   X, 
   Star, 
-  Send 
+  Send,
+  ShieldCheck,
+  ThumbsUp,
+  CalendarCheck
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { PARENT_REVIEWS, SPECIALISTS } from '../data/mockData';
@@ -226,53 +229,6 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* TOP METRICS STRIP: 4 Columns with vertical dividers */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl md:rounded-3xl border border-slate-200/90 dark:border-white/10 shadow-xs mb-12 sm:mb-16 overflow-hidden">
-          <div className="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-slate-200/80 dark:divide-white/10 [direction:ltr]">
-            
-            {/* Metric 1: Average Rating */}
-            <div className="py-6 sm:py-8 px-4 sm:px-6 text-center">
-              <div className="text-3xl sm:text-4xl lg:text-[42px] font-black text-[#0B3B36] dark:text-[#2DD4BF] tracking-tight leading-none">
-                4.9
-              </div>
-              <div className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-2">
-                {isArabic ? 'متوسط التقييم' : 'AVERAGE RATING'}
-              </div>
-            </div>
-
-            {/* Metric 2: Verified Reviews */}
-            <div className="py-6 sm:py-8 px-4 sm:px-6 text-center">
-              <div className="text-3xl sm:text-4xl lg:text-[42px] font-black text-[#0B3B36] dark:text-[#2DD4BF] tracking-tight leading-none">
-                1,400+
-              </div>
-              <div className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-2">
-                {isArabic ? 'تقييم موثق' : 'VERIFIED REVIEWS'}
-              </div>
-            </div>
-
-            {/* Metric 3: Would Recommend */}
-            <div className="py-6 sm:py-8 px-4 sm:px-6 text-center">
-              <div className="text-3xl sm:text-4xl lg:text-[42px] font-black text-[#0B3B36] dark:text-[#2DD4BF] tracking-tight leading-none">
-                98%
-              </div>
-              <div className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-2">
-                {isArabic ? 'يوصون بالمركز' : 'WOULD RECOMMEND'}
-              </div>
-            </div>
-
-            {/* Metric 4: Booking Experience */}
-            <div className="py-6 sm:py-8 px-4 sm:px-6 text-center">
-              <div className="text-3xl sm:text-4xl lg:text-[42px] font-black text-[#0B3B36] dark:text-[#2DD4BF] tracking-tight leading-none">
-                4.8
-              </div>
-              <div className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mt-2">
-                {isArabic ? 'تجربة الحجز' : 'BOOKING EXPERIENCE'}
-              </div>
-            </div>
-
-          </div>
-        </div>
-
         {/* SECTION HEADER: Eyebrow + Title & Subtitle + Circular Nav Controls */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
           
@@ -474,6 +430,119 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
               </div>
             );
           })}
+        </div>
+
+        {/* METRICS STRIP: Re-designed with custom icons & mobile-optimized responsive tiles (Moved below evaluation cards) */}
+        <div className="bg-white dark:bg-slate-900/90 rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] mt-10 sm:mt-14 p-3 sm:p-4.5 relative overflow-hidden backdrop-blur-md">
+          {/* Subtle ambient lighting */}
+          <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 relative z-10">
+            
+            {/* Metric 1: Average Rating */}
+            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-amber-400/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+              <div className="flex items-center justify-between gap-1.5 mb-2.5">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-amber-500/10 text-amber-500 border border-amber-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-amber-500/20 transition-all">
+                  <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-amber-400 text-amber-500" />
+                </div>
+                <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-400/20 truncate">
+                  {isArabic ? 'من 5.0' : 'Out of 5'}
+                </span>
+              </div>
+              <div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#0B3B36] dark:text-[#2DD4BF] tracking-tight leading-none">
+                    4.9
+                  </span>
+                  <div className="flex text-amber-400 text-[10px] sm:text-xs">
+                    {'★★★★★'}
+                  </div>
+                </div>
+                <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 mt-1.5 leading-tight">
+                  {isArabic ? 'متوسط التقييم' : 'AVERAGE RATING'}
+                </div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                  {isArabic ? 'امتياز سريري موثوق' : 'Clinical Excellence'}
+                </div>
+              </div>
+            </div>
+
+            {/* Metric 2: Verified Reviews */}
+            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-emerald-400/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+              <div className="flex items-center justify-between gap-1.5 mb-2.5">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-[#2DD4BF] border border-emerald-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-emerald-500/20 transition-all">
+                  <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
+                </div>
+                <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-400/20 truncate">
+                  {isArabic ? 'موثق 100%' : '100% Verified'}
+                </span>
+              </div>
+              <div>
+                <div className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#0B3B36] dark:text-[#2DD4BF] tracking-tight leading-none">
+                  1,400+
+                </div>
+                <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 mt-1.5 leading-tight">
+                  {isArabic ? 'تقييم موثق' : 'VERIFIED REVIEWS'}
+                </div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                  {isArabic ? 'تجارب أولياء الأمور' : 'Parent Testimonials'}
+                </div>
+              </div>
+            </div>
+
+            {/* Metric 3: Would Recommend */}
+            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-teal-400/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+              <div className="flex items-center justify-between gap-1.5 mb-2.5">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-teal-500/10 text-[#0D6D54] dark:text-[#00E5BE] border border-teal-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-teal-500/20 transition-all">
+                  <ThumbsUp className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
+                </div>
+                <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-400/20 truncate">
+                  {isArabic ? 'ثقة أولياء الأمور' : 'Parent Trust'}
+                </span>
+              </div>
+              <div>
+                <div className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#0B3B36] dark:text-[#2DD4BF] tracking-tight leading-none">
+                  98%
+                </div>
+                <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 mt-1.5 leading-tight">
+                  {isArabic ? 'يوصون بالمركز' : 'WOULD RECOMMEND'}
+                </div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                  {isArabic ? 'نسبة رضا استثنائية' : 'Exceptional Satisfaction'}
+                </div>
+              </div>
+            </div>
+
+            {/* Metric 4: Booking Experience */}
+            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-sky-400/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+              <div className="flex items-center justify-between gap-1.5 mb-2.5">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-sky-500/20 transition-all">
+                  <CalendarCheck className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
+                </div>
+                <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-sky-500/10 text-sky-700 dark:text-sky-300 border border-sky-400/20 truncate">
+                  {isArabic ? 'حجز فوري' : 'Fast Booking'}
+                </span>
+              </div>
+              <div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#0B3B36] dark:text-[#2DD4BF] tracking-tight leading-none">
+                    4.8
+                  </span>
+                  <span className="text-[10px] sm:text-xs font-bold text-slate-400 dark:text-slate-500">
+                    / 5.0
+                  </span>
+                </div>
+                <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 mt-1.5 leading-tight">
+                  {isArabic ? 'تجربة الحجز' : 'BOOKING EXPERIENCE'}
+                </div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                  {isArabic ? 'سلاسة وسرعة التنسيق' : 'Seamless Coordination'}
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
 
       </div>

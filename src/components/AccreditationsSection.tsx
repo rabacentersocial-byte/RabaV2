@@ -5,7 +5,9 @@ import {
   X, 
   ExternalLink,
   ShieldCheck,
-  Award
+  Award,
+  ChevronRight,
+  ChevronLeft
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { 
@@ -26,6 +28,12 @@ export const AccreditationsSection: React.FC = () => {
 
   const [settings, setSettings] = useState<AccreditationsSectionSettings>(() => getStoredAccreditationSettings());
   const [selectedItem, setSelectedItem] = useState<AccreditationItem | null>(null);
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const touchStartXRef = React.useRef(0);
+  const hasMovedRef = React.useRef(false);
+  const resumeTimerRef = React.useRef<any>(null);
 
   // Sync with Admin updates
   useEffect(() => {
@@ -93,64 +101,163 @@ export const AccreditationsSection: React.FC = () => {
     };
   }) : defaultBadges;
 
-  // Duplicate for seamless infinite loop
-  const loopList = [...itemsToDisplay, ...itemsToDisplay, ...itemsToDisplay];
+  // Duplicate 4 times for infinite loop
+  const loopList = [...itemsToDisplay, ...itemsToDisplay, ...itemsToDisplay, ...itemsToDisplay];
+
+  // Initialize scroll position to 1 set width so user can swipe left or right immediately
+  useEffect(() => {
+    if (!scrollRef.current) return;
+    const container = scrollRef.current;
+    const singleSetWidth = container.scrollWidth / 4;
+    if (singleSetWidth > 0 && container.scrollLeft === 0) {
+      container.scrollLeft = singleSetWidth;
+    }
+  }, [itemsToDisplay.length]);
+
+  // Smooth continuous requestAnimationFrame ticker
+  useEffect(() => {
+    let animId: number;
+    let lastTime = performance.now();
+
+    const ticker = (time: number) => {
+      const delta = Math.min(time - lastTime, 80);
+      lastTime = time;
+
+      if (!isPaused && !isDragging && scrollRef.current) {
+        const container = scrollRef.current;
+        const singleSetWidth = container.scrollWidth / 4;
+
+        if (singleSetWidth > 0) {
+          // Continuous 32px/sec smooth scroll
+          container.scrollLeft += delta * 0.032;
+
+          // Infinite wrap bounds
+          if (container.scrollLeft >= singleSetWidth * 2.5) {
+            container.scrollLeft -= singleSetWidth;
+          } else if (container.scrollLeft <= 10) {
+            container.scrollLeft += singleSetWidth;
+          }
+        }
+      }
+
+      animId = requestAnimationFrame(ticker);
+    };
+
+    animId = requestAnimationFrame(ticker);
+    return () => cancelAnimationFrame(animId);
+  }, [isPaused, isDragging, itemsToDisplay.length]);
+
+  // Touch gesture handlers for mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    hasMovedRef.current = false;
+    touchStartXRef.current = e.touches[0].clientX;
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (Math.abs(e.touches[0].clientX - touchStartXRef.current) > 8) {
+      hasMovedRef.current = true;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+    resumeTimerRef.current = setTimeout(() => {
+      setIsDragging(false);
+    }, 1800);
+  };
+
+  const handleManualStep = (direction: 'next' | 'prev') => {
+    if (!scrollRef.current) return;
+    const container = scrollRef.current;
+    const stride = 180;
+    container.scrollBy({
+      left: direction === 'next' ? stride : -stride,
+      behavior: 'smooth'
+    });
+  };
+
+  const handleBadgeClick = (item: any) => {
+    if (!hasMovedRef.current) {
+      setSelectedItem(item);
+    }
+  };
 
   return (
     <section 
       id="accreditations-section"
       className="py-8 sm:py-10 bg-slate-50/60 dark:bg-white/[0.02] text-slate-800 dark:text-white relative overflow-hidden border-t border-b border-slate-200/80 dark:border-white/10 select-none transition-colors"
     >
-      {/* CSS Animation Keyframes for Smooth, Steady, Slow Marquee */}
-      <style>{`
-        @keyframes accreditationLoop {
-          0% {
-            transform: translate3d(0, 0, 0);
-          }
-          100% {
-            transform: translate3d(-33.333%, 0, 0);
-          }
-        }
-        .animate-accreditation-loop {
-          display: flex;
-          width: max-content;
-          animation: accreditationLoop 38s linear infinite;
-        }
-        .animate-accreditation-loop:hover {
-          animation-play-state: paused;
-        }
-      `}</style>
-
       {/* Edge gradient fade masks for smooth entrance/exit */}
-      <div className="absolute top-0 right-0 bottom-0 w-16 sm:w-28 bg-gradient-to-l from-slate-50/90 dark:from-[#061412] to-transparent z-20 pointer-events-none" />
-      <div className="absolute top-0 left-0 bottom-0 w-16 sm:w-28 bg-gradient-to-r from-slate-50/90 dark:from-[#061412] to-transparent z-20 pointer-events-none" />
+      <div className="absolute top-0 right-0 bottom-0 w-12 sm:w-28 bg-gradient-to-l from-slate-50/90 dark:from-[#061412] to-transparent z-20 pointer-events-none" />
+      <div className="absolute top-0 left-0 bottom-0 w-12 sm:w-28 bg-gradient-to-r from-slate-50/90 dark:from-[#061412] to-transparent z-20 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         
-        {/* Simple Centered Header: "معتمدون من" exactly matching screenshot */}
-        <div className="text-center mb-6 sm:mb-8">
-          <h3 className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 tracking-wider">
-            {isArabic ? (settings.titleAr || 'معتمدون من') : (settings.titleEn || 'Accredited By')}
-          </h3>
+        {/* Header with Title and Mobile Navigation Arrows */}
+        <div className="flex items-center justify-between sm:justify-center gap-4 mb-4 sm:mb-6">
+          
+          {/* Prev Arrow */}
+          <button
+            onClick={() => handleManualStep('prev')}
+            aria-label={isArabic ? 'السابق' : 'Previous'}
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-[#2DD4BF] flex items-center justify-center shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
+            title={isArabic ? 'عرض الشهادات السابقة' : 'Previous accreditations'}
+          >
+            {isArabic ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          </button>
+
+          {/* Simple Centered Header: "معترف بنا من" */}
+          <div className="text-center">
+            <h3 className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 tracking-wider">
+              {isArabic ? (settings.titleAr || 'معترف بنا من') : (settings.titleEn || 'Accredited By')}
+            </h3>
+          </div>
+
+          {/* Next Arrow */}
+          <button
+            onClick={() => handleManualStep('next')}
+            aria-label={isArabic ? 'التالي' : 'Next'}
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-[#2DD4BF] flex items-center justify-center shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
+            title={isArabic ? 'عرض المزيد من الشهادات' : 'Next accreditations'}
+          >
+            {isArabic ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+          </button>
+
         </div>
 
-        {/* Slow Regular Horizontal Loop of Certification Icons */}
-        <div dir="ltr" className="w-full overflow-hidden flex items-center py-2 cursor-pointer">
-          <div className="animate-accreditation-loop items-center gap-8 sm:gap-14">
+        {/* Swipeable, touch-friendly, and continuous auto-scrolling loop */}
+        <div 
+          ref={scrollRef}
+          dir="ltr"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          className="w-full overflow-x-auto scrollbar-none flex items-center py-2.5 cursor-grab active:cursor-grabbing select-none"
+          style={{
+            WebkitOverflowScrolling: 'touch',
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none'
+          }}
+        >
+          <div className="flex items-center gap-7 sm:gap-14 shrink-0 px-4">
             {loopList.map((item, index) => (
               <div
                 key={`${item.id}-${index}`}
-                onClick={() => setSelectedItem(item as any)}
-                className="flex items-center gap-3 shrink-0 group transition-all duration-200 opacity-80 hover:opacity-100"
+                onClick={() => handleBadgeClick(item)}
+                className="flex items-center gap-2.5 sm:gap-3 shrink-0 group transition-all duration-200 opacity-85 hover:opacity-100 cursor-pointer active:scale-95"
                 title={isArabic ? `${item.nameAr} - انقر للتفاصيل` : `${item.nameEn} - Click for details`}
               >
                 {/* Certification Name / Label */}
-                <span className="text-xs sm:text-sm md:text-base font-bold text-slate-700 dark:text-slate-300 tracking-wider group-hover:text-[#0D6D54] dark:group-hover:text-white transition-colors">
+                <span className="text-xs sm:text-sm md:text-base font-bold text-slate-700 dark:text-slate-300 tracking-wider group-hover:text-[#0D6D54] dark:group-hover:text-white transition-colors whitespace-nowrap">
                   {item.label}
                 </span>
 
                 {/* Rounded Squircle Badge with Code (e.g. [ ISO ], [ BA ], [ QA ]) */}
-                <div className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl sm:rounded-2xl border border-slate-300 dark:border-slate-500/50 bg-slate-100 dark:bg-[#0E1E34]/80 text-slate-800 dark:text-slate-200 font-extrabold text-xs sm:text-sm tracking-widest shadow-xs group-hover:border-amber-400/80 group-hover:text-amber-500 dark:group-hover:text-amber-300 group-hover:scale-105 transition-all">
+                <div className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl sm:rounded-2xl border border-slate-300 dark:border-slate-500/50 bg-slate-100 dark:bg-[#0E1E34]/80 text-slate-800 dark:text-slate-200 font-extrabold text-xs sm:text-sm tracking-widest shadow-xs group-hover:border-amber-400/80 group-hover:text-amber-500 dark:group-hover:text-amber-300 group-hover:scale-105 transition-all shrink-0">
                   {item.code}
                 </div>
               </div>

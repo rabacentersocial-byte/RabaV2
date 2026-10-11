@@ -207,7 +207,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
         {/* ========================================================================= */}
         {/* THE ENCIRCLING BRACELET FRAME (سِوار الأمان والاحتواء المحيط بالقسم) */}
         {/* ========================================================================= */}
-        <div className="relative rounded-2xl sm:rounded-[36px] md:rounded-[48px] p-2.5 sm:p-6 md:p-8 bg-gradient-to-b from-[#00E5BE]/[0.05] via-transparent to-[#D2B2A4]/[0.06] border sm:border-2 border-dashed border-[#00E5BE]/40 dark:border-[#00E5BE]/35 shadow-[0_10px_40px_rgba(0,229,190,0.08)]">
+        <div className="relative rounded-2xl sm:rounded-[36px] md:rounded-[48px] p-3 sm:p-6 md:p-8 pb-9 sm:pb-10 bg-gradient-to-b from-[#00E5BE]/[0.05] via-transparent to-[#D2B2A4]/[0.06] border sm:border-2 border-dashed border-[#00E5BE]/40 dark:border-[#00E5BE]/35 shadow-[0_10px_40px_rgba(0,229,190,0.08)]">
           
           {/* Top Bracelet Clasp Ornament (ميدالية وقفل سِوار الأمان) */}
           <div className="absolute -top-3.5 sm:-top-4 left-1/2 -translate-x-1/2 px-3 sm:px-5 py-0.5 sm:py-1 rounded-full bg-white dark:bg-slate-900 border sm:border-2 border-[#00E5BE]/60 shadow-md flex items-center gap-1.5 sm:gap-2 z-20">
@@ -335,7 +335,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
             </div>
 
             {/* Column 2: Compact Form Beside Introductory Text (5 cols on lg) */}
-            <div className="lg:col-span-5 flex flex-col justify-center">
+            <div className="lg:col-span-5 flex flex-col justify-center mb-3 sm:mb-0">
               <div className="rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 shadow-xl transition-all relative overflow-hidden bg-gradient-to-br from-[#0B3B36] via-[#0E4A44] to-[#072421] dark:from-[#09221F] dark:via-[#0B2C27] dark:to-[#061815] border border-[#00E5BE]/30 text-white">
                 
                 {/* Decorative subtle brand glows */}
@@ -524,9 +524,11 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
           </div>
 
           {/* Bottom Bracelet Charm (ميدالية سِوار الاحتواء السفلية) */}
-          <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 px-2.5 sm:px-3 py-0.5 rounded-full bg-white dark:bg-slate-900 border border-[#00E5BE]/40 shadow-xs flex items-center gap-1.5 z-10 text-[9px] sm:text-[10px] font-bold text-slate-500 dark:text-slate-400">
-            <Heart className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#00E5BE] fill-current" />
-            <span>{isArabic ? 'سِوار الأمان — خطوة بخطوة مع طفلك' : 'Sewar Bracelet — Step by Step with Your Child'}</span>
+          <div className="absolute -bottom-3.5 sm:-bottom-4 left-1/2 -translate-x-1/2 px-3 sm:px-4 py-1 rounded-full bg-white dark:bg-[#071917] border border-[#00E5BE]/50 shadow-md flex items-center justify-center gap-1.5 z-20 text-[9.5px] sm:text-xs font-bold text-slate-700 dark:text-emerald-200 whitespace-nowrap max-w-[95vw]">
+            <Heart className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#00E5BE] fill-current shrink-0" />
+            <span className="whitespace-nowrap font-bold">
+              {isArabic ? 'سِوار الأمان — خطوة بخطوة مع طفلك' : 'Sewar Bracelet — Step by Step with Your Child'}
+            </span>
           </div>
         </div>
 

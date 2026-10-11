@@ -9,7 +9,9 @@ import {
   Clock, 
   Compass,
   SlidersHorizontal,
-  LayoutGrid
+  LayoutGrid,
+  ArrowLeft,
+  ArrowRight
 } from 'lucide-react';
 import { getStoredBranchesData, BranchItem } from '../data/branchesData';
 import { BranchMapPinGraphic } from './BranchMapPinGraphic';
@@ -557,39 +559,60 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
         )}
 
         {/* Unified Contact Bar below Branches */}
-        <div className="mt-12 bg-gradient-to-r from-[#0a3530] via-[#0d5c52] to-[#0a3e36] rounded-3xl p-5 sm:p-6 sm:px-8 border border-teal-600/30 shadow-[0_12px_36px_rgba(10,53,48,0.18)] flex flex-col sm:flex-row items-center justify-between gap-5 relative overflow-hidden text-white">
+        <div className="mt-8 sm:mt-12 bg-gradient-to-br from-[#06201c] via-[#0a3832] to-[#051a17] rounded-2xl sm:rounded-3xl p-4 sm:p-6 sm:px-8 border border-teal-500/25 shadow-[0_16px_40px_rgba(5,26,23,0.35)] relative overflow-hidden text-white">
           {/* Subtle ambient lighting glows */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-teal-400/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#00E5BE]/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[#00E5BE]/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-400/10 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="flex items-center gap-3.5 text-center sm:text-right relative z-10">
-            <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-[#2dd4bf] shrink-0 shadow-xs backdrop-blur-xs">
-              <Phone className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="text-xs sm:text-sm text-teal-100 font-bold mb-0.5">
-                {isArabic ? 'الرقم الموحد لكافة فروع المملكة:' : 'Unified Branch Call Center (KSA):'}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 sm:gap-6 relative z-10">
+            
+            {/* Phone Info Block (Clickable tap-to-call) */}
+            <a 
+              href="tel:0575100100"
+              className="flex items-center justify-between sm:justify-start gap-3 p-2 sm:p-0 rounded-xl hover:bg-white/5 active:bg-white/10 transition-all group cursor-pointer"
+              title={isArabic ? 'اتصال مباشر بالرقم الموحد' : 'Call unified hotline'}
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white/10 group-hover:bg-[#00E5BE]/20 border border-white/15 group-hover:border-[#00E5BE]/40 flex items-center justify-center text-[#00E5BE] shrink-0 shadow-xs backdrop-blur-xs transition-colors">
+                  <Phone className="w-4.5 h-4.5 sm:w-5 sm:h-5 transition-transform group-hover:scale-110" />
+                </div>
+                <div className="text-right">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-[11px] sm:text-xs text-teal-100/90 font-bold">
+                      {isArabic ? 'الرقم الموحد لكافة فروع المملكة:' : 'Unified Branch Call Center (KSA):'}
+                    </span>
+                  </div>
+                  <div className="text-base sm:text-xl font-black text-white group-hover:text-[#00E5BE] transition-colors font-mono tracking-wider mt-0.5" dir="ltr">
+                    0575100100
+                  </div>
+                </div>
               </div>
-              <a 
-                href="tel:0575100100" 
-                className="text-lg sm:text-xl font-black text-white hover:text-[#2dd4bf] transition-colors font-mono tracking-wider inline-block" 
-                dir="ltr"
+
+              {/* Instant Call indicator pill on mobile */}
+              <span className="sm:hidden text-[10.5px] font-black px-2.5 py-1 rounded-lg bg-white/10 text-teal-200 border border-white/10 group-hover:bg-[#00E5BE] group-hover:text-slate-950 transition-colors">
+                {isArabic ? 'اتصال فوري' : 'Call'}
+              </span>
+            </a>
+
+            {/* Action CTA Button */}
+            <div className="w-full sm:w-auto shrink-0">
+              <a
+                href="https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20الاستفسار%20عن%20أقرب%20فرع%20لمركز%20رابا%20في%20المملكة"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3.5 bg-gradient-to-r from-[#00E5BE] to-[#14c7a6] hover:from-[#1bf5cf] hover:to-[#17deb9] text-[#04201b] font-black rounded-xl sm:rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 sm:gap-2.5 transition-all shadow-md shadow-teal-950/30 active:scale-95 cursor-pointer"
               >
-                0575100100
+                <MessageCircle className="w-4 h-4 fill-[#04201b] text-[#04201b] shrink-0" />
+                <span className="font-black tracking-tight">{isArabic ? 'استشرنا لتحديد أقرب فرع لطفلك' : 'Find Closest Branch'}</span>
+                {isArabic ? (
+                  <ArrowLeft className="w-3.5 h-3.5 text-[#04201b] shrink-0 opacity-80" />
+                ) : (
+                  <ArrowRight className="w-3.5 h-3.5 text-[#04201b] shrink-0 opacity-80" />
+                )}
               </a>
             </div>
-          </div>
 
-          <div className="flex items-center gap-3 relative z-10">
-            <a
-              href="https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20الاستفسار%20عن%20أقرب%20فرع%20لمركز%20رابا%20في%20المملكة"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-3.5 bg-[#00E5BE] hover:bg-[#2dd4bf] text-[#0a3530] font-black rounded-2xl text-xs sm:text-sm flex items-center gap-2.5 transition-all shadow-md shadow-teal-950/20 hover:scale-[1.02] active:scale-95 cursor-pointer"
-            >
-              <MessageCircle className="w-4 h-4 fill-[#0a3530] text-[#0a3530]" />
-              <span>{isArabic ? 'استشرنا لتحديد أقرب فرع لطفلك' : 'Find Closest Branch'}</span>
-            </a>
           </div>
         </div>
 

@@ -891,48 +891,108 @@ export const PartnersSection: React.FC = () => {
         )}
 
         {/* Partnership Metrics Highlights */}
-        <div className="mt-12 sm:mt-16 pt-8 border-t border-slate-200/80 dark:border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-center">
-          
-          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/40 border border-slate-200/60 dark:border-white/5 shadow-2xs hover:shadow-sm transition-shadow">
-            <span className="block text-2xl sm:text-3xl font-black text-[#0D6D54] dark:text-[#2DD4BF] mb-1 font-sans">+٢٠</span>
-            <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 block">
-              {isArabic ? 'شراكة حكومية ومؤسسية' : 'Strategic Alliances'}
-            </span>
-            <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 block">
-              {isArabic ? 'وزارات وهيئات وجامعات كبرى' : 'Ministries & Authorities'}
-            </span>
-          </div>
+        <div className="mt-12 sm:mt-16 pt-8 border-t border-slate-200/80 dark:border-white/10">
+          <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] p-3 sm:p-5 relative overflow-hidden">
+            {/* Ambient glows */}
+            <div className="absolute top-0 right-0 w-48 h-48 bg-teal-500/5 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-sky-500/5 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/40 border border-slate-200/60 dark:border-white/5 shadow-2xs hover:shadow-sm transition-shadow">
-            <span className="block text-2xl sm:text-3xl font-black text-[#0D6D54] dark:text-[#2DD4BF] mb-1 font-sans">١٠٠٪</span>
-            <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 block">
-              {isArabic ? 'تكامل في مسارات الدمج' : 'Inclusion & Integration'}
-            </span>
-            <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 block">
-              {isArabic ? 'دمج مدرسي ورعاية تخصصية' : 'Classroom & Dedicated Care'}
-            </span>
-          </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 relative z-10">
+              
+              {/* Card 1: 20+ شراكة حكومية ومؤسسية */}
+              <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-slate-100 dark:border-white/5 hover:border-teal-400/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+                <div className="flex items-center justify-between gap-1.5 mb-2.5">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-teal-500/10 text-[#0D6D54] dark:text-[#2DD4BF] border border-teal-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-teal-500/20 transition-all">
+                    <Landmark className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
+                  </div>
+                  <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-400/20 truncate">
+                    {isArabic ? 'جهات كبرى' : 'Major Alliances'}
+                  </span>
+                </div>
+                <div>
+                  <div className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#0D6D54] dark:text-[#2DD4BF] tracking-tight leading-none font-mono">
+                    20+
+                  </div>
+                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100 mt-1.5 leading-snug">
+                    {isArabic ? 'شراكة حكومية ومؤسسية' : 'Strategic Alliances'}
+                  </div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                    {isArabic ? 'وزارات وهيئات وجامعات كبرى' : 'Ministries & Authorities'}
+                  </div>
+                </div>
+              </div>
 
-          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/40 border border-slate-200/60 dark:border-white/5 shadow-2xs hover:shadow-sm transition-shadow">
-            <span className="block text-2xl sm:text-3xl font-black text-[#0D6D54] dark:text-[#2DD4BF] mb-1 font-sans">٠٪</span>
-            <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 block">
-              {isArabic ? 'تقسيط وتيسير مالي مرن' : '0% Interest Installments'}
-            </span>
-            <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 block">
-              {isArabic ? 'شراكة تمارا وإمكان بدون فوائد' : 'Tamara & Emkan Enablement'}
-            </span>
-          </div>
+              {/* Card 2: 100% تكامل في مسارات الدمج */}
+              <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-slate-100 dark:border-white/5 hover:border-sky-400/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+                <div className="flex items-center justify-between gap-1.5 mb-2.5">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-sky-500/20 transition-all">
+                    <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
+                  </div>
+                  <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-sky-500/10 text-sky-700 dark:text-sky-300 border border-sky-400/20 truncate">
+                    {isArabic ? 'دمج مدرسي' : 'Full Inclusion'}
+                  </span>
+                </div>
+                <div>
+                  <div className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#0D6D54] dark:text-[#2DD4BF] tracking-tight leading-none font-mono">
+                    100%
+                  </div>
+                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100 mt-1.5 leading-snug">
+                    {isArabic ? 'تكامل في مسارات الدمج' : 'Inclusion & Integration'}
+                  </div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                    {isArabic ? 'دمج مدرسي ورعاية تخصصية' : 'Classroom & Dedicated Care'}
+                  </div>
+                </div>
+              </div>
 
-          <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/40 border border-slate-200/60 dark:border-white/5 shadow-2xs hover:shadow-sm transition-shadow">
-            <span className="block text-2xl sm:text-3xl font-black text-[#0D6D54] dark:text-[#2DD4BF] mb-1 font-sans">٣</span>
-            <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 block">
-              {isArabic ? 'اعتمادات دولية لجودة التأهيل' : 'International Accreditations'}
-            </span>
-            <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 block">
-              {isArabic ? 'IBAO و QABA و ISO 9001' : 'IBAO, QABA & ISO Standards'}
-            </span>
-          </div>
+              {/* Card 3: 0% تقسيط وتيسير مالي مرن */}
+              <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-slate-100 dark:border-white/5 hover:border-amber-400/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+                <div className="flex items-center justify-between gap-1.5 mb-2.5">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-amber-500/20 transition-all">
+                    <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
+                  </div>
+                  <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-400/20 truncate">
+                    {isArabic ? 'بدون فوائد' : '0% Interest'}
+                  </span>
+                </div>
+                <div>
+                  <div className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#0D6D54] dark:text-[#2DD4BF] tracking-tight leading-none font-mono">
+                    0%
+                  </div>
+                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100 mt-1.5 leading-snug">
+                    {isArabic ? 'تقسيط وتيسير مالي مرن' : 'Flexible Installments'}
+                  </div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                    {isArabic ? 'شراكة تمارا وإمكان بدون فوائد' : 'Tamara & Emkan Enablement'}
+                  </div>
+                </div>
+              </div>
 
+              {/* Card 4: 4 اعتمادات دولية */}
+              <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-slate-100 dark:border-white/5 hover:border-emerald-400/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+                <div className="flex items-center justify-between gap-1.5 mb-2.5">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-[#00E5BE] border border-emerald-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-emerald-500/20 transition-all">
+                    <Award className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
+                  </div>
+                  <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-400/20 truncate">
+                    {isArabic ? 'معايير دولية' : 'Global Standards'}
+                  </span>
+                </div>
+                <div>
+                  <div className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#0D6D54] dark:text-[#2DD4BF] tracking-tight leading-none font-mono">
+                    4
+                  </div>
+                  <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-100 mt-1.5 leading-snug">
+                    {isArabic ? 'اعتمادات دولية لجودة التأهيل' : 'International Accreditations'}
+                  </div>
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight font-medium">
+                    {isArabic ? 'IBAO و QABA و ISO و BACB' : 'IBAO, QABA, ISO & BACB'}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
         </div>
 
       </div>
