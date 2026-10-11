@@ -568,23 +568,37 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {/* Mobile Navigation Drawer */}
         {isMobileMenuOpen && (
           <div 
-            className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm lg:hidden flex"
+            className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm lg:hidden flex justify-end"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             <div 
-              className="bg-white dark:bg-slate-900 w-72 max-w-[80vw] h-full p-6 shadow-2xl space-y-3 overflow-y-auto"
+              className="bg-white dark:bg-slate-900 w-80 max-w-[85vw] h-full p-5 shadow-2xl flex flex-col overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/10">
-                <span className="font-black text-sm text-[#0B3B36] dark:text-emerald-400">
-                  {isArabic ? 'قائمة لوحة التحكم' : 'Admin Navigation'}
-                </span>
-                <button onClick={() => setIsMobileMenuOpen(false)} className="p-1 rounded-lg">
-                  <X className="w-5 h-5 text-slate-400" />
+              <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 dark:border-white/10 shrink-0">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-teal-500/15 flex items-center justify-center text-teal-700 dark:text-[#00E5BE]">
+                    <ShieldCheck className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="font-black text-sm text-[#0B3B36] dark:text-[#00E5BE] block">
+                      {isArabic ? 'قائمة لوحة التحكم' : 'Admin Navigation'}
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-medium">
+                      {isArabic ? 'إدارة المنظومة والبيانات' : 'System Administration'}
+                    </span>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setIsMobileMenuOpen(false)} 
+                  className="p-1.5 rounded-xl bg-slate-100 dark:bg-white/10 hover:bg-slate-200 text-slate-500 dark:text-slate-300 transition-colors cursor-pointer"
+                  aria-label={isArabic ? 'إغلاق' : 'Close'}
+                >
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-1.5 overflow-y-auto flex-1 py-3 no-scrollbar">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = activeTab === item.id;
@@ -595,15 +609,33 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         setActiveTab(item.id as any);
                         setIsMobileMenuOpen(false);
                       }}
-                      className={`w-full p-3 rounded-2xl text-xs font-bold flex items-center justify-between ${
-                        isActive ? 'bg-[#0B3B36] text-white' : 'text-slate-600 dark:text-slate-400'
+                      className={`w-full p-2.5 rounded-xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
+                        isActive 
+                          ? 'bg-gradient-to-r from-[#0B3B36] to-[#0f5349] text-white shadow-sm ring-1 ring-[#00E5BE]/30' 
+                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <Icon className="w-4 h-4" />
-                        <span>{isArabic ? item.labelAr : item.labelEn}</span>
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
+                          isActive 
+                            ? 'bg-white/15 text-[#00E5BE]' 
+                            : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-400'
+                        }`}>
+                          <Icon className="w-4 h-4" />
+                        </div>
+                        <span className="truncate">{isArabic ? item.labelAr : item.labelEn}</span>
                       </div>
-                      {item.badge && <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800">{item.badge}</span>}
+                      {item.badge && (
+                        <span className={`text-[10px] font-black px-2 py-0.5 rounded-full shrink-0 ${
+                          isActive
+                            ? 'bg-[#00E5BE] text-slate-950'
+                            : item.isHighlighted
+                              ? 'bg-amber-500/20 text-amber-700 dark:text-amber-400'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                        }`}>
+                          {item.badge}
+                        </span>
+                      )}
                     </button>
                   );
                 })}

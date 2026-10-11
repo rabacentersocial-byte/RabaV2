@@ -194,6 +194,17 @@ function writeJsonFile(filename: string, data: any): boolean {
   }
 }
 
+// Detect production / Cloud Run environment
+const isCloudRun = Boolean(process.env.K_SERVICE || process.env.K_REVISION || process.env.K_CONFIGURATION);
+const isProduction =
+  process.env.NODE_ENV === 'production' ||
+  isCloudRun ||
+  (!process.env.DEFAULT_APP_PORT && Boolean(process.env.PORT));
+
+if (isProduction && process.env.NODE_ENV !== 'production') {
+  process.env.NODE_ENV = 'production';
+}
+
 function getPort(): number {
   const args = process.argv;
   for (let i = 0; i < args.length; i++) {
@@ -206,16 +217,22 @@ function getPort(): number {
       if (!isNaN(p)) return p;
     }
   }
-  // In development, dev server MUST run on port 3000 (avoid container 8080 collision)
-  if (process.env.NODE_ENV !== 'production') {
-    return Number(process.env.DEFAULT_APP_PORT) || 3000;
+  // In Cloud Run / Production: MUST listen on PORT environment variable (e.g. 8080)
+  if (isProduction || isCloudRun) {
+    return Number(process.env.PORT) || 8080;
   }
-  return Number(process.env.PORT) || 3000;
+  // In AI Studio development, dev server MUST run on port 3000
+  return Number(process.env.DEFAULT_APP_PORT) || 3000;
 }
 
 async function startServer() {
   const app = express();
   const PORT = getPort();
+
+  // Health check endpoints for Cloud Run container probes
+  app.get(['/health', '/healthz'], (_req: Request, res: Response) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
 
   // Compress all responses for enhanced mobile network performance
   app.use(compression());
@@ -745,8 +762,21 @@ async function startServer() {
 
   // --- Vite Dev Server Middleware or Production Static Serving ---
   let viteInstance: any = null;
-  if (process.env.NODE_ENV === 'production') {
+  if (isProduction || process.env.NODE_ENV === 'production') {
     const distPath = path.join(process.cwd(), 'dist');
+    const indexPath = path.join(distPath, 'index.html');
+
+    // Auto-build client bundle if missing when starting in production
+    if (!fs.existsSync(indexPath)) {
+      console.log('[Raba Server] dist/index.html not found, generating production bundle...');
+      try {
+        const { execSync } = await import('child_process');
+        execSync('node scripts/sync-data.js && npx vite build', { stdio: 'inherit' });
+      } catch (buildErr) {
+        console.error('[Raba Server] Error building client bundle:', buildErr);
+      }
+    }
+
     // Long immutable cache on hashed JS & CSS assets
     app.use('/assets', express.static(path.join(distPath, 'assets'), {
       maxAge: '1y',
@@ -761,9 +791,13 @@ async function startServer() {
         }
       }
     }));
-    app.get('*', (req: Request, res: Response) => {
+    app.get('*', (_req: Request, res: Response) => {
       res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
-      res.sendFile(path.join(distPath, 'index.html'));
+      if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+      } else {
+        res.status(200).send('<!DOCTYPE html><html><head><title>مركز أبا للرعاية المتطورة</title></head><body><div style="font-family:system-ui,sans-serif;text-align:center;padding:40px;direction:rtl"><h2>جاري تجهيز الموقع...</h2><p>يرجى إعادة تحميل الصفحة خلال لحظات.</p></div></body></html>');
+      }
     });
   } else {
     viteInstance = await createViteServer({

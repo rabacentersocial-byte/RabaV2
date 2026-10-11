@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { 
   Search, 
   Filter, 
@@ -67,6 +67,53 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
   const [selectedExpMin, setSelectedExpMin] = useState<number>(0);
   const [sortBy, setSortBy] = useState<'recommended' | 'rating' | 'experience' | 'name'>('recommended');
   const [isSortOpen, setIsSortOpen] = useState(false);
+
+  // Scroll detection in mobile view to hide the sort button as soon as user scrolls down
+  const [isScrolledDownOnMobile, setIsScrolledDownOnMobile] = useState(false);
+  const lastScrollYRef = useRef(0);
+
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY || document.documentElement.scrollTop;
+          const diff = currentScrollY - lastScrollYRef.current;
+
+          // In mobile view:
+          // As soon as scrolling down past 25px (diff > 2) -> hide sort button on mobile!
+          // When scrolling back up (diff < -3) or reaching top (currentScrollY <= 20) -> reveal it!
+          if (currentScrollY > 25 && diff > 2) {
+            setIsScrolledDownOnMobile(true);
+            setIsSortOpen(false);
+          } else if (currentScrollY <= 20 || diff < -3) {
+            setIsScrolledDownOnMobile(false);
+          }
+
+          lastScrollYRef.current = currentScrollY;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Close sort menu when clicking outside
+  useEffect(() => {
+    if (!isSortOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.sort-dropdown-container')) {
+        setIsSortOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isSortOpen]);
 
   // Dynamic Specialist Image Settings (synced from Admin Dashboard)
   const [customSettings, setCustomSettings] = useState<Record<string, SpecialistImageSetting>>(() => getStoredSpecialistSettings());
@@ -402,76 +449,84 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
 
       {/* 3. STICKY FILTER & SEARCH TOOLBAR */}
       <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-white/10 sticky top-[57px] z-30 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-4">
+        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-2.5 sm:py-4 space-y-2.5 sm:space-y-4">
           
-          {/* Top Row: Search Input + Sort + View Mode (List vs Grid) */}
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          {/* Top Row: Search Input + Sort Dropdown on the SAME LINE on mobile */}
+          <div className="flex flex-row items-center justify-between gap-2 sm:gap-3">
             
             {/* Search bar */}
-            <div className="relative flex-1 max-w-2xl">
+            <div className="relative flex-1 min-w-0">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={isArabic ? 'ابحث بالاسم، التخصص، الكفاءة السريرية، أو الكلمات المفتاحية...' : 'Search by name, specialty, bio, or credentials...'}
-                className="w-full bg-slate-100/90 dark:bg-slate-800/90 text-slate-900 dark:text-white rounded-2xl pl-10 pr-12 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0d5c52] dark:focus:ring-[#2dd4bf] border border-slate-200 dark:border-white/10 transition-all placeholder:text-slate-400"
+                className="w-full bg-slate-100/90 dark:bg-slate-800/90 text-slate-900 dark:text-white rounded-xl sm:rounded-2xl pl-8 pr-9 sm:pl-10 sm:pr-12 py-2 sm:py-3 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#0d5c52] dark:focus:ring-[#2dd4bf] border border-slate-200 dark:border-white/10 transition-all placeholder:text-slate-400"
               />
-              <Search className={`w-5 h-5 text-slate-400 absolute top-1/2 -translate-y-1/2 ${isArabic ? 'right-4' : 'left-4'}`} />
+              <Search className={`w-4 h-4 sm:w-5 sm:h-5 text-slate-400 absolute top-1/2 -translate-y-1/2 ${isArabic ? 'right-2.5 sm:right-4' : 'left-2.5 sm:left-4'}`} />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className={`absolute top-1/2 -translate-y-1/2 ${isArabic ? 'left-3' : 'right-3'} p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 transition-colors cursor-pointer`}
+                  className={`absolute top-1/2 -translate-y-1/2 ${isArabic ? 'left-2 sm:left-3' : 'right-2 sm:right-3'} p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 transition-colors cursor-pointer`}
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
               )}
             </div>
 
-            {/* Right Controls: Sort & View Mode Toggle */}
-            <div className="flex items-center gap-2 self-end md:self-auto shrink-0 flex-wrap">
-              
-              {/* Sort Dropdown */}
-              <div className="relative">
-                <button
-                  onClick={() => setIsSortOpen(!isSortOpen)}
-                  className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-bold border border-slate-200 dark:border-white/10 transition-colors cursor-pointer"
-                >
-                  <SlidersHorizontal className="w-4 h-4 text-[#0d5c52] dark:text-[#2dd4bf]" />
-                  <span>
-                    {sortBy === 'recommended' && (isArabic ? 'الترتيب: الموصى به' : 'Sort: Recommended')}
-                    {sortBy === 'rating' && (isArabic ? 'الأعلى تقييماً' : 'Highest Rated')}
-                    {sortBy === 'experience' && (isArabic ? 'الأكثر خبرة' : 'Most Experienced')}
-                    {sortBy === 'name' && (isArabic ? 'أبجدياً (أ-ي)' : 'Alphabetical')}
-                  </span>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
-                </button>
+            {/* Sort Controls (On the SAME LINE in mobile, and smoothly disappears when scrolling down in mobile) */}
+            <div 
+              className={`sort-dropdown-container relative shrink-0 transition-all duration-300 ease-in-out ${
+                isScrolledDownOnMobile 
+                  ? 'max-md:opacity-0 max-md:max-w-0 max-md:overflow-hidden max-md:pointer-events-none max-md:scale-90 max-md:m-0 max-md:p-0' 
+                  : 'max-md:opacity-100 max-md:max-w-[220px] max-md:scale-100'
+              }`}
+            >
+              <button
+                onClick={() => setIsSortOpen(!isSortOpen)}
+                className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-bold border border-slate-200 dark:border-white/10 transition-colors cursor-pointer whitespace-nowrap shadow-2xs"
+                title={isArabic ? 'ترتيب النتائج' : 'Sort Results'}
+              >
+                <SlidersHorizontal className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0d5c52] dark:text-[#2dd4bf] shrink-0" />
+                <span className="hidden sm:inline">
+                  {sortBy === 'recommended' && (isArabic ? 'الترتيب: الموصى به' : 'Sort: Recommended')}
+                  {sortBy === 'rating' && (isArabic ? 'الأعلى تقييماً' : 'Highest Rated')}
+                  {sortBy === 'experience' && (isArabic ? 'الأكثر خبرة' : 'Most Experienced')}
+                  {sortBy === 'name' && (isArabic ? 'أبجدياً (أ-ي)' : 'Alphabetical')}
+                </span>
+                <span className="sm:hidden">
+                  {sortBy === 'recommended' && (isArabic ? 'الموصى به' : 'Recommended')}
+                  {sortBy === 'rating' && (isArabic ? 'الأعلى تقييماً' : 'Top Rated')}
+                  {sortBy === 'experience' && (isArabic ? 'الأكثر خبرة' : 'Experience')}
+                  {sortBy === 'name' && (isArabic ? 'أبجدياً' : 'A-Z')}
+                </span>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              </button>
 
-                {isSortOpen && (
-                  <div className={`absolute top-full mt-2 ${isArabic ? 'left-0' : 'right-0'} w-48 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-white/10 py-1.5 z-50 animate-in fade-in zoom-in-95 duration-150`}>
-                    {[
-                      { id: 'recommended', labelAr: 'الموصى به (الأولوية)', labelEn: 'Recommended' },
-                      { id: 'rating', labelAr: 'الأعلى تقييماً', labelEn: 'Highest Rated' },
-                      { id: 'experience', labelAr: 'الأكثر خبرة', labelEn: 'Most Experienced' },
-                      { id: 'name', labelAr: 'أبجدياً (أ-ي)', labelEn: 'Alphabetical' },
-                    ].map((opt) => (
-                      <button
-                        key={opt.id}
-                        onClick={() => {
-                          setSortBy(opt.id as any);
-                          setIsSortOpen(false);
-                        }}
-                        className={`w-full text-right px-4 py-2.5 text-xs font-bold flex items-center justify-between hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer ${
-                          sortBy === opt.id ? 'text-[#0d5c52] dark:text-[#2dd4bf] bg-slate-50 dark:bg-white/5' : 'text-slate-700 dark:text-slate-300'
-                        }`}
-                      >
-                        <span>{isArabic ? opt.labelAr : opt.labelEn}</span>
-                        {sortBy === opt.id && <Check className="w-4 h-4" />}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
+              {isSortOpen && (
+                <div className={`absolute top-full mt-2 ${isArabic ? 'left-0' : 'right-0'} w-48 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-white/10 py-1.5 z-50 animate-in fade-in zoom-in-95 duration-150`}>
+                  {[
+                    { id: 'recommended', labelAr: 'الموصى به (الأولوية)', labelEn: 'Recommended' },
+                    { id: 'rating', labelAr: 'الأعلى تقييماً', labelEn: 'Highest Rated' },
+                    { id: 'experience', labelAr: 'الأكثر خبرة', labelEn: 'Most Experienced' },
+                    { id: 'name', labelAr: 'أبجدياً (أ-ي)', labelEn: 'Alphabetical' },
+                  ].map((opt) => (
+                    <button
+                      key={opt.id}
+                      onClick={() => {
+                        setSortBy(opt.id as any);
+                        setIsSortOpen(false);
+                      }}
+                      className={`w-full text-right px-4 py-2.5 text-xs font-bold flex items-center justify-between hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer ${
+                        sortBy === opt.id ? 'text-[#0d5c52] dark:text-[#2dd4bf] bg-slate-50 dark:bg-white/5' : 'text-slate-700 dark:text-slate-300'
+                      }`}
+                    >
+                      <span>{isArabic ? opt.labelAr : opt.labelEn}</span>
+                      {sortBy === opt.id && <Check className="w-4 h-4" />}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
           </div>
@@ -696,10 +751,11 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
 
                       <button
                         onClick={() => handleViewCvClick(doctor)}
-                        className={`px-2.5 sm:px-3 py-2 sm:py-2.5 ${theme.cvButton} border rounded-xl text-xs font-bold flex items-center justify-center cursor-pointer active:scale-95`}
+                        className={`px-2.5 sm:px-3 py-2 sm:py-2.5 ${theme.cvButton} border rounded-xl text-xs font-bold flex items-center justify-center gap-1 cursor-pointer active:scale-95 shadow-2xs`}
                         title={isArabic ? 'السيرة الذاتية' : 'View CV'}
                       >
                         <FileText className="w-3.5 h-3.5" />
+                        <span className="text-[11px] font-bold">{isArabic ? 'السيرة' : 'CV'}</span>
                       </button>
 
                       <a
