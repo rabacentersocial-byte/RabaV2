@@ -178,19 +178,19 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight mb-1.5 sm:mb-2">
               {isArabic ? (
                 <span>
-                  العروض والخصومات الحصرية<span className="text-[#0D6D54] dark:text-[#00E5BE]">.</span>
+                  العروض والأنشطة<span className="text-[#0D6D54] dark:text-[#00E5BE]">.</span>
                 </span>
               ) : (
                 <span>
-                  Offers & Discounts<span className="text-[#0D6D54] dark:text-[#00E5BE]">.</span>
+                  Offers & Activities<span className="text-[#0D6D54] dark:text-[#00E5BE]">.</span>
                 </span>
               )}
             </h2>
 
             <p className="text-xs sm:text-base text-slate-600 dark:text-emerald-100/80 leading-relaxed max-w-2xl font-medium">
               {isArabic 
-                ? 'استكشف باقة عروضنا الحصرية بمناسبة اليوم الوطني السعودي الـ96 مع إمكانية التمرير والاستفادة الفورية.'
-                : 'Explore our premier exclusive offers for Saudi National Day 96 with convenient horizontal slider.'}
+                ? 'استكشف باقة عروضنا وأنشطتنا الحصرية بمناسبة اليوم الوطني السعودي الـ96 وفعاليات المركز مع إمكانية التمرير والاستفادة الفورية.'
+                : 'Explore our premier exclusive offers and activities for Saudi National Day 96 and center events.'}
             </p>
           </div>
 

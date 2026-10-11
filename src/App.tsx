@@ -20,6 +20,7 @@ const SpecialistsSection = lazy(() => import('./components/SpecialistsSection').
 const SpecialistsDirectoryPage = lazy(() => import('./components/SpecialistsDirectoryPage'));
 const ServicesDirectoryPage = lazy(() => import('./components/ServicesDirectoryPage'));
 const BranchesDirectoryPage = lazy(() => import('./components/BranchesDirectoryPage'));
+const OffersDirectoryPage = lazy(() => import('./components/OffersDirectoryPage'));
 const SpecialistCvModal = lazy(() => import('./components/SpecialistCvModal').then(m => ({ default: m.SpecialistCvModal })));
 const BookingModal = lazy(() => import('./components/BookingModal').then(m => ({ default: m.BookingModal })));
 const NotificationCenterModal = lazy(() => import('./components/NotificationCenterModal').then(m => ({ default: m.NotificationCenterModal })));
@@ -317,6 +318,7 @@ export default function App() {
   const [isSpecialistsPageOpen, setIsSpecialistsPageOpen] = useState(false);
   const [isServicesPageOpen, setIsServicesPageOpen] = useState(false);
   const [isBranchesPageOpen, setIsBranchesPageOpen] = useState(false);
+  const [isOffersPageOpen, setIsOffersPageOpen] = useState(false);
   const [adminSession, setAdminSession] = useState<AdminUser | null>(() => getStoredAdminSession());
   const [cartCount, setCartCount] = useState(0);
   const [selectedCourseForRegistration, setSelectedCourseForRegistration] = useState<CourseItem | null>(null);
@@ -331,12 +333,17 @@ export default function App() {
       initialHash === '#services-directory' || 
       initialHash === '#services-page' ||
       initialHash === '#branches-directory' || 
-      initialHash === '#branches-page'
+      initialHash === '#branches-page' ||
+      initialHash === '#offers-directory' ||
+      initialHash === '#offers-page' ||
+      initialHash === '#offers' ||
+      initialHash === '#activities'
     ) {
       window.history.replaceState('', document.title, window.location.pathname + window.location.search);
       setIsSpecialistsPageOpen(false);
       setIsServicesPageOpen(false);
       setIsBranchesPageOpen(false);
+      setIsOffersPageOpen(false);
     }
     // Scroll to top of the Home page on initial load
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
@@ -351,6 +358,7 @@ export default function App() {
     setIsSpecialistsPageOpen(true);
     setIsServicesPageOpen(false);
     setIsBranchesPageOpen(false);
+    setIsOffersPageOpen(false);
     window.location.hash = '#specialists-directory';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -359,6 +367,7 @@ export default function App() {
     setIsServicesPageOpen(true);
     setIsSpecialistsPageOpen(false);
     setIsBranchesPageOpen(false);
+    setIsOffersPageOpen(false);
     window.location.hash = '#services-directory';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -367,7 +376,17 @@ export default function App() {
     setIsBranchesPageOpen(true);
     setIsSpecialistsPageOpen(false);
     setIsServicesPageOpen(false);
+    setIsOffersPageOpen(false);
     window.location.hash = '#branches-directory';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenOffersPage = () => {
+    setIsOffersPageOpen(true);
+    setIsSpecialistsPageOpen(false);
+    setIsServicesPageOpen(false);
+    setIsBranchesPageOpen(false);
+    window.location.hash = '#offers-directory';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -375,13 +394,18 @@ export default function App() {
     setIsSpecialistsPageOpen(false);
     setIsServicesPageOpen(false);
     setIsBranchesPageOpen(false);
+    setIsOffersPageOpen(false);
     if (
       window.location.hash === '#specialists-directory' || 
       window.location.hash === '#specialists-page' ||
       window.location.hash === '#services-directory' ||
       window.location.hash === '#services-page' ||
       window.location.hash === '#branches-directory' ||
-      window.location.hash === '#branches-page'
+      window.location.hash === '#branches-page' ||
+      window.location.hash === '#offers-directory' ||
+      window.location.hash === '#offers-page' ||
+      window.location.hash === '#offers' ||
+      window.location.hash === '#activities'
     ) {
       window.history.pushState('', document.title, window.location.pathname + window.location.search);
     }
@@ -402,6 +426,12 @@ export default function App() {
       setIsBranchesPageOpen(
         window.location.hash === '#branches-directory' || 
         window.location.hash === '#branches-page'
+      );
+      setIsOffersPageOpen(
+        window.location.hash === '#offers-directory' || 
+        window.location.hash === '#offers-page' ||
+        window.location.hash === '#offers' ||
+        window.location.hash === '#activities'
       );
     };
     const handleAuthChange = (e: any) => {
@@ -593,10 +623,12 @@ export default function App() {
         onOpenSpecialistsPage={handleOpenSpecialistsPage}
         onOpenServicesPage={handleOpenServicesPage}
         onOpenBranchesPage={handleOpenBranchesPage}
+        onOpenOffersPage={handleOpenOffersPage}
         onGoHome={handleBackToHome}
         isSpecialistsPageOpen={isSpecialistsPageOpen}
         isServicesPageOpen={isServicesPageOpen}
         isBranchesPageOpen={isBranchesPageOpen}
+        isOffersPageOpen={isOffersPageOpen}
         unreadCount={unreadCount}
         cartCount={cartCount}
       />
@@ -640,6 +672,18 @@ export default function App() {
               }}
             />
           </Suspense>
+        ) : isOffersPageOpen ? (
+          /* Dedicated Offers & Activities Page (Moved from Homepage to Separate Page) */
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-teal-500 font-bold">جاري تحميل صفحة العروض والأنشطة...</div>}>
+            <OffersDirectoryPage
+              onBackToHome={handleBackToHome}
+              onClaimOffer={handleClaimOffer}
+              onOpenBooking={(notes) => {
+                if (notes) setBookingInitialNotes(notes);
+                setIsBookingOpen(true);
+              }}
+            />
+          </Suspense>
         ) : (
           <>
             {/* 3. Hero Section */}
@@ -656,13 +700,6 @@ export default function App() {
             {/* 5. Center Achievements & Statistics Bar (from image) */}
             {modules.stats && (
               <StatsBar />
-            )}
-
-            {/* 7. Center Offers & Discounts (from image) */}
-            {modules.offers && (
-              <OffersSection
-                onClaimOffer={handleClaimOffer}
-              />
             )}
 
             {/* 8. Occupational & ABA Therapy Programs */}
@@ -766,10 +803,12 @@ export default function App() {
         onOpenSpecialistsPage={handleOpenSpecialistsPage}
         onOpenServicesPage={handleOpenServicesPage}
         onOpenBranchesPage={handleOpenBranchesPage}
+        onOpenOffersPage={handleOpenOffersPage}
         onGoHome={handleBackToHome}
         isSpecialistsPageOpen={isSpecialistsPageOpen}
         isServicesPageOpen={isServicesPageOpen}
         isBranchesPageOpen={isBranchesPageOpen}
+        isOffersPageOpen={isOffersPageOpen}
       />
 
       {/* Modals wrapped in Suspense for zero initial blocking time */}

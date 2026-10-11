@@ -22,7 +22,8 @@ import {
   Stethoscope,
   BadgeCheck,
   Award,
-  Sparkle
+  Sparkle,
+  Gift
 } from 'lucide-react';
 import { RabaLogo } from './RabaLogo';
 import { useTheme } from '../context/ThemeContext';
@@ -37,10 +38,12 @@ interface NavbarProps {
   onOpenSpecialistsPage?: () => void;
   onOpenServicesPage?: () => void;
   onOpenBranchesPage?: () => void;
+  onOpenOffersPage?: () => void;
   onGoHome?: () => void;
   isSpecialistsPageOpen?: boolean;
   isServicesPageOpen?: boolean;
   isBranchesPageOpen?: boolean;
+  isOffersPageOpen?: boolean;
   unreadCount?: number;
   cartCount?: number;
 }
@@ -53,10 +56,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenSpecialistsPage,
   onOpenServicesPage,
   onOpenBranchesPage,
+  onOpenOffersPage,
   onGoHome,
   isSpecialistsPageOpen = false,
   isServicesPageOpen = false,
   isBranchesPageOpen = false,
+  isOffersPageOpen = false,
   unreadCount
 }) => {
   const { theme, toggleTheme } = useTheme();
@@ -98,6 +103,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navLinks = [
     { label: t('nav.home'), href: '#hero' },
     { label: isArabic ? 'الخدمات' : 'Services', href: '#services' },
+    { label: isArabic ? 'العروض والأنشطة' : 'Offers & Activities', href: '#offers' },
     { label: isArabic ? 'خدمة سِوار (معلم الظل)' : 'Sewar (Shadow Teacher)', href: '#shadow-teacher' },
     { label: t('nav.specialists'), href: '#specialists' },
     { label: isArabic ? 'فروعنا بالمملكة' : 'Branches', href: '#branches' },
@@ -129,6 +135,16 @@ export const Navbar: React.FC<NavbarProps> = ({
           icon: Sparkles,
           iconBg: 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-400 border-cyan-500/30',
           badge: isArabic ? 'متاح الآن' : 'Available',
+        },
+        {
+          id: 'offers',
+          label: isArabic ? 'العروض والأنشطة' : 'Offers & Activities',
+          subtitle: isArabic ? 'عروض وفعاليات اليوم الوطني والأنشطة الحصرية' : 'National Day Deals & Center Events',
+          href: '#offers',
+          icon: Gift,
+          iconBg: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30',
+          badge: isArabic ? 'عروض خاصة' : 'Offers',
+          badgeHighlight: true,
         },
         {
           id: 'summer-packages',
@@ -255,17 +271,21 @@ export const Navbar: React.FC<NavbarProps> = ({
             <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5" aria-label="القائمة الرئيسية">
               {navLinks.map((link) => {
                 const isLinkActive = 
+                  (link.href === '#offers' && isOffersPageOpen) ||
                   (link.href === '#services' && isServicesPageOpen) || 
                   (link.href === '#specialists' && isSpecialistsPageOpen) ||
                   (link.href === '#branches' && isBranchesPageOpen) ||
-                  (link.href === '#hero' && !isServicesPageOpen && !isSpecialistsPageOpen && !isBranchesPageOpen);
+                  (link.href === '#hero' && !isServicesPageOpen && !isSpecialistsPageOpen && !isBranchesPageOpen && !isOffersPageOpen);
 
                 return (
                   <a
                     key={link.href}
                     href={link.href}
                     onClick={(e) => {
-                      if (link.href === '#services' && onOpenServicesPage) {
+                      if (link.href === '#offers' && onOpenOffersPage) {
+                        e.preventDefault();
+                        onOpenOffersPage();
+                      } else if (link.href === '#services' && onOpenServicesPage) {
                         e.preventDefault();
                         onOpenServicesPage();
                       } else if (link.href === '#specialists' && onOpenSpecialistsPage) {
@@ -277,7 +297,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       } else if (link.href === '#hero' && onGoHome) {
                         e.preventDefault();
                         onGoHome();
-                      } else if (onGoHome && (isSpecialistsPageOpen || isServicesPageOpen || isBranchesPageOpen)) {
+                      } else if (onGoHome && (isSpecialistsPageOpen || isServicesPageOpen || isBranchesPageOpen || isOffersPageOpen)) {
                         onGoHome();
                       }
                     }}
@@ -488,10 +508,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                       {section.items.map((item) => {
                         const ItemIcon = item.icon;
                         const isLinkActive = 
+                          (item.href === '#offers' && isOffersPageOpen) ||
                           (item.href === '#services' && isServicesPageOpen) || 
                           (item.href === '#specialists' && isSpecialistsPageOpen) ||
                           (item.href === '#branches' && isBranchesPageOpen) ||
-                          (item.href === '#hero' && !isServicesPageOpen && !isSpecialistsPageOpen && !isBranchesPageOpen);
+                          (item.href === '#hero' && !isServicesPageOpen && !isSpecialistsPageOpen && !isBranchesPageOpen && !isOffersPageOpen);
 
                         return (
                           <a
@@ -499,7 +520,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                             href={item.href}
                             onClick={(e) => {
                               setMobileMenuOpen(false);
-                              if (item.href === '#services' && onOpenServicesPage) {
+                              if (item.href === '#offers' && onOpenOffersPage) {
+                                e.preventDefault();
+                                onOpenOffersPage();
+                              } else if (item.href === '#services' && onOpenServicesPage) {
                                 e.preventDefault();
                                 onOpenServicesPage();
                               } else if (item.href === '#specialists' && onOpenSpecialistsPage) {
@@ -511,7 +535,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                               } else if (item.href === '#hero' && onGoHome) {
                                 e.preventDefault();
                                 onGoHome();
-                              } else if (onGoHome && (isSpecialistsPageOpen || isServicesPageOpen || isBranchesPageOpen)) {
+                              } else if (onGoHome && (isSpecialistsPageOpen || isServicesPageOpen || isBranchesPageOpen || isOffersPageOpen)) {
                                 onGoHome();
                               }
                             }}

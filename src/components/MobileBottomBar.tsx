@@ -16,10 +16,12 @@ interface MobileBottomBarProps {
   onOpenSpecialistsPage?: () => void;
   onOpenServicesPage?: () => void;
   onOpenBranchesPage?: () => void;
+  onOpenOffersPage?: () => void;
   onGoHome?: () => void;
   isSpecialistsPageOpen?: boolean;
   isServicesPageOpen?: boolean;
   isBranchesPageOpen?: boolean;
+  isOffersPageOpen?: boolean;
 }
 
 export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
@@ -28,10 +30,12 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
   onOpenSpecialistsPage,
   onOpenServicesPage,
   onOpenBranchesPage,
+  onOpenOffersPage,
   onGoHome,
   isSpecialistsPageOpen = false,
   isServicesPageOpen = false,
-  isBranchesPageOpen = false
+  isBranchesPageOpen = false,
+  isOffersPageOpen = false
 }) => {
   const { isArabic } = useLanguage();
   const [activeTab, setActiveTab] = useState<'home' | 'services' | 'specialists' | 'branches'>(
@@ -48,11 +52,11 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
     } else {
       setActiveTab('home');
     }
-  }, [isBranchesPageOpen, isSpecialistsPageOpen, isServicesPageOpen]);
+  }, [isBranchesPageOpen, isSpecialistsPageOpen, isServicesPageOpen, isOffersPageOpen]);
 
   const handleHomeClick = () => {
     setActiveTab('home');
-    if ((isSpecialistsPageOpen || isServicesPageOpen || isBranchesPageOpen) && onGoHome) {
+    if ((isSpecialistsPageOpen || isServicesPageOpen || isBranchesPageOpen || isOffersPageOpen) && onGoHome) {
       onGoHome();
     } else {
       const element = document.getElementById('hero');
