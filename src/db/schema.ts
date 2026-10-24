@@ -1,4 +1,4 @@
-import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, timestamp, index } from 'drizzle-orm/pg-core';
 
 // Users table linked to Firebase Auth UID
 export const users = pgTable('users', {
@@ -9,14 +9,19 @@ export const users = pgTable('users', {
   photoUrl: text('photo_url'),
   role: text('role').default('admin'),
   createdAt: timestamp('created_at').defaultNow(),
-});
+}, (table) => [
+  index('idx_users_email').on(table.email),
+  index('idx_users_role').on(table.role),
+]);
 
 // Key-value store for application synchronization data
 export const siteSettings = pgTable('site_settings', {
   key: text('key').primaryKey(),
   data: text('data').notNull(),
   updatedAt: timestamp('updated_at').defaultNow(),
-});
+}, (table) => [
+  index('idx_site_settings_updated_at').on(table.updatedAt),
+]);
 
 // Appointments table for clinic bookings
 export const appointments = pgTable('appointments', {
@@ -30,7 +35,14 @@ export const appointments = pgTable('appointments', {
   status: text('status').default('pending'),
   notes: text('notes'),
   createdAt: timestamp('created_at').defaultNow(),
-});
+}, (table) => [
+  index('idx_appointments_phone').on(table.phone),
+  index('idx_appointments_date').on(table.date),
+  index('idx_appointments_status').on(table.status),
+  index('idx_appointments_specialist').on(table.specialist),
+  index('idx_appointments_date_status').on(table.date, table.status),
+  index('idx_appointments_created_at').on(table.createdAt),
+]);
 
 // Medical specialists / consultants
 export const specialists = pgTable('specialists', {
@@ -43,7 +55,10 @@ export const specialists = pgTable('specialists', {
   experience: text('experience'),
   rating: text('rating'),
   createdAt: timestamp('created_at').defaultNow(),
-});
+}, (table) => [
+  index('idx_specialists_specialty').on(table.specialty),
+  index('idx_specialists_name').on(table.name),
+]);
 
 // Medical and rehabilitation services
 export const services = pgTable('services', {
@@ -54,4 +69,6 @@ export const services = pgTable('services', {
   icon: text('icon'),
   price: text('price'),
   createdAt: timestamp('created_at').defaultNow(),
-});
+}, (table) => [
+  index('idx_services_category').on(table.category),
+]);

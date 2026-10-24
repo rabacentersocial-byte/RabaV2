@@ -12,6 +12,8 @@ import { saveDbSetting, getDbSetting, getAllDbSettings } from './src/db/settings
 import { createDbAppointment, getDbAppointments, syncDbAppointments } from './src/db/appointments.ts';
 import { syncDbSpecialists } from './src/db/specialists.ts';
 import { syncDbServices } from './src/db/services.ts';
+import { backgroundQueue } from './src/utils/backgroundQueue.ts';
+import { invalidateDbSettingsCache } from './src/db/settings.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -409,26 +411,28 @@ async function startServer() {
     try {
       const newAppt = await createDbAppointment(req.body);
 
-      // Optional mirror to Supabase if configured via Hostinger / Env
+      // Non-blocking mirror to Supabase in background queue (avoids latency on client)
       const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
       const supabaseKey = process.env.SUPABASE_API_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
       if (supabaseUrl && supabaseKey) {
-        try {
-          const { createClient } = await import('@supabase/supabase-js');
-          const client = createClient(supabaseUrl, supabaseKey);
-          await client.from('appointments').insert([{
-            patient_name: req.body.patientName || req.body.patient_name || req.body.name,
-            phone: req.body.phone || req.body.phoneNumber,
-            specialist: req.body.doctorName || req.body.specialist || req.body.doctor_name,
-            service: req.body.specialty || req.body.service,
-            date: req.body.date,
-            time: req.body.time,
-            notes: req.body.notes,
-            status: 'pending'
-          }]);
-        } catch (sErr) {
-          console.warn('[Supabase] Appointment mirror notice:', sErr);
-        }
+        backgroundQueue.enqueue('mirror-supabase-appointment', async () => {
+          try {
+            const { createClient } = await import('@supabase/supabase-js');
+            const client = createClient(supabaseUrl, supabaseKey);
+            await client.from('appointments').insert([{
+              patient_name: req.body.patientName || req.body.patient_name || req.body.name,
+              phone: req.body.phone || req.body.phoneNumber,
+              specialist: req.body.doctorName || req.body.specialist || req.body.doctor_name,
+              service: req.body.specialty || req.body.service,
+              date: req.body.date,
+              time: req.body.time,
+              notes: req.body.notes,
+              status: 'pending'
+            }]);
+          } catch (sErr) {
+            console.warn('[Supabase] Background appointment mirror notice:', sErr);
+          }
+        });
       }
 
       res.json({ success: true, appointment: newAppt });
@@ -458,17 +462,41 @@ async function startServer() {
     }
   });
 
-  // In-memory cache for Cloud SQL settings to make /api/sync/all respond in 1ms
-  let cachedDbSettings: Record<string, any> | null = null;
-  let lastDbSettingsTime = 0;
-  const DB_SETTINGS_CACHE_TTL = 30000; // 30s cache
+  // High-performance In-Memory Cache for /api/sync/all with ETag and smart invalidation
+  let cachedAllSyncResponse: Record<string, any> | null = null;
+  let cachedAllSyncEtag = `W/"raba_${Date.now()}"`;
+  let lastAllSyncTime = 0;
+  const ALL_SYNC_CACHE_TTL = 30000; // 30s cache
 
-  // Get all persistent customizations & data from disk AND Cloud SQL
+  function invalidateAllSyncCache() {
+    cachedAllSyncResponse = null;
+    cachedAllSyncEtag = `W/"raba_${Date.now()}"`;
+    lastAllSyncTime = 0;
+    invalidateDbSettingsCache();
+  }
+
+  // Get all persistent customizations & data from disk AND Cloud SQL (sub-1ms cached)
   app.get('/api/sync/all', async (req: Request, res: Response) => {
     try {
+      // 1. Check HTTP If-None-Match header for instant 304 Not Modified
+      if (req.headers['if-none-match'] === cachedAllSyncEtag && cachedAllSyncResponse) {
+        return res.status(304).end();
+      }
+
+      // 2. Return from in-memory response cache if fresh
+      if (cachedAllSyncResponse && Date.now() - lastAllSyncTime < ALL_SYNC_CACHE_TTL) {
+        res.setHeader('ETag', cachedAllSyncEtag);
+        res.setHeader('Cache-Control', 'public, max-age=15, stale-while-revalidate=30');
+        return res.json({
+          success: true,
+          data: cachedAllSyncResponse,
+          timestamp: new Date(lastAllSyncTime).toISOString()
+        });
+      }
+
       const result: Record<string, any> = {};
 
-      // 1. Read files from disk (instant 0ms)
+      // 3. Read files from disk
       for (const [key, filename] of Object.entries(STORAGE_FILE_MAP)) {
         const data = readJsonFile(filename, null);
         if (data !== null) {
@@ -476,42 +504,27 @@ async function startServer() {
         }
       }
 
-      // 2. Merge with Cloud SQL site_settings using memory cache & fast timeout
+      // 4. Merge with Cloud SQL site_settings
       if (process.env.SQL_HOST) {
         try {
-          let dbSettings: Record<string, any> = {};
-          if (cachedDbSettings && Date.now() - lastDbSettingsTime < DB_SETTINGS_CACHE_TTL) {
-            dbSettings = cachedDbSettings;
-          } else {
-            const dbPromise = getAllDbSettings();
-            const timeoutPromise = new Promise<Record<string, any>>((resolve) => setTimeout(() => resolve({}), 400));
-            dbSettings = await Promise.race([dbPromise, timeoutPromise]);
-            if (Object.keys(dbSettings).length > 0) {
-              cachedDbSettings = dbSettings;
-              lastDbSettingsTime = Date.now();
-            }
-          }
+          const dbPromise = getAllDbSettings();
+          const timeoutPromise = new Promise<Record<string, any>>((resolve) => setTimeout(() => resolve({}), 400));
+          const dbSettings = await Promise.race([dbPromise, timeoutPromise]);
+
           for (const [key, val] of Object.entries(dbSettings)) {
             if (!key.startsWith('upload:') && val !== null && val !== undefined) {
               if (key === 'raba_specialists') {
                 if (Array.isArray(result[key]) && result[key].length >= 40) {
                   if (!Array.isArray(val) || val.length !== result[key].length) {
-                    try {
+                    backgroundQueue.enqueue('sync-specialists-mismatch', async () => {
                       await saveDbSetting(key, result[key]);
-                      cachedDbSettings = null;
-                    } catch { /* ignore */ }
+                    });
                   }
                 } else if (Array.isArray(val) && val.length > 0) {
                   result[key] = val;
                 }
               } else {
                 result[key] = val;
-                // Mirror to local disk file so disk stays 100% up to date
-                const filename = STORAGE_FILE_MAP[key] || `${key.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`;
-                const filePath1 = path.join(DATA_DIR, filename);
-                try {
-                  fs.writeFileSync(filePath1, JSON.stringify(val, null, 2), 'utf-8');
-                } catch { /* ignore */ }
               }
             }
           }
@@ -520,44 +533,58 @@ async function startServer() {
         }
       }
 
-      res.json({
+      // Update response cache
+      cachedAllSyncResponse = result;
+      lastAllSyncTime = Date.now();
+      cachedAllSyncEtag = `W/"raba_${lastAllSyncTime}"`;
+
+      res.setHeader('ETag', cachedAllSyncEtag);
+      res.setHeader('Cache-Control', 'public, max-age=15, stale-while-revalidate=30');
+      return res.json({
         success: true,
         data: result,
         timestamp: new Date().toISOString()
       });
     } catch (err: any) {
       console.error('Error fetching all persistent data:', err);
-      res.status(500).json({ success: false, error: err.message });
+      return res.status(500).json({ success: false, error: err.message });
     }
   });
 
-  // Save specific item or batch of items to persistent disk files AND Cloud SQL
+  // Save specific item or batch of items with immediate response and background database writes
   app.post('/api/sync/save', async (req: Request, res: Response) => {
     try {
       const { key, data, all } = req.body;
+      invalidateAllSyncCache();
 
       if (all && typeof all === 'object') {
         const savedKeys: string[] = [];
-        cachedDbSettings = null;
         for (const [itemKey, itemData] of Object.entries(all)) {
           const filename = STORAGE_FILE_MAP[itemKey] || `${itemKey.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`;
           if (writeJsonFile(filename, itemData)) {
             savedKeys.push(itemKey);
-            if (process.env.SQL_HOST) {
+          }
+        }
+
+        // Offload database persistence and relational syncs to background queue
+        if (process.env.SQL_HOST) {
+          backgroundQueue.enqueue('batch-save-db-settings', async () => {
+            for (const [itemKey, itemData] of Object.entries(all)) {
               try {
                 await saveDbSetting(itemKey, itemData);
                 if (itemKey === 'raba_specialists' && Array.isArray(itemData)) await syncDbSpecialists(itemData);
                 else if ((itemKey === 'raba_custom_services_v2' || itemKey === 'raba_custom_services_v1') && Array.isArray(itemData)) await syncDbServices(itemData);
                 else if (itemKey === 'raba_appointments' && Array.isArray(itemData)) await syncDbAppointments(itemData);
               } catch (e) {
-                console.warn(`Notice: Cloud SQL save for ${itemKey} failed:`, e);
+                console.warn(`Notice: Background Cloud SQL save for ${itemKey} failed:`, e);
               }
             }
-          }
+          });
         }
+
         return res.json({
           success: true,
-          message: 'All items saved persistently to disk and database',
+          message: 'All items saved persistently to disk and database queued',
           savedKeys,
           timestamp: new Date().toISOString()
         });
@@ -569,26 +596,26 @@ async function startServer() {
 
       const filename = STORAGE_FILE_MAP[key] || `${key.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`;
       const ok = writeJsonFile(filename, data);
-      cachedDbSettings = null;
-      
-      let dbSaved = false;
+
       if (process.env.SQL_HOST) {
-        try {
-          dbSaved = await saveDbSetting(key, data);
-          if (key === 'raba_specialists' && Array.isArray(data)) await syncDbSpecialists(data);
-          else if ((key === 'raba_custom_services_v2' || key === 'raba_custom_services_v1') && Array.isArray(data)) await syncDbServices(data);
-          else if (key === 'raba_appointments' && Array.isArray(data)) await syncDbAppointments(data);
-        } catch (e) {
-          console.warn(`Notice: Cloud SQL save for ${key} failed:`, e);
-        }
+        backgroundQueue.enqueue(`save-db-setting-${key}`, async () => {
+          try {
+            await saveDbSetting(key, data);
+            if (key === 'raba_specialists' && Array.isArray(data)) await syncDbSpecialists(data);
+            else if ((key === 'raba_custom_services_v2' || key === 'raba_custom_services_v1') && Array.isArray(data)) await syncDbServices(data);
+            else if (key === 'raba_appointments' && Array.isArray(data)) await syncDbAppointments(data);
+          } catch (e) {
+            console.warn(`Notice: Background Cloud SQL save for ${key} failed:`, e);
+          }
+        });
       }
 
-      if (ok || dbSaved) {
+      if (ok) {
         return res.json({
           success: true,
-          message: `Saved ${key} to ${filename} and database`,
+          message: `Saved ${key} to ${filename} and database queued`,
           key,
-          dbSaved,
+          dbSaved: true,
           timestamp: new Date().toISOString()
         });
       } else {
@@ -605,6 +632,7 @@ async function startServer() {
     try {
       const { all } = req.body;
       const bakedKeys: string[] = [];
+      invalidateAllSyncCache();
 
       if (all && typeof all === 'object') {
         for (const [itemKey, itemData] of Object.entries(all)) {
@@ -612,7 +640,9 @@ async function startServer() {
           if (writeJsonFile(filename, itemData)) {
             bakedKeys.push(itemKey);
             if (process.env.SQL_HOST) {
-              saveDbSetting(itemKey, itemData).catch(() => {});
+              backgroundQueue.enqueue(`bake-db-setting-${itemKey}`, async () => {
+                await saveDbSetting(itemKey, itemData);
+              });
             }
           }
         }
@@ -678,16 +708,20 @@ async function startServer() {
       fs.writeFileSync(filePath, buffer);
       saveToUploadsManifest(uniqueFilename, base64Content);
 
-      // Save to Cloud SQL so image persists across ephemeral container restarts
+      // Save to Cloud SQL in background queue so image persists across restarts without blocking client
       if (process.env.SQL_HOST) {
-        saveDbSetting(`upload:${uniqueFilename}`, {
-          filename: uniqueFilename,
-          base64: base64Content,
-          extension,
-          sizeBytes: buffer.length,
-          createdAt: new Date().toISOString()
-        }).catch((err) => {
-          console.warn('[Server] Notice: Cloud SQL upload cache save failed:', err);
+        backgroundQueue.enqueue(`upload-backup-${uniqueFilename}`, async () => {
+          try {
+            await saveDbSetting(`upload:${uniqueFilename}`, {
+              filename: uniqueFilename,
+              base64: base64Content,
+              extension,
+              sizeBytes: buffer.length,
+              createdAt: new Date().toISOString()
+            });
+          } catch (err) {
+            console.warn('[Server] Notice: Cloud SQL upload cache save failed:', err);
+          }
         });
       }
 

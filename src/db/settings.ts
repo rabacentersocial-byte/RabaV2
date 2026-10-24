@@ -2,15 +2,32 @@ import { db } from './index.ts';
 import { siteSettings } from './schema.ts';
 import { eq } from 'drizzle-orm';
 
+// In-memory cache for Cloud SQL settings with TTL & instant invalidation
+let cachedSettingsMap: Record<string, any> | null = null;
+let lastSettingsCacheTime = 0;
+const SETTINGS_CACHE_TTL_MS = 30_000;
+
 export async function getDbSetting(key: string): Promise<any | null> {
+  // Check memory cache first
+  if (cachedSettingsMap && Date.now() - lastSettingsCacheTime < SETTINGS_CACHE_TTL_MS) {
+    if (cachedSettingsMap[key] !== undefined) {
+      return cachedSettingsMap[key];
+    }
+  }
+
   try {
     const result = await db.select().from(siteSettings).where(eq(siteSettings.key, key));
     if (result.length > 0) {
+      let parsed: any;
       try {
-        return JSON.parse(result[0].data);
+        parsed = JSON.parse(result[0].data);
       } catch {
-        return result[0].data;
+        parsed = result[0].data;
       }
+      if (cachedSettingsMap) {
+        cachedSettingsMap[key] = parsed;
+      }
+      return parsed;
     }
     return null;
   } catch (error) {
@@ -20,6 +37,10 @@ export async function getDbSetting(key: string): Promise<any | null> {
 }
 
 export async function getAllDbSettings(): Promise<Record<string, any>> {
+  if (cachedSettingsMap && Date.now() - lastSettingsCacheTime < SETTINGS_CACHE_TTL_MS) {
+    return cachedSettingsMap;
+  }
+
   try {
     const results = await db.select().from(siteSettings);
     const map: Record<string, any> = {};
@@ -30,10 +51,12 @@ export async function getAllDbSettings(): Promise<Record<string, any>> {
         map[row.key] = row.data;
       }
     }
+    cachedSettingsMap = map;
+    lastSettingsCacheTime = Date.now();
     return map;
   } catch (error) {
     console.error('Database query failed for all settings:', error);
-    return {};
+    return cachedSettingsMap || {};
   }
 }
 
@@ -52,9 +75,20 @@ export async function saveDbSetting(key: string, data: any): Promise<boolean> {
           updatedAt: new Date(),
         },
       });
+
+    // Update in-memory cache immediately
+    if (cachedSettingsMap) {
+      cachedSettingsMap[key] = data;
+      lastSettingsCacheTime = Date.now();
+    }
     return true;
   } catch (error) {
     console.error(`Database save failed for setting ${key}:`, error);
     return false;
   }
+}
+
+export function invalidateDbSettingsCache(): void {
+  cachedSettingsMap = null;
+  lastSettingsCacheTime = 0;
 }
