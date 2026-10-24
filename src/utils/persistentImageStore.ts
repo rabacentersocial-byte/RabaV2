@@ -129,6 +129,14 @@ export const KNOWN_STATIC_ALIASES: Record<string, string> = {
   '/uploads/1791192291320____________png.png': '/specialists/cards/spec_hala-badran.png',
   '/uploads/1791192301426___________png.png': '/specialists/cards/spec_hind-elsayed.png',
   '/uploads/1791192310187______________png.png': '/specialists/cards/spec_haitham-alzaidan.png',
+  '/uploads/1792837482249___________jpg.jpg': '/specialists/cards/spec_hajar_mohamed.jpg',
+  '/uploads/1792837494199______________jpg.jpg': '/specialists/cards/spec_dina_abdullah.jpg',
+  '/uploads/1792837503992___________jpg.jpg': '/specialists/cards/spec_alaa_zayed.jpg',
+  '/uploads/1792837517725_______________jpg.jpg': '/specialists/cards/spec_rakan_otaibi.jpg',
+  '/uploads/1792837527356___________jpg.jpg': '/specialists/cards/spec_mohamed_youssef.jpg',
+  '/uploads/1792837539193_______________jpg.jpg': '/specialists/cards/spec_islam_ibrahim.jpg',
+  '/uploads/1792837550074_______________jpg.jpg': '/specialists/cards/spec_maryam_zahrani.jpg',
+  '/uploads/1792837565428__________________jpg.jpg': '/specialists/cards/spec_abrar_qahtani.jpg',
 
   // Partners aliases
   '/uploads/1791026786793___jpeg.png': '/images/partners/partner-moi_custom.png',

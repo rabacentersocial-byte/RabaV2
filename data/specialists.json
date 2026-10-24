@@ -389,18 +389,20 @@
     "id": "spec-doha-khaled",
     "name": "ضحى خالد",
     "nameEn": "Doha Khaled",
-    "title": "إشراف قسم الـ ABA",
+    "title": "رئيس قسم الـ ABA بنادي رابا",
     "titleEn": "Supervisor of ABA Department",
-    "role": "مشرفة قسم تحليل السلوك التطبيقي ومحلل سلوكي معتمد",
+    "role": "رئيس قسم الـ ABA بنادي رابا",
     "roleEn": "ABA Supervisor & Certified Behavior Analyst",
     "avatar": "/uploads/1790357539758_____________jpg_jpeg.jpg",
-    "experienceYears": 9,
+    "experienceYears": 10,
     "licenseNumber": "RABA-ABA-091",
     "specialties": [
-      "بكالوريوس تربية خاصة من الجامعة العربية",
-      "مشرف اخصائي توحد معتمد من البورد الامريكي من منظمة QABA",
-      "حاصلة على محلل سلوكي معتمد من منظمة IBAO",
-      "خبرة أكثر من 9 سنوات في رعاية وتأهيل التوحد"
+      "حاصلة على بكالوريوس التربية خاصة من الجامعه العربيه المفتوحة",
+      "حاصلة على اعتماد فني سلوك RBT من منظمة BCAB",
+      "حاصلة على اعتماد مشرف توحد QASP-S من منظمة QABA",
+      "حاصلة على اعتماد محلل سلوك دولي IBA من منظمة IBAO",
+      "حاصلة على شهادة التعامل مع البالغين من منظمة IBAO",
+      "خبرة عمليه أكثر من ١٠ سنوات"
     ],
     "specialtiesEn": [
       "B.Sc. in Special Education (Arab Open University)",
@@ -409,21 +411,20 @@
       "9+ Years Clinical Practice in Pediatric Autism Rehabilitation"
     ],
     "education": [
-      "بكالوريوس تربية خاصة من الجامعة العربية",
-      "مشرف أخصائي توحد معتمد من البورد الأمريكي من منظمة QABA",
-      "محلل سلوكي معتمد من منظمة IBAO الدولية"
+      "حاصلة على بكالوريوس التربية خاصة من الجامعه العربيه المفتوحة"
     ],
     "educationEn": [
       "B.Sc. in Special Education - Arab University",
       "Certified Autism Services Practitioner Supervisor (QABA QASP-S)",
       "Certified Behavior Analyst - IBAO Board"
     ],
-    "bio": "مشرفة قسم ABA بمركز رابا، حاصلة على بكالوريوس تربية خاصة من الجامعة العربية، ومشرف أخصائي توحد معتمد من البورد الأمريكي من منظمة QABA، ومحلل سلوكي معتمد من منظمة IBAO بخبرة تزيد عن 9 سنوات في الإشراف الإكلينيكي وتأهيل مهارات أطفال طيف التوحد.",
+    "bio": "رئيس قسم الـ ABA بنادي رابا بمركز رابا. حاصلة على بكالوريوس التربية خاصة من الجامعه العربيه المفتوحة · حاصلة على اعتماد فني سلوك RBT من منظمة BCAB · حاصلة على اعتماد مشرف توحد QASP-S من منظمة QABA · حاصلة على اعتماد محلل سلوك دولي IBA من منظمة IBAO · حاصلة على شهادة التعامل مع البالغين من منظمة IBAO · خبرة عمليه أكثر من ١٠ سنوات",
     "bioEn": "Supervisor in the ABA Department at Raba Center. Holds B.Sc. in Special Education, Certified Autism Specialist Supervisor by QABA, and Certified Behavior Analyst by IBAO with over 9 years of specialized clinical experience.",
     "certifications": [
-      "مشرف أخصائي توحد معتمد من البورد الأمريكي من منظمة QABA (QASP-S)",
-      "محلل سلوكي معتمد من منظمة IBAO الدولية",
-      "اعتماد قياس السلوك اللغوي والتواصلي VB-MAPP"
+      "حاصلة على اعتماد فني سلوك RBT من منظمة BCAB",
+      "حاصلة على اعتماد مشرف توحد QASP-S من منظمة QABA",
+      "حاصلة على اعتماد محلل سلوك دولي IBA من منظمة IBAO",
+      "حاصلة على شهادة التعامل مع البالغين من منظمة IBAO"
     ],
     "certificationsEn": [
       "QABA Board Certified Autism Specialist Supervisor (QASP-S)",
@@ -530,11 +531,11 @@
     "roleEn": "Special Education Teacher",
     "category": "aba",
     "department": "قسم التأهيل والتعليم الخاص",
-    "avatar": "/uploads/1792837482249___________jpg.jpg",
-    "cardImage": "/uploads/1792837482249___________jpg.jpg",
-    "fallbackAvatar": "/uploads/1792837482249___________jpg.jpg",
-    "posterCrop": "/uploads/1792837482249___________jpg.jpg",
-    "portraitCrop": "/uploads/1792837482249___________jpg.jpg",
+    "avatar": "/specialists/cards/spec_hajar_mohamed.jpg",
+    "cardImage": "/specialists/cards/spec_hajar_mohamed.jpg",
+    "fallbackAvatar": "/specialists/cards/spec_hajar_mohamed.jpg",
+    "posterCrop": "/specialists/cards/spec_hajar_mohamed.jpg",
+    "portraitCrop": "/specialists/cards/spec_hajar_mohamed.jpg",
     "experienceYears": 3,
     "licenseNumber": "",
     "specialties": [
@@ -601,11 +602,11 @@
     "roleEn": "ABA Department Supervisor",
     "category": "aba",
     "department": "قسم تحليل السلوك التطبيقي ABA",
-    "avatar": "/uploads/1792837494199______________jpg.jpg",
-    "cardImage": "/uploads/1792837494199______________jpg.jpg",
-    "fallbackAvatar": "/uploads/1792837494199______________jpg.jpg",
-    "posterCrop": "/uploads/1792837494199______________jpg.jpg",
-    "portraitCrop": "/uploads/1792837494199______________jpg.jpg",
+    "avatar": "/specialists/cards/spec_dina_abdullah.jpg",
+    "cardImage": "/specialists/cards/spec_dina_abdullah.jpg",
+    "fallbackAvatar": "/specialists/cards/spec_dina_abdullah.jpg",
+    "posterCrop": "/specialists/cards/spec_dina_abdullah.jpg",
+    "portraitCrop": "/specialists/cards/spec_dina_abdullah.jpg",
     "experienceYears": 10,
     "licenseNumber": "QASP-S Certified",
     "specialties": [
@@ -670,11 +671,11 @@
     "roleEn": "Classroom Teacher",
     "category": "aba",
     "department": "قسم برامج التأهيل والتوحد",
-    "avatar": "/uploads/1792837503992___________jpg.jpg",
-    "cardImage": "/uploads/1792837503992___________jpg.jpg",
-    "fallbackAvatar": "/uploads/1792837503992___________jpg.jpg",
-    "posterCrop": "/uploads/1792837503992___________jpg.jpg",
-    "portraitCrop": "/uploads/1792837503992___________jpg.jpg",
+    "avatar": "/specialists/cards/spec_alaa_zayed.jpg",
+    "cardImage": "/specialists/cards/spec_alaa_zayed.jpg",
+    "fallbackAvatar": "/specialists/cards/spec_alaa_zayed.jpg",
+    "posterCrop": "/specialists/cards/spec_alaa_zayed.jpg",
+    "portraitCrop": "/specialists/cards/spec_alaa_zayed.jpg",
     "experienceYears": 2,
     "licenseNumber": "",
     "specialties": [
@@ -743,11 +744,11 @@
     "roleEn": "Occupational Therapist",
     "category": "occupational",
     "department": "قسم العلاج الوظيفي والتكامل الحسي",
-    "avatar": "/uploads/1792837517725_______________jpg.jpg",
-    "cardImage": "/uploads/1792837517725_______________jpg.jpg",
-    "fallbackAvatar": "/uploads/1792837517725_______________jpg.jpg",
-    "posterCrop": "/uploads/1792837517725_______________jpg.jpg",
-    "portraitCrop": "/uploads/1792837517725_______________jpg.jpg",
+    "avatar": "/specialists/cards/spec_rakan_otaibi.jpg",
+    "cardImage": "/specialists/cards/spec_rakan_otaibi.jpg",
+    "fallbackAvatar": "/specialists/cards/spec_rakan_otaibi.jpg",
+    "posterCrop": "/specialists/cards/spec_rakan_otaibi.jpg",
+    "portraitCrop": "/specialists/cards/spec_rakan_otaibi.jpg",
     "experienceYears": 1,
     "licenseNumber": "SCFHS Licensed",
     "specialties": [
@@ -814,11 +815,11 @@
     "roleEn": "Behavior Modification Specialist",
     "category": "aba",
     "department": "قسم تحليل السلوك التطبيقي وتنمية المهارات",
-    "avatar": "/uploads/1792837527356___________jpg.jpg",
-    "cardImage": "/uploads/1792837527356___________jpg.jpg",
-    "fallbackAvatar": "/uploads/1792837527356___________jpg.jpg",
-    "posterCrop": "/uploads/1792837527356___________jpg.jpg",
-    "portraitCrop": "/uploads/1792837527356___________jpg.jpg",
+    "avatar": "/specialists/cards/spec_mohamed_youssef.jpg",
+    "cardImage": "/specialists/cards/spec_mohamed_youssef.jpg",
+    "fallbackAvatar": "/specialists/cards/spec_mohamed_youssef.jpg",
+    "posterCrop": "/specialists/cards/spec_mohamed_youssef.jpg",
+    "portraitCrop": "/specialists/cards/spec_mohamed_youssef.jpg",
     "experienceYears": 10,
     "licenseNumber": "QABA Certified",
     "specialties": [
@@ -883,11 +884,11 @@
     "roleEn": "Special Education Teacher",
     "category": "aba",
     "department": "قسم التأهيل والتعليم الخاص",
-    "avatar": "/uploads/1792837539193_______________jpg.jpg",
-    "cardImage": "/uploads/1792837539193_______________jpg.jpg",
-    "fallbackAvatar": "/uploads/1792837539193_______________jpg.jpg",
-    "posterCrop": "/uploads/1792837539193_______________jpg.jpg",
-    "portraitCrop": "/uploads/1792837539193_______________jpg.jpg",
+    "avatar": "/specialists/cards/spec_islam_ibrahim.jpg",
+    "cardImage": "/specialists/cards/spec_islam_ibrahim.jpg",
+    "fallbackAvatar": "/specialists/cards/spec_islam_ibrahim.jpg",
+    "posterCrop": "/specialists/cards/spec_islam_ibrahim.jpg",
+    "portraitCrop": "/specialists/cards/spec_islam_ibrahim.jpg",
     "experienceYears": 15,
     "licenseNumber": "",
     "specialties": [
@@ -958,11 +959,11 @@
     "roleEn": "Branch Administrative Supervisor",
     "category": "psychology",
     "department": "الإدارة التنفيذية والإشراف الإداري - فرع النرجس",
-    "avatar": "/uploads/1792837550074_______________jpg.jpg",
-    "cardImage": "/uploads/1792837550074_______________jpg.jpg",
-    "fallbackAvatar": "/uploads/1792837550074_______________jpg.jpg",
-    "posterCrop": "/uploads/1792837550074_______________jpg.jpg",
-    "portraitCrop": "/uploads/1792837550074_______________jpg.jpg",
+    "avatar": "/specialists/cards/spec_maryam_zahrani.jpg",
+    "cardImage": "/specialists/cards/spec_maryam_zahrani.jpg",
+    "fallbackAvatar": "/specialists/cards/spec_maryam_zahrani.jpg",
+    "posterCrop": "/specialists/cards/spec_maryam_zahrani.jpg",
+    "portraitCrop": "/specialists/cards/spec_maryam_zahrani.jpg",
     "experienceYears": 3,
     "licenseNumber": "IPA Certified Leader",
     "specialties": [
@@ -1029,11 +1030,11 @@
     "roleEn": "ABA Department Supervisor",
     "category": "aba",
     "department": "قسم تحليل السلوك التطبيقي ABA",
-    "avatar": "/uploads/1792837565428__________________jpg.jpg",
-    "cardImage": "/uploads/1792837565428__________________jpg.jpg",
-    "fallbackAvatar": "/uploads/1792837565428__________________jpg.jpg",
-    "posterCrop": "/uploads/1792837565428__________________jpg.jpg",
-    "portraitCrop": "/uploads/1792837565428__________________jpg.jpg",
+    "avatar": "/specialists/cards/spec_abrar_qahtani.jpg",
+    "cardImage": "/specialists/cards/spec_abrar_qahtani.jpg",
+    "fallbackAvatar": "/specialists/cards/spec_abrar_qahtani.jpg",
+    "posterCrop": "/specialists/cards/spec_abrar_qahtani.jpg",
+    "portraitCrop": "/specialists/cards/spec_abrar_qahtani.jpg",
     "experienceYears": 9,
     "licenseNumber": "ABAT Certified",
     "specialties": [
@@ -1155,20 +1156,20 @@
     "id": "spec-manar-wahba",
     "name": "منار وهبه",
     "nameEn": "Manar Wahba",
-    "title": "إشراف قسم النطق والتخاطب",
+    "title": "مشرفة قسم النطق والتخاطب",
     "titleEn": "Supervisor of Speech & Language Pathology Department",
-    "role": "مشرفة قسم النطق والتخاطب والتأهيل اللغوي",
+    "role": "مشرفة قسم النطق والتخاطب",
     "roleEn": "Speech & Language Pathology Supervisor",
     "avatar": "/uploads/1790357549806______________jpg_jpeg.jpg",
     "experienceYears": 10,
     "licenseNumber": "RABA-SLP-010",
     "specialties": [
-      "بكالوريوس خدمة اجتماعية جامعة القاهرة",
-      "دبلومة تخاطب جامعة عين شمس",
-      "دبلومة تربية خاصة علوم إعاقة جامعة الزقازيق",
-      "متخصصة opt ومشاكل نطق وسمع",
-      "شهادة opt من منظمة ASHA الأمريكية",
-      "خبرة أكثر من 10 سنوات في علاج النطق واللغة"
+      "حاصلة على درجة البكالوريوس من جامعة القاهرة",
+      "حاصلة على دبلومة التخاطب من جامعة عين شمس",
+      "حاصلة على دبلومة في التربية الخاصة تخصص علوم إعاقة من جامعة الزقازيق",
+      "حاصلة على شهادة الـ OPT من منظمة ASHA الأميرية",
+      "متخصصة في العلاج بالـ OPT ومشاكل النطق والسمع",
+      "خبرة عملية أكثر من ١٠ سنوات"
     ],
     "specialtiesEn": [
       "B.Sc. in Social Work (Cairo University)",
@@ -1179,10 +1180,9 @@
       "10+ Years Dedicated Experience in Pediatric Speech Rehabilitation"
     ],
     "education": [
-      "بكالوريوس خدمة اجتماعية - جامعة القاهرة",
-      "دبلومة تخاطب واضطرابات النطق - جامعة عين شمس",
-      "دبلومة تربية خاصة علوم إعاقة - جامعة الزقازيق",
-      "شهادة Oral Placement Therapy (OPT) من منظمة ASHA الأمريكية"
+      "حاصلة على درجة البكالوريوس من جامعة القاهرة",
+      "حاصلة على دبلومة التخاطب من جامعة عين شمس",
+      "حاصلة على دبلومة في التربية الخاصة تخصص علوم إعاقة من جامعة الزقازيق"
     ],
     "educationEn": [
       "B.Sc. in Social Work - Cairo University",
@@ -1190,12 +1190,11 @@
       "Diploma in Special Education - Zagazig University",
       "Oral Placement Therapy (OPT) Certified - ASHA (USA)"
     ],
-    "bio": "مشرفة قسم النطق والتخاطب بمركز رابا. حاصلة على بكالوريوس خدمة اجتماعية من جامعة القاهرة، دبلومة تخاطب من جامعة عين شمس، دبلومة تربية خاصة علوم إعاقة من جامعة الزقازيق، ومتخصصة في العلاج الوظيفي الفموي opt ومشاكل النطق والسمع وحاصلة على شهادة opt من منظمة ASHA الأمريكية بخبرة تتجاوز 10 سنوات.",
+    "bio": "مشرفة قسم النطق والتخاطب بمركز رابا. حاصلة على درجة البكالوريوس من جامعة القاهرة · حاصلة على دبلومة التخاطب من جامعة عين شمس · حاصلة على دبلومة في التربية الخاصة تخصص علوم إعاقة من جامعة الزقازيق · حاصلة على شهادة الـ OPT من منظمة ASHA الأميرية · متخصصة في العلاج بالـ OPT ومشاكل النطق والسمع · خبرة عملية أكثر من ١٠ سنوات",
     "bioEn": "Supervisor of the Speech & Language Pathology Department at Raba Center. Holds specialized diplomas from Ain Shams and Zagazig Universities, ASHA-certified in Oral Placement Therapy (OPT), with 10+ years treating complex speech, voice, and articulation challenges.",
     "certifications": [
-      "شهادة تخصصية في العلاج الفموي الحركي OPT من منظمة ASHA الأمريكية",
-      "دبلوم مهني في اضطرابات التواصل والتخاطب - جامعة عين شمس",
-      "اعتماد تشخيص وعلاج عيوب النطق والتأتأة والتواصل اللغوي"
+      "حاصلة على شهادة الـ OPT من منظمة ASHA الأميرية",
+      "متخصصة في العلاج بالـ OPT ومشاكل النطق والسمع"
     ],
     "certificationsEn": [
       "ASHA Certified Oral Placement Therapy (OPT) Specialist",
@@ -1259,7 +1258,7 @@
       "Professional Diploma in Communication Disorders - Ain Shams University",
       "ABAT Board Certified - QABA"
     ],
-    "bio": "أخصائي معتمد بمركز رابا. حاصل علي بكالوريوس التربية الخاصة من جامعة حلوان · حاصل علي دبلوم مهني في إضطرابات التواصل والتخاطب من جامعة عين شمس · حاصل علي اعتماد البورد الأميريكي في تحليل السلوك التطبيقي ABAT · خبرة عملية أكثر من ٨ سنوات",
+    "bio": "أخصائي ABA معتمد بمركز رابا. حاصل علي بكالوريوس التربية الخاصة من جامعة حلوان · حاصل علي دبلوم مهني في إضطرابات التواصل والتخاطب من جامعة عين شمس · حاصل علي اعتماد البورد الأميريكي في تحليل السلوك التطبيقي ABAT · خبرة عملية أكثر من ٨ سنوات",
     "bioEn": "ABA Specialist at Raba Center. Holds B.Sc. in Special Education from Helwan University, Professional Diploma in Communication Disorders from Ain Shams University, and ABAT certified by the American Board (QABA) with over 8 years experience.",
     "certifications": [
       "حاصل علي اعتماد البورد الأميريكي في تحليل السلوك التطبيقي ABAT"
@@ -1306,8 +1305,7 @@
     "experienceYears": 5,
     "licenseNumber": "RABA-ABA-057",
     "specialties": [
-      "حاصل علي بكالوريوس علوم الاعاقه",
-      "والتأهيل من جامعة الزقازيق",
+      "حاصل علي بكالوريوس علوم الاعاقه والتأهيل من جامعة الزقازيق",
       "حاصل على دبلوم خاص في الإعاقة العقلية من كلية علوم الإعاقة والتأهيل من جامعة الزقازيق",
       "حاصل على دورات في برنامج VB-MAPP",
       "مشرف توحد مؤهل من منظمة QASP-S",
@@ -1321,8 +1319,7 @@
       "5+ Years Clinical Experience"
     ],
     "education": [
-      "حاصل علي بكالوريوس علوم الاعاقه",
-      "والتأهيل من جامعة الزقازيق",
+      "حاصل علي بكالوريوس علوم الاعاقه والتأهيل من جامعة الزقازيق",
       "حاصل على دبلوم خاص في الإعاقة العقلية من كلية علوم الإعاقة والتأهيل من جامعة الزقازيق"
     ],
     "educationEn": [
@@ -1330,7 +1327,7 @@
       "Special Advanced Diploma - Zagazig University",
       "QASP-S Certified Autism Practitioner Supervisor - QABA"
     ],
-    "bio": "أخصائي ABA بمركز رابا. حاصل علي بكالوريوس علوم الاعاقه · والتأهيل من جامعة الزقازيق · حاصل على دبلوم خاص في الإعاقة العقلية من كلية علوم الإعاقة والتأهيل من جامعة الزقازيق · حاصل على دورات في برنامج VB-MAPP · مشرف توحد مؤهل من منظمة QASP-S · خبره عملية أكثر من ٥ سنوات",
+    "bio": "أخصائي ABA بمركز رابا. حاصل علي بكالوريوس علوم الاعاقه والتأهيل من جامعة الزقازيق · حاصل على دبلوم خاص في الإعاقة العقلية من كلية علوم الإعاقة والتأهيل من جامعة الزقازيق · حاصل على دورات في برنامج VB-MAPP · مشرف توحد مؤهل من منظمة QASP-S · خبره عملية أكثر من ٥ سنوات",
     "bioEn": "ABA Specialist at Raba Center. Holds B.Sc. and Special Diploma in Disability Sciences & Rehabilitation from Zagazig University, and is a QASP-S certified Autism Practitioner Supervisor by QABA with 5+ years of specialized clinical experience.",
     "certifications": [
       "حاصل على دورات في برنامج VB-MAPP",
@@ -3542,7 +3539,7 @@
     "id": "spec-atheer-alrasheed",
     "name": "اثير آل رشيد",
     "nameEn": "Atheer Al-Rasheed",
-    "role": "أخصائية تحليل السلوك التطبيقي ABA",
+    "role": "أخصائية ABA",
     "roleEn": "Applied Behavior Analysis (ABA) Specialist",
     "title": "أخصائية ABA",
     "titleEn": "ABA Specialist",
@@ -3555,27 +3552,29 @@
     "reviewsCount": 95,
     "experienceYears": 3,
     "education": [
-      "حاصلة على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الاسلامية"
+      "حاصلة على بكالوريوس علم النفس من جامعة الإمام  محمد بن سعود الاسلامية"
     ],
     "educationEn": [
       "Bachelor of Applied Sciences & Special Education",
       "Professional Diploma in Early Intervention & Autism Therapy"
     ],
     "certifications": [
-      "حاصلة على تصنيف هيئة التخصصات الصحية",
-      "حاصلة على رخصة ABAT فني تحليل سلوك تطبيقي",
-      "حاصلة على دورة فعالية العلاج الطبي ومدى تأثيره على ذوي إضطرابات طيف التوحد"
+      "حاصلة على تصنيف هيئة التخصصات الصحيه",
+      "البورد الامريكي QABA (ABAT)",
+      "حاصلة على دورة (الحماية من التحرش للافراد ذوي التوحد) من جمعية السعوديه الخيريه للتوحد",
+      "حاصلة على دورة فعالية العلاج الطبي ومدى تاثيره على ذوي إضطرابات طيف التوحد"
     ],
     "certificationsEn": [
       "SCFHS Accreditation & Licensing",
       "Certified Behavioral & Clinical Intervention Programs"
     ],
     "specialties": [
-      "حاصلة على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الاسلامية",
-      "حاصلة على تصنيف هيئة التخصصات الصحية",
-      "حاصلة على رخصة ABAT فني تحليل سلوك تطبيقي",
-      "حاصلة على دورة فعالية العلاج الطبي ومدى تأثيره على ذوي إضطرابات طيف التوحد",
-      "خبرة عملية أكثر من 3 سنوات"
+      "حاصلة على بكالوريوس علم النفس من جامعة الإمام  محمد بن سعود الاسلامية",
+      "حاصلة على تصنيف هيئة التخصصات الصحيه",
+      "البورد الامريكي QABA (ABAT)",
+      "حاصلة على دورة (الحماية من التحرش للافراد ذوي التوحد) من جمعية السعوديه الخيريه للتوحد",
+      "حاصلة على دورة فعالية العلاج الطبي ومدى تاثيره على ذوي إضطرابات طيف التوحد",
+      "خبرة عملية أكثر من ٣ سنوات"
     ],
     "specialtiesEn": [
       "Specialized Rehabilitation",
@@ -3597,7 +3596,7 @@
       "Thursday"
     ],
     "sessionPrice": 0,
-    "bio": "أخصائية تحليل سلوك تطبيقي ABA مرخصة ومصنفة من الهيئة السعودية للتخصصات الصحية وحاصلة على رخصة ABAT. متخصصة في تعديل السلوك وتنمية المهارات الاستقلالية والتواصلية للأطفال ذوي اضطراب طيف التوحد.",
+    "bio": "أخصائية ABA بمركز رابا. حاصلة على بكالوريوس علم النفس من جامعة الإمام  محمد بن سعود الاسلامية · حاصلة على تصنيف هيئة التخصصات الصحيه · البورد الامريكي QABA (ABAT) · حاصلة على دورة (الحماية من التحرش للافراد ذوي التوحد) من جمعية السعوديه الخيريه للتوحد · حاصلة على دورة فعالية العلاج الطبي ومدى تاثيره على ذوي إضطرابات طيف التوحد · خبرة عملية أكثر من ٣ سنوات",
     "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
     "orderIndex": 50,
     "cardImage": "/uploads/1791192114276_______________png.png",
@@ -4567,7 +4566,7 @@
     "id": "spec-mayar-alsaeed",
     "name": "ميار السعيد",
     "nameEn": "Mayar Al-Saeed",
-    "role": "أخصائية علاج اضطرابات النطق واللغة",
+    "role": "أخصائية النطق والتخاطب",
     "roleEn": "Speech & Language Pathologist",
     "title": "أخصائية النطق والتخاطب",
     "titleEn": "Speech & Language Pathologist",
@@ -4580,21 +4579,23 @@
     "reviewsCount": 130,
     "experienceYears": 7,
     "education": [
-      "حاصلة على بكالوريوس التربيه الخاصه تخصص إعاقة عقلية من جامعة الإمام محمد بن سعود"
+      "حاصلة على بكالوريوس التربية الخاصة تخصص إعاقة عقلية من جامعة الإمام محمد بن سعود"
     ],
     "educationEn": [
       "Bachelor of Applied Sciences & Special Education",
       "Professional Diploma in Early Intervention & Autism Therapy"
     ],
-    "certifications": [],
+    "certifications": [
+      "حاصلة على دوره نطق وتخاطب ٧٠ ساعه من أكادمية علم النفس تحت اشراف وزاره التعليم"
+    ],
     "certificationsEn": [
       "SCFHS Accreditation & Licensing",
       "Certified Behavioral & Clinical Intervention Programs"
     ],
     "specialties": [
-      "حاصلة على بكالوريوس التربيه الخاصه تخصص إعاقة عقلية من جامعة الإمام محمد بن سعود",
-      "حاصلة على دوره نطق وتخاطب 70 ساعه من أكاديمية علم النفس تحت اشراف وزاره التعليم",
-      "خبرة عملية أكثر من 7 سنوات"
+      "حاصلة على بكالوريوس التربية الخاصة تخصص إعاقة عقلية من جامعة الإمام محمد بن سعود",
+      "حاصلة على دوره نطق وتخاطب ٧٠ ساعه من أكادمية علم النفس تحت اشراف وزاره التعليم",
+      "خبرة عملية أكثر من ٧ سنوات"
     ],
     "specialtiesEn": [
       "Specialized Rehabilitation",
@@ -4616,7 +4617,7 @@
       "Thursday"
     ],
     "sessionPrice": 0,
-    "bio": "أخصائية نطق وتخاطب وتربية خاصة بخبرة تتجاوز 7 سنوات في تقييم وتأهيل اضطرابات اللغة والكلام لدى الأطفال، متخصصة في تأهيل حالات التأخر اللغوي ومتلازمة داون وطيف التوحد.",
+    "bio": "أخصائية النطق والتخاطب بمركز رابا. حاصلة على بكالوريوس التربية الخاصة تخصص إعاقة عقلية من جامعة الإمام محمد بن سعود · حاصلة على دوره نطق وتخاطب ٧٠ ساعه من أكادمية علم النفس تحت اشراف وزاره التعليم · خبرة عملية أكثر من ٧ سنوات",
     "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
     "orderIndex": 65,
     "cardImage": "/uploads/1791192282250_____________png.png",
