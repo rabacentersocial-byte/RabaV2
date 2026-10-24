@@ -194,16 +194,15 @@ function writeJsonFile(filename: string, data: any): boolean {
   }
 }
 
-// Detect production / Cloud Run environment
-const isCloudRun = Boolean(process.env.K_SERVICE || process.env.K_REVISION || process.env.K_CONFIGURATION);
-const isProduction =
-  process.env.NODE_ENV === 'production' ||
-  isCloudRun ||
-  (!process.env.DEFAULT_APP_PORT && Boolean(process.env.PORT));
-
-if (isProduction && process.env.NODE_ENV !== 'production') {
-  process.env.NODE_ENV = 'production';
-}
+// Detect production vs development environment
+// In AI Studio development, dev server runs with DEFAULT_APP_PORT=3000 or tsx and MUST mount vite.middlewares
+const isExplicitProduction = process.env.NODE_ENV === 'production';
+const isDevMode = !isExplicitProduction && (
+  process.env.NODE_ENV === 'development' || 
+  process.env.DEFAULT_APP_PORT === '3000' || 
+  process.argv.some(a => a.includes('tsx') || a.includes('--port'))
+);
+const isProduction = isExplicitProduction || (!isDevMode && Boolean(process.env.PORT && !process.env.DEFAULT_APP_PORT));
 
 function getPort(): number {
   const args = process.argv;
@@ -217,12 +216,14 @@ function getPort(): number {
       if (!isNaN(p)) return p;
     }
   }
-  // In Cloud Run / Production: MUST listen on PORT environment variable (e.g. 8080)
-  if (isProduction || isCloudRun) {
+  // In AI Studio development, dev server MUST run on port 3000
+  if (process.env.DEFAULT_APP_PORT) {
+    return Number(process.env.DEFAULT_APP_PORT);
+  }
+  if (isProduction) {
     return Number(process.env.PORT) || 8080;
   }
-  // In AI Studio development, dev server MUST run on port 3000
-  return Number(process.env.DEFAULT_APP_PORT) || 3000;
+  return 3000;
 }
 
 async function startServer() {

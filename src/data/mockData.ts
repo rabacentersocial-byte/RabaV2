@@ -11,7 +11,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "Senior Clinical Psychologist & Medical Director",
     "category": "psychology",
     "department": "القسم الطبي والإرشاد النفسي الإكلينيكي",
-    "avatar": "/specialists/cards/spec_22_hanaa-basheer.png",
+    "avatar": "/uploads/1790827426491_50_png.png",
     "experienceYears": 15,
     "licenseNumber": "SCFHS-24-1022",
     "specialties": [
@@ -78,13 +78,14 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.98,
     "reviewsCount": 320,
     "sessionPrice": 0,
-    "fallbackAvatar": "/specialists/cards/spec_22_hanaa-basheer.png",
-    "posterCrop": "/specialists/cards/spec_22_hanaa-basheer.png",
-    "portraitCrop": "/specialists/cards/spec_22_hanaa-basheer.png",
+    "fallbackAvatar": "/uploads/1790827426491_50_png.png",
+    "posterCrop": "/uploads/1790827426491_50_png.png",
+    "portraitCrop": "/uploads/1790827426491_50_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_22_hanaa-basheer.png",
-    "orderIndex": 0
+    "cardImage": "/uploads/1790827426491_50_png.png",
+    "orderIndex": 0,
+    "isTopRated": false
   },
   {
     "id": "spec-1",
@@ -94,7 +95,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "General Director of Rehabilitation | Head of ABA",
     "role": "مدير برامج التأهيل ورئيس قسم الـ ABA",
     "roleEn": "General Director of Programs & Head of ABA",
-    "avatar": "/specialists/cards/spec_10_1.png",
+    "avatar": "/uploads/1790826219680_16_png.png",
     "experienceYears": 12,
     "licenseNumber": "",
     "specialties": [
@@ -152,14 +153,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.95,
     "reviewsCount": 220,
     "sessionPrice": 0,
-    "fallbackAvatar": "/specialists/cards/spec_10_1.png",
-    "posterCrop": "/specialists/cards/spec_10_1.png",
-    "portraitCrop": "/specialists/cards/spec_10_1.png",
+    "fallbackAvatar": "/uploads/1790826219680_16_png.png",
+    "posterCrop": "/uploads/1790826219680_16_png.png",
+    "portraitCrop": "/uploads/1790826219680_16_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_10_1.png",
-    "orderIndex": 10,
-    "category": "aba"
+    "cardImage": "/uploads/1790826219680_16_png.png",
+    "orderIndex": 1,
+    "category": "aba",
+    "isTopRated": true
   },
   {
     "id": "spec-hesham-ali",
@@ -171,7 +173,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "Head of Speech & Language Pathology Department",
     "category": "speech",
     "department": "قسم النطق والتخاطب واضطرابات التواصل",
-    "avatar": "/specialists/cards/spec_60_hesham-ali.png",
+    "avatar": "/uploads/1791187379881_60_png.png",
     "experienceYears": 20,
     "licenseNumber": "",
     "specialties": [
@@ -223,7 +225,14 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.97,
     "reviewsCount": 230,
     "sessionPrice": 0,
-    "fallbackAvatar": "/specialists/cards/spec_60_hesham-ali.png"
+    "fallbackAvatar": "/uploads/1791187379881_60_png.png",
+    "orderIndex": 2,
+    "cardImage": "/uploads/1791187379881_60_png.png",
+    "posterCrop": "/uploads/1791187379881_60_png.png",
+    "portraitCrop": "/uploads/1791187379881_60_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-haneen-obaidi",
@@ -233,7 +242,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "Head of Occupational Therapy Department",
     "role": "رئيس قسم العلاج الوظيفي",
     "roleEn": "Head of Occupational Therapy Department",
-    "avatar": "/specialists/cards/spec_01_haneen-obaidi.jpg",
+    "avatar": "/uploads/1790357520279_________________jpg_jpeg.jpg",
     "experienceYears": 11,
     "licenseNumber": "",
     "specialties": [
@@ -296,14 +305,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.95,
     "reviewsCount": 240,
     "sessionPrice": 0,
-    "fallbackAvatar": "/specialists/cards/spec_01_haneen-obaidi.jpg",
-    "posterCrop": "/specialists/cards/spec_01_haneen-obaidi.jpg",
-    "portraitCrop": "/specialists/cards/spec_01_haneen-obaidi.jpg",
+    "fallbackAvatar": "/uploads/1790357520279_________________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357520279_________________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357520279_________________jpg_jpeg.jpg",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_01_haneen-obaidi.jpg",
-    "orderIndex": 1,
-    "category": "occupational"
+    "cardImage": "/uploads/1790357520279_________________jpg_jpeg.jpg",
+    "orderIndex": 3,
+    "category": "occupational",
+    "isTopRated": true
   },
   {
     "id": "spec-amer-qadoos",
@@ -315,7 +325,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "Neuro-Rehabilitation Specialist & Behavior Analyst (IBA)",
     "category": "psychology",
     "department": "قسم النطق والتخاطب والتأهيل السمعي",
-    "avatar": "/specialists/cards/spec_61_amer-qadoos.png",
+    "avatar": "/uploads/1791187395677_61_png.png",
     "experienceYears": 10,
     "licenseNumber": "SCFHS-SLP-010",
     "specialties": [
@@ -368,7 +378,14 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.95,
     "reviewsCount": 185,
     "sessionPrice": 280,
-    "fallbackAvatar": "/specialists/cards/spec_61_amer-qadoos.png"
+    "fallbackAvatar": "/uploads/1791187395677_61_png.png",
+    "orderIndex": 4,
+    "cardImage": "/uploads/1791187395677_61_png.png",
+    "posterCrop": "/uploads/1791187395677_61_png.png",
+    "portraitCrop": "/uploads/1791187395677_61_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-doha-khaled",
@@ -378,7 +395,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "Supervisor of ABA Department",
     "role": "مشرفة قسم تحليل السلوك التطبيقي ومحلل سلوكي معتمد",
     "roleEn": "ABA Supervisor & Certified Behavior Analyst",
-    "avatar": "/specialists/cards/spec_03_doha-khaled.jpg",
+    "avatar": "/uploads/1790357539758_____________jpg_jpeg.jpg",
     "experienceYears": 9,
     "licenseNumber": "RABA-ABA-091",
     "specialties": [
@@ -430,14 +447,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.9,
     "reviewsCount": 195,
     "sessionPrice": 260,
-    "fallbackAvatar": "/specialists/cards/spec_03_doha-khaled.jpg",
-    "posterCrop": "/specialists/cards/spec_03_doha-khaled.jpg",
-    "portraitCrop": "/specialists/cards/spec_03_doha-khaled.jpg",
+    "fallbackAvatar": "/uploads/1790357539758_____________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357539758_____________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357539758_____________jpg_jpeg.jpg",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_03_doha-khaled.jpg",
-    "orderIndex": 3,
-    "category": "aba"
+    "cardImage": "/uploads/1790357539758_____________jpg_jpeg.jpg",
+    "orderIndex": 5,
+    "category": "aba",
+    "isTopRated": true
   },
   {
     "id": "spec-heshmah-mutairi",
@@ -449,7 +467,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "Administrative Director & Certified Applied Behavior Analyst (ABAT)",
     "category": "aba",
     "department": "إدارة الفروع وتطوير البرامج السلوكية",
-    "avatar": "/specialists/cards/spec_27_heshmah-mutairi.png",
+    "avatar": "/uploads/1790866017691_17_png.png",
     "experienceYears": 7,
     "licenseNumber": "",
     "sessionPrice": 0,
@@ -495,13 +513,578 @@ export const SPECIALISTS: Specialist[] = [
       "Wednesday",
       "Thursday"
     ],
-    "fallbackAvatar": "/specialists/cards/spec_27_heshmah-mutairi.png",
-    "posterCrop": "/specialists/cards/spec_27_heshmah-mutairi.png",
-    "portraitCrop": "/specialists/cards/spec_27_heshmah-mutairi.png",
+    "fallbackAvatar": "/uploads/1790866017691_17_png.png",
+    "posterCrop": "/uploads/1790866017691_17_png.png",
+    "portraitCrop": "/uploads/1790866017691_17_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_27_heshmah-mutairi.png",
-    "orderIndex": 27
+    "cardImage": "/uploads/1790866017691_17_png.png",
+    "orderIndex": 6,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-hajar-mohamed",
+    "name": "هاجر محمد",
+    "nameEn": "Hajar Mohamed",
+    "title": "معلمة فصل",
+    "titleEn": "Special Education Classroom Teacher",
+    "role": "معلمة فصل",
+    "roleEn": "Special Education Teacher",
+    "category": "aba",
+    "department": "قسم التأهيل والتعليم الخاص",
+    "avatar": "/uploads/1792837482249___________jpg.jpg",
+    "cardImage": "/uploads/1792837482249___________jpg.jpg",
+    "fallbackAvatar": "/uploads/1792837482249___________jpg.jpg",
+    "posterCrop": "/uploads/1792837482249___________jpg.jpg",
+    "portraitCrop": "/uploads/1792837482249___________jpg.jpg",
+    "experienceYears": 3,
+    "licenseNumber": "",
+    "specialties": [
+      "حاصلة على درجة البكالوريوس من المعهد العالمي بالقيروان",
+      "حاصلة على دبلوم علوم الإحاطة الحياتية من المعهد الخاص من الشبة الطبي بالقيروان",
+      "حاصلة على دورات ABA و AAC",
+      "خبرة عملية أكثر من ٣ سنوات"
+    ],
+    "specialtiesEn": [
+      "Bachelor's Degree from the Higher Institute of Kairouan",
+      "Diploma in Life Assistance Sciences from Paramedical Institute of Kairouan",
+      "Certified in ABA & AAC Communication Training",
+      "3+ Years of Practical Experience"
+    ],
+    "education": [
+      "حاصلة على درجة البكالوريوس من المعهد العالمي بالقيروان",
+      "حاصلة على دبلوم علوم الإحاطة الحياتية من المعهد الخاص من الشبة الطبي بالقيروان"
+    ],
+    "educationEn": [
+      "Bachelor's Degree - Higher Institute of Kairouan",
+      "Diploma in Life Assistance Sciences - Paramedical Institute of Kairouan"
+    ],
+    "bio": "معلمة فصل بمركز رابا. حاصلة على درجة البكالوريوس من المعهد العالمي بالقيروان، ودبلوم علوم الإحاطة الحياتية من المعهد الخاص من الشبة الطبي بالقيروان. حاصلة على دورات متقدمة في تحليل السلوك التطبيقي (ABA) والتواصل المعزز والبديل (AAC)، بخبرة عملية تتجاوز ٣ سنوات في تدريب وتأهيل الأطفال.",
+    "bioEn": "Special Education Classroom Teacher at Raba Center. Holds a Bachelor's degree from the Higher Institute of Kairouan and a Diploma in Life Assistance Sciences from the Paramedical Institute of Kairouan. Certified in ABA and AAC with over 3 years of clinical experience.",
+    "certifications": [
+      "حاصلة على دورات متقدمة في تحليل السلوك التطبيقي ABA",
+      "حاصلة على دورات أنظمة التواصل المعزز والبديل AAC",
+      "دبلوم علوم الإحاطة الحياتية - الشبة الطبي بالقيروان"
+    ],
+    "certificationsEn": [
+      "Advanced Applied Behavior Analysis (ABA) Certification",
+      "Augmentative and Alternative Communication (AAC) Certification",
+      "Life Assistance Sciences Diploma"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.93,
+    "reviewsCount": 85,
+    "sessionPrice": 0,
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "orderIndex": 7,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-dina-abdullah",
+    "name": "دينا عبدالله",
+    "nameEn": "Dina Abdullah",
+    "title": "مشرفة قسم الـ ABA",
+    "titleEn": "ABA Department Supervisor | QASP-S",
+    "role": "مشرفة قسم الـ ABA",
+    "roleEn": "ABA Department Supervisor",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/uploads/1792837494199______________jpg.jpg",
+    "cardImage": "/uploads/1792837494199______________jpg.jpg",
+    "fallbackAvatar": "/uploads/1792837494199______________jpg.jpg",
+    "posterCrop": "/uploads/1792837494199______________jpg.jpg",
+    "portraitCrop": "/uploads/1792837494199______________jpg.jpg",
+    "experienceYears": 10,
+    "licenseNumber": "QASP-S Certified",
+    "specialties": [
+      "حاصلة على درجة البكالوريوس من جامعة الأسكندرية",
+      "حاصلة على دبلوم خاص رياض أطفال قسم طفل غير عادي جامعة الأسكندرية",
+      "حاصلة على اعتماد QASP-S",
+      "خبرة عملية أكثر من ١٠ سنوات"
+    ],
+    "specialtiesEn": [
+      "Bachelor's Degree from Alexandria University",
+      "Special Postgraduate Diploma in Special Needs Childhood - Alexandria University",
+      "Qualified Autism Services Practitioner-Supervisor (QASP-S)",
+      "10+ Years of Practical Experience"
+    ],
+    "education": [
+      "حاصلة على درجة البكالوريوس من جامعة الأسكندرية",
+      "حاصلة على دبلوم خاص رياض أطفال قسم طفل غير عادي جامعة الأسكندرية"
+    ],
+    "educationEn": [
+      "Bachelor's Degree - Alexandria University",
+      "Special Postgraduate Diploma in Child Development & Exceptional Children - Alexandria University"
+    ],
+    "bio": "مشرفة قسم الـ ABA بمركز رابا. حاصلة على درجة البكالوريوس ودبلوم خاص رياض أطفال قسم طفل غير عادي من جامعة الأسكندرية. حاصلة على الاعتماد الدولي المرموق QASP-S، وتمتلك خبرة عملية واسعة تتجاوز ١٠ سنوات في الإشراف الإكلينيكي وبناء البرامج السلوكية الفردية لأطفال طيف التوحد.",
+    "bioEn": "ABA Department Supervisor at Raba Center. Holds a Bachelor's Degree and Special Diploma in Exceptional Children from Alexandria University. QASP-S Board Certified Supervisor with over 10 years of extensive experience designing and supervising evidence-based ABA interventions.",
+    "certifications": [
+      "اعتماد البورد الدولي QASP-S (Qualified Autism Services Practitioner-Supervisor)",
+      "دبلوم خاص رياض أطفال قسم طفل غير عادي - جامعة الإسكندرية"
+    ],
+    "certificationsEn": [
+      "Qualified Autism Services Practitioner-Supervisor (QASP-S)",
+      "Specialized Child Development & Exceptional Children Credential"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.96,
+    "reviewsCount": 164,
+    "sessionPrice": 0,
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "orderIndex": 8,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-alaa-zayed",
+    "name": "علاء زايد",
+    "nameEn": "Alaa Zayed",
+    "title": "معلم فصل",
+    "titleEn": "Classroom Teacher & Autism Trainer",
+    "role": "معلم فصل",
+    "roleEn": "Classroom Teacher",
+    "category": "aba",
+    "department": "قسم برامج التأهيل والتوحد",
+    "avatar": "/uploads/1792837503992___________jpg.jpg",
+    "cardImage": "/uploads/1792837503992___________jpg.jpg",
+    "fallbackAvatar": "/uploads/1792837503992___________jpg.jpg",
+    "posterCrop": "/uploads/1792837503992___________jpg.jpg",
+    "portraitCrop": "/uploads/1792837503992___________jpg.jpg",
+    "experienceYears": 2,
+    "licenseNumber": "",
+    "specialties": [
+      "حاصل على درجة البكالوريوس من جامعة كفر الشيخ",
+      "حاصل علي دوره تدريبيه في طيف التوحد من جامعة كفر الشيخ",
+      "حاصل علي دورة تدريبية في صعوبات التعلم من جامعة كفر الشيخ",
+      "حاصل علي ورشة عمل لمقياس جيليام في طيف التوحد من جامعة كفر الشيخ",
+      "مدرب معتمد في التخاطب والتوحد بجامعه كفر الشيخ",
+      "خبرة عملية أكثر من سنتين"
+    ],
+    "specialtiesEn": [
+      "Bachelor's Degree from Kafrelsheikh University",
+      "Autism Spectrum Disorder Specialized Training - Kafrelsheikh University",
+      "Learning Disabilities Training - Kafrelsheikh University",
+      "Gilliam Autism Rating Scale (GARS) Workshop Certification",
+      "Certified Speech & Autism Trainer - Kafrelsheikh University",
+      "2+ Years of Practical Experience"
+    ],
+    "education": [
+      "حاصل على درجة البكالوريوس من جامعة كفر الشيخ"
+    ],
+    "educationEn": [
+      "Bachelor's Degree - Kafrelsheikh University"
+    ],
+    "bio": "معلم فصل بمركز رابا. حاصل على درجة البكالوريوس من جامعة كفر الشيخ، ومدرب معتمد في التخاطب والتوحد. حاصل على دورات تدريبية متقدمة في طيف التوحد وصعوبات التعلم ومقياس جيليام، بخبرة عملية مميزة في تطبيق الخطط التأهيلية والتربوية.",
+    "bioEn": "Classroom Teacher at Raba Center. Holds a Bachelor's Degree from Kafrelsheikh University and is a certified trainer in speech and autism. Completed advanced coursework in autism spectrum disorder, learning disabilities, and Gilliam Autism Rating Scale with over 2 years of practical experience.",
+    "certifications": [
+      "مدرب معتمد في التخاطب والتوحد - جامعة كفر الشيخ",
+      "ورشة عمل مقياس جيليام في طيف التوحد",
+      "دورة تدريبية متخصصة في صعوبات التعلم"
+    ],
+    "certificationsEn": [
+      "Certified Speech & Autism Trainer - Kafrelsheikh University",
+      "Gilliam Autism Rating Scale (GARS) Certification",
+      "Specialized Learning Disabilities Certification"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.91,
+    "reviewsCount": 78,
+    "sessionPrice": 0,
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "orderIndex": 9,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-rakan-otaibi",
+    "name": "راكان العتيبي",
+    "nameEn": "Rakan Al-Otaibi",
+    "title": "أخصائي العلاج الوظيفي",
+    "titleEn": "Occupational Therapist",
+    "role": "أخصائي العلاج الوظيفي",
+    "roleEn": "Occupational Therapist",
+    "category": "occupational",
+    "department": "قسم العلاج الوظيفي والتكامل الحسي",
+    "avatar": "/uploads/1792837517725_______________jpg.jpg",
+    "cardImage": "/uploads/1792837517725_______________jpg.jpg",
+    "fallbackAvatar": "/uploads/1792837517725_______________jpg.jpg",
+    "posterCrop": "/uploads/1792837517725_______________jpg.jpg",
+    "portraitCrop": "/uploads/1792837517725_______________jpg.jpg",
+    "experienceYears": 1,
+    "licenseNumber": "SCFHS Licensed",
+    "specialties": [
+      "حاصل على بكالوريوس العلاج الوظيفي من جامعة الملك سعود",
+      "حاصل على ترخيص الهيئة السعودية للتخصصات الصحية",
+      "متخصص في علاج المشاكل الحسّية والتحديات النمائية لدى الأطفال",
+      "متخصص في علاج مشاكل الأكل لدى الأطفال",
+      "خبرة عملية أكثر من سنة"
+    ],
+    "specialtiesEn": [
+      "Bachelor of Science in Occupational Therapy - King Saud University",
+      "Licensed by Saudi Commission for Health Specialties (SCFHS)",
+      "Specialized in Sensory Processing & Pediatric Developmental Challenges",
+      "Specialized in Pediatric Feeding & Eating Therapy",
+      "1+ Year of Clinical Experience"
+    ],
+    "education": [
+      "حاصل على بكالوريوس العلاج الوظيفي من جامعة الملك سعود"
+    ],
+    "educationEn": [
+      "Bachelor of Science in Occupational Therapy - King Saud University"
+    ],
+    "bio": "أخصائي علاج وظيفي مرخص من الهيئة السعودية للتخصصات الصحية بمركز رابا. خريج جامعة الملك سعود، متخصص في معالجة الاضطرابات الحسية والتحديات النمائية وتطوير المهارات الحركية الدقيقة وبرامج علاج مشاكل الأكل لدى الأطفال.",
+    "bioEn": "Licensed Occupational Therapist at Raba Center, certified by the Saudi Commission for Health Specialties. King Saud University graduate specializing in sensory integration therapy, fine motor development, developmental challenges, and pediatric feeding therapies.",
+    "certifications": [
+      "ترخيص الهيئة السعودية للتخصصات الصحية (SCFHS)",
+      "اعتماد علاج وتأهيل مشاكل الأكل والتغذية لدى الأطفال",
+      "شهادة التكامل الحسي والتحديات النمائية"
+    ],
+    "certificationsEn": [
+      "Saudi Commission for Health Specialties (SCFHS) License",
+      "Pediatric Feeding & Oral Motor Therapy Certification",
+      "Sensory Integration & Developmental Therapy Credential"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.94,
+    "reviewsCount": 92,
+    "sessionPrice": 0,
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "orderIndex": 10,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-mohamed-youssef",
+    "name": "محمد يوسف",
+    "nameEn": "Mohamed Youssef",
+    "title": "أخصائي تعديل السلوك وتنمية المهارات",
+    "titleEn": "Behavior Modification & Skills Development Specialist | QABA",
+    "role": "أخصائي تعديل السلوك وتنمية المهارات",
+    "roleEn": "Behavior Modification Specialist",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي وتنمية المهارات",
+    "avatar": "/uploads/1792837527356___________jpg.jpg",
+    "cardImage": "/uploads/1792837527356___________jpg.jpg",
+    "fallbackAvatar": "/uploads/1792837527356___________jpg.jpg",
+    "posterCrop": "/uploads/1792837527356___________jpg.jpg",
+    "portraitCrop": "/uploads/1792837527356___________jpg.jpg",
+    "experienceYears": 10,
+    "licenseNumber": "QABA Certified",
+    "specialties": [
+      "حاصل على درجة البكالوريوس من جامعة عين شمس",
+      "حاصل على دبلوم الأمراض النفسية والاجتماعية من جامعة عين شمس",
+      "حاصل على اعتماد البورد الامريكي QABA",
+      "خبرة عملية أكثر من ١٠ سنوات"
+    ],
+    "specialtiesEn": [
+      "Bachelor's Degree from Ain Shams University",
+      "Diploma in Psychological & Social Disorders - Ain Shams University",
+      "Certified by the American Board QABA",
+      "10+ Years of Practical Experience"
+    ],
+    "education": [
+      "حاصل على درجة البكالوريوس من جامعة عين شمس",
+      "حاصل على دبلوم الأمراض النفسية والاجتماعية من جامعة عين شمس"
+    ],
+    "educationEn": [
+      "Bachelor's Degree - Ain Shams University",
+      "Diploma in Psychological and Social Disorders - Ain Shams University"
+    ],
+    "bio": "أخصائي تعديل السلوك وتنمية المهارات بمركز رابا. حاصل على درجة البكالوريوس ودبلوم الأمراض النفسية والاجتماعية من جامعة عين شمس. حاصل على اعتماد البورد الأمريكي QABA، بخبرة عملية سريرية تتجاوز ١٠ سنوات في قيادة وتصميم الخطط السلوكية وتأهيل الأطفال ذوي الإعاقة.",
+    "bioEn": "Behavior Modification and Skills Development Specialist at Raba Center. Holds a Bachelor's Degree and Diploma in Psychological & Social Disorders from Ain Shams University. QABA Board Certified with over 10 years of clinical experience designing behavioral intervention protocols and skill acquisition programs.",
+    "certifications": [
+      "اعتماد البورد الأمريكي QABA (Qualified Applied Behavior Analysis)",
+      "دبلوم الأمراض النفسية والاجتماعية - جامعة عين شمس"
+    ],
+    "certificationsEn": [
+      "QABA American Board Credential",
+      "Psychological & Social Disorders Clinical Diploma - Ain Shams University"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.97,
+    "reviewsCount": 210,
+    "sessionPrice": 0,
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "orderIndex": 11,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-islam-ibrahim",
+    "name": "اسلام ابراهيم",
+    "nameEn": "Islam Ibrahim",
+    "title": "معلمة فصل",
+    "titleEn": "Senior Special Education Classroom Teacher",
+    "role": "معلمة فصل",
+    "roleEn": "Special Education Teacher",
+    "category": "aba",
+    "department": "قسم التأهيل والتعليم الخاص",
+    "avatar": "/uploads/1792837539193_______________jpg.jpg",
+    "cardImage": "/uploads/1792837539193_______________jpg.jpg",
+    "fallbackAvatar": "/uploads/1792837539193_______________jpg.jpg",
+    "posterCrop": "/uploads/1792837539193_______________jpg.jpg",
+    "portraitCrop": "/uploads/1792837539193_______________jpg.jpg",
+    "experienceYears": 15,
+    "licenseNumber": "",
+    "specialties": [
+      "حاصله على درجة البكالوريوس من جامعة عين شمس",
+      "حاصله علي دبلوم مهني في التخاطب من جامعة عين شمس",
+      "حاصلة على دبلوم مهني في تعديل السلوك من جامعة عين شمس",
+      "حاصلة على دوره تدريبية في التوحد من جامعة عين شمس قسم الإرشاد النفسي",
+      "خبرة عملية أكثر من ١٥ سنة"
+    ],
+    "specialtiesEn": [
+      "Bachelor's Degree from Ain Shams University",
+      "Professional Diploma in Speech & Language Therapy - Ain Shams University",
+      "Professional Diploma in Behavior Modification - Ain Shams University",
+      "Specialized Autism Training - Psychological Counseling Dept, Ain Shams University",
+      "15+ Years of Practical Experience"
+    ],
+    "education": [
+      "حاصله على درجة البكالوريوس من جامعة عين شمس",
+      "حاصله علي دبلوم مهني في التخاطب من جامعة عين شمس",
+      "حاصلة على دبلوم مهني في تعديل السلوك من جامعة عين شمس"
+    ],
+    "educationEn": [
+      "Bachelor's Degree - Ain Shams University",
+      "Professional Diploma in Speech & Language Therapy - Ain Shams University",
+      "Professional Diploma in Behavior Modification - Ain Shams University"
+    ],
+    "bio": "معلمة فصل أولى بمركز رابا. حاصلة على درجة البكالوريوس ودبلومين مهنيين في التخاطب وتعديل السلوك من جامعة عين شمس، بالإضافة إلى تدريب متخصص في طيف التوحد من قسم الإرشاد النفسي، بخبرة ريادية تتجاوز ١٥ سنة في التربية الخاصة وتأهيل الأطفال.",
+    "bioEn": "Senior Special Education Classroom Teacher at Raba Center. Holds a Bachelor's Degree and two Professional Diplomas in Speech-Language Therapy and Behavior Modification from Ain Shams University, with specialized training in autism counseling and over 15 years of distinguished teaching experience.",
+    "certifications": [
+      "دبلوم مهني في التخاطب واضطرابات النطق - جامعة عين شمس",
+      "دبلوم مهني في تعديل السلوك - جامعة عين شمس",
+      "شهادة تدريبية معتمدة في التوحد - قسم الإرشاد النفسي"
+    ],
+    "certificationsEn": [
+      "Professional Diploma in Speech & Language Therapy - Ain Shams University",
+      "Professional Diploma in Behavior Modification - Ain Shams University",
+      "Autism Psychological Counseling Certification"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.98,
+    "reviewsCount": 240,
+    "sessionPrice": 0,
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "orderIndex": 12,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-maryam-zahrani",
+    "name": "مريم الزهراني",
+    "nameEn": "Maryam Al-Zahrani",
+    "title": "المشرف الإداري لفرع النرجس",
+    "titleEn": "Administrative Supervisor - Al-Narjis Branch",
+    "role": "المشرف الإداري لفرع النرجس",
+    "roleEn": "Branch Administrative Supervisor",
+    "category": "psychology",
+    "department": "الإدارة التنفيذية والإشراف الإداري - فرع النرجس",
+    "avatar": "/uploads/1792837550074_______________jpg.jpg",
+    "cardImage": "/uploads/1792837550074_______________jpg.jpg",
+    "fallbackAvatar": "/uploads/1792837550074_______________jpg.jpg",
+    "posterCrop": "/uploads/1792837550074_______________jpg.jpg",
+    "portraitCrop": "/uploads/1792837550074_______________jpg.jpg",
+    "experienceYears": 3,
+    "licenseNumber": "IPA Certified Leader",
+    "specialties": [
+      "حاصلة على بكالوريوس إدارة الأعمال من جامعة الطائف",
+      "حاصلة على دورة مهارات القيادة والإشراف الإداري من IPA",
+      "حاصلة على دورة إدارة وتطوير فرق العمل من IPA",
+      "حاصلة على دورة إدارة الأداء الوظيفي وتقييم الموظفين من IPA",
+      "خبرة عملية أكثر من ٣ سنوات"
+    ],
+    "specialtiesEn": [
+      "Bachelor's Degree in Business Administration - Taif University",
+      "Leadership & Administrative Supervision Certificate - Institute of Public Administration (IPA)",
+      "Team Management & Development Certificate - IPA",
+      "Job Performance Management & Evaluation Certificate - IPA",
+      "3+ Years of Leadership Experience"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس إدارة الأعمال من جامعة الطائف"
+    ],
+    "educationEn": [
+      "Bachelor's Degree in Business Administration - Taif University"
+    ],
+    "bio": "المشرف الإداري لفرع النرجس بمركز رابا. حاصلة على بكالوريوس إدارة الأعمال من جامعة الطائف ومجموعة شهادات قيادية وإدارية متقدمة من معهد الإدارة العامة (IPA) تشمل الإشراف الإداري وتطوير فرق العمل وتقييم الأداء، بخبرة عملية تتجاوز ٣ سنوات.",
+    "bioEn": "Administrative Supervisor for Al-Narjis Branch at Raba Center. Holds a Bachelor's Degree in Business Administration from Taif University and advanced leadership credentials from the Institute of Public Administration (IPA), with over 3 years of executive branch oversight experience.",
+    "certifications": [
+      "شهادة مهارات القيادة والإشراف الإداري - معهد الإدارة العامة (IPA)",
+      "شهادة إدارة وتطوير فرق العمل - معهد الإدارة العامة (IPA)",
+      "شهادة إدارة الأداء الوظيفي وتقييم الموظفين - معهد الإدارة العامة (IPA)"
+    ],
+    "certificationsEn": [
+      "Leadership & Administrative Supervision - Institute of Public Administration (IPA)",
+      "Team Management & Development - IPA",
+      "Performance Management & Staff Evaluation - IPA"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.95,
+    "reviewsCount": 110,
+    "sessionPrice": 0,
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "orderIndex": 13,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-abrar-qahtani",
+    "name": "أبرار القحطاني",
+    "nameEn": "Abrar Al-Qahtani",
+    "title": "مشرفة قسم الـ ABA",
+    "titleEn": "ABA Department Supervisor | ABAT",
+    "role": "مشرفة قسم الـ ABA",
+    "roleEn": "ABA Department Supervisor",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/uploads/1792837565428__________________jpg.jpg",
+    "cardImage": "/uploads/1792837565428__________________jpg.jpg",
+    "fallbackAvatar": "/uploads/1792837565428__________________jpg.jpg",
+    "posterCrop": "/uploads/1792837565428__________________jpg.jpg",
+    "portraitCrop": "/uploads/1792837565428__________________jpg.jpg",
+    "experienceYears": 9,
+    "licenseNumber": "ABAT Certified",
+    "specialties": [
+      "حاصله على بكالوريوس التربية الخاصة من جامعة شقراء",
+      "حاصلة على إعتماد البورد الأميريكي ABAT",
+      "خبرة عملية أكثر من ٩ سنوات"
+    ],
+    "specialtiesEn": [
+      "Bachelor's Degree in Special Education - Shaqra University",
+      "Applied Behavior Analysis Technician (ABAT) - American Board",
+      "9+ Years of Clinical Experience"
+    ],
+    "education": [
+      "حاصله على بكالوريوس التربية الخاصة من جامعة شقراء"
+    ],
+    "educationEn": [
+      "Bachelor's Degree in Special Education - Shaqra University"
+    ],
+    "bio": "مشرفة قسم الـ ABA بمركز رابا. حاصلة على بكالوريوس التربية الخاصة من جامعة شقراء، وحاصلة على اعتماد البورد الأمريكي ABAT. تمتلك خبرة سريرية وتطبيقية تتجاوز ٩ سنوات في إعداد البرامج السلوكية الفردية وإدارة الجلسات العلاجية ومتابعة تطور مهارات الأطفال.",
+    "bioEn": "ABA Department Supervisor at Raba Center. Holds a Bachelor's Degree in Special Education from Shaqra University and is certified by the American Board as an Applied Behavior Analysis Technician (ABAT), with over 9 years of dedicated clinical practice in autism and behavioral therapy.",
+    "certifications": [
+      "اعتماد البورد الأمريكي ABAT (Applied Behavior Analysis Technician)",
+      "بكالوريوس التربية الخاصة والتدخل المبكر - جامعة شقراء"
+    ],
+    "certificationsEn": [
+      "Applied Behavior Analysis Technician (ABAT) - American Board",
+      "Special Education & Early Intervention Degree"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.97,
+    "reviewsCount": 185,
+    "sessionPrice": 0,
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "orderIndex": 14,
+    "isTopRated": false
   },
   {
     "id": "spec-rahaf-doghmani",
@@ -511,7 +1094,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "Supervisor of ABA Department",
     "role": "مشرفة قسم الـ ABA",
     "roleEn": "Supervisor of ABA Department & QABA Analyst",
-    "avatar": "/specialists/cards/spec_02_rahaf-doghmani.jpg",
+    "avatar": "/uploads/1790357530423_________________jpg_jpeg.jpg",
     "experienceYears": 6,
     "licenseNumber": "RABA-ABA-052",
     "specialties": [
@@ -560,14 +1143,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.9,
     "reviewsCount": 175,
     "sessionPrice": 270,
-    "fallbackAvatar": "/specialists/cards/spec_02_rahaf-doghmani.jpg",
-    "posterCrop": "/specialists/cards/spec_02_rahaf-doghmani.jpg",
-    "portraitCrop": "/specialists/cards/spec_02_rahaf-doghmani.jpg",
+    "fallbackAvatar": "/uploads/1790357530423_________________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357530423_________________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357530423_________________jpg_jpeg.jpg",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_02_rahaf-doghmani.jpg",
-    "orderIndex": 2,
-    "category": "aba"
+    "cardImage": "/uploads/1790357530423_________________jpg_jpeg.jpg",
+    "orderIndex": 15,
+    "category": "aba",
+    "isTopRated": true
   },
   {
     "id": "spec-manar-wahba",
@@ -577,7 +1161,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "Supervisor of Speech & Language Pathology Department",
     "role": "مشرفة قسم النطق والتخاطب والتأهيل اللغوي",
     "roleEn": "Speech & Language Pathology Supervisor",
-    "avatar": "/specialists/cards/spec_04_manar-wahba.jpg",
+    "avatar": "/uploads/1790357549806______________jpg_jpeg.jpg",
     "experienceYears": 10,
     "licenseNumber": "RABA-SLP-010",
     "specialties": [
@@ -635,14 +1219,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.88,
     "reviewsCount": 182,
     "sessionPrice": 270,
-    "fallbackAvatar": "/specialists/cards/spec_04_manar-wahba.jpg",
-    "posterCrop": "/specialists/cards/spec_04_manar-wahba.jpg",
-    "portraitCrop": "/specialists/cards/spec_04_manar-wahba.jpg",
+    "fallbackAvatar": "/uploads/1790357549806______________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357549806______________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357549806______________jpg_jpeg.jpg",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_04_manar-wahba.jpg",
-    "orderIndex": 4,
-    "category": "speech"
+    "cardImage": "/uploads/1790357549806______________jpg_jpeg.jpg",
+    "orderIndex": 16,
+    "category": "speech",
+    "isTopRated": false
   },
   {
     "id": "spec-ahmed-fathi",
@@ -652,7 +1237,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "ABA Specialist",
     "role": "أخصائي تحليل السلوك التطبيقي المعتمد ABAT",
     "roleEn": "ABA Specialist & Board Certified ABAT",
-    "avatar": "/specialists/cards/spec_05_ahmed-fathi.jpg",
+    "avatar": "/uploads/1790357579245_______________jpg_jpeg.jpg",
     "experienceYears": 8,
     "licenseNumber": "RABA-ABA-084",
     "specialties": [
@@ -701,14 +1286,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.85,
     "reviewsCount": 168,
     "sessionPrice": 250,
-    "fallbackAvatar": "/specialists/cards/spec_05_ahmed-fathi.jpg",
-    "posterCrop": "/specialists/cards/spec_05_ahmed-fathi.jpg",
-    "portraitCrop": "/specialists/cards/spec_05_ahmed-fathi.jpg",
+    "fallbackAvatar": "/uploads/1790357579245_______________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357579245_______________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357579245_______________jpg_jpeg.jpg",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_05_ahmed-fathi.jpg",
-    "orderIndex": 5,
-    "category": "aba"
+    "cardImage": "/uploads/1790357579245_______________jpg_jpeg.jpg",
+    "orderIndex": 17,
+    "category": "aba",
+    "isTopRated": false
   },
   {
     "id": "spec-mohamed-atef",
@@ -718,7 +1304,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "ABA Specialist",
     "role": "أخصائي ABA",
     "roleEn": "ABA Specialist & Qualified Autism Services Supervisor (QASP-S)",
-    "avatar": "/specialists/cards/spec_06_mohamed-atef.jpg",
+    "avatar": "/uploads/1790357588113______________jpg_jpeg.jpg",
     "experienceYears": 5,
     "licenseNumber": "RABA-ABA-057",
     "specialties": [
@@ -772,14 +1358,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.88,
     "reviewsCount": 154,
     "sessionPrice": 250,
-    "fallbackAvatar": "/specialists/cards/spec_06_mohamed-atef.jpg",
-    "posterCrop": "/specialists/cards/spec_06_mohamed-atef.jpg",
-    "portraitCrop": "/specialists/cards/spec_06_mohamed-atef.jpg",
+    "fallbackAvatar": "/uploads/1790357588113______________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357588113______________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357588113______________jpg_jpeg.jpg",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_06_mohamed-atef.jpg",
-    "orderIndex": 6,
-    "category": "aba"
+    "cardImage": "/uploads/1790357588113______________jpg_jpeg.jpg",
+    "orderIndex": 18,
+    "category": "aba",
+    "isTopRated": false
   },
   {
     "id": "spec-sadeem-mshari",
@@ -789,7 +1376,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "ABA Specialist",
     "role": "أخصائية ABA",
     "roleEn": "ABA Specialist & SCFHS Licensed Psychologist",
-    "avatar": "/specialists/cards/spec_07_sadeem-mshari.jpg",
+    "avatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
     "experienceYears": 990,
     "licenseNumber": "RABA-PSY-049",
     "specialties": [
@@ -848,14 +1435,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.9,
     "reviewsCount": 142,
     "sessionPrice": 260,
-    "fallbackAvatar": "/specialists/cards/spec_07_sadeem-mshari.jpg",
-    "posterCrop": "/specialists/cards/spec_07_sadeem-mshari.jpg",
-    "portraitCrop": "/specialists/cards/spec_07_sadeem-mshari.jpg",
+    "fallbackAvatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357598308______________________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357598308______________________jpg_jpeg.jpg",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_07_sadeem-mshari.jpg",
-    "orderIndex": 7,
-    "category": "aba"
+    "cardImage": "/uploads/1790357598308______________________jpg_jpeg.jpg",
+    "orderIndex": 19,
+    "category": "aba",
+    "isTopRated": true
   },
   {
     "id": "spec-maram-mohamed",
@@ -865,7 +1453,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "ABA Specialist",
     "role": "أخصائية تحليل السلوك التطبيقي وعلم النفس الإكلينيكي",
     "roleEn": "ABA Specialist & Clinical Psychologist",
-    "avatar": "/specialists/cards/spec_08_maram-mohamed.jpg",
+    "avatar": "/uploads/1790357606704______________jpg_jpeg.jpg",
     "experienceYears": 3,
     "licenseNumber": "RABA-ABA-033",
     "specialties": [
@@ -917,14 +1505,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.85,
     "reviewsCount": 130,
     "sessionPrice": 240,
-    "fallbackAvatar": "/specialists/cards/spec_08_maram-mohamed.jpg",
-    "posterCrop": "/specialists/cards/spec_08_maram-mohamed.jpg",
-    "portraitCrop": "/specialists/cards/spec_08_maram-mohamed.jpg",
+    "fallbackAvatar": "/uploads/1790357606704______________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357606704______________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357606704______________jpg_jpeg.jpg",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_08_maram-mohamed.jpg",
-    "orderIndex": 8,
-    "category": "aba"
+    "cardImage": "/uploads/1790357606704______________jpg_jpeg.jpg",
+    "orderIndex": 20,
+    "category": "aba",
+    "isTopRated": false
   },
   {
     "id": "spec-ahmed-raad",
@@ -934,7 +1523,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "ABA Specialist",
     "role": "أخصائي ABA",
     "roleEn": "ABA Specialist & Health Sciences Graduate",
-    "avatar": "/specialists/cards/spec_09_ahmed-raad.jpg",
+    "avatar": "/uploads/1790357615959______________jpg_jpeg.jpg",
     "experienceYears": 2,
     "licenseNumber": "RABA-ABA-038",
     "specialties": [
@@ -980,14 +1569,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.82,
     "reviewsCount": 125,
     "sessionPrice": 240,
-    "fallbackAvatar": "/specialists/cards/spec_09_ahmed-raad.jpg",
-    "posterCrop": "/specialists/cards/spec_09_ahmed-raad.jpg",
-    "portraitCrop": "/specialists/cards/spec_09_ahmed-raad.jpg",
+    "fallbackAvatar": "/uploads/1790357615959______________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357615959______________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357615959______________jpg_jpeg.jpg",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_09_ahmed-raad.jpg",
-    "orderIndex": 9,
-    "category": "aba"
+    "cardImage": "/uploads/1790357615959______________jpg_jpeg.jpg",
+    "orderIndex": 21,
+    "category": "aba",
+    "isTopRated": false
   },
   {
     "id": "spec-mohamed-saad",
@@ -997,7 +1587,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "Speech & Language Pathologist",
     "role": "أخصائي النطق والتخاطب",
     "roleEn": "Speech & Language Pathologist & Early Intervention Lead",
-    "avatar": "/specialists/cards/spec_11_mohamed-saad.png",
+    "avatar": "/uploads/1790826142955_1_png.png",
     "experienceYears": 8,
     "licenseNumber": "RABA-SLP-052",
     "specialties": [
@@ -1049,14 +1639,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.93,
     "reviewsCount": 195,
     "sessionPrice": 240,
-    "fallbackAvatar": "/specialists/cards/spec_11_mohamed-saad.png",
-    "posterCrop": "/specialists/cards/spec_11_mohamed-saad.png",
-    "portraitCrop": "/specialists/cards/spec_11_mohamed-saad.png",
+    "fallbackAvatar": "/uploads/1790826142955_1_png.png",
+    "posterCrop": "/uploads/1790826142955_1_png.png",
+    "portraitCrop": "/uploads/1790826142955_1_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_11_mohamed-saad.png",
-    "orderIndex": 11,
-    "category": "speech"
+    "cardImage": "/uploads/1790826142955_1_png.png",
+    "orderIndex": 22,
+    "category": "speech",
+    "isTopRated": false
   },
   {
     "id": "spec-alzahraa-farag",
@@ -1066,7 +1657,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "Clinical Psychologist",
     "role": "أخصائي نفسي إكلينيكي",
     "roleEn": "Clinical Child Psychologist & Behavioral Assessment Specialist",
-    "avatar": "/specialists/cards/spec_12_alzahraa-farag.png",
+    "avatar": "/uploads/1790826125079_2_png.png",
     "experienceYears": 10,
     "licenseNumber": "RABA-PSY-058",
     "specialties": [
@@ -1119,14 +1710,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.91,
     "reviewsCount": 182,
     "sessionPrice": 260,
-    "fallbackAvatar": "/specialists/cards/spec_12_alzahraa-farag.png",
-    "posterCrop": "/specialists/cards/spec_12_alzahraa-farag.png",
-    "portraitCrop": "/specialists/cards/spec_12_alzahraa-farag.png",
+    "fallbackAvatar": "/uploads/1790826125079_2_png.png",
+    "posterCrop": "/uploads/1790826125079_2_png.png",
+    "portraitCrop": "/uploads/1790826125079_2_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_12_alzahraa-farag.png",
-    "orderIndex": 12,
-    "category": "psychology"
+    "cardImage": "/uploads/1790826125079_2_png.png",
+    "orderIndex": 23,
+    "category": "psychology",
+    "isTopRated": false
   },
   {
     "id": "spec-noura-elbasyouni",
@@ -1136,7 +1728,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "Ph.D. Pediatric Psychologist",
     "role": "أخصائية نفسية",
     "roleEn": "Ph.D. in Clinical Child Psychology & Autism Specialist",
-    "avatar": "/specialists/cards/spec_13_noura-elbasyouni.png",
+    "avatar": "/uploads/1790826321411_3_png.png",
     "experienceYears": 10,
     "licenseNumber": "RABA-SCFHS-061",
     "specialties": [
@@ -1191,14 +1783,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.95,
     "reviewsCount": 215,
     "sessionPrice": 290,
-    "fallbackAvatar": "/specialists/cards/spec_13_noura-elbasyouni.png",
-    "posterCrop": "/specialists/cards/spec_13_noura-elbasyouni.png",
-    "portraitCrop": "/specialists/cards/spec_13_noura-elbasyouni.png",
+    "fallbackAvatar": "/uploads/1790826321411_3_png.png",
+    "posterCrop": "/uploads/1790826321411_3_png.png",
+    "portraitCrop": "/uploads/1790826321411_3_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_13_noura-elbasyouni.png",
-    "orderIndex": 13,
-    "category": "psychology"
+    "cardImage": "/uploads/1790826321411_3_png.png",
+    "orderIndex": 24,
+    "category": "psychology",
+    "isTopRated": false
   },
   {
     "id": "spec-asmaa-moustafa",
@@ -1208,7 +1801,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "ABA Department Supervisor",
     "role": "مشرفة قسم الـ ABA",
     "roleEn": "ABA Supervisor & International Behavior Analyst (QBA / IBA)",
-    "avatar": "/specialists/cards/spec_14_asmaa-moustafa.png",
+    "avatar": "/uploads/1790826279297_4_png.png",
     "experienceYears": 10,
     "licenseNumber": "RABA-QBA-091",
     "specialties": [
@@ -1267,14 +1860,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.96,
     "reviewsCount": 230,
     "sessionPrice": 280,
-    "fallbackAvatar": "/specialists/cards/spec_14_asmaa-moustafa.png",
-    "posterCrop": "/specialists/cards/spec_14_asmaa-moustafa.png",
-    "portraitCrop": "/specialists/cards/spec_14_asmaa-moustafa.png",
+    "fallbackAvatar": "/uploads/1790826279297_4_png.png",
+    "posterCrop": "/uploads/1790826279297_4_png.png",
+    "portraitCrop": "/uploads/1790826279297_4_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_14_asmaa-moustafa.png",
-    "orderIndex": 14,
-    "category": "aba"
+    "cardImage": "/uploads/1790826279297_4_png.png",
+    "orderIndex": 25,
+    "category": "aba",
+    "isTopRated": false
   },
   {
     "id": "spec-ayman-elhoweity",
@@ -1284,7 +1878,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "Behavior Analyst (BACB / TOT)",
     "role": "أخصائي ABA",
     "roleEn": "ABA Specialist, BACB Licensed & Certified TOT",
-    "avatar": "/specialists/cards/spec_15_ayman-elhoweity.png",
+    "avatar": "/uploads/1790826241596_5_png.png",
     "experienceYears": 10,
     "licenseNumber": "RABA-BACB-102",
     "specialties": [
@@ -1341,14 +1935,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.88,
     "reviewsCount": 170,
     "sessionPrice": 260,
-    "fallbackAvatar": "/specialists/cards/spec_15_ayman-elhoweity.png",
-    "posterCrop": "/specialists/cards/spec_15_ayman-elhoweity.png",
-    "portraitCrop": "/specialists/cards/spec_15_ayman-elhoweity.png",
+    "fallbackAvatar": "/uploads/1790826241596_5_png.png",
+    "posterCrop": "/uploads/1790826241596_5_png.png",
+    "portraitCrop": "/uploads/1790826241596_5_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_15_ayman-elhoweity.png",
-    "orderIndex": 15,
-    "category": "aba"
+    "cardImage": "/uploads/1790826241596_5_png.png",
+    "orderIndex": 26,
+    "category": "aba",
+    "isTopRated": false
   },
   {
     "id": "spec-mohamed-bakry",
@@ -1358,7 +1953,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "Occupational & Sensory Therapist",
     "role": "أخصائي علاج وظيفي وتكامل حسّي / سيكوموتر",
     "roleEn": "Occupational Therapist & Sensory Integration Practitioner",
-    "avatar": "/specialists/cards/spec_16_mohamed-bakry.png",
+    "avatar": "/uploads/1790826439548_6_png.png",
     "experienceYears": 6,
     "licenseNumber": "RABA-OT-065",
     "specialties": [
@@ -1422,14 +2017,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.87,
     "reviewsCount": 145,
     "sessionPrice": 240,
-    "fallbackAvatar": "/specialists/cards/spec_16_mohamed-bakry.png",
-    "posterCrop": "/specialists/cards/spec_16_mohamed-bakry.png",
-    "portraitCrop": "/specialists/cards/spec_16_mohamed-bakry.png",
+    "fallbackAvatar": "/uploads/1790826439548_6_png.png",
+    "posterCrop": "/uploads/1790826439548_6_png.png",
+    "portraitCrop": "/uploads/1790826439548_6_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_16_mohamed-bakry.png",
-    "orderIndex": 16,
-    "category": "occupational"
+    "cardImage": "/uploads/1790826439548_6_png.png",
+    "orderIndex": 27,
+    "category": "occupational",
+    "isTopRated": false
   },
   {
     "id": "spec-anwar-elmaghyouli",
@@ -1439,7 +2035,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "Speech & Language Pathologist",
     "role": "أخصائية النطق والتخاطب",
     "roleEn": "Speech-Language Pathologist & Communication Specialist",
-    "avatar": "/specialists/cards/spec_17_anwar-elmaghyouli.png",
+    "avatar": "/uploads/1790826509139_7_png.png",
     "experienceYears": 5,
     "licenseNumber": "RABA-SLP-068",
     "specialties": [
@@ -1485,14 +2081,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.89,
     "reviewsCount": 138,
     "sessionPrice": 230,
-    "fallbackAvatar": "/specialists/cards/spec_17_anwar-elmaghyouli.png",
-    "posterCrop": "/specialists/cards/spec_17_anwar-elmaghyouli.png",
-    "portraitCrop": "/specialists/cards/spec_17_anwar-elmaghyouli.png",
+    "fallbackAvatar": "/uploads/1790826509139_7_png.png",
+    "posterCrop": "/uploads/1790826509139_7_png.png",
+    "portraitCrop": "/uploads/1790826509139_7_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_17_anwar-elmaghyouli.png",
-    "orderIndex": 17,
-    "category": "speech"
+    "cardImage": "/uploads/1790826509139_7_png.png",
+    "orderIndex": 28,
+    "category": "speech",
+    "isTopRated": false
   },
   {
     "id": "spec-mohamed-abdelhamid",
@@ -1502,7 +2099,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "Speech Pathologist & OPT Specialist",
     "role": "أخصائي النطق والتخاطب",
     "roleEn": "Speech Pathologist & Oral Placement Therapy (OPT) Specialist",
-    "avatar": "/specialists/cards/spec_18_mohamed-abdelhamid.png",
+    "avatar": "/uploads/1790826577879_9_png.png",
     "experienceYears": 6,
     "licenseNumber": "RABA-SLP-070",
     "specialties": [
@@ -1550,14 +2147,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.86,
     "reviewsCount": 152,
     "sessionPrice": 240,
-    "fallbackAvatar": "/specialists/cards/spec_18_mohamed-abdelhamid.png",
-    "posterCrop": "/specialists/cards/spec_18_mohamed-abdelhamid.png",
-    "portraitCrop": "/specialists/cards/spec_18_mohamed-abdelhamid.png",
+    "fallbackAvatar": "/uploads/1790826577879_9_png.png",
+    "posterCrop": "/uploads/1790826577879_9_png.png",
+    "portraitCrop": "/uploads/1790826577879_9_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_18_mohamed-abdelhamid.png",
-    "orderIndex": 18,
-    "category": "speech"
+    "cardImage": "/uploads/1790826577879_9_png.png",
+    "orderIndex": 29,
+    "category": "speech",
+    "isTopRated": false
   },
   {
     "id": "spec-mohamed-elgayyar",
@@ -1567,7 +2165,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "Occupational Therapy & Sensory Integration Specialist",
     "role": "أخصائي العلاج الوظيفي والتكامل الحسي",
     "roleEn": "Occupational Therapist & Certified Behavior Technician (ABAT)",
-    "avatar": "/specialists/cards/spec_19_mohamed-elgayyar.png",
+    "avatar": "/uploads/1790826687565_10_png.png",
     "experienceYears": 7,
     "licenseNumber": "RABA-OT-071",
     "specialties": [
@@ -1625,14 +2223,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.88,
     "reviewsCount": 160,
     "sessionPrice": 250,
-    "fallbackAvatar": "/specialists/cards/spec_19_mohamed-elgayyar.png",
-    "posterCrop": "/specialists/cards/spec_19_mohamed-elgayyar.png",
-    "portraitCrop": "/specialists/cards/spec_19_mohamed-elgayyar.png",
+    "fallbackAvatar": "/uploads/1790826687565_10_png.png",
+    "posterCrop": "/uploads/1790826687565_10_png.png",
+    "portraitCrop": "/uploads/1790826687565_10_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_19_mohamed-elgayyar.png",
-    "orderIndex": 19,
-    "category": "occupational"
+    "cardImage": "/uploads/1790826687565_10_png.png",
+    "orderIndex": 30,
+    "category": "occupational",
+    "isTopRated": false
   },
   {
     "id": "spec-elsaeed-diab",
@@ -1642,7 +2241,7 @@ export const SPECIALISTS: Specialist[] = [
     "titleEn": "Learning Disabilities Specialist",
     "role": "أخصائي صعوبات تعلم",
     "roleEn": "Learning Disabilities Specialist & Psycho-Educational Evaluator",
-    "avatar": "/specialists/cards/spec_20_elsaeed-diab.png",
+    "avatar": "/uploads/1790826711609_11_png.png",
     "experienceYears": 7,
     "licenseNumber": "RABA-LD-074",
     "specialties": [
@@ -1709,14 +2308,15 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.89,
     "reviewsCount": 164,
     "sessionPrice": 250,
-    "fallbackAvatar": "/specialists/cards/spec_20_elsaeed-diab.png",
-    "posterCrop": "/specialists/cards/spec_20_elsaeed-diab.png",
-    "portraitCrop": "/specialists/cards/spec_20_elsaeed-diab.png",
+    "fallbackAvatar": "/uploads/1790826711609_11_png.png",
+    "posterCrop": "/uploads/1790826711609_11_png.png",
+    "portraitCrop": "/uploads/1790826711609_11_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_20_elsaeed-diab.png",
-    "orderIndex": 20,
-    "category": "psychology"
+    "cardImage": "/uploads/1790826711609_11_png.png",
+    "orderIndex": 31,
+    "category": "psychology",
+    "isTopRated": false
   },
   {
     "id": "spec-yara-abouhamda",
@@ -1773,75 +2373,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائية العلاج الوظيفي بمركز رابا. حاصلة على بكالوريوس العلاج الوظيفي من الجامعة الأردنية · خبرة أكثر من سنة",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
-  },
-  {
-    "id": "spec-sara-abdelhamid",
-    "name": "سارة عبد الحميد",
-    "nameEn": "Sara Abdelhamid",
-    "title": "أخصائية أولى نطق وتخاطب وتأهيل لغوي",
-    "titleEn": "Senior Speech-Language Pathologist",
-    "role": "أخصائية أولى نطق وتخاطب وتأهيل لغوي",
-    "roleEn": "Senior Speech-Language Pathologist",
-    "category": "speech",
-    "department": "قسم علاج النطق واللغة واضطرابات التواصل",
-    "avatar": "/specialists/cards/spec_sara-abdelhamid.png",
-    "experienceYears": 8,
-    "licenseNumber": "٣٣٤٣",
-    "specialties": [
-      "تأهيل لغوي متقدم",
-      "علاج تأخر الكلام",
-      "جلسات النطق والتخاطب وتنمية المهارات",
-      "التواصل اللفظي وغير اللفظي"
-    ],
-    "specialtiesEn": [
-      "Speech Delay",
-      "PECS System",
-      "Fluency & Stuttering",
-      "Expressive Language"
-    ],
-    "education": [
-      "بكالوريوس علوم السمع والنطق - جامعة عين شمس",
-      "دبلوم مهني في اضطرابات التواصل"
-    ],
-    "educationEn": [
-      "BSc in Speech & Hearing Sciences",
-      "Professional Diploma in Communication Disorders"
-    ],
-    "bio": "أخصائية أولى في علاج اضطرابات النطق واللغة والتخاطب بمراكز رابا، متخصصة في تنمية الحصيلة اللغوية، وعلاج تأخر الكلام، والخطط التأهيلية التفاعلية للأطفال.",
-    "bioEn": "Certified Speech-Language Pathologist specializing in language delays, articulation, and PECS for children on the autism spectrum.",
-    "certifications": [
-      "شهادة معتمدة في PECS Level 2",
-      "رخصة الهيئة السعودية للتخصصات الصحية"
-    ],
-    "certificationsEn": [
-      "PECS Level 2 Certified",
-      "SCFHS License"
-    ],
-    "availableDays": [
-      "الأحد",
-      "الإثنين",
-      "الثلاثاء",
-      "الأربعاء",
-      "الخميس"
-    ],
-    "availableDaysEn": [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday"
-    ],
-    "rating": 4.95,
-    "reviewsCount": 145,
-    "sessionPrice": 0,
-    "fallbackAvatar": "/specialists/sara_abdelhamid.jpg",
-    "posterCrop": "/specialists/cards/spec_21_sara-abdelhamid.png",
-    "portraitCrop": "/specialists/cards/spec_21_sara-abdelhamid.png",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 32,
+    "cardImage": "/specialists/cards/spec_21_yara-abouhamda.png",
+    "posterCrop": "/specialists/cards/spec_21_yara-abouhamda.png",
+    "portraitCrop": "/specialists/cards/spec_21_yara-abouhamda.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_21_sara-abdelhamid.png",
-    "orderIndex": 21
+    "isTopRated": false
   },
   {
     "id": "spec-bayan-alnajem",
@@ -1853,7 +2392,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "Special Education & Hearing Impairment Specialist",
     "category": "speech",
     "department": "قسم التربية الخاصة والتأهيل",
-    "avatar": "/specialists/cards/spec_23_bayan-alnajem.png",
+    "avatar": "/uploads/1790863548373_12_png.png",
     "experienceYears": 1,
     "licenseNumber": "",
     "sessionPrice": 0,
@@ -1902,13 +2441,14 @@ export const SPECIALISTS: Specialist[] = [
       "Wednesday",
       "Thursday"
     ],
-    "fallbackAvatar": "/specialists/cards/spec_23_bayan-alnajem.png",
-    "posterCrop": "/specialists/cards/spec_23_bayan-alnajem.png",
-    "portraitCrop": "/specialists/cards/spec_23_bayan-alnajem.png",
+    "fallbackAvatar": "/uploads/1790863548373_12_png.png",
+    "posterCrop": "/uploads/1790863548373_12_png.png",
+    "portraitCrop": "/uploads/1790863548373_12_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_23_bayan-alnajem.png",
-    "orderIndex": 23
+    "cardImage": "/uploads/1790863548373_12_png.png",
+    "orderIndex": 33,
+    "isTopRated": false
   },
   {
     "id": "spec-manar-obeid",
@@ -1920,7 +2460,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "ABA Department Supervisor & Certified Behavior Analyst (QABA/IBAO)",
     "category": "aba",
     "department": "قسم تحليل السلوك التطبيقي ABA",
-    "avatar": "/specialists/cards/spec_24_manar-obeid.png",
+    "avatar": "/uploads/1790865956621_13_png.png",
     "experienceYears": 17,
     "licenseNumber": "",
     "sessionPrice": 0,
@@ -1980,13 +2520,14 @@ export const SPECIALISTS: Specialist[] = [
       "Wednesday",
       "Thursday"
     ],
-    "fallbackAvatar": "/specialists/cards/spec_24_manar-obeid.png",
-    "posterCrop": "/specialists/cards/spec_24_manar-obeid.png",
-    "portraitCrop": "/specialists/cards/spec_24_manar-obeid.png",
+    "fallbackAvatar": "/uploads/1790865956621_13_png.png",
+    "posterCrop": "/uploads/1790865956621_13_png.png",
+    "portraitCrop": "/uploads/1790865956621_13_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_24_manar-obeid.png",
-    "orderIndex": 24
+    "cardImage": "/uploads/1790865956621_13_png.png",
+    "orderIndex": 34,
+    "isTopRated": false
   },
   {
     "id": "spec-salma-abouelfadl",
@@ -1998,7 +2539,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "Sensory Integration & Communication Specialist",
     "category": "occupational",
     "department": "قسم العلاج الوظيفي والتكامل الحسي",
-    "avatar": "/specialists/cards/spec_25_salma-abouelfadl.png",
+    "avatar": "/uploads/1790865973849_14_png.png",
     "experienceYears": 7,
     "licenseNumber": "",
     "sessionPrice": 0,
@@ -2059,13 +2600,14 @@ export const SPECIALISTS: Specialist[] = [
       "Wednesday",
       "Thursday"
     ],
-    "fallbackAvatar": "/specialists/cards/spec_25_salma-abouelfadl.png",
-    "posterCrop": "/specialists/cards/spec_25_salma-abouelfadl.png",
-    "portraitCrop": "/specialists/cards/spec_25_salma-abouelfadl.png",
+    "fallbackAvatar": "/uploads/1790865973849_14_png.png",
+    "posterCrop": "/uploads/1790865973849_14_png.png",
+    "portraitCrop": "/uploads/1790865973849_14_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_25_salma-abouelfadl.png",
-    "orderIndex": 25
+    "cardImage": "/uploads/1790865973849_14_png.png",
+    "orderIndex": 35,
+    "isTopRated": false
   },
   {
     "id": "spec-ahmed-sayed",
@@ -2077,7 +2619,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "Speech & Language Pathologist (OPT Certified)",
     "category": "speech",
     "department": "قسم النطق والتخاطب",
-    "avatar": "/specialists/cards/spec_26_ahmed-sayed.png",
+    "avatar": "/uploads/1790865993782_15_png.png",
     "experienceYears": 6,
     "licenseNumber": "",
     "sessionPrice": 0,
@@ -2123,13 +2665,14 @@ export const SPECIALISTS: Specialist[] = [
       "Wednesday",
       "Thursday"
     ],
-    "fallbackAvatar": "/specialists/cards/spec_26_ahmed-sayed.png",
-    "posterCrop": "/specialists/cards/spec_26_ahmed-sayed.png",
-    "portraitCrop": "/specialists/cards/spec_26_ahmed-sayed.png",
+    "fallbackAvatar": "/uploads/1790865993782_15_png.png",
+    "posterCrop": "/uploads/1790865993782_15_png.png",
+    "portraitCrop": "/uploads/1790865993782_15_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_26_ahmed-sayed.png",
-    "orderIndex": 26
+    "cardImage": "/uploads/1790865993782_15_png.png",
+    "orderIndex": 36,
+    "isTopRated": false
   },
   {
     "id": "spec-aseel-yousef",
@@ -2141,7 +2684,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "Occupational Therapy & Fine Motor Rehabilitation Specialist",
     "category": "occupational",
     "department": "قسم العلاج الوظيفي والتكامل الحسي",
-    "avatar": "/specialists/cards/spec_28_aseel-yousef.png",
+    "avatar": "/uploads/1790866040732_19_png.png",
     "experienceYears": 2,
     "licenseNumber": "",
     "sessionPrice": 0,
@@ -2186,13 +2729,14 @@ export const SPECIALISTS: Specialist[] = [
       "Wednesday",
       "Thursday"
     ],
-    "fallbackAvatar": "/specialists/cards/spec_28_aseel-yousef.png",
-    "posterCrop": "/specialists/cards/spec_28_aseel-yousef.png",
-    "portraitCrop": "/specialists/cards/spec_28_aseel-yousef.png",
+    "fallbackAvatar": "/uploads/1790866040732_19_png.png",
+    "posterCrop": "/uploads/1790866040732_19_png.png",
+    "portraitCrop": "/uploads/1790866040732_19_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_28_aseel-yousef.png",
-    "orderIndex": 28
+    "cardImage": "/uploads/1790866040732_19_png.png",
+    "orderIndex": 37,
+    "isTopRated": false
   },
   {
     "id": "spec-mohammed-shehri-clinical",
@@ -2204,7 +2748,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "Clinical Psychologist & Behavioral Assessment Specialist",
     "category": "psychology",
     "department": "قسم الإرشاد والتقييم النفسي",
-    "avatar": "/specialists/cards/spec_29_mohammed-shehri-clinical.png",
+    "avatar": "/uploads/1790866057132_21_png.png",
     "experienceYears": 2,
     "licenseNumber": "",
     "sessionPrice": 0,
@@ -2249,13 +2793,14 @@ export const SPECIALISTS: Specialist[] = [
       "Wednesday",
       "Thursday"
     ],
-    "fallbackAvatar": "/specialists/cards/spec_29_mohammed-shehri-clinical.png",
-    "posterCrop": "/specialists/cards/spec_29_mohammed-shehri-clinical.png",
-    "portraitCrop": "/specialists/cards/spec_29_mohammed-shehri-clinical.png",
+    "fallbackAvatar": "/uploads/1790866057132_21_png.png",
+    "posterCrop": "/uploads/1790866057132_21_png.png",
+    "portraitCrop": "/uploads/1790866057132_21_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_29_mohammed-shehri-clinical.png",
-    "orderIndex": 29
+    "cardImage": "/uploads/1790866057132_21_png.png",
+    "orderIndex": 38,
+    "isTopRated": false
   },
   {
     "id": "spec-saad-dosari",
@@ -2267,7 +2812,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "ABA Specialist & Licensed ABAT Behavior Technician",
     "category": "aba",
     "department": "قسم تحليل السلوك التطبيقي ABA",
-    "avatar": "/specialists/cards/spec_30_saad-dosari.png",
+    "avatar": "/uploads/1790866075647_22_png.png",
     "experienceYears": 2,
     "licenseNumber": "",
     "sessionPrice": 0,
@@ -2315,13 +2860,14 @@ export const SPECIALISTS: Specialist[] = [
       "Wednesday",
       "Thursday"
     ],
-    "fallbackAvatar": "/specialists/cards/spec_30_saad-dosari.png",
-    "posterCrop": "/specialists/cards/spec_30_saad-dosari.png",
-    "portraitCrop": "/specialists/cards/spec_30_saad-dosari.png",
+    "fallbackAvatar": "/uploads/1790866075647_22_png.png",
+    "posterCrop": "/uploads/1790866075647_22_png.png",
+    "portraitCrop": "/uploads/1790866075647_22_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_30_saad-dosari.png",
-    "orderIndex": 30
+    "cardImage": "/uploads/1790866075647_22_png.png",
+    "orderIndex": 39,
+    "isTopRated": false
   },
   {
     "id": "spec-fahad-juhani",
@@ -2333,7 +2879,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "ABA Specialist & Certified ABAT Practitioner",
     "category": "aba",
     "department": "قسم تحليل السلوك التطبيقي ABA",
-    "avatar": "/specialists/cards/spec_31_fahad-juhani.png",
+    "avatar": "/uploads/1790866092167_23_png.png",
     "experienceYears": 2,
     "licenseNumber": "",
     "sessionPrice": 0,
@@ -2379,13 +2925,14 @@ export const SPECIALISTS: Specialist[] = [
       "Wednesday",
       "Thursday"
     ],
-    "fallbackAvatar": "/specialists/cards/spec_31_fahad-juhani.png",
-    "posterCrop": "/specialists/cards/spec_31_fahad-juhani.png",
-    "portraitCrop": "/specialists/cards/spec_31_fahad-juhani.png",
+    "fallbackAvatar": "/uploads/1790866092167_23_png.png",
+    "posterCrop": "/uploads/1790866092167_23_png.png",
+    "portraitCrop": "/uploads/1790866092167_23_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_31_fahad-juhani.png",
-    "orderIndex": 31
+    "cardImage": "/uploads/1790866092167_23_png.png",
+    "orderIndex": 40,
+    "isTopRated": false
   },
   {
     "id": "spec-hala-enazi",
@@ -2397,7 +2944,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "ABA Specialist & SCFHS Classified Psychologist",
     "category": "aba",
     "department": "قسم تحليل السلوك التطبيقي ABA",
-    "avatar": "/specialists/cards/spec_32_hala-enazi.png",
+    "avatar": "/uploads/1790866107078_24_png.png",
     "experienceYears": 1,
     "licenseNumber": "",
     "sessionPrice": 0,
@@ -2448,13 +2995,14 @@ export const SPECIALISTS: Specialist[] = [
       "Wednesday",
       "Thursday"
     ],
-    "fallbackAvatar": "/specialists/cards/spec_32_hala-enazi.png",
-    "posterCrop": "/specialists/cards/spec_32_hala-enazi.png",
-    "portraitCrop": "/specialists/cards/spec_32_hala-enazi.png",
+    "fallbackAvatar": "/uploads/1790866107078_24_png.png",
+    "posterCrop": "/uploads/1790866107078_24_png.png",
+    "portraitCrop": "/uploads/1790866107078_24_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_32_hala-enazi.png",
-    "orderIndex": 32
+    "cardImage": "/uploads/1790866107078_24_png.png",
+    "orderIndex": 41,
+    "isTopRated": false
   },
   {
     "id": "spec-taif-subaie",
@@ -2466,7 +3014,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "ABA Specialist & Licensed Psychologist",
     "category": "aba",
     "department": "قسم تحليل السلوك التطبيقي ABA",
-    "avatar": "/specialists/cards/spec_33_taif-subaie.png",
+    "avatar": "/uploads/1790866122845_25_png.png",
     "experienceYears": 2,
     "licenseNumber": "",
     "sessionPrice": 0,
@@ -2515,13 +3063,14 @@ export const SPECIALISTS: Specialist[] = [
       "Wednesday",
       "Thursday"
     ],
-    "fallbackAvatar": "/specialists/cards/spec_33_taif-subaie.png",
-    "posterCrop": "/specialists/cards/spec_33_taif-subaie.png",
-    "portraitCrop": "/specialists/cards/spec_33_taif-subaie.png",
+    "fallbackAvatar": "/uploads/1790866122845_25_png.png",
+    "posterCrop": "/uploads/1790866122845_25_png.png",
+    "portraitCrop": "/uploads/1790866122845_25_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_33_taif-subaie.png",
-    "orderIndex": 33
+    "cardImage": "/uploads/1790866122845_25_png.png",
+    "orderIndex": 42,
+    "isTopRated": false
   },
   {
     "id": "spec-raghad-hawarneh",
@@ -2533,7 +3082,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "Occupational Therapy & Medical Rehabilitation Specialist",
     "category": "occupational",
     "department": "قسم العلاج الوظيفي والتكامل الحسي",
-    "avatar": "/specialists/cards/spec_34_raghad-hawarneh.png",
+    "avatar": "/uploads/1790866151823_26_png.png",
     "experienceYears": 1,
     "licenseNumber": "",
     "sessionPrice": 0,
@@ -2578,13 +3127,14 @@ export const SPECIALISTS: Specialist[] = [
       "Wednesday",
       "Thursday"
     ],
-    "fallbackAvatar": "/specialists/cards/spec_34_raghad-hawarneh.png",
-    "posterCrop": "/specialists/cards/spec_34_raghad-hawarneh.png",
-    "portraitCrop": "/specialists/cards/spec_34_raghad-hawarneh.png",
+    "fallbackAvatar": "/uploads/1790866151823_26_png.png",
+    "posterCrop": "/uploads/1790866151823_26_png.png",
+    "portraitCrop": "/uploads/1790866151823_26_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_34_raghad-hawarneh.png",
-    "orderIndex": 34
+    "cardImage": "/uploads/1790866151823_26_png.png",
+    "orderIndex": 43,
+    "isTopRated": false
   },
   {
     "id": "spec-eman-bahattab",
@@ -2596,7 +3146,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "ABA Specialist & Certified Behavior Technician (QABA)",
     "category": "aba",
     "department": "قسم تحليل السلوك التطبيقي ABA",
-    "avatar": "/specialists/cards/spec_35_eman-bahattab.png",
+    "avatar": "/uploads/1790866167869_27_png.png",
     "experienceYears": 5,
     "licenseNumber": "",
     "sessionPrice": 0,
@@ -2642,13 +3192,14 @@ export const SPECIALISTS: Specialist[] = [
       "Wednesday",
       "Thursday"
     ],
-    "fallbackAvatar": "/specialists/cards/spec_35_eman-bahattab.png",
-    "posterCrop": "/specialists/cards/spec_35_eman-bahattab.png",
-    "portraitCrop": "/specialists/cards/spec_35_eman-bahattab.png",
+    "fallbackAvatar": "/uploads/1790866167869_27_png.png",
+    "posterCrop": "/uploads/1790866167869_27_png.png",
+    "portraitCrop": "/uploads/1790866167869_27_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_35_eman-bahattab.png",
-    "orderIndex": 35
+    "cardImage": "/uploads/1790866167869_27_png.png",
+    "orderIndex": 44,
+    "isTopRated": false
   },
   {
     "id": "spec-omar-saad-speech",
@@ -2660,7 +3211,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "Speech Pathologist & Behavioral Specialist (ABAT / QASP-S Candidate)",
     "category": "speech",
     "department": "قسم النطق والتخاطب",
-    "avatar": "/specialists/cards/spec_36_omar-saad-speech.png",
+    "avatar": "/uploads/1790866182582_28_png.png",
     "experienceYears": 5,
     "licenseNumber": "",
     "sessionPrice": 0,
@@ -2709,13 +3260,14 @@ export const SPECIALISTS: Specialist[] = [
       "Wednesday",
       "Thursday"
     ],
-    "fallbackAvatar": "/specialists/cards/spec_36_omar-saad-speech.png",
-    "posterCrop": "/specialists/cards/spec_36_omar-saad-speech.png",
-    "portraitCrop": "/specialists/cards/spec_36_omar-saad-speech.png",
+    "fallbackAvatar": "/uploads/1790866182582_28_png.png",
+    "posterCrop": "/uploads/1790866182582_28_png.png",
+    "portraitCrop": "/uploads/1790866182582_28_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_36_omar-saad-speech.png",
-    "orderIndex": 36
+    "cardImage": "/uploads/1790866182582_28_png.png",
+    "orderIndex": 45,
+    "isTopRated": false
   },
   {
     "id": "spec-aliah-mutairi",
@@ -2727,7 +3279,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "Occupational Therapy & Sensory Rehabilitation Specialist",
     "category": "occupational",
     "department": "قسم العلاج الوظيفي والتكامل الحسي",
-    "avatar": "/specialists/cards/spec_37_aliah-mutairi.png",
+    "avatar": "/uploads/1790866202949_29_png.png",
     "experienceYears": 2,
     "licenseNumber": "",
     "sessionPrice": 0,
@@ -2772,13 +3324,14 @@ export const SPECIALISTS: Specialist[] = [
       "Wednesday",
       "Thursday"
     ],
-    "fallbackAvatar": "/specialists/cards/spec_37_aliah-mutairi.png",
-    "posterCrop": "/specialists/cards/spec_37_aliah-mutairi.png",
-    "portraitCrop": "/specialists/cards/spec_37_aliah-mutairi.png",
+    "fallbackAvatar": "/uploads/1790866202949_29_png.png",
+    "posterCrop": "/uploads/1790866202949_29_png.png",
+    "portraitCrop": "/uploads/1790866202949_29_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_37_aliah-mutairi.png",
-    "orderIndex": 37
+    "cardImage": "/uploads/1790866202949_29_png.png",
+    "orderIndex": 46,
+    "isTopRated": false
   },
   {
     "id": "spec-haya-faleh",
@@ -2790,7 +3343,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "Psychologist & Certified Behavior Analyst Technician (ABAT)",
     "category": "psychology",
     "department": "قسم الإرشاد النفسي والتدخل السلوكي ABA",
-    "avatar": "/specialists/cards/spec_38_haya-faleh.png",
+    "avatar": "/uploads/1790866269363_30_png.png",
     "experienceYears": 1,
     "licenseNumber": "",
     "sessionPrice": 0,
@@ -2836,13 +3389,14 @@ export const SPECIALISTS: Specialist[] = [
       "Wednesday",
       "Thursday"
     ],
-    "fallbackAvatar": "/specialists/cards/spec_38_haya-faleh.png",
-    "posterCrop": "/specialists/cards/spec_38_haya-faleh.png",
-    "portraitCrop": "/specialists/cards/spec_38_haya-faleh.png",
+    "fallbackAvatar": "/uploads/1790866269363_30_png.png",
+    "posterCrop": "/uploads/1790866269363_30_png.png",
+    "portraitCrop": "/uploads/1790866269363_30_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_38_haya-faleh.png",
-    "orderIndex": 38
+    "cardImage": "/uploads/1790866269363_30_png.png",
+    "orderIndex": 47,
+    "isTopRated": false
   },
   {
     "id": "spec-haya-dosari",
@@ -2854,7 +3408,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "Psychologist & Certified Behavior Analyst Technician (ABAT)",
     "category": "psychology",
     "department": "قسم الإرشاد النفسي والتدخل السلوكي ABA",
-    "avatar": "/specialists/cards/spec_39_haya-dosari.png",
+    "avatar": "/uploads/1790866288993_31_png.png",
     "experienceYears": 1,
     "licenseNumber": "",
     "sessionPrice": 0,
@@ -2900,13 +3454,14 @@ export const SPECIALISTS: Specialist[] = [
       "Wednesday",
       "Thursday"
     ],
-    "fallbackAvatar": "/specialists/cards/spec_39_haya-dosari.png",
-    "posterCrop": "/specialists/cards/spec_39_haya-dosari.png",
-    "portraitCrop": "/specialists/cards/spec_39_haya-dosari.png",
+    "fallbackAvatar": "/uploads/1790866288993_31_png.png",
+    "posterCrop": "/uploads/1790866288993_31_png.png",
+    "portraitCrop": "/uploads/1790866288993_31_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_39_haya-dosari.png",
-    "orderIndex": 39
+    "cardImage": "/uploads/1790866288993_31_png.png",
+    "orderIndex": 48,
+    "isTopRated": false
   },
   {
     "id": "spec-ahlam-alnoaman",
@@ -2920,7 +3475,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم النطق والتخاطب والتأهيل اللغوي",
     "licenseNumber": "SCFHS-24-5930",
     "avatar": "/uploads/1791192101630________________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_ahlam-alnoaman.svg",
+    "fallbackAvatar": "/uploads/1791192101630________________png.png",
     "rating": 4.95,
     "reviewsCount": 160,
     "experienceYears": 17,
@@ -2976,7 +3531,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائية النطق والتخاطب بمركز رابا. حاصلة على درجة البكالوريوس من جامعة عين شمس · حاصلة على دبلوم التوحد من جامعهة القاهره · حاصلة على دبلومة التربية الخاصة من جامعة القاهرة · حاصلة على دبلومة صعوبات التعلم من جامعة القاهرة · حاصلة على دبلومة إعداد أخصائي تربية خاصة من نقابة ذوي الإحتياجات الخاصة بالإسماعيلية · حاصلة على دورة تخصصية في العلاج الحركي اللمسي للنطق والكلام OPT · فني تحليل سلوك تطبيقي معتمد ABAT · حاصلة على ترخيص الهيئة السعودية للتخصصات الصحية · خبرة عملية أكثر من ١٧ سنة",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 49,
+    "cardImage": "/uploads/1791192101630________________png.png",
+    "posterCrop": "/uploads/1791192101630________________png.png",
+    "portraitCrop": "/uploads/1791192101630________________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-atheer-alrasheed",
@@ -2990,7 +3552,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم تحليل السلوك التطبيقي ABA",
     "licenseNumber": "SCFHS-24-2041",
     "avatar": "/uploads/1791192114276_______________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_atheer-alrasheed.svg",
+    "fallbackAvatar": "/uploads/1791192114276_______________png.png",
     "rating": 4.9,
     "reviewsCount": 95,
     "experienceYears": 3,
@@ -3038,7 +3600,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائية تحليل سلوك تطبيقي ABA مرخصة ومصنفة من الهيئة السعودية للتخصصات الصحية وحاصلة على رخصة ABAT. متخصصة في تعديل السلوك وتنمية المهارات الاستقلالية والتواصلية للأطفال ذوي اضطراب طيف التوحد.",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 50,
+    "cardImage": "/uploads/1791192114276_______________png.png",
+    "posterCrop": "/uploads/1791192114276_______________png.png",
+    "portraitCrop": "/uploads/1791192114276_______________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-tasneem-sabry",
@@ -3052,7 +3621,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم تحليل السلوك التطبيقي ABA",
     "licenseNumber": "SCFHS-24-9335",
     "avatar": "/uploads/1791192126580____________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_tasneem-sabry.svg",
+    "fallbackAvatar": "/uploads/1791192126580____________png.png",
     "rating": 4.96,
     "reviewsCount": 190,
     "experienceYears": 8,
@@ -3104,7 +3673,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "مشرفة قسم تحليل السلوك التطبيقي ABA بمراكز رابا، حاصلة على الدكتوراه والماجستير المهنيين من جامعة القاهرة ودبلومات متقدمة من الجامعة الأمريكية. تمتلك خبرة تفوق 8 سنوات في الإشراف الإكلينيكي وتصميم الخطط السلوكية المتقدمة.",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 51,
+    "cardImage": "/uploads/1791192126580____________png.png",
+    "posterCrop": "/uploads/1791192126580____________png.png",
+    "portraitCrop": "/uploads/1791192126580____________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-tasneem-abdelaziz",
@@ -3118,7 +3694,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم تحليل السلوك التطبيقي ABA",
     "licenseNumber": "SCFHS-24-4360",
     "avatar": "/uploads/1791192139635__________________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_tasneem-abdelaziz.svg",
+    "fallbackAvatar": "/uploads/1791192139635__________________png.png",
     "rating": 4.93,
     "reviewsCount": 140,
     "experienceYears": 10,
@@ -3166,7 +3742,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "اخصائية ABA بمركز رابا. حاصلة على بكالوريوس العلوم الصحية من جامعة الرباط الوطني · حاصلة على رخصة ABAT من البورد الامريكي QABA · حاصلة على دورة أسس التشخيص والعلاج للإضطرابات النفسية بمركز · مطمئنة للدكتور طارق الحبيب · خبرة عملية أكثر من ١٠ سنوات",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 52,
+    "cardImage": "/uploads/1791192139635__________________png.png",
+    "posterCrop": "/uploads/1791192139635__________________png.png",
+    "portraitCrop": "/uploads/1791192139635__________________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-jawaher-ibrahim",
@@ -3180,7 +3763,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم علم النفس والإرشاد الأسري",
     "licenseNumber": "SCFHS-24-8472",
     "avatar": "/uploads/1791192158941________________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_jawaher-ibrahim.svg",
+    "fallbackAvatar": "/uploads/1791192158941________________png.png",
     "rating": 4.91,
     "reviewsCount": 110,
     "experienceYears": 3,
@@ -3230,7 +3813,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائية نفسية بمركز رابا. حاصلة على بكالوريوس علم النفس من جامعة الملك سعود · مصنفة من الهيئة السعودية للتخصصات الصحية كأخصائية نفسية · حاصلة على شهادة ABAT في تحليل السلوك التطبيقي · حاصلة على دورة ABAT لمدة 40 ساعة · دورات في العلاج المعرفي السلوكي CBT · خبرة عملية أكثر من ٣ سنوات",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 53,
+    "cardImage": "/uploads/1791192158941________________png.png",
+    "posterCrop": "/uploads/1791192158941________________png.png",
+    "portraitCrop": "/uploads/1791192158941________________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-hossam-samy",
@@ -3244,7 +3834,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم النطق والتخاطب والتأهيل اللغوي",
     "licenseNumber": "SCFHS-24-3564",
     "avatar": "/uploads/1791192167745___________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_hossam-samy.svg",
+    "fallbackAvatar": "/uploads/1791192167745___________png.png",
     "rating": 4.92,
     "reviewsCount": 130,
     "experienceYears": 7,
@@ -3293,7 +3883,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائي النطق والتخاطب بمركز رابا. حاصل علي بكالوريوس العلوم في التربيه الخاصه من جامعة مصر للعلوم · حاصل علي دبلومة مهنية في إضطرابات التواصل من جامعة القاهرة · حاصل علي دبلومه خاصه في التربية الخاصة من جامعة القاهرة · خبرة عملية أكثر من ٧ سنوات",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 54,
+    "cardImage": "/uploads/1791192167745___________png.png",
+    "posterCrop": "/uploads/1791192167745___________png.png",
+    "portraitCrop": "/uploads/1791192167745___________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-khaled-alharbi",
@@ -3307,7 +3904,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم تحليل السلوك التطبيقي ABA",
     "licenseNumber": "SCFHS-24-8418",
     "avatar": "/uploads/1791192175779_____________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_khaled-alharbi.svg",
+    "fallbackAvatar": "/uploads/1791192175779_____________png.png",
     "rating": 4.89,
     "reviewsCount": 85,
     "experienceYears": 2,
@@ -3353,7 +3950,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائي ABA بمركز رابا. حاصل على بكالوريوس علم النفس الإكلينيكي من جامعة الملك سعود · حاصل على رخصة ABAT فني تحليل سلوك تطبيقي · حاصل على رخصة اخصائي نفسي مساعد من هيئة التخصصات الصحية · خبرة عملية أكثر من سنتين",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 55,
+    "cardImage": "/uploads/1791192175779_____________png.png",
+    "posterCrop": "/uploads/1791192175779_____________png.png",
+    "portraitCrop": "/uploads/1791192175779_____________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-reema-alhusseini",
@@ -3367,7 +3971,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم علم النفس والإرشاد الأسري",
     "licenseNumber": "SCFHS-24-4834",
     "avatar": "/uploads/1791192184198______________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_reema-alhusseini.svg",
+    "fallbackAvatar": "/uploads/1791192184198______________png.png",
     "rating": 4.95,
     "reviewsCount": 175,
     "experienceYears": 10,
@@ -3413,7 +4017,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائية نفسية بمركز رابا. حاصلة على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الإسلامية · حاصلة على شهادة مشرف توحد ممارس QASP-S من منظمة QABA · حاصلة على تصنيف مهني من الهيئة السعودية للتخصصات الصحية · خبرة أكثر من ١٠ سنوات",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 56,
+    "cardImage": "/uploads/1791192184198______________png.png",
+    "posterCrop": "/uploads/1791192184198______________png.png",
+    "portraitCrop": "/uploads/1791192184198______________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-sultan-alshaye",
@@ -3427,7 +4038,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم العلاج الوظيفي والتكامل الحسي",
     "licenseNumber": "SCFHS-24-5711",
     "avatar": "/uploads/1791192194710______________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_sultan-alshaye.svg",
+    "fallbackAvatar": "/uploads/1791192194710______________png.png",
     "rating": 4.9,
     "reviewsCount": 105,
     "experienceYears": 3,
@@ -3470,7 +4081,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائي العلاج الوظيفي بمركز رابا. حاصل على بكالوريوس العلوم التطبيقيه من جامعة الملك سعود تخصص علاج وظيفي · خبرة أكثر من ٣ سنوات",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 57,
+    "cardImage": "/uploads/1791192194710______________png.png",
+    "posterCrop": "/uploads/1791192194710______________png.png",
+    "portraitCrop": "/uploads/1791192194710______________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-shaimaa-adel",
@@ -3484,7 +4102,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم النطق والتخاطب والتأهيل اللغوي",
     "licenseNumber": "SCFHS-24-9265",
     "avatar": "/uploads/1791192202894____________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_shaimaa-adel.svg",
+    "fallbackAvatar": "/uploads/1791192202894____________png.png",
     "rating": 4.97,
     "reviewsCount": 210,
     "experienceYears": 18,
@@ -3532,7 +4150,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائية النطق والتخاطب بمركز رابا. حاصلة على درجة البكالوريوس من جامعة الإسكندرية · حاصلة على دراسات عليا علوم إعاقة مسار اضطرابات نطق وتخاطب من جامعة الزقازيق · حاصلة على الرخصة المهنية في النطق والتخاطب من هيئة التقويم والقياس · حاصلة على رخصة مشرف توحد سلوكي معتمد دولياً QASP-S · خبرة عملية أكثر من ١٨ سنة",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 58,
+    "cardImage": "/uploads/1791192202894____________png.png",
+    "posterCrop": "/uploads/1791192202894____________png.png",
+    "portraitCrop": "/uploads/1791192202894____________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-abdelilah-shakl",
@@ -3546,7 +4171,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم العلاج الوظيفي والتكامل الحسي",
     "licenseNumber": "SCFHS-24-7390",
     "avatar": "/uploads/1791192213481______________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_abdelilah-shakl.svg",
+    "fallbackAvatar": "/uploads/1791192213481______________png.png",
     "rating": 4.92,
     "reviewsCount": 115,
     "experienceYears": 3,
@@ -3593,7 +4218,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائي علاج وظيفي مرخص من هيئة التخصصات الصحية وحاصل على اعتماد Floortime 101. متخصص في التحديات الحسية النمائية، وتأهيل المهارات الحركية، وعلاج صعوبات ومشاكل التغذية والأكل لدى الأطفال.",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 59,
+    "cardImage": "/uploads/1791192213481______________png.png",
+    "posterCrop": "/uploads/1791192213481______________png.png",
+    "portraitCrop": "/uploads/1791192213481______________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-alaa-eldin-nagy",
@@ -3607,7 +4239,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم تحليل السلوك التطبيقي ABA",
     "licenseNumber": "SCFHS-24-8260",
     "avatar": "/uploads/1791192231188_________________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_alaa-eldin-nagy.svg",
+    "fallbackAvatar": "/uploads/1791192231188_________________png.png",
     "rating": 4.94,
     "reviewsCount": 155,
     "experienceYears": 8,
@@ -3653,7 +4285,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائي تحليل سلوك تطبيقي معتمد ABAT بخبرة سريرية تتجاوز 8 سنوات في مراكز التأهيل المتخصصة، خبير في تطبيق برامج تعديل السلوك وتنمية مهارات التواصل الوظيفي والاستقلالية.",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 60,
+    "cardImage": "/uploads/1791192231188_________________png.png",
+    "posterCrop": "/uploads/1791192231188_________________png.png",
+    "portraitCrop": "/uploads/1791192231188_________________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-ghalib-alotaibi",
@@ -3667,7 +4306,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم تحليل السلوك التطبيقي ABA",
     "licenseNumber": "SCFHS-24-4055",
     "avatar": "/uploads/1791192244901______________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_ghalib-alotaibi.svg",
+    "fallbackAvatar": "/uploads/1791192244901______________png.png",
     "rating": 4.9,
     "reviewsCount": 90,
     "experienceYears": 2,
@@ -3715,7 +4354,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائي ABA بمركز رابا. حاصل على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الاسلامية · حاصل على دورات في إختبارات الذكاء للأطفال · معتمد كأخصائي تحليل سلوك تطبيقي من QABA · مصنف من الهيئة السعوديه للتخصصات الصحيه · خبرة عملية أكثر من سنتين",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 61,
+    "cardImage": "/uploads/1791192244901______________png.png",
+    "posterCrop": "/uploads/1791192244901______________png.png",
+    "portraitCrop": "/uploads/1791192244901______________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-kareem-ragab",
@@ -3729,7 +4375,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم النطق والتخاطب والتأهيل اللغوي",
     "licenseNumber": "SCFHS-24-9140",
     "avatar": "/uploads/1791192253778__________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_kareem-ragab.svg",
+    "fallbackAvatar": "/uploads/1791192253778__________png.png",
     "rating": 4.91,
     "reviewsCount": 100,
     "experienceYears": 3,
@@ -3777,7 +4423,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائي النطق والتخاطب بمركز رابا. حاصل على بكالوريوس العلوم في التربية الخاصة من جامعة مصر للعلوم · حاصل على دبلومة التخاطب لمدة عام من مركز الإشراق الطبي · حاصل على دبلومة التخاطب من جامعة الأزهر · حاصل على شهادة ٤٠ ساعة لفني تحليل السلوك التطبيقي · خبرة عملية أكثر من ٣ سنوات",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 62,
+    "cardImage": "/uploads/1791192253778__________png.png",
+    "posterCrop": "/uploads/1791192253778__________png.png",
+    "portraitCrop": "/uploads/1791192253778__________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-marwa-alsharif",
@@ -3791,7 +4444,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم البرامج الأكاديمية والتربية الخاصة",
     "licenseNumber": "SCFHS-24-2625",
     "avatar": "/uploads/1791192261779_____________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_marwa-alsharif.svg",
+    "fallbackAvatar": "/uploads/1791192261779_____________png.png",
     "rating": 4.93,
     "reviewsCount": 125,
     "experienceYears": 4,
@@ -3835,7 +4488,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "مشرفة أكاديمية بمركز رابا. حاصلة على بكالوريوس التربية الخاصة من المعهد العالي للتربية المختصة · حاصلة على دورة في التعامل مع أطفال طيف التوحد · خبرة عملية أكثر من ٤ سنوات",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 63,
+    "cardImage": "/uploads/1791192261779_____________png.png",
+    "posterCrop": "/uploads/1791192261779_____________png.png",
+    "portraitCrop": "/uploads/1791192261779_____________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-mostafa-mahmoud",
@@ -3849,7 +4509,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم تحليل السلوك التطبيقي ABA",
     "licenseNumber": "SCFHS-24-7294",
     "avatar": "/uploads/1791192271638_____________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_mostafa-mahmoud.svg",
+    "fallbackAvatar": "/uploads/1791192271638_____________png.png",
     "rating": 4.93,
     "reviewsCount": 135,
     "experienceYears": 4,
@@ -3896,7 +4556,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائي تحليل سلوك تطبيقي ومشرف خدمات توحد معتمد دولياً QASP-S و ABAT، متخصص في تطبيق مقياس VB-MAPP وبناء الخطط التأهيلية الفردية المبنية على تحليل السلوك اللفظي.",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 64,
+    "cardImage": "/uploads/1791192271638_____________png.png",
+    "posterCrop": "/uploads/1791192271638_____________png.png",
+    "portraitCrop": "/uploads/1791192271638_____________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-mayar-alsaeed",
@@ -3910,7 +4577,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم النطق والتخاطب والتأهيل اللغوي",
     "licenseNumber": "SCFHS-24-1530",
     "avatar": "/uploads/1791192282250_____________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_mayar-alsaeed.svg",
+    "fallbackAvatar": "/uploads/1791192282250_____________png.png",
     "rating": 4.92,
     "reviewsCount": 130,
     "experienceYears": 7,
@@ -3952,7 +4619,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائية نطق وتخاطب وتربية خاصة بخبرة تتجاوز 7 سنوات في تقييم وتأهيل اضطرابات اللغة والكلام لدى الأطفال، متخصصة في تأهيل حالات التأخر اللغوي ومتلازمة داون وطيف التوحد.",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 65,
+    "cardImage": "/uploads/1791192282250_____________png.png",
+    "posterCrop": "/uploads/1791192282250_____________png.png",
+    "portraitCrop": "/uploads/1791192282250_____________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-hala-badran",
@@ -3966,7 +4640,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم النطق والتخاطب والتأهيل اللغوي",
     "licenseNumber": "SCFHS-24-5379",
     "avatar": "/uploads/1791192291320____________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_hala-badran.svg",
+    "fallbackAvatar": "/uploads/1791192291320____________png.png",
     "rating": 4.98,
     "reviewsCount": 260,
     "experienceYears": 20,
@@ -4019,7 +4693,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائية النطق والتخاطب بمركز رابا. حاصلة علي ليسانس آداب علم النفس من جامعة الزقازيق · حاصله علي ماجستير في التوحد من جامعة الزقازيق · حاصلة علي دبلومة مهنية تخصص نطق وتواصل من جامعة عين شمس · حاصلة علي دبلومة تدريبية في النطق والتخاطب من جامعة عين شمس · حاصلة علي دبلومة في علم النفس الإكلينكي من جامعة بنها · خبرة عملية أكثر من ٢٠ سنة",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 66,
+    "cardImage": "/uploads/1791192291320____________png.png",
+    "posterCrop": "/uploads/1791192291320____________png.png",
+    "portraitCrop": "/uploads/1791192291320____________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-hind-elsayed",
@@ -4033,7 +4714,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم النطق والتخاطب والتأهيل اللغوي",
     "licenseNumber": "SCFHS-24-8020",
     "avatar": "/uploads/1791192301426___________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_hind-elsayed.svg",
+    "fallbackAvatar": "/uploads/1791192301426___________png.png",
     "rating": 4.94,
     "reviewsCount": 165,
     "experienceYears": 12,
@@ -4086,7 +4767,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائية النطق والتخاطب بمركز رابا. حاصله على درجة البكالوريوس من جامعة القاهرة · حاصله على دبلوم عام تربوي من جامعة طنطا · حاصلة على دبلومة تخاطب ٣٠٠ ساعة من جامعة عين شمس · حاصله على دبلومة فى التوحد من جامعة عين شمس · حاصله على دبلومة صعوبات تعلم مع د/لبنى الشرقاوى · خبرة عملية أكثر من ١٢ س",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 67,
+    "cardImage": "/uploads/1791192301426___________png.png",
+    "posterCrop": "/uploads/1791192301426___________png.png",
+    "portraitCrop": "/uploads/1791192301426___________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-haitham-alzaidan",
@@ -4100,7 +4788,7 @@ export const SPECIALISTS: Specialist[] = [
     "department": "قسم تحليل السلوك التطبيقي ABA",
     "licenseNumber": "SCFHS-24-7603",
     "avatar": "/uploads/1791192310187______________png.png",
-    "fallbackAvatar": "/specialists/cards/spec_haitham-alzaidan.svg",
+    "fallbackAvatar": "/uploads/1791192310187______________png.png",
     "rating": 4.88,
     "reviewsCount": 75,
     "experienceYears": 1,
@@ -4144,7 +4832,14 @@ export const SPECIALISTS: Specialist[] = [
     ],
     "sessionPrice": 0,
     "bio": "أخصائي نفسي - أخصائي ABA بمركز رابا. حاصل على بكالوريوس علم النفس من جامعه الإمام محمد بن سعود الاسلامية · حاصل على شهادة فني تحليل سلوك تطبيقي ABAT · خبرة عملية أكثر من سنة",
-    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development."
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 68,
+    "cardImage": "/uploads/1791192310187______________png.png",
+    "posterCrop": "/uploads/1791192310187______________png.png",
+    "portraitCrop": "/uploads/1791192310187______________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
   },
   {
     "id": "spec-renad-otaibi",
@@ -4156,7 +4851,7 @@ export const SPECIALISTS: Specialist[] = [
     "roleEn": "Psychologist",
     "category": "psychology",
     "department": "قسم الإرشاد النفسي وتعديل السلوك",
-    "avatar": "/specialists/cards/spec_34_hala-enazi.png",
+    "avatar": "/uploads/1790866298707_32_png.png",
     "experienceYears": 1,
     "licenseNumber": "",
     "specialties": [
@@ -4200,13 +4895,13 @@ export const SPECIALISTS: Specialist[] = [
     "rating": 4.9,
     "reviewsCount": 45,
     "sessionPrice": 0,
-    "fallbackAvatar": "/specialists/cards/spec_34_hala-enazi.png",
-    "posterCrop": "/specialists/cards/spec_34_hala-enazi.png",
-    "portraitCrop": "/specialists/cards/spec_34_hala-enazi.png",
+    "fallbackAvatar": "/uploads/1790866298707_32_png.png",
+    "posterCrop": "/uploads/1790866298707_32_png.png",
+    "portraitCrop": "/uploads/1790866298707_32_png.png",
     "focalPosition": "top",
     "zoomLevel": 100,
-    "cardImage": "/specialists/cards/spec_34_hala-enazi.png",
-    "orderIndex": 63,
+    "cardImage": "/uploads/1790866298707_32_png.png",
+    "orderIndex": 69,
     "image": "/specialists/cards/spec_34_hala-enazi.png",
     "isTopRated": false
   }

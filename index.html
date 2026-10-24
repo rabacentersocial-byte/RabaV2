@@ -40,20 +40,32 @@
         }
       };
 
-      // If app takes longer than 12s, provide instant reload action inside the splash
+      // If app takes longer than 3.5s, provide instant reload / force show action
       setTimeout(function() {
         if (!window.__rabaReactMounted) {
           var note = document.getElementById('raba-loading-note');
           if (note) {
             note.innerHTML = `
               <div style="margin-top: 12px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
-                <span style="color: #cbd5e1; font-size: 12px;">قد يستغرق التحميل لأول مرة بضع ثوانٍ إضافية</span>
-                <button onclick="window.location.reload(true)" style="background: rgba(45, 212, 191, 0.2); border: 1px solid #2DD4BF; color: #2DD4BF; padding: 6px 16px; border-radius: 9999px; font-size: 12px; font-weight: bold; cursor: pointer;">إعادة التحميل الآن ↻</button>
+                <span style="color: #cbd5e1; font-size: 12px;">قد يستغرق التحميل لأول مرة بضع ثوانٍ</span>
+                <div style="display: flex; gap: 8px;">
+                  <button onclick="window.location.reload(true)" style="background: rgba(45, 212, 191, 0.2); border: 1px solid #2DD4BF; color: #2DD4BF; padding: 6px 14px; border-radius: 9999px; font-size: 12px; font-weight: bold; cursor: pointer;">إعادة التحميل ↻</button>
+                  <button onclick="window.dismissSplash()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px 14px; border-radius: 9999px; font-size: 12px; cursor: pointer;">دخول الموقع</button>
+                </div>
               </div>
             `;
           }
         }
-      }, 12000);
+      }, 3500);
+
+      // Clean up stale or conflicting service workers to prevent cached white screens
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for (var reg of registrations) {
+            reg.unregister();
+          }
+        }).catch(function() {});
+      }
 
       window.addEventListener('error', function(event) {
         var msg = (event && (event.message || (event.error && event.error.message))) || '';
@@ -73,7 +85,7 @@
         console.warn('[Raba Guard] Promise rejection caught:', event.reason);
       });
 
-      // Anti-flicker dark/light mode script
+      // Anti-flicker dark/light mode script (splash retains dark contrast to prevent white-on-white invisibility)
       (function() {
         try {
           var saved = localStorage.getItem('raba_theme_v2') || localStorage.getItem('raba_theme');
@@ -84,10 +96,6 @@
             root.classList.add('light');
             root.style.colorScheme = 'light';
             root.style.backgroundColor = '#F8FAFC';
-            var s = document.getElementById('raba-splash');
-            if (s) {
-              s.style.backgroundColor = '#F8FAFC';
-            }
           } else {
             root.classList.add('dark');
             root.classList.remove('light');

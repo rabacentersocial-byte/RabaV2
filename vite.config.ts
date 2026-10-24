@@ -48,8 +48,7 @@ export default defineConfig(() => {
           maximumFileSizeToCacheInBytes: 6 * 1024 * 1024, // 6 MB to support initial bundled data cache
         },
         devOptions: {
-          enabled: true,
-          type: 'module',
+          enabled: false,
         },
       }),
     ],
