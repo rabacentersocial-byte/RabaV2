@@ -43,7 +43,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
   const [isSuccess, setIsSuccess] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
 
@@ -59,8 +59,8 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
 
     setIsLoading(true);
 
-    setTimeout(() => {
-      const result = authenticateAdmin(identifier, password);
+    try {
+      const result = await authenticateAdmin(identifier, password);
       setIsLoading(false);
 
       if (result.success && result.user) {
@@ -71,7 +71,10 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
       } else {
         setErrorMessage(result.error || (isArabic ? 'اسم المستخدم أو كلمة المرور غير صحيحة' : 'Invalid credentials'));
       }
-    }, 550);
+    } catch {
+      setIsLoading(false);
+      setErrorMessage(isArabic ? 'حدث خطأ أثناء التحقق من بيانات الدخول' : 'An error occurred during login verification');
+    }
   };
 
   return (

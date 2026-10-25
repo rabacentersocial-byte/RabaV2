@@ -539,6 +539,8 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
                     <img
                       src={selectedPost.author.avatar || '/specialists/spec_haneen_obaidi_1790197216150.jpg'}
                       alt={selectedPost.author.name}
+                      loading="lazy"
+                      decoding="async"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.onerror = null;

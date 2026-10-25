@@ -41,7 +41,6 @@ export const DEFAULT_ACCREDITATIONS_SETTINGS: AccreditationsSectionSettings = {
   accentBarColor: 'bg-amber-500'
 };
 
-import defaultSyncData from './defaultSyncData.json';
 
 export const ACCREDITATIONS_LIST: AccreditationItem[] = [
   {
@@ -177,15 +176,6 @@ export const getStoredAccreditations = (): AccreditationItem[] => {
           logoType: item.logoType || (item.customLogoUrl ? 'custom' : undefined)
         })).sort((a: AccreditationItem, b: AccreditationItem) => a.order - b.order);
       }
-    }
-    const bundled = (defaultSyncData as any)?.data?.raba_accreditations;
-    if (Array.isArray(bundled) && bundled.length > 0) {
-      return bundled.map((item: any, idx: number) => ({
-        ...item,
-        active: item.active !== undefined ? item.active : true,
-        order: item.order !== undefined ? item.order : idx + 1,
-        logoType: item.logoType || (item.customLogoUrl ? 'custom' : undefined)
-      })).sort((a: AccreditationItem, b: AccreditationItem) => a.order - b.order);
     }
   } catch {
     // ignore

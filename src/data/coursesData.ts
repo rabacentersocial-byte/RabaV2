@@ -1,5 +1,4 @@
 import { savePersistentModule } from '../utils/persistentSync';
-import defaultSyncData from './defaultSyncData.json';
 
 export interface CourseItem {
   id: string;
@@ -710,13 +709,6 @@ export function getStoredCoursesData(): CourseItem[] {
         return combined.map(enrichItem).sort((a: CourseItem, b: CourseItem) => getCourseNumericPrice(b) - getCourseNumericPrice(a));
       }
     }
-    const bundled = (defaultSyncData as any)?.data?.[STORAGE_COURSES_KEY];
-    if (Array.isArray(bundled) && bundled.length > 0) {
-      const existingIds = new Set(bundled.map((p: any) => p.id));
-      const missing = COURSES_DATA.filter(c => !existingIds.has(c.id));
-      const combined = [...bundled, ...missing];
-      return combined.map(enrichItem).sort((a: CourseItem, b: CourseItem) => getCourseNumericPrice(b) - getCourseNumericPrice(a));
-    }
     return COURSES_DATA.map(enrichItem).sort((a: CourseItem, b: CourseItem) => getCourseNumericPrice(b) - getCourseNumericPrice(a));
   } catch {
     return COURSES_DATA.map(enrichItem).sort((a: CourseItem, b: CourseItem) => getCourseNumericPrice(b) - getCourseNumericPrice(a));
@@ -748,10 +740,6 @@ export function getStoredCoursesSettings(): CoursesSectionSettings {
         titleHighlightAr: parsed.titleHighlightAr === 'تحليل السلوك التطبيقي (ABA)' ? DEFAULT_COURSES_SETTINGS.titleHighlightAr : (parsed.titleHighlightAr || DEFAULT_COURSES_SETTINGS.titleHighlightAr),
         subtitleAr: (parsed.subtitleAr && parsed.subtitleAr.includes('بأعلى المعايير الإكلينيكية')) ? DEFAULT_COURSES_SETTINGS.subtitleAr : (parsed.subtitleAr || DEFAULT_COURSES_SETTINGS.subtitleAr)
       };
-    }
-    const bundled = (defaultSyncData as any)?.data?.[STORAGE_COURSES_SETTINGS_KEY];
-    if (bundled && typeof bundled === 'object') {
-      return { ...DEFAULT_COURSES_SETTINGS, ...bundled };
     }
     return DEFAULT_COURSES_SETTINGS;
   } catch {

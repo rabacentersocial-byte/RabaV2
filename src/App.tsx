@@ -11,7 +11,6 @@ import { MobileBottomBar } from './components/MobileBottomBar';
 import { CourseItem } from './data/coursesData';
 import { getStoredAdminSession, clearStoredAdminSession } from './data/adminData';
 import { DISPATCH_REQUEST_EVENT } from './data/customerRequests';
-import { saveAppointmentToFirestore } from './services/firestoreService';
 
 // Lazy-loaded components for optimal mobile bundle splitting, fast paint, and low TBT
 const ShadowTeacherSection = lazy(() => import('./components/ShadowTeacherSection').then(m => ({ default: m.ShadowTeacherSection })));
@@ -93,7 +92,9 @@ export default function App() {
       const req = e?.detail as Appointment;
       if (req) {
         setAppointments((prev) => [req, ...prev.filter(a => a.id !== req.id)]);
-        saveAppointmentToFirestore(req).catch(() => {});
+        import('./services/firestoreService')
+          .then(m => m.saveAppointmentToFirestore(req))
+          .catch(() => {});
       }
     };
     const handleNotifsUpdate = (e: any) => {
@@ -527,8 +528,9 @@ export default function App() {
       ...confirmedAppointment,
       id: confirmedAppointment.id || `apt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
     };
-    setAppointments((prev) => [sanitizedApp, ...prev.filter(a => a.id !== sanitizedApp.id)]);
-    saveAppointmentToFirestore(sanitizedApp).catch(() => {});
+    import('./services/firestoreService')
+      .then(m => m.saveAppointmentToFirestore(sanitizedApp))
+      .catch(() => {});
 
     // Create immediate confirmation notification for user
     const newConfirmationNotif: NotificationItem = {

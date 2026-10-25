@@ -52,10 +52,20 @@ for (const file of dataFiles) {
     const srcPath = path.join(DATA_DIR, file);
     const destPath = path.join(PUBLIC_DATA_DIR, file);
     const content = fs.readFileSync(srcPath, 'utf-8');
-    fs.writeFileSync(destPath, content, 'utf-8');
+    let parsed = JSON.parse(content);
+
+    // Security Hardening: Never leak admin passwords in public/data or bundled client sync data
+    if (file === 'admin_users.json' && Array.isArray(parsed)) {
+      parsed = parsed.map((user) => {
+        const { password, ...safeUser } = user;
+        return safeUser;
+      });
+      fs.writeFileSync(destPath, JSON.stringify(parsed, null, 2), 'utf-8');
+    } else {
+      fs.writeFileSync(destPath, content, 'utf-8');
+    }
 
     // Parse and map to storage keys
-    const parsed = JSON.parse(content);
     for (const [storageKey, mappedFile] of Object.entries(STORAGE_FILE_MAP)) {
       if (mappedFile === file) {
         combinedData[storageKey] = parsed;

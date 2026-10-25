@@ -1,4 +1,3 @@
-import defaultSyncData from './defaultSyncData.json';
 
 export interface SiteThemeSettings {
   id: string;
@@ -354,16 +353,8 @@ export function getStoredLogoSettings(): SiteLogoSettings {
         // ignore JSON parse error
       }
     }
-    const bundled = (defaultSyncData as any)?.data?.raba_site_logo_v3;
-    if (bundled && typeof bundled === 'object') {
-      return { ...DEFAULT_LOGO_SETTINGS, ...bundled };
-    }
     return { ...DEFAULT_LOGO_SETTINGS };
   } catch {
-    const bundled = (defaultSyncData as any)?.data?.raba_site_logo_v3;
-    if (bundled && typeof bundled === 'object') {
-      return { ...DEFAULT_LOGO_SETTINGS, ...bundled };
-    }
     return { ...DEFAULT_LOGO_SETTINGS };
   }
 }

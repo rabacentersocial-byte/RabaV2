@@ -1,6 +1,6 @@
 {
   "success": true,
-  "timestamp": "2026-10-24T11:14:14.371Z",
+  "timestamp": "2026-10-24T13:36:11.974Z",
   "data": {
     "raba_accreditations": [
       {
@@ -128,7 +128,6 @@
         "department": "الإدارة التنفيذية العليا",
         "status": "active",
         "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
-        "password": "admin",
         "permissions": [
           "manage_appointments",
           "send_notifications",
@@ -157,7 +156,6 @@
         "department": "إدارة الجودة والتشغيل",
         "status": "active",
         "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80",
-        "password": "raba",
         "permissions": [
           "manage_appointments",
           "send_notifications",
@@ -184,7 +182,6 @@
         "department": "القسم الطبي والتأهيلي",
         "status": "active",
         "avatar": "/specialists/hanaa_basheer.jpg",
-        "password": "raba",
         "permissions": [
           "manage_appointments",
           "send_notifications",
@@ -208,7 +205,6 @@
         "department": "خدمة العملاء والاستقبال",
         "status": "active",
         "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
-        "password": "raba",
         "permissions": [
           "manage_appointments",
           "send_notifications",
@@ -230,7 +226,6 @@
         "department": "الإدارة المالية والحسابات",
         "status": "active",
         "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
-        "password": "raba",
         "permissions": [
           "view_finances",
           "manage_appointments",

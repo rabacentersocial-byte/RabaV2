@@ -7,6 +7,25 @@
 
 import { loadPersistentImagesToMemory } from './persistentImageStore';
 
+/**
+ * Returns authorization and session headers for secure server sync
+ */
+export function getAdminHeaders(): Record<string, string> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  try {
+    const raw = localStorage.getItem('raba_admin_session_auth');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.token) {
+        headers['x-admin-token'] = parsed.token;
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return headers;
+}
+
 export interface SyncStatus {
   status: 'online' | 'offline' | 'error';
   persistent: boolean;
@@ -349,7 +368,7 @@ export async function initPersistentSync(): Promise<void> {
     if (Object.keys(localKeysToPush).length > 0) {
       fetch('/api/sync/save', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAdminHeaders(),
         body: JSON.stringify({ all: localKeysToPush })
       }).catch(() => {
         // silent fallback
@@ -405,7 +424,7 @@ export async function savePersistentModule<T>(key: string, data: T): Promise<boo
   try {
     const res = await fetch('/api/sync/save', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAdminHeaders(),
       body: JSON.stringify({ key, data })
     });
     if (res.ok) {
@@ -441,7 +460,7 @@ export async function syncAllToDiskNow(): Promise<{ success: boolean; count: num
 
     const res = await fetch('/api/sync/bake', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAdminHeaders(),
       body: JSON.stringify({ all: payload })
     });
 
@@ -453,7 +472,7 @@ export async function syncAllToDiskNow(): Promise<{ success: boolean; count: num
     // Fallback to /api/sync/save
     const res2 = await fetch('/api/sync/save', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAdminHeaders(),
       body: JSON.stringify({ all: payload })
     });
 
@@ -498,7 +517,7 @@ export async function uploadAttachmentToServer(
 
     const res = await fetch('/api/sync/upload', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAdminHeaders(),
       body: JSON.stringify({
         filename: name,
         fileData
@@ -534,7 +553,9 @@ export async function uploadAttachmentToServer(
  */
 export async function fetchDatabaseDiagnostic(): Promise<any | null> {
   try {
-    const res = await fetch('/api/sync/diagnostic');
+    const res = await fetch('/api/sync/diagnostic', {
+      headers: getAdminHeaders()
+    });
     if (!res.ok) return null;
     const json = await res.json();
     return json.diagnostic || null;

@@ -1,5 +1,4 @@
 import { savePersistentModule } from '../utils/persistentSync';
-import defaultSyncData from './defaultSyncData.json';
 
 export interface BranchItem {
   id: string;
@@ -246,10 +245,6 @@ export function getStoredBranchesData(): BranchItem[] {
       if (Array.isArray(parsed) && parsed.length >= 8) {
         return parsed.sort((a, b) => (a.order || 0) - (b.order || 0));
       }
-    }
-    const bundled = (defaultSyncData as any)?.data?.[STORAGE_BRANCHES_KEY];
-    if (Array.isArray(bundled) && bundled.length >= 8) {
-      return [...bundled].sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
     }
     return [...BRANCHES_DATA];
   } catch {

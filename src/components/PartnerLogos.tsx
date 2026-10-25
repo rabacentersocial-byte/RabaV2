@@ -77,6 +77,8 @@ export const PartnerLogoRenderer: React.FC<{
       <img
         src={effectiveSrc}
         alt={name}
+        loading="lazy"
+        decoding="async"
         style={{
           transform: normalizedScale !== 1 ? `scale(${normalizedScale})` : undefined,
           transformOrigin: 'center center',
@@ -84,8 +86,6 @@ export const PartnerLogoRenderer: React.FC<{
           maxWidth: normalizedScale > 1.25 ? `${Math.min(Math.round(normalizedScale * 100), 160)}%` : '100%'
         }}
         className={`${fitClass} mx-auto block transition-transform duration-300 group-hover:scale-105`}
-        loading="eager"
-        decoding="sync"
         onError={() => {
           if (!hasError && bundledSrc && effectiveSrc !== bundledSrc) {
             setHasError(true);

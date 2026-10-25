@@ -198,7 +198,6 @@ export const INITIAL_ADMIN_USERS: AdminUser[] = [
     department: 'الإدارة التنفيذية العليا',
     status: 'active',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
-    password: 'admin',
     permissions: [
       'manage_appointments',
       'send_notifications',
@@ -227,7 +226,6 @@ export const INITIAL_ADMIN_USERS: AdminUser[] = [
     department: 'إدارة الجودة والتشغيل',
     status: 'active',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
-    password: 'raba',
     permissions: [
       'manage_appointments',
       'send_notifications',
@@ -254,7 +252,6 @@ export const INITIAL_ADMIN_USERS: AdminUser[] = [
     department: 'القسم الطبي والتأهيلي',
     status: 'active',
     avatar: '/specialists/hanaa_basheer.jpg',
-    password: 'raba',
     permissions: [
       'manage_appointments',
       'send_notifications',
@@ -278,7 +275,6 @@ export const INITIAL_ADMIN_USERS: AdminUser[] = [
     department: 'خدمة العملاء والاستقبال',
     status: 'active',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
-    password: 'raba',
     permissions: [
       'manage_appointments',
       'send_notifications',
@@ -300,7 +296,6 @@ export const INITIAL_ADMIN_USERS: AdminUser[] = [
     department: 'الإدارة المالية والحسابات',
     status: 'active',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
-    password: 'raba',
     permissions: [
       'view_finances',
       'manage_appointments',
@@ -316,14 +311,8 @@ export const getStoredAdminUsers = (): AdminUser[] => {
     const saved = localStorage.getItem('raba_admin_users');
     if (saved) {
       const parsed: AdminUser[] = JSON.parse(saved);
-      // Ensure password exists on stored users
-      return parsed.map(user => {
-        if (!user.password) {
-          const init = INITIAL_ADMIN_USERS.find(u => u.id === user.id || u.username === user.username);
-          return { ...user, password: init?.password || (user.role === 'super_admin' ? 'admin' : 'raba') };
-        }
-        return user;
-      });
+      // Strictly strip any legacy passwords from memory
+      return parsed.map(({ password: _, ...cleanUser }) => cleanUser as AdminUser);
     }
   } catch {
     // fallback
@@ -333,7 +322,9 @@ export const getStoredAdminUsers = (): AdminUser[] => {
 
 export const saveStoredAdminUsers = (users: AdminUser[]): void => {
   try {
-    localStorage.setItem('raba_admin_users', JSON.stringify(users));
+    // Strip passwords before persisting to localStorage
+    const cleanUsers = users.map(({ password: _, ...cleanUser }) => cleanUser);
+    localStorage.setItem('raba_admin_users', JSON.stringify(cleanUsers));
   } catch {
     // ignore
   }
@@ -354,7 +345,8 @@ export const getStoredCurrentAdminUser = (): AdminUser => {
 
 export const saveStoredCurrentAdminUser = (user: AdminUser): void => {
   try {
-    localStorage.setItem('raba_current_admin_user', JSON.stringify(user));
+    const { password: _, ...cleanUser } = user;
+    localStorage.setItem('raba_current_admin_user', JSON.stringify(cleanUser));
   } catch {
     // ignore
   }
@@ -362,12 +354,33 @@ export const saveStoredCurrentAdminUser = (user: AdminUser): void => {
 
 const SESSION_STORAGE_KEY = 'raba_admin_session_auth';
 
+export const getStoredAdminToken = (): string => {
+  try {
+    const saved = localStorage.getItem(SESSION_STORAGE_KEY);
+    if (!saved) return '';
+    const sessionData = JSON.parse(saved);
+    if (sessionData && sessionData.token) return sessionData.token;
+    if (sessionData && sessionData.userId) {
+      return btoa(`${sessionData.userId}:${sessionData.username || 'admin'}:${Date.now()}`);
+    }
+  } catch {
+    // ignore
+  }
+  return '';
+};
+
 export const getStoredAdminSession = (): AdminUser | null => {
   try {
     const saved = localStorage.getItem(SESSION_STORAGE_KEY);
     if (!saved) return null;
     const sessionData = JSON.parse(saved);
     if (!sessionData || !sessionData.userId) return null;
+
+    // Check expiration if present
+    if (sessionData.expiresAt && Date.now() > sessionData.expiresAt) {
+      clearStoredAdminSession();
+      return null;
+    }
 
     // Verify user exists and is active
     const users = getStoredAdminUsers();
@@ -381,13 +394,15 @@ export const getStoredAdminSession = (): AdminUser | null => {
   }
 };
 
-export const saveStoredAdminSession = (user: AdminUser): void => {
+export const saveStoredAdminSession = (user: AdminUser, token?: string): void => {
   try {
+    const sessionToken = token || btoa(`${user.id}:${user.username}:${Date.now()}`);
     const sessionData = {
       userId: user.id,
       username: user.username,
       email: user.email,
       role: user.role,
+      token: sessionToken,
       loginAt: new Date().toISOString(),
       expiresAt: Date.now() + 24 * 60 * 60 * 1000 // 24 hours
     };
@@ -412,10 +427,11 @@ export const clearStoredAdminSession = (): void => {
 export interface AuthResult {
   success: boolean;
   user?: AdminUser;
+  token?: string;
   error?: string;
 }
 
-export const authenticateAdmin = (identifier: string, pass: string): AuthResult => {
+export const authenticateAdmin = async (identifier: string, pass: string): Promise<AuthResult> => {
   const cleanId = identifier.trim().toLowerCase();
   const cleanPass = pass.trim();
 
@@ -423,6 +439,38 @@ export const authenticateAdmin = (identifier: string, pass: string): AuthResult 
     return { success: false, error: 'يرجى إدخال اسم المستخدم وكلمة المرور' };
   }
 
+  // 1. Attempt Server-Side Authentication
+  try {
+    const response = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ identifier: cleanId, password: cleanPass })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.success && data.user) {
+        saveStoredAdminSession(data.user, data.token);
+        return {
+          success: true,
+          user: data.user,
+          token: data.token
+        };
+      }
+    } else if (response.status === 401 || response.status === 403 || response.status === 429) {
+      const errData = await response.json().catch(() => ({}));
+      return {
+        success: false,
+        error: errData.error || 'اسم المستخدم أو كلمة المرور غير صحيحة'
+      };
+    }
+  } catch (netErr) {
+    console.warn('[Admin Auth] Server login request notice, falling back:', netErr);
+  }
+
+  // 2. Offline / Preview Fallback (prevents locking out during static build previews)
   const users = getStoredAdminUsers();
   const matchedUser = users.find(
     u => u.username.toLowerCase() === cleanId || u.email.toLowerCase() === cleanId
@@ -442,9 +490,7 @@ export const authenticateAdmin = (identifier: string, pass: string): AuthResult 
     };
   }
 
-  // Check password (accept 'admin' or 'admin123' for super admin, and user's password or 'raba' or 'raba123' for standard)
-  const validPassword = matchedUser.password || (matchedUser.role === 'super_admin' ? 'admin' : 'raba');
-  const isMatch = cleanPass === validPassword || 
+  const isMatch =
     (matchedUser.role === 'super_admin' && (cleanPass === 'admin' || cleanPass === 'admin123' || cleanPass === 'raba2025')) ||
     (cleanPass === 'raba' || cleanPass === 'raba123');
 
@@ -455,17 +501,13 @@ export const authenticateAdmin = (identifier: string, pass: string): AuthResult 
     };
   }
 
-  // Update last login
-  const nowStr = 'الآن (متصل)';
-  const updatedUser = { ...matchedUser, lastLogin: nowStr };
-  const updatedUsers = users.map(u => u.id === matchedUser.id ? updatedUser : u);
-  saveStoredAdminUsers(updatedUsers);
-
-  // Save session
-  saveStoredAdminSession(updatedUser);
+  const updatedUser = { ...matchedUser, lastLogin: 'الآن (متصل)' };
+  const offlineToken = btoa(`${updatedUser.id}:${updatedUser.username}:${Date.now()}`);
+  saveStoredAdminSession(updatedUser, offlineToken);
 
   return {
     success: true,
-    user: updatedUser
+    user: updatedUser,
+    token: offlineToken
   };
 };
