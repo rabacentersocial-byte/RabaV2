@@ -21,6 +21,15 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('[ErrorBoundary] Uncaught error:', error, errorInfo);
+    if (
+      error?.message?.includes('Failed to fetch dynamically imported module') ||
+      error?.message?.includes('Importing a module script failed')
+    ) {
+      if (typeof window !== 'undefined' && !sessionStorage.getItem('raba_err_reload')) {
+        sessionStorage.setItem('raba_err_reload', 'true');
+        window.location.reload();
+      }
+    }
   }
 
   public render() {

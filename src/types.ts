@@ -345,3 +345,32 @@ export interface OfferData {
   phone?: string;                // e.g. '966550000000'
   styling?: OfferCustomStyling;  // Detailed color & card style customizer
 }
+
+export interface TrackingPixelItem {
+  id: string;
+  is_active: boolean;
+}
+
+export interface TrackingScriptItem {
+  script: string;
+  is_active: boolean;
+}
+
+export interface TrackingPixelsConfig {
+  meta: TrackingPixelItem;
+  tiktok: TrackingPixelItem;
+  snapchat: TrackingPixelItem;
+  gtm: TrackingPixelItem;
+  custom_head: TrackingScriptItem;
+  custom_body: TrackingScriptItem;
+}
+
+export const DEFAULT_TRACKING_PIXELS: TrackingPixelsConfig = {
+  meta: { id: '', is_active: false },
+  tiktok: { id: '', is_active: false },
+  snapchat: { id: '', is_active: false },
+  gtm: { id: '', is_active: false },
+  custom_head: { script: '', is_active: false },
+  custom_body: { script: '', is_active: false }
+};
+

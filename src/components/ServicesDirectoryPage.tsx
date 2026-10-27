@@ -397,20 +397,20 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/70 dark:bg-[#061412] text-slate-800 dark:text-slate-100 transition-colors duration-300 pb-28 md:pb-16" dir={isArabic ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-transparent text-slate-800 dark:text-slate-100 transition-colors duration-300 pb-28 md:pb-16" dir={isArabic ? 'rtl' : 'ltr'}>
       
       {/* 1. TOP HERO & BREADCRUMBS BANNER */}
-      <div className="relative overflow-hidden bg-gradient-to-b from-[#0B3B36] via-[#092e2a] to-[#071D18] text-white pt-8 pb-14 sm:pb-16 px-4 sm:px-6 lg:px-8 border-b border-teal-500/20 shadow-lg">
+      <div className="relative overflow-hidden bg-gradient-to-b from-[#0F1E38] via-[#0C172C] to-[#090F1E] text-white pt-8 pb-14 sm:pb-16 px-4 sm:px-6 lg:px-8 border-b border-blue-500/20 shadow-lg">
         
         {/* Ambient background glow & soft grid pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(#00E5BE_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
-        <div className="absolute -top-24 right-1/4 w-96 h-96 bg-[#00E5BE]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(#2E86EB_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
+        <div className="absolute -top-24 right-1/4 w-96 h-96 bg-[#2E86EB]/15 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute top-1/2 left-4 w-72 h-72 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-7xl mx-auto relative z-10">
           
           {/* Breadcrumb Navigation Bar */}
-          <div className="flex items-center justify-between gap-4 mb-6 text-xs font-bold text-teal-200/80">
+          <div className="flex items-center justify-between gap-4 mb-6 text-xs font-bold text-blue-200/80">
             <div className="flex items-center gap-2">
               <button
                 onClick={onBackToHome}
@@ -419,8 +419,8 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                 <Home className="w-4 h-4 group-hover:scale-110 transition-transform" />
                 <span>{isArabic ? 'الرئيسية' : 'Home'}</span>
               </button>
-              <span className="text-teal-400/50">/</span>
-              <span className="text-[#00E5BE] font-black">{isArabic ? 'دليل الخدمات الشامل' : 'Services Directory'}</span>
+              <span className="text-blue-400/50">/</span>
+              <span className="text-[#FFD23F] font-black">{isArabic ? 'دليل الخدمات الشامل' : 'Services Directory'}</span>
             </div>
 
             {/* Back to Home Button */}
@@ -829,7 +829,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                   return (
                     <div
                       key={service.id}
-                      className={`bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[28px] overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-2xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${visual.colorClassHover} ${
+                      className={`bg-white dark:bg-[#111827] rounded-2xl sm:rounded-[28px] overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-2xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${visual.colorClassHover} ${
                         programsViewMode === 'slider'
                           ? "w-[72vw] min-w-[245px] max-w-[280px] sm:w-[330px] sm:max-w-none md:w-[350px] shrink-0 snap-start"
                           : "w-full max-w-[320px] mx-auto sm:max-w-none"
@@ -1102,14 +1102,14 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                   return (
                     <div
                       key={course.id}
-                      className={`bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[28px] overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-2xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:border-[#00E5BE]/40 ${
+                      className={`bg-white dark:bg-[#111827] rounded-2xl sm:rounded-[28px] overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-2xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:border-[#2E86EB]/50 ${
                         coursesViewMode === 'slider'
                           ? "w-[70vw] min-w-[230px] max-w-[270px] sm:w-[320px] sm:max-w-none md:w-[340px] shrink-0 snap-start"
                           : "w-full max-w-[320px] mx-auto sm:max-w-none"
                       }`}
                     >
                       {/* Top Accent Strip */}
-                      <div className="h-1 sm:h-1.5 w-full bg-gradient-to-r from-[#0B3B36] to-[#00E5BE]" />
+                      <div className="h-1 sm:h-1.5 w-full bg-gradient-to-r from-[#1B4B8A] to-[#2E86EB]" />
 
                       {/* Header */}
                       <div className="p-2.5 sm:p-4 pb-2 sm:pb-3 bg-teal-500/5 dark:bg-teal-950/20 border-b border-teal-500/15 relative">
@@ -1373,7 +1373,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                   return (
                     <div
                       key={pkg.id}
-                      className={`bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[28px] overflow-hidden border shadow-2xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${
+                      className={`bg-white dark:bg-[#111827] rounded-2xl sm:rounded-[28px] overflow-hidden border shadow-2xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${
                         isSummer
                           ? 'border-sky-300 dark:border-sky-500/40 ring-1 ring-sky-400/25 shadow-sky-500/5'
                           : 'border-slate-200/90 dark:border-white/10'

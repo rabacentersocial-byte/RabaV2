@@ -128,20 +128,20 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
       onClick={handleClose}
     >
       <div 
-        className={`relative bg-white dark:bg-[#0c1424] text-slate-900 dark:text-white rounded-3xl max-w-md w-full shadow-2xl border border-slate-200/90 dark:border-white/15 overflow-hidden ${isArabic ? 'text-right' : 'text-left'} my-auto`}
+        className={`relative glass-modal-dialog text-slate-900 dark:text-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden ${isArabic ? 'text-right' : 'text-left'} my-auto`}
         onClick={(e) => e.stopPropagation()}
         dir={direction}
       >
         {/* Simplified Header */}
-        <div className="px-5 py-4 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent dark:from-emerald-500/15 dark:to-transparent border-b border-slate-200/80 dark:border-white/10 flex items-center justify-between">
+        <div className="px-5 py-4 bg-gradient-to-r from-blue-500/10 via-blue-500/5 to-transparent dark:from-[#2E86EB]/15 dark:to-transparent border-b border-slate-200/80 dark:border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#00E5BE]/15 text-[#0B3B36] dark:text-[#00E5BE] flex items-center justify-center shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-[#2E86EB]/15 text-[#2E86EB] dark:text-[#2E86EB] flex items-center justify-center shrink-0">
               <PhoneCall className="w-5 h-5" />
             </div>
             <div>
               <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white flex items-center gap-1.5">
                 <span>{isArabic ? 'استشارة هاتفية مجانية' : 'Free Phone Consultation'}</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-[#00E5BE] font-bold">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-[#22C55E] font-bold">
                   {isArabic ? 'مجاناً 100%' : '100% Free'}
                 </span>
               </h3>
@@ -281,7 +281,7 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
               <button
                 type="button"
                 onClick={() => setShowOptional(!showOptional)}
-                className="text-xs font-bold text-[#0D6D54] dark:text-[#00E5BE] hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs font-bold text-[#2E86EB] dark:text-[#2E86EB] hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <span>{isArabic ? '+ تحديد الوقت المفضل أو ملاحظة (اختياري)' : '+ Preferred time or note (Optional)'}</span>
                 {showOptional ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -299,7 +299,7 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
                         value={childAge}
                         onChange={(e) => setChildAge(e.target.value)}
                         placeholder={isArabic ? 'مثال: 5' : 'e.g. 5'}
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-2.5 py-1.5 text-xs text-slate-900 dark:text-white outline-none"
+                        className="w-full bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/15 rounded-xl px-2.5 py-1.5 text-xs text-slate-900 dark:text-white outline-none"
                       />
                     </div>
                     <div>
@@ -307,7 +307,7 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
                       <select
                         value={preferredTime}
                         onChange={(e) => setPreferredTime(e.target.value)}
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-2 py-1.5 text-xs text-slate-900 dark:text-white outline-none cursor-pointer"
+                        className="w-full bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/15 rounded-xl px-2 py-1.5 text-xs text-slate-900 dark:text-white outline-none cursor-pointer"
                       >
                         <option value={isArabic ? 'صباحاً (09:00 ص - 12:00 م)' : 'Morning'}>{isArabic ? 'صباحاً (9 ص - 12 م)' : 'Morning'}</option>
                         <option value={isArabic ? 'مساءً (04:00 م - 08:00 م)' : 'Evening'}>{isArabic ? 'مساءً (4 م - 8 م)' : 'Evening'}</option>
@@ -322,7 +322,7 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder={isArabic ? 'أبرز ما تلاحظه على طفلك (اختياري)...' : 'Brief symptom notes...'}
-                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-2.5 py-1.5 text-xs text-slate-900 dark:text-white outline-none"
+                      className="w-full bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/15 rounded-xl px-2.5 py-1.5 text-xs text-slate-900 dark:text-white outline-none"
                     />
                   </div>
                 </div>
@@ -333,14 +333,14 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full py-3 px-4 bg-gradient-to-r from-[#0B3B36] via-[#0D6D54] to-[#00E5BE] hover:opacity-95 active:scale-98 text-white font-black rounded-xl text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
+                className="w-full py-3 px-4 bg-gradient-to-r from-[#0E2A54] via-[#1B4B8A] to-[#2E86EB] hover:opacity-95 active:scale-98 text-white font-black rounded-xl text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
               >
                 <Send className={`w-3.5 h-3.5 ${isArabic ? 'rotate-180' : ''}`} />
                 <span>{isArabic ? 'إرسال طلب الاستشارة فوراً' : 'Submit Consultation Request'}</span>
               </button>
 
               <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 mt-2">
-                <Sparkles className="w-3 h-3 text-[#00E5BE]" />
+                <Sparkles className="w-3 h-3 text-[#FFD23F]" />
                 <span>{isArabic ? 'خدمة مجانية وسريعة - يتصل بك أخصائي التوجيه' : 'Free & quick service'}</span>
               </div>
             </div>

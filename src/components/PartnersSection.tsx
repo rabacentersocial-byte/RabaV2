@@ -553,7 +553,7 @@ export const PartnersSection: React.FC = () => {
               </div>
 
               {/* Filter Tabs Capsule Bar */}
-              <div className="w-full bg-white dark:bg-slate-800/90 rounded-[28px] border border-slate-200/80 dark:border-white/10 p-1.5 shadow-xs mb-4 flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth">
+              <div className="w-full bg-white dark:bg-[#111827] rounded-[28px] border border-slate-200/80 dark:border-white/10 p-1.5 shadow-xs mb-4 flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth">
                 {mobileFilterTabs.map((tab) => {
                   const isSelected = selectedMobileCategory === tab.id;
                   return (
@@ -568,8 +568,8 @@ export const PartnersSection: React.FC = () => {
                       }}
                       className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-bold shrink-0 transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-[#0D3B36] text-white shadow-xs'
-                          : 'bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50'
+                          ? 'bg-[#2E86EB] text-white shadow-xs'
+                          : 'bg-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'
                       }`}
                     >
                       <span>{tab.label}</span>
@@ -577,7 +577,7 @@ export const PartnersSection: React.FC = () => {
                         className={`px-1.5 py-0.2 rounded-md text-[11px] font-sans font-bold ${
                           isSelected
                             ? 'bg-white/20 text-white'
-                            : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                            : 'bg-slate-100 dark:bg-[#0E1526] text-slate-600 dark:text-slate-300'
                         }`}
                       >
                         {tab.count}
@@ -598,7 +598,7 @@ export const PartnersSection: React.FC = () => {
                   <div
                     key={`mob-card-${partner.id}-${idx}`}
                     onClick={() => setActivePartnerModal(partner)}
-                    className="w-[156px] h-[174px] shrink-0 bg-white dark:bg-slate-900 rounded-[22px] p-2 border border-slate-200/90 dark:border-white/10 shadow-sm flex flex-col items-center justify-between cursor-pointer snap-start transition-all active:scale-[0.98]"
+                    className="w-[156px] h-[174px] shrink-0 bg-white dark:bg-[#111827] rounded-[22px] p-2 border border-slate-200/90 dark:border-white/10 shadow-sm flex flex-col items-center justify-between cursor-pointer snap-start transition-all active:scale-[0.98]"
                   >
                     {/* Top Canvas with Logo - Pure White in both modes without excess padding */}
                     <div 
@@ -699,7 +699,7 @@ export const PartnersSection: React.FC = () => {
                         {/* Modern Professional Partner Card - Reduced empty spaces & centered texts */}
                         <div
                           onClick={() => setActivePartnerModal(partner)}
-                          className={`group w-[72vw] min-w-[210px] max-w-[245px] sm:min-w-0 sm:max-w-none sm:w-[240px] md:w-[250px] h-[265px] sm:h-[285px] rounded-[24px] sm:rounded-[28px] p-3 sm:p-3.5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-lg shadow-slate-900/5 dark:shadow-black/40 hover:shadow-2xl hover:border-emerald-500/50 dark:hover:border-[#2DD4BF]/50 hover:-translate-y-1.5 transition-all duration-300 flex flex-col items-center justify-between cursor-pointer relative overflow-hidden`}
+                          className={`group w-[72vw] min-w-[210px] max-w-[245px] sm:min-w-0 sm:max-w-none sm:w-[240px] md:w-[250px] h-[265px] sm:h-[285px] rounded-[24px] sm:rounded-[28px] p-3 sm:p-3.5 bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-white/10 shadow-lg shadow-slate-900/5 dark:shadow-black/40 hover:shadow-2xl hover:border-blue-500/50 dark:hover:border-[#2E86EB]/50 hover:-translate-y-1.5 transition-all duration-300 flex flex-col items-center justify-between cursor-pointer relative overflow-hidden`}
                         >
                           {/* Top Badge: Centered in the card */}
                           <div className="flex items-center justify-center w-full pt-0.5 px-0.5 relative z-10">
@@ -768,7 +768,7 @@ export const PartnersSection: React.FC = () => {
               <div
                 key={partner.id}
                 onClick={() => setActivePartnerModal(partner)}
-                className={`group h-[265px] sm:h-[285px] rounded-[24px] sm:rounded-[28px] p-3 sm:p-3.5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-lg shadow-slate-900/5 dark:shadow-black/40 hover:shadow-2xl hover:border-emerald-500/50 dark:hover:border-[#2DD4BF]/50 hover:-translate-y-1.5 transition-all duration-300 flex flex-col items-center justify-between cursor-pointer relative overflow-hidden`}
+                className={`group h-[265px] sm:h-[285px] rounded-[24px] sm:rounded-[28px] p-3 sm:p-3.5 bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-white/10 shadow-lg shadow-slate-900/5 dark:shadow-black/40 hover:shadow-2xl hover:border-blue-500/50 dark:hover:border-[#2E86EB]/50 hover:-translate-y-1.5 transition-all duration-300 flex flex-col items-center justify-between cursor-pointer relative overflow-hidden`}
               >
                 {/* Top Badge: Centered in the card */}
                 <div className="flex items-center justify-center w-full pt-0.5 px-0.5 relative z-10">
@@ -1006,20 +1006,20 @@ export const PartnersSection: React.FC = () => {
           onClick={() => setActivePartnerModal(null)}
         >
           <div 
-            className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-7 border border-slate-200 dark:border-white/10 shadow-2xl relative overflow-hidden"
+            className="w-full max-w-lg bg-white dark:bg-[#0B0F19] rounded-3xl p-6 sm:p-7 border border-slate-200 dark:border-white/10 shadow-2xl relative overflow-hidden"
             onClick={(e) => e.stopPropagation()}
             dir={isArabic ? 'rtl' : 'ltr'}
           >
             {/* Top Accent Bar */}
             <div 
               className="absolute top-0 inset-x-0 h-2"
-              style={{ backgroundColor: activePartnerModal.accentColor || '#0D6D54' }}
+              style={{ backgroundColor: activePartnerModal.accentColor || '#2E86EB' }}
             />
 
             {/* Close button */}
             <button
               onClick={() => setActivePartnerModal(null)}
-              className="absolute top-4 left-4 rtl:left-auto rtl:right-4 w-8 h-8 rounded-full bg-slate-100/80 dark:bg-slate-800/80 backdrop-blur-xs flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white cursor-pointer z-20"
+              className="absolute top-4 left-4 rtl:left-auto rtl:right-4 w-8 h-8 rounded-full bg-slate-100/80 dark:bg-[#111827] backdrop-blur-xs flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white cursor-pointer z-20"
             >
               <X className="w-4 h-4" />
             </button>

@@ -271,12 +271,12 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
   return (
     <section 
       id="services" 
-      className="py-16 sm:py-24 bg-slate-50/50 dark:bg-white/[0.02] relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10"
+      className="py-16 sm:py-24 bg-transparent relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10"
       dir={isArabic ? 'rtl' : 'ltr'}
     >
       {/* Background ambient lighting */}
-      <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-teal-500/5 dark:bg-[#00E5BE]/5 rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="absolute bottom-10 left-1/4 w-[400px] h-[400px] bg-sky-500/5 dark:bg-sky-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-[#2E86EB]/10 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute bottom-10 left-1/4 w-[400px] h-[400px] bg-[#22C55E]/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -285,14 +285,14 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
           <div className="max-w-3xl">
             
             {/* Eyebrow Pill: خدماتنا التأهيلية التخصصية */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/10 dark:bg-[#00E5BE]/15 border border-teal-500/25 dark:border-[#00E5BE]/30 text-teal-800 dark:text-[#00E5BE] text-xs font-black mb-3 shadow-2xs">
-              <Award className="w-3.5 h-3.5 text-teal-600 dark:text-[#00E5BE]" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full liquid-glass-pill text-[#2E86EB] text-xs font-black mb-3 shadow-2xs">
+              <Award className="w-3.5 h-3.5 text-[#2E86EB]" />
               <span>{isArabic ? 'خدماتنا التأهيلية التخصصية' : 'SPECIALIZED REHABILITATION SERVICES'}</span>
             </div>
 
             {/* Main Headline from flyer: "خدمات.. متكاملة لدعم رحلة طفلك" */}
             <div className="flex flex-wrap items-center gap-2 mb-3">
-              <span className="inline-block px-4 py-1.5 rounded-2xl bg-gradient-to-r from-[#0284C7] to-[#0B3B36] text-white text-2xl sm:text-3xl lg:text-4xl font-black shadow-md">
+              <span className="inline-block px-4 py-1.5 rounded-2xl bg-gradient-to-r from-[#2E86EB] to-[#1E3A8A] text-white text-2xl sm:text-3xl lg:text-4xl font-black shadow-md border-t border-white/40">
                 {isArabic ? 'خدمات.. متكاملة' : 'Integrated Services'}
               </span>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
@@ -302,7 +302,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
 
             {/* Slogan from flyer with curved smile accent */}
             <div className="flex items-center gap-2 pt-1">
-              <div className="w-6 h-2 border-b-3 border-[#00E5BE] rounded-full shrink-0" />
+              <div className="w-6 h-2 border-b-3 border-[#2E86EB] rounded-full shrink-0" />
               <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 font-bold leading-relaxed">
                 {isArabic 
                   ? 'نبدأ بالتقييم .. ونبني المسار وفق احتياج طفلك' 
@@ -324,10 +324,10 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 onClick={() => handleScroll('prev')}
                 disabled={!canScrollPrev}
                 aria-label={isArabic ? 'الخدمة السابقة' : 'Previous program'}
-                className={`w-10 h-10 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs transition-all cursor-pointer ${
+                className={`w-10 h-10 rounded-full liquid-glass-btn flex items-center justify-center shadow-xs transition-all cursor-pointer ${
                   canScrollPrev
-                    ? 'hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95'
-                    : 'opacity-40 cursor-not-allowed'
+                    ? 'hover:scale-105 active:scale-95 text-slate-700 dark:text-slate-200'
+                    : 'opacity-40 cursor-not-allowed text-slate-400'
                 }`}
               >
                 {isArabic ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
@@ -337,10 +337,10 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 onClick={() => handleScroll('next')}
                 disabled={!canScrollNext}
                 aria-label={isArabic ? 'الخدمة التالية' : 'Next program'}
-                className={`w-10 h-10 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs transition-all cursor-pointer ${
+                className={`w-10 h-10 rounded-full liquid-glass-btn flex items-center justify-center shadow-xs transition-all cursor-pointer ${
                   canScrollNext
-                    ? 'hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95'
-                    : 'opacity-40 cursor-not-allowed'
+                    ? 'hover:scale-105 active:scale-95 text-slate-700 dark:text-slate-200'
+                    : 'opacity-40 cursor-not-allowed text-slate-400'
                 }`}
               >
                 {isArabic ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
@@ -364,8 +364,8 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 }}
                 className={`px-4 py-2 rounded-full text-xs sm:text-sm whitespace-nowrap transition-all duration-200 font-bold cursor-pointer ${
                   isActive
-                    ? 'bg-[#0B3B36] text-white shadow-md dark:bg-[#00E5BE] dark:text-slate-950'
-                    : 'bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-white/15'
+                    ? 'bg-[#2E86EB] text-white shadow-md shadow-blue-500/25 border-t border-white/50'
+                    : 'liquid-glass-pill hover:scale-[1.02]'
                 }`}
               >
                 {isArabic ? cat.labelAr : cat.labelEn}
@@ -396,7 +396,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
               return (
                 <div
                   key={service.id}
-                  className={`w-[78vw] min-w-[270px] max-w-[315px] sm:w-[350px] sm:max-w-none md:w-[365px] lg:w-[380px] shrink-0 snap-start bg-white dark:bg-slate-900 rounded-2xl sm:rounded-[32px] overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group ${visual.colorClassHover}`}
+                  className={`w-[78vw] min-w-[270px] max-w-[315px] sm:w-[350px] sm:max-w-none md:w-[365px] lg:w-[380px] shrink-0 snap-start liquid-glass-card rounded-2xl sm:rounded-[32px] overflow-hidden flex flex-col justify-between group ${visual.colorClassHover}`}
                 >
                   {/* Top Slim Accent Strip in Service Brand Color */}
                   <div className={`h-1.5 sm:h-2 w-full ${visual.colorClass}`} />
@@ -506,18 +506,18 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         {/* ================================================================= */}
         {/* 4. BOTTOM BANNER MATCHING THE ATTACHED FLYER FOOTER               */}
         {/* ================================================================= */}
-        <div className="mt-12 sm:mt-16 bg-gradient-to-r from-[#0B3B36] via-[#0E4943] to-[#0284C7] rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-          {/* Luminous teal & cyan brand highlight beams */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-teal-400/15 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-60 h-60 bg-[#00E5BE]/20 rounded-full blur-2xl pointer-events-none" />
+        <div className="mt-12 sm:mt-16 bg-gradient-to-r from-[#0E2A54] via-[#153E75] to-[#2E86EB] rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+          {/* Luminous blue & warm gold brand highlight beams */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-blue-400/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-60 h-60 bg-[#FFD23F]/20 rounded-full blur-2xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
             <div className="space-y-3 text-center lg:text-right">
               
               {/* Distinctive Raba Brand Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-teal-700/80 dark:bg-[#00E5BE] text-white dark:text-slate-950 text-xs font-black tracking-wide shadow-md border border-white/20">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-blue-700/80 dark:bg-[#2E86EB] text-white text-xs font-black tracking-wide shadow-md border border-white/20">
                 <span>رابا</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-white dark:bg-slate-950" />
+                <span className="w-1.5 h-1.5 rounded-full bg-white" />
                 <span>{isArabic ? 'مسار رابا الإكلينيكي المخصص' : 'RABA Tailored Clinical Pathway'}</span>
               </div>
 
@@ -526,7 +526,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 {isArabic ? 'نبدأ بالتقييم .. ونبني المسار وفق احتياج طفلك' : 'We start with assessment .. and build the pathway tailored to your child’s needs'}
               </h3>
               
-              <p className="text-xs sm:text-sm text-teal-100 max-w-xl">
+              <p className="text-xs sm:text-sm text-blue-100 max-w-xl">
                 {isArabic 
                   ? 'برامج تأهيلية متكاملة تحت إشراف نخبة من الأخصائيين المعتمدين محلياً ودولياً في تحليل السلوك التطبيقي، التخاطب، العلاج الوظيفي والتكامل الحسي.'
                   : 'Integrated rehabilitation programs supervised by accredited local and international specialists in ABA, Speech Therapy, Occupational Therapy, and Sensory Integration.'}
@@ -539,7 +539,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 href="tel:0575100100"
                 className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs sm:text-sm font-black flex items-center gap-2 transition-all cursor-pointer backdrop-blur-md"
               >
-                <Phone className="w-4 h-4 text-[#00E5BE]" />
+                <Phone className="w-4 h-4 text-[#FFD23F]" />
                 <span dir="ltr">0575100100</span>
               </a>
 
@@ -555,7 +555,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
 
               <button
                 onClick={() => onSelectService(services[0])}
-                className="px-6 py-3 rounded-2xl bg-[#00E5BE] hover:bg-[#00ffd2] text-slate-950 text-xs sm:text-sm font-black flex items-center gap-2 shadow-lg shadow-teal-500/25 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                className="px-6 py-3 rounded-2xl bg-[#2E86EB] hover:bg-[#2575d0] text-white text-xs sm:text-sm font-black flex items-center gap-2 shadow-lg shadow-blue-500/25 transition-all hover:scale-105 active:scale-95 cursor-pointer"
               >
                 <Calendar className="w-4 h-4" />
                 <span>{isArabic ? 'احجز تقييم طفلك الآن' : 'Book Child Assessment'}</span>

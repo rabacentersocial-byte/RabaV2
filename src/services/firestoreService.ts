@@ -8,15 +8,75 @@ import {
   orderBy, 
   limit 
 } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { db, auth } from '../lib/firebase';
 import { Appointment, ParentReview, Specialist } from '../types';
+
+export enum OperationType {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  LIST = 'list',
+  GET = 'get',
+  WRITE = 'write',
+}
+
+export interface FirestoreErrorInfo {
+  error: string;
+  operationType: OperationType;
+  path: string | null;
+  authInfo: {
+    userId?: string | null;
+    email?: string | null;
+    emailVerified?: boolean | null;
+    isAnonymous?: boolean | null;
+    tenantId?: string | null;
+    providerInfo?: {
+      providerId?: string | null;
+      email?: string | null;
+    }[];
+  };
+}
+
+export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  const errMessage = error instanceof Error ? error.message : String(error);
+  const isPermissionDenied = 
+    (error as any)?.code === 'permission-denied' || 
+    errMessage.toLowerCase().includes('missing or insufficient permissions') ||
+    errMessage.toLowerCase().includes('permission_denied');
+
+  const errInfo: FirestoreErrorInfo = {
+    error: errMessage,
+    authInfo: {
+      userId: auth?.currentUser?.uid || null,
+      email: auth?.currentUser?.email || null,
+      emailVerified: auth?.currentUser?.emailVerified || null,
+      isAnonymous: auth?.currentUser?.isAnonymous || null,
+      tenantId: auth?.currentUser?.tenantId || null,
+      providerInfo: auth?.currentUser?.providerData?.map(provider => ({
+        providerId: provider.providerId,
+        email: provider.email,
+      })) || []
+    },
+    operationType,
+    path
+  };
+
+  if (isPermissionDenied) {
+    console.error('Firestore Error: ', JSON.stringify(errInfo));
+    throw new Error(JSON.stringify(errInfo));
+  } else {
+    // Graceful offline warning without unhandled rejection
+    console.warn(`Firestore operation [${operationType}] at [${path}] operating in offline/resilient mode:`, errMessage);
+  }
+}
 
 /**
  * Saves a new appointment booking to Firestore
  */
 export async function saveAppointmentToFirestore(appointment: Appointment): Promise<boolean> {
+  const docId = appointment.id || `apt-${Date.now()}`;
+  const path = `appointments/${docId}`;
   try {
-    const docId = appointment.id || `apt-${Date.now()}`;
     const docRef = doc(db, 'appointments', docId);
     
     // Sanitize payload matching Firestore schema
@@ -40,7 +100,7 @@ export async function saveAppointmentToFirestore(appointment: Appointment): Prom
     await setDoc(docRef, payload, { merge: true });
     return true;
   } catch (error) {
-    console.warn('Could not save appointment to Firestore (offline fallback enabled):', error);
+    handleFirestoreError(error, OperationType.WRITE, path);
     return false;
   }
 }
@@ -49,8 +109,9 @@ export async function saveAppointmentToFirestore(appointment: Appointment): Prom
  * Submits a parent review/testimonial to Firestore
  */
 export async function saveTestimonialToFirestore(review: ParentReview): Promise<boolean> {
+  const docId = review.id || `rev-${Date.now()}`;
+  const path = `testimonials/${docId}`;
   try {
-    const docId = review.id || `rev-${Date.now()}`;
     const docRef = doc(db, 'testimonials', docId);
 
     const payload = {
@@ -70,7 +131,8 @@ export async function saveTestimonialToFirestore(review: ParentReview): Promise<
     await setDoc(docRef, payload, { merge: true });
     return true;
   } catch (error) {
-    console.warn('Could not save testimonial to Firestore:', error);
+    handleFirestoreError(error, OperationType.WRITE, path);
     return false;
   }
 }
+

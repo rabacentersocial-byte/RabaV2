@@ -147,7 +147,8 @@ const STORAGE_FILE_MAP: Record<string, string> = {
   raba_partners_settings_v7: 'partners_settings.json',
   raba_partners_settings_v6: 'partners_settings.json',
   raba_partners_settings_v5: 'partners_settings.json',
-  raba_partners_slider_settings: 'partners_settings.json'
+  raba_partners_slider_settings: 'partners_settings.json',
+  raba_tracking_pixels: 'tracking_pixels.json'
 };
 
 // Helper to safely read JSON from data dir or public/data fallback
@@ -570,6 +571,104 @@ async function startServer() {
       return res.json({ connected: true, configured: true, tableFound: true, count: data?.length ?? 0 });
     } catch (err: any) {
       return sendSafeError(res, 500, 'فشل استعلام حالة Supabase', err);
+    }
+  });
+
+  // --- Tracking Pixels API (Admin & Public) ---
+  const DEFAULT_TRACKING_PIXELS = {
+    meta: { id: '', is_active: false },
+    tiktok: { id: '', is_active: false },
+    snapchat: { id: '', is_active: false },
+    gtm: { id: '', is_active: false },
+    custom_head: { script: '', is_active: false },
+    custom_body: { script: '', is_active: false }
+  };
+
+  app.get('/api/admin/tracking-pixels', async (_req: Request, res: Response) => {
+    try {
+      let pixels = readJsonFile('tracking_pixels.json', null);
+      if (!pixels && process.env.SQL_HOST) {
+        try {
+          pixels = await getDbSetting('raba_tracking_pixels');
+        } catch { /* ignore */ }
+      }
+      const data = {
+        meta: { ...DEFAULT_TRACKING_PIXELS.meta, ...(pixels?.meta || {}) },
+        tiktok: { ...DEFAULT_TRACKING_PIXELS.tiktok, ...(pixels?.tiktok || {}) },
+        snapchat: { ...DEFAULT_TRACKING_PIXELS.snapchat, ...(pixels?.snapchat || {}) },
+        gtm: { ...DEFAULT_TRACKING_PIXELS.gtm, ...(pixels?.gtm || {}) },
+        custom_head: { ...DEFAULT_TRACKING_PIXELS.custom_head, ...(pixels?.custom_head || {}) },
+        custom_body: { ...DEFAULT_TRACKING_PIXELS.custom_body, ...(pixels?.custom_body || {}) }
+      };
+      return res.json({ success: true, data });
+    } catch (err: any) {
+      return res.status(500).json({ success: false, message: 'Failed to read tracking pixels', error: err.message });
+    }
+  });
+
+  app.post('/api/admin/tracking-pixels', async (req: Request, res: Response) => {
+    try {
+      const body = req.body || {};
+      const sanitized = {
+        meta: {
+          id: typeof body.meta?.id === 'string' ? body.meta.id.trim() : '',
+          is_active: Boolean(body.meta?.is_active)
+        },
+        tiktok: {
+          id: typeof body.tiktok?.id === 'string' ? body.tiktok.id.trim() : '',
+          is_active: Boolean(body.tiktok?.is_active)
+        },
+        snapchat: {
+          id: typeof body.snapchat?.id === 'string' ? body.snapchat.id.trim() : '',
+          is_active: Boolean(body.snapchat?.is_active)
+        },
+        gtm: {
+          id: typeof body.gtm?.id === 'string' ? body.gtm.id.trim() : '',
+          is_active: Boolean(body.gtm?.is_active)
+        },
+        custom_head: {
+          script: typeof body.custom_head?.script === 'string' ? body.custom_head.script : '',
+          is_active: Boolean(body.custom_head?.is_active)
+        },
+        custom_body: {
+          script: typeof body.custom_body?.script === 'string' ? body.custom_body.script : '',
+          is_active: Boolean(body.custom_body?.is_active)
+        }
+      };
+
+      writeJsonFile('tracking_pixels.json', sanitized);
+
+      if (process.env.SQL_HOST) {
+        backgroundQueue.enqueue('save-db-tracking-pixels', async () => {
+          try {
+            await saveDbSetting('raba_tracking_pixels', sanitized);
+          } catch (e) {
+            console.warn('[DB] Failed to save tracking pixels in background:', e);
+          }
+        });
+      }
+
+      invalidateAllSyncCache();
+      return res.json({ success: true, message: 'Tracking pixels saved successfully', data: sanitized });
+    } catch (err: any) {
+      return res.status(500).json({ success: false, message: 'Failed to save tracking pixels', error: err.message });
+    }
+  });
+
+  app.get('/api/tracking-pixels/active', async (_req: Request, res: Response) => {
+    try {
+      let pixels = readJsonFile('tracking_pixels.json', null);
+      if (!pixels && process.env.SQL_HOST) {
+        try {
+          pixels = await getDbSetting('raba_tracking_pixels');
+        } catch { /* ignore */ }
+      }
+      return res.json({
+        success: true,
+        data: pixels || DEFAULT_TRACKING_PIXELS
+      });
+    } catch {
+      return res.json({ success: true, data: DEFAULT_TRACKING_PIXELS });
     }
   });
 

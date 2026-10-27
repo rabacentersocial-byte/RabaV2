@@ -305,7 +305,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
               <article
                 key={post.id}
                 onClick={() => setSelectedPost(post)}
-                className="w-[88vw] max-w-[370px] sm:w-[360px] md:w-[380px] lg:w-[400px] shrink-0 snap-start bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-xs hover:shadow-xl hover:border-[#0d5c52]/40 dark:hover:border-[#2dd4bf]/40 transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+                className="w-[88vw] max-w-[370px] sm:w-[360px] md:w-[380px] lg:w-[400px] shrink-0 snap-start liquid-glass-card rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
               >
                 {/* 1. Integrated Custom Header with Topic Icon (No Photos) */}
                 <div className={`p-6 sm:p-7 pb-5 ${categoryConfig.headerBg} ${categoryConfig.headerBorder} relative transition-colors`}>
@@ -454,12 +454,12 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
           onClick={() => setSelectedPost(null)}
         >
           <div 
-            className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-white/15 relative flex flex-col"
+            className="bg-white dark:bg-[#0B0F19] rounded-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-white/15 relative flex flex-col"
             onClick={(e) => e.stopPropagation()}
             dir={isArabic ? 'rtl' : 'ltr'}
           >
             {/* Modal Header Sticky Top */}
-            <div className="sticky top-0 z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-6 py-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between">
+            <div className="sticky top-0 z-20 bg-white/95 dark:bg-[#0B0F19]/95 backdrop-blur-md px-6 py-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between">
               {(() => {
                 const modalConfig = getCategoryIconConfig(selectedPost.category);
                 return (
@@ -477,7 +477,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
 
               <button
                 onClick={() => setSelectedPost(null)}
-                className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-colors cursor-pointer"
+                className="w-9 h-9 rounded-full bg-slate-100 dark:bg-[#111827] text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1F2937] flex items-center justify-center transition-colors cursor-pointer"
                 aria-label="Close"
               >
                 <X className="w-5 h-5" />
@@ -608,12 +608,12 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
               </div>
 
               {/* Call to Action Inside Modal */}
-              <div className="p-5 sm:p-6 bg-gradient-to-r from-[#0d5c52] via-[#0f766e] to-[#115e59] rounded-2xl text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg shadow-teal-900/20">
+              <div className="p-5 sm:p-6 bg-gradient-to-r from-[#0E2A54] via-[#153E75] to-[#2E86EB] rounded-2xl text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg shadow-blue-900/20">
                 <div>
                   <h4 className="font-black text-base">
                     {isArabic ? 'هل تود استشارة الكاتب حول طفلك؟' : 'Want to consult the author about your child?'}
                   </h4>
-                  <p className="text-xs text-teal-100 mt-0.5">
+                  <p className="text-xs text-blue-100 mt-0.5">
                     {isArabic 
                       ? 'يمكنك حجز جلسة تقييم مباشرة مع الأخصائي أو الفريق الإكلينيكي المعالج.' 
                       : 'You can book a direct diagnostic or rehabilitation session.'}
@@ -632,7 +632,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
                     }
                     if (onOpenBooking) onOpenBooking();
                   }}
-                  className="w-full sm:w-auto shrink-0 bg-white text-[#0f2d29] font-black px-6 py-3 rounded-xl hover:bg-amber-300 transition-colors text-xs sm:text-sm cursor-pointer shadow-md"
+                  className="w-full sm:w-auto shrink-0 bg-white text-[#0E2A54] font-black px-6 py-3 rounded-xl hover:bg-[#FFD23F] transition-colors text-xs sm:text-sm cursor-pointer shadow-md"
                 >
                   {isArabic ? 'احجز استشارة مع الأخصائي' : 'Book Consultation'}
                 </button>

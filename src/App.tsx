@@ -12,30 +12,56 @@ import { CourseItem } from './data/coursesData';
 import { getStoredAdminSession, clearStoredAdminSession } from './data/adminData';
 import { DISPATCH_REQUEST_EVENT } from './data/customerRequests';
 
+// Helper that retries dynamic imports to handle transient network hiccups or dev-server restarts
+function safeImport<T>(factory: () => Promise<T>, retries = 3, interval = 600): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const attempt = (remaining: number) => {
+      factory()
+        .then(resolve)
+        .catch((error) => {
+          if (remaining > 0) {
+            setTimeout(() => attempt(remaining - 1), interval);
+          } else {
+            const isChunkError = 
+              error?.message?.includes('Failed to fetch dynamically imported module') ||
+              error?.message?.includes('Importing a module script failed');
+            if (isChunkError && typeof window !== 'undefined' && !sessionStorage.getItem('raba_chunk_reload')) {
+              sessionStorage.setItem('raba_chunk_reload', 'true');
+              window.location.reload();
+              return;
+            }
+            reject(error);
+          }
+        });
+    };
+    attempt(retries);
+  });
+}
+
 // Lazy-loaded components for optimal mobile bundle splitting, fast paint, and low TBT
-const ShadowTeacherSection = lazy(() => import('./components/ShadowTeacherSection').then(m => ({ default: m.ShadowTeacherSection })));
-const PackagesSection = lazy(() => import('./components/PackagesSection').then(m => ({ default: m.PackagesSection })));
-const SpecialistsSection = lazy(() => import('./components/SpecialistsSection').then(m => ({ default: m.SpecialistsSection })));
-const SpecialistsDirectoryPage = lazy(() => import('./components/SpecialistsDirectoryPage'));
-const ServicesDirectoryPage = lazy(() => import('./components/ServicesDirectoryPage'));
-const BranchesDirectoryPage = lazy(() => import('./components/BranchesDirectoryPage'));
-const OffersDirectoryPage = lazy(() => import('./components/OffersDirectoryPage'));
-const SpecialistCvModal = lazy(() => import('./components/SpecialistCvModal').then(m => ({ default: m.SpecialistCvModal })));
-const BookingModal = lazy(() => import('./components/BookingModal').then(m => ({ default: m.BookingModal })));
-const NotificationCenterModal = lazy(() => import('./components/NotificationCenterModal').then(m => ({ default: m.NotificationCenterModal })));
-const TestimonialsSection = lazy(() => import('./components/TestimonialsSection').then(m => ({ default: m.TestimonialsSection })));
-const BlogSliderSection = lazy(() => import('./components/BlogSliderSection').then(m => ({ default: m.BlogSliderSection })));
-const AccreditationsSection = lazy(() => import('./components/AccreditationsSection').then(m => ({ default: m.AccreditationsSection })));
-const PartnersSection = lazy(() => import('./components/PartnersSection').then(m => ({ default: m.PartnersSection })));
-const BranchesSection = lazy(() => import('./components/BranchesSection').then(m => ({ default: m.BranchesSection })));
-const CoursesSliderSection = lazy(() => import('./components/CoursesSliderSection').then(m => ({ default: m.CoursesSliderSection })));
-const CourseRegistrationModal = lazy(() => import('./components/CourseRegistrationModal').then(m => ({ default: m.CourseRegistrationModal })));
-const LoginModal = lazy(() => import('./components/LoginModal').then(m => ({ default: m.LoginModal })));
-const StoreModal = lazy(() => import('./components/StoreModal').then(m => ({ default: m.StoreModal })));
-const VideoModal = lazy(() => import('./components/VideoModal').then(m => ({ default: m.VideoModal })));
-const QuickConsultationModal = lazy(() => import('./components/QuickConsultationModal').then(m => ({ default: m.QuickConsultationModal })));
-const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
-const AdminLoginPage = lazy(() => import('./components/admin/AdminLoginPage').then(m => ({ default: m.AdminLoginPage })));
+const ShadowTeacherSection = lazy(() => safeImport(() => import('./components/ShadowTeacherSection')).then(m => ({ default: m.ShadowTeacherSection })));
+const PackagesSection = lazy(() => safeImport(() => import('./components/PackagesSection')).then(m => ({ default: m.PackagesSection })));
+const SpecialistsSection = lazy(() => safeImport(() => import('./components/SpecialistsSection')).then(m => ({ default: m.SpecialistsSection })));
+const SpecialistsDirectoryPage = lazy(() => safeImport(() => import('./components/SpecialistsDirectoryPage')));
+const ServicesDirectoryPage = lazy(() => safeImport(() => import('./components/ServicesDirectoryPage')));
+const BranchesDirectoryPage = lazy(() => safeImport(() => import('./components/BranchesDirectoryPage')));
+const OffersDirectoryPage = lazy(() => safeImport(() => import('./components/OffersDirectoryPage')));
+const SpecialistCvModal = lazy(() => safeImport(() => import('./components/SpecialistCvModal')).then(m => ({ default: m.SpecialistCvModal })));
+const BookingModal = lazy(() => safeImport(() => import('./components/BookingModal')).then(m => ({ default: m.BookingModal })));
+const NotificationCenterModal = lazy(() => safeImport(() => import('./components/NotificationCenterModal')).then(m => ({ default: m.NotificationCenterModal })));
+const TestimonialsSection = lazy(() => safeImport(() => import('./components/TestimonialsSection')).then(m => ({ default: m.TestimonialsSection })));
+const BlogSliderSection = lazy(() => safeImport(() => import('./components/BlogSliderSection')).then(m => ({ default: m.BlogSliderSection })));
+const AccreditationsSection = lazy(() => safeImport(() => import('./components/AccreditationsSection')).then(m => ({ default: m.AccreditationsSection })));
+const PartnersSection = lazy(() => safeImport(() => import('./components/PartnersSection')).then(m => ({ default: m.PartnersSection })));
+const BranchesSection = lazy(() => safeImport(() => import('./components/BranchesSection')).then(m => ({ default: m.BranchesSection })));
+const CoursesSliderSection = lazy(() => safeImport(() => import('./components/CoursesSliderSection')).then(m => ({ default: m.CoursesSliderSection })));
+const CourseRegistrationModal = lazy(() => safeImport(() => import('./components/CourseRegistrationModal')).then(m => ({ default: m.CourseRegistrationModal })));
+const LoginModal = lazy(() => safeImport(() => import('./components/LoginModal')).then(m => ({ default: m.LoginModal })));
+const StoreModal = lazy(() => safeImport(() => import('./components/StoreModal')).then(m => ({ default: m.StoreModal })));
+const VideoModal = lazy(() => safeImport(() => import('./components/VideoModal')).then(m => ({ default: m.VideoModal })));
+const QuickConsultationModal = lazy(() => safeImport(() => import('./components/QuickConsultationModal')).then(m => ({ default: m.QuickConsultationModal })));
+const AdminDashboard = lazy(() => safeImport(() => import('./components/admin/AdminDashboard')).then(m => ({ default: m.default || m.AdminDashboard })));
+const AdminLoginPage = lazy(() => safeImport(() => import('./components/admin/AdminLoginPage')).then(m => ({ default: m.default || m.AdminLoginPage })));
 
 import { 
   INITIAL_APPOINTMENTS, 
@@ -62,6 +88,7 @@ import {
   getStoredModulesVisibility, 
   SiteModulesVisibility 
 } from './data/siteCustomizer';
+import { getStoredTrackingPixels, applyTrackingPixels } from './utils/trackingPixels';
 
 export default function App() {
   // Modules Visibility & Theme Control
@@ -70,6 +97,17 @@ export default function App() {
   useEffect(() => {
     // Apply saved theme colors on startup
     applyGlobalTheme(getStoredThemeSettings());
+
+    // Apply and sync active advertising and tracking pixels
+    applyTrackingPixels(getStoredTrackingPixels());
+    fetch('/api/tracking-pixels/active')
+      .then(res => res.json())
+      .then(json => {
+        if (json.success && json.data) {
+          applyTrackingPixels(json.data);
+        }
+      })
+      .catch(() => {});
 
     // Dismiss splash overlay as soon as App component renders
     if (typeof window !== 'undefined' && (window as any).dismissSplash) {
@@ -415,7 +453,7 @@ export default function App() {
 
   useEffect(() => {
     const handleHashChange = () => {
-      setIsAdminOpen(window.location.hash === '#admin');
+      setIsAdminOpen(window.location.hash.startsWith('#admin'));
       setIsSpecialistsPageOpen(
         window.location.hash === '#specialists-directory' || 
         window.location.hash === '#specialists-page'
@@ -569,14 +607,14 @@ export default function App() {
   if (isAdminOpen) {
     if (!adminSession) {
       return (
-        <Suspense fallback={<div className="min-h-screen bg-[#061412] flex items-center justify-center text-teal-400 font-bold">جاري تحميل تسجيل الدخول...</div>}>
+        <Suspense fallback={<div className="min-h-screen bg-[#0B0F19] flex items-center justify-center text-[#2E86EB] font-bold">جاري تحميل تسجيل الدخول...</div>}>
           <AdminLoginPage
             onLoginSuccess={(user) => {
               setAdminSession(user);
             }}
             onBackToWebsite={() => {
               setIsAdminOpen(false);
-              if (window.location.hash === '#admin') {
+              if (window.location.hash.startsWith('#admin')) {
                 window.location.hash = '';
               }
             }}
@@ -586,7 +624,7 @@ export default function App() {
     }
 
     return (
-      <Suspense fallback={<div className="min-h-screen bg-[#061412] flex items-center justify-center text-teal-400 font-bold">جاري تحميل لوحة التحكم...</div>}>
+      <Suspense fallback={<div className="min-h-screen bg-[#0B0F19] flex items-center justify-center text-[#2E86EB] font-bold">جاري تحميل لوحة التحكم...</div>}>
         <AdminDashboard
           appointments={appointments}
           onUpdateAppointments={setAppointments}
@@ -600,7 +638,7 @@ export default function App() {
           }}
           onClose={() => {
             setIsAdminOpen(false);
-            if (window.location.hash === '#admin') {
+            if (window.location.hash.startsWith('#admin')) {
               window.location.hash = '';
             }
           }}

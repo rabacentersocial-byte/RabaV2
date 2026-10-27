@@ -6,7 +6,6 @@ import {
   ChevronRight, 
   ChevronLeft
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
 import { useLanguage } from '../context/LanguageContext';
 
 import { Specialist } from '../types';
@@ -30,7 +29,9 @@ interface HeroProps {
 export const Hero: React.FC<HeroProps> = ({ 
   onOpenBooking, 
   onOpenNotifications,
-  onOpenVideo
+  onOpenVideo,
+  onBookSpecialist,
+  onViewCv
 }) => {
   const { language, isArabic } = useLanguage();
   
@@ -80,13 +81,7 @@ export const Hero: React.FC<HeroProps> = ({
     }
   }, [slides.length, currentSlideIndex]);
 
-  const currentSlide = slides[currentSlideIndex] || slides[0] || {
-    id: 'fallback',
-    src: '/specialists/ahmed_abouzeid.jpg',
-    alt: 'مركز رابا',
-    objectPosition: 'top',
-    zoomLevel: 100
-  };
+  const currentSlide: HeroSlideItem = slides[currentSlideIndex] || slides[0];
 
   const handleNext = useCallback(() => {
     if (slides.length <= 1) return;
@@ -128,6 +123,34 @@ export const Hero: React.FC<HeroProps> = ({
     touchStartXRef.current = null;
   };
 
+  // Smart image resolver: supports custom uploaded slides from admin panel while maintaining instant local fallbacks
+  const getSlideDisplayImage = useCallback((slide: HeroSlideItem) => {
+    if (!slide) return '/images/hero/slide_2_ahmed.jpg';
+    if (slide.src) {
+      if (slide.src.startsWith('data:') || slide.src.startsWith('blob:')) {
+        return slide.src;
+      }
+      const resolved = getResolvedImageUrl(slide.src);
+      if (resolved && resolved !== '' && !resolved.includes('undefined')) {
+        return resolved;
+      }
+      if (slide.src.startsWith('/')) {
+        return slide.src;
+      }
+    }
+    const defaults: Record<string, string> = {
+      'photo-1': '/images/hero/slide_1_haneen.png',
+      'photo-2': '/images/hero/slide_2_ahmed.jpg',
+      'photo-3': '/images/hero/slide_3_rahaf.png',
+      'photo-4': '/images/hero/slide_4_doha.png',
+      'photo-5': '/images/hero/slide_5_manar.png',
+      'photo-6': '/images/hero/slide_6_fathi.png',
+      'photo-7': '/images/hero/slide_7_specialist.png',
+      'photo-8': '/images/hero/slide_8_specialist.png',
+    };
+    return defaults[slide.id] || slide.src || '/images/hero/slide_2_ahmed.jpg';
+  }, []);
+
   return (
     <section 
       id="hero" 
@@ -160,7 +183,7 @@ export const Hero: React.FC<HeroProps> = ({
                   <span className="inline-block mt-2">
                     السلوك التطبيقي{' '}
                     <span className="relative inline-block mx-1">
-                      <span className="relative z-10 bg-gradient-to-r from-[#F59E0B] to-[#FBBF24] text-slate-950 font-black px-4 py-0.5 sm:px-6 sm:py-1 rounded-xl shadow-lg border border-amber-300 transform -rotate-1 inline-block text-2xl sm:text-4xl lg:text-[44px]">
+                      <span className="relative z-10 bg-gradient-to-r from-[#FFD23F] to-[#FFE066] text-slate-950 font-black px-4 py-0.5 sm:px-6 sm:py-1 rounded-xl shadow-lg border border-amber-300 transform -rotate-1 inline-block text-2xl sm:text-4xl lg:text-[44px]">
                         ABA
                       </span>
                       <span className="absolute -inset-1 bg-amber-400/40 blur-md rounded-xl" />
@@ -173,7 +196,7 @@ export const Hero: React.FC<HeroProps> = ({
                   <span className="inline-block mt-2">
                     Behavior Analysis{' '}
                     <span className="relative inline-block mx-1">
-                      <span className="relative z-10 bg-gradient-to-r from-[#F59E0B] to-[#FBBF24] text-slate-950 font-black px-4 py-0.5 sm:px-6 sm:py-1 rounded-xl shadow-lg border border-amber-300 transform -rotate-1 inline-block text-2xl sm:text-4xl lg:text-[44px]">
+                      <span className="relative z-10 bg-gradient-to-r from-[#FFD23F] to-[#FFE066] text-slate-950 font-black px-4 py-0.5 sm:px-6 sm:py-1 rounded-xl shadow-lg border border-amber-300 transform -rotate-1 inline-block text-2xl sm:text-4xl lg:text-[44px]">
                         ABA
                       </span>
                       <span className="absolute -inset-1 bg-amber-400/40 blur-md rounded-xl" />
@@ -190,10 +213,10 @@ export const Hero: React.FC<HeroProps> = ({
                 : 'Raba Center is among the foremost certified institutions delivering evidence-based rehabilitation and developmental therapy for children with autism and developmental delays.'}
             </p>
 
-            {/* Value checklist bullets with glassy containers */}
+            {/* Value checklist bullets with Liquid Glass Kit containers */}
             <div className="space-y-3 pt-2 text-sm sm:text-base text-slate-800 dark:text-slate-100 font-medium">
-              <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/80 dark:bg-white/[0.06] backdrop-blur-md border border-slate-200/90 dark:border-white/15 shadow-xs transition-all">
-                <span className="w-6 h-6 rounded-xl bg-sky-500/20 text-sky-600 dark:text-[#00E5BE] border border-sky-400/40 dark:border-[#00E5BE]/40 flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-3 p-3.5 rounded-2xl liquid-glass-card shadow-xs transition-all">
+                <span className="w-7 h-7 rounded-xl bg-[#2E86EB]/15 text-[#2E86EB] border border-[#2E86EB]/30 flex items-center justify-center shrink-0 shadow-2xs">
                   <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />
                 </span>
                 <span>
@@ -203,8 +226,8 @@ export const Hero: React.FC<HeroProps> = ({
                 </span>
               </div>
 
-              <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/80 dark:bg-white/[0.06] backdrop-blur-md border border-slate-200/90 dark:border-white/15 shadow-xs transition-all">
-                <span className="w-6 h-6 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-[#10B981] border border-emerald-400/40 dark:border-[#10B981]/40 flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-3 p-3.5 rounded-2xl liquid-glass-card shadow-xs transition-all">
+                <span className="w-7 h-7 rounded-xl bg-[#22C55E]/15 text-[#22C55E] border border-[#22C55E]/30 flex items-center justify-center shrink-0 shadow-2xs">
                   <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />
                 </span>
                 <span>
@@ -214,8 +237,8 @@ export const Hero: React.FC<HeroProps> = ({
                 </span>
               </div>
 
-              <div className="flex items-center gap-3 p-3 rounded-2xl bg-white/80 dark:bg-white/[0.06] backdrop-blur-md border border-slate-200/90 dark:border-white/15 shadow-xs transition-all">
-                <span className="w-6 h-6 rounded-xl bg-amber-500/20 text-amber-600 dark:text-[#F59E0B] border border-amber-400/40 dark:border-amber-400/40 flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-3 p-3.5 rounded-2xl liquid-glass-card shadow-xs transition-all">
+                <span className="w-7 h-7 rounded-xl bg-[#FFD23F]/20 text-amber-700 dark:text-[#FFD23F] border border-[#FFD23F]/40 flex items-center justify-center shrink-0 shadow-2xs">
                   <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />
                 </span>
                 <span>
@@ -232,9 +255,9 @@ export const Hero: React.FC<HeroProps> = ({
               <button
                 id="hero-register-btn"
                 onClick={onOpenBooking}
-                className="relative group overflow-hidden bg-gradient-to-r from-[#0B3B36] via-[#0E544C] to-[#00897B] hover:from-[#062420] hover:to-[#00a896] dark:from-[#00E5BE] dark:via-[#00c9a7] dark:to-[#0284C7] text-white dark:text-slate-950 font-black px-6 sm:px-8 py-3.5 rounded-2xl border border-white/30 shadow-[0_10px_30px_rgba(11,59,54,0.35)] dark:shadow-[0_10px_30px_rgba(0,229,190,0.35)] hover:shadow-xl active:scale-95 transition-all text-sm sm:text-base text-center justify-center flex items-center cursor-pointer"
+                className="relative group overflow-hidden bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:from-[#1D74D8] hover:to-[#16A34A] text-white font-black px-6 sm:px-8 py-3.5 rounded-2xl border-t border-white/60 border-x border-b border-white/20 shadow-[0_12px_32px_rgba(46,134,235,0.35),inset_0_1px_1px_rgba(255,255,255,0.4)] hover:shadow-xl active:scale-95 transition-all text-sm sm:text-base text-center justify-center flex items-center cursor-pointer"
               >
-                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
+                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
                 <span className="relative z-10">{isArabic ? 'سجل الآن' : 'Register Now'}</span>
               </button>
 
@@ -244,11 +267,11 @@ export const Hero: React.FC<HeroProps> = ({
                 href="https://x.com/rabacenter/status/1352206247299321858?s=46"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-3 text-slate-800 dark:text-white hover:text-sky-600 dark:hover:text-[#00E5BE] font-bold transition-all group cursor-pointer text-sm sm:text-base py-2"
+                className="flex items-center justify-center gap-3 text-slate-800 dark:text-white hover:text-[#2E86EB] dark:hover:text-[#2E86EB] font-bold transition-all group cursor-pointer text-sm sm:text-base py-2"
                 title={isArabic ? 'شاهد فيديو تعريفي عن مركز رابا على منصة X' : 'Watch introductory video on X (Twitter)'}
               >
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/80 dark:bg-white/[0.12] hover:bg-white dark:hover:bg-white/[0.22] backdrop-blur-xl text-slate-900 dark:text-white border border-slate-200 dark:border-white/30 flex items-center justify-center shadow-lg shadow-sky-500/10 group-hover:scale-110 active:scale-95 transition-transform shrink-0">
-                  <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current ml-0.5" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full liquid-glass-btn text-slate-900 dark:text-white flex items-center justify-center shadow-lg group-hover:scale-110 active:scale-95 transition-transform shrink-0">
+                  <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current ml-0.5 text-[#2E86EB]" />
                 </div>
                 <span>{isArabic ? 'شاهد فيديو تعريفي' : 'Watch Video'}</span>
               </a>
@@ -256,148 +279,149 @@ export const Hero: React.FC<HeroProps> = ({
 
           </div>
 
-          {/* Left Column: Visual Presentation with Images-Only Slider Circle */}
-          <div className="lg:col-span-6 relative flex items-center justify-center mt-6 lg:mt-0">
+          {/* Left Column: Visual Presentation with Creative Liquid Glass Circular Showcase */}
+          <div className="lg:col-span-6 relative flex flex-col items-center justify-center mt-4 lg:mt-0 w-full select-none">
             
-            {/* Main Outer Frosted Glowing Glass Circle Backdrop */}
+            {/* Unified Responsive Badges Row Above the Circle (Consistent across Mobile, Tablet & Desktop) */}
+            {config.showBadges && (
+              <div className="flex items-center justify-between gap-2 w-full max-w-[280px] xs:max-w-[320px] sm:max-w-[380px] lg:max-w-[440px] xl:max-w-[460px] mb-3.5 sm:mb-4 z-20">
+                {/* Live Daily Children Counter Pill */}
+                <a 
+                  href="#stats-bar"
+                  className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full bg-[#22C55E] text-white text-[11px] sm:text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer border border-emerald-400/40"
+                  title={isArabic ? `+${dailyChildrenCount} أطفال جدد اليوم (إجمالي المستفيدين: ${formattedTotal}+)` : `+${dailyChildrenCount} Enrolled Today`}
+                >
+                  <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#FFD23F] text-slate-950 flex items-center justify-center text-[9px] sm:text-[10px] font-black shrink-0 shadow-xs">
+                    +{dailyChildrenCount}
+                  </span>
+                  <span className="whitespace-nowrap font-black">
+                    {isArabic ? `+${dailyChildrenCount} أطفال جدد` : `+${dailyChildrenCount} Today`}
+                  </span>
+                  {isWithinHours && (
+                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white animate-ping shrink-0" />
+                  )}
+                </a>
+
+                {/* Instant Booking Notice Pill */}
+                <button 
+                  onClick={onOpenBooking}
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full liquid-glass-btn bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold shadow-md border border-slate-200 dark:border-white/20 hover:scale-105 active:scale-95 transition-all cursor-pointer backdrop-blur-md"
+                  title={isArabic ? 'انقر لتقديم طلب تسجيل جديد' : 'Click to register'}
+                >
+                  <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2E86EB] shrink-0" />
+                  <span className="whitespace-nowrap">{isArabic ? 'حجز فوري' : 'Quick Booking'}</span>
+                  <span className="w-2 h-2 rounded-full bg-[#22C55E] shrink-0 animate-pulse" />
+                </button>
+              </div>
+            )}
+
+            {/* The Main Circular Showcase Stage - 100% Unobstructed across all viewports */}
             <div 
-              id="hero-specialists-slider"
+              id="hero-services-slider"
               onMouseEnter={() => setIsPaused(true)}
               onMouseLeave={() => setIsPaused(false)}
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
-              className="relative w-[280px] h-[280px] xs:w-[320px] xs:h-[320px] sm:w-[420px] sm:h-[420px] md:w-[460px] md:h-[460px] rounded-full bg-gradient-to-tr from-[#0284C7]/40 via-[#00E5BE]/25 to-sky-400/20 backdrop-blur-2xl border-4 border-white/60 dark:border-white/30 flex items-center justify-center shadow-[0_20px_60px_rgba(2,132,199,0.3)] group p-1 sm:p-1.5"
+              className="relative w-[280px] h-[280px] xs:w-[320px] xs:h-[320px] sm:w-[380px] sm:h-[380px] lg:w-[440px] lg:h-[440px] xl:w-[460px] xl:h-[460px] rounded-full p-2 sm:p-2.5 bg-gradient-to-tr from-[#2E86EB] via-[#FFD23F] via-[#FF2D9B] to-[#22C55E] shadow-[0_20px_50px_rgba(46,134,235,0.35),0_0_30px_rgba(0,229,190,0.2)] group select-none transition-all duration-300 shrink-0 aspect-square"
             >
-              
-              {/* Inner Circular Frame: Pure Images Only (No Text, No Dark Overlay) */}
-              <div className="relative w-full h-full rounded-full overflow-hidden flex items-center justify-center shadow-inner">
-                <AnimatePresence initial={false} mode="wait">
-                  <motion.div
-                    key={currentSlide.id}
-                    initial={{ opacity: 0, scale: 0.96 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 1.04 }}
-                    transition={{ duration: 0.45, ease: 'easeOut' }}
-                    className="absolute inset-0 w-full h-full"
-                  >
-                    <img
-                      src={getResolvedImageUrl(currentSlide.src)}
-                      alt={currentSlide.alt}
-                      width={460}
-                      height={460}
-                      fetchPriority="high"
-                      decoding="async"
-                      onError={(e) => handleImageErrorWithStore(e, currentSlide.src, '/specialists/ahmed_abouzeid.jpg')}
-                      className={`w-full h-full object-cover transition-transform duration-300 ${
-                        currentSlide.objectPosition === 'center'
-                          ? 'object-center'
-                          : currentSlide.objectPosition === 'bottom'
-                          ? 'object-bottom'
-                          : 'object-top'
-                      }`}
-                      style={{
-                        transform: `scale(${(currentSlide.zoomLevel || 100) / 100})`
-                      }}
-                      referrerPolicy="no-referrer"
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+              {/* Luminous Brand Aura Behind Circle */}
+              <div className="absolute -inset-4 sm:-inset-6 bg-gradient-to-tr from-[#2E86EB]/30 via-[#FF2D9B]/15 to-[#FFD23F]/25 rounded-full blur-2xl -z-10 pointer-events-none transition-opacity duration-700 opacity-80 group-hover:opacity-100" />
 
-              {/* Slider Navigation Arrows */}
-              {/* Previous Button */}
-              {slides.length > 1 && (
-                <button
-                  id="hero-slider-prev-btn"
-                  onClick={handlePrev}
-                  aria-label={isArabic ? 'الصورة السابقة' : 'Previous photo'}
-                  className="absolute -right-2 sm:-right-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-white/95 dark:bg-slate-900/95 hover:bg-white dark:hover:bg-slate-800 text-slate-800 dark:text-white border border-slate-200/90 dark:border-white/25 shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer backdrop-blur-md"
-                >
-                  <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6" />
-                </button>
-              )}
+              {/* Inner Circular Stage Window - Locked to full circle frame to prevent flexbox collapse */}
+              <div className="absolute inset-2 sm:inset-2.5 rounded-full overflow-hidden bg-slate-900 border border-white/60 dark:border-white/10 shadow-inner">
+                
+                {/* Background Soft Spotlight Radial Glow */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(46,134,235,0.25)_0%,rgba(0,229,190,0.1)_50%,transparent_75%)] pointer-events-none z-0" />
 
-              {/* Next Button */}
-              {slides.length > 1 && (
-                <button
-                  id="hero-slider-next-btn"
-                  onClick={handleNext}
-                  aria-label={isArabic ? 'الصورة التالية' : 'Next photo'}
-                  className="absolute -left-2 sm:-left-4 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-white/95 dark:bg-slate-900/95 hover:bg-white dark:hover:bg-slate-800 text-slate-800 dark:text-white border border-slate-200/90 dark:border-white/25 shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer backdrop-blur-md"
-                >
-                  <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6" />
-                </button>
-              )}
-
-              {/* Floating Badge 1 (Top-Left Corner): عداد أطفال جدد يومياً (+10 أطفال من 8 ص إلى 6 م) */}
-              {config.showBadges && (
-                <>
-                  <a 
-                    href="#stats-bar"
-                    className="absolute -top-2 -left-2 sm:-left-12 z-30 bg-emerald-600/90 dark:bg-emerald-500/80 backdrop-blur-xl text-white px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-2xl shadow-xl flex items-center gap-2 sm:gap-2.5 border border-emerald-300/40 animate-bounce-subtle cursor-pointer hover:scale-105 transition-transform"
-                    title={isArabic ? `مزامنة مباشرة: +${dailyChildrenCount} أطفال جدد اليوم (من إجمالي ${formattedTotal}+ مستفيد) — انقر للتفاصيل` : `Live sync: +${dailyChildrenCount} enrolled today (out of ${formattedTotal}+ total)`}
-                  >
-                    <div className="flex -space-x-2 -space-x-reverse overflow-hidden items-center">
-                      {/* Counter Badge Circle */}
-                      <div className="min-w-6 h-6 sm:min-w-7 sm:h-7 px-1 rounded-full border-2 border-white bg-amber-400 flex items-center justify-center text-[9px] sm:text-[10px] font-black text-slate-900 shadow-xs z-10 transition-transform">
-                        +{dailyChildrenCount}
+                {/* Specialist Image Directly Rendered Inside Circular Stage (Pure CSS Cross-Fade for 100% Reliability) */}
+                <div className="absolute inset-0 w-full h-full rounded-full overflow-hidden z-10">
+                  {slides.map((s, idx) => {
+                    const isActive = idx === currentSlideIndex;
+                    return (
+                      <div
+                        key={s.id || idx}
+                        className={`absolute inset-0 w-full h-full rounded-full overflow-hidden transition-opacity duration-500 ease-in-out ${
+                          isActive ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
+                        }`}
+                      >
+                        <img
+                          src={getSlideDisplayImage(s)}
+                          alt={s.alt}
+                          width={460}
+                          height={460}
+                          loading={idx === 0 ? "eager" : "lazy"}
+                          decoding="async"
+                          onError={(e) => handleImageErrorWithStore(e, s.src, '/images/hero/slide_2_ahmed.jpg')}
+                          className={`w-full h-full object-cover rounded-full transition-transform duration-700 ease-out group-hover:scale-105 ${
+                            s.objectPosition === 'center'
+                              ? 'object-center'
+                              : s.objectPosition === 'bottom'
+                              ? 'object-bottom'
+                              : 'object-[center_12%]'
+                          }`}
+                          style={{
+                            transform: `scale(${(s.zoomLevel || 100) / 100})`
+                          }}
+                          referrerPolicy="no-referrer"
+                        />
                       </div>
-                      <img width={28} height={28} loading="lazy" decoding="async" className="inline-block h-6 w-6 sm:h-7 sm:w-7 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="child" />
-                      <img width={28} height={28} loading="lazy" decoding="async" className="inline-block h-6 w-6 sm:h-7 sm:w-7 rounded-full ring-2 ring-white" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="child" />
-                    </div>
+                    );
+                  })}
+                </div>
 
-                    <div className="flex flex-col items-start leading-tight">
-                      <span className="text-[11px] sm:text-xs font-black flex items-center gap-1.5">
-                        <span>{isArabic ? `+${dailyChildrenCount} أطفال جدد اليوم` : `+${dailyChildrenCount} Enrolled Today`}</span>
-                        {isWithinHours && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-ping inline-block" title={isArabic ? 'تحديث مباشر' : 'Live update'} />
-                        )}
-                      </span>
-                      <span className="text-[9px] text-emerald-100/90 font-bold tracking-tight">
-                        {isArabic ? `إجمالي المستفيدين: ${formattedTotal}+` : `Total: ${formattedTotal}+`}
-                      </span>
-                    </div>
-                  </a>
-
-                  {/* Floating Notification Card (Bottom-Right Corner) with static message & counter reacting with upper counter */}
-                  <div 
-                    onClick={onOpenBooking}
-                    style={{ transform: 'translateZ(0)' }}
-                    className={`absolute -bottom-5 -right-2 sm:-right-8 z-30 bg-white/95 dark:bg-[#0B1120]/95 backdrop-blur-md border border-slate-200 dark:border-white/20 hover:border-emerald-400/60 dark:hover:border-emerald-400/60 rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 shadow-[0_16px_40px_rgba(0,0,0,0.25)] flex items-center gap-2.5 sm:gap-3 ${isArabic ? 'text-right' : 'text-left'} max-w-[250px] sm:max-w-[325px] cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300`}
-                    title={isArabic ? 'انقر لتقديم طلب تسجيل جديد لطفلك' : 'Click to submit registration for your child'}
-                  >
-                    {/* Yellow Envelope Badge with live counter indicator linked to upper counter */}
-                    <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center shrink-0 shadow-md border border-amber-300 group-hover:scale-105 transition-transform">
-                      <Mail className="w-5 h-5 sm:w-6 sm:h-6" />
-                      
-                      {/* Dynamic counter notification badge reacting exclusively with upper counter */}
-                      <span className={`absolute -top-1.5 -right-1.5 min-w-5 h-5 px-1 rounded-full bg-emerald-600 dark:bg-emerald-500 text-white text-[9px] font-black flex items-center justify-center border-2 border-white dark:border-slate-900 shadow-xs transition-transform duration-300 ${
-                        counterPulse ? 'scale-125 bg-emerald-500 ring-2 ring-emerald-300' : 'scale-100'
-                      }`}>
-                        {dailyChildrenCount}+
-                      </span>
-                      {isWithinHours && (
-                        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping pointer-events-none" />
-                      )}
-                    </div>
-
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1.5 whitespace-nowrap">
-                        <span className="text-xs font-black text-slate-900 dark:text-white whitespace-nowrap">
-                          {isArabic ? 'تم استلام طلبك بنجاح' : 'Request Received Successfully'}
-                        </span>
-                        <span className="text-emerald-600 dark:text-[#00E5BE] text-xs font-bold shrink-0">✔</span>
-                      </div>
-                      <p className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 leading-tight mt-0.5 whitespace-nowrap truncate font-medium">
-                        {isArabic 
-                          ? 'سيقوم فريق مركز رابا بالتواصل معك' 
-                          : 'Our team will contact you shortly'}
-                      </p>
+                {/* Minimal Elegant Slide Pagination Dots at the Bottom Arc */}
+                {slides.length > 1 && (
+                  <div className="absolute bottom-3.5 sm:bottom-4 inset-x-0 z-20 flex justify-center items-center pointer-events-auto">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-950/60 backdrop-blur-md border border-white/20 shadow-lg">
+                      {slides.map((s, idx) => (
+                        <button
+                          key={s.id || idx}
+                          onClick={() => setCurrentSlideIndex(idx)}
+                          aria-label={isArabic ? `شريحة ${idx + 1}` : `Slide ${idx + 1}`}
+                          className={`transition-all duration-300 rounded-full cursor-pointer ${
+                            idx === currentSlideIndex
+                              ? 'w-5 h-1.5 bg-gradient-to-r from-[#2E86EB] via-[#FFD23F] to-[#22C55E] shadow-sm'
+                              : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/80'
+                          }`}
+                        />
+                      ))}
                     </div>
                   </div>
+                )}
+
+              </div>
+
+              {/* Navigation Chevron Buttons */}
+              {slides.length > 1 && (
+                <>
+                  {/* Previous Button (Right side in RTL) */}
+                  <button
+                    id="hero-slider-prev-btn"
+                    onClick={handlePrev}
+                    aria-label={isArabic ? 'الصورة السابقة' : 'Previous photo'}
+                    className="absolute -right-3 sm:-right-4 lg:-right-5 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-11 sm:h-11 rounded-full liquid-glass-btn bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-white border border-white/60 dark:border-white/20 shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer backdrop-blur-md"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+
+                  {/* Next Button (Left side in RTL) */}
+                  <button
+                    id="hero-slider-next-btn"
+                    onClick={handleNext}
+                    aria-label={isArabic ? 'الصورة التالية' : 'Next photo'}
+                    className="absolute -left-3 sm:-left-4 lg:-left-5 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-11 sm:h-11 rounded-full liquid-glass-btn bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-white border border-white/60 dark:border-white/20 shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer backdrop-blur-md"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
                 </>
               )}
+            </div>
 
+            {/* Bottom Accent Star (from unified mobile/desktop design in Screenshot 2) */}
+            <div className="mt-3.5 sm:mt-4 flex items-center justify-center text-[#FFD23F] drop-shadow-[0_0_12px_rgba(255,210,63,0.6)] animate-pulse select-none pointer-events-none">
+              <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+              </svg>
             </div>
 
           </div>

@@ -250,24 +250,24 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/80 dark:bg-[#061412] text-slate-900 dark:text-white transition-colors" dir={isArabic ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-transparent text-slate-900 dark:text-white transition-colors" dir={isArabic ? 'rtl' : 'ltr'}>
       
       {/* 1. TOP BREADCRUMB & BACK HEADER BAR */}
-      <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-white/10 sticky top-0 z-40 shadow-xs">
+      <div className="liquid-glass-panel border-b border-white/80 dark:border-white/10 sticky top-0 z-40 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
           
           {/* Breadcrumb path */}
           <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
             <button
               onClick={onBackToHome}
-              className="flex items-center gap-1.5 hover:text-[#0d5c52] dark:hover:text-[#2dd4bf] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 hover:text-[#2E86EB] dark:hover:text-[#2E86EB] transition-colors cursor-pointer"
             >
               <Home className="w-3.5 h-3.5" />
               <span>{isArabic ? 'الرئيسية' : 'Home'}</span>
             </button>
             <span className="text-slate-300 dark:text-slate-600">/</span>
             <span className="text-slate-900 dark:text-white font-bold flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-[#00E5BE]" />
+              <MapPin className="w-3.5 h-3.5 text-[#2E86EB]" />
               <span>{isArabic ? 'دليل فروع مركز رابا' : 'Branches Directory'}</span>
             </span>
           </nav>
@@ -672,17 +672,17 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
     return (
       <div
         key={branch.id}
-        className={`bg-white dark:bg-[#0C1F1A] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-lg hover:border-emerald-500/50 dark:hover:border-[#00E5BE]/40 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group relative ${
+        className={`bg-white dark:bg-[#111827] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-lg hover:border-blue-500/50 dark:hover:border-[#2E86EB]/50 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group relative ${
           viewMode === 'slider' ? 'w-[76vw] min-w-[260px] max-w-[310px] sm:w-[350px] sm:max-w-none md:w-[365px] shrink-0 snap-start' : 'w-full'
         }`}
       >
         {/* Top: 3D Map Pin Graphic with Ambient Lighting */}
-        <div className="relative h-36 sm:h-56 md:h-60 overflow-hidden bg-slate-100 dark:bg-[#071713]">
+        <div className="relative h-36 sm:h-56 md:h-60 overflow-hidden bg-slate-100 dark:bg-[#0E1526]">
           <BranchMapPinGraphic branchName={branch.name} />
 
           {/* City Tag Indicator Overlay */}
           <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 bg-slate-900/85 backdrop-blur-md px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold text-slate-200 border border-white/10 flex items-center gap-1 sm:gap-1.5 shadow-md">
-            <MapPin className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-[#00E5BE]" />
+            <MapPin className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-[#2E86EB]" />
             <span>{isArabic ? branch.cityNameAr : branch.cityNameEn}</span>
           </div>
 
@@ -695,7 +695,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
         </div>
 
         {/* Body Content */}
-        <div className="p-3.5 sm:p-6 flex-1 flex flex-col justify-between space-y-3 sm:space-y-5 bg-white dark:bg-[#0C1F1A]">
+        <div className="p-3.5 sm:p-6 flex-1 flex flex-col justify-between space-y-3 sm:space-y-5 bg-white dark:bg-[#111827]">
           
           <div className="space-y-2.5 sm:space-y-3">
             {/* Region Tag Pill & Working Hours */}
@@ -705,14 +705,14 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
               </span>
 
               <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-semibold flex items-center gap-1">
-                <Clock className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-[#0D6D54] dark:text-[#00E5BE]" />
+                <Clock className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-[#2E86EB] dark:text-[#2E86EB]" />
                 <span>{isArabic ? branch.hoursAr : branch.hoursEn}</span>
               </span>
             </div>
 
             {/* Branch Name */}
             <div>
-              <h3 className="text-base sm:text-xl font-black text-slate-900 dark:text-white group-hover:text-[#0D6D54] dark:group-hover:text-[#00E5BE] transition-colors leading-snug line-clamp-1">
+              <h3 className="text-base sm:text-xl font-black text-slate-900 dark:text-white group-hover:text-[#2E86EB] dark:group-hover:text-[#2E86EB] transition-colors leading-snug line-clamp-1">
                 {isArabic ? branch.name : branch.nameEn}
               </h3>
             </div>
@@ -755,7 +755,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
             {/* Direct Book / Inquire at Branch */}
             <button
               onClick={() => handleBranchBooking(branch)}
-              className="w-full py-2 sm:py-2.5 px-3 bg-[#0B3B36] hover:bg-[#124e47] dark:bg-[#00E5BE] dark:hover:bg-[#00ffd2] text-white dark:text-slate-950 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
+              className="w-full py-2 sm:py-2.5 px-3 bg-[#2E86EB] hover:bg-[#2575d0] dark:bg-[#2E86EB] dark:hover:bg-[#2575d0] text-white text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
             >
               <CalendarCheck className="w-3.5 h-3.5" />
               <span>{isArabic ? 'احجز موعد أو استشارة في هذا الفرع' : 'Book at this Branch'}</span>

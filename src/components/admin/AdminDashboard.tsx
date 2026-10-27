@@ -30,7 +30,8 @@ import {
   RefreshCw,
   Database,
   Handshake,
-  GraduationCap
+  GraduationCap,
+  Activity
 } from 'lucide-react';
 import { Appointment, ParentReview, AdminUser, PermissionId, ServiceItem, TherapyPackage, Specialist } from '../../types';
 import { syncAllToDiskNow, savePersistentModule } from '../../utils/persistentSync';
@@ -62,6 +63,7 @@ import { PartnersSettingsTab } from './PartnersSettingsTab';
 import { CoursesManagementTab } from './CoursesManagementTab';
 import { MarketingReviewsTab } from './MarketingReviewsTab';
 import { FinancesSettingsTab } from './FinancesSettingsTab';
+import { TrackingPixelSettings } from './TrackingPixelSettings';
 
 interface AdminDashboardProps {
   onClose: () => void;
@@ -90,8 +92,36 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Active navigation tab
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'users' | 'appointments' | 'services' | 'pricing' | 'specialists' | 'slider' | 'courses' | 'blog' | 'accreditations' | 'partners' | 'site_settings' | 'marketing' | 'finances'
-  >('overview');
+    'overview' | 'users' | 'appointments' | 'services' | 'pricing' | 'specialists' | 'slider' | 'courses' | 'blog' | 'accreditations' | 'partners' | 'site_settings' | 'marketing' | 'finances' | 'pixels'
+  >(() => {
+    if (typeof window !== 'undefined' && window.location.hash.toLowerCase().includes('pixels')) {
+      return 'pixels';
+    }
+    return 'overview';
+  });
+
+  // Keep activeTab in sync with browser URL hash
+  useEffect(() => {
+    const handleHashSync = () => {
+      const hash = window.location.hash.toLowerCase();
+      if (hash.includes('pixels')) {
+        setActiveTab('pixels');
+      }
+    };
+    window.addEventListener('hashchange', handleHashSync);
+    return () => window.removeEventListener('hashchange', handleHashSync);
+  }, []);
+
+  const handleSelectTab = (tabId: typeof activeTab) => {
+    setActiveTab(tabId);
+    if (tabId === 'pixels') {
+      window.location.hash = '#admin/settings/pixels';
+    } else if (tabId === 'overview') {
+      window.location.hash = '#admin';
+    } else {
+      window.location.hash = `#admin/${tabId}`;
+    }
+  };
 
   // Mobile sidebar toggle
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -246,10 +276,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     },
     {
       id: 'slider',
-      labelAr: 'صور العرض والشرائح (السلايدر)',
-      labelEn: 'Hero & Slider Photos',
+      labelAr: 'شرائح الخدمات والإعلانات (السلايدر)',
+      labelEn: 'Service & Promo Slider',
       icon: SlidersHorizontal,
-      badge: isArabic ? 'جديد' : 'New',
+      badge: isArabic ? 'خدمات وعروض' : 'Promo',
       perm: null
     },
     {
@@ -307,6 +337,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       icon: DollarSign,
       badge: null,
       perm: 'view_finances' as PermissionId
+    },
+    {
+      id: 'pixels',
+      path: '/admin/settings/pixels',
+      labelAr: 'إعدادات التتبع والبيكسل',
+      labelEn: 'Tracking Pixels',
+      icon: Activity,
+      badge: isArabic ? 'تتبع' : 'Pixels',
+      perm: null
     }
   ];
 
@@ -521,7 +560,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <button
                   key={item.id}
                   onClick={() => {
-                    setActiveTab(item.id as any);
+                    handleSelectTab(item.id as any);
                   }}
                   className={`w-full p-3 rounded-2xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
                     isActive
@@ -606,7 +645,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <button
                       key={item.id}
                       onClick={() => {
-                        setActiveTab(item.id as any);
+                        handleSelectTab(item.id as any);
                         setIsMobileMenuOpen(false);
                       }}
                       className={`w-full p-2.5 rounded-xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
@@ -748,6 +787,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {activeTab === 'finances' && (
             <FinancesSettingsTab
               appointments={appointments}
+              hasPermission={hasPermission}
+            />
+          )}
+
+          {activeTab === 'pixels' && (
+            <TrackingPixelSettings
               hasPermission={hasPermission}
             />
           )}

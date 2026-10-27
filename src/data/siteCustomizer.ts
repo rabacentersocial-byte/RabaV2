@@ -3,22 +3,26 @@ export interface SiteThemeSettings {
   id: string;
   nameAr: string;
   nameEn: string;
-  primaryColor: string; // e.g. #0B3B36
-  primaryLight: string; // e.g. #0E5246
-  accentColor: string; // e.g. #00E5BE
-  secondaryColor: string; // e.g. #0284C7
+  primaryColor: string; // #2E86EB (Primary Blue)
+  primaryLight: string; // #4A9CFF
+  accentColor: string; // #FF2D9B (Accent Magenta)
+  secondaryColor: string; // #FFD23F (Secondary Gold / Yellow)
+  tertiaryColor?: string; // #22C55E (Tertiary Emerald Green)
+  neutralColor?: string; // #D9F14A (Neutral Lime Chartreuse)
   isCustom?: boolean;
 }
 
 export const THEME_PRESETS: SiteThemeSettings[] = [
   {
-    id: 'emerald-raba',
-    nameAr: 'الزمردي الراقي والأخضر الصحي (هوية رابا الأصلية)',
-    nameEn: 'Raba Classic Royal Emerald & Teal',
-    primaryColor: '#0B3B36',
-    primaryLight: '#0E5246',
-    accentColor: '#00E5BE',
-    secondaryColor: '#0284C7'
+    id: 'raba-vibrant-palette',
+    nameAr: 'باليت رابا المعتمد (الباليت الملكي الرسمي: أزرق #2E86EB · ذهبي #FFD23F · أخضر #22C55E · فوشيا #FF2D9B · ليموني #D9F14A)',
+    nameEn: 'Official Raba Color Palette (Primary #2E86EB)',
+    primaryColor: '#2E86EB',
+    primaryLight: '#4A9CFF',
+    accentColor: '#FF2D9B',
+    secondaryColor: '#FFD23F',
+    tertiaryColor: '#22C55E',
+    neutralColor: '#D9F14A'
   },
   {
     id: 'medical-navy',
@@ -27,7 +31,20 @@ export const THEME_PRESETS: SiteThemeSettings[] = [
     primaryColor: '#0F2942',
     primaryLight: '#1B3E63',
     accentColor: '#0284C7',
-    secondaryColor: '#38BDF8'
+    secondaryColor: '#38BDF8',
+    tertiaryColor: '#22C55E',
+    neutralColor: '#D9F14A'
+  },
+  {
+    id: 'emerald-raba',
+    nameAr: 'الزمردي الراقي والأخضر الصحي',
+    nameEn: 'Raba Classic Royal Emerald & Teal',
+    primaryColor: '#0B3B36',
+    primaryLight: '#0E5246',
+    accentColor: '#00E5BE',
+    secondaryColor: '#0284C7',
+    tertiaryColor: '#22C55E',
+    neutralColor: '#D9F14A'
   },
   {
     id: 'ocean-turquoise',
@@ -36,16 +53,9 @@ export const THEME_PRESETS: SiteThemeSettings[] = [
     primaryColor: '#0D3B3F',
     primaryLight: '#16575D',
     accentColor: '#14B8A6',
-    secondaryColor: '#06B6D4'
-  },
-  {
-    id: 'clinical-violet',
-    nameAr: 'البنفسجي الإكلينيكي الراقي (التحفيز الإدراكي)',
-    nameEn: 'Clinical Royal Violet & Amethyst',
-    primaryColor: '#2E1065',
-    primaryLight: '#43198D',
-    accentColor: '#8B5CF6',
-    secondaryColor: '#A855F7'
+    secondaryColor: '#06B6D4',
+    tertiaryColor: '#22C55E',
+    neutralColor: '#D9F14A'
   },
   {
     id: 'warm-amber',
@@ -54,7 +64,9 @@ export const THEME_PRESETS: SiteThemeSettings[] = [
     primaryColor: '#451A03',
     primaryLight: '#652809',
     accentColor: '#F59E0B',
-    secondaryColor: '#FBBF24'
+    secondaryColor: '#FBBF24',
+    tertiaryColor: '#22C55E',
+    neutralColor: '#D9F14A'
   }
 ];
 
@@ -181,9 +193,9 @@ export const DEFAULT_PROGRAM_PILLARS: ProgramPillarItem[] = [
     descAr: 'قيادة طبية سعودية مرخصة تضع معايير الجودة الدولية في الرعاية النهارية والتأهيل المتخصص.',
     descEn: 'Licensed Saudi clinical leadership setting international standards.',
     iconName: 'UserCheck',
-    color: 'text-[#0284C7]',
-    bgColor: 'bg-sky-500/15',
-    borderColor: 'border-sky-400/30',
+    color: 'text-[#2E86EB]',
+    bgColor: 'bg-[#2E86EB]/15',
+    borderColor: 'border-[#2E86EB]/30',
     active: true,
     order: 1
   },
@@ -194,9 +206,9 @@ export const DEFAULT_PROGRAM_PILLARS: ProgramPillarItem[] = [
     descAr: 'تطبيق أحدث الأدوات والتقنيات المقننة في التقييم والتدخل السلوكي والحسي لدعم التطور النمائي.',
     descEn: 'Employing modern standardized tools and evidence-based methods.',
     iconName: 'Lightbulb',
-    color: 'text-[#F59E0B]',
-    bgColor: 'bg-amber-500/15',
-    borderColor: 'border-amber-400/30',
+    color: 'text-[#FFD23F]',
+    bgColor: 'bg-[#FFD23F]/15',
+    borderColor: 'border-[#FFD23F]/30',
     active: true,
     order: 2
   },
@@ -207,9 +219,9 @@ export const DEFAULT_PROGRAM_PILLARS: ProgramPillarItem[] = [
     descAr: 'بيئة علاجية آمنة ومحبة تحترم خصوصية الطفل وتوفر إرشاداً نفسياً وأسرياً دائماً للوالدين.',
     descEn: 'A caring therapeutic setting respecting privacy and empowering families.',
     iconName: 'Heart',
-    color: 'text-[#0D6D54] dark:text-[#00E5BE]',
-    bgColor: 'bg-teal-500/15',
-    borderColor: 'border-teal-400/30',
+    color: 'text-[#FF2D9B]',
+    bgColor: 'bg-[#FF2D9B]/15',
+    borderColor: 'border-[#FF2D9B]/30',
     active: true,
     order: 3
   },
@@ -220,9 +232,9 @@ export const DEFAULT_PROGRAM_PILLARS: ProgramPillarItem[] = [
     descAr: 'خطط تعديل سلوك فردية بإشراف مشرفين معتمدين دولياً لرفع الاستقلالية والمهارات الاجتماعية.',
     descEn: 'Individual behavior modification plans under international board supervision.',
     iconName: 'Star',
-    color: 'text-[#10B981]',
-    bgColor: 'bg-emerald-500/15',
-    borderColor: 'border-emerald-400/30',
+    color: 'text-[#22C55E]',
+    bgColor: 'bg-[#22C55E]/15',
+    borderColor: 'border-[#22C55E]/30',
     active: true,
     order: 4
   },
@@ -233,9 +245,9 @@ export const DEFAULT_PROGRAM_PILLARS: ProgramPillarItem[] = [
     descAr: 'تهيئة الطفل للدمج المدرسي والمجتمعي الفعال وتوفير معلم الظل المتخصص لتحقيق أقصى إمكاناته.',
     descEn: 'Preparing children for school inclusion and real-world independence.',
     iconName: 'Globe',
-    color: 'text-[#00E5BE]',
-    bgColor: 'bg-teal-500/15',
-    borderColor: 'border-teal-400/30',
+    color: 'text-[#D9F14A]',
+    bgColor: 'bg-[#D9F14A]/15',
+    borderColor: 'border-[#D9F14A]/30',
     active: true,
     order: 5
   }
@@ -244,16 +256,16 @@ export const DEFAULT_PROGRAM_PILLARS: ProgramPillarItem[] = [
 export const DEFAULT_FOOTER_SETTINGS: FooterSettings = {
   aboutTextAr: 'مركز رابا للرعاية النهارية والتأهيل - مرخص من وزارة الصحة ووزارة الموارد البشرية والتنمية الاجتماعية، نقدم برامج تأهيلية متكاملة لطيف التوحد، تحليل السلوك التطبيقي ABA، واضطرابات النطق والتواصل.',
   aboutTextEn: 'Raba Center for Day Care & Rehabilitation - Accredited clinical care for autism spectrum, ABA behavioral therapy, and speech development.',
-  accreditationBadgeAr: 'معتمد من وزارة الصحة والجهات التنظيمية الرسمية بالمملكة',
-  accreditationBadgeEn: 'MOH & Saudi Ministry of Human Resources Accredited',
-  addressAr: 'المملكة العربية السعودية، الرياض - حي الصحافة',
-  addressEn: 'Riyadh, Saudi Arabia - Al Sahafa District',
+  accreditationBadgeAr: '',
+  accreditationBadgeEn: '',
+  addressAr: 'المملكة العربية السعودية',
+  addressEn: 'Kingdom of Saudi Arabia',
   phone: '0575100100',
-  email: 'contact@rabacenter.com',
+  email: 'info@rabacenters.com',
   hoursAr: 'الأحد - الخميس: 8:00 ص - 8:00 م | السبت: 9:00 ص - 4:00 م',
   hoursEn: 'Sun - Thu: 8:00 AM - 8:00 PM | Sat: 9:00 AM - 4:00 PM',
-  officialLicenseAr: 'ترخيص وزارة الصحة: 1400039281 | اعتماد البورد الأمريكي BACB & BHCOE',
-  officialLicenseEn: 'MOH License: 1400039281 | BACB & BHCOE Certified',
+  officialLicenseAr: '',
+  officialLicenseEn: '',
   copyrightAr: '© 2026 مركز رابا للرعاية النهارية والتأهيل. جميع الحقوق محفوظة.',
   copyrightEn: '© 2026 Raba Center for Day Care & Rehabilitation. All rights reserved.',
   qualityProtocolsAr: 'نطبق أعلى معايير الجودة العالمية وأحدث بروتوكولات تحليل السلوك التطبيقي ABA المعتمدة دولياً لضمان تطور مستمر لطفلك.',
@@ -422,10 +434,13 @@ export function saveStoredThemeSettings(settings: SiteThemeSettings): void {
 export function applyGlobalTheme(settings: SiteThemeSettings): void {
   if (typeof document === 'undefined') return;
   const root = document.documentElement;
-  root.style.setProperty('--raba-primary', settings.primaryColor);
-  root.style.setProperty('--raba-primary-light', settings.primaryLight);
-  root.style.setProperty('--raba-accent', settings.accentColor);
-  root.style.setProperty('--raba-secondary', settings.secondaryColor);
+  root.style.setProperty('--raba-primary', settings.primaryColor || '#2E86EB');
+  root.style.setProperty('--raba-primary-light', settings.primaryLight || '#4A9CFF');
+  root.style.setProperty('--raba-accent', settings.accentColor || '#FF2D9B');
+  root.style.setProperty('--raba-secondary', settings.secondaryColor || '#FFD23F');
+  root.style.setProperty('--raba-tertiary', settings.tertiaryColor || '#22C55E');
+  root.style.setProperty('--raba-neutral', settings.neutralColor || '#D9F14A');
+  root.style.setProperty('--raba-dark-bg', '#0B0F19');
 }
 
 // Social Load / Save
@@ -491,6 +506,20 @@ export function getStoredFooterSettings(): FooterSettings {
     if (!parsed.phone || parsed.phone.includes('55 123 4567') || parsed.phone.includes('000 0000')) {
       parsed.phone = '0575100100';
     }
+    if (!parsed.email || parsed.email.includes('contact@rabacenter')) {
+      parsed.email = 'info@rabacenters.com';
+    }
+    if (!parsed.addressAr || parsed.addressAr.includes('حي الصحافة') || parsed.addressAr.includes('الصحافة')) {
+      parsed.addressAr = 'المملكة العربية السعودية';
+    }
+    if (!parsed.addressEn || parsed.addressEn.includes('Al Sahafa') || parsed.addressEn.includes('Sahafa')) {
+      parsed.addressEn = 'Kingdom of Saudi Arabia';
+    }
+    // Remove license and board accreditation
+    parsed.officialLicenseAr = '';
+    parsed.officialLicenseEn = '';
+    parsed.accreditationBadgeAr = '';
+    parsed.accreditationBadgeEn = '';
     return { ...DEFAULT_FOOTER_SETTINGS, ...parsed };
   } catch {
     return { ...DEFAULT_FOOTER_SETTINGS };

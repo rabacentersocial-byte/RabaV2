@@ -79,14 +79,14 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
 
   return (
     <div 
-      className="min-h-screen relative flex flex-col bg-slate-950 text-white selection:bg-[#00E5BE] selection:text-slate-950 font-sans overflow-x-hidden"
+      className="min-h-screen relative flex flex-col bg-[#0B0F19] text-white selection:bg-[#2E86EB] selection:text-white font-sans overflow-x-hidden"
       dir={isArabic ? 'rtl' : 'ltr'}
     >
       {/* Background Decorative Ambient Gradients */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-[#0B3B36]/60 rounded-full blur-3xl opacity-70 animate-pulse" />
-        <div className="absolute top-1/3 -right-40 w-[500px] h-[500px] bg-[#00E5BE]/15 rounded-full blur-3xl opacity-60" />
-        <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-sky-900/30 rounded-full blur-3xl opacity-60" />
+        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-[#0E2A54]/80 rounded-full blur-3xl opacity-70 animate-pulse" />
+        <div className="absolute top-1/3 -right-40 w-[500px] h-[500px] bg-[#2E86EB]/20 rounded-full blur-3xl opacity-60" />
+        <div className="absolute -bottom-40 left-1/3 w-[600px] h-[600px] bg-blue-900/30 rounded-full blur-3xl opacity-60" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)]" />
       </div>
 
@@ -96,7 +96,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
         <div className="flex items-center gap-3">
           <RabaLogo variant="horizontal" size="md" />
           <div className="hidden sm:flex items-center gap-2 pr-3 rtl:pr-3 rtl:border-r rtl:border-white/15 ltr:pl-3 ltr:border-l ltr:border-white/15">
-            <span className="px-2.5 py-0.5 rounded-full bg-[#00E5BE]/10 border border-[#00E5BE]/30 text-[#00E5BE] text-[11px] font-black tracking-wide">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#2E86EB]/15 border border-[#2E86EB]/30 text-[#2E86EB] text-[11px] font-black tracking-wide">
               {isArabic ? 'لوحة تحكم الإدارة' : 'Admin Portal'}
             </span>
           </div>
@@ -139,14 +139,14 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
         <div className="w-full max-w-md">
           
           {/* Main Glassmorphic Login Card */}
-          <div className="bg-slate-900/80 backdrop-blur-2xl border border-white/15 rounded-3xl p-6 sm:p-8 shadow-[0_25px_70px_rgba(0,0,0,0.6)] relative overflow-hidden">
+          <div className="bg-[#111827]/90 backdrop-blur-2xl border border-white/15 rounded-3xl p-6 sm:p-8 shadow-[0_25px_70px_rgba(0,0,0,0.6)] relative overflow-hidden">
             
             {/* Top Glowing Accent Line */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#00E5BE] to-transparent" />
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#2E86EB] to-transparent" />
 
             {/* Card Header */}
             <div className="flex flex-col items-center text-center mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0B3B36] to-[#00E5BE] text-slate-950 flex items-center justify-center shadow-lg shadow-[#00E5BE]/20 mb-3.5 ring-4 ring-[#00E5BE]/10">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0E2A54] to-[#2E86EB] text-white flex items-center justify-center shadow-lg shadow-[#2E86EB]/20 mb-3.5 ring-4 ring-[#2E86EB]/10">
                 <ShieldCheck className="w-7 h-7 text-white" />
               </div>
 
@@ -205,7 +205,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
                         if (errorMessage) setErrorMessage(null);
                       }}
                       placeholder={isArabic ? 'مثال: admin أو admin@raba.sa' : 'e.g. admin or admin@raba.sa'}
-                      className={`w-full bg-slate-800/80 border ${errorMessage ? 'border-rose-500/60' : 'border-white/15'} rounded-2xl py-3 ${isArabic ? 'pr-11 pl-4 text-right' : 'pl-11 pr-4 text-left'} text-sm text-white placeholder:text-slate-500 outline-none focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/20 transition-all font-medium`}
+                      className={`w-full bg-[#0E1526] border ${errorMessage ? 'border-rose-500/60' : 'border-white/15'} rounded-2xl py-3 ${isArabic ? 'pr-11 pl-4 text-right' : 'pl-11 pr-4 text-left'} text-sm text-white placeholder:text-slate-500 outline-none focus:border-[#2E86EB] focus:ring-2 focus:ring-[#2E86EB]/20 transition-all font-medium`}
                       disabled={isLoading}
                     />
                     <User className={`w-4 h-4 text-slate-400 absolute ${isArabic ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2`} />
@@ -221,7 +221,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
                     <button
                       type="button"
                       onClick={() => setShowForgotModal(true)}
-                      className="text-[11px] font-bold text-[#00E5BE] hover:underline cursor-pointer"
+                      className="text-[11px] font-bold text-[#2E86EB] hover:underline cursor-pointer"
                     >
                       {isArabic ? 'نسيت كلمة المرور؟' : 'Forgot password?'}
                     </button>
@@ -237,7 +237,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
                         if (errorMessage) setErrorMessage(null);
                       }}
                       placeholder="••••••••"
-                      className={`w-full bg-slate-800/80 border ${errorMessage ? 'border-rose-500/60' : 'border-white/15'} rounded-2xl py-3 ${isArabic ? 'pr-11 pl-11 text-right' : 'pl-11 pr-11 text-left'} text-sm text-white placeholder:text-slate-500 outline-none focus:border-[#00E5BE] focus:ring-2 focus:ring-[#00E5BE]/20 transition-all font-mono`}
+                      className={`w-full bg-[#0E1526] border ${errorMessage ? 'border-rose-500/60' : 'border-white/15'} rounded-2xl py-3 ${isArabic ? 'pr-11 pl-11 text-right' : 'pl-11 pr-11 text-left'} text-sm text-white placeholder:text-slate-500 outline-none focus:border-[#2E86EB] focus:ring-2 focus:ring-[#2E86EB]/20 transition-all font-mono`}
                       disabled={isLoading}
                     />
                     <Lock className={`w-4 h-4 text-slate-400 absolute ${isArabic ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2`} />
@@ -261,7 +261,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
                       type="checkbox"
                       checked={rememberMe}
                       onChange={(e) => setRememberMe(e.target.checked)}
-                      className="w-4 h-4 rounded border-white/20 bg-slate-800 text-[#00E5BE] focus:ring-[#00E5BE] focus:ring-offset-0 cursor-pointer"
+                      className="w-4 h-4 rounded border-white/20 bg-slate-800 text-[#2E86EB] focus:ring-[#2E86EB] focus:ring-offset-0 cursor-pointer"
                     />
                     <span>{isArabic ? 'تذكر جلستي على هذا الجهاز' : 'Remember my session'}</span>
                   </label>
@@ -271,7 +271,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#0B3B36] to-[#00E5BE] hover:opacity-95 active:scale-[0.99] text-white font-black text-sm transition-all shadow-lg shadow-[#00E5BE]/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#0E2A54] to-[#2E86EB] hover:opacity-95 active:scale-[0.99] text-white font-black text-sm transition-all shadow-lg shadow-[#2E86EB]/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-2"
                 >
                   {isLoading ? (
                     <div className="flex items-center gap-2">
@@ -280,7 +280,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
                     </div>
                   ) : (
                     <>
-                      <Lock className="w-4 h-4 text-emerald-300" />
+                      <Lock className="w-4 h-4 text-blue-300" />
                       <span>{isArabic ? 'تسجيل الدخول إلى لوحة التحكم' : 'Sign In to Dashboard'}</span>
                     </>
                   )}
@@ -341,3 +341,5 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
     </div>
   );
 };
+
+export default AdminLoginPage;

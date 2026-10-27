@@ -372,17 +372,17 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/70 dark:bg-[#061412] text-slate-900 dark:text-white transition-colors" dir={isArabic ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-transparent text-slate-900 dark:text-white transition-colors" dir={isArabic ? 'rtl' : 'ltr'}>
       
       {/* 1. TOP BREADCRUMB & BACK HEADER BAR */}
-      <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-white/10 sticky top-0 z-40 shadow-xs">
+      <div className="liquid-glass-panel border-b border-white/80 dark:border-white/10 sticky top-0 z-40 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
           
           {/* Breadcrumb path */}
           <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
             <button
               onClick={onBackToHome}
-              className="flex items-center gap-1.5 hover:text-[#0d5c52] dark:hover:text-[#2dd4bf] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 hover:text-[#2E86EB] dark:hover:text-[#2E86EB] transition-colors cursor-pointer"
             >
               <Home className="w-3.5 h-3.5" />
               <span>{isArabic ? 'الرئيسية' : 'Home'}</span>
@@ -631,7 +631,7 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
               return (
                 <div
                   key={doctor.id}
-                  className={`bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border ${theme.cardBorderHover} shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col group relative`}
+                  className={`liquid-glass-card rounded-2xl sm:rounded-3xl border ${theme.cardBorderHover} shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col group relative`}
                 >
                   {/* Top Slim Accent Strip in Doctor's Brand/Logo Color */}
                   <div className={`h-1.5 w-full ${theme.topAccentBar}`} />

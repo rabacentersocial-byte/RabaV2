@@ -172,7 +172,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
     return (
       <div
         key={course.id}
-        className={`w-[78vw] min-w-[270px] max-w-[315px] sm:w-[350px] sm:max-w-none md:w-[370px] lg:w-[380px] shrink-0 snap-start bg-white dark:bg-[#121c24] rounded-2xl sm:rounded-[32px] overflow-hidden border ${theme.cardBorderHover} shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-all duration-300 flex flex-col group relative`}
+        className={`w-[78vw] min-w-[270px] max-w-[315px] sm:w-[350px] sm:max-w-none md:w-[370px] lg:w-[380px] shrink-0 snap-start bg-white dark:bg-[#111827] rounded-2xl sm:rounded-[32px] overflow-hidden border ${theme.cardBorderHover} shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-all duration-300 flex flex-col group relative`}
       >
         {/* Top Header Section: Distinct Logo Color Container */}
         <div className={`${theme.headerBg} p-4 sm:p-7 pt-5 sm:pt-7 pb-4 sm:pb-6 rounded-t-2xl sm:rounded-t-[32px] border-b ${theme.headerBorder} relative transition-colors`}>
@@ -186,7 +186,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
             {/* Left in RTL: Rounded White Icon Button */}
             <button
               onClick={() => handleOpenDetails(course)}
-              className={`w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border ${theme.iconBoxBorder} shadow-xs flex items-center justify-center ${theme.iconColor} hover:scale-105 active:scale-95 transition-all cursor-pointer group/icon shrink-0`}
+              className={`w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-white dark:bg-[#0E1526] border ${theme.iconBoxBorder} shadow-xs flex items-center justify-center ${theme.iconColor} hover:scale-105 active:scale-95 transition-all cursor-pointer group/icon shrink-0`}
               title={isArabic ? 'معاينة وفيديو الكورس' : 'Course Video Preview'}
             >
               <CourseCustomIcon course={course} className={`w-4 h-4 sm:w-5 sm:h-5 ${theme.iconColor} group-hover/icon:scale-110 transition-transform`} />
@@ -208,7 +208,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
         </div>
 
         {/* Lower Section: Pure White Body */}
-        <div className="bg-white dark:bg-[#121c22] p-4 sm:p-7 pt-4 sm:pt-5 rounded-b-2xl sm:rounded-b-[32px] flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
+        <div className="bg-white dark:bg-[#111827] p-4 sm:p-7 pt-4 sm:pt-5 rounded-b-2xl sm:rounded-b-[32px] flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
           
           <div className="space-y-2.5 sm:space-y-3.5">
             {/* Price Row: Big number + Currency + Strikethrough Original Price */}
@@ -298,13 +298,13 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
             
             {/* Right Side in RTL: Badge, Title, Subtitle */}
             <div className="max-w-3xl space-y-3">
-              {/* Soft Sage Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#dff1ec] dark:bg-teal-950/60 text-[#0d5c52] dark:text-[#2dd4bf] text-xs sm:text-sm font-bold shadow-2xs">
+              {/* Soft Blue Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#2E86EB] dark:text-[#2E86EB] text-xs sm:text-sm font-bold shadow-2xs">
                 <span>{isArabic ? sectionSettings.badgeAr : sectionSettings.badgeEn}</span>
               </div>
 
               {/* Main Headline */}
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#0f2d29] dark:text-white tracking-tight leading-[1.2] [text-wrap:balance]">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.2] [text-wrap:balance]">
                 {isArabic ? (
                   <>
                     <span>{sectionSettings.titlePart1Ar}</span>{' '}

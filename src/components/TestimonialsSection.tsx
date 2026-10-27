@@ -303,8 +303,8 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                 onClick={() => setFilterTopic(tab.id)}
                 className={`rounded-full px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all cursor-pointer shrink-0 shadow-2xs whitespace-nowrap ${
                   isActive
-                    ? 'bg-[#0B3B36] dark:bg-[#00E5BE] text-white dark:text-slate-950 font-bold border border-[#0B3B36] dark:border-[#00E5BE] shadow-sm'
-                    : 'bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200/90 dark:border-white/10'
+                    ? 'bg-[#2E86EB] dark:bg-[#2E86EB] text-white dark:text-white font-bold border border-[#2E86EB] shadow-sm'
+                    : 'bg-white dark:bg-[#111827] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/90 dark:border-white/10'
                 }`}
               >
                 {isArabic ? tab.labelAr : tab.labelEn}
@@ -336,7 +336,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
             return (
               <div
                 key={rev.id}
-                className="w-[82vw] max-w-[325px] sm:w-[320px] md:w-[330px] shrink-0 snap-start bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200/90 dark:border-white/10 shadow-xs hover:shadow-md hover:border-slate-300 dark:hover:border-white/20 transition-all duration-300 flex flex-col justify-between"
+                className="w-[82vw] max-w-[325px] sm:w-[320px] md:w-[330px] shrink-0 snap-start liquid-glass-card rounded-2xl p-4 sm:p-5 transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   
@@ -433,9 +433,9 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
         </div>
 
         {/* METRICS STRIP: Re-designed with custom icons & mobile-optimized responsive tiles (Moved below evaluation cards) */}
-        <div className="bg-white dark:bg-slate-900/90 rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] mt-10 sm:mt-14 p-3 sm:p-4.5 relative overflow-hidden backdrop-blur-md">
+        <div className="bg-white dark:bg-[#111827] rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] mt-10 sm:mt-14 p-3 sm:p-4.5 relative overflow-hidden backdrop-blur-md">
           {/* Subtle ambient lighting */}
-          <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 relative z-10">
@@ -452,7 +452,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
               </div>
               <div>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#0B3B36] dark:text-[#2DD4BF] tracking-tight leading-none">
+                  <span className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#2E86EB] dark:text-[#22C55E] tracking-tight leading-none">
                     4.9
                   </span>
                   <div className="flex text-amber-400 text-[10px] sm:text-xs">
@@ -471,7 +471,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
             {/* Metric 2: Verified Reviews */}
             <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-emerald-400/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
               <div className="flex items-center justify-between gap-1.5 mb-2.5">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-[#2DD4BF] border border-emerald-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-emerald-500/20 transition-all">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-[#22C55E] border border-emerald-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-emerald-500/20 transition-all">
                   <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
                 </div>
                 <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-400/20 truncate">
@@ -479,7 +479,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                 </span>
               </div>
               <div>
-                <div className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#0B3B36] dark:text-[#2DD4BF] tracking-tight leading-none">
+                <div className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#2E86EB] dark:text-[#22C55E] tracking-tight leading-none">
                   1,400+
                 </div>
                 <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 mt-1.5 leading-tight">
@@ -492,17 +492,17 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
             </div>
 
             {/* Metric 3: Would Recommend */}
-            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-teal-400/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-blue-400/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
               <div className="flex items-center justify-between gap-1.5 mb-2.5">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-teal-500/10 text-[#0D6D54] dark:text-[#00E5BE] border border-teal-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-teal-500/20 transition-all">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-blue-500/10 text-[#2E86EB] dark:text-[#2E86EB] border border-blue-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-blue-500/20 transition-all">
                   <ThumbsUp className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
                 </div>
-                <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-400/20 truncate">
+                <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-400/20 truncate">
                   {isArabic ? 'ثقة أولياء الأمور' : 'Parent Trust'}
                 </span>
               </div>
               <div>
-                <div className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#0B3B36] dark:text-[#2DD4BF] tracking-tight leading-none">
+                <div className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#2E86EB] dark:text-[#22C55E] tracking-tight leading-none">
                   98%
                 </div>
                 <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 mt-1.5 leading-tight">

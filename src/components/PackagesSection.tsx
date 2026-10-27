@@ -142,58 +142,58 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
           categoryText: 'text-[#0D6D54] dark:text-[#00E5BE]',
           titleText: 'text-[#0B3B36] dark:text-emerald-100',
           checkBg: 'bg-[#DEF3EC] dark:bg-emerald-950/60 text-[#0D6D54] dark:text-[#00E5BE]',
-          btnBg: 'bg-[#0B3B36] hover:bg-[#124e47] text-white',
+          btnBg: 'bg-[#22C55E] hover:bg-[#16a34a] text-white',
           icon: <Heart className="w-5 h-5 fill-emerald-500/20 stroke-[2.2]" />
         };
       case 'purple':
         return {
-          headerBg: 'bg-[#EAF8FA] dark:bg-[#082229]/70',
-          iconBg: 'bg-white/90 dark:bg-slate-800/90 text-[#0284C7] dark:text-[#00E5BE]',
-          categoryText: 'text-[#0284C7] dark:text-[#00E5BE]',
-          titleText: 'text-[#0369A1] dark:text-cyan-100',
-          checkBg: 'bg-[#E0F2FE] dark:bg-sky-950/60 text-[#0284C7] dark:text-[#00E5BE]',
-          btnBg: 'bg-[#0284C7] hover:bg-[#0369a1] text-white',
-          icon: <Sparkles className="w-5 h-5 fill-cyan-500/20 stroke-[2.2]" />
+          headerBg: 'bg-blue-50/70 dark:bg-[#0c2340]',
+          iconBg: 'bg-white/90 dark:bg-slate-800/90 text-[#2E86EB]',
+          categoryText: 'text-[#2E86EB]',
+          titleText: 'text-[#1d74d8] dark:text-blue-200',
+          checkBg: 'bg-blue-50 dark:bg-blue-950/60 text-[#2E86EB]',
+          btnBg: 'bg-[#2E86EB] hover:bg-[#1d74d8] text-white',
+          icon: <Sparkles className="w-5 h-5 fill-blue-500/20 stroke-[2.2]" />
         };
       case 'amber':
         return {
-          headerBg: 'bg-[#FEF5ED] dark:bg-[#321f10]/60',
-          iconBg: 'bg-white/90 dark:bg-slate-800/90 text-[#C26213] dark:text-[#FBBF24]',
-          categoryText: 'text-[#C26213] dark:text-[#FBBF24]',
-          titleText: 'text-[#9E4A07] dark:text-amber-100',
-          checkBg: 'bg-[#FEF0E3] dark:bg-amber-950/60 text-[#C26213] dark:text-[#FBBF24]',
-          btnBg: 'bg-[#C26213] hover:bg-[#a6510c] text-white',
+          headerBg: 'bg-amber-50/70 dark:bg-[#2b1f06]',
+          iconBg: 'bg-white/90 dark:bg-slate-800/90 text-amber-700 dark:text-[#FFD23F]',
+          categoryText: 'text-amber-800 dark:text-[#FFD23F]',
+          titleText: 'text-amber-900 dark:text-amber-200',
+          checkBg: 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-[#FFD23F]',
+          btnBg: 'bg-[#FFD23F] hover:bg-[#f5c724] text-slate-950 font-black',
           icon: <Brain className="w-5 h-5 stroke-[2.2]" />
         };
       case 'sky':
         return {
-          headerBg: 'bg-[#F0F7FF] dark:bg-[#112338]/60',
-          iconBg: 'bg-white/90 dark:bg-slate-800/90 text-[#1570EF] dark:text-[#60A5FA]',
-          categoryText: 'text-[#1570EF] dark:text-[#60A5FA]',
-          titleText: 'text-[#0E4A96] dark:text-sky-100',
-          checkBg: 'bg-[#E0F2FE] dark:bg-sky-950/60 text-[#1570EF] dark:text-[#60A5FA]',
-          btnBg: 'bg-[#1570EF] hover:bg-[#105ecb] text-white',
+          headerBg: 'bg-blue-50/60 dark:bg-[#0b1f38]',
+          iconBg: 'bg-white/90 dark:bg-slate-800/90 text-[#2E86EB]',
+          categoryText: 'text-[#2E86EB]',
+          titleText: 'text-[#1d74d8] dark:text-sky-200',
+          checkBg: 'bg-blue-50 dark:bg-blue-950/60 text-[#2E86EB]',
+          btnBg: 'bg-[#2E86EB] hover:bg-[#1d74d8] text-white',
           icon: <MessageSquare className="w-5 h-5 stroke-[2.2]" />
         };
       case 'teal':
         return {
-          headerBg: 'bg-[#EAFBF7] dark:bg-[#0c2a25]/60',
-          iconBg: 'bg-white/90 dark:bg-slate-800/90 text-[#0E8376] dark:text-[#2DD4BF]',
-          categoryText: 'text-[#0E8376] dark:text-[#2DD4BF]',
-          titleText: 'text-[#0B4F47] dark:text-teal-100',
-          checkBg: 'bg-[#E0F2EF] dark:bg-teal-950/60 text-[#0E8376] dark:text-[#2DD4BF]',
-          btnBg: 'bg-[#0E8376] hover:bg-[#0b6b60] text-white',
+          headerBg: 'bg-emerald-50/70 dark:bg-[#082b16]',
+          iconBg: 'bg-white/90 dark:bg-slate-800/90 text-[#22C55E]',
+          categoryText: 'text-[#22C55E]',
+          titleText: 'text-[#16a34a] dark:text-emerald-200',
+          checkBg: 'bg-emerald-50 dark:bg-emerald-950/60 text-[#22C55E]',
+          btnBg: 'bg-[#22C55E] hover:bg-[#16a34a] text-white',
           icon: <Activity className="w-5 h-5 stroke-[2.2]" />
         };
       case 'mint':
       default:
         return {
-          headerBg: 'bg-[#ECF7F3] dark:bg-[#0b2923]/60',
-          iconBg: 'bg-white/90 dark:bg-slate-800/90 text-[#0D6D54] dark:text-[#2DD4BF]',
-          categoryText: 'text-[#0D6D54] dark:text-[#2DD4BF]',
-          titleText: 'text-[#0B3B36] dark:text-white',
-          checkBg: 'bg-[#E3F4EC] dark:bg-teal-950/60 text-[#0D6D54] dark:text-[#2DD4BF]',
-          btnBg: 'bg-[#0B3B36] hover:bg-[#124e47] text-white',
+          headerBg: 'bg-blue-50/70 dark:bg-[#0c2340]',
+          iconBg: 'bg-white/90 dark:bg-slate-800/90 text-[#2E86EB]',
+          categoryText: 'text-[#2E86EB]',
+          titleText: 'text-[#2E86EB] dark:text-white',
+          checkBg: 'bg-blue-50 dark:bg-blue-950/60 text-[#2E86EB]',
+          btnBg: 'bg-[#2E86EB] hover:bg-[#1d74d8] text-white',
           icon: <ShieldCheck className="w-5 h-5 stroke-[2.2]" />
         };
     }
@@ -212,7 +212,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
           <div className={`max-w-2xl ${isArabic ? 'text-right' : 'text-left'}`}>
             
             {/* Small Uppercase Tracked Eyebrow */}
-            <span className="text-[#0D6D54] dark:text-[#2DD4BF] text-[11px] sm:text-xs font-black tracking-widest uppercase block mb-2">
+            <span className="text-[#2E86EB] text-[11px] sm:text-xs font-black tracking-widest uppercase block mb-2">
               {isArabic ? 'باقات مُصممة لاحتياجات طفلك' : 'TAILORED TO YOUR NEEDS'}
             </span>
 
@@ -220,11 +220,11 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-none mb-3">
               {isArabic ? (
                 <span>
-                  الباقات<span className="text-[#0D6D54] dark:text-[#2DD4BF]">.</span>
+                  الباقات<span className="text-[#2E86EB]">.</span>
                 </span>
               ) : (
                 <span>
-                  Packages<span className="text-[#0D6D54] dark:text-[#2DD4BF]">.</span>
+                  Packages<span className="text-[#2E86EB]">.</span>
                 </span>
               )}
             </h2>
@@ -242,7 +242,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
             <button
               onClick={() => handleScroll('prev')}
               aria-label={isArabic ? 'الباقة السابقة' : 'Previous package'}
-              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-white/10 shadow-xs active:scale-95 transition-all cursor-pointer"
+              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full liquid-glass-btn flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer text-slate-700 dark:text-slate-200"
             >
               {isArabic ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
             </button>
@@ -250,7 +250,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
             <button
               onClick={() => handleScroll('next')}
               aria-label={isArabic ? 'الباقة التالية' : 'Next package'}
-              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-white/10 shadow-xs active:scale-95 transition-all cursor-pointer"
+              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full liquid-glass-btn flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer text-slate-700 dark:text-slate-200"
             >
               {isArabic ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
             </button>
@@ -262,19 +262,14 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 mb-6" style={{ WebkitOverflowScrolling: 'touch' }}>
           {categories.map((cat) => {
             const isActive = selectedCategory === cat.id;
-            const isSummerTab = cat.id === 'summer';
             return (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm whitespace-nowrap transition-all duration-200 font-bold cursor-pointer ${
                   isActive
-                    ? isSummerTab
-                      ? 'bg-gradient-to-r from-sky-600 via-cyan-600 to-blue-600 text-white shadow-sm ring-2 ring-sky-300/40'
-                      : 'bg-[#0B3B36] text-white shadow-sm'
-                    : isSummerTab
-                      ? 'bg-sky-50/80 dark:bg-sky-950/30 text-sky-800 dark:text-sky-300 hover:bg-sky-100 border border-sky-200 dark:border-sky-800/40'
-                      : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 border border-slate-200 dark:border-white/15'
+                    ? 'bg-[#2E86EB] text-white shadow-md shadow-blue-500/25 border-t border-white/50'
+                    : 'liquid-glass-pill hover:scale-[1.02]'
                 }`}
               >
                 {isArabic ? cat.labelAr : cat.labelEn}
@@ -306,9 +301,9 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
             return (
               <div
                 key={pkg.id}
-                className={`w-[76vw] min-w-[255px] max-w-[295px] sm:w-[350px] md:w-[370px] lg:w-[385px] shrink-0 snap-start bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl overflow-hidden border shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between relative group ${
+                className={`w-[76vw] min-w-[255px] max-w-[295px] sm:w-[350px] md:w-[370px] lg:w-[385px] shrink-0 snap-start liquid-glass-card rounded-2xl sm:rounded-3xl overflow-hidden border shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between relative group ${
                   isSummer 
-                    ? 'border-sky-300 dark:border-sky-500/40 ring-1 ring-sky-400/25 shadow-sky-500/5' 
+                    ? 'border-sky-400/60 dark:border-sky-500/40 ring-1 ring-sky-400/25' 
                     : 'border-slate-200/90 dark:border-white/10'
                 }`}
               >
@@ -342,7 +337,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                       )}
 
                       {pkg.popular && !isSummer && (
-                        <span className="bg-[#0B3B36] text-white text-[9px] sm:text-[10px] font-black tracking-wider px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-2xs uppercase">
+                        <span className="bg-[#2E86EB] text-white text-[9px] sm:text-[10px] font-black tracking-wider px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-2xs uppercase">
                           {isArabic ? 'الأكثر طلباً' : 'MOST POPULAR'}
                         </span>
                       )}
@@ -365,7 +360,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                 </div>
 
                 {/* Lower Body Section */}
-                <div className="p-3 sm:p-6 pt-2.5 sm:pt-4 flex flex-col justify-between flex-1 bg-white dark:bg-slate-900 rounded-b-2xl sm:rounded-b-3xl">
+                <div className="p-3 sm:p-6 pt-2.5 sm:pt-4 flex flex-col justify-between flex-1 bg-white dark:bg-[#111827] rounded-b-2xl sm:rounded-b-3xl">
                   
                   <div>
                     {/* Price Row */}
@@ -452,7 +447,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                   {/* Bottom Area: Installments Notice with Tamara & Emkan Logos - ONLY for Summer Packages */}
                   <div>
                     {isSummer && (
-                      <div className="pt-2 sm:pt-3 border-t border-slate-100 dark:border-white/10 mb-2.5 sm:mb-3.5 bg-slate-50/80 dark:bg-slate-800/60 p-2 sm:p-2.5 rounded-xl border border-slate-200/70 dark:border-white/10">
+                      <div className="pt-2 sm:pt-3 border-t border-slate-100 dark:border-white/10 mb-2.5 sm:mb-3.5 bg-slate-50/80 dark:bg-[#0E1526] p-2 sm:p-2.5 rounded-xl border border-slate-200/70 dark:border-white/10">
                         <div className="flex items-center justify-between gap-2">
                           <span className="text-[10px] sm:text-xs font-bold text-slate-700 dark:text-slate-200 leading-tight">
                             {isArabic ? 'متاح التقسيط :' : 'Installments Available:'}

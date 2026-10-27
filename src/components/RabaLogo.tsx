@@ -106,7 +106,7 @@ export const RabaLogo: React.FC<RabaLogoProps> = ({
         xmlns="http://www.w3.org/2000/svg"
         preserveAspectRatio="xMidYMid meet"
       >
-        {/* 1. TOP-LEFT PIECE: Sky Blue */}
+        {/* 1. TOP-LEFT PIECE: Vibrant Electric Blue (#2E86EB) */}
         <path 
           d="
             M 200 45 
@@ -129,18 +129,18 @@ export const RabaLogo: React.FC<RabaLogoProps> = ({
             L 204 148
             L 200 45 Z
           "
-          fill="#008CD3"
+          fill="#2E86EB"
           stroke={cutStroke}
           strokeWidth={cutStrokeWidth}
           strokeLinejoin="round"
           strokeLinecap="round"
         />
-        <g stroke="#006BA8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <g stroke="#1D6BC4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M 108 112 C 124 102, 148 106, 162 120" />
           <path d="M 132 82 C 150 74, 174 76, 188 88" />
         </g>
 
-        {/* 2. TOP-RIGHT PIECE: Warm Amber / Golden Orange */}
+        {/* 2. TOP-RIGHT PIECE: Sunburst Gold (#FFD23F) */}
         <path 
           d="
             M 200 45
@@ -161,19 +161,19 @@ export const RabaLogo: React.FC<RabaLogoProps> = ({
             C 330 110, 310 82, 280 64
             C 256 50, 228 44, 200 45 Z
           "
-          fill="#F8A51D"
+          fill="#FFD23F"
           stroke={cutStroke}
           strokeWidth={cutStrokeWidth}
           strokeLinejoin="round"
           strokeLinecap="round"
         />
-        <g stroke="#D97706" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <g stroke="#D9A814" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M 234 82 C 254 74, 282 78, 298 94" />
           <path d="M 248 118 C 274 110, 304 116, 318 134" />
           <path d="M 272 156 C 292 152, 314 162, 322 178" />
         </g>
 
-        {/* 3. MIDDLE-LEFT PIECE: Emerald Green */}
+        {/* 3. MIDDLE-LEFT PIECE: Fresh Emerald Green (#22C55E) */}
         <path 
           d="
             M 72 156
@@ -195,18 +195,18 @@ export const RabaLogo: React.FC<RabaLogoProps> = ({
             C 126 174, 118 182, 106 182
             C 90 182, 76 172, 72 156 Z
           "
-          fill="#00B050"
+          fill="#22C55E"
           stroke={cutStroke}
           strokeWidth={cutStrokeWidth}
           strokeLinejoin="round"
           strokeLinecap="round"
         />
-        <g stroke="#047857" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <g stroke="#15803D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M 96 196 C 114 188, 134 192, 146 206" />
           <path d="M 106 230 C 124 224, 144 232, 152 246" />
         </g>
 
-        {/* 4. CENTER & LOWER-RIGHT PIECE: Vibrant Magenta / Hot Pink */}
+        {/* 4. CENTER & LOWER-RIGHT PIECE: Vibrant Neon Magenta (#FF2D9B) */}
         <path 
           d="
             M 220 206
@@ -228,18 +228,18 @@ export const RabaLogo: React.FC<RabaLogoProps> = ({
             C 202 242, 210 234, 214 224
             L 220 206 Z
           "
-          fill="#E5007D"
+          fill="#FF2D9B"
           stroke={cutStroke}
           strokeWidth={cutStrokeWidth}
           strokeLinejoin="round"
           strokeLinecap="round"
         />
-        <g stroke="#BE185D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <g stroke="#BE126E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <path d="M 238 238 C 262 232, 286 242, 294 262" />
           <path d="M 226 270 C 248 266, 270 274, 278 290" />
         </g>
 
-        {/* 5. BOTTOM STEM PIECE: Lemon Yellow */}
+        {/* 5. BOTTOM STEM PIECE: High-Contrast Chartreuse / Lime (#D9F14A) */}
         <path 
           d="
             M 176 250
@@ -263,13 +263,13 @@ export const RabaLogo: React.FC<RabaLogoProps> = ({
             C 128 276, 142 268, 156 268
             L 176 250 Z
           "
-          fill="#FDE047"
+          fill="#D9F14A"
           stroke={cutStroke}
           strokeWidth={cutStrokeWidth}
           strokeLinejoin="round"
           strokeLinecap="round"
         />
-        <g stroke="#CA8A04" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <g stroke="#A3BD12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M 148 296 C 158 308, 158 326, 152 340" />
         </g>
       </svg>
@@ -339,16 +339,16 @@ export const RabaLogo: React.FC<RabaLogoProps> = ({
     if (enText.trim().toUpperCase() === 'RABA') {
       return (
         <div className="flex items-center gap-0.5 sm:gap-1 font-sans font-bold select-none text-[11px] sm:text-[13px] tracking-[0.24em] leading-none" dir="ltr">
-          <span className="text-[#008CD3]">R</span>
-          <span className="text-[#00A89A]">A</span>
-          <span className="text-[#00B050]">B</span>
-          <span className="text-[#009F4D]">A</span>
+          <span className="text-[#2E86EB]">R</span>
+          <span className="text-[#FFD23F]">A</span>
+          <span className="text-[#22C55E]">B</span>
+          <span className="text-[#FF2D9B]">A</span>
         </div>
       );
     }
     return (
       <span 
-        className="font-sans font-bold select-none text-[10px] sm:text-[11px] tracking-wider px-1.5 py-0.5 rounded-md bg-teal-500/10 text-teal-700 dark:text-[#00E5BE] border border-teal-500/20 leading-none" 
+        className="font-sans font-bold select-none text-[10px] sm:text-[11px] tracking-wider px-1.5 py-0.5 rounded-md bg-[#2E86EB]/10 text-[#2E86EB] border border-[#2E86EB]/20 leading-none" 
         dir="ltr"
       >
         {enText}
@@ -369,7 +369,7 @@ export const RabaLogo: React.FC<RabaLogoProps> = ({
     <span 
       style={mainTitleColorStyle}
       className={`font-black select-none tracking-tight leading-none drop-shadow-2xs ${
-        !currentSettings.titleColor ? 'text-[#E5007D] dark:text-[#FB7185]' : ''
+        !currentSettings.titleColor ? 'text-[#2E86EB] dark:text-white' : ''
       }`}
       dir={isArabic ? 'rtl' : 'ltr'}
     >

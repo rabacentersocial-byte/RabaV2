@@ -341,7 +341,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
               onClick={() => setSubTab(tab.id as any)}
               className={`px-4 py-2 rounded-2xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
                 subTab === tab.id
-                  ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-md scale-102'
+                  ? 'bg-[#2E86EB] text-white shadow-md scale-102'
                   : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
@@ -385,7 +385,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
                   onClick={() => handleSelectPreset(preset)}
                   className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between gap-3 ${
                     themeSettings.id === preset.id
-                      ? 'border-[#00E5BE] bg-emerald-500/5 dark:bg-[#00E5BE]/10 shadow-md ring-2 ring-[#00E5BE]/30'
+                      ? 'border-[#2E86EB] bg-[#2E86EB]/5 dark:bg-[#2E86EB]/10 shadow-md ring-2 ring-[#2E86EB]/30'
                       : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800/60 hover:border-slate-300'
                   }`}
                 >
@@ -395,19 +395,20 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
                         {isArabic ? preset.nameAr : preset.nameEn}
                       </span>
                       {themeSettings.id === preset.id && (
-                        <span className="w-5 h-5 rounded-full bg-[#00E5BE] text-slate-950 flex items-center justify-center text-[11px] font-black">
+                        <span className="w-5 h-5 rounded-full bg-[#2E86EB] text-white flex items-center justify-center text-[11px] font-black">
                           ✓
                         </span>
                       )}
                     </div>
                   </div>
 
-                  {/* Swatches */}
+                  {/* 5 Palette Swatches */}
                   <div className="flex items-center gap-1.5 pt-1">
-                    <span className="w-7 h-7 rounded-lg shadow-xs" style={{ backgroundColor: preset.primaryColor }} title="Primary" />
-                    <span className="w-7 h-7 rounded-lg shadow-xs" style={{ backgroundColor: preset.primaryLight }} title="Primary Light" />
-                    <span className="w-7 h-7 rounded-lg shadow-xs" style={{ backgroundColor: preset.accentColor }} title="Accent" />
-                    <span className="w-7 h-7 rounded-lg shadow-xs" style={{ backgroundColor: preset.secondaryColor }} title="Secondary" />
+                    <span className="w-6 h-6 rounded-lg shadow-xs border border-white/20" style={{ backgroundColor: preset.primaryColor }} title="Primary (#2E86EB)" />
+                    <span className="w-6 h-6 rounded-lg shadow-xs border border-white/20" style={{ backgroundColor: preset.secondaryColor }} title="Secondary (#FFD23F)" />
+                    <span className="w-6 h-6 rounded-lg shadow-xs border border-white/20" style={{ backgroundColor: preset.tertiaryColor || '#22C55E' }} title="Tertiary (#22C55E)" />
+                    <span className="w-6 h-6 rounded-lg shadow-xs border border-white/20" style={{ backgroundColor: preset.accentColor }} title="Accent (#FF2D9B)" />
+                    <span className="w-6 h-6 rounded-lg shadow-xs border border-white/20" style={{ backgroundColor: preset.neutralColor || '#D9F14A' }} title="Neutral (#D9F14A)" />
                   </div>
                 </div>
               ))}
@@ -417,24 +418,24 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
           {/* Custom Hex Color Pickers Form */}
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-5 shadow-xs space-y-4">
             <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-teal-600" />
-              <span>{isArabic ? 'تخصيص أكواد الألوان بدقة (Custom Hex Color Picker)' : 'Custom Hex Color Picker'}</span>
+              <Sparkles className="w-4 h-4 text-[#2E86EB]" />
+              <span>{isArabic ? 'تخصيص لوحة الألوان الـ 5 المعتمدة (5-Color Palette Editor)' : '5-Color Palette Editor'}</span>
             </h3>
 
             <form onSubmit={handleSaveCustomTheme} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                 
-                {/* Primary Color */}
+                {/* 1. Primary Color (#2E86EB) */}
                 <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/5 space-y-2">
                   <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">
-                    {isArabic ? 'اللون الرئيسي الداكن:' : 'Primary Color:'}
+                    {isArabic ? 'الرئيسي (Primary):' : 'Primary:'}
                   </label>
                   <div className="flex items-center gap-2">
                     <input
                       type="color"
                       value={themeSettings.primaryColor}
                       onChange={(e) => setThemeSettings({ ...themeSettings, primaryColor: e.target.value })}
-                      className="w-10 h-10 rounded-xl cursor-pointer border-0 bg-transparent"
+                      className="w-9 h-9 rounded-xl cursor-pointer border-0 bg-transparent shrink-0"
                     />
                     <input
                       type="text"
@@ -445,64 +446,85 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
                   </div>
                 </div>
 
-                {/* Primary Light */}
+                {/* 2. Secondary Color (#FFD23F) */}
                 <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/5 space-y-2">
                   <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">
-                    {isArabic ? 'درجة اللون المتوسطة:' : 'Primary Light:'}
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="color"
-                      value={themeSettings.primaryLight}
-                      onChange={(e) => setThemeSettings({ ...themeSettings, primaryLight: e.target.value })}
-                      className="w-10 h-10 rounded-xl cursor-pointer border-0 bg-transparent"
-                    />
-                    <input
-                      type="text"
-                      value={themeSettings.primaryLight}
-                      onChange={(e) => setThemeSettings({ ...themeSettings, primaryLight: e.target.value })}
-                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl p-2 text-xs font-mono font-bold"
-                    />
-                  </div>
-                </div>
-
-                {/* Accent Color */}
-                <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/5 space-y-2">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">
-                    {isArabic ? 'لون التمييز والأزرار (Accent):' : 'Accent Color:'}
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="color"
-                      value={themeSettings.accentColor}
-                      onChange={(e) => setThemeSettings({ ...themeSettings, accentColor: e.target.value })}
-                      className="w-10 h-10 rounded-xl cursor-pointer border-0 bg-transparent"
-                    />
-                    <input
-                      type="text"
-                      value={themeSettings.accentColor}
-                      onChange={(e) => setThemeSettings({ ...themeSettings, accentColor: e.target.value })}
-                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl p-2 text-xs font-mono font-bold"
-                    />
-                  </div>
-                </div>
-
-                {/* Secondary Color */}
-                <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/5 space-y-2">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">
-                    {isArabic ? 'اللون الثانوي (Secondary):' : 'Secondary Color:'}
+                    {isArabic ? 'الثانوي (Secondary):' : 'Secondary:'}
                   </label>
                   <div className="flex items-center gap-2">
                     <input
                       type="color"
                       value={themeSettings.secondaryColor}
                       onChange={(e) => setThemeSettings({ ...themeSettings, secondaryColor: e.target.value })}
-                      className="w-10 h-10 rounded-xl cursor-pointer border-0 bg-transparent"
+                      className="w-9 h-9 rounded-xl cursor-pointer border-0 bg-transparent shrink-0"
                     />
                     <input
                       type="text"
                       value={themeSettings.secondaryColor}
                       onChange={(e) => setThemeSettings({ ...themeSettings, secondaryColor: e.target.value })}
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl p-2 text-xs font-mono font-bold"
+                    />
+                  </div>
+                </div>
+
+                {/* 3. Tertiary Color (#22C55E) */}
+                <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/5 space-y-2">
+                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">
+                    {isArabic ? 'الثالث (Tertiary):' : 'Tertiary:'}
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={themeSettings.tertiaryColor || '#22C55E'}
+                      onChange={(e) => setThemeSettings({ ...themeSettings, tertiaryColor: e.target.value })}
+                      className="w-9 h-9 rounded-xl cursor-pointer border-0 bg-transparent shrink-0"
+                    />
+                    <input
+                      type="text"
+                      value={themeSettings.tertiaryColor || '#22C55E'}
+                      onChange={(e) => setThemeSettings({ ...themeSettings, tertiaryColor: e.target.value })}
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl p-2 text-xs font-mono font-bold"
+                    />
+                  </div>
+                </div>
+
+                {/* 4. Accent Color (#FF2D9B) */}
+                <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/5 space-y-2">
+                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">
+                    {isArabic ? 'التمييز (Accent):' : 'Accent:'}
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={themeSettings.accentColor}
+                      onChange={(e) => setThemeSettings({ ...themeSettings, accentColor: e.target.value })}
+                      className="w-9 h-9 rounded-xl cursor-pointer border-0 bg-transparent shrink-0"
+                    />
+                    <input
+                      type="text"
+                      value={themeSettings.accentColor}
+                      onChange={(e) => setThemeSettings({ ...themeSettings, accentColor: e.target.value })}
+                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl p-2 text-xs font-mono font-bold"
+                    />
+                  </div>
+                </div>
+
+                {/* 5. Neutral Color (#D9F14A) */}
+                <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/5 space-y-2">
+                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">
+                    {isArabic ? 'المتباين (Neutral):' : 'Neutral:'}
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={themeSettings.neutralColor || '#D9F14A'}
+                      onChange={(e) => setThemeSettings({ ...themeSettings, neutralColor: e.target.value })}
+                      className="w-9 h-9 rounded-xl cursor-pointer border-0 bg-transparent shrink-0"
+                    />
+                    <input
+                      type="text"
+                      value={themeSettings.neutralColor || '#D9F14A'}
+                      onChange={(e) => setThemeSettings({ ...themeSettings, neutralColor: e.target.value })}
                       className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl p-2 text-xs font-mono font-bold"
                     />
                   </div>
@@ -514,10 +536,10 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
               <div className="flex justify-end pt-2">
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-2xl bg-[#0B3B36] hover:bg-[#00E5BE] hover:text-slate-950 text-white font-black text-xs shadow-md transition-all cursor-pointer flex items-center gap-2"
+                  className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:opacity-95 text-white font-black text-xs shadow-md transition-all cursor-pointer flex items-center gap-2"
                 >
                   <Save className="w-4 h-4" />
-                  <span>{isArabic ? 'حفظ وتطبيق لون الثيم' : 'Save & Apply Palette'}</span>
+                  <span>{isArabic ? 'حفظ وتطبيق ألوان الباقة' : 'Save & Apply Palette'}</span>
                 </button>
               </div>
             </form>
@@ -1007,7 +1029,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
                   type="email"
                   value={footerSettings.email}
                   onChange={(e) => setFooterSettings({ ...footerSettings, email: e.target.value })}
-                  placeholder="contact@rabacenter.com"
+                  placeholder="info@rabacenters.com"
                   className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-xs font-mono outline-none"
                 />
               </div>

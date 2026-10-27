@@ -33,89 +33,89 @@ export interface SpecialistLogoTheme {
 }
 
 export const SPECIALIST_LOGO_THEMES: SpecialistLogoTheme[] = [
-  // 1. Raba Classic Deep Teal (#0a3530 / #0d5c52) - اللون الأساسي للشعار والإدارة الطبية
-  {
-    id: 'teal',
-    nameAr: 'تيل رابا الأساسي',
-    nameEn: 'Raba Classic Teal',
-    accentHex: '#0a3530',
-    cardBorderHover: 'border-[#cbe8df] dark:border-teal-950/70 hover:border-[#0a3530]/60 hover:shadow-[0_16px_36px_rgba(10,53,48,0.13)]',
-    topAccentBar: 'bg-gradient-to-r from-[#0a3530] via-[#0d5c52] to-[#2dd4bf]',
-    photoBg: 'bg-[#edf7f4] dark:bg-[#072420]',
-    specialtyBadge: 'bg-[#edf7f4] dark:bg-teal-950/60 text-[#0a3530] dark:text-[#2dd4bf] border border-[#cbe8df] dark:border-teal-800/40',
-    expMetricColor: 'text-[#0a3530] dark:text-[#2dd4bf]',
-    bookButton: 'bg-[#0a3530] hover:bg-[#062420] text-white shadow-xs hover:shadow-md active:scale-95',
-    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-[#0a3530] hover:border-[#0a3530] dark:hover:text-[#2dd4bf] dark:hover:border-[#2dd4bf]',
-    availableDot: 'bg-[#0d9488]',
-    availableText: 'text-[#0a3530] dark:text-[#2dd4bf]'
-  },
-
-  // 2. Logo Sky Blue (#008CD3 / #0284c7) - قطعة اللوجو الزرقاء السماوية
+  // 1. Primary #2E86EB (Electric Medical Blue) - اللون الأساسي المعتمد
   {
     id: 'blue',
-    nameAr: 'أزرق سماوي',
-    nameEn: 'Logo Sky Blue',
-    accentHex: '#0284c7',
-    cardBorderHover: 'border-[#c2e0f6] dark:border-sky-950/70 hover:border-[#0284c7]/60 hover:shadow-[0_16px_36px_rgba(2,132,199,0.15)]',
-    topAccentBar: 'bg-gradient-to-r from-[#0284c7] via-[#008CD3] to-[#38bdf8]',
-    photoBg: 'bg-[#f0f7fc] dark:bg-[#081e33]',
-    specialtyBadge: 'bg-[#f0f7fc] dark:bg-sky-950/60 text-[#0284c7] dark:text-[#38bdf8] border border-[#c2e0f6] dark:border-sky-800/40',
-    expMetricColor: 'text-[#0284c7] dark:text-[#38bdf8]',
-    bookButton: 'bg-[#0284c7] hover:bg-[#0369a1] text-white shadow-xs hover:shadow-md active:scale-95',
-    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-[#0284c7] hover:border-[#0284c7] dark:hover:text-[#38bdf8] dark:hover:border-[#38bdf8]',
-    availableDot: 'bg-[#0284c7]',
-    availableText: 'text-[#0284c7] dark:text-[#38bdf8]'
+    nameAr: 'أزرق رابا الأساسي',
+    nameEn: 'Primary Medical Blue',
+    accentHex: '#2E86EB',
+    cardBorderHover: 'border-blue-200 dark:border-blue-950/70 hover:border-[#2E86EB]/60 hover:shadow-[0_16px_36px_rgba(46,134,235,0.18)]',
+    topAccentBar: 'bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#60a5fa]',
+    photoBg: 'bg-blue-50/60 dark:bg-[#0c1f38]',
+    specialtyBadge: 'bg-blue-50 dark:bg-blue-950/60 text-[#2E86EB] dark:text-[#60a5fa] border border-blue-200 dark:border-blue-800/40',
+    expMetricColor: 'text-[#2E86EB] dark:text-[#60a5fa]',
+    bookButton: 'bg-[#2E86EB] hover:bg-[#1d74d8] text-white shadow-xs hover:shadow-md active:scale-95',
+    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-[#2E86EB] hover:border-[#2E86EB] dark:hover:text-[#60a5fa] dark:hover:border-[#60a5fa]',
+    availableDot: 'bg-[#2E86EB]',
+    availableText: 'text-[#2E86EB] dark:text-[#60a5fa]'
   },
 
-  // 3. Logo Warm Amber / Golden Orange (#F8A51D / #b45309) - قطعة اللوجو الذهبية العنبرية
+  // 2. Secondary #FFD23F (Warm Gold / Saffron) - اللون الثانوي
   {
     id: 'amber',
-    nameAr: 'عنبري ذهبي',
-    nameEn: 'Logo Warm Amber',
-    accentHex: '#b45309',
-    cardBorderHover: 'border-[#f7dc9f] dark:border-amber-950/70 hover:border-[#b45309]/60 hover:shadow-[0_16px_36px_rgba(180,83,9,0.15)]',
-    topAccentBar: 'bg-gradient-to-r from-[#b45309] via-[#F8A51D] to-[#fbbf24]',
-    photoBg: 'bg-[#fef9ee] dark:bg-[#2b1c06]',
-    specialtyBadge: 'bg-[#fef9ee] dark:bg-amber-950/60 text-[#9a5600] dark:text-[#fbbf24] border border-[#f7dc9f] dark:border-amber-800/40',
-    expMetricColor: 'text-[#9a5600] dark:text-[#fbbf24]',
-    bookButton: 'bg-[#b45309] hover:bg-[#92400e] text-white shadow-xs hover:shadow-md active:scale-95',
-    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-[#b45309] hover:border-[#b45309] dark:hover:text-[#fbbf24] dark:hover:border-[#fbbf24]',
-    availableDot: 'bg-[#d97706]',
-    availableText: 'text-[#9a5600] dark:text-[#fbbf24]'
+    nameAr: 'ذهبي عنبري',
+    nameEn: 'Secondary Warm Gold',
+    accentHex: '#FFD23F',
+    cardBorderHover: 'border-amber-200 dark:border-amber-950/70 hover:border-[#FFD23F]/60 hover:shadow-[0_16px_36px_rgba(255,210,63,0.18)]',
+    topAccentBar: 'bg-gradient-to-r from-[#FFD23F] via-[#FBBF24] to-[#fde047]',
+    photoBg: 'bg-amber-50/60 dark:bg-[#2b1f06]',
+    specialtyBadge: 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-[#FFD23F] border border-amber-200 dark:border-amber-800/40',
+    expMetricColor: 'text-amber-700 dark:text-[#FFD23F]',
+    bookButton: 'bg-[#FFD23F] hover:bg-[#f5c724] text-slate-950 font-black shadow-xs hover:shadow-md active:scale-95',
+    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-amber-700 hover:border-[#FFD23F] dark:hover:text-[#FFD23F] dark:hover:border-[#FFD23F]',
+    availableDot: 'bg-[#FFD23F]',
+    availableText: 'text-amber-800 dark:text-[#FFD23F]'
   },
 
-  // 4. Logo Rose Magenta (#E5007D / #be185d) - قطعة اللوجو الفوشيا الوردية
-  {
-    id: 'rose',
-    nameAr: 'وردي فوشيا',
-    nameEn: 'Logo Rose Magenta',
-    accentHex: '#be185d',
-    cardBorderHover: 'border-[#f6b4d7] dark:border-pink-950/70 hover:border-[#be185d]/60 hover:shadow-[0_16px_36px_rgba(190,24,93,0.15)]',
-    topAccentBar: 'bg-gradient-to-r from-[#be185d] via-[#E5007D] to-[#f472b6]',
-    photoBg: 'bg-[#fdf2f8] dark:bg-[#2e0b1d]',
-    specialtyBadge: 'bg-[#fdf2f8] dark:bg-pink-950/60 text-[#9d174d] dark:text-[#f472b6] border border-[#f6b4d7] dark:border-pink-800/40',
-    expMetricColor: 'text-[#9d174d] dark:text-[#f472b6]',
-    bookButton: 'bg-[#be185d] hover:bg-[#9d174d] text-white shadow-xs hover:shadow-md active:scale-95',
-    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-[#be185d] hover:border-[#be185d] dark:hover:text-[#f472b6] dark:hover:border-[#f472b6]',
-    availableDot: 'bg-[#e11d48]',
-    availableText: 'text-[#be185d] dark:text-[#f472b6]'
-  },
-
-  // 5. Logo Emerald Green (#00B050 / #15803d) - قطعة اللوجو الخضراء الزمردية
+  // 3. Tertiary #22C55E (Vivid Emerald Green) - لون النمو والتعافي الصحي
   {
     id: 'emerald',
     nameAr: 'أخضر زمردي',
-    nameEn: 'Logo Emerald Green',
-    accentHex: '#15803d',
-    cardBorderHover: 'border-[#b9f2cb] dark:border-emerald-950/70 hover:border-[#15803d]/60 hover:shadow-[0_16px_36px_rgba(21,128,61,0.15)]',
-    topAccentBar: 'bg-gradient-to-r from-[#15803d] via-[#00B050] to-[#4ade80]',
-    photoBg: 'bg-[#f0fdf4] dark:bg-[#072412]',
-    specialtyBadge: 'bg-[#f0fdf4] dark:bg-emerald-950/60 text-[#14532d] dark:text-[#4ade80] border border-[#b9f2cb] dark:border-emerald-800/40',
-    expMetricColor: 'text-[#14532d] dark:text-[#4ade80]',
-    bookButton: 'bg-[#15803d] hover:bg-[#166534] text-white shadow-xs hover:shadow-md active:scale-95',
-    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-[#15803d] hover:border-[#15803d] dark:hover:text-[#4ade80] dark:hover:border-[#4ade80]',
-    availableDot: 'bg-[#16a34a]',
-    availableText: 'text-[#14532d] dark:text-[#4ade80]'
+    nameEn: 'Tertiary Emerald Green',
+    accentHex: '#22C55E',
+    cardBorderHover: 'border-emerald-200 dark:border-emerald-950/70 hover:border-[#22C55E]/60 hover:shadow-[0_16px_36px_rgba(34,197,94,0.18)]',
+    topAccentBar: 'bg-gradient-to-r from-[#22C55E] via-[#16a34a] to-[#4ade80]',
+    photoBg: 'bg-emerald-50/60 dark:bg-[#072412]',
+    specialtyBadge: 'bg-emerald-50 dark:bg-emerald-950/60 text-[#15803d] dark:text-[#4ade80] border border-emerald-200 dark:border-emerald-800/40',
+    expMetricColor: 'text-[#15803d] dark:text-[#4ade80]',
+    bookButton: 'bg-[#22C55E] hover:bg-[#16a34a] text-white shadow-xs hover:shadow-md active:scale-95',
+    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-[#22C55E] hover:border-[#22C55E] dark:hover:text-[#4ade80] dark:hover:border-[#4ade80]',
+    availableDot: 'bg-[#22C55E]',
+    availableText: 'text-[#15803d] dark:text-[#4ade80]'
+  },
+
+  // 4. Accent #FF2D9B (Neon Magenta / Rose) - لون التميز والنشاط
+  {
+    id: 'rose',
+    nameAr: 'وردي فوشيا',
+    nameEn: 'Accent Neon Magenta',
+    accentHex: '#FF2D9B',
+    cardBorderHover: 'border-pink-200 dark:border-pink-950/70 hover:border-[#FF2D9B]/60 hover:shadow-[0_16px_36px_rgba(255,45,155,0.18)]',
+    topAccentBar: 'bg-gradient-to-r from-[#FF2D9B] via-[#f43f5e] to-[#fb7185]',
+    photoBg: 'bg-pink-50/60 dark:bg-[#2b0c1e]',
+    specialtyBadge: 'bg-pink-50 dark:bg-pink-950/60 text-[#be185d] dark:text-[#f472b6] border border-pink-200 dark:border-pink-800/40',
+    expMetricColor: 'text-[#be185d] dark:text-[#f472b6]',
+    bookButton: 'bg-[#FF2D9B] hover:bg-[#e01980] text-white shadow-xs hover:shadow-md active:scale-95',
+    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-[#FF2D9B] hover:border-[#FF2D9B] dark:hover:text-[#f472b6] dark:hover:border-[#f472b6]',
+    availableDot: 'bg-[#FF2D9B]',
+    availableText: 'text-[#be185d] dark:text-[#f472b6]'
+  },
+
+  // 5. Neutral #D9F14A (Electric Chartreuse / Lime) - لون التباين العالي
+  {
+    id: 'lime',
+    nameAr: 'ليموني مشرق',
+    nameEn: 'Neutral Electric Lime',
+    accentHex: '#D9F14A',
+    cardBorderHover: 'border-lime-200 dark:border-lime-950/70 hover:border-[#D9F14A]/60 hover:shadow-[0_16px_36px_rgba(217,241,74,0.18)]',
+    topAccentBar: 'bg-gradient-to-r from-[#D9F14A] via-[#bef264] to-[#a3e635]',
+    photoBg: 'bg-lime-50/60 dark:bg-[#1a2307]',
+    specialtyBadge: 'bg-lime-50 dark:bg-lime-950/60 text-[#4d7c0f] dark:text-[#D9F14A] border border-lime-200 dark:border-lime-800/40',
+    expMetricColor: 'text-[#4d7c0f] dark:text-[#D9F14A]',
+    bookButton: 'bg-[#D9F14A] hover:bg-[#c9e338] text-slate-950 font-black shadow-xs hover:shadow-md active:scale-95',
+    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-[#4d7c0f] hover:border-[#D9F14A] dark:hover:text-[#D9F14A] dark:hover:border-[#D9F14A]',
+    availableDot: 'bg-[#65a30d]',
+    availableText: 'text-[#4d7c0f] dark:text-[#D9F14A]'
   },
 
   // 6. Royal Purple / Violet (#6d28d9) - بنفسجي التأهيل التخصصي

@@ -118,14 +118,14 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
       style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 8px)' }}
     >
       {/* Frosted Glass Container with top border & subtle shadow */}
-      <div className="mx-2.5 mb-1.5 rounded-2xl bg-white/95 dark:bg-[#071D18]/95 backdrop-blur-2xl border border-slate-200/90 dark:border-white/15 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_-8px_35px_rgba(0,0,0,0.45)] px-1.5 py-1.5 flex items-center justify-around">
+      <div className="mx-2.5 mb-1.5 rounded-2xl bg-white/95 dark:bg-[#0B0F19]/95 backdrop-blur-2xl border border-slate-200/90 dark:border-white/15 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_-8px_35px_rgba(0,0,0,0.45)] px-1.5 py-1.5 flex items-center justify-around">
         
         {/* 1. Home */}
         <button
           onClick={handleHomeClick}
           className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer min-w-[56px] min-h-[44px] ${
             activeTab === 'home'
-              ? 'text-[#0B3B36] dark:text-[#00E5BE] font-black scale-105'
+              ? 'text-[#2E86EB] font-black scale-105'
               : 'text-slate-500 dark:text-slate-400 font-semibold hover:text-slate-800 dark:hover:text-white'
           }`}
         >
@@ -138,7 +138,7 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
           onClick={handleServicesClick}
           className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer min-w-[56px] min-h-[44px] ${
             activeTab === 'services'
-              ? 'text-[#0B3B36] dark:text-[#00E5BE] font-black scale-105'
+              ? 'text-[#2E86EB] font-black scale-105'
               : 'text-slate-500 dark:text-slate-400 font-semibold hover:text-slate-800 dark:hover:text-white'
           }`}
         >
@@ -146,11 +146,11 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
           <span className="text-[11px] font-bold tracking-tight">{isArabic ? 'الخدمات' : 'Services'}</span>
         </button>
 
-        {/* 3. Center CTA: Book Appointment */}
+        {/* 3. Center CTA: Book Appointment (Primary #2E86EB to Tertiary #22C55E) */}
         <button
           onClick={onOpenBooking}
           id="mobile-bottom-book-btn"
-          className="flex flex-col items-center justify-center -mt-4 px-3.5 py-1.5 rounded-2xl bg-gradient-to-r from-[#0B3B36] via-[#0D4D46] to-[#00E5BE] text-white shadow-lg shadow-teal-900/30 dark:shadow-teal-500/25 border-2 border-white dark:border-[#071D18] active:scale-95 transition-transform cursor-pointer min-h-[48px]"
+          className="flex flex-col items-center justify-center -mt-4 px-3.5 py-1.5 rounded-2xl bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] text-white shadow-lg shadow-blue-500/25 border-2 border-white dark:border-[#0B0F19] active:scale-95 transition-transform cursor-pointer min-h-[48px]"
         >
           <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center mb-0.5">
             <CalendarCheck className="w-4 h-4 text-white" />
@@ -163,7 +163,7 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
           onClick={handleSpecialistsClick}
           className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer min-w-[56px] min-h-[44px] ${
             activeTab === 'specialists'
-              ? 'text-[#0B3B36] dark:text-[#00E5BE] font-black scale-105'
+              ? 'text-[#2E86EB] font-black scale-105'
               : 'text-slate-500 dark:text-slate-400 font-semibold hover:text-slate-800 dark:hover:text-white'
           }`}
         >
@@ -171,16 +171,16 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
           <span className="text-[11px] font-bold tracking-tight">{isArabic ? 'الأخصائيين' : 'Specialists'}</span>
         </button>
 
-        {/* 5. Our Branches (replaced WhatsApp) */}
+        {/* 5. Our Branches */}
         <button
           onClick={handleBranchesClick}
           className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer min-w-[56px] min-h-[44px] ${
             activeTab === 'branches'
-              ? 'text-[#0B3B36] dark:text-[#00E5BE] font-black scale-105'
+              ? 'text-[#2E86EB] font-black scale-105'
               : 'text-slate-500 dark:text-slate-400 font-semibold hover:text-slate-800 dark:hover:text-white'
           }`}
         >
-          <MapPin className="w-5 h-5 mb-0.5 text-emerald-600 dark:text-[#00E5BE]" />
+          <MapPin className="w-5 h-5 mb-0.5 text-[#22C55E]" />
           <span className="text-[11px] font-bold tracking-tight">{isArabic ? 'فروعنا' : 'Branches'}</span>
         </button>
 

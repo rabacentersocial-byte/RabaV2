@@ -237,14 +237,14 @@ export const Navbar: React.FC<NavbarProps> = ({
     <>
       <header 
         id="main-sticky-header"
-        className={`sticky top-0 z-50 w-full py-2 sm:py-2.5 transition-none sm:transition-colors sm:duration-300 ${
+        className={`sticky top-0 z-50 w-full py-2 sm:py-2.5 transition-all duration-300 ${
           isScrolled 
             ? isDark 
-              ? 'bg-[#061412]/95 backdrop-blur-2xl border-b border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]' 
-              : 'bg-white/95 backdrop-blur-2xl border-b border-slate-200/90 shadow-[0_8px_25px_rgba(0,0,0,0.06)]'
+              ? 'bg-[#0B0F19]/80 backdrop-blur-2xl border-b border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.55),inset_0_1px_1px_rgba(255,255,255,0.1)]' 
+              : 'bg-white/85 backdrop-blur-2xl border-b border-white/80 shadow-[0_10px_30px_rgba(15,23,42,0.06),inset_0_1px_1px_rgba(255,255,255,0.95)]'
             : isDark 
-              ? 'bg-[#061412]/85 backdrop-blur-xl border-b border-white/10' 
-              : 'bg-white/90 backdrop-blur-xl border-b border-slate-200/70'
+              ? 'bg-[#0B0F19]/60 backdrop-blur-xl border-b border-white/10' 
+              : 'bg-white/70 backdrop-blur-xl border-b border-white/60'
         }`}
         style={{ position: 'sticky', top: 0, zIndex: 50 }}
       >
@@ -267,8 +267,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               <RabaLogo variant="compact" size="md" />
             </a>
 
-            {/* 2. Primary Navigation (Desktop - Balanced & Clean) */}
-            <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5" aria-label="القائمة الرئيسية">
+            {/* 2. Primary Navigation (Desktop - Liquid Glass Capsule Track) */}
+            <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5 p-1 rounded-full liquid-glass-pill" aria-label="القائمة الرئيسية">
               {navLinks.map((link) => {
                 const isLinkActive = 
                   (link.href === '#offers' && isOffersPageOpen) ||
@@ -301,12 +301,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                         onGoHome();
                       }
                     }}
-                    className={`px-3 py-2 text-xs xl:text-sm font-bold rounded-xl transition-all ${
+                    className={`px-3 py-1.5 text-xs xl:text-sm font-bold rounded-full transition-all duration-200 ${
                       isLinkActive
-                        ? 'bg-[#0B3B36] text-white dark:bg-[#00E5BE] dark:text-slate-950 shadow-sm'
+                        ? 'bg-[#2E86EB] text-white shadow-md shadow-blue-500/25 border-t border-white/40'
                         : isDark
                           ? 'text-slate-300 hover:text-white hover:bg-white/[0.08]'
-                          : 'text-slate-700 hover:text-slate-950 hover:bg-slate-100'
+                          : 'text-slate-700 hover:text-slate-950 hover:bg-white/80'
                     }`}
                   >
                     {link.label}
@@ -322,15 +322,15 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={toggleLanguage}
                 id="header-language-toggle-btn"
-                className={`px-2 sm:px-3 py-2 rounded-xl backdrop-blur-md transition-all cursor-pointer flex items-center gap-1 sm:gap-1.5 border text-xs font-black shadow-xs ${
+                className={`px-2 sm:px-3 py-2 rounded-full transition-all cursor-pointer flex items-center gap-1 sm:gap-1.5 text-xs font-black shadow-xs ${
                   isDark 
-                    ? 'bg-white/[0.08] hover:bg-white/[0.14] text-slate-200 hover:text-white border-white/15' 
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-800 hover:text-slate-950 border-slate-200'
+                    ? 'liquid-glass-btn text-slate-200 hover:text-white' 
+                    : 'liquid-glass-btn text-slate-800 hover:text-slate-950'
                 }`}
                 title={isArabic ? "Switch to English" : "التحويل إلى اللغة العربية"}
                 aria-label="تبديل لغة الموقع"
               >
-                <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-teal-600 dark:text-[#00E5BE]" />
+                <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2E86EB]" />
                 <span className="font-bold tracking-wide">{isArabic ? 'EN' : 'عربي'}</span>
               </button>
 
@@ -338,18 +338,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={toggleTheme}
                 id="header-theme-toggle-btn"
-                className={`p-2 sm:p-2.5 rounded-xl backdrop-blur-md transition-all cursor-pointer flex items-center justify-center border shadow-xs ${
+                className={`p-2 sm:p-2.5 rounded-full transition-all cursor-pointer flex items-center justify-center shadow-xs ${
                   isDark 
-                    ? 'bg-white/[0.08] hover:bg-white/[0.14] text-amber-400 border-white/15' 
-                    : 'bg-slate-100 hover:bg-slate-200 text-sky-700 border-slate-200'
+                    ? 'liquid-glass-btn text-[#FFD23F]' 
+                    : 'liquid-glass-btn text-[#2E86EB]'
                 }`}
                 title={isDark ? "التحويل إلى الوضع الفاتح" : "التحويل إلى الوضع الليلي"}
                 aria-label="تبديل الوضع الليلي والفاتح"
               >
                 {isDark ? (
-                  <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 transition-transform hover:rotate-45" />
+                  <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FFD23F] transition-transform hover:rotate-45" />
                 ) : (
-                  <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-700 transition-transform hover:-rotate-12" />
+                  <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2E86EB] transition-transform hover:-rotate-12" />
                 )}
               </button>
 
@@ -358,10 +358,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   onClick={onOpenAdmin}
                   id="header-admin-btn"
-                  className={`hidden sm:flex p-2 sm:p-2.5 rounded-xl backdrop-blur-md transition-all cursor-pointer items-center justify-center border shadow-xs ${
+                  className={`hidden sm:flex p-2 sm:p-2.5 rounded-full transition-all cursor-pointer items-center justify-center shadow-xs ${
                     isDark 
-                      ? 'bg-white/[0.08] hover:bg-emerald-500/20 text-emerald-400 hover:text-emerald-300 border-white/15 hover:border-emerald-500/30' 
-                    : 'bg-slate-100 hover:bg-emerald-50 text-emerald-700 hover:text-emerald-800 border-slate-200 hover:border-emerald-300'
+                      ? 'liquid-glass-btn text-[#22C55E] hover:text-[#4ade80]' 
+                      : 'liquid-glass-btn text-[#16a34a] hover:text-[#15803d]'
                   }`}
                   title={isArabic ? "لوحة تحكم المنظومة والإدارة" : "Admin Dashboard"}
                   aria-label={isArabic ? "لوحة تحكم المنظومة والإدارة" : "Admin Dashboard"}
@@ -374,7 +374,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={onOpenBooking}
                 id="header-quick-book-btn"
-                className="relative group overflow-hidden flex items-center gap-2 bg-gradient-to-r from-[#00E5BE] via-[#00c9a7] to-[#0284C7] hover:from-[#00ffd2] hover:to-[#0396e6] active:scale-95 text-slate-950 text-xs sm:text-sm font-black px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl transition-all duration-300 shadow-md shadow-teal-500/20 hover:shadow-xl hover:shadow-teal-500/35 border border-white/40 cursor-pointer"
+                className="relative group overflow-hidden flex items-center gap-2 bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:from-[#1D74D8] hover:to-[#16A34A] active:scale-95 text-white text-xs sm:text-sm font-black px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl transition-all duration-300 shadow-md shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 border border-white/30 cursor-pointer"
               >
                 {/* Shimmer light sweep animation */}
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/35 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
@@ -429,14 +429,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               isArabic ? 'slide-in-from-right' : 'slide-in-from-left'
             } ${
               isDark 
-                ? 'bg-[#071311] text-white border-white/10' 
+                ? 'bg-[#0E1526] text-white border-white/10' 
                 : 'bg-white text-slate-900 border-slate-200/90'
             }`}
             dir={isArabic ? 'rtl' : 'ltr'}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Drawer Header: Brand, Status Beacon & Close Button */}
-            <div className="p-4 sm:p-5 border-b border-slate-200/80 dark:border-white/10 flex items-center justify-between shrink-0 bg-gradient-to-l from-teal-500/10 dark:from-teal-900/25 to-transparent">
+            <div className="p-4 sm:p-5 border-b border-slate-200/80 dark:border-white/10 flex items-center justify-between shrink-0 bg-gradient-to-l from-blue-500/10 dark:from-[#2E86EB]/20 to-transparent">
               <div className="flex items-center gap-2.5 min-w-0">
                 <RabaLogo variant="compact" size="sm" />
                 <div className="min-w-0">
@@ -445,7 +445,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </h3>
                   <div className="flex items-center gap-1.5 mt-0.5">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                    <span className="text-[10px] text-teal-700 dark:text-[#00E5BE] font-bold truncate">
+                    <span className="text-[10px] text-blue-600 dark:text-[#22C55E] font-bold truncate">
                       {isArabic ? 'متاح لاستقبال الحالات' : 'Active & Accepting Cases'}
                     </span>
                   </div>
@@ -465,18 +465,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar overscroll-contain">
               
               {/* Quick Booking Hero Card */}
-              <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#0B3B36] via-[#0b4840] to-[#0284C7] text-white shadow-md border border-white/20 relative overflow-hidden">
+              <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#0E2A54] via-[#1B4B8A] to-[#2E86EB] text-white shadow-md border border-white/20 relative overflow-hidden">
                 <div className="absolute -left-6 -top-6 w-20 h-20 bg-white/10 rounded-full blur-xl pointer-events-none" />
                 <div className="flex items-center justify-between gap-3 relative z-10">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/20 text-[#00E5BE] shadow-xs">
+                    <div className="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/20 text-[#FFD23F] shadow-xs">
                       <CalendarCheck className="w-5 h-5" />
                     </div>
                     <div className="min-w-0">
                       <h4 className="text-xs sm:text-sm font-black truncate">
                         {isArabic ? 'حجز تقييم استشاري' : 'Book Clinical Assessment'}
                       </h4>
-                      <p className="text-[10.5px] text-teal-100/90 mt-0.5 truncate font-medium">
+                      <p className="text-[10.5px] text-blue-100/90 mt-0.5 truncate font-medium">
                         {isArabic ? 'جلسات فورية مع نخبة الاستشاريين' : 'Certified clinical specialists'}
                       </p>
                     </div>
@@ -487,7 +487,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       setMobileMenuOpen(false);
                       onOpenBooking();
                     }}
-                    className="px-3.5 py-2 rounded-xl bg-[#00E5BE] hover:bg-[#00ffd2] text-slate-950 text-xs font-black shadow-xs cursor-pointer active:scale-95 transition-all flex items-center gap-1 shrink-0"
+                    className="px-3.5 py-2 rounded-xl bg-[#2E86EB] hover:bg-[#2575d0] text-white text-xs font-black shadow-xs cursor-pointer active:scale-95 transition-all flex items-center gap-1 shrink-0"
                   >
                     <span>{t('nav.bookNow')}</span>
                     {isArabic ? <ChevronLeft className="w-3.5 h-3.5 stroke-[3]" /> : <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />}
@@ -500,7 +500,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {mobileNavSections.map((section, sIdx) => (
                   <div key={sIdx} className="space-y-1.5">
                     <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 px-1.5 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-teal-500/50" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#2E86EB]/60" />
                       <span>{section.sectionTitle}</span>
                     </span>
 
@@ -541,7 +541,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                             }}
                             className={`group p-2.5 rounded-2xl transition-all flex items-center justify-between border cursor-pointer ${
                               isLinkActive
-                                ? 'bg-gradient-to-r from-[#0B3B36] to-[#0f5349] text-white shadow-sm border-teal-600/40 ring-1 ring-[#00E5BE]/30'
+                                ? 'bg-gradient-to-r from-[#1B4B8A] to-[#2E86EB] text-white shadow-sm border-blue-500/40 ring-1 ring-[#FFD23F]/40'
                                 : item.badgeHighlight
                                   ? 'bg-sky-500/5 hover:bg-sky-500/10 text-slate-800 dark:text-white border-sky-400/40 dark:border-sky-500/30'
                                   : isDark 

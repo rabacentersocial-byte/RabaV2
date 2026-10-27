@@ -175,6 +175,7 @@ export const KNOWN_STATIC_ALIASES: Record<string, string> = {
   '/uploads/1790358050734_Screenshot_2569-09-23_at_2_26_05_AM_png.png': '/images/hero/slide_4_doha.png',
   '/uploads/1790358074567_Screenshot_2569-09-23_at_2_27_08_AM_png.png': '/images/hero/slide_5_manar.png',
   '/uploads/1790358094657_Screenshot_2569-09-22_at_2_07_53_PM_png.png': '/images/hero/slide_6_fathi.png',
+  '/uploads/1790358094657_Screenshot_2569-09-23_at_2_07_53_PM_png.png': '/images/hero/slide_6_fathi.png',
   '/uploads/1790358114735_Screenshot_2569-09-23_at_2_25_47_AM_png.png': '/images/hero/slide_7_specialist.png',
   '/uploads/1790358142609_Screenshot_2569-09-23_at_2_26_16_AM_png.png': '/images/hero/slide_8_specialist.png',
   // Accreditations

@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "id": "",
+    "is_active": false
+  },
+  "tiktok": {
+    "id": "",
+    "is_active": false
+  },
+  "snapchat": {
+    "id": "",
+    "is_active": false
+  },
+  "gtm": {
+    "id": "",
+    "is_active": false
+  },
+  "custom_head": {
+    "script": "",
+    "is_active": false
+  },
+  "custom_body": {
+    "script": "",
+    "is_active": false
+  }
+}

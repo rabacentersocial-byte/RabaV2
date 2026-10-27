@@ -187,11 +187,11 @@ export const AccreditationsSection: React.FC = () => {
   return (
     <section 
       id="accreditations-section"
-      className="py-8 sm:py-10 bg-slate-50/60 dark:bg-white/[0.02] text-slate-800 dark:text-white relative overflow-hidden border-t border-b border-slate-200/80 dark:border-white/10 select-none transition-colors"
+      className="py-8 sm:py-10 bg-transparent text-slate-800 dark:text-white relative overflow-hidden border-t border-b border-slate-200/80 dark:border-white/10 select-none transition-colors"
     >
       {/* Edge gradient fade masks for smooth entrance/exit */}
-      <div className="absolute top-0 right-0 bottom-0 w-12 sm:w-28 bg-gradient-to-l from-slate-50/90 dark:from-[#061412] to-transparent z-20 pointer-events-none" />
-      <div className="absolute top-0 left-0 bottom-0 w-12 sm:w-28 bg-gradient-to-r from-slate-50/90 dark:from-[#061412] to-transparent z-20 pointer-events-none" />
+      <div className="absolute top-0 right-0 bottom-0 w-12 sm:w-28 bg-gradient-to-l from-slate-50/90 dark:from-[#0B0F19] to-transparent z-20 pointer-events-none" />
+      <div className="absolute top-0 left-0 bottom-0 w-12 sm:w-28 bg-gradient-to-r from-slate-50/90 dark:from-[#0B0F19] to-transparent z-20 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         
@@ -202,7 +202,7 @@ export const AccreditationsSection: React.FC = () => {
           <button
             onClick={() => handleManualStep('prev')}
             aria-label={isArabic ? 'السابق' : 'Previous'}
-            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-[#2DD4BF] flex items-center justify-center shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-[#2E86EB] dark:hover:text-[#2E86EB] flex items-center justify-center shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
             title={isArabic ? 'عرض الشهادات السابقة' : 'Previous accreditations'}
           >
             {isArabic ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
@@ -219,7 +219,7 @@ export const AccreditationsSection: React.FC = () => {
           <button
             onClick={() => handleManualStep('next')}
             aria-label={isArabic ? 'التالي' : 'Next'}
-            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-[#2DD4BF] flex items-center justify-center shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-[#2E86EB] dark:hover:text-[#2E86EB] flex items-center justify-center shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
             title={isArabic ? 'عرض المزيد من الشهادات' : 'Next accreditations'}
           >
             {isArabic ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}

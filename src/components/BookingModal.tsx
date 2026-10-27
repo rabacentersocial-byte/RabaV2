@@ -208,22 +208,22 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       onClick={handleModalClose}
     >
       <div 
-        className={`relative bg-white dark:bg-[#0c1424] text-slate-900 dark:text-white rounded-2xl sm:rounded-3xl max-w-md w-full shadow-2xl border border-slate-200/90 dark:border-white/15 overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh] my-auto ${isArabic ? 'text-right' : 'text-left'}`}
+        className={`relative glass-modal-dialog text-slate-900 dark:text-white rounded-2xl sm:rounded-3xl max-w-md w-full shadow-2xl overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh] my-auto ${isArabic ? 'text-right' : 'text-left'}`}
         onClick={(e) => e.stopPropagation()}
         id="appointment-booking-modal"
         dir={direction}
       >
         
         {/* Simplified Header */}
-        <div className="px-4 py-3 sm:px-5 sm:py-4 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent dark:from-emerald-500/15 dark:to-transparent border-b border-slate-200/80 dark:border-white/10 flex items-center justify-between shrink-0">
+        <div className="px-4 py-3 sm:px-5 sm:py-4 bg-gradient-to-r from-[#2E86EB]/10 via-[#2E86EB]/5 to-transparent dark:from-[#2E86EB]/20 dark:to-transparent border-b border-slate-200/80 dark:border-white/10 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#00E5BE]/15 text-[#0B3B36] dark:text-[#00E5BE] flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#2E86EB]/15 text-[#2E86EB] flex items-center justify-center shrink-0">
               <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div>
               <h3 className="text-xs sm:text-base font-black text-slate-900 dark:text-white flex items-center gap-1.5">
                 <span>{isArabic ? 'حجز موعد سريع' : 'Quick Booking'}</span>
-                <span className="text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-[#00E5BE] font-bold">
+                <span className="text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full bg-[#22C55E]/15 text-emerald-600 dark:text-[#22C55E] font-bold">
                   {isArabic ? 'تأكيد مباشر' : 'Instant'}
                 </span>
               </h3>
@@ -245,7 +245,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         {isSubmitted && confirmedApp ? (
           /* SUCCESS SCREEN */
           <div className="p-4 sm:p-6 text-center space-y-3.5 sm:space-y-4 animate-in zoom-in-95 duration-200 overflow-y-auto">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-[#00E5BE] rounded-full flex items-center justify-center mx-auto shadow-sm">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#22C55E]/15 border border-[#22C55E]/30 text-[#22C55E] rounded-full flex items-center justify-center mx-auto shadow-sm">
               <CheckCircle2 className="w-7 h-7 sm:w-8 sm:h-8" />
             </div>
 
@@ -264,7 +264,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             <div className="bg-slate-50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 rounded-2xl p-3 sm:p-3.5 text-xs text-right space-y-2">
               <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-white/10 pb-2">
                 <span className="text-slate-500">{isArabic ? 'رقم الحجز المرجعي:' : 'Reference:'}</span>
-                <span className="font-mono font-black text-emerald-700 dark:text-[#00E5BE]">{confirmedApp.referenceNumber}</span>
+                <span className="font-mono font-black text-[#2E86EB] dark:text-[#3B92F5]">{confirmedApp.referenceNumber}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">{isArabic ? 'الاسم:' : 'Name:'}</span>
@@ -272,7 +272,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">{isArabic ? 'الخدمة:' : 'Service:'}</span>
-                <span className="font-bold text-emerald-700 dark:text-[#00E5BE]">{confirmedApp.serviceTitle}</span>
+                <span className="font-bold text-[#2E86EB] dark:text-[#3B92F5]">{confirmedApp.serviceTitle}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">{isArabic ? 'الموعد:' : 'Date & Time:'}</span>
@@ -324,7 +324,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder={isArabic ? 'اكتب اسمك الثلاثي' : 'Enter your full name'}
-                  className={`w-full h-11 bg-slate-50 dark:bg-white/5 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2.5 ${isArabic ? 'pl-10' : 'pr-10'} text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-[#00E5BE]/30 focus:border-[#00E5BE] outline-none transition-all`}
+                  className={`w-full h-11 bg-slate-50 dark:bg-white/5 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2.5 ${isArabic ? 'pl-10' : 'pr-10'} text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none transition-all`}
                 />
                 <User className={`w-4 h-4 text-slate-400 absolute ${isArabic ? 'left-3.5' : 'right-3.5'} top-1/2 -translate-y-1/2 pointer-events-none`} />
               </div>
@@ -343,7 +343,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   onChange={(e) => setMobilePhone(e.target.value)}
                   placeholder="05XXXXXXXX"
                   dir="ltr"
-                  className="w-full h-11 bg-slate-50 dark:bg-white/5 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2.5 pr-10 text-sm text-slate-900 dark:text-white font-mono placeholder:text-slate-400 focus:ring-2 focus:ring-[#00E5BE]/30 focus:border-[#00E5BE] outline-none text-left transition-all"
+                  className="w-full h-11 bg-slate-50 dark:bg-white/5 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2.5 pr-10 text-sm text-slate-900 dark:text-white font-mono placeholder:text-slate-400 focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none text-left transition-all"
                 />
                 <Phone className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
@@ -364,7 +364,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   onClick={() => setBookingType('service')}
                   className={`h-8 sm:h-9 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     bookingType === 'service'
-                      ? 'bg-white dark:bg-[#0B3B36] text-[#0B3B36] dark:text-[#00E5BE] shadow-xs font-black'
+                      ? 'bg-white dark:bg-[#2E86EB] text-[#2E86EB] dark:text-white shadow-xs font-black'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
@@ -375,7 +375,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   onClick={() => setBookingType('package')}
                   className={`h-8 sm:h-9 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     bookingType === 'package'
-                      ? 'bg-white dark:bg-[#0B3B36] text-[#0B3B36] dark:text-[#00E5BE] shadow-xs font-black'
+                      ? 'bg-white dark:bg-[#2E86EB] text-[#2E86EB] dark:text-white shadow-xs font-black'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
@@ -387,7 +387,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 <select
                   value={selectedServiceId}
                   onChange={(e) => setSelectedServiceId(e.target.value)}
-                  className="w-full h-11 bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-[#00E5BE]/30 focus:border-[#00E5BE] outline-none cursor-pointer"
+                  className="w-full h-11 bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none cursor-pointer"
                 >
                   {SERVICES.map((srv) => (
                     <option key={srv.id} value={srv.id}>
@@ -399,7 +399,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 <select
                   value={selectedPackageId}
                   onChange={(e) => setSelectedPackageId(e.target.value)}
-                  className="w-full h-11 bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-[#00E5BE]/30 focus:border-[#00E5BE] outline-none cursor-pointer"
+                  className="w-full h-11 bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none cursor-pointer"
                 >
                   {THERAPY_PACKAGES.map((pkg) => (
                     <option key={pkg.id} value={pkg.id}>
@@ -421,7 +421,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   min={todayStr}
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="w-full h-11 bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-white/15 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-[#00E5BE]/30 focus:border-[#00E5BE] outline-none font-mono"
+                  className="w-full h-11 bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-white/15 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none font-mono"
                 />
               </div>
 
@@ -432,7 +432,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 <select
                   value={selectedTimeSlot}
                   onChange={(e) => setSelectedTimeSlot(e.target.value)}
-                  className="w-full h-11 bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-white/15 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-[#00E5BE]/30 focus:border-[#00E5BE] outline-none cursor-pointer"
+                  className="w-full h-11 bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-white/15 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none cursor-pointer"
                 >
                   {TIME_SLOTS.map((slot, idx) => (
                     <option key={idx} value={slot}>
@@ -448,7 +448,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <button
                 type="button"
                 onClick={() => setShowOptionalDetails(!showOptionalDetails)}
-                className="w-full py-2 px-3 rounded-xl bg-slate-100/80 dark:bg-white/5 hover:bg-slate-200/80 dark:hover:bg-white/10 text-xs font-bold text-[#0B3B36] dark:text-[#00E5BE] flex items-center justify-between cursor-pointer transition-all border border-slate-200/60 dark:border-white/5"
+                className="w-full py-2 px-3 rounded-xl bg-slate-100/80 dark:bg-white/5 hover:bg-slate-200/80 dark:hover:bg-white/10 text-xs font-bold text-[#2E86EB] dark:text-[#3B92F5] flex items-center justify-between cursor-pointer transition-all border border-slate-200/60 dark:border-white/5"
               >
                 <span className="flex items-center gap-1.5">
                   <Baby className="w-3.5 h-3.5" />
@@ -466,14 +466,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                         value={childName}
                         onChange={(e) => setChildName(e.target.value)}
                         placeholder={isArabic ? 'اسم الطفل (اختياري)' : 'Child name (optional)'}
-                        className="w-full h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-3 py-1.5 text-xs sm:text-sm text-slate-900 dark:text-white outline-none focus:border-[#00E5BE]"
+                        className="w-full h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-3 py-1.5 text-xs sm:text-sm text-slate-900 dark:text-white outline-none focus:border-[#2E86EB]"
                       />
                     </div>
                     <div>
                       <select
                         value={childAge}
                         onChange={(e) => setChildAge(Number(e.target.value))}
-                        className="w-full h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-2.5 py-1.5 text-xs sm:text-sm text-slate-900 dark:text-white outline-none cursor-pointer focus:border-[#00E5BE]"
+                        className="w-full h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-2.5 py-1.5 text-xs sm:text-sm text-slate-900 dark:text-white outline-none cursor-pointer focus:border-[#2E86EB]"
                       >
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map((age) => (
                           <option key={age} value={age}>
@@ -490,7 +490,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder={isArabic ? 'ملاحظة سريعة أو استفسار...' : 'Quick note or inquiry...'}
-                      className="w-full h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-3 py-1.5 text-xs sm:text-sm text-slate-900 dark:text-white outline-none focus:border-[#00E5BE]"
+                      className="w-full h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-3 py-1.5 text-xs sm:text-sm text-slate-900 dark:text-white outline-none focus:border-[#2E86EB]"
                     />
                   </div>
                 </div>
@@ -502,7 +502,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <button
                 type="submit"
                 id="submit-booking-btn"
-                className="w-full h-12 py-3 px-4 bg-gradient-to-r from-[#0B3B36] via-[#0D6D54] to-[#00E5BE] hover:opacity-95 active:scale-[0.98] text-white font-black rounded-xl text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
+                className="w-full h-12 py-3 px-4 bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:opacity-95 active:scale-[0.98] text-white font-black rounded-xl text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
               >
                 <FileCheck2 className="w-4 h-4 shrink-0" />
                 <span>{isArabic ? 'تأكيد طلب الحجز فوراً' : 'Confirm Booking Request'}</span>
@@ -510,7 +510,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </button>
 
               <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 mt-2">
-                <Sparkles className="w-3.5 h-3.5 text-[#00E5BE]" />
+                <Sparkles className="w-3.5 h-3.5 text-[#FFD23F]" />
                 <span>{isArabic ? 'حجز مباشر وسهل بدون دفع إلكتروني' : 'Direct booking, zero prepayment'}</span>
               </div>
             </div>

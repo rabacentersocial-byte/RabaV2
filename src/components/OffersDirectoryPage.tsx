@@ -342,23 +342,23 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
   const totalItemsCount = filteredOffers.length + filteredActivities.length;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#041a15] text-slate-900 dark:text-white transition-colors" dir={direction}>
+    <div className="min-h-screen bg-transparent text-slate-900 dark:text-white transition-colors" dir={direction}>
       
       {/* 1. TOP BREADCRUMB & BACK ACTION BAR */}
-      <div className="border-b border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-[#06241d]/80 backdrop-blur-md sticky top-0 z-30">
+      <div className="border-b border-white/80 dark:border-white/10 liquid-glass-panel sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-4">
           
           {/* Breadcrumbs */}
           <div className="flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400">
             <button 
               onClick={onBackToHome}
-              className="flex items-center gap-1.5 hover:text-[#0D6D54] dark:hover:text-[#00E5BE] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 hover:text-[#2E86EB] dark:hover:text-[#2E86EB] transition-colors cursor-pointer"
             >
               <Home className="w-4 h-4" />
               <span>{isArabic ? 'الرئيسية' : 'Home'}</span>
             </button>
             <span>/</span>
-            <span className="text-[#0D6D54] dark:text-[#00E5BE] font-black">
+            <span className="text-[#2E86EB] dark:text-[#2E86EB] font-black">
               {isArabic ? 'العروض والأنشطة' : 'Offers & Activities'}
             </span>
           </div>
@@ -370,13 +370,13 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
               className="p-2 sm:px-3 sm:py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
               title={isArabic ? 'مشاركة الصفحة' : 'Share Page'}
             >
-              {copiedShare ? <Check className="w-4 h-4 text-emerald-500" /> : <Share2 className="w-4 h-4 text-teal-600 dark:text-teal-400" />}
+              {copiedShare ? <Check className="w-4 h-4 text-emerald-500" /> : <Share2 className="w-4 h-4 text-[#2E86EB] dark:text-[#2E86EB]" />}
               <span className="hidden sm:inline">{copiedShare ? (isArabic ? 'تم النسخ' : 'Copied') : (isArabic ? 'مشاركة' : 'Share')}</span>
             </button>
 
             <button
               onClick={onBackToHome}
-              className="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#0D6D54] to-[#0f766e] text-white hover:brightness-110 text-xs sm:text-sm font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-md shadow-teal-900/20 active:scale-95"
+              className="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#2E86EB] to-[#1E3A8A] text-white hover:brightness-110 text-xs sm:text-sm font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-md shadow-blue-900/20 active:scale-95"
             >
               {isArabic ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
               <span>{isArabic ? 'العودة للرئيسية' : 'Back to Home'}</span>
@@ -387,7 +387,7 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
       </div>
 
       {/* 2. HERO HEADER SECTION */}
-      <section className="relative overflow-hidden py-10 sm:py-14 md:py-16 border-b border-slate-200/80 dark:border-white/10 bg-gradient-to-b from-white via-slate-50/50 to-slate-100/40 dark:from-[#06241d] dark:via-[#041a15] dark:to-[#031511]">
+      <section className="relative overflow-hidden py-10 sm:py-14 md:py-16 border-b border-slate-200/80 dark:border-white/10 bg-gradient-to-b from-white via-slate-50/50 to-slate-100/40 dark:from-[#0E1B33] dark:via-[#0B0F19] dark:to-[#080B12]">
         
         {/* Background ambient lighting */}
         <div className="absolute top-0 right-1/4 w-[420px] h-[420px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
@@ -519,7 +519,7 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                   onClick={() => setSelectedFilter(tab.id as any)}
                   className={`shrink-0 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer border ${
                     isSelected
-                      ? 'bg-gradient-to-r from-[#0D6D54] to-[#0f766e] text-white border-transparent shadow-md shadow-teal-900/20'
+                      ? 'bg-gradient-to-r from-[#2E86EB] to-[#1E3A8A] text-white border-transparent shadow-md shadow-blue-900/20'
                       : 'bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 border-slate-200/80 dark:border-white/10'
                   }`}
                 >
@@ -543,9 +543,9 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
             <div className="flex items-center justify-between gap-4 mb-6">
               <div>
                 <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                  <Gift className="w-5 h-5 text-[#0D6D54] dark:text-[#00E5BE]" />
+                  <Gift className="w-5 h-5 text-[#2E86EB] dark:text-[#2E86EB]" />
                   <span>{isArabic ? 'العروض والخصومات الحصرية' : 'Exclusive Offers & Discounts'}</span>
-                  <span className="text-xs bg-emerald-100 dark:bg-emerald-950/60 text-[#0D6D54] dark:text-[#00E5BE] px-2 py-0.5 rounded-full font-bold">
+                  <span className="text-xs bg-blue-100 dark:bg-blue-950/60 text-[#2E86EB] dark:text-[#2E86EB] px-2 py-0.5 rounded-full font-bold">
                     {filteredOffers.length}
                   </span>
                 </h2>
@@ -559,14 +559,14 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                   <button
                     onClick={() => handleScroll('prev')}
                     aria-label={isArabic ? 'السابق' : 'Previous'}
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-slate-200 dark:border-emerald-500/30 bg-white dark:bg-[#062c22]/80 text-slate-700 dark:text-emerald-200 hover:bg-emerald-50 dark:hover:bg-emerald-600/40 flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
+                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111827] text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-[#1E293B] flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
                   >
                     {isArabic ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
                   </button>
                   <button
                     onClick={() => handleScroll('next')}
                     aria-label={isArabic ? 'التالي' : 'Next'}
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-slate-200 dark:border-emerald-500/30 bg-white dark:bg-[#062c22]/80 text-slate-700 dark:text-emerald-200 hover:bg-emerald-50 dark:hover:bg-emerald-600/40 flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
+                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111827] text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-[#1E293B] flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
                   >
                     {isArabic ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                   </button>
@@ -780,12 +780,12 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
               {filteredActivities.map((act) => (
                 <div
                   key={act.id}
-                  className="bg-white dark:bg-[#06241d]/90 rounded-3xl p-5 sm:p-6 border border-slate-200/90 dark:border-white/10 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                  className="bg-white dark:bg-[#111827] rounded-3xl p-5 sm:p-6 border border-slate-200/90 dark:border-white/10 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
                 >
                   <div>
                     {/* Activity Top Meta */}
                     <div className="flex items-center justify-between gap-3 mb-3.5">
-                      <span className="px-3 py-1 rounded-full text-xs font-black bg-teal-50 dark:bg-teal-950/60 text-[#0D6D54] dark:text-[#00E5BE] border border-teal-200/60 dark:border-teal-800/40">
+                      <span className="px-3 py-1 rounded-full text-xs font-black bg-blue-50 dark:bg-blue-950/60 text-[#2E86EB] dark:text-[#2E86EB] border border-blue-200/60 dark:border-blue-800/40">
                         {isArabic ? act.categoryAr : act.categoryEn}
                       </span>
                       <span className={`px-2.5 py-1 rounded-full text-[11px] font-black ${
@@ -806,9 +806,9 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                     </p>
 
                     {/* Schedule & Location Details */}
-                    <div className="bg-slate-50 dark:bg-black/30 rounded-2xl p-3 sm:p-3.5 mb-5 space-y-2 border border-slate-200/60 dark:border-white/5 text-xs text-slate-700 dark:text-slate-300">
+                    <div className="bg-slate-50 dark:bg-[#0E1526] rounded-2xl p-3 sm:p-3.5 mb-5 space-y-2 border border-slate-200/60 dark:border-white/5 text-xs text-slate-700 dark:text-slate-300">
                       <div className="flex items-center gap-2">
-                        <Clock className="w-3.5 h-3.5 text-[#0D6D54] dark:text-[#00E5BE] shrink-0" />
+                        <Clock className="w-3.5 h-3.5 text-[#2E86EB] dark:text-[#2E86EB] shrink-0" />
                         <span className="font-bold">{isArabic ? act.dateAr : act.dateEn}</span>
                       </div>
                       <div className="flex items-center gap-2">

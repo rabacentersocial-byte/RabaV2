@@ -2909,7 +2909,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
     return (
       <div
         key={doctor.id}
-        className={`w-[66vw] min-w-[220px] max-w-[260px] sm:min-w-0 sm:max-w-none sm:w-[325px] md:w-[350px] lg:w-[375px] shrink-0 snap-start self-start bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl overflow-hidden border ${theme.cardBorderHover} shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group`}
+        className={`w-[66vw] min-w-[220px] max-w-[260px] sm:min-w-0 sm:max-w-none sm:w-[325px] md:w-[350px] lg:w-[375px] shrink-0 snap-start self-start liquid-glass-card rounded-2xl sm:rounded-3xl overflow-hidden border ${theme.cardBorderHover} shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group`}
       >
         {/* Top Slim Accent Strip in Doctor's Brand/Logo Color */}
         <div className={`h-1.5 w-full ${theme.topAccentBar}`} />
@@ -3120,7 +3120,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
           {onOpenSpecialistsPage && (
             <button
               onClick={onOpenSpecialistsPage}
-              className="shrink-0 flex items-center gap-2 px-4 py-2.5 sm:py-3 bg-gradient-to-r from-[#dff1ec] to-[#e6f4f1] dark:from-teal-950/60 dark:to-teal-900/40 hover:from-[#0d5c52] hover:to-[#0f766e] hover:text-white dark:hover:from-[#2dd4bf] dark:hover:to-[#14b8a6] dark:hover:text-slate-950 text-[#0d5c52] dark:text-[#2dd4bf] border border-[#0d5c52]/20 dark:border-[#2dd4bf]/20 rounded-2xl text-xs sm:text-sm font-black shadow-xs hover:shadow-md transition-all cursor-pointer group"
+              className="shrink-0 flex items-center gap-2 px-4 py-2.5 sm:py-3 liquid-glass-btn text-[#2E86EB] rounded-2xl text-xs sm:text-sm font-black shadow-xs hover:shadow-md transition-all cursor-pointer group"
               title={isArabic ? 'فتح صفحة دليل الأخصائيين الشاملة' : 'Open Specialists Directory Page'}
             >
               <span>{isArabic ? 'عرض المزيد (دليل الأخصائيين)' : 'View More (Directory)'}</span>
@@ -3128,14 +3128,14 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
             </button>
           )}
 
-          {/* Search Input Bar */}
+          {/* Search Input Bar with Liquid Glass Input */}
           <div className="relative w-full md:w-72 lg:w-80">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={isArabic ? 'ابحث باسم الأخصائي أو التخصص أو المؤهل...' : 'Search by name, specialty, or bio...'}
-              className="w-full pl-10 pr-4 rtl:pr-10 rtl:pl-4 py-2.5 sm:py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0B3B36] dark:focus:ring-[#00E5BE] transition-all shadow-xs"
+              className="w-full pl-10 pr-4 rtl:pr-10 rtl:pl-4 py-2.5 sm:py-3 liquid-glass-input rounded-2xl text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none transition-all shadow-xs"
             />
             <Search className={`w-4 h-4 text-slate-400 absolute top-1/2 -translate-y-1/2 ${isArabic ? 'right-3.5' : 'left-3.5'}`} />
             {searchQuery && (
@@ -3150,7 +3150,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
         </div>
       </div>
 
-      {/* 2. Category Classification Filter Tabs (فلتر تصنيف حسب التخصص) */}
+      {/* 2. Category Classification Filter Tabs (Liquid Glass Pills) */}
       <div className="mb-4 sm:mb-6">
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
           {categories.map((cat) => {
@@ -3160,18 +3160,18 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
                   isSelected
-                    ? 'bg-[#0B3B36] text-white shadow-md dark:bg-[#00E5BE] dark:text-slate-950 font-black scale-[1.02]'
-                    : 'bg-white dark:bg-slate-900/90 text-slate-700 dark:text-slate-300 border border-slate-200/90 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/5 hover:border-slate-300'
+                    ? 'bg-[#2E86EB] text-white shadow-md shadow-blue-500/25 border-t border-white/50 font-black scale-[1.02]'
+                    : 'liquid-glass-pill hover:scale-[1.02]'
                 }`}
               >
                 <span>{isArabic ? cat.labelAr : cat.labelEn}</span>
                 <span
                   className={`text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full font-bold tabular-nums ${
                     isSelected
-                      ? 'bg-white/20 dark:bg-slate-950/20 text-white dark:text-slate-950'
-                      : 'bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-400'
+                      ? 'bg-white/20 text-white'
+                      : 'bg-slate-200/50 dark:bg-white/10 text-slate-600 dark:text-slate-300'
                   }`}
                 >
                   {count}
