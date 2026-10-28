@@ -260,9 +260,9 @@ async function startServer() {
   // Compress all responses for enhanced mobile network performance
   app.use(compression());
 
-  // JSON and URL-encoded body parser with sensible limit for attachments
-  app.use(express.json({ limit: '25mb' }));
-  app.use(express.urlencoded({ extended: true, limit: '25mb' }));
+  // JSON and URL-encoded body parser with sensible limit for attachments & hardened against decompression crashes (CVE-2026-111181)
+  app.use(express.json({ limit: '25mb', inflate: false }));
+  app.use(express.urlencoded({ extended: true, limit: '25mb', inflate: false }));
 
   // Static directories with optimal HTTP cache headers (resolves PageSpeed "Use efficient cache lifetimes" diagnostic)
   const staticCacheOptions = {
