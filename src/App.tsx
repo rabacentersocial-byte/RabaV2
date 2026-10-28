@@ -9,6 +9,7 @@ import { Footer } from './components/Footer';
 import { FloatingActions } from './components/FloatingActions';
 import { MobileBottomBar } from './components/MobileBottomBar';
 import { CourseItem } from './data/coursesData';
+import { LazySection } from './components/LazySection';
 import { getStoredAdminSession, clearStoredAdminSession } from './data/adminData';
 import { DISPATCH_REQUEST_EVENT } from './data/customerRequests';
 
@@ -749,76 +750,94 @@ export default function App() {
                   onSelectService={handleSelectServiceForBooking}
                 />
                 {modules.courses && (
+                  <LazySection minHeight="280px">
+                    <Suspense fallback={null}>
+                      <CoursesSliderSection
+                        onRegisterCourse={handleOpenCourseRegistration}
+                      />
+                    </Suspense>
+                  </LazySection>
+                )}
+                <LazySection minHeight="260px">
                   <Suspense fallback={null}>
-                    <CoursesSliderSection
-                      onRegisterCourse={handleOpenCourseRegistration}
+                    <ShadowTeacherSection 
+                      onSubmitRequest={handleConfirmBooking}
                     />
                   </Suspense>
-                )}
-                <Suspense fallback={null}>
-                  <ShadowTeacherSection 
-                    onSubmitRequest={handleConfirmBooking}
-                  />
-                </Suspense>
-                <Suspense fallback={null}>
-                  <PackagesSection
-                    onSelectPackage={handleSelectPackageForBooking}
-                  />
-                </Suspense>
+                </LazySection>
+                <LazySection minHeight="380px">
+                  <Suspense fallback={null}>
+                    <PackagesSection
+                      onSelectPackage={handleSelectPackageForBooking}
+                    />
+                  </Suspense>
+                </LazySection>
               </>
             )}
 
             {/* 10. Medical Specialists & CV Exploration */}
             {modules.specialists && (
-              <Suspense fallback={null}>
-                <SpecialistsSection
-                  specialists={specialists}
-                  onViewCv={handleViewCv}
-                  onBookSpecialist={handleSelectSpecialistForBooking}
-                  onOpenSpecialistsPage={handleOpenSpecialistsPage}
-                />
-              </Suspense>
+              <LazySection minHeight="420px">
+                <Suspense fallback={null}>
+                  <SpecialistsSection
+                    specialists={specialists}
+                    onViewCv={handleViewCv}
+                    onBookSpecialist={handleSelectSpecialistForBooking}
+                    onOpenSpecialistsPage={handleOpenSpecialistsPage}
+                  />
+                </Suspense>
+              </LazySection>
             )}
 
             {/* 11.4. Branches Network Slider (فروع الرياض والخرج) directly above Accreditations */}
             {modules.branches && (
-              <Suspense fallback={null}>
-                <BranchesSection onOpenBranchesPage={handleOpenBranchesPage} />
-              </Suspense>
+              <LazySection minHeight="320px">
+                <Suspense fallback={null}>
+                  <BranchesSection onOpenBranchesPage={handleOpenBranchesPage} />
+                </Suspense>
+              </LazySection>
             )}
 
             {/* 11.45. Partners Horizontal Slider (شركاء النجاح والرعايات) directly above Accreditations */}
             {modules.partners !== false && (
-              <Suspense fallback={null}>
-                <PartnersSection />
-              </Suspense>
+              <LazySection minHeight="200px">
+                <Suspense fallback={null}>
+                  <PartnersSection />
+                </Suspense>
+              </LazySection>
             )}
 
             {/* 11.5. Accreditations & Certifications Section (معترف بنا من) in the footer of the blogs & branches */}
             {modules.accreditations && (
-              <Suspense fallback={null}>
-                <AccreditationsSection />
-              </Suspense>
+              <LazySection minHeight="220px">
+                <Suspense fallback={null}>
+                  <AccreditationsSection />
+                </Suspense>
+              </LazySection>
             )}
 
             {/* 12. Client Testimonials & Success Stories */}
             {modules.reviews && (
-              <Suspense fallback={null}>
-                <TestimonialsSection
-                  testimonials={testimonials}
-                  onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
-                />
-              </Suspense>
+              <LazySection minHeight="360px">
+                <Suspense fallback={null}>
+                  <TestimonialsSection
+                    testimonials={testimonials}
+                    onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
+                  />
+                </Suspense>
+              </LazySection>
             )}
 
             {/* 13. Clinical Blog & Articles Slider */}
             {modules.blog && (
-              <Suspense fallback={null}>
-                <BlogSliderSection
-                  onOpenBooking={handleOpenBooking}
-                  onBookSpecialist={handleSelectSpecialistForBooking}
-                />
-              </Suspense>
+              <LazySection minHeight="360px">
+                <Suspense fallback={null}>
+                  <BlogSliderSection
+                    onOpenBooking={handleOpenBooking}
+                    onBookSpecialist={handleSelectSpecialistForBooking}
+                  />
+                </Suspense>
+              </LazySection>
             )}
           </>
         )}
@@ -827,7 +846,9 @@ export default function App() {
 
       {/* Footer */}
       {modules.footer && (
-        <Footer onOpenAdmin={() => setIsAdminOpen(true)} />
+        <LazySection minHeight="280px">
+          <Footer onOpenAdmin={() => setIsAdminOpen(true)} />
+        </LazySection>
       )}
 
       {/* Multi-Floating Actions (WhatsApp, AI Bot Assistant, Share, Scroll to Top) */}

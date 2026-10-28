@@ -33,14 +33,6 @@
         }
       };
 
-      // Clean up stale or conflicting service workers to prevent cached white screens
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(registrations) {
-          for (var reg of registrations) {
-            reg.unregister();
-          }
-        }).catch(function() {});
-      }
 
       window.addEventListener('error', function(event) {
         var msg = (event && (event.message || (event.error && event.error.message))) || '';
@@ -106,7 +98,7 @@
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="image" href="/logo/raba_puzzle_brain.png" />
+    <link rel="preload" as="image" href="/images/hero/slide_2_ahmed.webp" fetchpriority="high" type="image/webp" />
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Inter:wght@400;600;700&display=swap"></noscript>
 

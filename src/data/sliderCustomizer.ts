@@ -35,7 +35,7 @@ export const DEFAULT_HERO_SLIDER_CONFIG: HeroSliderConfig = {
 export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   {
     id: 'service-aba',
-    src: '/images/hero/slide_2_ahmed.jpg',
+    src: '/images/hero/slide_2_ahmed.webp',
     alt: 'برنامج تحليل السلوك التطبيقي ABA - مركز رابا',
     titleAr: 'برنامج تحليل السلوك التطبيقي المكثف ABA',
     titleEn: 'Applied Behavior Analysis (ABA) Program',
@@ -54,7 +54,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   },
   {
     id: 'offer-national-day',
-    src: '/images/hero/slide_1_haneen.png',
+    src: '/images/hero/slide_1_haneen.webp',
     alt: 'عروض اليوم الوطني السعودي 96 - خصم 35%',
     titleAr: 'عرض اليوم الوطني 96: خصم 35% للعملاء الجدد',
     titleEn: 'National Day 96: 35% Off for New Clients',
@@ -73,7 +73,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   },
   {
     id: 'service-sensory',
-    src: '/images/hero/slide_3_rahaf.png',
+    src: '/images/hero/slide_3_rahaf.webp',
     alt: 'غرف التكامل الحسي والعلاج الوظيفي - مركز رابا',
     titleAr: 'غرف التكامل الحسي والتأهيل الوظيفي',
     titleEn: 'Sensory Integration & Occupational Therapy',
@@ -92,7 +92,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   },
   {
     id: 'service-speech',
-    src: '/images/hero/slide_5_manar.png',
+    src: '/images/hero/slide_5_manar.webp',
     alt: 'تأهيل النطق والتخاطب واضطرابات البلع واللغة',
     titleAr: 'جلسات تأهيل النطق والتخاطب وتطوير اللغة',
     titleEn: 'Speech & Language Pathology Sessions',
@@ -111,7 +111,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   },
   {
     id: 'service-shadow-teacher',
-    src: '/images/shadow_teacher.jpg',
+    src: '/images/shadow_teacher.webp',
     alt: 'برنامج المعلم الظل والمرافق المدرسي',
     titleAr: 'برنامج المعلم الظل (المرافق التعليمي المدرسي)',
     titleEn: 'Shadow Teacher & School Inclusion Program',
@@ -130,7 +130,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   },
   {
     id: 'offer-assessment',
-    src: '/images/hero/slide_4_doha.png',
+    src: '/images/hero/slide_4_doha.webp',
     alt: 'يوم التقييم الشامل والتشخيص المبكر',
     titleAr: 'جلسات التقييم الشامل والتشخيص المبكر للتوحد',
     titleEn: 'Comprehensive Early Autism Assessment',
@@ -167,7 +167,16 @@ export function getStoredHeroSlides(): HeroSlideItem[] {
           localStorage.setItem(STORAGE_HERO_SLIDES_KEY, JSON.stringify(DEFAULT_HERO_SLIDES));
           return [...DEFAULT_HERO_SLIDES];
         }
-        return parsed.sort((a, b) => (a.order || 0) - (b.order || 0));
+        const upgraded = parsed.map(slide => {
+          let src = slide.src || '';
+          if (src.includes('/images/hero/slide_') && (src.endsWith('.png') || src.endsWith('.jpg'))) {
+            src = src.replace(/\.(png|jpg)$/, '.webp');
+          } else if (src.includes('/images/shadow_teacher.jpg')) {
+            src = '/images/shadow_teacher.webp';
+          }
+          return { ...slide, src };
+        });
+        return upgraded.sort((a, b) => (a.order || 0) - (b.order || 0));
       }
     }
     return [...DEFAULT_HERO_SLIDES];
