@@ -24,7 +24,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
-    // Defer Firebase SDK loading until after initial mobile paint to keep TBT & TTI lightning fast
+    // Only eagerly initialize Firebase if on admin/login page or if active session exists.
+    // For general public visitors, defer to 5s to eliminate TBT and ensure near-100 mobile performance.
+    const isAuthRoute = typeof window !== 'undefined' && (
+      window.location.hash.includes('admin') || 
+      window.location.hash.includes('login') ||
+      Boolean(localStorage.getItem('raba_admin_session_auth'))
+    );
+    const delay = isAuthRoute ? 100 : 5000;
+
     const initTimer = setTimeout(async () => {
       try {
         const [{ auth }, { onAuthStateChanged }] = await Promise.all([
@@ -62,7 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } catch (err) {
         console.warn('[AuthContext] Deferred Firebase Auth notice:', err);
       }
-    }, 1200);
+    }, delay);
 
     return () => {
       clearTimeout(initTimer);

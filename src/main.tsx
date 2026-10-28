@@ -50,14 +50,16 @@ if (rootEl) {
   }
 }
 
-// Safely execute initial hydration and favicon setup without blocking main thread mount
-setTimeout(() => {
-  try {
-    hydratePersistentData();
-  } catch (e) {
-    console.warn('[main] Hydration notice:', e);
+// Safely execute initial background sync and favicon setup during idle time without blocking main thread mount
+const scheduleIdleWork = (fn: () => void, delayMs = 2500) => {
+  if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+    (window as any).requestIdleCallback(fn, { timeout: delayMs + 1000 });
+  } else {
+    setTimeout(fn, delayMs);
   }
+};
 
+scheduleIdleWork(() => {
   try {
     updateTabFavicon();
   } catch (e) {
@@ -69,4 +71,4 @@ setTimeout(() => {
   } catch (e) {
     console.warn('[main] Persistent sync notice:', e);
   }
-}, 0);
+}, 2200);

@@ -312,8 +312,13 @@ async function startServer() {
     next();
   });
 
-  // Static data directory (enables fallback fetching of /data/all_sync.json on any server or static host)
-  app.use('/data', express.static(PUBLIC_DATA_DIR));
+  // Static data directory with efficient caching (resolves Lighthouse "Use efficient cache lifetimes")
+  app.use('/data', express.static(PUBLIC_DATA_DIR, {
+    maxAge: '1h',
+    setHeaders: (res: Response) => {
+      res.setHeader('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
+    }
+  }));
 
   // Run initial regeneration of all_sync.json on server start
   regenerateAllSyncFile();

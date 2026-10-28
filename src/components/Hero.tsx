@@ -337,6 +337,10 @@ export const Hero: React.FC<HeroProps> = ({
                 <div className="absolute inset-0 w-full h-full rounded-full overflow-hidden z-10">
                   {slides.map((s, idx) => {
                     const isActive = idx === currentSlideIndex;
+                    const isNext = idx === (currentSlideIndex + 1) % slides.length;
+                    // Only mount the active slide and adjacent prefetch slide to avoid loading 8 heavy images at once on mobile
+                    if (!isActive && !isNext) return null;
+
                     return (
                       <div
                         key={s.id || idx}
@@ -349,7 +353,8 @@ export const Hero: React.FC<HeroProps> = ({
                           alt={s.alt}
                           width={460}
                           height={460}
-                          loading={idx === 0 ? "eager" : "lazy"}
+                          loading={isActive && currentSlideIndex === 0 ? "eager" : "lazy"}
+                          fetchPriority={isActive && currentSlideIndex === 0 ? "high" : "auto"}
                           decoding="async"
                           onError={(e) => handleImageErrorWithStore(e, s.src, '/images/hero/slide_2_ahmed.jpg')}
                           className={`w-full h-full object-cover rounded-full transition-transform duration-700 ease-out group-hover:scale-105 ${

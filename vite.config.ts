@@ -45,7 +45,70 @@ export default defineConfig(() => {
           ],
         },
         workbox: {
-          maximumFileSizeToCacheInBytes: 6 * 1024 * 1024, // 6 MB to support initial bundled data cache
+          globPatterns: [
+            'index.html',
+            'manifest.webmanifest',
+            'favicon.ico',
+            'favicon.svg',
+            'favicon-192x192.png',
+            'favicon-512x512.png',
+            'apple-touch-icon.png',
+            'logo/raba_puzzle_brain.png',
+            'assets/index-*.css',
+            'assets/index-*.js',
+            'assets/vendor-react-*.js',
+            'assets/vendor-libs-*.js'
+          ],
+          globIgnores: [
+            '**/uploads/**',
+            '**/specialists/**',
+            '**/images/**',
+            '**/data/**',
+            '**/AdminDashboard*',
+            '**/vendor-firebase*',
+            '**/data-mock*',
+            '**/*.map'
+          ],
+          maximumFileSizeToCacheInBytes: 2 * 1024 * 1024,
+          runtimeCaching: [
+            {
+              urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'google-fonts-cache',
+                expiration: {
+                  maxEntries: 10,
+                  maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
+            {
+              urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|avif)$/i,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'images-cache',
+                expiration: {
+                  maxEntries: 60,
+                  maxAgeSeconds: 60 * 60 * 24 * 30 // 30 Days
+                }
+              }
+            },
+            {
+              urlPattern: /\/api\/sync\/.*/i,
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'api-sync-cache',
+                networkTimeoutSeconds: 3,
+                expiration: {
+                  maxEntries: 10,
+                  maxAgeSeconds: 60 * 60 * 24 // 1 day
+                }
+              }
+            }
+          ]
         },
         devOptions: {
           enabled: false,
@@ -67,6 +130,8 @@ export default defineConfig(() => {
       emptyOutDir: true,
       cssCodeSplit: true,
       minify: 'esbuild',
+      cssMinify: true,
+      target: 'es2020',
       chunkSizeWarningLimit: 800,
       rollupOptions: {
         output: {
@@ -88,6 +153,9 @@ export default defineConfig(() => {
                 return 'vendor-confetti';
               }
               return 'vendor-libs';
+            }
+            if (id.includes('src/data/mockData')) {
+              return 'data-mock';
             }
           },
         },

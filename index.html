@@ -6,57 +6,32 @@
     <title>مركز رابا للعلاج بتحليل السلوك التطبيقي ABA | RABA CENTER</title>
     <meta name="description" content="مركز رابا من أقدم المراكز التي تقدم خدمات التأهيل والدعم لذوي الإحتياجات الخاصة، برامج تحليل السلوك التطبيقي ABA، تشخيص وتقييم مبني على أساس علمي، ودعم نفسي وإرشاد أسري." />
     
-    <!-- Splash dismissal, diagnostics and error recovery guard -->
+    <!-- Diagnostics and error recovery guard -->
     <script>
       window.__rabaReactMounted = false;
       window.dismissSplash = function() {
         window.__rabaReactMounted = true;
-        var s = document.getElementById('raba-splash');
-        if (s) {
-          s.style.transition = 'opacity 0.15s ease, visibility 0.15s';
-          s.style.opacity = '0';
-          s.style.pointerEvents = 'none';
-          setTimeout(function() {
-            if (s && s.parentNode) s.parentNode.removeChild(s);
-          }, 160);
-        }
       };
 
       window.showAppError = function(err) {
-        var splash = document.getElementById('raba-splash');
+        var root = document.getElementById('root');
         var errText = (err && (err.message || err.toString())) || 'خطأ غير متوقع';
-        if (splash) {
-          splash.innerHTML = `
-            <div style="max-width: 440px; width: 90%; background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 20px; padding: 28px 20px; text-align: center; color: #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
-              <div style="width: 56px; height: 56px; border-radius: 16px; background: rgba(239, 68, 68, 0.15); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; color: #f87171; font-size: 26px;">⚠️</div>
-              <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">مركز رابا للتأهيل ورعاية التوحد</h3>
-              <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 20px; line-height: 1.6;">جارٍ تحديث المنصة، يرجى النقر على الزر أدناه لتحديث الصفحة ومتابعة التصفح.</p>
-              <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                <button onclick="window.location.reload(true)" style="background: #00E5BE; color: #022c22; font-weight: 700; font-size: 13px; padding: 10px 22px; border: none; border-radius: 9999px; cursor: pointer;">تحديث الصفحة ↻</button>
-                <button onclick="localStorage.clear(); window.location.reload(true)" style="background: rgba(255,255,255,0.1); color: #fff; font-weight: 600; font-size: 13px; padding: 10px 18px; border: 1px solid rgba(255,255,255,0.2); border-radius: 9999px; cursor: pointer;">إعادة تعيين الذاكرة</button>
+        if (root && !window.__rabaReactMounted) {
+          root.innerHTML = `
+            <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background-color: #0B1320; font-family: system-ui, -apple-system, sans-serif; direction: rtl; text-align: center; padding: 24px;">
+              <div style="max-width: 440px; width: 90%; background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 20px; padding: 28px 20px; text-align: center; color: #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
+                <div style="width: 56px; height: 56px; border-radius: 16px; background: rgba(239, 68, 68, 0.15); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; color: #f87171; font-size: 26px;">⚠️</div>
+                <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">مركز رابا للتأهيل ورعاية التوحد</h3>
+                <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 20px; line-height: 1.6;">جارٍ تحديث المنصة، يرجى النقر على الزر أدناه لتحديث الصفحة ومتابعة التصفح.</p>
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                  <button onclick="window.location.reload(true)" style="background: #00E5BE; color: #022c22; font-weight: 700; font-size: 13px; padding: 10px 22px; border: none; border-radius: 9999px; cursor: pointer;">تحديث الصفحة ↻</button>
+                  <button onclick="localStorage.clear(); window.location.reload(true)" style="background: rgba(255,255,255,0.1); color: #fff; font-weight: 600; font-size: 13px; padding: 10px 18px; border: 1px solid rgba(255,255,255,0.2); border-radius: 9999px; cursor: pointer;">إعادة تعيين الذاكرة</button>
+                </div>
               </div>
             </div>
           `;
         }
       };
-
-      // If app takes longer than 3.5s, provide instant reload / force show action
-      setTimeout(function() {
-        if (!window.__rabaReactMounted) {
-          var note = document.getElementById('raba-loading-note');
-          if (note) {
-            note.innerHTML = `
-              <div style="margin-top: 12px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
-                <span style="color: #cbd5e1; font-size: 12px;">قد يستغرق التحميل لأول مرة بضع ثوانٍ</span>
-                <div style="display: flex; gap: 8px;">
-                  <button onclick="window.location.reload(true)" style="background: rgba(45, 212, 191, 0.2); border: 1px solid #2DD4BF; color: #2DD4BF; padding: 6px 14px; border-radius: 9999px; font-size: 12px; font-weight: bold; cursor: pointer;">إعادة التحميل ↻</button>
-                  <button onclick="window.dismissSplash()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 6px 14px; border-radius: 9999px; font-size: 12px; cursor: pointer;">دخول الموقع</button>
-                </div>
-              </div>
-            `;
-          }
-        }
-      }, 3500);
 
       // Clean up stale or conflicting service workers to prevent cached white screens
       if ('serviceWorker' in navigator) {
@@ -135,37 +110,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Inter:wght@400;600;700&display=swap"></noscript>
 
-    <style>
-      @keyframes rabaPulse {
-        0%, 100% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.06); opacity: 0.85; }
-      }
-      @keyframes rabaSpin {
-        to { transform: rotate(360deg); }
-      }
-    </style>
   </head>
   <body class="font-sans antialiased bg-[#F8FAFC] text-slate-900 dark:bg-[#061412] dark:text-slate-100 selection:bg-[#00E5BE] selection:text-slate-950 md:transition-colors md:duration-300" style="margin: 0; min-height: 100vh;">
-    <!-- Root container with embedded initial splash for zero-delay, fail-safe rendering -->
-    <div id="root">
-      <div id="raba-splash" style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #0B1320; font-family: system-ui, -apple-system, sans-serif; direction: rtl; text-align: center; padding: 24px; box-sizing: border-box;">
-        <div style="position: relative; width: 84px; height: 84px; margin-bottom: 20px;">
-          <img src="/logo/raba_puzzle_brain.png" alt="RABA" width="84" height="84" style="width: 100%; height: 100%; object-fit: contain; animation: rabaPulse 2s infinite ease-in-out;" onerror="this.style.display='none'" />
-        </div>
-        <div style="font-size: 20px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 8px;">
-          مركز رابا للتأهيل ورعاية التوحد
-        </div>
-        <div style="font-size: 13px; color: #2DD4BF; font-weight: 600; margin-bottom: 24px;">
-          التميز الإكلينيكي في برامج تحليل السلوك التطبيقي ABA
-        </div>
-        <div id="raba-loading-note" style="display: flex; flex-direction: column; align-items: center;">
-          <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 11px; color: #94A3B8; background: rgba(255,255,255,0.06); padding: 6px 14px; border-radius: 9999px;">
-            <div style="width: 8px; height: 8px; border: 2px solid #2DD4BF; border-top-color: transparent; border-radius: 50%; animation: rabaSpin 0.8s linear infinite;"></div>
-            <span>جارٍ تجهيز المنصة التفاعلية...</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div id="root"></div>
 
     <script type="module" src="/src/main.tsx"></script>
   </body>

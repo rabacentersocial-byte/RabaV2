@@ -248,16 +248,18 @@ export async function initPersistentSync(): Promise<void> {
       }
     }
 
-    // 3. Tertiary Attempt: Dynamically loaded fallback (zero bundle overhead on initial paint)
+    // 3. Fallback: Network fetch of static data file if not already fetched
     if (!serverData) {
       try {
-        const mod = await import('../data/defaultSyncData.json');
-        const bundled = (mod as any)?.default?.data || (mod as any)?.default;
-        if (bundled) {
-          serverData = bundled;
+        const fallbackRes = await fetch('/data/all_sync.json?v=static');
+        if (fallbackRes.ok) {
+          const json = await fallbackRes.json();
+          if (json.data || json) {
+            serverData = json.data || json;
+          }
         }
       } catch {
-        // fallback unavailable
+        // standalone mode
       }
     }
 

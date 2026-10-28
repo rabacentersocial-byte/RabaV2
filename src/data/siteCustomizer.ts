@@ -262,8 +262,8 @@ export const DEFAULT_FOOTER_SETTINGS: FooterSettings = {
   addressEn: 'Kingdom of Saudi Arabia',
   phone: '0575100100',
   email: 'info@rabacenters.com',
-  hoursAr: 'الأحد - الخميس: 8:00 ص - 8:00 م | السبت: 9:00 ص - 4:00 م',
-  hoursEn: 'Sun - Thu: 8:00 AM - 8:00 PM | Sat: 9:00 AM - 4:00 PM',
+  hoursAr: 'الأحد – الخميس: 8:00 ص – 8:00 م',
+  hoursEn: 'Sunday – Thursday: 8:00 AM – 8:00 PM',
   officialLicenseAr: '',
   officialLicenseEn: '',
   copyrightAr: '© 2026 مركز رابا للرعاية النهارية والتأهيل. جميع الحقوق محفوظة.',
@@ -514,6 +514,13 @@ export function getStoredFooterSettings(): FooterSettings {
     }
     if (!parsed.addressEn || parsed.addressEn.includes('Al Sahafa') || parsed.addressEn.includes('Sahafa')) {
       parsed.addressEn = 'Kingdom of Saudi Arabia';
+    }
+    // Remove Saturday from working hours
+    if (!parsed.hoursAr || parsed.hoursAr.includes('السبت') || parsed.hoursAr.includes('Saturday')) {
+      parsed.hoursAr = 'الأحد – الخميس: 8:00 ص – 8:00 م';
+    }
+    if (!parsed.hoursEn || parsed.hoursEn.includes('Sat') || parsed.hoursEn.includes('Saturday')) {
+      parsed.hoursEn = 'Sunday – Thursday: 8:00 AM – 8:00 PM';
     }
     // Remove license and board accreditation
     parsed.officialLicenseAr = '';
