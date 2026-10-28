@@ -608,7 +608,7 @@ export default function App() {
   if (isAdminOpen) {
     if (!adminSession) {
       return (
-        <Suspense fallback={<div className="min-h-screen bg-[#0B0F19] flex items-center justify-center text-[#2E86EB] font-bold">جاري تحميل تسجيل الدخول...</div>}>
+        <Suspense fallback={<div className="min-h-screen bg-[#0D1B2A] flex items-center justify-center text-[#2E86EB] font-bold">جاري تحميل تسجيل الدخول...</div>}>
           <AdminLoginPage
             onLoginSuccess={(user) => {
               setAdminSession(user);
@@ -625,7 +625,7 @@ export default function App() {
     }
 
     return (
-      <Suspense fallback={<div className="min-h-screen bg-[#0B0F19] flex items-center justify-center text-[#2E86EB] font-bold">جاري تحميل لوحة التحكم...</div>}>
+      <Suspense fallback={<div className="min-h-screen bg-[#0D1B2A] flex items-center justify-center text-[#2E86EB] font-bold">جاري تحميل لوحة التحكم...</div>}>
         <AdminDashboard
           appointments={appointments}
           onUpdateAppointments={setAppointments}

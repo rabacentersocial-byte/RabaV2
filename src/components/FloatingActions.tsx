@@ -94,7 +94,7 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
             id="whatsapp-chat-popup"
             className={`fixed sm:absolute bottom-24 sm:bottom-16 ${
               isArabic ? 'left-3 sm:left-0' : 'right-3 sm:right-0'
-            } w-[calc(100vw-1.5rem)] sm:w-92 max-w-sm bg-white dark:bg-[#0B141E] text-slate-900 dark:text-white rounded-3xl shadow-[0_20px_70px_rgba(0,0,0,0.35)] dark:shadow-[0_20px_70px_rgba(0,0,0,0.8)] border border-slate-200 dark:border-white/15 overflow-hidden ${
+            } w-[calc(100vw-1.5rem)] sm:w-92 max-w-sm bg-white dark:bg-[#0D1B2A] text-slate-900 dark:text-white rounded-3xl shadow-[0_20px_70px_rgba(0,0,0,0.35)] dark:shadow-[0_20px_70px_rgba(0,0,0,0.8)] border border-slate-200 dark:border-white/15 overflow-hidden ${
               isArabic ? 'text-right' : 'text-left'
             } z-50 animate-in fade-in slide-in-from-bottom-4 duration-300`}
             dir={direction}

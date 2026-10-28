@@ -79,7 +79,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
 
   return (
     <div 
-      className="min-h-screen relative flex flex-col bg-[#0B0F19] text-white selection:bg-[#2E86EB] selection:text-white font-sans overflow-x-hidden"
+      className="min-h-screen relative flex flex-col bg-[#0D1B2A] text-white selection:bg-[#2E86EB] selection:text-white font-sans overflow-x-hidden"
       dir={isArabic ? 'rtl' : 'ltr'}
     >
       {/* Background Decorative Ambient Gradients */}

@@ -41,7 +41,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSucce
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-md animate-in fade-in duration-200">
       <div 
-        className={`relative w-full max-w-md bg-white dark:bg-[#0B1120] text-slate-900 dark:text-white border border-slate-200 dark:border-white/20 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.7)] overflow-hidden ${isArabic ? 'text-right' : 'text-left'} p-6 sm:p-8`}
+        className={`relative w-full max-w-md bg-white dark:bg-[#0D1B2A] text-slate-900 dark:text-white border border-slate-200 dark:border-white/20 rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.7)] overflow-hidden ${isArabic ? 'text-right' : 'text-left'} p-6 sm:p-8`}
         onClick={(e) => e.stopPropagation()}
         dir={direction}
       >

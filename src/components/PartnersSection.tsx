@@ -678,8 +678,8 @@ export const PartnersSection: React.FC = () => {
                 <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/20 dark:via-emerald-400/25 to-transparent pointer-events-none z-0" />
 
                 {/* Left and Right Fade Masks for seamless infinite flow */}
-                <div className="absolute top-0 right-0 bottom-0 w-12 sm:w-32 bg-gradient-to-l from-[#F8FAFC] via-[#F8FAFC]/70 to-transparent dark:from-[#061412] dark:via-[#061412]/80 dark:to-transparent z-30 pointer-events-none" />
-                <div className="absolute top-0 left-0 bottom-0 w-12 sm:w-32 bg-gradient-to-r from-[#F8FAFC] via-[#F8FAFC]/70 to-transparent dark:from-[#061412] dark:via-[#061412]/80 dark:to-transparent z-30 pointer-events-none" />
+                <div className="absolute top-0 right-0 bottom-0 w-12 sm:w-32 bg-gradient-to-l from-[#F8FAFC] via-[#F8FAFC]/70 to-transparent dark:from-[#0D1B2A] dark:via-[#0D1B2A]/80 dark:to-transparent z-30 pointer-events-none" />
+                <div className="absolute top-0 left-0 bottom-0 w-12 sm:w-32 bg-gradient-to-r from-[#F8FAFC] via-[#F8FAFC]/70 to-transparent dark:from-[#0D1B2A] dark:via-[#0D1B2A]/80 dark:to-transparent z-30 pointer-events-none" />
 
                 {/* Moving Track */}
                 <div
@@ -1006,7 +1006,7 @@ export const PartnersSection: React.FC = () => {
           onClick={() => setActivePartnerModal(null)}
         >
           <div 
-            className="w-full max-w-lg bg-white dark:bg-[#0B0F19] rounded-3xl p-6 sm:p-7 border border-slate-200 dark:border-white/10 shadow-2xl relative overflow-hidden"
+            className="w-full max-w-lg bg-white dark:bg-[#0D1B2A] rounded-3xl p-6 sm:p-7 border border-slate-200 dark:border-white/10 shadow-2xl relative overflow-hidden"
             onClick={(e) => e.stopPropagation()}
             dir={isArabic ? 'rtl' : 'ltr'}
           >

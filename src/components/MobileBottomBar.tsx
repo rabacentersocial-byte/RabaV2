@@ -118,7 +118,7 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
       style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 8px)' }}
     >
       {/* Frosted Glass Container with top border & subtle shadow */}
-      <div className="mx-2.5 mb-1.5 rounded-2xl bg-white/95 dark:bg-[#0B0F19]/95 backdrop-blur-2xl border border-slate-200/90 dark:border-white/15 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_-8px_35px_rgba(0,0,0,0.45)] px-1.5 py-1.5 flex items-center justify-around">
+      <div className="mx-2.5 mb-1.5 rounded-2xl bg-white/95 dark:bg-[#0D1B2A]/95 backdrop-blur-2xl border border-slate-200/90 dark:border-white/15 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_-8px_35px_rgba(0,0,0,0.45)] px-1.5 py-1.5 flex items-center justify-around">
         
         {/* 1. Home */}
         <button
@@ -150,7 +150,7 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
         <button
           onClick={onOpenBooking}
           id="mobile-bottom-book-btn"
-          className="flex flex-col items-center justify-center -mt-4 px-3.5 py-1.5 rounded-2xl bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] text-white shadow-lg shadow-blue-500/25 border-2 border-white dark:border-[#0B0F19] active:scale-95 transition-transform cursor-pointer min-h-[48px]"
+          className="flex flex-col items-center justify-center -mt-4 px-3.5 py-1.5 rounded-2xl bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] text-white shadow-lg shadow-blue-500/25 border-2 border-white dark:border-[#0D1B2A] active:scale-95 transition-transform cursor-pointer min-h-[48px]"
         >
           <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center mb-0.5">
             <CalendarCheck className="w-4 h-4 text-white" />

@@ -387,7 +387,7 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
       </div>
 
       {/* 2. HERO HEADER SECTION */}
-      <section className="relative overflow-hidden py-10 sm:py-14 md:py-16 border-b border-slate-200/80 dark:border-white/10 bg-gradient-to-b from-white via-slate-50/50 to-slate-100/40 dark:from-[#0E1B33] dark:via-[#0B0F19] dark:to-[#080B12]">
+      <section className="relative overflow-hidden py-10 sm:py-14 md:py-16 border-b border-slate-200/80 dark:border-white/10 bg-gradient-to-b from-white via-slate-50/50 to-slate-100/40 dark:from-[#112238] dark:via-[#0D1B2A] dark:to-[#08111D]">
         
         {/* Background ambient lighting */}
         <div className="absolute top-0 right-1/4 w-[420px] h-[420px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
@@ -806,7 +806,7 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                     </p>
 
                     {/* Schedule & Location Details */}
-                    <div className="bg-slate-50 dark:bg-[#0E1526] rounded-2xl p-3 sm:p-3.5 mb-5 space-y-2 border border-slate-200/60 dark:border-white/5 text-xs text-slate-700 dark:text-slate-300">
+                    <div className="bg-slate-50 dark:bg-[#112238] rounded-2xl p-3 sm:p-3.5 mb-5 space-y-2 border border-slate-200/60 dark:border-white/5 text-xs text-slate-700 dark:text-slate-300">
                       <div className="flex items-center gap-2">
                         <Clock className="w-3.5 h-3.5 text-[#2E86EB] dark:text-[#2E86EB] shrink-0" />
                         <span className="font-bold">{isArabic ? act.dateAr : act.dateEn}</span>

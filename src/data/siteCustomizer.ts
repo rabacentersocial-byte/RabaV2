@@ -440,7 +440,7 @@ export function applyGlobalTheme(settings: SiteThemeSettings): void {
   root.style.setProperty('--raba-secondary', settings.secondaryColor || '#FFD23F');
   root.style.setProperty('--raba-tertiary', settings.tertiaryColor || '#22C55E');
   root.style.setProperty('--raba-neutral', settings.neutralColor || '#D9F14A');
-  root.style.setProperty('--raba-dark-bg', '#0B0F19');
+  root.style.setProperty('--raba-dark-bg', '#0D1B2A');
 }
 
 // Social Load / Save

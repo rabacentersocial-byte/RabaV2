@@ -33,9 +33,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       root.classList.add('dark');
       root.classList.remove('light');
       root.style.colorScheme = 'dark';
-      root.style.backgroundColor = '#061412';
+      root.style.backgroundColor = '#0D1B2A';
       if (body) {
-        body.style.backgroundColor = '#061412';
+        body.style.backgroundColor = '#0D1B2A';
         body.style.color = '#f1f5f9';
       }
     } else {

@@ -98,7 +98,7 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-lg bg-white dark:bg-[#081816] border border-slate-200 dark:border-teal-500/25 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]"
+        className="relative w-full max-w-lg bg-white dark:bg-[#0D1B2A] border border-slate-200 dark:border-white/15 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]"
         onClick={(e) => e.stopPropagation()}
         dir={isArabic ? 'rtl' : 'ltr'}
       >

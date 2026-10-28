@@ -77,7 +77,7 @@ export const NotificationCenterModal: React.FC<NotificationCenterModalProps> = (
       onClick={onClose}
     >
       <div 
-        className={`relative bg-white dark:bg-[#0B1120] text-slate-900 dark:text-white rounded-3xl max-w-2xl w-full shadow-[0_20px_60px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.7)] border border-slate-200 dark:border-white/20 overflow-hidden ${isArabic ? 'text-right' : 'text-left'} my-8`}
+        className={`relative bg-white dark:bg-[#0D1B2A] text-slate-900 dark:text-white rounded-3xl max-w-2xl w-full shadow-[0_20px_60px_rgba(0,0,0,0.3)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.7)] border border-slate-200 dark:border-white/20 overflow-hidden ${isArabic ? 'text-right' : 'text-left'} my-8`}
         onClick={(e) => e.stopPropagation()}
         id="notification-center-modal"
         dir={direction}

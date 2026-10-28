@@ -242,7 +242,7 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-md animate-in fade-in duration-200">
       <div 
-        className={`relative w-full max-w-3xl bg-white dark:bg-[#0B1120] text-slate-900 dark:text-white border border-slate-200 dark:border-white/20 rounded-3xl shadow-2xl overflow-hidden ${isArabic ? 'text-right' : 'text-left'} flex flex-col max-h-[90vh]`}
+        className={`relative w-full max-w-3xl bg-white dark:bg-[#0D1B2A] text-slate-900 dark:text-white border border-slate-200 dark:border-white/20 rounded-3xl shadow-2xl overflow-hidden ${isArabic ? 'text-right' : 'text-left'} flex flex-col max-h-[90vh]`}
         onClick={(e) => e.stopPropagation()}
         dir={direction}
       >

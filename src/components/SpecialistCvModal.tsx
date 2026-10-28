@@ -120,7 +120,7 @@ export const SpecialistCvModal: React.FC<SpecialistCvModalProps> = ({
       aria-labelledby="specialist-cv-name"
     >
       <div 
-        className={`relative bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white rounded-t-[28px] sm:rounded-3xl max-w-3xl w-full shadow-[0_25px_65px_rgba(0,0,0,0.4)] dark:shadow-[0_25px_65px_rgba(0,0,0,0.85)] border-t sm:border border-slate-200/90 dark:border-white/15 overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[88vh] ${isArabic ? 'text-right' : 'text-left'} my-0 sm:my-auto animate-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200`}
+        className={`relative bg-white dark:bg-[#0D1B2A] text-slate-900 dark:text-white rounded-t-[28px] sm:rounded-3xl max-w-3xl w-full shadow-[0_25px_65px_rgba(0,0,0,0.4)] dark:shadow-[0_25px_65px_rgba(0,0,0,0.85)] border-t sm:border border-slate-200/90 dark:border-white/15 overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[88vh] ${isArabic ? 'text-right' : 'text-left'} my-0 sm:my-auto animate-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200`}
         onClick={(e) => e.stopPropagation()}
         id="specialist-cv-modal"
         dir={direction}
@@ -129,7 +129,7 @@ export const SpecialistCvModal: React.FC<SpecialistCvModalProps> = ({
         <div className="w-12 h-1.5 rounded-full bg-slate-300 dark:bg-white/20 mx-auto mt-2.5 mb-1 sm:hidden shrink-0" />
 
         {/* Top Banner & Header Section */}
-        <div className="bg-gradient-to-l from-blue-500/10 dark:from-[#2E86EB]/20 via-slate-100/90 dark:via-[#111827]/80 to-white dark:to-[#0B0F19] p-4 sm:p-6 sm:pb-5 relative border-b border-slate-200/80 dark:border-white/10 shrink-0">
+        <div className="bg-gradient-to-l from-blue-500/10 dark:from-[#2E86EB]/20 via-slate-100/90 dark:via-[#111827]/80 to-white dark:to-[#0D1B2A] p-4 sm:p-6 sm:pb-5 relative border-b border-slate-200/80 dark:border-white/10 shrink-0">
           
           {/* Top Bar Actions: Share & Close */}
           <div className={`absolute top-3 ${isArabic ? 'left-3' : 'right-3'} flex items-center gap-1.5 z-10`}>
@@ -350,7 +350,7 @@ export const SpecialistCvModal: React.FC<SpecialistCvModalProps> = ({
         </div>
 
         {/* Sticky Mobile-Friendly Modal Footer CTA */}
-        <div className="p-3 sm:p-5 bg-white/95 dark:bg-[#071311]/95 backdrop-blur-md border-t border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2.5 shrink-0">
+        <div className="p-3 sm:p-5 bg-white/95 dark:bg-[#0D1B2A]/95 backdrop-blur-md border-t border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2.5 shrink-0">
           
           {/* Left Buttons: Close & WhatsApp consultation */}
           <div className="flex items-center gap-2 w-full sm:w-auto">

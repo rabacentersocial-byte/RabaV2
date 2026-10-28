@@ -351,7 +351,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   return (
     <div 
-      className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors relative"
+      className="min-h-screen bg-slate-100 dark:bg-[#0D1B2A] text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors relative"
       dir={isArabic ? 'rtl' : 'ltr'}
     >
       {/* Quick Persistent Sync Floating Toast */}

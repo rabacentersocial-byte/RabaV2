@@ -138,7 +138,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
   ];
 
   return (
-    <footer className={`relative overflow-hidden text-slate-700 dark:text-slate-300 pt-16 pb-28 md:pb-12 ${isArabic ? 'text-right' : 'text-left'} transition-colors duration-500 border-t border-slate-200/80 dark:border-white/10 bg-gradient-to-b from-slate-50/70 via-white/50 to-slate-100/90 dark:from-[#060913]/85 dark:via-[#080E1C]/90 dark:to-[#050810]/98 backdrop-blur-2xl`}>
+    <footer className={`relative overflow-hidden text-slate-700 dark:text-slate-300 pt-16 pb-28 md:pb-12 ${isArabic ? 'text-right' : 'text-left'} transition-colors duration-500 border-t border-slate-200/80 dark:border-white/10 bg-gradient-to-b from-slate-50/70 via-white/50 to-slate-100/90 dark:from-[#0D1B2A]/90 dark:via-[#0B1522]/95 dark:to-[#08101A]/98 backdrop-blur-2xl`}>
       
       {/* 1. Liquid Glass Prismatic Top Horizon Hairline (Curved Light Reflection) */}
       <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#2E86EB]/60 via-40% via-[#FFD23F]/50 via-60% via-[#22C55E]/60 to-transparent pointer-events-none z-20" />
@@ -398,22 +398,13 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
             {onOpenAdmin && (
               <button
                 onClick={onOpenAdmin}
-                className="text-emerald-700 dark:text-emerald-400 hover:underline font-bold flex items-center gap-1 cursor-pointer"
+                title={isArabic ? 'لوحة تحكم المنظومة' : 'Staff & Admin Portal'}
+                aria-label={isArabic ? 'لوحة تحكم المنظومة' : 'Staff & Admin Portal'}
+                className="text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 p-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors cursor-pointer"
               >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>{isArabic ? 'لوحة تحكم المنظومة (الإدارة)' : 'Staff & Admin Portal'}</span>
+                <ShieldCheck className="w-4 h-4" />
               </button>
             )}
-            <button
-              onClick={() => {
-                setPwaModalTab(isIOS ? 'ios' : 'android');
-                setIsPwaModalOpen(true);
-              }}
-              className="text-teal-700 dark:text-[#00E5BE] hover:underline font-bold flex items-center gap-1.5 cursor-pointer"
-            >
-              <Smartphone className="w-3.5 h-3.5" />
-              <span>{isArabic ? 'تثبيت تطبيق الويب (Web App)' : 'Install Web App'}</span>
-            </button>
           </div>
           
           <button

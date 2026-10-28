@@ -240,10 +240,10 @@ export const Navbar: React.FC<NavbarProps> = ({
         className={`sticky top-0 z-50 w-full py-2 sm:py-2.5 transition-all duration-300 ${
           isScrolled 
             ? isDark 
-              ? 'bg-[#0B0F19]/80 backdrop-blur-2xl border-b border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.55),inset_0_1px_1px_rgba(255,255,255,0.1)]' 
+              ? 'bg-[#0D1B2A]/85 backdrop-blur-2xl border-b border-white/10 shadow-[0_12px_36px_rgba(0,0,0,0.55),inset_0_1px_1px_rgba(255,255,255,0.1)]' 
               : 'bg-white/85 backdrop-blur-2xl border-b border-white/80 shadow-[0_10px_30px_rgba(15,23,42,0.06),inset_0_1px_1px_rgba(255,255,255,0.95)]'
             : isDark 
-              ? 'bg-[#0B0F19]/60 backdrop-blur-xl border-b border-white/10' 
+              ? 'bg-[#0D1B2A]/70 backdrop-blur-xl border-b border-white/10' 
               : 'bg-white/70 backdrop-blur-xl border-b border-white/60'
         }`}
         style={{ position: 'sticky', top: 0, zIndex: 50 }}
@@ -353,22 +353,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </button>
 
-              {/* Admin Dashboard Entry (Icon Only - on tablet/desktop) */}
-              {onOpenAdmin && (
-                <button
-                  onClick={onOpenAdmin}
-                  id="header-admin-btn"
-                  className={`hidden sm:flex p-2 sm:p-2.5 rounded-full transition-all cursor-pointer items-center justify-center shadow-xs ${
-                    isDark 
-                      ? 'liquid-glass-btn text-[#22C55E] hover:text-[#4ade80]' 
-                      : 'liquid-glass-btn text-[#16a34a] hover:text-[#15803d]'
-                  }`}
-                  title={isArabic ? "لوحة تحكم المنظومة والإدارة" : "Admin Dashboard"}
-                  aria-label={isArabic ? "لوحة تحكم المنظومة والإدارة" : "Admin Dashboard"}
-                >
-                  <ShieldCheck className="w-4 h-4" />
-                </button>
-              )}
 
               {/* Primary Action Button: "احجز الآن" / "Book Now" */}
               <button
@@ -429,7 +413,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               isArabic ? 'slide-in-from-right' : 'slide-in-from-left'
             } ${
               isDark 
-                ? 'bg-[#0E1526] text-white border-white/10' 
+                ? 'bg-[#0D1B2A] text-white border-white/10' 
                 : 'bg-white text-slate-900 border-slate-200/90'
             }`}
             dir={isArabic ? 'rtl' : 'ltr'}
@@ -629,25 +613,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </div>
               </div>
 
-              {/* Admin Portal Entry */}
-              {onOpenAdmin && (
-                <div className="pt-1">
-                  <button
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      onOpenAdmin();
-                    }}
-                    className={`w-full py-2.5 px-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 border cursor-pointer ${
-                      isDark 
-                        ? 'bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/25 text-emerald-300' 
-                        : 'bg-emerald-50 hover:bg-emerald-100 border-emerald-300 text-emerald-900'
-                    }`}
-                  >
-                    <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                    <span>{isArabic ? 'لوحة تحكم المنظومة وإدارة البيانات' : 'System Admin Dashboard'}</span>
-                  </button>
-                </div>
-              )}
 
             </div>
 

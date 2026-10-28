@@ -190,8 +190,8 @@ export const AccreditationsSection: React.FC = () => {
       className="py-8 sm:py-10 bg-transparent text-slate-800 dark:text-white relative overflow-hidden border-t border-b border-slate-200/80 dark:border-white/10 select-none transition-colors"
     >
       {/* Edge gradient fade masks for smooth entrance/exit */}
-      <div className="absolute top-0 right-0 bottom-0 w-12 sm:w-28 bg-gradient-to-l from-slate-50/90 dark:from-[#0B0F19] to-transparent z-20 pointer-events-none" />
-      <div className="absolute top-0 left-0 bottom-0 w-12 sm:w-28 bg-gradient-to-r from-slate-50/90 dark:from-[#0B0F19] to-transparent z-20 pointer-events-none" />
+      <div className="absolute top-0 right-0 bottom-0 w-12 sm:w-28 bg-gradient-to-l from-slate-50/90 dark:from-[#0D1B2A] to-transparent z-20 pointer-events-none" />
+      <div className="absolute top-0 left-0 bottom-0 w-12 sm:w-28 bg-gradient-to-r from-slate-50/90 dark:from-[#0D1B2A] to-transparent z-20 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         
@@ -274,7 +274,7 @@ export const AccreditationsSection: React.FC = () => {
           onClick={() => setSelectedItem(null)}
         >
           <div 
-            className="bg-white dark:bg-[#0B1526] text-slate-900 dark:text-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-white/10 relative overflow-hidden"
+            className="bg-white dark:bg-[#0D1B2A] text-slate-900 dark:text-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-white/10 relative overflow-hidden"
             onClick={(e) => e.stopPropagation()}
             dir={isArabic ? 'rtl' : 'ltr'}
           >

@@ -7,8 +7,7 @@ export const AnimatedBackground: React.FC = () => {
 
   return (
     <div 
-      className="fixed inset-0 pointer-events-none overflow-hidden -z-10 select-none transition-colors duration-700"
-      style={{ transform: 'translateZ(0)', willChange: 'transform' }}
+      className="liquid-bg-container fixed inset-0 pointer-events-none overflow-hidden -z-10 select-none transition-colors duration-700"
       aria-hidden="true"
     >
       {/* 
@@ -19,7 +18,7 @@ export const AnimatedBackground: React.FC = () => {
       <div 
         className={`absolute inset-0 transition-colors duration-700 ${
           isDark 
-            ? 'bg-gradient-to-b from-[#060913] via-[#091122] via-45% to-[#050810]' 
+            ? 'bg-gradient-to-b from-[#0D1B2A] via-[#091524] via-45% to-[#070F1A]' 
             : 'bg-gradient-to-b from-[#F8FAFD] via-[#EEF4FB] via-45% to-[#F4F8FD]'
         }`} 
       />
@@ -45,56 +44,51 @@ export const AnimatedBackground: React.FC = () => {
         
         {/* Orb 1: Electric Blue (#2E86EB) - Primary Hero & Header Caustic Focus */}
         <div 
-          className="absolute -top-24 -right-20 md:-top-32 md:-right-24 w-[380px] h-[380px] sm:w-[540px] sm:h-[540px] lg:w-[720px] lg:h-[720px] rounded-full blur-[90px] sm:blur-[120px] lg:blur-[140px] opacity-75 dark:opacity-60 animate-liquid-orb-1"
+          className="liquid-orb absolute -top-24 -right-20 md:-top-32 md:-right-24 w-[380px] h-[380px] sm:w-[540px] sm:h-[540px] lg:w-[720px] lg:h-[720px] rounded-full blur-[90px] sm:blur-[120px] lg:blur-[140px] opacity-75 dark:opacity-60 animate-liquid-orb-1"
           style={{
             background: isDark 
               ? 'radial-gradient(circle, rgba(46, 134, 235, 0.45) 0%, rgba(46, 134, 235, 0.15) 50%, transparent 75%)' 
-              : 'radial-gradient(circle, rgba(46, 134, 235, 0.25) 0%, rgba(74, 156, 255, 0.12) 50%, transparent 75%)',
-            willChange: 'transform'
+              : 'radial-gradient(circle, rgba(46, 134, 235, 0.25) 0%, rgba(74, 156, 255, 0.12) 50%, transparent 75%)'
           }}
         />
 
         {/* Orb 2: Vivid Emerald Green (#22C55E) - Mid-Left Health & Services Aurora */}
         <div 
-          className="absolute top-[28%] -left-24 sm:-left-32 md:-left-40 w-[360px] h-[360px] sm:w-[500px] sm:h-[500px] lg:w-[660px] lg:h-[660px] rounded-full blur-[85px] sm:blur-[115px] lg:blur-[135px] opacity-70 dark:opacity-50 animate-liquid-orb-2"
+          className="liquid-orb absolute top-[28%] -left-24 sm:-left-32 md:-left-40 w-[360px] h-[360px] sm:w-[500px] sm:h-[500px] lg:w-[660px] lg:h-[660px] rounded-full blur-[85px] sm:blur-[115px] lg:blur-[135px] opacity-70 dark:opacity-50 animate-liquid-orb-2"
           style={{
             background: isDark 
               ? 'radial-gradient(circle, rgba(34, 197, 94, 0.38) 0%, rgba(34, 197, 94, 0.12) 50%, transparent 75%)' 
-              : 'radial-gradient(circle, rgba(34, 197, 94, 0.22) 0%, rgba(74, 222, 128, 0.10) 50%, transparent 75%)',
-            willChange: 'transform'
+              : 'radial-gradient(circle, rgba(34, 197, 94, 0.22) 0%, rgba(74, 222, 128, 0.10) 50%, transparent 75%)'
           }}
         />
 
         {/* Orb 3: Warm Saffron Gold (#FFD23F) - Mid-Right Warmth & Depth */}
         <div 
-          className="absolute top-[52%] -right-16 sm:-right-24 md:-right-32 w-[340px] h-[340px] sm:w-[460px] sm:h-[460px] lg:w-[580px] lg:h-[580px] rounded-full blur-[80px] sm:blur-[110px] lg:blur-[130px] opacity-65 dark:opacity-45 animate-liquid-orb-3"
+          className="liquid-orb absolute top-[52%] -right-16 sm:-right-24 md:-right-32 w-[340px] h-[340px] sm:w-[460px] sm:h-[460px] lg:w-[580px] lg:h-[580px] rounded-full blur-[80px] sm:blur-[110px] lg:blur-[130px] opacity-65 dark:opacity-45 animate-liquid-orb-3"
           style={{
             background: isDark 
               ? 'radial-gradient(circle, rgba(255, 210, 63, 0.35) 0%, rgba(255, 210, 63, 0.10) 50%, transparent 75%)' 
-              : 'radial-gradient(circle, rgba(255, 210, 63, 0.22) 0%, rgba(254, 240, 138, 0.12) 50%, transparent 75%)',
-            willChange: 'transform'
+              : 'radial-gradient(circle, rgba(255, 210, 63, 0.22) 0%, rgba(254, 240, 138, 0.12) 50%, transparent 75%)'
           }}
         />
 
         {/* Orb 4: Neon Magenta Flare (#FF2D9B) - Lower Left Prismatic Energy */}
         <div 
-          className="absolute top-[75%] -left-16 sm:-left-24 md:-left-28 w-[350px] h-[350px] sm:w-[480px] sm:h-[480px] lg:w-[620px] lg:h-[620px] rounded-full blur-[85px] sm:blur-[120px] lg:blur-[140px] opacity-60 dark:opacity-40 animate-liquid-orb-4"
+          className="liquid-orb absolute top-[75%] -left-16 sm:-left-24 md:-left-28 w-[350px] h-[350px] sm:w-[480px] sm:h-[480px] lg:w-[620px] lg:h-[620px] rounded-full blur-[85px] sm:blur-[120px] lg:blur-[140px] opacity-60 dark:opacity-40 animate-liquid-orb-4"
           style={{
             background: isDark 
               ? 'radial-gradient(circle, rgba(255, 45, 155, 0.35) 0%, rgba(255, 45, 155, 0.10) 50%, transparent 75%)' 
-              : 'radial-gradient(circle, rgba(255, 45, 155, 0.18) 0%, rgba(244, 114, 182, 0.08) 50%, transparent 75%)',
-            willChange: 'transform'
+              : 'radial-gradient(circle, rgba(255, 45, 155, 0.18) 0%, rgba(244, 114, 182, 0.08) 50%, transparent 75%)'
           }}
         />
 
         {/* Orb 5: High-Contrast Chartreuse / Lime (#D9F14A) - Center Dynamic Dispersion */}
         <div 
-          className="absolute top-[40%] left-[25%] sm:left-[35%] w-[300px] h-[300px] sm:w-[420px] sm:h-[420px] lg:w-[500px] lg:h-[500px] rounded-full blur-[80px] sm:blur-[110px] lg:blur-[130px] opacity-45 dark:opacity-30 animate-caustic-shimmer"
+          className="liquid-orb absolute top-[40%] left-[25%] sm:left-[35%] w-[300px] h-[300px] sm:w-[420px] sm:h-[420px] lg:w-[500px] lg:h-[500px] rounded-full blur-[80px] sm:blur-[110px] lg:blur-[130px] opacity-45 dark:opacity-30 animate-caustic-shimmer"
           style={{
             background: isDark 
               ? 'radial-gradient(circle, rgba(217, 241, 74, 0.25) 0%, rgba(217, 241, 74, 0.06) 50%, transparent 75%)' 
-              : 'radial-gradient(circle, rgba(217, 241, 74, 0.16) 0%, rgba(234, 252, 110, 0.06) 50%, transparent 75%)',
-            willChange: 'transform'
+              : 'radial-gradient(circle, rgba(217, 241, 74, 0.16) 0%, rgba(234, 252, 110, 0.06) 50%, transparent 75%)'
           }}
         />
 
@@ -154,7 +148,7 @@ export const AnimatedBackground: React.FC = () => {
       <div 
         className={`absolute bottom-0 inset-x-0 h-48 pointer-events-none transition-opacity duration-700 ${
           isDark 
-            ? 'bg-gradient-to-t from-[#050810] to-transparent opacity-80' 
+            ? 'bg-gradient-to-t from-[#0D1B2A] to-transparent opacity-80' 
             : 'bg-gradient-to-t from-[#F4F8FD] to-transparent opacity-60'
         }`}
       />

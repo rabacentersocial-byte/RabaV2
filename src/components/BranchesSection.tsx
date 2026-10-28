@@ -559,7 +559,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
         )}
 
         {/* Unified Contact Bar below Branches */}
-        <div className="mt-8 sm:mt-12 bg-gradient-to-br from-[#0E1B33] via-[#112347] to-[#0B0F19] rounded-2xl sm:rounded-3xl p-4 sm:p-6 sm:px-8 border border-blue-500/25 shadow-[0_16px_40px_rgba(11,15,25,0.45)] relative overflow-hidden text-white">
+        <div className="mt-8 sm:mt-12 bg-gradient-to-br from-[#0E1B33] via-[#112347] to-[#0D1B2A] rounded-2xl sm:rounded-3xl p-4 sm:p-6 sm:px-8 border border-blue-500/25 shadow-[0_16px_40px_rgba(13,27,42,0.55)] relative overflow-hidden text-white">
           {/* Subtle ambient lighting glows */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#2E86EB]/15 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#FFD23F]/10 rounded-full blur-3xl pointer-events-none" />

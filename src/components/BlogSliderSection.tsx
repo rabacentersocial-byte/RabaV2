@@ -454,12 +454,12 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
           onClick={() => setSelectedPost(null)}
         >
           <div 
-            className="bg-white dark:bg-[#0B0F19] rounded-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-white/15 relative flex flex-col"
+            className="bg-white dark:bg-[#0D1B2A] rounded-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-white/15 relative flex flex-col"
             onClick={(e) => e.stopPropagation()}
             dir={isArabic ? 'rtl' : 'ltr'}
           >
             {/* Modal Header Sticky Top */}
-            <div className="sticky top-0 z-20 bg-white/95 dark:bg-[#0B0F19]/95 backdrop-blur-md px-6 py-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between">
+            <div className="sticky top-0 z-20 bg-white/95 dark:bg-[#0D1B2A]/95 backdrop-blur-md px-6 py-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between">
               {(() => {
                 const modalConfig = getCategoryIconConfig(selectedPost.category);
                 return (

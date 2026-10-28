@@ -210,7 +210,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
         <div className="relative rounded-2xl sm:rounded-[36px] md:rounded-[48px] p-3 sm:p-6 md:p-8 pb-9 sm:pb-10 bg-gradient-to-b from-[#2E86EB]/[0.05] via-transparent to-[#FF2D9B]/[0.04] border sm:border-2 border-dashed border-[#2E86EB]/40 dark:border-[#2E86EB]/35 shadow-[0_10px_40px_rgba(46,134,235,0.08)]">
           
           {/* Top Bracelet Clasp Ornament (ميدالية وقفل سِوار الأمان) */}
-          <div className="absolute -top-3.5 sm:-top-4 left-1/2 -translate-x-1/2 px-3 sm:px-5 py-0.5 sm:py-1 rounded-full bg-white dark:bg-[#0B0F19] border sm:border-2 border-[#2E86EB]/60 shadow-md flex items-center gap-1.5 sm:gap-2 z-20">
+          <div className="absolute -top-3.5 sm:-top-4 left-1/2 -translate-x-1/2 px-3 sm:px-5 py-0.5 sm:py-1 rounded-full bg-white dark:bg-[#0D1B2A] border sm:border-2 border-[#2E86EB]/60 shadow-md flex items-center gap-1.5 sm:gap-2 z-20">
             <SiwarBraceletIcon className="w-3.5 sm:w-5 h-3.5 sm:h-5 text-[#2E86EB] animate-pulse shrink-0" />
             <span className="text-[10px] sm:text-xs font-black tracking-wider text-[#2E86EB] whitespace-nowrap">
               {isArabic ? 'سِوار الأمان والاحتواء المدرسي' : 'Sewar School Protection Bracelet'}
@@ -336,7 +336,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
 
             {/* Column 2: Compact Form Beside Introductory Text (5 cols on lg) */}
             <div className="lg:col-span-5 flex flex-col justify-center mb-3 sm:mb-0">
-              <div className="rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 shadow-xl transition-all relative overflow-hidden bg-gradient-to-br from-[#0B0F19] via-[#0E1526] to-[#0A0D18] border border-[#2E86EB]/30 text-white">
+              <div className="rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 shadow-xl transition-all relative overflow-hidden bg-gradient-to-br from-[#0D1B2A] via-[#102035] to-[#0A1422] border border-[#2E86EB]/30 text-white">
                 
                 {/* Decorative subtle brand glows */}
                 <div className="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-[#2E86EB]/20 rounded-full blur-2xl pointer-events-none" />
@@ -366,7 +366,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className="bg-white/95 dark:bg-[#0B0F19]/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 text-center shadow-lg border border-white/20 space-y-2.5 sm:space-y-3 my-1 sm:my-2 text-slate-900 dark:text-white"
+                      className="bg-white/95 dark:bg-[#0D1B2A]/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 text-center shadow-lg border border-white/20 space-y-2.5 sm:space-y-3 my-1 sm:my-2 text-slate-900 dark:text-white"
                     >
                       <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#22C55E]/15 border border-[#22C55E]/30 text-[#22C55E] rounded-full flex items-center justify-center mx-auto shadow-inner">
                         <CheckCircle2 className="w-6 h-6 sm:w-7 sm:h-7" />
@@ -524,7 +524,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
           </div>
 
           {/* Bottom Bracelet Charm (ميدالية سِوار الاحتواء السفلية) */}
-          <div className="absolute -bottom-3.5 sm:-bottom-4 left-1/2 -translate-x-1/2 px-3 sm:px-4 py-1 rounded-full bg-white dark:bg-[#0B0F19] border border-[#2E86EB]/50 shadow-md flex items-center justify-center gap-1.5 z-20 text-[9.5px] sm:text-xs font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap max-w-[95vw]">
+          <div className="absolute -bottom-3.5 sm:-bottom-4 left-1/2 -translate-x-1/2 px-3 sm:px-4 py-1 rounded-full bg-white dark:bg-[#0D1B2A] border border-[#2E86EB]/50 shadow-md flex items-center justify-center gap-1.5 z-20 text-[9.5px] sm:text-xs font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap max-w-[95vw]">
             <Heart className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#FF2D9B] fill-current shrink-0" />
             <span className="whitespace-nowrap font-bold">
               {isArabic ? 'سِوار الأمان — خطوة بخطوة مع طفلك' : 'Sewar Bracelet — Step by Step with Your Child'}
