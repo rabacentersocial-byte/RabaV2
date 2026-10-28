@@ -1374,7 +1374,7 @@ export const SPECIALISTS: Specialist[] = [
     "role": "أخصائية ABA",
     "roleEn": "ABA Specialist & SCFHS Licensed Psychologist",
     "avatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
-    "experienceYears": 990,
+    "experienceYears": 2,
     "licenseNumber": "RABA-PSY-049",
     "specialties": [
       "حاصلة على بكالوريوس علم النفس من جامعة الأميرة نورة بنت عبدالرحمن",

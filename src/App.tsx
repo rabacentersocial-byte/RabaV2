@@ -206,7 +206,8 @@ export default function App() {
                 s.id === 'spec-rawan-tablett' || 
                 s.id === 'spec-hossam-malki' ||
                 (s.id === 'spec-hanaa-basheer' && (!s.education || s.education.length < 5 || s.category !== 'psychology' || s.experienceYears !== 15)) ||
-                (s.id === 'spec-sara-abdelhamid' && s.name && s.name.includes('يارا'))
+                (s.id === 'spec-sara-abdelhamid' && s.name && s.name.includes('يارا')) ||
+                (s.id === 'spec-sadeem-mshari' && s.experienceYears !== 2)
               );
             const fullList = hasStaleMocks
               ? SPECIALISTS
@@ -298,7 +299,8 @@ export default function App() {
               s.id === 'spec-rawan-tablett' || 
               s.id === 'spec-hossam-malki' ||
               (s.id === 'spec-hanaa-basheer' && (!s.education || s.education.length < 5 || s.category !== 'psychology' || s.experienceYears !== 15)) ||
-              (s.id === 'spec-sara-abdelhamid' && s.name && s.name.includes('يارا'))
+              (s.id === 'spec-sara-abdelhamid' && s.name && s.name.includes('يارا')) ||
+              (s.id === 'spec-sadeem-mshari' && s.experienceYears !== 2)
             );
           if (hasStaleMocks) {
             return deduplicateSpecialists(SPECIALISTS);

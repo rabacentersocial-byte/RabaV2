@@ -760,7 +760,7 @@ export const DOCTORS_DATA: Doctor[] = [
     "fallbackAvatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
     "rating": 4.9,
     "reviewCount": 142,
-    "experienceYears": 990,
+    "experienceYears": 2,
     "patientsCount": 710,
     "sessionPrice": 0,
     "location": "الرياض",
