@@ -52,7 +52,9 @@
     "vite": "^8.3.5",
     "@grpc/grpc-js": "^1.14.5",
     "source-map-js": "^1.2.2",
-    "esbuild": "^0.28.2"
+    "esbuild": "^0.28.2",
+    "re2js": "^2.8.7",
+    "uuid": "^11.1.1"
   },
   "engines": {
     "node": ">=18.0.0"
