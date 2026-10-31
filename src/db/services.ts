@@ -1,4 +1,4 @@
-import { db } from './index.ts';
+import { db, withDbRetry } from './index.ts';
 import { services } from './schema.ts';
 
 // In-memory cache for services with 60-second TTL
@@ -11,7 +11,7 @@ export async function getDbServices() {
     return cachedServices;
   }
   try {
-    const results = await db.select().from(services);
+    const results = await withDbRetry(() => db.select().from(services));
     cachedServices = results;
     lastServicesCacheTime = Date.now();
     return results;

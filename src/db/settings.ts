@@ -1,6 +1,6 @@
-import { db } from './index.ts';
+import { db, withDbRetry } from './index.ts';
 import { siteSettings } from './schema.ts';
-import { eq } from 'drizzle-orm';
+import { eq, notLike } from 'drizzle-orm';
 
 // In-memory cache for Cloud SQL settings with TTL & instant invalidation
 let cachedSettingsMap: Record<string, any> | null = null;
@@ -16,7 +16,9 @@ export async function getDbSetting(key: string): Promise<any | null> {
   }
 
   try {
-    const result = await db.select().from(siteSettings).where(eq(siteSettings.key, key));
+    const result = await withDbRetry(() =>
+      db.select().from(siteSettings).where(eq(siteSettings.key, key))
+    );
     if (result.length > 0) {
       let parsed: any;
       try {
@@ -36,13 +38,23 @@ export async function getDbSetting(key: string): Promise<any | null> {
   }
 }
 
-export async function getAllDbSettings(): Promise<Record<string, any>> {
-  if (cachedSettingsMap && Date.now() - lastSettingsCacheTime < SETTINGS_CACHE_TTL_MS) {
+export async function getAllDbSettings(options?: { includeUploads?: boolean }): Promise<Record<string, any>> {
+  const includeUploads = options?.includeUploads ?? false;
+
+  // Use memory cache for standard settings queries
+  if (!includeUploads && cachedSettingsMap && Date.now() - lastSettingsCacheTime < SETTINGS_CACHE_TTL_MS) {
     return cachedSettingsMap;
   }
 
   try {
-    const results = await db.select().from(siteSettings);
+    const results = await withDbRetry(() => {
+      if (includeUploads) {
+        return db.select().from(siteSettings);
+      }
+      // Filter out upload:... keys containing heavy base64 strings (40+ MB payload savings!)
+      return db.select().from(siteSettings).where(notLike(siteSettings.key, 'upload:%'));
+    });
+
     const map: Record<string, any> = {};
     for (const row of results) {
       try {
@@ -51,8 +63,10 @@ export async function getAllDbSettings(): Promise<Record<string, any>> {
         map[row.key] = row.data;
       }
     }
-    cachedSettingsMap = map;
-    lastSettingsCacheTime = Date.now();
+    if (!includeUploads) {
+      cachedSettingsMap = map;
+      lastSettingsCacheTime = Date.now();
+    }
     return map;
   } catch (error) {
     console.error('Database query failed for all settings:', error);
@@ -63,18 +77,20 @@ export async function getAllDbSettings(): Promise<Record<string, any>> {
 export async function saveDbSetting(key: string, data: any): Promise<boolean> {
   try {
     const serialized = typeof data === 'string' ? data : JSON.stringify(data);
-    await db.insert(siteSettings)
-      .values({
-        key,
-        data: serialized,
-      })
-      .onConflictDoUpdate({
-        target: siteSettings.key,
-        set: {
+    await withDbRetry(() =>
+      db.insert(siteSettings)
+        .values({
+          key,
           data: serialized,
-          updatedAt: new Date(),
-        },
-      });
+        })
+        .onConflictDoUpdate({
+          target: siteSettings.key,
+          set: {
+            data: serialized,
+            updatedAt: new Date(),
+          },
+        })
+    );
 
     // Update in-memory cache immediately
     if (cachedSettingsMap) {

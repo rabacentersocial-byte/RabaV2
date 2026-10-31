@@ -1,4 +1,4 @@
-import { db } from './index.ts';
+import { db, withDbRetry } from './index.ts';
 import { appointments } from './schema.ts';
 
 // In-memory cache for appointments with short TTL (15 seconds)
@@ -17,7 +17,7 @@ export async function createDbAppointment(data: {
   notes?: string;
 }) {
   try {
-    const result = await db.insert(appointments).values(data).returning();
+    const result = await withDbRetry(() => db.insert(appointments).values(data).returning());
     // Invalidate appointments cache
     cachedAppointments = null;
     return result[0];
@@ -32,7 +32,7 @@ export async function getDbAppointments() {
     return cachedAppointments;
   }
   try {
-    const results = await db.select().from(appointments);
+    const results = await withDbRetry(() => db.select().from(appointments));
     cachedAppointments = results;
     lastApptsCacheTime = Date.now();
     return results;

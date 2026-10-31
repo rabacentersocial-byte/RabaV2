@@ -1,4 +1,4 @@
-import { db } from './index.ts';
+import { db, withDbRetry } from './index.ts';
 import { specialists } from './schema.ts';
 
 export interface SpecialistDbRecord {
@@ -22,7 +22,7 @@ export async function getDbSpecialists() {
     return cachedSpecialists;
   }
   try {
-    const results = await db.select().from(specialists);
+    const results = await withDbRetry(() => db.select().from(specialists));
     cachedSpecialists = results;
     lastCacheTime = Date.now();
     return results;

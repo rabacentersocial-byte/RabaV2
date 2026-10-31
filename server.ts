@@ -85,7 +85,12 @@ function saveToUploadsManifest(filename: string, base64Content: string) {
 async function restoreUploadsFromCloudSql() {
   if (!process.env.SQL_HOST) return;
   try {
-    const allSettings = await getAllDbSettings();
+    const existingUploads = fs.existsSync(UPLOADS_DIR) ? fs.readdirSync(UPLOADS_DIR) : [];
+    if (existingUploads.length >= 10) {
+      // Local disk and manifest already contain uploads, skip heavy DB download
+      return;
+    }
+    const allSettings = await getAllDbSettings({ includeUploads: true });
     let restoredCount = 0;
     for (const [key, val] of Object.entries(allSettings)) {
       if (key.startsWith('upload:') && val && typeof val === 'object') {
@@ -727,7 +732,7 @@ async function startServer() {
       if (process.env.SQL_HOST) {
         try {
           const dbPromise = getAllDbSettings();
-          const timeoutPromise = new Promise<Record<string, any>>((resolve) => setTimeout(() => resolve({}), 400));
+          const timeoutPromise = new Promise<Record<string, any>>((resolve) => setTimeout(() => resolve({}), 1500));
           const dbSettings = await Promise.race([dbPromise, timeoutPromise]);
 
           for (const [key, val] of Object.entries(dbSettings)) {
