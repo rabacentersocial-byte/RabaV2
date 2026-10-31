@@ -616,15 +616,15 @@ export function getStoredPartners(): PartnerItem[] {
         return {
           ...p,
           logoUrl: p.id === 'partner-tamara'
-            ? '/images/partners/partner-tamara_custom.png'
+            ? '/images/partners/partner-tamara_custom.webp'
             : p.id === 'partner-rais'
-              ? '/images/partners/partner-rais_custom.png'
-              : `/images/partners/${p.id}_custom.png`
+              ? '/images/partners/partner-rais_custom.webp'
+              : `/images/partners/${p.id}_custom.webp`
         };
       }
       return {
         ...p,
-        logoUrl: bundled || p.logoUrl || `/images/partners/${p.id}_custom.png`
+        logoUrl: bundled || p.logoUrl || `/images/partners/${p.id}_custom.webp`
       };
     });
     if (modified) {

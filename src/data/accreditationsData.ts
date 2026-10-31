@@ -59,7 +59,7 @@ export const ACCREDITATIONS_LIST: AccreditationItem[] = [
     active: true,
     order: 1,
     logoType: 'custom',
-    customLogoUrl: '/images/accreditations/iso_logo.jpg',
+    customLogoUrl: '/images/accreditations/iso_logo.webp',
     certificateNumber: 'ISO-SA-88421-2024',
     validUntil: '2027'
   },
@@ -79,7 +79,7 @@ export const ACCREDITATIONS_LIST: AccreditationItem[] = [
     active: true,
     order: 2,
     logoType: 'custom',
-    customLogoUrl: '/images/accreditations/ibao_logo.jpg',
+    customLogoUrl: '/images/accreditations/ibao_logo.webp',
     certificateNumber: 'IBAO-CP-9041',
     validUntil: '2026'
   },
@@ -99,7 +99,7 @@ export const ACCREDITATIONS_LIST: AccreditationItem[] = [
     active: true,
     order: 3,
     logoType: 'custom',
-    customLogoUrl: '/images/accreditations/qaba_logo.jpg',
+    customLogoUrl: '/images/accreditations/qaba_logo.webp',
     certificateNumber: 'QABA-ORG-7712',
     validUntil: '2026'
   },
