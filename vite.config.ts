@@ -1,8 +1,9 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig} from 'vite';
+import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 
 export default defineConfig(() => {
   return {
@@ -10,6 +11,43 @@ export default defineConfig(() => {
     plugins: [
       react(), 
       tailwindcss(),
+      ViteImageOptimizer({
+        test: /\.(jpe?g|png|gif|tiff|webp|svg|avif)$/i,
+        includePublic: true,
+        logStats: false,
+        ansiColors: true,
+        svg: {
+          multipass: true,
+          plugins: [
+            {
+              name: 'preset-default',
+              params: {
+                overrides: {
+                  cleanupNumericValues: false,
+                  removeViewBox: false,
+                },
+              },
+            },
+          ],
+        },
+        png: {
+          quality: 80,
+        },
+        jpeg: {
+          quality: 80,
+        },
+        jpg: {
+          quality: 80,
+        },
+        webp: {
+          lossless: false,
+          quality: 80,
+        },
+        avif: {
+          lossless: false,
+          quality: 75,
+        },
+      }),
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'favicon.svg', 'favicon-192x192.png', 'favicon-512x512.png'],

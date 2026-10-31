@@ -99,16 +99,28 @@ export default function App() {
     // Apply saved theme colors on startup
     applyGlobalTheme(getStoredThemeSettings());
 
-    // Apply and sync active advertising and tracking pixels
-    applyTrackingPixels(getStoredTrackingPixels());
-    fetch('/api/tracking-pixels/active')
-      .then(res => res.json())
-      .then(json => {
-        if (json.success && json.data) {
-          applyTrackingPixels(json.data);
-        }
-      })
-      .catch(() => {});
+    // Defer tracking pixels & external analytics to after first paint & idle to achieve near-zero TBT
+    const scheduleDeferredPixels = () => {
+      const run = () => {
+        applyTrackingPixels(getStoredTrackingPixels());
+        fetch('/api/tracking-pixels/active')
+          .then(res => res.json())
+          .then(json => {
+            if (json.success && json.data) {
+              applyTrackingPixels(json.data);
+            }
+          })
+          .catch(() => {});
+      };
+
+      if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+        (window as any).requestIdleCallback(run, { timeout: 3500 });
+      } else {
+        setTimeout(run, 2000);
+      }
+    };
+
+    scheduleDeferredPixels();
 
     // Dismiss splash overlay as soon as App component renders
     if (typeof window !== 'undefined' && (window as any).dismissSplash) {

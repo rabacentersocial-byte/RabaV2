@@ -94,13 +94,54 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="/favicon-512x512.png" />
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Preconnect & Preloads for Core Web Vitals & Instant LCP -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" as="image" href="/images/hero/slide_2_ahmed.webp" fetchpriority="high" type="image/webp" />
-    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Inter:wght@400;600;700&display=swap"></noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" /></noscript>
+
+    <!-- Schema.org Structured Data (MedicalBusiness & LocalBusiness) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": ["MedicalBusiness", "LocalBusiness"],
+      "name": "مركز رابا للعلاج بتحليل السلوك التطبيقي ABA | RABA CENTER",
+      "alternateName": "مركز رابا للتأهيل",
+      "url": "https://rabacenter.com",
+      "logo": "https://rabacenter.com/favicon-512x512.png",
+      "image": "https://rabacenter.com/images/hero/slide_2_ahmed.webp",
+      "description": "مركز رابا من أقدم وأعرق المراكز المتخصصة في تقديم خدمات التأهيل والدعم لذوي الاحتياجات الخاصة وبرامج تحليل السلوك التطبيقي ABA وتشخيص وتقييم النطق والتخاطب والعلاج الوظيفي.",
+      "telephone": "+966500000000",
+      "priceRange": "$$",
+      "currenciesAccepted": "SAR",
+      "paymentAccepted": "Cash, Credit Card, Mada, Tabby, Tamara",
+      "medicalSpecialty": ["Pediatrics", "BehavioralHealth", "Psychiatric"],
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "طريق الملك فهد",
+        "addressLocality": "الرياض",
+        "addressRegion": "منطقة الرياض",
+        "addressCountry": "SA"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 24.7136,
+        "longitude": 46.6753
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+          "opens": "08:00",
+          "closes": "18:00"
+        }
+      ]
+    }
+    </script>
 
   </head>
   <body class="font-sans antialiased bg-[#F8FAFC] text-slate-900 dark:bg-[#0D1B2A] dark:text-slate-100 selection:bg-[#2E86EB] selection:text-white md:transition-colors md:duration-300" style="margin: 0; min-height: 100vh;">

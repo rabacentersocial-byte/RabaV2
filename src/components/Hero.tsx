@@ -125,7 +125,7 @@ export const Hero: React.FC<HeroProps> = ({
 
   // Smart image resolver: supports custom uploaded slides from admin panel while maintaining instant local fallbacks
   const getSlideDisplayImage = useCallback((slide: HeroSlideItem) => {
-    if (!slide) return '/images/hero/slide_2_ahmed.jpg';
+    if (!slide) return '/images/hero/slide_2_ahmed.webp';
     if (slide.src) {
       if (slide.src.startsWith('data:') || slide.src.startsWith('blob:')) {
         return slide.src;
@@ -139,41 +139,45 @@ export const Hero: React.FC<HeroProps> = ({
       }
     }
     const defaults: Record<string, string> = {
-      'photo-1': '/images/hero/slide_1_haneen.png',
-      'photo-2': '/images/hero/slide_2_ahmed.jpg',
-      'photo-3': '/images/hero/slide_3_rahaf.png',
-      'photo-4': '/images/hero/slide_4_doha.png',
-      'photo-5': '/images/hero/slide_5_manar.png',
-      'photo-6': '/images/hero/slide_6_fathi.png',
-      'photo-7': '/images/hero/slide_7_specialist.png',
-      'photo-8': '/images/hero/slide_8_specialist.png',
+      'service-aba': '/images/hero/slide_2_ahmed.webp',
+      'offer-national-day': '/images/hero/slide_1_haneen.webp',
+      'service-sensory': '/images/hero/slide_3_rahaf.webp',
+      'service-speech': '/images/hero/slide_5_manar.webp',
+      'photo-1': '/images/hero/slide_1_haneen.webp',
+      'photo-2': '/images/hero/slide_2_ahmed.webp',
+      'photo-3': '/images/hero/slide_3_rahaf.webp',
+      'photo-4': '/images/hero/slide_4_doha.webp',
+      'photo-5': '/images/hero/slide_5_manar.webp',
+      'photo-6': '/images/hero/slide_6_fathi.webp',
+      'photo-7': '/images/hero/slide_7_specialist.webp',
+      'photo-8': '/images/hero/slide_8_specialist.webp',
     };
-    return defaults[slide.id] || slide.src || '/images/hero/slide_2_ahmed.jpg';
+    return defaults[slide.id] || slide.src || '/images/hero/slide_2_ahmed.webp';
   }, []);
 
   return (
     <section 
       id="hero" 
-      className="relative pt-10 pb-20 md:pt-16 md:pb-28 overflow-hidden border-b border-slate-200/80 dark:border-white/10"
+      className="relative pt-6 pb-12 md:pt-16 md:pb-28 overflow-hidden border-b border-slate-200/80 dark:border-white/10"
     >
       {/* Background Decorative Stars (Teal & Golden Amber from Logo) */}
-      <div className="absolute top-10 left-1/2 -translate-x-1/2 text-sky-500 dark:text-[#00E5BE] opacity-80 select-none pointer-events-none animate-pulse">
+      <div className="absolute top-8 left-1/2 -translate-x-1/2 text-sky-500 dark:text-[#00E5BE] opacity-80 select-none pointer-events-none animate-pulse">
         <svg viewBox="0 0 24 24" className="w-8 h-8 fill-current">
           <path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z" />
         </svg>
       </div>
 
-      <div className="absolute bottom-12 left-1/2 -translate-x-12 text-[#F59E0B] opacity-80 select-none pointer-events-none">
+      <div className="absolute bottom-10 left-1/2 -translate-x-12 text-[#FFD23F] opacity-80 select-none pointer-events-none">
         <svg viewBox="0 0 24 24" className="w-9 h-9 fill-current">
           <path d="M12 2L15 9L22 12L15 15L12 22L9 15L2 12L9 9L12 2Z" />
         </svg>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
           
           {/* Hero Copy Column */}
-          <div className={`lg:col-span-6 space-y-6 ${isArabic ? 'text-right' : 'text-left'}`}>
+          <div className={`lg:col-span-6 space-y-5 sm:space-y-6 ${isArabic ? 'text-right' : 'text-left'}`}>
             
             {/* Main Headline with Brush Highlighted ABA */}
             <h1 className="text-3xl sm:text-5xl lg:text-[52px] font-black leading-[1.25] tracking-tight text-slate-900 dark:text-white drop-shadow-xs">
@@ -323,6 +327,7 @@ export const Hero: React.FC<HeroProps> = ({
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
               className="relative w-[280px] h-[280px] xs:w-[320px] xs:h-[320px] sm:w-[380px] sm:h-[380px] lg:w-[440px] lg:h-[440px] xl:w-[460px] xl:h-[460px] rounded-full p-2 sm:p-2.5 bg-gradient-to-tr from-[#2E86EB] via-[#FFD23F] via-[#FF2D9B] to-[#22C55E] shadow-[0_20px_50px_rgba(46,134,235,0.35),0_0_30px_rgba(0,229,190,0.2)] group select-none transition-all duration-300 shrink-0 aspect-square"
+              style={{ aspectRatio: '1 / 1' }}
             >
               {/* Luminous Brand Aura Behind Circle */}
               <div className="absolute -inset-4 sm:-inset-6 bg-gradient-to-tr from-[#2E86EB]/30 via-[#FF2D9B]/15 to-[#FFD23F]/25 rounded-full blur-2xl -z-10 pointer-events-none transition-opacity duration-700 opacity-80 group-hover:opacity-100" />
@@ -341,22 +346,29 @@ export const Hero: React.FC<HeroProps> = ({
                     // Only mount the active slide and adjacent prefetch slide to avoid loading 8 heavy images at once on mobile
                     if (!isActive && !isNext) return null;
 
+                    const isLcpCandidate = idx === 0;
+
                     return (
                       <div
                         key={s.id || idx}
+                        data-slide-active={isActive ? "true" : "false"}
                         className={`absolute inset-0 w-full h-full rounded-full overflow-hidden transition-opacity duration-500 ease-in-out ${
                           isActive ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
                         }`}
+                        style={{
+                          opacity: isActive ? 1 : 0,
+                          visibility: isActive ? 'visible' : 'hidden'
+                        }}
                       >
                         <img
                           src={getSlideDisplayImage(s)}
-                          alt={s.alt}
+                          alt={s.alt || 'مركز رابا للعلاج بتحليل السلوك التطبيقي ABA'}
                           width={460}
                           height={460}
-                          loading={isActive && currentSlideIndex === 0 ? "eager" : "lazy"}
-                          fetchPriority={isActive && currentSlideIndex === 0 ? "high" : "auto"}
+                          loading={isLcpCandidate ? "eager" : "lazy"}
+                          fetchPriority={isLcpCandidate ? "high" : "auto"}
                           decoding="async"
-                          onError={(e) => handleImageErrorWithStore(e, s.src, '/images/hero/slide_2_ahmed.jpg')}
+                          onError={(e) => handleImageErrorWithStore(e, s.src, '/images/hero/slide_2_ahmed.webp')}
                           className={`w-full h-full object-cover rounded-full transition-transform duration-700 ease-out group-hover:scale-105 ${
                             s.objectPosition === 'center'
                               ? 'object-center'
@@ -365,6 +377,7 @@ export const Hero: React.FC<HeroProps> = ({
                               : 'object-[center_12%]'
                           }`}
                           style={{
+                            aspectRatio: '1 / 1',
                             transform: `scale(${(s.zoomLevel || 100) / 100})`
                           }}
                           referrerPolicy="no-referrer"

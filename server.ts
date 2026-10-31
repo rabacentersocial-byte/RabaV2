@@ -25,6 +25,11 @@ import {
   requireAdminAuth,
   sendSafeError
 } from './src/middleware/security.ts';
+import {
+  imageUpload,
+  optimizeUploadedImageMiddleware,
+  optimizeImageBuffer
+} from './src/server/utils/imageOptimizer.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -974,13 +979,38 @@ async function startServer() {
         }
       }
 
+      // Automated Sharp Optimization for raster images
+      let finalBuffer: any = buffer;
+      let finalExtension = extension;
+      let optWidth: number | undefined;
+      let optHeight: number | undefined;
+
+      const isRasterImage = ['jpg', 'jpeg', 'png', 'webp', 'avif'].includes(extension);
+      if (isRasterImage) {
+        try {
+          const optResult = await optimizeImageBuffer(buffer, filename || 'upload', {
+            maxWidth: 1200,
+            quality: 80,
+            format: 'webp',
+            withoutEnlargement: true
+          });
+          finalBuffer = optResult.buffer;
+          finalExtension = 'webp';
+          optWidth = optResult.width;
+          optHeight = optResult.height;
+        } catch (optErr) {
+          console.warn('[Server] Notice: Sharp optimization skipped for base64 upload, saving original:', optErr);
+        }
+      }
+
       const rawBase = filename ? path.basename(filename).replace(/\.[^.]+$/, '') : 'attachment';
       const safeBaseName = rawBase.replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 40) || 'attachment';
-      const uniqueFilename = `${Date.now()}_${safeBaseName}.${extension}`;
+      const uniqueFilename = `${Date.now()}_${safeBaseName}.${finalExtension}`;
       const filePath = path.join(UPLOADS_DIR, uniqueFilename);
+      const finalBase64 = finalBuffer.toString('base64');
 
-      fs.writeFileSync(filePath, buffer);
-      saveToUploadsManifest(uniqueFilename, base64Content);
+      fs.writeFileSync(filePath, finalBuffer);
+      saveToUploadsManifest(uniqueFilename, finalBase64);
 
       // Save to Cloud SQL in background queue so image persists across restarts without blocking client
       if (process.env.SQL_HOST) {
@@ -988,9 +1018,11 @@ async function startServer() {
           try {
             await saveDbSetting(`upload:${uniqueFilename}`, {
               filename: uniqueFilename,
-              base64: base64Content,
-              extension,
-              sizeBytes: buffer.length,
+              base64: finalBase64,
+              extension: finalExtension,
+              sizeBytes: finalBuffer.length,
+              width: optWidth,
+              height: optHeight,
               createdAt: new Date().toISOString()
             });
           } catch (err) {
@@ -1005,13 +1037,70 @@ async function startServer() {
         success: true,
         url: publicUrl,
         filename: uniqueFilename,
-        sizeBytes: buffer.length,
+        sizeBytes: finalBuffer.length,
+        width: optWidth,
+        height: optHeight,
+        format: finalExtension,
         timestamp: new Date().toISOString()
       });
     } catch (err: any) {
       return sendSafeError(res, 500, 'فشل رفع الملف إلى الخادم', err);
     }
   });
+
+  // Dedicated Image Upload Endpoint with Sharp Processing (Multipart Form Data)
+  app.post(
+    '/api/upload/image',
+    uploadLimiter,
+    imageUpload.single('image'),
+    optimizeUploadedImageMiddleware,
+    async (req: Request & { optimizedImage?: any }, res: Response) => {
+      try {
+        const opt = req.optimizedImage;
+        if (!opt) {
+          return res.status(400).json({ success: false, error: 'تعذر الحصول على بيانات الصورة المحسنة' });
+        }
+
+        // Save to manifest for persistence across restarts
+        saveToUploadsManifest(opt.filename, opt.buffer.toString('base64'));
+
+        // Save to Cloud SQL in background queue if configured
+        if (process.env.SQL_HOST) {
+          backgroundQueue.enqueue(`upload-backup-${opt.filename}`, async () => {
+            try {
+              await saveDbSetting(`upload:${opt.filename}`, {
+                filename: opt.filename,
+                base64: opt.buffer.toString('base64'),
+                extension: opt.format,
+                sizeBytes: opt.optimizedSize,
+                width: opt.width,
+                height: opt.height,
+                createdAt: new Date().toISOString()
+              });
+            } catch (err) {
+              console.warn('[Server] Notice: Cloud SQL upload cache save failed:', err);
+            }
+          });
+        }
+
+        return res.json({
+          success: true,
+          url: opt.publicUrl,
+          filename: opt.filename,
+          format: opt.format,
+          mimeType: opt.mimeType,
+          width: opt.width,
+          height: opt.height,
+          originalSizeBytes: opt.originalSize,
+          optimizedSizeBytes: opt.optimizedSize,
+          compressionRatio: opt.compressionRatio,
+          timestamp: new Date().toISOString()
+        });
+      } catch (err: any) {
+        return sendSafeError(res, 500, 'فشل معالجة ورفع الصورة', err);
+      }
+    }
+  );
 
   // Full Backup export (Protected: Admin Auth Required)
   app.get('/api/sync/backup', requireAdminAuth, (_req: Request, res: Response) => {
