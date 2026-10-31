@@ -12,24 +12,11 @@ export default defineConfig(() => {
       react(), 
       tailwindcss(),
       ViteImageOptimizer({
-        test: /\.(jpe?g|png|gif|tiff|webp|svg|avif)$/i,
+        test: /\.(jpe?g|png|gif|tiff|webp|avif)$/i,
+        exclude: /(uploads|aistudio)/,
         includePublic: true,
         logStats: false,
         ansiColors: true,
-        svg: {
-          multipass: true,
-          plugins: [
-            {
-              name: 'preset-default',
-              params: {
-                overrides: {
-                  cleanupNumericValues: false,
-                  removeViewBox: false,
-                },
-              },
-            },
-          ],
-        },
         png: {
           quality: 80,
         },
