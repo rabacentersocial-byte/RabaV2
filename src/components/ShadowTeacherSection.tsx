@@ -536,3 +536,5 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
     </section>
   );
 };
+
+export default ShadowTeacherSection;

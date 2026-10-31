@@ -192,18 +192,24 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
     }
   };
 
+  const rafIdRef = useRef<number | null>(null);
+
   // Scroll capability
   const updateScrollState = useCallback(() => {
-    const el = sliderRef.current;
-    if (!el) return;
-    const maxScroll = el.scrollWidth - el.clientWidth;
-    const current = Math.abs(el.scrollLeft);
-    setCanScrollPrev(current > 15);
-    setCanScrollNext(current < maxScroll - 15);
+    if (rafIdRef.current !== null) return;
+    rafIdRef.current = requestAnimationFrame(() => {
+      rafIdRef.current = null;
+      const el = sliderRef.current;
+      if (!el) return;
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      const current = Math.abs(el.scrollLeft);
+      setCanScrollPrev(current > 15);
+      setCanScrollNext(current < maxScroll - 15);
 
-    const cardWidth = 380;
-    const index = Math.round(current / cardWidth);
-    setCurrentIndex(Math.min(Math.max(0, index), Math.max(0, filteredServices.length - 1)));
+      const cardWidth = 380;
+      const index = Math.round(current / cardWidth);
+      setCurrentIndex(Math.min(Math.max(0, index), Math.max(0, filteredServices.length - 1)));
+    });
   }, [filteredServices.length]);
 
   useEffect(() => {
@@ -211,8 +217,12 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
     if (!el) return;
     updateScrollState();
     el.addEventListener('scroll', updateScrollState, { passive: true });
-    window.addEventListener('resize', updateScrollState);
+    window.addEventListener('resize', updateScrollState, { passive: true });
     return () => {
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
       el.removeEventListener('scroll', updateScrollState);
       window.removeEventListener('resize', updateScrollState);
     };

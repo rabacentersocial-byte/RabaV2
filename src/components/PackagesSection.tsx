@@ -68,16 +68,22 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
     return packages.filter((pkg) => pkg.category === selectedCategory);
   }, [packages, selectedCategory]);
 
+  const rafIdRef = useRef<number | null>(null);
+
   // Update scroll button states
   const updateScrollButtons = useCallback(() => {
-    const el = sliderRef.current;
-    if (!el) return;
-    const { scrollLeft, scrollWidth, clientWidth } = el;
-    const maxScroll = scrollWidth - clientWidth;
-    const currentScroll = Math.abs(scrollLeft);
+    if (rafIdRef.current !== null) return;
+    rafIdRef.current = requestAnimationFrame(() => {
+      rafIdRef.current = null;
+      const el = sliderRef.current;
+      if (!el) return;
+      const { scrollLeft, scrollWidth, clientWidth } = el;
+      const maxScroll = scrollWidth - clientWidth;
+      const currentScroll = Math.abs(scrollLeft);
 
-    setCanScrollLeft(currentScroll > 10);
-    setCanScrollRight(currentScroll < maxScroll - 10);
+      setCanScrollLeft(currentScroll > 10);
+      setCanScrollRight(currentScroll < maxScroll - 10);
+    });
   }, []);
 
   useEffect(() => {
@@ -85,8 +91,12 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
     if (!el) return;
     updateScrollButtons();
     el.addEventListener('scroll', updateScrollButtons, { passive: true });
-    window.addEventListener('resize', updateScrollButtons);
+    window.addEventListener('resize', updateScrollButtons, { passive: true });
     return () => {
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
       el.removeEventListener('scroll', updateScrollButtons);
       window.removeEventListener('resize', updateScrollButtons);
     };

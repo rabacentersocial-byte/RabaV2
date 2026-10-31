@@ -241,20 +241,27 @@ export const PartnersSection: React.FC = () => {
 
   // Initial offset positioning
   useEffect(() => {
+    let rafId: number | null = null;
     const updateCenter = () => {
-      if (viewportRef.current) {
-        const vpWidth = viewportRef.current.clientWidth;
-        const cardWidth = getCardWidth();
-        const initialOffset = (vpWidth / 2) - (cardWidth / 2);
-        offsetRef.current = initialOffset;
-        if (trackRef.current) {
-          trackRef.current.style.transform = `translate3d(${initialOffset}px, 0, 0)`;
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        if (viewportRef.current) {
+          const vpWidth = viewportRef.current.clientWidth;
+          const cardWidth = getCardWidth();
+          const initialOffset = (vpWidth / 2) - (cardWidth / 2);
+          offsetRef.current = initialOffset;
+          if (trackRef.current) {
+            trackRef.current.style.transform = `translate3d(${initialOffset}px, 0, 0)`;
+          }
         }
-      }
+      });
     };
     updateCenter();
-    window.addEventListener('resize', updateCenter);
-    return () => window.removeEventListener('resize', updateCenter);
+    window.addEventListener('resize', updateCenter, { passive: true });
+    return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', updateCenter);
+    };
   }, [totalPartners, selectedSector]);
 
   // Continuous animation loop

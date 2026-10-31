@@ -176,7 +176,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
   const handleScrollSlider = (ref: React.RefObject<HTMLDivElement | null>, direction: 'prev' | 'next') => {
     const el = ref.current;
     if (!el) return;
-    const cardStep = Math.min(el.clientWidth * 0.85, 360);
+    const cardStep = typeof window !== 'undefined' ? Math.min(window.innerWidth * 0.85, 360) : 320;
     // In RTL, moving forward ('next') scrolls leftwards (negative), 'prev' scrolls rightwards (positive)
     const offset = isArabic 
       ? (direction === 'next' ? -cardStep : cardStep)

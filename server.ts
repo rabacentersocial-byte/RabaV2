@@ -254,21 +254,59 @@ async function startServer() {
   const app = express();
   const PORT = getPort();
 
-  // 1. Security Headers (Anti-XSS, Anti-MIME sniffing, Clickjacking prevention)
+  // 1. Canonical Domain & HTTPS Redirection (Resolves PageSpeed Document Latency & eliminates redirect chains)
+  app.use((req: Request, res: Response, next) => {
+    const host = (req.headers.host || '').toLowerCase();
+    const proto = (req.headers['x-forwarded-proto'] as string || req.protocol).toLowerCase();
+
+    // Skip redirection for local dev, container probes, and internal hosts
+    if (
+      !host ||
+      host.includes('localhost') ||
+      host.includes('127.0.0.1') ||
+      host.includes('0.0.0.0') ||
+      host.includes(':3000') ||
+      host.includes('.run.app') ||
+      host.includes('.internal')
+    ) {
+      return next();
+    }
+
+    const isWww = host.startsWith('www.');
+    const isHttp = proto === 'http';
+
+    // Single 301 direct hop to canonical apex HTTPS without chains
+    if (isWww || isHttp) {
+      const canonicalHost = host.replace(/^www\./, '');
+      const targetUrl = `https://${canonicalHost}${req.originalUrl || req.url}`;
+      return res.redirect(301, targetUrl);
+    }
+
+    next();
+  });
+
+  // 2. Security Headers (Anti-XSS, Anti-MIME sniffing, Clickjacking prevention)
   app.use(securityHeaders);
 
-  // 2. Health check endpoints for Cloud Run container probes
+  // 3. Health check endpoints for Cloud Run container probes
   app.get(['/health', '/healthz'], (_req: Request, res: Response) => {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
   });
 
-  // 3. Block direct static access to sensitive admin user data
+  // 4. Block direct static access to sensitive admin user data
   app.get('/data/admin_users.json', (_req: Request, res: Response) => {
     return res.status(403).json({ success: false, error: 'Access denied' });
   });
 
-  // Compress all responses for enhanced mobile network performance
-  app.use(compression());
+  // Compress all responses for enhanced mobile network performance & lower TTFB
+  app.use(compression({
+    level: 6,
+    threshold: 512,
+    filter: (req, res) => {
+      if (req.headers['x-no-compression']) return false;
+      return compression.filter(req, res);
+    }
+  }));
 
   // JSON and URL-encoded body parser with sensible limit for attachments & hardened against decompression crashes (CVE-2026-111181)
   app.use(express.json({ limit: '25mb', inflate: false }));
@@ -1193,6 +1231,10 @@ async function startServer() {
           res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
         }
       }));
+      // Explicit 404 for missing assets in /assets to prevent falling through to index.html (which breaks dynamic imports)
+      app.use('/assets', (_req: Request, res: Response) => {
+        res.status(404).json({ error: 'Asset chunk not found', reloadRequired: true });
+      });
       // 1-year cache on static media/images/fonts, with no-cache on HTML
       app.use(express.static(distPath, {
         maxAge: '365d',

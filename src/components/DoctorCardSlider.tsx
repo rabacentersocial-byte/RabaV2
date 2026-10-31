@@ -2831,7 +2831,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
     const el = sliderRef.current;
     if (!el) return;
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-    const scrollAmount = isMobile ? Math.round(el.clientWidth * 0.75) : 380;
+    const scrollAmount = isMobile ? Math.round(window.innerWidth * 0.75) : 380;
     let delta = direction === 'prev' ? -scrollAmount : scrollAmount;
     if (isArabic) delta = -delta;
     el.scrollBy({ left: delta, behavior: 'smooth' });

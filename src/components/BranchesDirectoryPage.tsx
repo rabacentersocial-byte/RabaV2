@@ -144,19 +144,25 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
     return 370;
   };
 
+  const rafIdRef = useRef<number | null>(null);
+
   const updateScrollState = useCallback(() => {
-    const el = sliderRef.current;
-    if (!el) return;
+    if (rafIdRef.current !== null) return;
+    rafIdRef.current = requestAnimationFrame(() => {
+      rafIdRef.current = null;
+      const el = sliderRef.current;
+      if (!el) return;
 
-    const maxScroll = el.scrollWidth - el.clientWidth;
-    const current = Math.abs(el.scrollLeft);
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      const current = Math.abs(el.scrollLeft);
 
-    setCanScrollPrev(current > 15);
-    setCanScrollNext(current < maxScroll - 15);
+      setCanScrollPrev(current > 15);
+      setCanScrollNext(current < maxScroll - 15);
 
-    const slideWidth = getSlideWidth();
-    const index = Math.round(current / slideWidth);
-    setCurrentIndex(Math.min(Math.max(0, index), filteredBranches.length - 1));
+      const slideWidth = getSlideWidth();
+      const index = Math.round(current / slideWidth);
+      setCurrentIndex(Math.min(Math.max(0, index), filteredBranches.length - 1));
+    });
   }, [filteredBranches.length]);
 
   useEffect(() => {
@@ -165,9 +171,13 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
 
     updateScrollState();
     el.addEventListener('scroll', updateScrollState, { passive: true });
-    window.addEventListener('resize', updateScrollState);
+    window.addEventListener('resize', updateScrollState, { passive: true });
 
     return () => {
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
       el.removeEventListener('scroll', updateScrollState);
       window.removeEventListener('resize', updateScrollState);
     };
