@@ -1167,10 +1167,11 @@ async function startServer() {
 
   // --- Vite Dev Server Middleware or Production Static Serving ---
   let viteInstance: any = null;
-  if (isProduction || process.env.NODE_ENV === 'production') {
-    const distPath = path.join(process.cwd(), 'dist');
-    const indexPath = path.join(distPath, 'index.html');
+  const distPath = path.join(process.cwd(), 'dist');
+  const indexPath = path.join(distPath, 'index.html');
+  const hasDist = fs.existsSync(indexPath);
 
+  if (hasDist || isProduction || process.env.NODE_ENV === 'production') {
     // Auto-build client bundle if missing when starting in production
     if (!fs.existsSync(indexPath)) {
       console.log('[Raba Server] dist/index.html not found, generating production bundle...');
@@ -1182,33 +1183,46 @@ async function startServer() {
       }
     }
 
-    // Long immutable cache on hashed JS & CSS assets (resolves PageSpeed "Use efficient cache lifetimes")
-    app.use('/assets', express.static(path.join(distPath, 'assets'), {
-      maxAge: '365d',
-      immutable: true,
-      setHeaders: (res) => {
-        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-      }
-    }));
-    // 1-year cache on static media/images/fonts, with no-cache on HTML
-    app.use(express.static(distPath, {
-      maxAge: '365d',
-      setHeaders: (res, filePath) => {
-        if (filePath.endsWith('.html')) {
-          res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
-        } else if (/\.(jpg|jpeg|png|webp|avif|svg|gif|woff2?|ttf|eot|ico)$/i.test(filePath)) {
+    if (fs.existsSync(indexPath)) {
+      console.log('[Raba Server] Serving optimized production bundle from dist/');
+      // Long immutable cache on hashed JS & CSS assets (resolves PageSpeed "Use efficient cache lifetimes")
+      app.use('/assets', express.static(path.join(distPath, 'assets'), {
+        maxAge: '365d',
+        immutable: true,
+        setHeaders: (res) => {
           res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
         }
-      }
-    }));
-    app.get('*', (_req: Request, res: Response) => {
-      res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
-      if (fs.existsSync(indexPath)) {
-        res.sendFile(indexPath);
-      } else {
-        res.status(200).send('<!DOCTYPE html><html><head><title>مركز أبا للرعاية المتطورة</title></head><body><div style="font-family:system-ui,sans-serif;text-align:center;padding:40px;direction:rtl"><h2>جاري تجهيز الموقع...</h2><p>يرجى إعادة تحميل الصفحة خلال لحظات.</p></div></body></html>');
-      }
-    });
+      }));
+      // 1-year cache on static media/images/fonts, with no-cache on HTML
+      app.use(express.static(distPath, {
+        maxAge: '365d',
+        setHeaders: (res, filePath) => {
+          if (filePath.endsWith('.html')) {
+            res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+          } else if (/\.(jpg|jpeg|png|webp|avif|svg|gif|woff2?|ttf|eot|ico)$/i.test(filePath)) {
+            res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+          }
+        }
+      }));
+      app.get('*', (_req: Request, res: Response) => {
+        res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+        if (fs.existsSync(indexPath)) {
+          res.sendFile(indexPath);
+        } else {
+          res.status(200).send('<!DOCTYPE html><html><head><title>مركز أبا للرعاية المتطورة</title></head><body><div style="font-family:system-ui,sans-serif;text-align:center;padding:40px;direction:rtl"><h2>جاري تجهيز الموقع...</h2><p>يرجى إعادة تحميل الصفحة خلال لحظات.</p></div></body></html>');
+        }
+      });
+    } else {
+      viteInstance = await createViteServer({
+        server: {
+          middlewareMode: true,
+          hmr: false,
+          watch: null,
+        },
+        appType: 'spa',
+      });
+      app.use(viteInstance.middlewares);
+    }
   } else {
     viteInstance = await createViteServer({
       server: {
