@@ -105,9 +105,24 @@
         "createdAt": { "type": "string" }
       },
       "required": ["email", "role"]
+    },
+    "SiteSetting": {
+      "title": "SiteSetting",
+      "description": "Dynamic site configuration, module customizer data, and page content",
+      "type": "object",
+      "properties": {
+        "key": { "type": "string" },
+        "data": { "type": "object" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["data"]
     }
   },
   "firestore": {
+    "/site_settings/{settingId}": {
+      "schema": "SiteSetting",
+      "description": "Dynamic site configuration, module customizer data, and page content"
+    },
     "/appointments/{appointmentId}": {
       "schema": "Appointment",
       "description": "Collection of patient booking requests and appointments"

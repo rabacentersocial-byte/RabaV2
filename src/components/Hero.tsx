@@ -152,7 +152,7 @@ export const Hero: React.FC<HeroProps> = ({
       'photo-7': '/images/hero/slide_7_specialist.webp',
       'photo-8': '/images/hero/slide_8_specialist.webp',
     };
-    return defaults[slide.id] || slide.src || '/images/hero/slide_2_ahmed.webp';
+    return defaults[slide.id] || slide.src || '/images/hero/slide_1_haneen.webp';
   }, []);
 
   return (

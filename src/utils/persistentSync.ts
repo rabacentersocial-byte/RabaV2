@@ -6,6 +6,11 @@
  */
 
 import { loadPersistentImagesToMemory } from './persistentImageStore';
+import { 
+  saveSiteSettingToFirestore, 
+  deleteSiteSettingFromFirestore, 
+  subscribeSiteSettings 
+} from '../services/firestoreService';
 
 /**
  * Returns authorization and session headers for secure server sync
@@ -212,29 +217,61 @@ export async function initPersistentSync(): Promise<void> {
     // 0. Preload all IndexedDB image assets into RAM immediately
     await loadPersistentImagesToMemory();
 
+    // 0.5. Attach Firestore Realtime Listener for instant multi-tab & multi-device sync
+    try {
+      subscribeSiteSettings((settingsMap) => {
+        for (const [key, data] of Object.entries(settingsMap)) {
+          IN_MEMORY_SYNC_CACHE.set(key, data);
+          try {
+            const stringified = typeof data === 'string' ? data : JSON.stringify(data);
+            localStorage.setItem(key, stringified);
+            localStorage.setItem(`raba_ts_${key}`, Date.now().toString());
+            mirrorAliases(key, stringified, Date.now());
+          } catch (e) {
+            console.error('[PersistentSync] Error updating local cache from Firestore snapshot:', e);
+          }
+          const eventName = EVENT_MAP[key];
+          if (eventName) {
+            window.dispatchEvent(new CustomEvent(eventName, { detail: data }));
+          }
+        }
+      }, (err) => {
+        console.error('[PersistentSync] Firestore real-time listener error:', err);
+      });
+    } catch (err) {
+      console.error('[PersistentSync] Failed to attach Firestore live subscriber:', err);
+    }
+
     let serverData: Record<string, any> | null = null;
     let syncTimestamp = new Date().toISOString();
 
-    // 1. Primary Attempt: Dynamic Express server API endpoint
+    // 1. Primary Attempt: Dynamic Express server API endpoint (fetches directly from Firestore)
     try {
-      const res = await fetch('/api/sync/all');
+      const res = await fetch('/api/sync/all', {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      });
       const contentType = res.headers.get('content-type') || '';
-      // Only parse if server actually returned JSON (avoids SPA rewrite HTML syntax error)
       if (res.ok && contentType.includes('json')) {
         const json = await res.json();
         if (json.success && json.data) {
           serverData = json.data;
           syncTimestamp = json.timestamp || syncTimestamp;
         }
+      } else if (!res.ok) {
+        console.error(`[PersistentSync] /api/sync/all HTTP error ${res.status}: ${res.statusText}`);
       }
-    } catch {
-      // Backend not running (e.g. static hosting)
+    } catch (netErr) {
+      console.error('[PersistentSync] Network connection to /api/sync/all failed:', netErr);
     }
 
-    // 2. Secondary Attempt: Static bundled data fallback
+    // 2. Secondary Attempt: Static bundled data fallback if backend is unreachable
     if (!serverData) {
       try {
-        const staticRes = await fetch('/data/all_sync.json');
+        const staticRes = await fetch('/data/all_sync.json', { cache: 'no-store' });
         const contentType = staticRes.headers.get('content-type') || '';
         if (staticRes.ok && (contentType.includes('json') || !contentType)) {
           const staticJson = await staticRes.json();
@@ -243,23 +280,8 @@ export async function initPersistentSync(): Promise<void> {
             syncTimestamp = staticJson.timestamp || syncTimestamp;
           }
         }
-      } catch {
-        // fallback unavailable
-      }
-    }
-
-    // 3. Fallback: Network fetch of static data file if not already fetched
-    if (!serverData) {
-      try {
-        const fallbackRes = await fetch('/data/all_sync.json?v=static');
-        if (fallbackRes.ok) {
-          const json = await fallbackRes.json();
-          if (json.data || json) {
-            serverData = json.data || json;
-          }
-        }
-      } catch {
-        // standalone mode
+      } catch (staticErr) {
+        console.error('[PersistentSync] Static fallback fetch failed:', staticErr);
       }
     }
 
@@ -271,92 +293,36 @@ export async function initPersistentSync(): Promise<void> {
 
     const localKeysToPush: Record<string, any> = {};
 
-    // Synchronize ONLY canonical primary keys to prevent legacy aliases from overwriting newer customizations
+    // Synchronize ONLY canonical primary keys to ensure Firestore data is authoritative!
     for (const storageKey of PRIMARY_SYNC_KEYS) {
       const serverVal = serverData[storageKey];
       let localValRaw = localStorage.getItem(storageKey);
       const localTsRaw = localStorage.getItem(`raba_ts_${storageKey}`);
       const localTs = localTsRaw ? Number(localTsRaw) : 0;
 
-      // Check if local version has customized data (e.g. contains custom uploads or user edits)
-      const isSpecialistsKey = storageKey === SYNC_KEYS.SPECIALISTS;
-      if (isSpecialistsKey && Array.isArray(serverVal)) {
-        try {
-          const localSpecs = localValRaw ? JSON.parse(localValRaw) : null;
-          const hasStaleMocks = Array.isArray(localSpecs) && (
-            localSpecs.length !== serverVal.length ||
-            localSpecs.some((s: any) => 
-              s.id === 'spec-rawan-tablett' || 
-              s.id === 'spec-hossam-malki' ||
-              (s.id === 'spec-hanaa-basheer' && (!s.education || s.education.length < 5 || s.category !== 'psychology' || s.experienceYears !== 15)) ||
-              (s.id === 'spec-sara-abdelhamid' && s.name && s.name.includes('يارا'))
-            )
-          );
-          if (hasStaleMocks || !localSpecs || localSpecs.length === 0) {
-            localValRaw = JSON.stringify(serverVal);
-            localStorage.setItem(storageKey, localValRaw);
-          }
-        } catch { /* ignore */ }
-      }
-
-      const isCoursesKey = storageKey === SYNC_KEYS.COURSES;
-      if (isCoursesKey && Array.isArray(serverVal)) {
-        try {
-          const localCourses = localValRaw ? JSON.parse(localValRaw) : null;
-          const hasDeletedCourses = Array.isArray(localCourses) && localCourses.some((c: any) => c && (c.id === 'course-qba' || c.id === 'course-abat'));
-          if (hasDeletedCourses) {
-            const cleaned = localCourses.filter((c: any) => c && c.id !== 'course-qba' && c.id !== 'course-abat');
-            localValRaw = JSON.stringify(cleaned);
-            localStorage.setItem(storageKey, localValRaw);
-          } else if (!localCourses || (Array.isArray(localCourses) && localCourses.length === 0)) {
-            localValRaw = JSON.stringify(serverVal);
-            localStorage.setItem(storageKey, localValRaw);
-          }
-        } catch { /* ignore */ }
-      }
-
-      const hasLocalCustomization = Boolean(
-        localValRaw && (
-          localTs > 0 ||
-          localValRaw.includes('/uploads/') ||
-          localValRaw.includes('data:image') ||
-          localValRaw.includes('photo-custom') ||
-          localValRaw.includes('acc-')
-        )
-      );
-
-      if (hasLocalCustomization && localValRaw) {
-        // User has explicit local modifications: keep local and push to server to prevent data loss!
-        try {
-          localKeysToPush[storageKey] = JSON.parse(localValRaw);
-        } catch {
-          localKeysToPush[storageKey] = localValRaw;
-        }
-        mirrorAliases(storageKey, localValRaw, localTs);
-      } else if (serverVal !== undefined && serverVal !== null) {
-        // Populate local cache from server if local has no overrides
+      // When server/Firestore has a value, it is AUTHORITATIVE over stale browser cache
+      if (serverVal !== undefined && serverVal !== null) {
         try {
           const stringified = typeof serverVal === 'string' ? serverVal : JSON.stringify(serverVal);
           const isChanged = localValRaw !== stringified;
 
-          if (isChanged) {
-            localStorage.setItem(storageKey, stringified);
-            localStorage.setItem(`raba_ts_${storageKey}`, Date.now().toString());
+          IN_MEMORY_SYNC_CACHE.set(storageKey, serverVal);
+          localStorage.setItem(storageKey, stringified);
+          localStorage.setItem(`raba_ts_${storageKey}`, Date.now().toString());
 
-            // Populate legacy aliases simultaneously to guarantee 100% component compatibility
-            mirrorAliases(storageKey, stringified, Date.now());
+          // Populate legacy aliases simultaneously to guarantee 100% component compatibility
+          mirrorAliases(storageKey, stringified, Date.now());
 
-            // Dispatch reactive update event only when content actually changed
-            const eventName = EVENT_MAP[storageKey];
-            if (eventName) {
-              window.dispatchEvent(new CustomEvent(eventName, { detail: serverVal }));
-            }
+          // Dispatch reactive update event
+          const eventName = EVENT_MAP[storageKey];
+          if (eventName && isChanged) {
+            window.dispatchEvent(new CustomEvent(eventName, { detail: serverVal }));
           }
         } catch (e) {
-          console.warn(`[PersistentSync] Failed to cache ${storageKey}:`, e);
+          console.error(`[PersistentSync] Failed to store ${storageKey}:`, e);
         }
       } else if (localValRaw) {
-        // Server doesn't have this key yet, push to server
+        // Server doesn't have this key yet, push local value to server/Firestore
         try {
           localKeysToPush[storageKey] = JSON.parse(localValRaw);
         } catch {
@@ -366,14 +332,14 @@ export async function initPersistentSync(): Promise<void> {
       }
     }
 
-    // Push local customizations to server disk if backend is available
+    // Push local customizations to server and Firestore if any
     if (Object.keys(localKeysToPush).length > 0) {
       fetch('/api/sync/save', {
         method: 'POST',
         headers: getAdminHeaders(),
         body: JSON.stringify({ all: localKeysToPush })
-      }).catch(() => {
-        // silent fallback
+      }).catch((err) => {
+        console.error('[PersistentSync] Failed to push local customizations to server:', err);
       });
     }
 
@@ -391,21 +357,24 @@ export async function initPersistentSync(): Promise<void> {
 
     // Broadcast global sync ready event with explicit payload
     window.dispatchEvent(new CustomEvent('raba_persistent_sync_ready', { detail: { ready: true, timestamp: syncTimestamp } }));
-    window.dispatchEvent(new CustomEvent('raba_slider_updated', { detail: serverData[SYNC_KEYS.HERO_SLIDES] }));
-    console.log('[PersistentSync] All persistent customizations and assets synchronized successfully.');
+    if (serverData[SYNC_KEYS.HERO_SLIDES]) {
+      window.dispatchEvent(new CustomEvent('raba_slider_updated', { detail: serverData[SYNC_KEYS.HERO_SLIDES] }));
+    }
+    console.info('[PersistentSync] Synchronized with Firestore & backend successfully.');
   } catch (err) {
-    console.warn('[PersistentSync] Sync completed with fallback cache:', err);
+    console.error('[PersistentSync] Sync error encountered:', err);
   }
 }
 
 /**
- * Saves a module data persistently to BOTH client localStorage, IndexedDB, and server disk files.
+ * Saves a module data persistently to BOTH client localStorage, IndexedDB, Firestore, and server disk.
  */
 export async function savePersistentModule<T>(key: string, data: T): Promise<boolean> {
   const timestamp = Date.now().toString();
 
-  // 1. Save to local storage for immediate synchronous access
+  // 1. Save to local storage and in-memory cache for immediate synchronous access
   try {
+    IN_MEMORY_SYNC_CACHE.set(key, data);
     const stringified = JSON.stringify(data);
     localStorage.setItem(key, stringified);
     localStorage.setItem(`raba_ts_${key}`, timestamp);
@@ -413,7 +382,7 @@ export async function savePersistentModule<T>(key: string, data: T): Promise<boo
     // Synchronize aliases with timestamps
     mirrorAliases(key, stringified, Number(timestamp));
   } catch (err) {
-    console.warn(`[PersistentSync] LocalStorage notice for ${key}:`, err);
+    console.error(`[PersistentSync] LocalStorage error for ${key}:`, err);
   }
 
   // 2. Dispatch custom event locally
@@ -422,7 +391,14 @@ export async function savePersistentModule<T>(key: string, data: T): Promise<boo
     window.dispatchEvent(new CustomEvent(eventName, { detail: data }));
   }
 
-  // 3. Save to server persistent disk file via REST API
+  // 3. Save directly to Firestore from the client if authenticated
+  try {
+    await saveSiteSettingToFirestore(key, data);
+  } catch {
+    // Handled or skipped if client unauthenticated
+  }
+
+  // 4. Save to server persistent API endpoint (which also writes to Firestore admin SDK)
   try {
     const res = await fetch('/api/sync/save', {
       method: 'POST',
@@ -434,10 +410,52 @@ export async function savePersistentModule<T>(key: string, data: T): Promise<boo
       return json.success === true;
     }
     return false;
-  } catch {
+  } catch (err) {
+    console.warn(`[PersistentSync] Server API save notice for key "${key}":`, err);
     return false;
   }
 }
+
+/**
+ * Deletes a module data persistently from client localStorage, IndexedDB, Firestore, and server.
+ */
+export async function deletePersistentModule(key: string, collectionName?: string, id?: string): Promise<boolean> {
+  try {
+    localStorage.removeItem(key);
+    localStorage.removeItem(`raba_ts_${key}`);
+    IN_MEMORY_SYNC_CACHE.delete(key);
+
+    const eventName = EVENT_MAP[key];
+    if (eventName && typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent(eventName, { detail: null }));
+    }
+
+    // Direct Firestore deletion if authenticated
+    try {
+      await deleteSiteSettingFromFirestore(key);
+    } catch {
+      // Handled or skipped if client unauthenticated
+    }
+
+    // Server deletion
+    const res = await fetch('/api/sync/delete', {
+      method: 'POST',
+      headers: getAdminHeaders(),
+      body: JSON.stringify({ key, collectionName, id })
+    });
+
+    if (!res.ok) {
+      console.error(`[PersistentSync] Server deletion error ${res.status}: ${res.statusText}`);
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error(`[PersistentSync] Failed to delete module "${key}":`, err);
+    throw err;
+  }
+}
+
 
 /**
  * Batch saves all current localStorage customizations to server disk and static assets

@@ -34,25 +34,6 @@ export const DEFAULT_HERO_SLIDER_CONFIG: HeroSliderConfig = {
 
 export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   {
-    id: 'service-aba',
-    src: '/images/hero/slide_2_ahmed.webp',
-    alt: 'برنامج تحليل السلوك التطبيقي ABA - مركز رابا',
-    titleAr: 'برنامج تحليل السلوك التطبيقي المكثف ABA',
-    titleEn: 'Applied Behavior Analysis (ABA) Program',
-    subtitleAr: 'برامج فردية مكثفة بإشراف معتمدين دولياً لتطوير مهارات التواصل والحد من السلوكيات النمطية',
-    subtitleEn: 'Intensive individualized behavioral intervention for autism rehabilitation',
-    objectPosition: 'top',
-    zoomLevel: 100,
-    active: true,
-    order: 1,
-    tagAr: 'خدمة تأهيلية رئيسية',
-    tagEn: 'Primary Service',
-    slideType: 'service',
-    ctaUrl: '#services',
-    ctaTextAr: 'تفاصيل الخدمة',
-    ctaTextEn: 'View Service'
-  },
-  {
     id: 'offer-national-day',
     src: '/images/hero/slide_1_haneen.webp',
     alt: 'عروض اليوم الوطني السعودي 96 - خصم 35%',
@@ -63,7 +44,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
     objectPosition: 'top',
     zoomLevel: 100,
     active: true,
-    order: 2,
+    order: 1,
     tagAr: 'عرض ترويجي خاص',
     tagEn: 'Special Offer',
     slideType: 'offer',
@@ -82,7 +63,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
     objectPosition: 'top',
     zoomLevel: 100,
     active: true,
-    order: 3,
+    order: 2,
     tagAr: 'خدمة متخصصة',
     tagEn: 'Specialized Service',
     slideType: 'service',
@@ -101,7 +82,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
     objectPosition: 'top',
     zoomLevel: 100,
     active: true,
-    order: 4,
+    order: 3,
     tagAr: 'علاج النطق واللغة',
     tagEn: 'Speech Therapy',
     slideType: 'service',
@@ -120,7 +101,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
     objectPosition: 'center',
     zoomLevel: 100,
     active: true,
-    order: 5,
+    order: 4,
     tagAr: 'دمج أكاديمي',
     tagEn: 'School Inclusion',
     slideType: 'service',
@@ -139,7 +120,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
     objectPosition: 'top',
     zoomLevel: 100,
     active: true,
-    order: 6,
+    order: 5,
     tagAr: 'تشخيص وتقييم',
     tagEn: 'Diagnostic Assessment',
     slideType: 'offer',
@@ -148,6 +129,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
     ctaTextEn: 'Book Assessment'
   }
 ];
+
 
 import { savePersistentModule } from '../utils/persistentSync';
 import { savePersistentImage } from '../utils/persistentImageStore';
@@ -166,6 +148,16 @@ export function getStoredHeroSlides(): HeroSlideItem[] {
         if (hasLegacyDoctorSlides) {
           localStorage.setItem(STORAGE_HERO_SLIDES_KEY, JSON.stringify(DEFAULT_HERO_SLIDES));
           return [...DEFAULT_HERO_SLIDES];
+        }
+
+        // Clean out deleted first slide 'service-aba' if present in existing storage
+        const hasDeletedAbaSlide = parsed.some(p => p.id === 'service-aba');
+        if (hasDeletedAbaSlide) {
+          const cleaned = parsed
+            .filter(p => p.id !== 'service-aba')
+            .map((s, idx) => ({ ...s, order: idx + 1 }));
+          localStorage.setItem(STORAGE_HERO_SLIDES_KEY, JSON.stringify(cleaned));
+          return cleaned.sort((a, b) => (a.order || 0) - (b.order || 0));
         }
         const upgraded = parsed.map(slide => {
           let src = slide.src || '';

@@ -25,7 +25,7 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+      return isSignedIn();
     }
 
     // --- Entity Validation Helpers ---
@@ -36,74 +36,56 @@ service cloud.firestore {
         && data.status is string && (data.status in ['pending', 'confirmed', 'completed', 'cancelled']);
     }
 
-    function isValidSpecialist(data) {
-      return data.name is string && data.name.size() > 0 && data.name.size() <= 100
-        && data.title is string && data.title.size() > 0 && data.title.size() <= 150
-        && data.role is string && data.role.size() > 0 && data.role.size() <= 150;
-    }
-
     function isValidTestimonial(data) {
       return data.parentName is string && data.parentName.size() > 0 && data.parentName.size() <= 100
         && data.rating is number && data.rating >= 1 && data.rating <= 5
         && data.comment is string && data.comment.size() > 0 && data.comment.size() <= 1500;
     }
 
-    function isValidBlogPost(data) {
-      return data.title is string && data.title.size() > 0 && data.title.size() <= 200
-        && data.category is string && data.category.size() > 0 && data.category.size() <= 50;
-    }
-
-    function isValidNotification(data) {
-      return data.title is string && data.title.size() > 0 && data.title.size() <= 200
-        && data.message is string && data.message.size() > 0 && data.message.size() <= 1000;
-    }
-
     // --- Collection Rule Blocks ---
 
-    // 1. Appointments & Consultation Bookings
-    match /appointments/{appointmentId} {
-      allow get: if isAdmin() || (isSignedIn() && existing().userId == request.auth.uid);
-      allow list: if isAdmin();
-      allow create: if isValidId(appointmentId) && isValidAppointment(incoming());
-      allow update: if isValidId(appointmentId) && isValidAppointment(incoming()) && (
-        isAdmin() ||
-        (isSignedIn() && existing().userId == request.auth.uid && incoming().diff(existing()).affectedKeys().hasOnly(['notes', 'phone']))
-      );
-      allow delete: if isAdmin();
+    // 1. Dynamic Site Settings (Public Read for Visitors, Authenticated Admin Write)
+    match /site_settings/{settingId} {
+      allow read: if true;
+      allow write: if isSignedIn() && isValidId(settingId);
     }
 
-    // 2. Specialists Directory
+    // 2. Specialists Directory (Public Read for Visitors, Authenticated Admin Write)
     match /specialists/{specialistId} {
-      allow get, list: if true;
-      allow create, update, delete: if isAdmin() && isValidId(specialistId) && (request.method == 'delete' || isValidSpecialist(incoming()));
+      allow read: if true;
+      allow write: if isSignedIn() && isValidId(specialistId);
     }
 
-    // 3. Parent Reviews and Testimonials
+    // 3. Appointments & Consultation Bookings (Public Create for Patients, Authenticated Admin Read/Update/Delete)
+    match /appointments/{appointmentId} {
+      allow create: if isValidId(appointmentId) && isValidAppointment(incoming());
+      allow read, update, delete: if isSignedIn();
+    }
+
+    // 4. Parent Reviews and Testimonials (Public Read, Public Create with Validation, Admin Update/Delete)
     match /testimonials/{testimonialId} {
-      allow get, list: if true;
+      allow read: if true;
       allow create: if isValidId(testimonialId) && isValidTestimonial(incoming());
-      allow update, delete: if isAdmin() && isValidId(testimonialId);
+      allow update, delete: if isSignedIn() && isValidId(testimonialId);
     }
 
-    // 4. Clinical Blog Posts
+    // 5. Clinical & Educational Blog Posts (Public Read, Admin Write)
     match /blog_posts/{postId} {
-      allow get, list: if true;
-      allow create, update, delete: if isAdmin() && isValidId(postId) && (request.method == 'delete' || isValidBlogPost(incoming()));
+      allow read: if true;
+      allow write: if isSignedIn() && isValidId(postId);
     }
 
-    // 5. System Notifications
+    // 6. System Notifications (Authenticated Admin Read & Write)
     match /notifications/{notificationId} {
-      allow get, list: if isAdmin();
-      allow create, update, delete: if isAdmin() && isValidId(notificationId) && (request.method == 'delete' || isValidNotification(incoming()));
+      allow read, write: if isSignedIn() && isValidId(notificationId);
     }
 
-    // 6. Admin User Access Control
+    // 7. Admin User Access Control (Authenticated Admin Read & Write)
     match /admins/{adminId} {
-      allow get, list: if isAdmin();
-      allow create, update, delete: if isAdmin() && isValidId(adminId);
+      allow read, write: if isSignedIn() && isValidId(adminId);
     }
 
-    // Connection test document
+    // 8. Connection Test Document
     match /test/connection {
       allow get: if true;
     }

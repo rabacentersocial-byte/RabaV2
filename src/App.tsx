@@ -49,29 +49,30 @@ function safeImport<T>(factory: () => Promise<T>, retries = 3, interval = 500): 
 }
 
 // Lazy-loaded components for optimal mobile bundle splitting, fast paint, and low TBT
-const ShadowTeacherSection = lazy(() => safeImport(() => import('./components/ShadowTeacherSection')).then((m: any) => ({ default: m.default || m.ShadowTeacherSection || (() => null) })));
-const PackagesSection = lazy(() => safeImport(() => import('./components/PackagesSection')).then((m: any) => ({ default: m.default || m.PackagesSection || (() => null) })));
-const SpecialistsSection = lazy(() => safeImport(() => import('./components/SpecialistsSection')).then((m: any) => ({ default: m.default || m.SpecialistsSection || (() => null) })));
-const SpecialistsDirectoryPage = lazy(() => safeImport(() => import('./components/SpecialistsDirectoryPage')).then((m: any) => ({ default: m.default || m.SpecialistsDirectoryPage || (() => null) })));
-const ServicesDirectoryPage = lazy(() => safeImport(() => import('./components/ServicesDirectoryPage')).then((m: any) => ({ default: m.default || m.ServicesDirectoryPage || (() => null) })));
-const BranchesDirectoryPage = lazy(() => safeImport(() => import('./components/BranchesDirectoryPage')).then((m: any) => ({ default: m.default || m.BranchesDirectoryPage || (() => null) })));
-const OffersDirectoryPage = lazy(() => safeImport(() => import('./components/OffersDirectoryPage')).then((m: any) => ({ default: m.default || m.OffersDirectoryPage || (() => null) })));
-const SpecialistCvModal = lazy(() => safeImport(() => import('./components/SpecialistCvModal')).then((m: any) => ({ default: m.default || m.SpecialistCvModal || (() => null) })));
-const BookingModal = lazy(() => safeImport(() => import('./components/BookingModal')).then((m: any) => ({ default: m.default || m.BookingModal || (() => null) })));
-const NotificationCenterModal = lazy(() => safeImport(() => import('./components/NotificationCenterModal')).then((m: any) => ({ default: m.default || m.NotificationCenterModal || (() => null) })));
-const TestimonialsSection = lazy(() => safeImport(() => import('./components/TestimonialsSection')).then((m: any) => ({ default: m.default || m.TestimonialsSection || (() => null) })));
-const BlogSliderSection = lazy(() => safeImport(() => import('./components/BlogSliderSection')).then((m: any) => ({ default: m.default || m.BlogSliderSection || (() => null) })));
-const AccreditationsSection = lazy(() => safeImport(() => import('./components/AccreditationsSection')).then((m: any) => ({ default: m.default || m.AccreditationsSection || (() => null) })));
-const PartnersSection = lazy(() => safeImport(() => import('./components/PartnersSection')).then((m: any) => ({ default: m.default || m.PartnersSection || (() => null) })));
-const BranchesSection = lazy(() => safeImport(() => import('./components/BranchesSection')).then((m: any) => ({ default: m.default || m.BranchesSection || (() => null) })));
-const CoursesSliderSection = lazy(() => safeImport(() => import('./components/CoursesSliderSection')).then((m: any) => ({ default: m.default || m.CoursesSliderSection || (() => null) })));
-const CourseRegistrationModal = lazy(() => safeImport(() => import('./components/CourseRegistrationModal')).then((m: any) => ({ default: m.default || m.CourseRegistrationModal || (() => null) })));
-const LoginModal = lazy(() => safeImport(() => import('./components/LoginModal')).then((m: any) => ({ default: m.default || m.LoginModal || (() => null) })));
-const StoreModal = lazy(() => safeImport(() => import('./components/StoreModal')).then((m: any) => ({ default: m.default || m.StoreModal || (() => null) })));
-const VideoModal = lazy(() => safeImport(() => import('./components/VideoModal')).then((m: any) => ({ default: m.default || m.VideoModal || (() => null) })));
-const QuickConsultationModal = lazy(() => safeImport(() => import('./components/QuickConsultationModal')).then((m: any) => ({ default: m.default || m.QuickConsultationModal || (() => null) })));
-const AdminDashboard = lazy(() => safeImport(() => import('./components/admin/AdminDashboard')).then((m: any) => ({ default: m.default || m.AdminDashboard || (() => null) })));
-const AdminLoginPage = lazy(() => safeImport(() => import('./components/admin/AdminLoginPage')).then((m: any) => ({ default: m.default || m.AdminLoginPage || (() => null) })));
+const ShadowTeacherSection = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/ShadowTeacherSection')).then((m: any) => ({ default: m.default || m.ShadowTeacherSection || (() => null) })));
+const PackagesSection = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/PackagesSection')).then((m: any) => ({ default: m.default || m.PackagesSection || (() => null) })));
+const SpecialistsSection = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/SpecialistsSection')).then((m: any) => ({ default: m.default || m.SpecialistsSection || (() => null) })));
+const SpecialistsDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/SpecialistsDirectoryPage')).then((m: any) => ({ default: m.default || m.SpecialistsDirectoryPage || (() => null) })));
+const ServicesDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/ServicesDirectoryPage')).then((m: any) => ({ default: m.default || m.ServicesDirectoryPage || (() => null) })));
+const BranchesDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BranchesDirectoryPage')).then((m: any) => ({ default: m.default || m.BranchesDirectoryPage || (() => null) })));
+const OffersDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/OffersDirectoryPage')).then((m: any) => ({ default: m.default || m.OffersDirectoryPage || (() => null) })));
+const SpecialistCvModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/SpecialistCvModal')).then((m: any) => ({ default: m.default || m.SpecialistCvModal || (() => null) })));
+const BookingModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BookingModal')).then((m: any) => ({ default: m.default || m.BookingModal || (() => null) })));
+const NotificationCenterModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/NotificationCenterModal')).then((m: any) => ({ default: m.default || m.NotificationCenterModal || (() => null) })));
+const TestimonialsSection = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/TestimonialsSection')).then((m: any) => ({ default: m.default || m.TestimonialsSection || (() => null) })));
+const BlogSliderSection = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BlogSliderSection')).then((m: any) => ({ default: m.default || m.BlogSliderSection || (() => null) })));
+const AccreditationsSection = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/AccreditationsSection')).then((m: any) => ({ default: m.default || m.AccreditationsSection || (() => null) })));
+const PartnersSection = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/PartnersSection')).then((m: any) => ({ default: m.default || m.PartnersSection || (() => null) })));
+const BranchesSection = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BranchesSection')).then((m: any) => ({ default: m.default || m.BranchesSection || (() => null) })));
+const CoursesSliderSection = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/CoursesSliderSection')).then((m: any) => ({ default: m.default || m.CoursesSliderSection || (() => null) })));
+const CourseRegistrationModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/CourseRegistrationModal')).then((m: any) => ({ default: m.default || m.CourseRegistrationModal || (() => null) })));
+const LoginModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/LoginModal')).then((m: any) => ({ default: m.default || m.LoginModal || (() => null) })));
+const StoreModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/StoreModal')).then((m: any) => ({ default: m.default || m.StoreModal || (() => null) })));
+const VideoModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/VideoModal')).then((m: any) => ({ default: m.default || m.VideoModal || (() => null) })));
+const QuickConsultationModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/QuickConsultationModal')).then((m: any) => ({ default: m.default || m.QuickConsultationModal || (() => null) })));
+const AdminDashboard = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/admin/AdminDashboard')).then((m: any) => ({ default: m.default || m.AdminDashboard || (() => null) })));
+const AdminLoginPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/admin/AdminLoginPage')).then((m: any) => ({ default: m.default || m.AdminLoginPage || (() => null) })));
+
 
 import { 
   INITIAL_APPOINTMENTS, 

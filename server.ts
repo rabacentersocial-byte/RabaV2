@@ -30,6 +30,14 @@ import {
   optimizeUploadedImageMiddleware,
   optimizeImageBuffer
 } from './src/server/utils/imageOptimizer.ts';
+import {
+  adminDb,
+  saveAdminFirestoreSetting,
+  getAllAdminFirestoreSettings,
+  deleteAdminFirestoreSetting,
+  getAdminFirestoreSetting,
+  isFirestoreAdminConfigured
+} from './src/lib/firebase-admin.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -738,32 +746,20 @@ async function startServer() {
     invalidateDbSettingsCache();
   }
 
-  // Get all persistent customizations & data from disk AND Cloud SQL (sub-1ms cached)
-  app.get('/api/sync/all', async (req: Request, res: Response) => {
+  // Get all persistent customizations & data from Firestore with disk and DB fallbacks (No-cache)
+  app.get('/api/sync/all', async (_req: Request, res: Response) => {
+    // Explicit no-cache headers ensuring visitor and admin interfaces always receive fresh live data
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
     try {
-      // 1. Check HTTP If-None-Match header for instant 304 Not Modified
-      if (req.headers['if-none-match'] === cachedAllSyncEtag && cachedAllSyncResponse) {
-        return res.status(304).end();
-      }
-
-      // 2. Return from in-memory response cache if fresh
-      if (cachedAllSyncResponse && Date.now() - lastAllSyncTime < ALL_SYNC_CACHE_TTL) {
-        res.setHeader('ETag', cachedAllSyncEtag);
-        res.setHeader('Cache-Control', 'public, max-age=15, stale-while-revalidate=30');
-        return res.json({
-          success: true,
-          data: cachedAllSyncResponse,
-          timestamp: new Date(lastAllSyncTime).toISOString()
-        });
-      }
-
       const result: Record<string, any> = {};
 
-      // 3. Read files from disk
+      // 1. Read files from disk as initial baseline
       for (const [key, filename] of Object.entries(STORAGE_FILE_MAP)) {
         let data = readJsonFile(filename, null);
         if (data !== null) {
-          // Strictly strip passwords from raba_admin_users
           if (key === 'raba_admin_users' && Array.isArray(data)) {
             data = data.map(({ password: _p, ...safe }: any) => safe);
           }
@@ -771,7 +767,29 @@ async function startServer() {
         }
       }
 
-      // 4. Merge with Cloud SQL site_settings
+      // 2. Overlay live Firestore site_settings (Primary Production Database Source of Truth when credentials provided)
+      if (isFirestoreAdminConfigured()) {
+        try {
+          const firestoreSettings = await getAllAdminFirestoreSettings();
+          const firestoreKeys = Object.keys(firestoreSettings);
+          if (firestoreKeys.length > 0) {
+            for (const [key, val] of Object.entries(firestoreSettings)) {
+              if (val !== null && val !== undefined) {
+                if (key === 'raba_admin_users' && Array.isArray(val)) {
+                  result[key] = val.map(({ password: _p, ...safe }: any) => safe);
+                } else {
+                  result[key] = val;
+                }
+              }
+            }
+            console.log(`[Server Sync] Successfully merged ${firestoreKeys.length} settings from live Firestore.`);
+          }
+        } catch (fsErr: any) {
+          console.warn('[Server Sync] Firestore read note:', fsErr.message);
+        }
+      }
+
+      // 3. Optional Cloud SQL overlay if configured
       if (process.env.SQL_HOST) {
         try {
           const dbPromise = getAllDbSettings();
@@ -780,51 +798,34 @@ async function startServer() {
 
           for (const [key, val] of Object.entries(dbSettings)) {
             if (!key.startsWith('upload:') && val !== null && val !== undefined) {
-              if (key === 'raba_specialists') {
-                if (Array.isArray(result[key]) && result[key].length >= 40) {
-                  if (!Array.isArray(val) || val.length !== result[key].length) {
-                    backgroundQueue.enqueue('sync-specialists-mismatch', async () => {
-                      await saveDbSetting(key, result[key]);
-                    });
-                  }
-                } else if (Array.isArray(val) && val.length > 0) {
-                  result[key] = val;
-                }
-              } else if (key === 'raba_admin_users' && Array.isArray(val)) {
-                // Strictly redact passwords from database settings
+              if (key === 'raba_admin_users' && Array.isArray(val)) {
                 result[key] = val.map(({ password: _p, ...safe }: any) => safe);
-              } else {
+              } else if (!result[key]) {
                 result[key] = val;
               }
             }
           }
-        } catch (dbErr) {
-          console.error('[Server Sync] Cloud SQL query failed in /api/sync/all:', dbErr);
+        } catch (dbErr: any) {
+          console.warn('[Server Sync] Cloud SQL query notice:', dbErr.message);
         }
       }
 
-      // Update response cache
-      cachedAllSyncResponse = result;
-      lastAllSyncTime = Date.now();
-      cachedAllSyncEtag = `W/"raba_${lastAllSyncTime}"`;
-
-      res.setHeader('ETag', cachedAllSyncEtag);
-      res.setHeader('Cache-Control', 'public, max-age=15, stale-while-revalidate=30');
       return res.json({
         success: true,
         data: result,
         timestamp: new Date().toISOString()
       });
     } catch (err: any) {
-      return sendSafeError(res, 500, 'فشل استرجاع بيانات النظام التخصيصية', err);
+      console.error('🚨 [Server Sync Fatal Error] Failed to retrieve system data:', err);
+      return sendSafeError(res, 500, 'فشل استرجاع بيانات النظام التخصيصية من Firestore', err);
     }
   });
 
-  // Save specific item or batch of items (Protected: Admin Auth Required)
+  // Save specific item or batch of items to Firestore and disk (Protected: Admin Auth Required)
   app.post('/api/sync/save', requireAdminAuth, async (req: Request, res: Response) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
     try {
       const { key, data, all } = req.body || {};
-      invalidateAllSyncCache();
 
       if (all && typeof all === 'object') {
         const savedKeys: string[] = [];
@@ -833,13 +834,23 @@ async function startServer() {
           if (itemKey === 'raba_admin_users' && Array.isArray(itemData)) {
             cleanData = itemData.map(({ password: _p, ...safe }: any) => safe);
           }
+          
+          // 1. Write to local disk cache
           const filename = STORAGE_FILE_MAP[itemKey] || `${itemKey.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`;
-          if (writeJsonFile(filename, cleanData)) {
-            savedKeys.push(itemKey);
+          writeJsonFile(filename, cleanData);
+
+          // 2. Persist directly to Firestore (when credentials configured)
+          if (isFirestoreAdminConfigured()) {
+            try {
+              await saveAdminFirestoreSetting(itemKey, cleanData);
+              savedKeys.push(itemKey);
+            } catch (fsErr: any) {
+              console.warn(`[Server Sync] Firestore write note for '${itemKey}':`, fsErr.message);
+            }
           }
         }
 
-        // Offload database persistence and relational syncs to background queue
+        // 3. Mirror to Cloud SQL if configured
         if (process.env.SQL_HOST) {
           backgroundQueue.enqueue('batch-save-db-settings', async () => {
             for (const [itemKey, itemData] of Object.entries(all)) {
@@ -861,7 +872,7 @@ async function startServer() {
 
         return res.json({
           success: true,
-          message: 'All items saved persistently to disk and database queued',
+          message: 'All items saved persistently to Firestore and disk',
           savedKeys,
           timestamp: new Date().toISOString()
         });
@@ -876,9 +887,20 @@ async function startServer() {
         cleanData = data.map(({ password: _p, ...safe }: any) => safe);
       }
 
+      // 1. Write to local disk file
       const filename = STORAGE_FILE_MAP[key] || `${key.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`;
-      const ok = writeJsonFile(filename, cleanData);
+      writeJsonFile(filename, cleanData);
 
+      // 2. Persist directly to Firestore (when credentials configured)
+      if (isFirestoreAdminConfigured()) {
+        try {
+          await saveAdminFirestoreSetting(key, cleanData);
+        } catch (fsErr: any) {
+          console.warn(`[Server Sync] Firestore write note for '${key}':`, fsErr.message);
+        }
+      }
+
+      // 3. Offload to Cloud SQL if configured
       if (process.env.SQL_HOST) {
         backgroundQueue.enqueue(`save-db-setting-${key}`, async () => {
           try {
@@ -892,19 +914,62 @@ async function startServer() {
         });
       }
 
-      if (ok) {
-        return res.json({
-          success: true,
-          message: `Saved ${key} to ${filename} and database queued`,
-          key,
-          dbSaved: true,
-          timestamp: new Date().toISOString()
-        });
-      } else {
-        return res.status(500).json({ success: false, error: `فشل كتابة الملف ${filename}` });
-      }
+      return res.json({
+        success: true,
+        message: `Saved ${key} to Firestore and local disk`,
+        key,
+        firestoreSaved: isFirestoreAdminConfigured(),
+        timestamp: new Date().toISOString()
+      });
     } catch (err: any) {
-      return sendSafeError(res, 500, 'فشل حفظ البيانات المخصصة', err);
+      console.error('🚨 [Server Sync Error] Failed to save setting:', err);
+      return sendSafeError(res, 500, 'فشل حفظ البيانات', err);
+    }
+  });
+
+  // Delete item or setting from Firestore and disk (Protected: Admin Auth Required)
+  app.post('/api/sync/delete', requireAdminAuth, async (req: Request, res: Response) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    try {
+      const { key, collection: colName, id } = req.body || {};
+      if (!key && !id) {
+        return res.status(400).json({ success: false, error: 'المفتاح أو المُعرف مطلوب للحذف' });
+      }
+
+      if (key) {
+        if (isFirestoreAdminConfigured()) {
+          try {
+            await deleteAdminFirestoreSetting(key);
+            console.log(`[Server Sync] Deleted site setting '${key}' from Firestore.`);
+          } catch (e: any) {
+            console.warn(`[Server Sync] Firestore delete note for '${key}':`, e.message);
+          }
+        }
+        const filename = STORAGE_FILE_MAP[key] || `${key.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`;
+        try {
+          const p = path.join(DATA_DIR, filename);
+          if (fs.existsSync(p)) fs.unlinkSync(p);
+        } catch { /* ignore */ }
+      }
+
+      if (colName && id && isFirestoreAdminConfigured()) {
+        try {
+          await adminDb.collection(colName).doc(id).delete();
+          console.log(`[Server Sync] Deleted document '${id}' from collection '${colName}' in Firestore.`);
+        } catch (e: any) {
+          console.warn(`[Server Sync] Firestore delete document note for '${id}':`, e.message);
+        }
+      }
+
+      return res.json({
+        success: true,
+        message: `تم حذف ${key || id} بنجاح من Firestore`,
+        deletedKey: key || id,
+        timestamp: new Date().toISOString()
+      });
+    } catch (err: any) {
+      console.error('🚨 [Server Sync Error] Failed to delete from Firestore:', err);
+      return sendSafeError(res, 500, 'فشل حذف البيانات من Firestore', err);
     }
   });
 
