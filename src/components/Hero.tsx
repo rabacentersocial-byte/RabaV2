@@ -93,14 +93,23 @@ export const Hero: React.FC<HeroProps> = ({
     setCurrentSlideIndex((prev) => (prev - 1 + slides.length) % slides.length);
   }, [slides.length]);
 
-  // Auto-play timer (slides based on configured interval when not paused)
+  // Auto-play timer: initial 10-second stabilization delay ensures Slide 1 locks as rock-solid LCP element
   useEffect(() => {
     if (!config.autoplay || isPaused || slides.length <= 1) return;
-    const intervalMs = Math.max(2, config.intervalSeconds || 4) * 1000;
-    const interval = setInterval(() => {
+    const intervalMs = Math.max(3, config.intervalSeconds || 5) * 1000;
+
+    let intervalId: any = null;
+    const initialDelay = setTimeout(() => {
       handleNext();
-    }, intervalMs);
-    return () => clearInterval(interval);
+      intervalId = setInterval(() => {
+        handleNext();
+      }, intervalMs);
+    }, 10000);
+
+    return () => {
+      clearTimeout(initialDelay);
+      if (intervalId) clearInterval(intervalId);
+    };
   }, [config.autoplay, config.intervalSeconds, isPaused, slides.length, handleNext]);
 
   // Touch swipe support for mobile
@@ -341,9 +350,8 @@ export const Hero: React.FC<HeroProps> = ({
                 <div className="absolute inset-0 w-full h-full rounded-full overflow-hidden z-10">
                   {slides.map((s, idx) => {
                     const isActive = idx === currentSlideIndex;
-                    const isNext = idx === (currentSlideIndex + 1) % slides.length;
-                    // Only mount the active slide and adjacent prefetch slide to avoid loading 8 heavy images at once on mobile
-                    if (!isActive && !isNext) return null;
+                    // Only mount the active slide to eliminate downloading unneeded images on initial load
+                    if (!isActive) return null;
 
                     const isLcpCandidate = idx === 0;
 

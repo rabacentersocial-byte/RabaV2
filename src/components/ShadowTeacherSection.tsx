@@ -242,12 +242,13 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
           {/* Featured Visual Image Banner */}
           <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-md sm:shadow-xl border border-slate-200/80 dark:border-white/10 group bg-slate-100 dark:bg-slate-800 mb-3.5 sm:mb-8">
             <img
-              src="/images/shadow_teacher.jpg"
+              src="/images/shadow_teacher.webp"
               alt={isArabic ? 'أخصائية معلم الظل مع طفلة في بيئة تعليمية' : 'Shadow teacher with child in classroom'}
+              width={640}
+              height={280}
               className="w-full h-[160px] sm:h-[260px] md:h-[320px] object-cover object-center group-hover:scale-[1.01] transition-transform duration-700"
               loading="lazy"
               decoding="async"
-              referrerPolicy="no-referrer"
             />
             
             {/* Subtle gradient vignette */}
