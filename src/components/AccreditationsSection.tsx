@@ -102,19 +102,43 @@ export const AccreditationsSection: React.FC = () => {
   }) : defaultBadges;
 
   // Duplicate 4 times for infinite loop
+  // Duplicate 4 times for infinite loop
   const loopList = [...itemsToDisplay, ...itemsToDisplay, ...itemsToDisplay, ...itemsToDisplay];
+  const singleSetWidthRef = React.useRef(0);
+  const isIntersectingRef = React.useRef(false);
 
-  // Initialize scroll position to 1 set width so user can swipe left or right immediately
+  // Measure and cache singleSetWidth safely without layout thrashing
   useEffect(() => {
     if (!scrollRef.current) return;
     const container = scrollRef.current;
-    const singleSetWidth = container.scrollWidth / 4;
-    if (singleSetWidth > 0 && container.scrollLeft === 0) {
-      container.scrollLeft = singleSetWidth;
-    }
+    
+    const measure = () => {
+      const measured = container.scrollWidth / 4;
+      if (measured > 0) {
+        singleSetWidthRef.current = measured;
+        if (container.scrollLeft === 0) {
+          container.scrollLeft = measured;
+        }
+      }
+    };
+
+    measure();
+    const ro = new ResizeObserver(() => measure());
+    ro.observe(container);
+
+    // Only run ticker when visible in viewport
+    const io = new IntersectionObserver(([entry]) => {
+      isIntersectingRef.current = entry.isIntersecting;
+    }, { threshold: 0.05 });
+    io.observe(container);
+
+    return () => {
+      ro.disconnect();
+      io.disconnect();
+    };
   }, [itemsToDisplay.length]);
 
-  // Smooth continuous requestAnimationFrame ticker
+  // Smooth continuous requestAnimationFrame ticker (Zero forced reflow)
   useEffect(() => {
     let animId: number;
     let lastTime = performance.now();
@@ -123,20 +147,17 @@ export const AccreditationsSection: React.FC = () => {
       const delta = Math.min(time - lastTime, 80);
       lastTime = time;
 
-      if (!isPaused && !isDragging && scrollRef.current) {
+      const singleSetWidth = singleSetWidthRef.current;
+      if (!isPaused && !isDragging && isIntersectingRef.current && scrollRef.current && singleSetWidth > 0) {
         const container = scrollRef.current;
-        const singleSetWidth = container.scrollWidth / 4;
+        // Continuous smooth scroll using cached dimensions
+        container.scrollLeft += delta * 0.032;
 
-        if (singleSetWidth > 0) {
-          // Continuous 32px/sec smooth scroll
-          container.scrollLeft += delta * 0.032;
-
-          // Infinite wrap bounds
-          if (container.scrollLeft >= singleSetWidth * 2.5) {
-            container.scrollLeft -= singleSetWidth;
-          } else if (container.scrollLeft <= 10) {
-            container.scrollLeft += singleSetWidth;
-          }
+        // Infinite wrap bounds
+        if (container.scrollLeft >= singleSetWidth * 2.5) {
+          container.scrollLeft -= singleSetWidth;
+        } else if (container.scrollLeft <= 10) {
+          container.scrollLeft += singleSetWidth;
         }
       }
 
@@ -145,7 +166,7 @@ export const AccreditationsSection: React.FC = () => {
 
     animId = requestAnimationFrame(ticker);
     return () => cancelAnimationFrame(animId);
-  }, [isPaused, isDragging, itemsToDisplay.length]);
+  }, [isPaused, isDragging]);
 
   // Touch gesture handlers for mobile
   const handleTouchStart = (e: React.TouchEvent) => {

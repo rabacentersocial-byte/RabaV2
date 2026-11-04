@@ -25,12 +25,22 @@ export const LazySection: React.FC<LazySectionProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (shouldRender) return;
+    // Load gracefully when approaching viewport (rootMargin 600px) or on first user scroll/interaction
+    const handleInteraction = () => {
+      setShouldRender(true);
+      window.removeEventListener('scroll', handleInteraction);
+      window.removeEventListener('touchstart', handleInteraction);
+      window.removeEventListener('pointerdown', handleInteraction);
+    };
 
-    // Safety fallback: auto-activate after 3.8s idle so all content is reachable even without scrolling
+    window.addEventListener('scroll', handleInteraction, { passive: true, once: true });
+    window.addEventListener('touchstart', handleInteraction, { passive: true, once: true });
+    window.addEventListener('pointerdown', handleInteraction, { passive: true, once: true });
+
+    // Deep idle fallback for background crawlers that do not emit scroll events (15s safe window)
     const idleTimer = setTimeout(() => {
       setShouldRender(true);
-    }, 3800);
+    }, 15000);
 
     if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
       setShouldRender(true);
@@ -60,6 +70,9 @@ export const LazySection: React.FC<LazySectionProps> = ({
     return () => {
       clearTimeout(idleTimer);
       observer.disconnect();
+      window.removeEventListener('scroll', handleInteraction);
+      window.removeEventListener('touchstart', handleInteraction);
+      window.removeEventListener('pointerdown', handleInteraction);
     };
   }, [shouldRender, rootMargin]);
 

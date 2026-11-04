@@ -831,7 +831,7 @@ body {
   animation: liquid-prism-drift 18s ease-in-out infinite;
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce), (max-width: 768px) {
   .animate-liquid-orb-1,
   .animate-liquid-orb-2,
   .animate-liquid-orb-3,

@@ -301,7 +301,7 @@ export const Hero: React.FC<HeroProps> = ({
                     {isArabic ? `+${dailyChildrenCount} أطفال جدد` : `+${dailyChildrenCount} Today`}
                   </span>
                   {isWithinHours && (
-                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white animate-ping shrink-0" />
+                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white animate-ping shrink-0 will-change-transform will-change-opacity transform-gpu" />
                   )}
                 </a>
 
@@ -313,7 +313,7 @@ export const Hero: React.FC<HeroProps> = ({
                 >
                   <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2E86EB] shrink-0" />
                   <span className="whitespace-nowrap">{isArabic ? 'حجز فوري' : 'Quick Booking'}</span>
-                  <span className="w-2 h-2 rounded-full bg-[#22C55E] shrink-0 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-[#22C55E] shrink-0 will-change-opacity transform-gpu" />
                 </button>
               </div>
             )}
@@ -379,7 +379,6 @@ export const Hero: React.FC<HeroProps> = ({
                             aspectRatio: '1 / 1',
                             transform: `scale(${(s.zoomLevel || 100) / 100})`
                           }}
-                          referrerPolicy="no-referrer"
                         />
                       </div>
                     );
@@ -435,7 +434,7 @@ export const Hero: React.FC<HeroProps> = ({
             </div>
 
             {/* Bottom Accent Star (from unified mobile/desktop design in Screenshot 2) */}
-            <div className="mt-3.5 sm:mt-4 flex items-center justify-center text-[#FFD23F] drop-shadow-[0_0_12px_rgba(255,210,63,0.6)] animate-pulse select-none pointer-events-none">
+            <div className="mt-3.5 sm:mt-4 flex items-center justify-center text-[#FFD23F] drop-shadow-[0_0_12px_rgba(255,210,63,0.6)] select-none pointer-events-none opacity-90">
               <svg className="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
               </svg>
