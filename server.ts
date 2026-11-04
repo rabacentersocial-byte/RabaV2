@@ -320,6 +320,27 @@ async function startServer() {
   app.use(express.json({ limit: '25mb', inflate: false }));
   app.use(express.urlencoded({ extended: true, limit: '25mb', inflate: false }));
 
+  // Explicit SEO routes for robots.txt and sitemap.xml (fixes PageSpeed "robots.txt is not valid" 158 errors)
+  app.get('/robots.txt', (_req: Request, res: Response) => {
+    const robotsPath = path.join(process.cwd(), 'public', 'robots.txt');
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    if (fs.existsSync(robotsPath)) {
+      return res.sendFile(robotsPath);
+    }
+    return res.send(`User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: https://rabacenters.com/sitemap.xml\n`);
+  });
+
+  app.get('/sitemap.xml', (_req: Request, res: Response) => {
+    const sitemapPath = path.join(process.cwd(), 'public', 'sitemap.xml');
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    if (fs.existsSync(sitemapPath)) {
+      return res.sendFile(sitemapPath);
+    }
+    return res.status(404).send('Not Found');
+  });
+
   // Static directories with optimal HTTP cache headers (resolves PageSpeed "Use efficient cache lifetimes" diagnostic)
   const staticCacheOptions = {
     maxAge: '365d',

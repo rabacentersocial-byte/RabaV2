@@ -1,0 +1,11 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /data/admin_users.json
+
+# Host
+Host: https://rabacenters.com
+
+# Sitemaps
+Sitemap: https://rabacenters.com/sitemap.xml
