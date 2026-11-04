@@ -219,7 +219,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
     setEditingSlide(null);
     setIsNewSlide(true);
     setFormSlideType('service');
-    setFormSrc('/images/hero/slide_2_ahmed.jpg');
+    setFormSrc('/images/hero/card_1_journey.webp');
     setFormAlt(isArabic ? 'شريحة خدمية جديدة' : 'New service slide');
     setFormTitleAr('');
     setFormTitleEn('');

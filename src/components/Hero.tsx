@@ -125,7 +125,7 @@ export const Hero: React.FC<HeroProps> = ({
 
   // Smart image resolver: supports custom uploaded slides from admin panel while maintaining instant local fallbacks
   const getSlideDisplayImage = useCallback((slide: HeroSlideItem) => {
-    if (!slide) return '/images/hero/slide_2_ahmed.webp';
+    if (!slide) return '/images/hero/card_1_journey.webp';
     if (slide.src) {
       if (slide.src.startsWith('data:') || slide.src.startsWith('blob:')) {
         return slide.src;
@@ -139,20 +139,19 @@ export const Hero: React.FC<HeroProps> = ({
       }
     }
     const defaults: Record<string, string> = {
-      'service-aba': '/images/hero/slide_2_ahmed.webp',
-      'offer-national-day': '/images/hero/slide_1_haneen.webp',
-      'service-sensory': '/images/hero/slide_3_rahaf.webp',
-      'service-speech': '/images/hero/slide_5_manar.webp',
-      'photo-1': '/images/hero/slide_1_haneen.webp',
-      'photo-2': '/images/hero/slide_2_ahmed.webp',
-      'photo-3': '/images/hero/slide_3_rahaf.webp',
-      'photo-4': '/images/hero/slide_4_doha.webp',
-      'photo-5': '/images/hero/slide_5_manar.webp',
-      'photo-6': '/images/hero/slide_6_fathi.webp',
-      'photo-7': '/images/hero/slide_7_specialist.webp',
-      'photo-8': '/images/hero/slide_8_specialist.webp',
+      'card-1-journey': '/images/hero/card_1_journey.webp',
+      'card-2-assessment': '/images/hero/card_2_assessment.webp',
+      'card-3-services': '/images/hero/card_3_services.webp',
+      'card-4-inclusion': '/images/hero/card_4_inclusion.webp',
+      'card-5-club': '/images/hero/card_5_club.webp',
+      'card-6-academy': '/images/hero/card_6_academy.webp',
+      'card-7-offer': '/images/hero/card_7_offer.webp',
+      'service-aba': '/images/hero/card_1_journey.webp',
+      'offer-national-day': '/images/hero/card_7_offer.webp',
+      'service-sensory': '/images/hero/card_3_services.webp',
+      'service-speech': '/images/hero/card_3_services.webp'
     };
-    return defaults[slide.id] || slide.src || '/images/hero/slide_1_haneen.webp';
+    return defaults[slide.id] || slide.src || '/images/hero/card_1_journey.webp';
   }, []);
 
   return (
@@ -368,7 +367,7 @@ export const Hero: React.FC<HeroProps> = ({
                           loading={isLcpCandidate ? "eager" : "lazy"}
                           fetchPriority={isLcpCandidate ? "high" : "auto"}
                           decoding="async"
-                          onError={(e) => handleImageErrorWithStore(e, s.src, '/images/hero/slide_2_ahmed.webp')}
+                          onError={(e) => handleImageErrorWithStore(e, s.src, '/images/hero/card_1_journey.webp')}
                           className={`w-full h-full object-cover rounded-full transition-transform duration-700 ease-out group-hover:scale-105 ${
                             s.objectPosition === 'center'
                               ? 'object-center'
