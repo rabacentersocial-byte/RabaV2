@@ -303,6 +303,11 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
                       <img 
                         src={prod.image} 
                         alt={isArabic ? prod.name : prod.nameEn}
+                        width={320}
+                        height={180}
+                        style={{ aspectRatio: '16 / 9' }}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover" 
                       />
                       <span className={`absolute top-2 ${isArabic ? 'right-2' : 'left-2'} bg-white/90 dark:bg-slate-950/80 backdrop-blur-md text-sky-700 dark:text-[#00E5BE] text-[10px] font-bold px-2 py-0.5 rounded-md border border-slate-200 dark:border-white/15`}>
@@ -390,7 +395,16 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
                 {cartProductList.map(item => (
                   <div key={item.product.id} className="pt-2 flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2.5">
-                      <img src={item.product.image} alt={item.product.name} className="w-10 h-10 rounded-lg object-cover" />
+                      <img 
+                        src={item.product.image} 
+                        alt={item.product.name} 
+                        width={40}
+                        height={40}
+                        style={{ aspectRatio: '1 / 1' }}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-10 h-10 rounded-lg object-cover shrink-0" 
+                      />
                       <div>
                         <span className="font-bold text-slate-900 dark:text-white line-clamp-1">{item.product.name}</span>
                         <span className="text-[11px] text-slate-500">{item.product.price} ر.س × {item.quantity}</span>

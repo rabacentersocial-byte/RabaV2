@@ -114,6 +114,9 @@ export const SmartAccreditationLogo: React.FC<SmartAccreditationLogoProps> = ({
         <img
           src={effectiveSrc}
           alt={alt}
+          width={120}
+          height={60}
+          style={{ aspectRatio: '2 / 1' }}
           onError={(e) => handleImageErrorWithStore(e, src)}
           className={`${className} object-contain rounded-xl transition-transform duration-300 group-hover:scale-105`}
           loading="lazy"
@@ -134,6 +137,9 @@ export const SmartAccreditationLogo: React.FC<SmartAccreditationLogoProps> = ({
         <img
           src={effectiveSrc}
           alt={alt}
+          width={120}
+          height={60}
+          style={{ aspectRatio: '2 / 1' }}
           onError={(e) => handleImageErrorWithStore(e, src)}
           className={`${className} object-contain transition-transform duration-300 group-hover:scale-105 mix-blend-multiply`}
           loading="lazy"
@@ -149,6 +155,9 @@ export const SmartAccreditationLogo: React.FC<SmartAccreditationLogoProps> = ({
       <img
         src={effectiveSrc}
         alt={alt}
+        width={120}
+        height={60}
+        style={{ aspectRatio: '2 / 1' }}
         onError={(e) => handleImageErrorWithStore(e, src)}
         className={`${className} object-contain transition-transform duration-300 group-hover:scale-105 filter dark:brightness-105`}
         loading="lazy"

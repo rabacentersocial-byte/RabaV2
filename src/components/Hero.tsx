@@ -359,12 +359,12 @@ export const Hero: React.FC<HeroProps> = ({
                       <div
                         key={s.id || idx}
                         data-slide-active={isActive ? "true" : "false"}
-                        className={`absolute inset-0 w-full h-full rounded-full overflow-hidden transition-opacity duration-500 ease-in-out ${
+                        className={`absolute inset-0 w-full h-full rounded-full overflow-hidden ${
                           isActive ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
                         }`}
                         style={{
-                          opacity: isActive ? 1 : 0,
-                          visibility: isActive ? 'visible' : 'hidden'
+                          opacity: 1,
+                          visibility: 'visible'
                         }}
                       >
                         <img
@@ -374,9 +374,9 @@ export const Hero: React.FC<HeroProps> = ({
                           height={460}
                           loading={isLcpCandidate ? "eager" : "lazy"}
                           fetchPriority={isLcpCandidate ? "high" : "auto"}
-                          decoding="async"
+                          decoding={isLcpCandidate ? "sync" : "async"}
                           onError={(e) => handleImageErrorWithStore(e, s.src, '/images/hero/card_1_journey.webp')}
-                          className={`w-full h-full object-cover rounded-full transition-transform duration-700 ease-out group-hover:scale-105 ${
+                          className={`w-full h-full object-cover rounded-full ${
                             s.objectPosition === 'center'
                               ? 'object-center'
                               : s.objectPosition === 'bottom'

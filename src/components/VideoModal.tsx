@@ -54,6 +54,11 @@ export const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, onBookN
           <img 
             src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=1200&q=80" 
             alt={isArabic ? 'فيديو تعريفي عن مركز رابا' : 'Raba Center Tour'}
+            width={1200}
+            height={675}
+            style={{ aspectRatio: '16 / 9' }}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-slate-950/20" />

@@ -158,6 +158,11 @@ export const SpecialistCvModal: React.FC<SpecialistCvModalProps> = ({
               <img
                 src={getResolvedImageUrl(specialist.avatar)}
                 alt={displayName}
+                width={96}
+                height={96}
+                style={{ aspectRatio: '1 / 1' }}
+                loading="lazy"
+                decoding="async"
                 onError={(e) => handleImageErrorWithStore(e, specialist.avatar, specialist.avatar)}
                 className="w-18 h-18 sm:w-24 sm:h-24 rounded-2xl object-cover object-top border-2 sm:border-3 border-teal-500/30 dark:border-teal-400/40 shadow-md bg-slate-100 dark:bg-slate-800"
                 referrerPolicy="no-referrer"

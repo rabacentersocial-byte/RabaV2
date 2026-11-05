@@ -270,7 +270,7 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
                         : 'border-slate-200 dark:border-white/10 hover:border-slate-400 text-slate-600 dark:text-slate-300'
                     }`}
                   >
-                    <img src="/assets/tamara-logo.svg" alt="Tamara" className="h-5 object-contain" />
+                    <img src="/assets/tamara-logo.svg" alt="Tamara" width={60} height={20} loading="lazy" decoding="async" className="h-5 object-contain" />
                     <span className="text-[11px] font-bold">{isArabic ? 'تقسيط تمارا' : 'Tamara'}</span>
                   </button>
 
@@ -283,7 +283,7 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
                         : 'border-slate-200 dark:border-white/10 hover:border-slate-400 text-slate-600 dark:text-slate-300'
                     }`}
                   >
-                    <img src="/assets/emkan-logo.svg" alt="Emkan" className="h-5 object-contain" />
+                    <img src="/assets/emkan-logo.svg" alt="Emkan" width={60} height={20} loading="lazy" decoding="async" className="h-5 object-contain" />
                     <span className="text-[11px] font-bold">{isArabic ? 'تمويل إمكان' : 'Emkan'}</span>
                   </button>
 

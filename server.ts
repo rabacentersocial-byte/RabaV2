@@ -1321,13 +1321,13 @@ async function startServer() {
       app.use('/assets', (_req: Request, res: Response) => {
         res.status(404).json({ error: 'Asset chunk not found', reloadRequired: true });
       });
-      // 1-year cache on static media/images/fonts, with no-cache on HTML
+      // 1-year cache on static media/images/fonts/js/css, with no-cache on HTML
       app.use(express.static(distPath, {
         maxAge: '365d',
         setHeaders: (res, filePath) => {
           if (filePath.endsWith('.html')) {
             res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
-          } else if (/\.(jpg|jpeg|png|webp|avif|svg|gif|woff2?|ttf|eot|ico)$/i.test(filePath)) {
+          } else if (/\.(js|mjs|css|jpg|jpeg|png|webp|avif|svg|gif|woff2?|ttf|eot|ico)$/i.test(filePath)) {
             res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
           }
         }

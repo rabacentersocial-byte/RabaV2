@@ -539,6 +539,9 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
                     <img
                       src={selectedPost.author.avatar || '/specialists/spec_haneen_obaidi_1790197216150.jpg'}
                       alt={selectedPost.author.name}
+                      width={48}
+                      height={48}
+                      style={{ aspectRatio: '1 / 1' }}
                       loading="lazy"
                       decoding="async"
                       onError={(e) => {

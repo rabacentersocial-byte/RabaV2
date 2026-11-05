@@ -100,6 +100,11 @@ export const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
               <img 
                 src={course.cardCoverUrl || '/images/courses/course_1_qba.jpg'} 
                 alt={title} 
+                width={800}
+                height={450}
+                style={{ aspectRatio: '16 / 9' }}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover opacity-90"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />

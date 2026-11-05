@@ -145,6 +145,10 @@ export default defineConfig(() => {
         '@': path.resolve(import.meta.dirname || '.', '.'),
       },
     },
+    esbuild: {
+      legalComments: 'none',
+      treeShaking: true,
+    },
     server: {
       // HMR is disabled in AI Studio preview iframe per environment constraints
       hmr: false,
@@ -156,6 +160,7 @@ export default defineConfig(() => {
       cssCodeSplit: true,
       minify: 'esbuild',
       cssMinify: true,
+      sourcemap: false,
       target: 'es2020',
       chunkSizeWarningLimit: 800,
       rollupOptions: {

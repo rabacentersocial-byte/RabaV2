@@ -160,6 +160,55 @@
         height: 100%;
         object-fit: cover;
       }
+      /* Pre-render shell layout helpers */
+      .raba-pre-header {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: rgba(13, 27, 42, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .raba-pre-container {
+        max-width: 80rem;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+      .raba-pre-flex {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .raba-pre-hero-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        align-items: center;
+        padding-top: 1.5rem;
+        padding-bottom: 3rem;
+      }
+      @media (min-width: 1024px) {
+        .raba-pre-hero-grid {
+          grid-template-columns: 1fr 1fr;
+          padding-top: 4rem;
+          padding-bottom: 6rem;
+        }
+      }
+      .raba-pre-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        border-radius: 0.75rem;
+        text-decoration: none;
+        color: #ffffff;
+        background: linear-gradient(to right, #2E86EB, #22C55E);
+        padding: 0.6rem 1.4rem;
+        font-size: 0.9rem;
+      }
     </style>
 
     <!-- Schema.org Structured Data (MedicalBusiness & LocalBusiness) -->
@@ -203,7 +252,79 @@
 
   </head>
   <body class="font-sans antialiased bg-[#F8FAFC] text-slate-900 dark:bg-[#0D1B2A] dark:text-slate-100 selection:bg-[#2E86EB] selection:text-white md:transition-colors md:duration-300" style="margin: 0; min-height: 100vh;">
-    <div id="root"></div>
+    <div id="root">
+      <!-- Instant Static Prismatic Shell (Guarantees Sub-Second FCP & Immediate Rock-Solid LCP) -->
+      <div class="min-h-screen relative flex flex-col font-sans text-slate-900 dark:text-white overflow-x-clip w-full pb-16 md:pb-0" dir="rtl">
+        <header class="raba-pre-header">
+          <div class="raba-pre-container raba-pre-flex">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <img src="/logo/raba_puzzle_brain.png" alt="شعار مركز رابا" width="44" height="44" style="width: 44px; height: 44px; object-fit: contain;" />
+              <div style="display: flex; flex-direction: column;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="font-weight: 900; font-size: 1.25rem; color: #2E86EB;">مركز رابا</span>
+                  <span style="font-weight: 700; font-size: 0.8rem; color: #FFD23F;">RABA</span>
+                </div>
+                <span style="font-size: 0.7rem; color: #94a3b8; font-weight: 600;">للعلاج بتحليل السلوك التطبيقي ABA</span>
+              </div>
+            </div>
+            <div>
+              <a href="#booking" class="raba-pre-btn">احجز الآن</a>
+            </div>
+          </div>
+        </header>
+
+        <section id="hero" class="relative overflow-hidden" style="border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+          <div class="raba-pre-container">
+            <div class="raba-pre-hero-grid">
+              <div style="display: flex; flex-direction: column; gap: 1.25rem; text-align: right;">
+                <h1 style="font-size: clamp(1.85rem, 5vw, 3.25rem); font-weight: 900; line-height: 1.25; margin: 0;">
+                  مركز رابا للعلاج بتحليل <br />
+                  <span>السلوك التطبيقي <span style="background: linear-gradient(to right, #FFD23F, #FFE066); color: #020617; padding: 2px 14px; border-radius: 0.75rem; display: inline-block;">ABA</span></span>
+                </h1>
+                <p style="font-size: 1.05rem; color: #cbd5e1; line-height: 1.7; margin: 0; max-width: 36rem;">
+                  يعد مركز رابا من أقدم المراكز التي تقدم خدمات التأهيل والدعم لذوي الإحتياجات الخاصة، وفق المعايير العالمية المعتمدة.
+                </p>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                  <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <span style="color: #2E86EB; font-weight: 900;">✓</span>
+                    <span style="font-size: 0.95rem;">تشخيص وتقييم مبني على أساس علمي بشكل فردي لكل مستفيد</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <span style="color: #22C55E; font-weight: 900;">✓</span>
+                    <span style="font-size: 0.95rem;">برامج تدخل مبني على تحليل السلوك التطبيقي (ABA)</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <span style="color: #FFD23F; font-weight: 900;">✓</span>
+                    <span style="font-size: 0.95rem;">دعم نفسي وإرشاد أسري مستمر لتمكين أولياء الأمور</span>
+                  </div>
+                </div>
+                <div style="padding-top: 0.5rem;">
+                  <a href="#booking" class="raba-pre-btn" style="padding: 0.85rem 2rem; font-size: 1rem; border-radius: 1rem;">سجل الآن</a>
+                </div>
+              </div>
+
+              <!-- Hero Showcase Circular Image (Direct LCP Anchor) -->
+              <div style="display: flex; justify-content: center; align-items: center;">
+                <div id="hero-services-slider" style="position: relative; width: clamp(280px, 40vw, 440px); height: clamp(280px, 40vw, 440px); border-radius: 9999px; padding: 8px; background: linear-gradient(to top right, #2E86EB, #FFD23F, #FF2D9B, #22C55E); box-shadow: 0 20px 50px rgba(46,134,235,0.35);">
+                  <div style="width: 100%; height: 100%; border-radius: 9999px; overflow: hidden; background: #0f172a; border: 1px solid rgba(255,255,255,0.2);">
+                    <img 
+                      src="/images/hero/card_1_journey.webp" 
+                      alt="رحلة التطور تبدأ هنا - مركز رابا للعلاج بتحليل السلوك التطبيقي ABA" 
+                      width="460" 
+                      height="460" 
+                      fetchpriority="high" 
+                      loading="eager" 
+                      decoding="sync" 
+                      style="width: 100%; height: 100%; object-fit: cover; border-radius: 9999px; display: block;" 
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
 
     <script type="module" src="/src/main.tsx"></script>
   </body>

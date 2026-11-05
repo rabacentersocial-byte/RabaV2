@@ -77,9 +77,12 @@ export const PartnerLogoRenderer: React.FC<{
       <img
         src={effectiveSrc}
         alt={name}
+        width={140}
+        height={50}
         loading="lazy"
         decoding="async"
         style={{
+          aspectRatio: '14 / 5',
           transform: normalizedScale !== 1 ? `scale(${normalizedScale})` : undefined,
           transformOrigin: 'center center',
           maxHeight: normalizedScale > 1.25 ? `${Math.min(Math.round(normalizedScale * 100), 160)}%` : '100%',
