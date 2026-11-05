@@ -714,13 +714,15 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
               {/* Specialty & Specialist */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                  <label htmlFor="review-category-select" className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
                     {isArabic ? 'التخصص / القسم:' : 'Specialty Track:'}
                   </label>
                   <select
+                    id="review-category-select"
+                    aria-label={isArabic ? 'التخصص أو القسم' : 'Specialty Track'}
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/15 text-slate-900 dark:text-white rounded-xl p-2.5 text-xs outline-none"
+                    className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/15 text-slate-900 dark:text-white rounded-xl p-2.5 text-xs outline-none cursor-pointer"
                   >
                     <option value="sensory">{isArabic ? 'العلاج الوظيفي والتكامل الحسي (Cardiology)' : 'Cardiology (Sensory)'}</option>
                     <option value="aba">{isArabic ? 'تحليل السلوك التطبيقي (Dermatology)' : 'Dermatology (ABA)'}</option>
@@ -732,13 +734,15 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                  <label htmlFor="review-specialist-select" className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
                     {isArabic ? 'الأخصائي المعالج:' : 'Attending Clinician:'}
                   </label>
                   <select
+                    id="review-specialist-select"
+                    aria-label={isArabic ? 'الأخصائي المعالج' : 'Attending Clinician'}
                     value={specialistName}
                     onChange={(e) => setSpecialistName(e.target.value)}
-                    className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/15 text-slate-900 dark:text-white rounded-xl p-2.5 text-xs outline-none"
+                    className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/15 text-slate-900 dark:text-white rounded-xl p-2.5 text-xs outline-none cursor-pointer"
                   >
                     {SPECIALISTS.map((spec) => (
                       <option key={spec.id} value={spec.name}>

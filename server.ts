@@ -341,6 +341,34 @@ async function startServer() {
     return res.status(404).send('Not Found');
   });
 
+  // Explicit Agentic Browsing routes (llms.txt & .well-known/ard.json)
+  app.get('/llms.txt', (_req: Request, res: Response) => {
+    const llmsPath = path.join(process.cwd(), 'public', 'llms.txt');
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    if (fs.existsSync(llmsPath)) {
+      return res.sendFile(llmsPath);
+    }
+    return res.status(404).send('Not Found');
+  });
+
+  app.get('/.well-known/ard.json', (_req: Request, res: Response) => {
+    const ardPath = path.join(process.cwd(), 'public', '.well-known', 'ard.json');
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    if (fs.existsSync(ardPath)) {
+      return res.sendFile(ardPath);
+    }
+    return res.status(404).json({ error: 'Not Found' });
+  });
+
+  app.use('/.well-known', express.static(path.join(process.cwd(), 'public', '.well-known'), {
+    setHeaders: (res: Response) => {
+      res.setHeader('Content-Type', 'application/json; charset=utf-8');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+    }
+  }));
+
   // Static directories with optimal HTTP cache headers (resolves PageSpeed "Use efficient cache lifetimes" diagnostic)
   const staticCacheOptions = {
     maxAge: '365d',

@@ -160,7 +160,7 @@ export default defineConfig(() => {
       cssCodeSplit: true,
       minify: 'esbuild',
       cssMinify: true,
-      sourcemap: false,
+      sourcemap: true,
       target: 'es2020',
       chunkSizeWarningLimit: 800,
       rollupOptions: {
@@ -183,6 +183,18 @@ export default defineConfig(() => {
                 return 'vendor-confetti';
               }
               return 'vendor-libs';
+            }
+            if (id.includes('src/data/specialistsData')) {
+              return 'data-specialists';
+            }
+            if (id.includes('src/data/reviewsData')) {
+              return 'data-reviews';
+            }
+            if (id.includes('src/data/servicesData')) {
+              return 'data-services';
+            }
+            if (id.includes('src/data/appointmentsData')) {
+              return 'data-appointments';
             }
             if (id.includes('src/data/mockData')) {
               return 'data-mock';

@@ -314,11 +314,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
             {/* Field 1: Full Name */}
             <div>
-              <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">
+              <label htmlFor="booking-full-name" className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">
                 {isArabic ? 'الاسم الكريم:' : 'Full Name:'} <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <input
+                  id="booking-full-name"
                   type="text"
                   required
                   value={fullName}
@@ -332,11 +333,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
             {/* Field 2: Mobile Phone */}
             <div>
-              <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">
+              <label htmlFor="booking-phone" className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">
                 {isArabic ? 'رقم الجوال للتواصل:' : 'Mobile Number:'} <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <input
+                  id="booking-phone"
                   type="tel"
                   required
                   value={mobilePhone}
@@ -352,7 +354,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             {/* Field 3: Service / Package Selection */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                <label htmlFor={bookingType === 'service' ? 'booking-service-select' : 'booking-package-select'} className="text-xs font-bold text-slate-800 dark:text-slate-200">
                   {isArabic ? 'نوع الخدمة أو البرنامج:' : 'Service or Package:'}
                 </label>
               </div>
@@ -385,6 +387,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
               {bookingType === 'service' ? (
                 <select
+                  id="booking-service-select"
+                  aria-label={isArabic ? 'اختر الخدمة' : 'Select Service'}
                   value={selectedServiceId}
                   onChange={(e) => setSelectedServiceId(e.target.value)}
                   className="w-full h-11 bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none cursor-pointer"
@@ -397,6 +401,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 </select>
               ) : (
                 <select
+                  id="booking-package-select"
+                  aria-label={isArabic ? 'اختر الباقة التأهيلية' : 'Select Therapy Package'}
                   value={selectedPackageId}
                   onChange={(e) => setSelectedPackageId(e.target.value)}
                   className="w-full h-11 bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none cursor-pointer"
@@ -413,10 +419,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             {/* Field 4: Preferred Date & Time (Optimized Touch Heights) */}
             <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
               <div>
-                <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">
+                <label htmlFor="booking-date" className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">
                   {isArabic ? 'الموعد المناسب:' : 'Preferred Date:'}
                 </label>
                 <input
+                  id="booking-date"
                   type="date"
                   min={todayStr}
                   value={selectedDate}
@@ -426,10 +433,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">
+                <label htmlFor="booking-timeslot" className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">
                   {isArabic ? 'الفترة:' : 'Time Slot:'}
                 </label>
                 <select
+                  id="booking-timeslot"
+                  aria-label={isArabic ? 'الفترة الزمنية المفضلة' : 'Preferred Time Slot'}
                   value={selectedTimeSlot}
                   onChange={(e) => setSelectedTimeSlot(e.target.value)}
                   className="w-full h-11 bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-white/15 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none cursor-pointer"
@@ -448,7 +457,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <button
                 type="button"
                 onClick={() => setShowOptionalDetails(!showOptionalDetails)}
-                className="w-full py-2 px-3 rounded-xl bg-slate-100/80 dark:bg-white/5 hover:bg-slate-200/80 dark:hover:bg-white/10 text-xs font-bold text-[#2E86EB] dark:text-[#3B92F5] flex items-center justify-between cursor-pointer transition-all border border-slate-200/60 dark:border-white/5"
+                className="w-full py-2 px-3 rounded-xl bg-slate-100/80 dark:bg-white/5 hover:bg-slate-200/80 dark:hover:bg-white/10 text-xs font-bold text-[#2E86EB] dark:text-[#3B92F5] flex items-center justify-between cursor-pointer transition-all border border-slate-200/60 dark:border-white/5 min-h-[44px]"
               >
                 <span className="flex items-center gap-1.5">
                   <Baby className="w-3.5 h-3.5" />
@@ -461,7 +470,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 <div className="mt-2 p-3 rounded-xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/70 dark:border-white/10 space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-150">
                   <div className="grid grid-cols-3 gap-2">
                     <div className="col-span-2">
+                      <label htmlFor="booking-child-name" className="sr-only">{isArabic ? 'اسم الطفل' : 'Child Name'}</label>
                       <input
+                        id="booking-child-name"
                         type="text"
                         value={childName}
                         onChange={(e) => setChildName(e.target.value)}
@@ -470,7 +481,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       />
                     </div>
                     <div>
+                      <label htmlFor="booking-child-age" className="sr-only">{isArabic ? 'عمر الطفل' : 'Child Age'}</label>
                       <select
+                        id="booking-child-age"
+                        aria-label={isArabic ? 'عمر الطفل' : 'Child Age'}
                         value={childAge}
                         onChange={(e) => setChildAge(Number(e.target.value))}
                         className="w-full h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-2.5 py-1.5 text-xs sm:text-sm text-slate-900 dark:text-white outline-none cursor-pointer focus:border-[#2E86EB]"
@@ -485,7 +499,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   </div>
 
                   <div>
+                    <label htmlFor="booking-notes" className="sr-only">{isArabic ? 'ملاحظات إضافية' : 'Notes'}</label>
                     <input
+                      id="booking-notes"
                       type="text"
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
@@ -502,7 +518,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <button
                 type="submit"
                 id="submit-booking-btn"
-                className="w-full h-12 py-3 px-4 bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:opacity-95 active:scale-[0.98] text-white font-black rounded-xl text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
+                aria-label={isArabic ? 'تأكيد طلب حجز الموعد' : 'Confirm appointment booking request'}
+                className="w-full min-h-[48px] py-3 px-4 bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:opacity-95 active:scale-[0.98] text-white font-black rounded-xl text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
               >
                 <FileCheck2 className="w-4 h-4 shrink-0" />
                 <span>{isArabic ? 'تأكيد طلب الحجز فوراً' : 'Confirm Booking Request'}</span>

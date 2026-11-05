@@ -324,7 +324,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                         <div className="text-[11px] sm:text-sm font-bold text-slate-900 dark:text-white leading-tight">
                           {item.text}
                         </div>
-                        <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">
+                        <div className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 mt-0.5 leading-snug">
                           {item.sub}
                         </div>
                       </div>
@@ -379,14 +379,14 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                         {submittedRequest && (
                           <div className="my-2 p-2 sm:p-2.5 bg-slate-50 dark:bg-white/5 border border-[#2E86EB]/30 rounded-xl text-center space-y-1">
                             <div className="flex items-center justify-between text-[11px] sm:text-xs px-1 text-slate-700 dark:text-slate-300">
-                              <span className="text-slate-500 dark:text-slate-400">{isArabic ? 'المدينة المحددة:' : 'Selected City:'}</span>
+                              <span className="text-slate-600 dark:text-slate-300">{isArabic ? 'المدينة المحددة:' : 'Selected City:'}</span>
                               <span className="font-bold text-[#2E86EB] flex items-center gap-1">
                                 <MapPin className="w-3 h-3" />
                                 <span>{submittedRequest.city || 'الرياض'}</span>
                               </span>
                             </div>
                             <div className="flex items-center justify-between text-[11px] sm:text-xs px-1 pt-1 border-t border-slate-200/60 dark:border-white/10">
-                              <span className="text-[10px] text-slate-500 dark:text-slate-400 block">{isArabic ? 'الرقم المرجعي للطلب:' : 'Reference Number:'}</span>
+                              <span className="text-[10px] text-slate-600 dark:text-slate-300 block">{isArabic ? 'الرقم المرجعي للطلب:' : 'Reference Number:'}</span>
                               <span className="font-mono font-black text-[#2E86EB] dark:text-[#3B92F5] text-xs sm:text-sm tracking-wider">
                                 {submittedRequest.referenceNumber}
                               </span>
@@ -414,7 +414,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                             setIsSubmitted(false);
                             setFormData({ name: '', city: 'الرياض', phone: '' });
                           }}
-                          className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium underline py-0.5 cursor-pointer"
+                          className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium underline py-0.5 cursor-pointer"
                         >
                           {isArabic ? 'إرسال طلب إضافي' : 'Submit another request'}
                         </button>
@@ -432,11 +432,12 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
 
                       {/* Field 1: Name */}
                       <div>
-                        <label className="block text-[11px] sm:text-xs font-bold text-slate-200 mb-0.5 sm:mb-1">
+                        <label htmlFor="sewar-parent-name" className="block text-[11px] sm:text-xs font-bold text-slate-200 mb-0.5 sm:mb-1">
                           {isArabic ? 'الإسم' : 'Name'}
                         </label>
                         <div className="relative">
                           <input
+                            id="sewar-parent-name"
                             type="text"
                             required
                             value={formData.name}
@@ -451,13 +452,15 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                       {/* Row 2: City & Phone (2 columns) */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5">
                         
-                        {/* Field 2: City Selection */}
+                        {/* Field 2: Branch / City Selection */}
                         <div>
-                          <label className="block text-[11px] sm:text-xs font-bold text-slate-200 mb-0.5 sm:mb-1">
-                            {isArabic ? 'المدينة' : 'City'} <span className="text-[#2E86EB]">*</span>
+                          <label htmlFor="branch-select" className="block text-[11px] sm:text-xs font-bold text-slate-200 mb-0.5 sm:mb-1">
+                            {isArabic ? 'الفرع / المدينة' : 'Branch / City'} <span className="text-[#2E86EB]">*</span>
                           </label>
                           <div className="relative">
                             <select
+                              id="branch-select"
+                              aria-label={isArabic ? 'اختر الفرع' : 'Select Branch'}
                               required
                               value={formData.city}
                               onChange={(e) => setFormData({ ...formData, city: e.target.value })}
@@ -479,11 +482,12 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
 
                         {/* Field 3: Phone */}
                         <div>
-                          <label className="block text-[11px] sm:text-xs font-bold text-slate-200 mb-0.5 sm:mb-1">
+                          <label htmlFor="sewar-phone" className="block text-[11px] sm:text-xs font-bold text-slate-200 mb-0.5 sm:mb-1">
                             {isArabic ? 'رقم الجوال' : 'Phone'}
                           </label>
                           <div className="relative" dir="ltr">
                             <input
+                              id="sewar-phone"
                               type="tel"
                               required
                               value={formData.phone}
@@ -501,8 +505,9 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                       <div className="pt-1">
                         <button
                           type="submit"
+                          aria-label={isArabic ? 'إرسال طلب حجز خدمة سوار معلم الظل' : 'Submit Sewar shadow teacher booking request'}
                           disabled={isSubmitting}
-                          className="w-full bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:opacity-95 active:scale-[0.98] text-white font-black h-10 sm:h-12 px-4 sm:px-5 rounded-lg sm:rounded-xl shadow-[0_8px_20px_rgba(46,134,235,0.35)] transition-all duration-200 flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm cursor-pointer disabled:opacity-60"
+                          className="w-full bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:opacity-95 active:scale-[0.98] text-white font-black min-h-[48px] px-4 sm:px-5 rounded-lg sm:rounded-xl shadow-[0_8px_20px_rgba(46,134,235,0.35)] transition-all duration-200 flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm cursor-pointer disabled:opacity-60"
                         >
                           {isSubmitting ? (
                             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

@@ -223,11 +223,12 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
 
             {/* Field 1: Name */}
             <div>
-              <label className="font-bold text-slate-800 dark:text-slate-200 block mb-1">
-                {isArabic ? 'الاسم الكريم:' : 'Full Name:'} <span className="text-rose-500">*</span>
+              <label htmlFor="quick-parent-name" className="font-bold text-slate-800 dark:text-slate-200 block mb-1">
+                {isArabic ? 'الاسم الكريم:' : 'Your Name:'} <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <input
+                  id="quick-parent-name"
                   type="text"
                   required
                   value={parentName}
@@ -241,11 +242,12 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
 
             {/* Field 2: Phone */}
             <div>
-              <label className="font-bold text-slate-800 dark:text-slate-200 block mb-1">
+              <label htmlFor="quick-phone" className="font-bold text-slate-800 dark:text-slate-200 block mb-1">
                 {isArabic ? 'رقم الجوال للتواصل:' : 'Mobile Number:'} <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <input
+                  id="quick-phone"
                   type="tel"
                   required
                   value={phone}
@@ -260,10 +262,12 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
 
             {/* Field 3: Topic */}
             <div>
-              <label className="font-bold text-slate-800 dark:text-slate-200 block mb-1">
+              <label htmlFor="quick-topic-select" className="font-bold text-slate-800 dark:text-slate-200 block mb-1">
                 {isArabic ? 'موضوع الاستشارة الأساسي:' : 'Consultation Topic:'}
               </label>
               <select
+                id="quick-topic-select"
+                aria-label={isArabic ? 'موضوع الاستشارة الأساسي' : 'Consultation Topic'}
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:ring-2 focus:ring-[#00E5BE] outline-none cursor-pointer"
@@ -281,7 +285,7 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
               <button
                 type="button"
                 onClick={() => setShowOptional(!showOptional)}
-                className="text-xs font-bold text-[#2E86EB] dark:text-[#2E86EB] hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs font-bold text-[#2E86EB] dark:text-[#2E86EB] hover:underline flex items-center gap-1 cursor-pointer min-h-[36px]"
               >
                 <span>{isArabic ? '+ تحديد الوقت المفضل أو ملاحظة (اختياري)' : '+ Preferred time or note (Optional)'}</span>
                 {showOptional ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -291,8 +295,9 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
                 <div className="mt-2.5 p-3 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/70 dark:border-white/10 space-y-2.5 animate-in fade-in duration-150">
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="text-[10px] text-slate-500 block mb-1">{isArabic ? 'عمر الطفل (اختياري)' : 'Child Age'}</label>
+                      <label htmlFor="quick-child-age" className="text-[10px] text-slate-500 block mb-1">{isArabic ? 'عمر الطفل (اختياري)' : 'Child Age'}</label>
                       <input
+                        id="quick-child-age"
                         type="number"
                         min="1"
                         max="18"
@@ -303,8 +308,10 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] text-slate-500 block mb-1">{isArabic ? 'فترة الاتصال' : 'Call Window'}</label>
+                      <label htmlFor="quick-preferred-time" className="text-[10px] text-slate-500 block mb-1">{isArabic ? 'فترة الاتصال' : 'Call Window'}</label>
                       <select
+                        id="quick-preferred-time"
+                        aria-label={isArabic ? 'فترة الاتصال' : 'Call Window'}
                         value={preferredTime}
                         onChange={(e) => setPreferredTime(e.target.value)}
                         className="w-full bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/15 rounded-xl px-2 py-1.5 text-xs text-slate-900 dark:text-white outline-none cursor-pointer"
@@ -317,7 +324,9 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
                   </div>
 
                   <div>
+                    <label htmlFor="quick-notes" className="sr-only">{isArabic ? 'أبرز الملاحظات' : 'Symptom notes'}</label>
                     <input
+                      id="quick-notes"
                       type="text"
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
@@ -333,7 +342,8 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full py-3 px-4 bg-gradient-to-r from-[#0E2A54] via-[#1B4B8A] to-[#2E86EB] hover:opacity-95 active:scale-98 text-white font-black rounded-xl text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
+                aria-label={isArabic ? 'إرسال طلب الاستشارة الفورية' : 'Submit Quick Consultation Request'}
+                className="w-full min-h-[48px] py-3 px-4 bg-gradient-to-r from-[#0E2A54] via-[#1B4B8A] to-[#2E86EB] hover:opacity-95 active:scale-98 text-white font-black rounded-xl text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
               >
                 <Send className={`w-3.5 h-3.5 ${isArabic ? 'rotate-180' : ''}`} />
                 <span>{isArabic ? 'إرسال طلب الاستشارة فوراً' : 'Submit Consultation Request'}</span>

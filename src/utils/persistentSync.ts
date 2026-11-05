@@ -217,43 +217,64 @@ export async function initPersistentSync(): Promise<void> {
     // 0. Preload all IndexedDB image assets into RAM immediately
     await loadPersistentImagesToMemory();
 
-    // 0.5. Attach Firestore Realtime Listener for instant multi-tab & multi-device sync
-    try {
-      subscribeSiteSettings((settingsMap) => {
-        for (const [key, data] of Object.entries(settingsMap)) {
-          IN_MEMORY_SYNC_CACHE.set(key, data);
-          try {
-            const stringified = typeof data === 'string' ? data : JSON.stringify(data);
-            localStorage.setItem(key, stringified);
-            localStorage.setItem(`raba_ts_${key}`, Date.now().toString());
-            mirrorAliases(key, stringified, Date.now());
-          } catch (e) {
-            console.error('[PersistentSync] Error updating local cache from Firestore snapshot:', e);
+    // 0.5. Attach Firestore Realtime Listener lazily for authenticated admins or after initial idle
+    const isSpecialistOrAdmin = typeof window !== 'undefined' && (
+      window.location.hash.includes('admin') || 
+      !!localStorage.getItem('raba_admin_session_auth')
+    );
+
+    const setupLiveSubscriber = () => {
+      try {
+        subscribeSiteSettings((settingsMap) => {
+          for (const [key, data] of Object.entries(settingsMap)) {
+            IN_MEMORY_SYNC_CACHE.set(key, data);
+            try {
+              const stringified = typeof data === 'string' ? data : JSON.stringify(data);
+              localStorage.setItem(key, stringified);
+              localStorage.setItem(`raba_ts_${key}`, Date.now().toString());
+              mirrorAliases(key, stringified, Date.now());
+            } catch (e) {
+              console.warn('[PersistentSync] Local cache notice:', e);
+            }
+            const eventName = EVENT_MAP[key];
+            if (eventName) {
+              window.dispatchEvent(new CustomEvent(eventName, { detail: data }));
+            }
           }
-          const eventName = EVENT_MAP[key];
-          if (eventName) {
-            window.dispatchEvent(new CustomEvent(eventName, { detail: data }));
-          }
-        }
-      }, (err) => {
-        console.error('[PersistentSync] Firestore real-time listener error:', err);
-      });
-    } catch (err) {
-      console.error('[PersistentSync] Failed to attach Firestore live subscriber:', err);
+        }, (err) => {
+          console.warn('[PersistentSync] Realtime subscriber notice:', err?.message || err);
+        });
+      } catch (err) {
+        console.warn('[PersistentSync] Non-blocking subscriber notice:', err);
+      }
+    };
+
+    if (isSpecialistOrAdmin) {
+      setupLiveSubscriber();
+    } else if (typeof window !== 'undefined') {
+      if ('requestIdleCallback' in window) {
+        (window as any).requestIdleCallback(() => setupLiveSubscriber(), { timeout: 6000 });
+      } else {
+        setTimeout(setupLiveSubscriber, 5000);
+      }
     }
 
     let serverData: Record<string, any> | null = null;
     let syncTimestamp = new Date().toISOString();
 
-    // 1. Primary Attempt: Dynamic Express server API endpoint (fetches directly from Firestore)
+    // 1. Primary Attempt: Dynamic Express server API endpoint with 2500ms timeout
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2500);
       const res = await fetch('/api/sync/all', {
         cache: 'no-store',
+        signal: controller.signal,
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache'
         }
       });
+      clearTimeout(timeoutId);
       const contentType = res.headers.get('content-type') || '';
       if (res.ok && contentType.includes('json')) {
         const json = await res.json();
@@ -262,10 +283,10 @@ export async function initPersistentSync(): Promise<void> {
           syncTimestamp = json.timestamp || syncTimestamp;
         }
       } else if (!res.ok) {
-        console.error(`[PersistentSync] /api/sync/all HTTP error ${res.status}: ${res.statusText}`);
+        console.warn(`[PersistentSync] /api/sync/all HTTP ${res.status}: ${res.statusText}`);
       }
     } catch (netErr) {
-      console.error('[PersistentSync] Network connection to /api/sync/all failed:', netErr);
+      console.warn('[PersistentSync] Backend sync notice, falling back to local/static cache:', netErr);
     }
 
     // 2. Secondary Attempt: Static bundled data fallback if backend is unreachable

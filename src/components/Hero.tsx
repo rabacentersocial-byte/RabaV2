@@ -267,7 +267,8 @@ export const Hero: React.FC<HeroProps> = ({
               <button
                 id="hero-register-btn"
                 onClick={onOpenBooking}
-                className="relative group overflow-hidden bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:from-[#1D74D8] hover:to-[#16A34A] text-white font-black px-6 sm:px-8 py-3.5 rounded-2xl border-t border-white/60 border-x border-b border-white/20 shadow-[0_12px_32px_rgba(46,134,235,0.35),inset_0_1px_1px_rgba(255,255,255,0.4)] hover:shadow-xl active:scale-95 transition-all text-sm sm:text-base text-center justify-center flex items-center cursor-pointer"
+                aria-label={isArabic ? 'سجل الآن في برامج التأهيل والتطوير بمركز رابا' : 'Register now for rehabilitation programs at Raba Center'}
+                className="relative group overflow-hidden bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:from-[#1D74D8] hover:to-[#16A34A] text-white font-black px-6 sm:px-8 py-3.5 min-h-[48px] rounded-2xl border-t border-white/60 border-x border-b border-white/20 shadow-[0_12px_32px_rgba(46,134,235,0.35),inset_0_1px_1px_rgba(255,255,255,0.4)] hover:shadow-xl active:scale-95 transition-all text-sm sm:text-base text-center justify-center flex items-center cursor-pointer"
               >
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
                 <span className="relative z-10">{isArabic ? 'سجل الآن' : 'Register Now'}</span>
@@ -279,10 +280,11 @@ export const Hero: React.FC<HeroProps> = ({
                 href="https://x.com/rabacenter/status/1352206247299321858?s=46"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-3 text-slate-800 dark:text-white hover:text-[#2E86EB] dark:hover:text-[#2E86EB] font-bold transition-all group cursor-pointer text-sm sm:text-base py-2"
+                aria-label={isArabic ? 'شاهد فيديو تعريفي عن مركز رابا على منصة إكس' : 'Watch introductory video on X (Twitter)'}
+                className="flex items-center justify-center gap-3 text-slate-800 dark:text-white hover:text-[#2E86EB] dark:hover:text-[#2E86EB] font-bold transition-all group cursor-pointer text-sm sm:text-base py-2 min-h-[48px]"
                 title={isArabic ? 'شاهد فيديو تعريفي عن مركز رابا على منصة X' : 'Watch introductory video on X (Twitter)'}
               >
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full liquid-glass-btn text-slate-900 dark:text-white flex items-center justify-center shadow-lg group-hover:scale-110 active:scale-95 transition-transform shrink-0">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn text-slate-900 dark:text-white flex items-center justify-center shadow-lg group-hover:scale-110 active:scale-95 transition-transform shrink-0">
                   <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current ml-0.5 text-[#2E86EB]" />
                 </div>
                 <span>{isArabic ? 'شاهد فيديو تعريفي' : 'Watch Video'}</span>
@@ -401,11 +403,11 @@ export const Hero: React.FC<HeroProps> = ({
                         <button
                           key={s.id || idx}
                           onClick={() => setCurrentSlideIndex(idx)}
-                          aria-label={isArabic ? `شريحة ${idx + 1}` : `Slide ${idx + 1}`}
-                          className={`transition-all duration-300 rounded-full cursor-pointer ${
+                          aria-label={isArabic ? `الانتقال إلى الشريحة ${idx + 1}` : `Go to slide ${idx + 1}`}
+                          className={`transition-all duration-300 rounded-full cursor-pointer p-1 ${
                             idx === currentSlideIndex
-                              ? 'w-5 h-1.5 bg-gradient-to-r from-[#2E86EB] via-[#FFD23F] to-[#22C55E] shadow-sm'
-                              : 'w-1.5 h-1.5 bg-white/40 hover:bg-white/80'
+                              ? 'w-6 h-2 bg-gradient-to-r from-[#2E86EB] via-[#FFD23F] to-[#22C55E] shadow-sm'
+                              : 'w-2 h-2 bg-white/40 hover:bg-white/80'
                           }`}
                         />
                       ))}
@@ -422,8 +424,8 @@ export const Hero: React.FC<HeroProps> = ({
                   <button
                     id="hero-slider-prev-btn"
                     onClick={handlePrev}
-                    aria-label={isArabic ? 'الصورة السابقة' : 'Previous photo'}
-                    className="absolute -right-3 sm:-right-4 lg:-right-5 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-11 sm:h-11 rounded-full liquid-glass-btn bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-white border border-white/60 dark:border-white/20 shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer backdrop-blur-md"
+                    aria-label={isArabic ? 'الشريحة السابقة في المعرض الدائري' : 'Previous slide in carousel'}
+                    className="absolute -right-3 sm:-right-4 lg:-right-5 top-1/2 -translate-y-1/2 z-30 w-12 h-12 min-w-[48px] min-h-[48px] rounded-full liquid-glass-btn bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-white border border-white/60 dark:border-white/20 shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer backdrop-blur-md"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
@@ -432,8 +434,8 @@ export const Hero: React.FC<HeroProps> = ({
                   <button
                     id="hero-slider-next-btn"
                     onClick={handleNext}
-                    aria-label={isArabic ? 'الصورة التالية' : 'Next photo'}
-                    className="absolute -left-3 sm:-left-4 lg:-left-5 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-11 sm:h-11 rounded-full liquid-glass-btn bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-white border border-white/60 dark:border-white/20 shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer backdrop-blur-md"
+                    aria-label={isArabic ? 'الشريحة التالية في المعرض الدائري' : 'Next slide in carousel'}
+                    className="absolute -left-3 sm:-left-4 lg:-left-5 top-1/2 -translate-y-1/2 z-30 w-12 h-12 min-w-[48px] min-h-[48px] rounded-full liquid-glass-btn bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-white border border-white/60 dark:border-white/20 shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer backdrop-blur-md"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>

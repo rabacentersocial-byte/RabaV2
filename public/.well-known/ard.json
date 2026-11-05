@@ -1,0 +1,37 @@
+{
+  "$schema": "https://agentic-resource-discovery.org/schema/v1/ard.json",
+  "name": "Raba Center for ABA Therapy & Autism Rehabilitation",
+  "short_name": "Raba Center",
+  "description": "Comprehensive autism rehabilitation, ABA behavioral therapy, diagnostic assessments, speech-language pathology, occupational therapy, and school shadow teacher services in Saudi Arabia.",
+  "url": "https://rabacenters.com",
+  "canonical_url": "https://rabacenters.com",
+  "default_locale": "ar-SA",
+  "supported_locales": ["ar-SA", "en-US"],
+  "resources": [
+    {
+      "name": "Services & Programs",
+      "description": "Comprehensive developmental and behavioral rehabilitation programs",
+      "url": "https://rabacenters.com/#services"
+    },
+    {
+      "name": "Specialists Directory",
+      "description": "Certified behavioral therapists, speech clinicians, and occupational practitioners",
+      "url": "https://rabacenters.com/#specialists"
+    },
+    {
+      "name": "Sewar Shadow Teacher Service",
+      "description": "Specialized school shadow teaching and educational mainstreaming support",
+      "url": "https://rabacenters.com/#shadow-teacher"
+    },
+    {
+      "name": "Booking & Clinical Assessment",
+      "description": "Direct appointment registration and clinical consultation requests",
+      "url": "https://rabacenters.com/#booking"
+    },
+    {
+      "name": "LLMs Content Summary",
+      "description": "Structured plain-text summary and agentic manifest",
+      "url": "https://rabacenters.com/llms.txt"
+    }
+  ]
+}

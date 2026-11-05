@@ -1,0 +1,4910 @@
+import { Specialist, ServiceItem, TherapyPackage, Appointment, NotificationItem, ParentReview } from '../types';
+
+export const SPECIALISTS: Specialist[] = [
+  {
+    "id": "spec-hanaa-basheer",
+    "name": "د. هناء بشير",
+    "nameEn": "Dr. Hanaa Basheer",
+    "title": "أخصائي نفسي أول / المدير الطبي لمراكز رابا",
+    "titleEn": "Senior Clinical Psychologist & Medical Director",
+    "role": "أخصائي نفسي أول / المدير الطبي لمراكز رابا",
+    "roleEn": "Senior Clinical Psychologist & Medical Director",
+    "category": "psychology",
+    "department": "القسم الطبي والإرشاد النفسي الإكلينيكي",
+    "avatar": "/uploads/1790827426491_50_png.png",
+    "experienceYears": 15,
+    "licenseNumber": "SCFHS-24-1022",
+    "specialties": [
+      "حاصلة على بكالوريوس علم النفس العام من جامعة النيلين",
+      "حاصلة على ماجستير العلاج النفسي من جامعة النيلين",
+      "حاصلة على دكتوراه في علم النفس تخصص داخلي سريري من جامعة الرباط الوطني",
+      "حاصلة على دبلوم الإحتياجات الخاصة من جامعة النيلين",
+      "حاصلة على دبلومة العلاج السلوكي المعرفي من جامعة القراءة في بريطانيا",
+      "حاصلة على إعتماد بورد التشخيص الأميريكي لمقياس ADOS-2",
+      "عضو في الجمعية النفسية الأمريكية APA",
+      "إستشاري علم النفس في المجلس القومي للمهن الطبية و الصحية بالسودان",
+      "خبرة عملية أكثر من ١٥ سنة"
+    ],
+    "specialtiesEn": [
+      "Senior Clinical Psychologist & Medical Director",
+      "Ph.D. in Clinical Psychology - National Ribat University",
+      "M.Sc. in Psychotherapy & Special Needs Diploma",
+      "Cognitive Behavioral Therapy (CBT) - Univ. of Reading, UK",
+      "ADOS-2 Autism Diagnostics American Board Credential",
+      "Member of the American Psychological Association (APA)",
+      "Consultant - National Council for Medical Professions",
+      "15+ Years Clinical Experience"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس علم النفس العام من جامعة النيلين",
+      "حاصلة على ماجستير العلاج النفسي من جامعة النيلين",
+      "حاصلة على دكتوراه في علم النفس تخصص داخلي سريري من جامعة الرباط الوطني",
+      "حاصلة على دبلوم الإحتياجات الخاصة من جامعة النيلين",
+      "حاصلة على دبلومة العلاج السلوكي المعرفي من جامعة القراءة في بريطانيا"
+    ],
+    "educationEn": [
+      "B.Sc. in General Psychology - Al-Neelain University",
+      "M.Sc. in Psychotherapy - Al-Neelain University",
+      "Ph.D. in Clinical Psychology - The National Ribat University",
+      "Diploma in Special Needs - Al-Neelain University",
+      "Diploma in Cognitive Behavioral Therapy (CBT) - University of Reading, UK"
+    ],
+    "bio": "أخصائي نفسي أول / المدير الطبي لمراكز رابا بمركز رابا. حاصلة على بكالوريوس علم النفس العام من جامعة النيلين · حاصلة على ماجستير العلاج النفسي من جامعة النيلين · حاصلة على دكتوراه في علم النفس تخصص داخلي سريري من جامعة الرباط الوطني · حاصلة على دبلوم الإحتياجات الخاصة من جامعة النيلين · حاصلة على دبلومة العلاج السلوكي المعرفي من جامعة القراءة في بريطانيا · حاصلة على إعتماد بورد التشخيص الأميريكي لمقياس ADOS-2 · عضو في الجمعية النفسية الأمريكية APA · إستشاري علم النفس في المجلس القومي للمهن الطبية و الصحية بالسودان · خبرة عملية أكثر من ١٥ سنة",
+    "bioEn": "Senior Clinical Psychologist and Medical Director at Raba Centers. Holds a PhD in Clinical Psychology from National Ribat University, MSc in Psychotherapy and Diploma in Special Needs from Al-Neelain University, and a Diploma in Cognitive Behavioral Therapy from the University of Reading, UK. Certified by the American Board for ADOS-2 Autism Diagnostics, Member of the American Psychological Association (APA), and Consultant at the National Council for Medical Professions with over 15 years of clinical leadership.",
+    "certifications": [
+      "حاصلة على إعتماد بورد التشخيص الأميريكي لمقياس ADOS-2",
+      "عضو في الجمعية النفسية الأمريكية APA",
+      "إستشاري علم النفس في المجلس القومي للمهن الطبية و الصحية بالسودان"
+    ],
+    "certificationsEn": [
+      "Certified ADOS-2 Autism Diagnostic Evaluator - American Board",
+      "Member of the American Psychological Association (APA)",
+      "Consultant Psychologist - National Council for Medical & Health Professions"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.98,
+    "reviewsCount": 320,
+    "sessionPrice": 0,
+    "fallbackAvatar": "/uploads/1790827426491_50_png.png",
+    "posterCrop": "/uploads/1790827426491_50_png.png",
+    "portraitCrop": "/uploads/1790827426491_50_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790827426491_50_png.png",
+    "orderIndex": 0,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-1",
+    "name": "د.أحمد أبو زيد أنور",
+    "nameEn": "Ahmed Abouzeid Anwar",
+    "title": "مدير برامج التأهيل ورئيس قسم الـ ABA",
+    "titleEn": "General Director of Rehabilitation | Head of ABA",
+    "role": "مدير برامج التأهيل ورئيس قسم الـ ABA",
+    "roleEn": "General Director of Programs & Head of ABA",
+    "avatar": "/uploads/1790826219680_16_png.png",
+    "experienceYears": 12,
+    "licenseNumber": "",
+    "specialties": [
+      "حاصل على درجة الـ ليسانس في التربية من جامعه أسيوط",
+      "حاصل على ماجستير في التوحد من جامعة دمنهور",
+      "محلل سلوكي معتمد من البورد الأميريكي  من منظمات QBA / IBA",
+      "مقدم كورسات معتمد من البورد الأمريكي لجميع مستويات الاعتماد",
+      "QBA/ QASP-S/ ABAT",
+      "حاصل كورس في منهج تقييم PEAK",
+      "حاصل على كورس في آداة تقييم VB-MAPP",
+      "خبرة عملية أكثر من ١٢ سنة"
+    ],
+    "specialtiesEn": [
+      "MA, QBA, IBA",
+      "12 Years Clinical Experience & QABA CEUs Provider",
+      "Intensive Behavioral Intervention Plans",
+      "Behavior Modification & Parent Coaching"
+    ],
+    "education": [
+      "حاصل على درجة الـ ليسانس في التربية من جامعه أسيوط",
+      "حاصل على ماجستير في التوحد من جامعة دمنهور"
+    ],
+    "educationEn": [
+      "Master of Arts in Applied Behavior Analysis (MA - ABA)",
+      "Qualified Behavior Analyst (QBA®) Board Certified",
+      "International Behavior Analyst (IBA®)"
+    ],
+    "bio": "مدير برامج التأهيل ورئيس قسم الـ ABA بمركز رابا. حاصل على درجة الـ ليسانس في التربية من جامعه أسيوط · حاصل على ماجستير في التوحد من جامعة دمنهور · محلل سلوكي معتمد من البورد الأميريكي  من منظمات QBA / IBA · مقدم كورسات معتمد من البورد الأمريكي لجميع مستويات الاعتماد · QBA/ QASP-S/ ABAT · حاصل كورس في منهج تقييم PEAK · حاصل على كورس في آداة تقييم VB-MAPP · خبرة عملية أكثر من ١٢ سنة",
+    "bioEn": "General Director of Rehabilitation Programs and Head of ABA at Raba Center. Holds MA, QBA, IBA with 12 years of experience and is an approved CEUs provider for QABA.",
+    "certifications": [
+      "محلل سلوكي معتمد من البورد الأميريكي  من منظمات QBA / IBA",
+      "مقدم كورسات معتمد من البورد الأمريكي لجميع مستويات الاعتماد",
+      "QBA/ QASP-S/ ABAT",
+      "حاصل كورس في منهج تقييم PEAK",
+      "حاصل على كورس في آداة تقييم VB-MAPP"
+    ],
+    "certificationsEn": [
+      "Qualified Behavior Analyst (QBA®) Board Certified",
+      "International Behavior Analyst (IBA®)",
+      "Approved Continuing Education Provider (ACEP / CEUs Provider)",
+      "Advanced Applied Behavior Analysis Credential"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.95,
+    "reviewsCount": 220,
+    "sessionPrice": 0,
+    "fallbackAvatar": "/uploads/1790826219680_16_png.png",
+    "posterCrop": "/uploads/1790826219680_16_png.png",
+    "portraitCrop": "/uploads/1790826219680_16_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790826219680_16_png.png",
+    "orderIndex": 1,
+    "category": "aba",
+    "isTopRated": true
+  },
+  {
+    "id": "spec-hesham-ali",
+    "name": "د.هشام علي",
+    "nameEn": "Hesham Ali",
+    "title": "رئيس قسم النطق والتخاطب",
+    "titleEn": "Head of Speech and Language Department",
+    "role": "رئيس قسم النطق والتخاطب",
+    "roleEn": "Head of Speech & Language Pathology Department",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب واضطرابات التواصل",
+    "avatar": "/uploads/1791187379881_60_png.png",
+    "experienceYears": 20,
+    "licenseNumber": "",
+    "specialties": [
+      "رئيس قسم النطق والتخاطب بمراكز رابا",
+      "بكالوريوس التربية الخاصة - جامعة عين شمس",
+      "تمهيدي ماجستير في اضطرابات النطق والكلام",
+      "علاج التلعثم واضطرابات مخارج الحروف والنمو اللغوي",
+      "خبرة عملية أكثر من 20 سنة"
+    ],
+    "specialtiesEn": [
+      "Speech & Language Pathology Consultant",
+      "Augmentative and Alternative Communication (AAC)",
+      "Stuttering & Fluency Disorders Therapy",
+      "Auditory Verbal Therapy & Cochlear Implant Rehab",
+      "14+ Years Clinical Experience"
+    ],
+    "education": [
+      "ماجستير أمراض التخاطب واللغة",
+      "بكالوريوس علوم السمع والنطق"
+    ],
+    "educationEn": [
+      "Master Degree in Speech-Language Pathology",
+      "B.Sc. in Hearing and Speech Sciences"
+    ],
+    "bio": "رئيس قسم النطق والتخاطب بمراكز رابا. خبير واستشاري علاج اضطرابات النطق والكلام وتأخر النمو اللغوي والعيّ والتلعثم، حاصل على بكالوريوس وتمهيدي ماجستير اضطرابات النطق والكلام من جامعة عين شمس بخبرة سريرية تفوق 20 عاماً.",
+    "bioEn": "Head of Speech-Language Pathology Department at Raba Center with over 14 years of clinical experience in evaluating and treating speech, language delay, stuttering, and cochlear implant habilitation.",
+    "certifications": [
+      "ترخيص استشاري تخاطب من الهيئة السعودية للتخصصات الصحية",
+      "شهادة معتمدة في تقنيات التواصل البديل والمعزز AAC"
+    ],
+    "certificationsEn": [
+      "SCFHS Consultant License",
+      "AAC Certified Specialist"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.97,
+    "reviewsCount": 230,
+    "sessionPrice": 0,
+    "fallbackAvatar": "/uploads/1791187379881_60_png.png",
+    "orderIndex": 2,
+    "cardImage": "/uploads/1791187379881_60_png.png",
+    "posterCrop": "/uploads/1791187379881_60_png.png",
+    "portraitCrop": "/uploads/1791187379881_60_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-haneen-obaidi",
+    "name": "أ.حنين العبيدي",
+    "nameEn": "Haneen Al-Obaidi",
+    "title": "رئيس قسم العلاج الوظيفي",
+    "titleEn": "Head of Occupational Therapy Department",
+    "role": "رئيس قسم العلاج الوظيفي",
+    "roleEn": "Head of Occupational Therapy Department",
+    "avatar": "/uploads/1790357520279_________________jpg_jpeg.jpg",
+    "experienceYears": 11,
+    "licenseNumber": "",
+    "specialties": [
+      "حاصلة على بكالوريوس العلاج الوظيفي",
+      "من الجامعه الهاشمية",
+      "حاصلة على شهادة ايرس العالمية في التكامل الحسّي",
+      "حاصلة على شهادة Floortime 101",
+      "مرخصه في اختبار EASI للتكامل الحسّي",
+      "عضو في الجمعية الأردنية للعلاج الوظيفي",
+      "حاصلة على ترخيص الهيئة السعودية للتخصصات الصحية",
+      "متخصصه في تقييم وعلاج المشاكل الحسية والتحديات النمائية لدى الاطفال",
+      "خبرة عملية أكثر من ١١ سنة"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Occupational Therapy (Hashemite University)",
+      "Ayres Sensory Integration (CLASI / CASI)",
+      "DIR Floortime 101 Certified",
+      "Licensed in EASI Sensory Integration Assessment",
+      "Sensory & Developmental Challenges in Pediatrics",
+      "16+ Years Clinical Pediatric Rehabilitation Experience"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس العلاج الوظيفي"
+    ],
+    "educationEn": [
+      "B.Sc. in Occupational Therapy - The Hashemite University",
+      "Ayres Sensory Integration Global Certification",
+      "DIR Floortime 101 International Credential",
+      "Licensed Assessor for EASI (Evaluation in Sensory Integration)"
+    ],
+    "bio": "رئيس قسم العلاج الوظيفي بمركز رابا. حاصلة على بكالوريوس العلاج الوظيفي · من الجامعه الهاشمية · حاصلة على شهادة ايرس العالمية في التكامل الحسّي · حاصلة على شهادة Floortime 101 · مرخصه في اختبار EASI للتكامل الحسّي · عضو في الجمعية الأردنية للعلاج الوظيفي · حاصلة على ترخيص الهيئة السعودية للتخصصات الصحية · متخصصه في تقييم وعلاج المشاكل الحسية والتحديات النمائية لدى الاطفال · خبرة عملية أكثر من ١١ سنة",
+    "bioEn": "Head of the Occupational Therapy Department at Raba Center. Holds B.Sc. in Occupational Therapy from The Hashemite University, Ayres Sensory Integration Global Certification, Floortime 101, and licensed EASI sensory assessor with over 16 years of pediatric experience.",
+    "certifications": [
+      "من الجامعه الهاشمية",
+      "حاصلة على شهادة ايرس العالمية في التكامل الحسّي",
+      "حاصلة على شهادة Floortime 101",
+      "مرخصه في اختبار EASI للتكامل الحسّي",
+      "عضو في الجمعية الأردنية للعلاج الوظيفي",
+      "حاصلة على ترخيص الهيئة السعودية للتخصصات الصحية",
+      "متخصصه في تقييم وعلاج المشاكل الحسية والتحديات النمائية لدى الاطفال"
+    ],
+    "certificationsEn": [
+      "Ayres Sensory Integration Global Certification",
+      "Floortime 101 Certified Practitioner",
+      "Licensed EASI (Evaluation in Ayres Sensory Integration) Assessor",
+      "Professional Pediatric Rehabilitation Board Member"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday"
+    ],
+    "rating": 4.95,
+    "reviewsCount": 240,
+    "sessionPrice": 0,
+    "fallbackAvatar": "/uploads/1790357520279_________________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357520279_________________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357520279_________________jpg_jpeg.jpg",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790357520279_________________jpg_jpeg.jpg",
+    "orderIndex": 3,
+    "category": "occupational",
+    "isTopRated": true
+  },
+  {
+    "id": "spec-amer-qadoos",
+    "name": "عامر قادوس",
+    "nameEn": "Amer Qadous",
+    "title": "أخصائي التأهيل العصبي",
+    "titleEn": "Neuro-Rehabilitation Specialist",
+    "role": "أخصائي التأهيل العصبي ومحلل سلوك دولي IBA",
+    "roleEn": "Neuro-Rehabilitation Specialist & Behavior Analyst (IBA)",
+    "category": "psychology",
+    "department": "قسم النطق والتخاطب والتأهيل السمعي",
+    "avatar": "/uploads/1791187395677_61_png.png",
+    "experienceYears": 10,
+    "licenseNumber": "SCFHS-SLP-010",
+    "specialties": [
+      "أخصائي التأهيل العصبي وباحث علم النفس العصبي",
+      "محلل سلوك دولي معتمد IBA من منظمة IBAO",
+      "البورد الدولي للعلاجات النفسية ACT - CBT - DBT من جامعة نيفادا",
+      "البورد البريطاني لمقاييس الذكاء والقدرات العقلية",
+      "معتمد ساعات CME بالهيئة السعودية للتخصصات الصحية",
+      "خبرة عملية أكثر من 10 سنوات في فرنسا وبريطانيا"
+    ],
+    "specialtiesEn": [
+      "Senior Speech & Hearing Specialist",
+      "Pediatric Developmental Language Assessment",
+      "Early Intervention for Articulation & Stuttering",
+      "Autism Spectrum Communication Habilitation",
+      "10+ Years Clinical Experience"
+    ],
+    "education": [
+      "بكالوريوس علوم السمع والنطق والتخاطب",
+      "دبلوم عالي في التأهيل السمعي اللفظي"
+    ],
+    "educationEn": [
+      "B.Sc. in Speech and Hearing Sciences",
+      "Higher Diploma in Auditory-Verbal Rehabilitation"
+    ],
+    "bio": "أخصائي التأهيل العصبي وباحث ماجستير في علم النفس العصبي. محلل سلوك دولي معتمد IBA وحاصل على البورد الدولي للعلاجات النفسية (ACT, CBT, DBT) من جامعة نيفادا والبورد البريطاني للقدرات العقلية، بخبرة أكثر من 10 سنوات في مراكز التأهيل بفرنسا وبريطانيا.",
+    "bioEn": "Senior Speech-Language Pathologist at Raba Center specializing in language delays, speech sound disorders, and pediatric auditory-verbal therapy with over 10 years of experience.",
+    "certifications": [
+      "ترخيص أخصائي أول من الهيئة السعودية للتخصصات الصحية",
+      "شهادة معتمدة في تقييم اضطرابات النطق واللغة"
+    ],
+    "certificationsEn": [
+      "SCFHS Senior Specialist License",
+      "Certified Speech Sound Disorders Assessor"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.95,
+    "reviewsCount": 185,
+    "sessionPrice": 280,
+    "fallbackAvatar": "/uploads/1791187395677_61_png.png",
+    "orderIndex": 4,
+    "cardImage": "/uploads/1791187395677_61_png.png",
+    "posterCrop": "/uploads/1791187395677_61_png.png",
+    "portraitCrop": "/uploads/1791187395677_61_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-doha-khaled",
+    "name": "ضحى خالد",
+    "nameEn": "Doha Khaled",
+    "title": "رئيس قسم الـ ABA بنادي رابا",
+    "titleEn": "Supervisor of ABA Department",
+    "role": "رئيس قسم الـ ABA بنادي رابا",
+    "roleEn": "ABA Supervisor & Certified Behavior Analyst",
+    "avatar": "/uploads/1790357539758_____________jpg_jpeg.jpg",
+    "experienceYears": 10,
+    "licenseNumber": "RABA-ABA-091",
+    "specialties": [
+      "حاصلة على بكالوريوس التربية خاصة من الجامعه العربيه المفتوحة",
+      "حاصلة على اعتماد فني سلوك RBT من منظمة BCAB",
+      "حاصلة على اعتماد مشرف توحد QASP-S من منظمة QABA",
+      "حاصلة على اعتماد محلل سلوك دولي IBA من منظمة IBAO",
+      "حاصلة على شهادة التعامل مع البالغين من منظمة IBAO",
+      "خبرة عمليه أكثر من ١٠ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Special Education (Arab Open University)",
+      "Certified Autism Specialist Supervisor by QABA (QASP-S)",
+      "Certified Behavior Analyst by IBAO (IBA)",
+      "9+ Years Clinical Practice in Pediatric Autism Rehabilitation"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس التربية خاصة من الجامعه العربيه المفتوحة"
+    ],
+    "educationEn": [
+      "B.Sc. in Special Education - Arab University",
+      "Certified Autism Services Practitioner Supervisor (QABA QASP-S)",
+      "Certified Behavior Analyst - IBAO Board"
+    ],
+    "bio": "رئيس قسم الـ ABA بنادي رابا بمركز رابا. حاصلة على بكالوريوس التربية خاصة من الجامعه العربيه المفتوحة · حاصلة على اعتماد فني سلوك RBT من منظمة BCAB · حاصلة على اعتماد مشرف توحد QASP-S من منظمة QABA · حاصلة على اعتماد محلل سلوك دولي IBA من منظمة IBAO · حاصلة على شهادة التعامل مع البالغين من منظمة IBAO · خبرة عمليه أكثر من ١٠ سنوات",
+    "bioEn": "Supervisor in the ABA Department at Raba Center. Holds B.Sc. in Special Education, Certified Autism Specialist Supervisor by QABA, and Certified Behavior Analyst by IBAO with over 9 years of specialized clinical experience.",
+    "certifications": [
+      "حاصلة على اعتماد فني سلوك RBT من منظمة BCAB",
+      "حاصلة على اعتماد مشرف توحد QASP-S من منظمة QABA",
+      "حاصلة على اعتماد محلل سلوك دولي IBA من منظمة IBAO",
+      "حاصلة على شهادة التعامل مع البالغين من منظمة IBAO"
+    ],
+    "certificationsEn": [
+      "QABA Board Certified Autism Specialist Supervisor (QASP-S)",
+      "IBAO Certified Behavior Analyst (IBA)",
+      "VB-MAPP & Behavioral Milestones Assessment"
+    ],
+    "availableDays": [
+      "السبت",
+      "الأحد",
+      "الثلاثاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Saturday",
+      "Sunday",
+      "Tuesday",
+      "Thursday"
+    ],
+    "rating": 4.9,
+    "reviewsCount": 195,
+    "sessionPrice": 260,
+    "fallbackAvatar": "/uploads/1790357539758_____________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357539758_____________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357539758_____________jpg_jpeg.jpg",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790357539758_____________jpg_jpeg.jpg",
+    "orderIndex": 5,
+    "category": "aba",
+    "isTopRated": true
+  },
+  {
+    "id": "spec-heshmah-mutairi",
+    "name": "حشمة المطيري",
+    "nameEn": "Heshmah Al-Mutairi",
+    "title": "المدير الإداري لفرع الربوة",
+    "titleEn": "Administrative Director - Al-Rabwah Branch",
+    "role": "المدير الإداري لفرع الربوة",
+    "roleEn": "Administrative Director & Certified Applied Behavior Analyst (ABAT)",
+    "category": "aba",
+    "department": "إدارة الفروع وتطوير البرامج السلوكية",
+    "avatar": "/uploads/1790866017691_17_png.png",
+    "experienceYears": 7,
+    "licenseNumber": "",
+    "sessionPrice": 0,
+    "rating": 4.96,
+    "reviewsCount": 190,
+    "specialties": [
+      "حاصلة على بكالوريوس التربية الخاصة  تخصص صعوبات التعلم من جامعة الملك فيصل",
+      "فني تحليل سلوك تطبيقي معتمد ABAT",
+      "خبرة عملية أكثر من ٧ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Special Education (Learning Disabilities) - King Faisal University",
+      "Applied Behavior Analysis Technician (ABAT) - QABA Board Certified",
+      "Healthcare Administration & Rehabilitation Quality Management",
+      "7+ Years Clinical & Administrative Experience"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس التربية الخاصة  تخصص صعوبات التعلم من جامعة الملك فيصل"
+    ],
+    "educationEn": [
+      "B.Sc. in Special Education - King Faisal University"
+    ],
+    "certifications": [
+      "فني تحليل سلوك تطبيقي معتمد ABAT"
+    ],
+    "certificationsEn": [
+      "ABAT Credential - Qualified Applied Behavior Analysis Board (QABA)",
+      "Healthcare Center Administrative Credentials"
+    ],
+    "bio": "المدير الإداري لفرع الربوة بمركز رابا. حاصلة على بكالوريوس التربية الخاصة  تخصص صعوبات التعلم من جامعة الملك فيصل · فني تحليل سلوك تطبيقي معتمد ABAT · خبرة عملية أكثر من ٧ سنوات",
+    "bioEn": "Administrative Director of Al-Rabwah Branch at Raba Center, ABAT certified practitioner with B.Sc. from King Faisal University and 7+ years of experience in healthcare management and rehabilitation programs.",
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "fallbackAvatar": "/uploads/1790866017691_17_png.png",
+    "posterCrop": "/uploads/1790866017691_17_png.png",
+    "portraitCrop": "/uploads/1790866017691_17_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790866017691_17_png.png",
+    "orderIndex": 6,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-hajar-mohamed",
+    "name": "هاجر محمد",
+    "nameEn": "Hajar Mohamed",
+    "title": "معلمة فصل",
+    "titleEn": "Special Education Classroom Teacher",
+    "role": "معلمة فصل",
+    "roleEn": "Special Education Teacher",
+    "category": "aba",
+    "department": "قسم التأهيل والتعليم الخاص",
+    "avatar": "/specialists/cards/spec_hajar_mohamed.jpg",
+    "cardImage": "/specialists/cards/spec_hajar_mohamed.jpg",
+    "fallbackAvatar": "/specialists/cards/spec_hajar_mohamed.jpg",
+    "posterCrop": "/specialists/cards/spec_hajar_mohamed.jpg",
+    "portraitCrop": "/specialists/cards/spec_hajar_mohamed.jpg",
+    "experienceYears": 3,
+    "licenseNumber": "",
+    "specialties": [
+      "حاصلة على درجة البكالوريوس من المعهد العالمي بالقيروان",
+      "حاصلة على دبلوم علوم الإحاطة الحياتية من المعهد الخاص من الشبة الطبي بالقيروان",
+      "حاصلة على دورات ABA و AAC",
+      "خبرة عملية أكثر من ٣ سنوات"
+    ],
+    "specialtiesEn": [
+      "Bachelor's Degree from the Higher Institute of Kairouan",
+      "Diploma in Life Assistance Sciences from Paramedical Institute of Kairouan",
+      "Certified in ABA & AAC Communication Training",
+      "3+ Years of Practical Experience"
+    ],
+    "education": [
+      "حاصلة على درجة البكالوريوس من المعهد العالمي بالقيروان",
+      "حاصلة على دبلوم علوم الإحاطة الحياتية من المعهد الخاص من الشبة الطبي بالقيروان"
+    ],
+    "educationEn": [
+      "Bachelor's Degree - Higher Institute of Kairouan",
+      "Diploma in Life Assistance Sciences - Paramedical Institute of Kairouan"
+    ],
+    "bio": "معلمة فصل بمركز رابا. حاصلة على درجة البكالوريوس من المعهد العالمي بالقيروان، ودبلوم علوم الإحاطة الحياتية من المعهد الخاص من الشبة الطبي بالقيروان. حاصلة على دورات متقدمة في تحليل السلوك التطبيقي (ABA) والتواصل المعزز والبديل (AAC)، بخبرة عملية تتجاوز ٣ سنوات في تدريب وتأهيل الأطفال.",
+    "bioEn": "Special Education Classroom Teacher at Raba Center. Holds a Bachelor's degree from the Higher Institute of Kairouan and a Diploma in Life Assistance Sciences from the Paramedical Institute of Kairouan. Certified in ABA and AAC with over 3 years of clinical experience.",
+    "certifications": [
+      "حاصلة على دورات متقدمة في تحليل السلوك التطبيقي ABA",
+      "حاصلة على دورات أنظمة التواصل المعزز والبديل AAC",
+      "دبلوم علوم الإحاطة الحياتية - الشبة الطبي بالقيروان"
+    ],
+    "certificationsEn": [
+      "Advanced Applied Behavior Analysis (ABA) Certification",
+      "Augmentative and Alternative Communication (AAC) Certification",
+      "Life Assistance Sciences Diploma"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.93,
+    "reviewsCount": 85,
+    "sessionPrice": 0,
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "orderIndex": 7,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-dina-abdullah",
+    "name": "دينا عبدالله",
+    "nameEn": "Dina Abdullah",
+    "title": "مشرفة قسم الـ ABA",
+    "titleEn": "ABA Department Supervisor | QASP-S",
+    "role": "مشرفة قسم الـ ABA",
+    "roleEn": "ABA Department Supervisor",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/specialists/cards/spec_dina_abdullah.jpg",
+    "cardImage": "/specialists/cards/spec_dina_abdullah.jpg",
+    "fallbackAvatar": "/specialists/cards/spec_dina_abdullah.jpg",
+    "posterCrop": "/specialists/cards/spec_dina_abdullah.jpg",
+    "portraitCrop": "/specialists/cards/spec_dina_abdullah.jpg",
+    "experienceYears": 10,
+    "licenseNumber": "QASP-S Certified",
+    "specialties": [
+      "حاصلة على درجة البكالوريوس من جامعة الأسكندرية",
+      "حاصلة على دبلوم خاص رياض أطفال قسم طفل غير عادي جامعة الأسكندرية",
+      "حاصلة على اعتماد QASP-S",
+      "خبرة عملية أكثر من ١٠ سنوات"
+    ],
+    "specialtiesEn": [
+      "Bachelor's Degree from Alexandria University",
+      "Special Postgraduate Diploma in Special Needs Childhood - Alexandria University",
+      "Qualified Autism Services Practitioner-Supervisor (QASP-S)",
+      "10+ Years of Practical Experience"
+    ],
+    "education": [
+      "حاصلة على درجة البكالوريوس من جامعة الأسكندرية",
+      "حاصلة على دبلوم خاص رياض أطفال قسم طفل غير عادي جامعة الأسكندرية"
+    ],
+    "educationEn": [
+      "Bachelor's Degree - Alexandria University",
+      "Special Postgraduate Diploma in Child Development & Exceptional Children - Alexandria University"
+    ],
+    "bio": "مشرفة قسم الـ ABA بمركز رابا. حاصلة على درجة البكالوريوس ودبلوم خاص رياض أطفال قسم طفل غير عادي من جامعة الأسكندرية. حاصلة على الاعتماد الدولي المرموق QASP-S، وتمتلك خبرة عملية واسعة تتجاوز ١٠ سنوات في الإشراف الإكلينيكي وبناء البرامج السلوكية الفردية لأطفال طيف التوحد.",
+    "bioEn": "ABA Department Supervisor at Raba Center. Holds a Bachelor's Degree and Special Diploma in Exceptional Children from Alexandria University. QASP-S Board Certified Supervisor with over 10 years of extensive experience designing and supervising evidence-based ABA interventions.",
+    "certifications": [
+      "اعتماد البورد الدولي QASP-S (Qualified Autism Services Practitioner-Supervisor)",
+      "دبلوم خاص رياض أطفال قسم طفل غير عادي - جامعة الإسكندرية"
+    ],
+    "certificationsEn": [
+      "Qualified Autism Services Practitioner-Supervisor (QASP-S)",
+      "Specialized Child Development & Exceptional Children Credential"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.96,
+    "reviewsCount": 164,
+    "sessionPrice": 0,
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "orderIndex": 8,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-alaa-zayed",
+    "name": "علاء زايد",
+    "nameEn": "Alaa Zayed",
+    "title": "معلم فصل",
+    "titleEn": "Classroom Teacher & Autism Trainer",
+    "role": "معلم فصل",
+    "roleEn": "Classroom Teacher",
+    "category": "aba",
+    "department": "قسم برامج التأهيل والتوحد",
+    "avatar": "/specialists/cards/spec_alaa_zayed.jpg",
+    "cardImage": "/specialists/cards/spec_alaa_zayed.jpg",
+    "fallbackAvatar": "/specialists/cards/spec_alaa_zayed.jpg",
+    "posterCrop": "/specialists/cards/spec_alaa_zayed.jpg",
+    "portraitCrop": "/specialists/cards/spec_alaa_zayed.jpg",
+    "experienceYears": 2,
+    "licenseNumber": "",
+    "specialties": [
+      "حاصل على درجة البكالوريوس من جامعة كفر الشيخ",
+      "حاصل علي دوره تدريبيه في طيف التوحد من جامعة كفر الشيخ",
+      "حاصل علي دورة تدريبية في صعوبات التعلم من جامعة كفر الشيخ",
+      "حاصل علي ورشة عمل لمقياس جيليام في طيف التوحد من جامعة كفر الشيخ",
+      "مدرب معتمد في التخاطب والتوحد بجامعه كفر الشيخ",
+      "خبرة عملية أكثر من سنتين"
+    ],
+    "specialtiesEn": [
+      "Bachelor's Degree from Kafrelsheikh University",
+      "Autism Spectrum Disorder Specialized Training - Kafrelsheikh University",
+      "Learning Disabilities Training - Kafrelsheikh University",
+      "Gilliam Autism Rating Scale (GARS) Workshop Certification",
+      "Certified Speech & Autism Trainer - Kafrelsheikh University",
+      "2+ Years of Practical Experience"
+    ],
+    "education": [
+      "حاصل على درجة البكالوريوس من جامعة كفر الشيخ"
+    ],
+    "educationEn": [
+      "Bachelor's Degree - Kafrelsheikh University"
+    ],
+    "bio": "معلم فصل بمركز رابا. حاصل على درجة البكالوريوس من جامعة كفر الشيخ، ومدرب معتمد في التخاطب والتوحد. حاصل على دورات تدريبية متقدمة في طيف التوحد وصعوبات التعلم ومقياس جيليام، بخبرة عملية مميزة في تطبيق الخطط التأهيلية والتربوية.",
+    "bioEn": "Classroom Teacher at Raba Center. Holds a Bachelor's Degree from Kafrelsheikh University and is a certified trainer in speech and autism. Completed advanced coursework in autism spectrum disorder, learning disabilities, and Gilliam Autism Rating Scale with over 2 years of practical experience.",
+    "certifications": [
+      "مدرب معتمد في التخاطب والتوحد - جامعة كفر الشيخ",
+      "ورشة عمل مقياس جيليام في طيف التوحد",
+      "دورة تدريبية متخصصة في صعوبات التعلم"
+    ],
+    "certificationsEn": [
+      "Certified Speech & Autism Trainer - Kafrelsheikh University",
+      "Gilliam Autism Rating Scale (GARS) Certification",
+      "Specialized Learning Disabilities Certification"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.91,
+    "reviewsCount": 78,
+    "sessionPrice": 0,
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "orderIndex": 9,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-rakan-otaibi",
+    "name": "راكان العتيبي",
+    "nameEn": "Rakan Al-Otaibi",
+    "title": "أخصائي العلاج الوظيفي",
+    "titleEn": "Occupational Therapist",
+    "role": "أخصائي العلاج الوظيفي",
+    "roleEn": "Occupational Therapist",
+    "category": "occupational",
+    "department": "قسم العلاج الوظيفي والتكامل الحسي",
+    "avatar": "/specialists/cards/spec_rakan_otaibi.jpg",
+    "cardImage": "/specialists/cards/spec_rakan_otaibi.jpg",
+    "fallbackAvatar": "/specialists/cards/spec_rakan_otaibi.jpg",
+    "posterCrop": "/specialists/cards/spec_rakan_otaibi.jpg",
+    "portraitCrop": "/specialists/cards/spec_rakan_otaibi.jpg",
+    "experienceYears": 1,
+    "licenseNumber": "SCFHS Licensed",
+    "specialties": [
+      "حاصل على بكالوريوس العلاج الوظيفي من جامعة الملك سعود",
+      "حاصل على ترخيص الهيئة السعودية للتخصصات الصحية",
+      "متخصص في علاج المشاكل الحسّية والتحديات النمائية لدى الأطفال",
+      "متخصص في علاج مشاكل الأكل لدى الأطفال",
+      "خبرة عملية أكثر من سنة"
+    ],
+    "specialtiesEn": [
+      "Bachelor of Science in Occupational Therapy - King Saud University",
+      "Licensed by Saudi Commission for Health Specialties (SCFHS)",
+      "Specialized in Sensory Processing & Pediatric Developmental Challenges",
+      "Specialized in Pediatric Feeding & Eating Therapy",
+      "1+ Year of Clinical Experience"
+    ],
+    "education": [
+      "حاصل على بكالوريوس العلاج الوظيفي من جامعة الملك سعود"
+    ],
+    "educationEn": [
+      "Bachelor of Science in Occupational Therapy - King Saud University"
+    ],
+    "bio": "أخصائي علاج وظيفي مرخص من الهيئة السعودية للتخصصات الصحية بمركز رابا. خريج جامعة الملك سعود، متخصص في معالجة الاضطرابات الحسية والتحديات النمائية وتطوير المهارات الحركية الدقيقة وبرامج علاج مشاكل الأكل لدى الأطفال.",
+    "bioEn": "Licensed Occupational Therapist at Raba Center, certified by the Saudi Commission for Health Specialties. King Saud University graduate specializing in sensory integration therapy, fine motor development, developmental challenges, and pediatric feeding therapies.",
+    "certifications": [
+      "ترخيص الهيئة السعودية للتخصصات الصحية (SCFHS)",
+      "اعتماد علاج وتأهيل مشاكل الأكل والتغذية لدى الأطفال",
+      "شهادة التكامل الحسي والتحديات النمائية"
+    ],
+    "certificationsEn": [
+      "Saudi Commission for Health Specialties (SCFHS) License",
+      "Pediatric Feeding & Oral Motor Therapy Certification",
+      "Sensory Integration & Developmental Therapy Credential"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.94,
+    "reviewsCount": 92,
+    "sessionPrice": 0,
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "orderIndex": 10,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-mohamed-youssef",
+    "name": "محمد يوسف",
+    "nameEn": "Mohamed Youssef",
+    "title": "أخصائي تعديل السلوك وتنمية المهارات",
+    "titleEn": "Behavior Modification & Skills Development Specialist | QABA",
+    "role": "أخصائي تعديل السلوك وتنمية المهارات",
+    "roleEn": "Behavior Modification Specialist",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي وتنمية المهارات",
+    "avatar": "/specialists/cards/spec_mohamed_youssef.jpg",
+    "cardImage": "/specialists/cards/spec_mohamed_youssef.jpg",
+    "fallbackAvatar": "/specialists/cards/spec_mohamed_youssef.jpg",
+    "posterCrop": "/specialists/cards/spec_mohamed_youssef.jpg",
+    "portraitCrop": "/specialists/cards/spec_mohamed_youssef.jpg",
+    "experienceYears": 10,
+    "licenseNumber": "QABA Certified",
+    "specialties": [
+      "حاصل على درجة البكالوريوس من جامعة عين شمس",
+      "حاصل على دبلوم الأمراض النفسية والاجتماعية من جامعة عين شمس",
+      "حاصل على اعتماد البورد الامريكي QABA",
+      "خبرة عملية أكثر من ١٠ سنوات"
+    ],
+    "specialtiesEn": [
+      "Bachelor's Degree from Ain Shams University",
+      "Diploma in Psychological & Social Disorders - Ain Shams University",
+      "Certified by the American Board QABA",
+      "10+ Years of Practical Experience"
+    ],
+    "education": [
+      "حاصل على درجة البكالوريوس من جامعة عين شمس",
+      "حاصل على دبلوم الأمراض النفسية والاجتماعية من جامعة عين شمس"
+    ],
+    "educationEn": [
+      "Bachelor's Degree - Ain Shams University",
+      "Diploma in Psychological and Social Disorders - Ain Shams University"
+    ],
+    "bio": "أخصائي تعديل السلوك وتنمية المهارات بمركز رابا. حاصل على درجة البكالوريوس ودبلوم الأمراض النفسية والاجتماعية من جامعة عين شمس. حاصل على اعتماد البورد الأمريكي QABA، بخبرة عملية سريرية تتجاوز ١٠ سنوات في قيادة وتصميم الخطط السلوكية وتأهيل الأطفال ذوي الإعاقة.",
+    "bioEn": "Behavior Modification and Skills Development Specialist at Raba Center. Holds a Bachelor's Degree and Diploma in Psychological & Social Disorders from Ain Shams University. QABA Board Certified with over 10 years of clinical experience designing behavioral intervention protocols and skill acquisition programs.",
+    "certifications": [
+      "اعتماد البورد الأمريكي QABA (Qualified Applied Behavior Analysis)",
+      "دبلوم الأمراض النفسية والاجتماعية - جامعة عين شمس"
+    ],
+    "certificationsEn": [
+      "QABA American Board Credential",
+      "Psychological & Social Disorders Clinical Diploma - Ain Shams University"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.97,
+    "reviewsCount": 210,
+    "sessionPrice": 0,
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "orderIndex": 11,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-islam-ibrahim",
+    "name": "اسلام ابراهيم",
+    "nameEn": "Islam Ibrahim",
+    "title": "معلمة فصل",
+    "titleEn": "Senior Special Education Classroom Teacher",
+    "role": "معلمة فصل",
+    "roleEn": "Special Education Teacher",
+    "category": "aba",
+    "department": "قسم التأهيل والتعليم الخاص",
+    "avatar": "/specialists/cards/spec_islam_ibrahim.jpg",
+    "cardImage": "/specialists/cards/spec_islam_ibrahim.jpg",
+    "fallbackAvatar": "/specialists/cards/spec_islam_ibrahim.jpg",
+    "posterCrop": "/specialists/cards/spec_islam_ibrahim.jpg",
+    "portraitCrop": "/specialists/cards/spec_islam_ibrahim.jpg",
+    "experienceYears": 15,
+    "licenseNumber": "",
+    "specialties": [
+      "حاصله على درجة البكالوريوس من جامعة عين شمس",
+      "حاصله علي دبلوم مهني في التخاطب من جامعة عين شمس",
+      "حاصلة على دبلوم مهني في تعديل السلوك من جامعة عين شمس",
+      "حاصلة على دوره تدريبية في التوحد من جامعة عين شمس قسم الإرشاد النفسي",
+      "خبرة عملية أكثر من ١٥ سنة"
+    ],
+    "specialtiesEn": [
+      "Bachelor's Degree from Ain Shams University",
+      "Professional Diploma in Speech & Language Therapy - Ain Shams University",
+      "Professional Diploma in Behavior Modification - Ain Shams University",
+      "Specialized Autism Training - Psychological Counseling Dept, Ain Shams University",
+      "15+ Years of Practical Experience"
+    ],
+    "education": [
+      "حاصله على درجة البكالوريوس من جامعة عين شمس",
+      "حاصله علي دبلوم مهني في التخاطب من جامعة عين شمس",
+      "حاصلة على دبلوم مهني في تعديل السلوك من جامعة عين شمس"
+    ],
+    "educationEn": [
+      "Bachelor's Degree - Ain Shams University",
+      "Professional Diploma in Speech & Language Therapy - Ain Shams University",
+      "Professional Diploma in Behavior Modification - Ain Shams University"
+    ],
+    "bio": "معلمة فصل أولى بمركز رابا. حاصلة على درجة البكالوريوس ودبلومين مهنيين في التخاطب وتعديل السلوك من جامعة عين شمس، بالإضافة إلى تدريب متخصص في طيف التوحد من قسم الإرشاد النفسي، بخبرة ريادية تتجاوز ١٥ سنة في التربية الخاصة وتأهيل الأطفال.",
+    "bioEn": "Senior Special Education Classroom Teacher at Raba Center. Holds a Bachelor's Degree and two Professional Diplomas in Speech-Language Therapy and Behavior Modification from Ain Shams University, with specialized training in autism counseling and over 15 years of distinguished teaching experience.",
+    "certifications": [
+      "دبلوم مهني في التخاطب واضطرابات النطق - جامعة عين شمس",
+      "دبلوم مهني في تعديل السلوك - جامعة عين شمس",
+      "شهادة تدريبية معتمدة في التوحد - قسم الإرشاد النفسي"
+    ],
+    "certificationsEn": [
+      "Professional Diploma in Speech & Language Therapy - Ain Shams University",
+      "Professional Diploma in Behavior Modification - Ain Shams University",
+      "Autism Psychological Counseling Certification"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.98,
+    "reviewsCount": 240,
+    "sessionPrice": 0,
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "orderIndex": 12,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-maryam-zahrani",
+    "name": "مريم الزهراني",
+    "nameEn": "Maryam Al-Zahrani",
+    "title": "المشرف الإداري لفرع النرجس",
+    "titleEn": "Administrative Supervisor - Al-Narjis Branch",
+    "role": "المشرف الإداري لفرع النرجس",
+    "roleEn": "Branch Administrative Supervisor",
+    "category": "psychology",
+    "department": "الإدارة التنفيذية والإشراف الإداري - فرع النرجس",
+    "avatar": "/specialists/cards/spec_maryam_zahrani.jpg",
+    "cardImage": "/specialists/cards/spec_maryam_zahrani.jpg",
+    "fallbackAvatar": "/specialists/cards/spec_maryam_zahrani.jpg",
+    "posterCrop": "/specialists/cards/spec_maryam_zahrani.jpg",
+    "portraitCrop": "/specialists/cards/spec_maryam_zahrani.jpg",
+    "experienceYears": 3,
+    "licenseNumber": "IPA Certified Leader",
+    "specialties": [
+      "حاصلة على بكالوريوس إدارة الأعمال من جامعة الطائف",
+      "حاصلة على دورة مهارات القيادة والإشراف الإداري من IPA",
+      "حاصلة على دورة إدارة وتطوير فرق العمل من IPA",
+      "حاصلة على دورة إدارة الأداء الوظيفي وتقييم الموظفين من IPA",
+      "خبرة عملية أكثر من ٣ سنوات"
+    ],
+    "specialtiesEn": [
+      "Bachelor's Degree in Business Administration - Taif University",
+      "Leadership & Administrative Supervision Certificate - Institute of Public Administration (IPA)",
+      "Team Management & Development Certificate - IPA",
+      "Job Performance Management & Evaluation Certificate - IPA",
+      "3+ Years of Leadership Experience"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس إدارة الأعمال من جامعة الطائف"
+    ],
+    "educationEn": [
+      "Bachelor's Degree in Business Administration - Taif University"
+    ],
+    "bio": "المشرف الإداري لفرع النرجس بمركز رابا. حاصلة على بكالوريوس إدارة الأعمال من جامعة الطائف ومجموعة شهادات قيادية وإدارية متقدمة من معهد الإدارة العامة (IPA) تشمل الإشراف الإداري وتطوير فرق العمل وتقييم الأداء، بخبرة عملية تتجاوز ٣ سنوات.",
+    "bioEn": "Administrative Supervisor for Al-Narjis Branch at Raba Center. Holds a Bachelor's Degree in Business Administration from Taif University and advanced leadership credentials from the Institute of Public Administration (IPA), with over 3 years of executive branch oversight experience.",
+    "certifications": [
+      "شهادة مهارات القيادة والإشراف الإداري - معهد الإدارة العامة (IPA)",
+      "شهادة إدارة وتطوير فرق العمل - معهد الإدارة العامة (IPA)",
+      "شهادة إدارة الأداء الوظيفي وتقييم الموظفين - معهد الإدارة العامة (IPA)"
+    ],
+    "certificationsEn": [
+      "Leadership & Administrative Supervision - Institute of Public Administration (IPA)",
+      "Team Management & Development - IPA",
+      "Performance Management & Staff Evaluation - IPA"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.95,
+    "reviewsCount": 110,
+    "sessionPrice": 0,
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "orderIndex": 13,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-abrar-qahtani",
+    "name": "أبرار القحطاني",
+    "nameEn": "Abrar Al-Qahtani",
+    "title": "مشرفة قسم الـ ABA",
+    "titleEn": "ABA Department Supervisor | ABAT",
+    "role": "مشرفة قسم الـ ABA",
+    "roleEn": "ABA Department Supervisor",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/specialists/cards/spec_abrar_qahtani.jpg",
+    "cardImage": "/specialists/cards/spec_abrar_qahtani.jpg",
+    "fallbackAvatar": "/specialists/cards/spec_abrar_qahtani.jpg",
+    "posterCrop": "/specialists/cards/spec_abrar_qahtani.jpg",
+    "portraitCrop": "/specialists/cards/spec_abrar_qahtani.jpg",
+    "experienceYears": 9,
+    "licenseNumber": "ABAT Certified",
+    "specialties": [
+      "حاصله على بكالوريوس التربية الخاصة من جامعة شقراء",
+      "حاصلة على إعتماد البورد الأميريكي ABAT",
+      "خبرة عملية أكثر من ٩ سنوات"
+    ],
+    "specialtiesEn": [
+      "Bachelor's Degree in Special Education - Shaqra University",
+      "Applied Behavior Analysis Technician (ABAT) - American Board",
+      "9+ Years of Clinical Experience"
+    ],
+    "education": [
+      "حاصله على بكالوريوس التربية الخاصة من جامعة شقراء"
+    ],
+    "educationEn": [
+      "Bachelor's Degree in Special Education - Shaqra University"
+    ],
+    "bio": "مشرفة قسم الـ ABA بمركز رابا. حاصلة على بكالوريوس التربية الخاصة من جامعة شقراء، وحاصلة على اعتماد البورد الأمريكي ABAT. تمتلك خبرة سريرية وتطبيقية تتجاوز ٩ سنوات في إعداد البرامج السلوكية الفردية وإدارة الجلسات العلاجية ومتابعة تطور مهارات الأطفال.",
+    "bioEn": "ABA Department Supervisor at Raba Center. Holds a Bachelor's Degree in Special Education from Shaqra University and is certified by the American Board as an Applied Behavior Analysis Technician (ABAT), with over 9 years of dedicated clinical practice in autism and behavioral therapy.",
+    "certifications": [
+      "اعتماد البورد الأمريكي ABAT (Applied Behavior Analysis Technician)",
+      "بكالوريوس التربية الخاصة والتدخل المبكر - جامعة شقراء"
+    ],
+    "certificationsEn": [
+      "Applied Behavior Analysis Technician (ABAT) - American Board",
+      "Special Education & Early Intervention Degree"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.97,
+    "reviewsCount": 185,
+    "sessionPrice": 0,
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "orderIndex": 14,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-rahaf-doghmani",
+    "name": "رهف الدغماني",
+    "nameEn": "Rahaf Al-Doghmani",
+    "title": "مشرفة قسم الـ ABA",
+    "titleEn": "Supervisor of ABA Department",
+    "role": "مشرفة قسم الـ ABA",
+    "roleEn": "Supervisor of ABA Department & QABA Analyst",
+    "avatar": "/uploads/1790357530423_________________jpg_jpeg.jpg",
+    "experienceYears": 6,
+    "licenseNumber": "RABA-ABA-052",
+    "specialties": [
+      "حاصلة على بكالوريوس الإعاقة السمعية من جامعة القصيم",
+      "حاصلة على ماجستير في الإضطرابات السلوكية والإنفعالية من جامعة الملك سعود.",
+      "حاصلة على شهادة محلل سلوك معتمد QBA من البورد الأميريكي من منظمة QABA.",
+      "خبرة عملية أكثر من ٦ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Special Education (Qassim University)",
+      "Master in Behavioral & Emotional Disorders (King Saud University)",
+      "Certified Behavior Analyst by QABA Board",
+      "5+ Years Clinical Experience in ABA Therapy"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس الإعاقة السمعية من جامعة القصيم",
+      "حاصلة على ماجستير في الإضطرابات السلوكية والإنفعالية من جامعة الملك سعود."
+    ],
+    "educationEn": [
+      "Master in Behavioral and Emotional Disorders - King Saud University",
+      "B.Sc. in Special Education - Qassim University",
+      "Applied Behavior Analysis Certified by QABA Board"
+    ],
+    "bio": "مشرفة قسم الـ ABA بمركز رابا. حاصلة على بكالوريوس الإعاقة السمعية من جامعة القصيم · حاصلة على ماجستير في الإضطرابات السلوكية والإنفعالية من جامعة الملك سعود. · حاصلة على شهادة محلل سلوك معتمد QBA من البورد الأميريكي من منظمة QABA. · خبرة عملية أكثر من ٦ سنوات",
+    "bioEn": "Supervisor of the ABA Department at Raba Center. Holds a Master degree in Behavioral & Emotional Disorders from King Saud University, B.Sc. in Special Education from Qassim University, and QABA Board Certified Behavior Analyst with 5+ years of experience.",
+    "certifications": [
+      "حاصلة على شهادة محلل سلوك معتمد QBA من البورد الأميريكي من منظمة QABA."
+    ],
+    "certificationsEn": [
+      "QABA Board Certified Behavior Analyst",
+      "Master Degree in Behavioral & Emotional Disorders (KSU)",
+      "Individualized Behavior Support Plan Design Credential"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.9,
+    "reviewsCount": 175,
+    "sessionPrice": 270,
+    "fallbackAvatar": "/uploads/1790357530423_________________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357530423_________________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357530423_________________jpg_jpeg.jpg",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790357530423_________________jpg_jpeg.jpg",
+    "orderIndex": 15,
+    "category": "aba",
+    "isTopRated": true
+  },
+  {
+    "id": "spec-manar-wahba",
+    "name": "منار وهبه",
+    "nameEn": "Manar Wahba",
+    "title": "مشرفة قسم النطق والتخاطب",
+    "titleEn": "Supervisor of Speech & Language Pathology Department",
+    "role": "مشرفة قسم النطق والتخاطب",
+    "roleEn": "Speech & Language Pathology Supervisor",
+    "avatar": "/uploads/1790357549806______________jpg_jpeg.jpg",
+    "experienceYears": 10,
+    "licenseNumber": "RABA-SLP-010",
+    "specialties": [
+      "حاصلة على درجة البكالوريوس من جامعة القاهرة",
+      "حاصلة على دبلومة التخاطب من جامعة عين شمس",
+      "حاصلة على دبلومة في التربية الخاصة تخصص علوم إعاقة من جامعة الزقازيق",
+      "حاصلة على شهادة الـ OPT من منظمة ASHA الأميرية",
+      "متخصصة في العلاج بالـ OPT ومشاكل النطق والسمع",
+      "خبرة عملية أكثر من ١٠ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Social Work (Cairo University)",
+      "Diploma in Speech & Language Pathology (Ain Shams University)",
+      "Diploma in Special Education & Disabilities (Zagazig University)",
+      "Oral Placement Therapy (OPT) Specialist",
+      "Certified OPT Provider by ASHA (American Speech-Language-Hearing Association)",
+      "10+ Years Dedicated Experience in Pediatric Speech Rehabilitation"
+    ],
+    "education": [
+      "حاصلة على درجة البكالوريوس من جامعة القاهرة",
+      "حاصلة على دبلومة التخاطب من جامعة عين شمس",
+      "حاصلة على دبلومة في التربية الخاصة تخصص علوم إعاقة من جامعة الزقازيق"
+    ],
+    "educationEn": [
+      "B.Sc. in Social Work - Cairo University",
+      "Diploma in Speech & Communication Pathology - Ain Shams University",
+      "Diploma in Special Education - Zagazig University",
+      "Oral Placement Therapy (OPT) Certified - ASHA (USA)"
+    ],
+    "bio": "مشرفة قسم النطق والتخاطب بمركز رابا. حاصلة على درجة البكالوريوس من جامعة القاهرة · حاصلة على دبلومة التخاطب من جامعة عين شمس · حاصلة على دبلومة في التربية الخاصة تخصص علوم إعاقة من جامعة الزقازيق · حاصلة على شهادة الـ OPT من منظمة ASHA الأميرية · متخصصة في العلاج بالـ OPT ومشاكل النطق والسمع · خبرة عملية أكثر من ١٠ سنوات",
+    "bioEn": "Supervisor of the Speech & Language Pathology Department at Raba Center. Holds specialized diplomas from Ain Shams and Zagazig Universities, ASHA-certified in Oral Placement Therapy (OPT), with 10+ years treating complex speech, voice, and articulation challenges.",
+    "certifications": [
+      "حاصلة على شهادة الـ OPT من منظمة ASHA الأميرية",
+      "متخصصة في العلاج بالـ OPT ومشاكل النطق والسمع"
+    ],
+    "certificationsEn": [
+      "ASHA Certified Oral Placement Therapy (OPT) Specialist",
+      "Professional Speech & Communication Diploma (Ain Shams Univ)",
+      "Pediatric Articulation & Stuttering Therapy Accreditation"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday"
+    ],
+    "rating": 4.88,
+    "reviewsCount": 182,
+    "sessionPrice": 270,
+    "fallbackAvatar": "/uploads/1790357549806______________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357549806______________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357549806______________jpg_jpeg.jpg",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790357549806______________jpg_jpeg.jpg",
+    "orderIndex": 16,
+    "category": "speech",
+    "isTopRated": false
+  },
+  {
+    "id": "spec-ahmed-fathi",
+    "name": "أحمد فتحي",
+    "nameEn": "Ahmed Fathi",
+    "title": "أخصائي ABA",
+    "titleEn": "ABA Specialist",
+    "role": "أخصائي تحليل السلوك التطبيقي المعتمد ABAT",
+    "roleEn": "ABA Specialist & Board Certified ABAT",
+    "avatar": "/uploads/1790357579245_______________jpg_jpeg.jpg",
+    "experienceYears": 8,
+    "licenseNumber": "RABA-ABA-084",
+    "specialties": [
+      "حاصل علي بكالوريوس التربية الخاصة من جامعة حلوان",
+      "حاصل علي دبلوم مهني في إضطرابات التواصل والتخاطب من جامعة عين شمس",
+      "حاصل علي اعتماد البورد الأميريكي في تحليل السلوك التطبيقي ABAT",
+      "خبرة عملية أكثر من ٨ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Special Education (Helwan University)",
+      "Professional Diploma in Communication & Speech Disorders (Ain Shams University)",
+      "Applied Behavior Analysis Technician (ABAT) Board Certified (QABA)",
+      "8+ Years Pediatric Behavioral Experience"
+    ],
+    "education": [
+      "حاصل علي بكالوريوس التربية الخاصة من جامعة حلوان",
+      "حاصل علي دبلوم مهني في إضطرابات التواصل والتخاطب من جامعة عين شمس"
+    ],
+    "educationEn": [
+      "B.Sc. in Special Education - Helwan University",
+      "Professional Diploma in Communication Disorders - Ain Shams University",
+      "ABAT Board Certified - QABA"
+    ],
+    "bio": "أخصائي ABA معتمد بمركز رابا. حاصل علي بكالوريوس التربية الخاصة من جامعة حلوان · حاصل علي دبلوم مهني في إضطرابات التواصل والتخاطب من جامعة عين شمس · حاصل علي اعتماد البورد الأميريكي في تحليل السلوك التطبيقي ABAT · خبرة عملية أكثر من ٨ سنوات",
+    "bioEn": "ABA Specialist at Raba Center. Holds B.Sc. in Special Education from Helwan University, Professional Diploma in Communication Disorders from Ain Shams University, and ABAT certified by the American Board (QABA) with over 8 years experience.",
+    "certifications": [
+      "حاصل علي اعتماد البورد الأميريكي في تحليل السلوك التطبيقي ABAT"
+    ],
+    "certificationsEn": [
+      "Applied Behavior Analysis Technician (ABAT) - QABA Board Certified",
+      "Professional Communication Disorders Diploma (Ain Shams)",
+      "Positive Reinforcement & Behavior Intervention Accreditation"
+    ],
+    "availableDays": [
+      "السبت",
+      "الأحد",
+      "الثلاثاء",
+      "الأربعاء"
+    ],
+    "availableDaysEn": [
+      "Saturday",
+      "Sunday",
+      "Tuesday",
+      "Wednesday"
+    ],
+    "rating": 4.85,
+    "reviewsCount": 168,
+    "sessionPrice": 250,
+    "fallbackAvatar": "/uploads/1790357579245_______________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357579245_______________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357579245_______________jpg_jpeg.jpg",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790357579245_______________jpg_jpeg.jpg",
+    "orderIndex": 17,
+    "category": "aba",
+    "isTopRated": false
+  },
+  {
+    "id": "spec-mohamed-atef",
+    "name": "محمد عاطف",
+    "nameEn": "Mohamed Atef",
+    "title": "أخصائي ABA",
+    "titleEn": "ABA Specialist",
+    "role": "أخصائي ABA",
+    "roleEn": "ABA Specialist & Qualified Autism Services Supervisor (QASP-S)",
+    "avatar": "/uploads/1790357588113______________jpg_jpeg.jpg",
+    "experienceYears": 5,
+    "licenseNumber": "RABA-ABA-057",
+    "specialties": [
+      "حاصل علي بكالوريوس علوم الاعاقه والتأهيل من جامعة الزقازيق",
+      "حاصل على دبلوم خاص في الإعاقة العقلية من كلية علوم الإعاقة والتأهيل من جامعة الزقازيق",
+      "حاصل على دورات في برنامج VB-MAPP",
+      "مشرف توحد مؤهل من منظمة QASP-S",
+      "خبره عملية أكثر من ٥ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Disability Sciences & Rehabilitation (Zagazig University)",
+      "Special Diploma in Disability Sciences (Zagazig University)",
+      "Qualified Autism Services Practitioner Supervisor (QASP-S - QABA)",
+      "Specialist in Intellectual & Developmental Disabilities",
+      "5+ Years Clinical Experience"
+    ],
+    "education": [
+      "حاصل علي بكالوريوس علوم الاعاقه والتأهيل من جامعة الزقازيق",
+      "حاصل على دبلوم خاص في الإعاقة العقلية من كلية علوم الإعاقة والتأهيل من جامعة الزقازيق"
+    ],
+    "educationEn": [
+      "B.Sc. in Disability Sciences & Rehabilitation - Zagazig University",
+      "Special Advanced Diploma - Zagazig University",
+      "QASP-S Certified Autism Practitioner Supervisor - QABA"
+    ],
+    "bio": "أخصائي ABA بمركز رابا. حاصل علي بكالوريوس علوم الاعاقه والتأهيل من جامعة الزقازيق · حاصل على دبلوم خاص في الإعاقة العقلية من كلية علوم الإعاقة والتأهيل من جامعة الزقازيق · حاصل على دورات في برنامج VB-MAPP · مشرف توحد مؤهل من منظمة QASP-S · خبره عملية أكثر من ٥ سنوات",
+    "bioEn": "ABA Specialist at Raba Center. Holds B.Sc. and Special Diploma in Disability Sciences & Rehabilitation from Zagazig University, and is a QASP-S certified Autism Practitioner Supervisor by QABA with 5+ years of specialized clinical experience.",
+    "certifications": [
+      "حاصل على دورات في برنامج VB-MAPP",
+      "مشرف توحد مؤهل من منظمة QASP-S"
+    ],
+    "certificationsEn": [
+      "QASP-S Board Certified Autism Practitioner Supervisor",
+      "Advanced Diploma in Disability Rehabilitation (Zagazig Univ)",
+      "Developmental & Intellectual Disability Intervention Credential"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.88,
+    "reviewsCount": 154,
+    "sessionPrice": 250,
+    "fallbackAvatar": "/uploads/1790357588113______________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357588113______________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357588113______________jpg_jpeg.jpg",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790357588113______________jpg_jpeg.jpg",
+    "orderIndex": 18,
+    "category": "aba",
+    "isTopRated": false
+  },
+  {
+    "id": "spec-sadeem-mshari",
+    "name": "سديم احمد المشاري",
+    "nameEn": "Sadeem Ahmed Al-Mashari",
+    "title": "أخصائية ABA",
+    "titleEn": "ABA Specialist",
+    "role": "أخصائية ABA",
+    "roleEn": "ABA Specialist & SCFHS Licensed Psychologist",
+    "avatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
+    "experienceYears": 2,
+    "licenseNumber": "RABA-PSY-049",
+    "specialties": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الأميرة نورة بنت عبدالرحمن",
+      "حاصلة على رخصة ABAT من البورد الأميريكي QABA",
+      "حاصلة على دبلوم المقاييس النفسية من أكاديمية النخبة الدولية",
+      "حاصلة على دورة التدريب على تطبيق وتصحيح مقياس ستانفورد بينيه للذكاء الصورة الخامسة",
+      "عضو مجلس إدارة في الجمعية العلمية السعودية للإرشاد النفسي",
+      "خبرة تطوعية عامة وصحية لما يقارب ٩٩٠ ساعة",
+      "حاصلة على دورة التقييم والتشخيص للإضطرابات النفسية من هيئة الصحة العامة (وقاية)",
+      "حاصلة على مبادئ الذكاء الإصطناعي من سدايا",
+      "خبرة عملية أكثر من عام"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Psychology (Princess Nourah Bint Abdulrahman University)",
+      "Diploma in Psychological Assessments (Elite International Academy)",
+      "Classified & Licensed by the Saudi Commission for Health Specialties (SCFHS)",
+      "ABAT Board Certified by the American Board (QABA)"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الأميرة نورة بنت عبدالرحمن",
+      "حاصلة على دبلوم المقاييس النفسية من أكاديمية النخبة الدولية"
+    ],
+    "educationEn": [
+      "B.Sc. in Psychology - Princess Nourah Bint Abdulrahman University",
+      "Diploma in Psychological Testing - Elite International Academy",
+      "Licensed Specialist - Saudi Commission for Health Specialties (SCFHS)",
+      "ABAT License - QABA Board Certified"
+    ],
+    "bio": "أخصائية ABA بمركز رابا. حاصلة على بكالوريوس علم النفس من جامعة الأميرة نورة بنت عبدالرحمن · حاصلة على رخصة ABAT من البورد الأميريكي QABA · حاصلة على دبلوم المقاييس النفسية من أكاديمية النخبة الدولية · حاصلة على دورة التدريب على تطبيق وتصحيح مقياس ستانفورد بينيه للذكاء الصورة الخامسة · عضو مجلس إدارة في الجمعية العلمية السعودية للإرشاد النفسي · خبرة تطوعية عامة وصحية لما يقارب ٩٩٠ ساعة · حاصلة على دورة التقييم والتشخيص للإضطرابات النفسية من هيئة الصحة العامة (وقاية) · حاصلة على مبادئ الذكاء الإصطناعي من سدايا · خبرة عملية أكثر من عام",
+    "bioEn": "ABA Specialist at Raba Center. Holds B.Sc. in Psychology from Princess Nourah University, Diploma in Psychological Testing from Elite International Academy, licensed by SCFHS, and ABAT certified by the American Board (QABA).",
+    "certifications": [
+      "حاصلة على رخصة ABAT من البورد الأميريكي QABA",
+      "حاصلة على دورة التدريب على تطبيق وتصحيح مقياس ستانفورد بينيه للذكاء الصورة الخامسة",
+      "عضو مجلس إدارة في الجمعية العلمية السعودية للإرشاد النفسي",
+      "حاصلة على دورة التقييم والتشخيص للإضطرابات النفسية من هيئة الصحة العامة (وقاية)",
+      "حاصلة على مبادئ الذكاء الإصطناعي من سدايا"
+    ],
+    "certificationsEn": [
+      "Licensed by Saudi Commission for Health Specialties (SCFHS)",
+      "Applied Behavior Analysis Technician (ABAT) - QABA Certified",
+      "Pediatric Psychological & Developmental Assessment Diploma"
+    ],
+    "availableDays": [
+      "السبت",
+      "الأحد",
+      "الثلاثاء",
+      "الأربعاء"
+    ],
+    "availableDaysEn": [
+      "Saturday",
+      "Sunday",
+      "Tuesday",
+      "Wednesday"
+    ],
+    "rating": 4.9,
+    "reviewsCount": 142,
+    "sessionPrice": 260,
+    "fallbackAvatar": "/uploads/1790357598308______________________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357598308______________________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357598308______________________jpg_jpeg.jpg",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790357598308______________________jpg_jpeg.jpg",
+    "orderIndex": 19,
+    "category": "aba",
+    "isTopRated": true
+  },
+  {
+    "id": "spec-maram-mohamed",
+    "name": "مرام محمد",
+    "nameEn": "Maram Mohamed",
+    "title": "أخصائية ABA",
+    "titleEn": "ABA Specialist",
+    "role": "أخصائية تحليل السلوك التطبيقي وعلم النفس الإكلينيكي",
+    "roleEn": "ABA Specialist & Clinical Psychologist",
+    "avatar": "/uploads/1790357606704______________jpg_jpeg.jpg",
+    "experienceYears": 3,
+    "licenseNumber": "RABA-ABA-033",
+    "specialties": [
+      "بكالوريوس علم النفس الإكلينيكي جامعة الرباط الوطني",
+      "اعتماد البورد الأمريكي ABAT",
+      "متخصصة في العلاج عن طريق تحليل السلوك التطبيقي (ABA)",
+      "خبرة أكثر من 3 سنوات في الجلسات السلوكية"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Clinical Psychology (National Ribat University)",
+      "Applied Behavior Analysis Technician (ABAT) Board Certified",
+      "Specialized in Applied Behavior Analysis (ABA) Pediatric Interventions",
+      "3+ Years Clinical Practice"
+    ],
+    "education": [
+      "بكالوريوس علم النفس الإكلينيكي من جامعة الرباط الوطني",
+      "اعتماد البورد الأمريكي في تحليل السلوك التطبيقي ABAT من منظمة QABA",
+      "برامج متقدمة في تعديل السلوك للأطفال ذوي طيف التوحد"
+    ],
+    "educationEn": [
+      "B.Sc. in Clinical Psychology - The National Ribat University",
+      "ABAT Certified by the American Board (QABA)",
+      "Advanced Clinical Intervention Protocols in Autism & Behavioral Acquisition"
+    ],
+    "bio": "أخصائية تحليل السلوك التطبيقي (ABA) بمركز رابا. حاصلة على بكالوريوس علم النفس الإكلينيكي من جامعة الرباط الوطني، وحاصلة على اعتماد البورد الأمريكي ABAT من منظمة QABA، متخصصة في العلاج والتأهيل عن طريق تحليل السلوك التطبيقي (ABA) للأطفال بخبرة تتجاوز 3 سنوات.",
+    "bioEn": "ABA Specialist at Raba Center. Holds B.Sc. in Clinical Psychology from National Ribat University and is an ABAT certified practitioner by the American Board (QABA), specializing in evidence-based pediatric ABA therapy with 3+ years experience.",
+    "certifications": [
+      "اعتماد البورد الأمريكي في تحليل السلوك التطبيقي ABAT",
+      "شهادة الممارسة الإكلينيكية في علم النفس وتأهيل الأطفال",
+      "اعتماد تطبيق جلسات التدريب بالمحاولات المنفصلة DTT"
+    ],
+    "certificationsEn": [
+      "Applied Behavior Analysis Technician (ABAT) - QABA Certified",
+      "Clinical Child Psychology & Rehabilitation Practice Certificate",
+      "Discrete Trial Training (DTT) & Natural Environment Teaching (NET)"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.85,
+    "reviewsCount": 130,
+    "sessionPrice": 240,
+    "fallbackAvatar": "/uploads/1790357606704______________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357606704______________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357606704______________jpg_jpeg.jpg",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790357606704______________jpg_jpeg.jpg",
+    "orderIndex": 20,
+    "category": "aba",
+    "isTopRated": false
+  },
+  {
+    "id": "spec-ahmed-raad",
+    "name": "أحمد رعد",
+    "nameEn": "Ahmed Raad",
+    "title": "أخصائي ABA",
+    "titleEn": "ABA Specialist",
+    "role": "أخصائي ABA",
+    "roleEn": "ABA Specialist & Health Sciences Graduate",
+    "avatar": "/uploads/1790357615959______________jpg_jpeg.jpg",
+    "experienceYears": 2,
+    "licenseNumber": "RABA-ABA-038",
+    "specialties": [
+      "حاصل على درجة البكالوريوس من جامعة حمص",
+      "حاصل على إعتماد ABAT في تحليل السلوك التطبيقي من QABA",
+      "خبرة عملية أكثر من سنتين"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Health Sciences (Homs University)",
+      "Applied Behavior Analysis Technician (ABAT) Board Certified",
+      "3+ Years Experience in ABA Therapy & Skill Building"
+    ],
+    "education": [
+      "حاصل على درجة البكالوريوس من جامعة حمص"
+    ],
+    "educationEn": [
+      "B.Sc. in Health Sciences - Homs University",
+      "Applied Behavior Analysis Technician (ABAT) - QABA Board Certified",
+      "Intensive Training in Early Intervention & Adaptive Skill Acquisition"
+    ],
+    "bio": "أخصائي ABA بمركز رابا. حاصل على درجة البكالوريوس من جامعة حمص · حاصل على إعتماد ABAT في تحليل السلوك التطبيقي من QABA · خبرة عملية أكثر من سنتين",
+    "bioEn": "ABA Specialist at Raba Center. Holds B.Sc. in Health Sciences from Homs University and is an ABAT certified practitioner by the American Board (QABA) with 3+ years experience delivering one-on-one behavioral intervention for children.",
+    "certifications": [
+      "حاصل على إعتماد ABAT في تحليل السلوك التطبيقي من QABA"
+    ],
+    "certificationsEn": [
+      "Applied Behavior Analysis Technician (ABAT) - QABA Board Certified",
+      "Positive Reinforcement & Adaptive Skills Training Credential",
+      "Pediatric Healthcare Safety & First Aid Accreditation"
+    ],
+    "availableDays": [
+      "السبت",
+      "الإثنين",
+      "الثلاثاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Saturday",
+      "Monday",
+      "Tuesday",
+      "Thursday"
+    ],
+    "rating": 4.82,
+    "reviewsCount": 125,
+    "sessionPrice": 240,
+    "fallbackAvatar": "/uploads/1790357615959______________jpg_jpeg.jpg",
+    "posterCrop": "/uploads/1790357615959______________jpg_jpeg.jpg",
+    "portraitCrop": "/uploads/1790357615959______________jpg_jpeg.jpg",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790357615959______________jpg_jpeg.jpg",
+    "orderIndex": 21,
+    "category": "aba",
+    "isTopRated": false
+  },
+  {
+    "id": "spec-mohamed-saad",
+    "name": "محمد سعد",
+    "nameEn": "Mohamed Saad",
+    "title": "أخصائي النطق والتخاطب",
+    "titleEn": "Speech & Language Pathologist",
+    "role": "أخصائي النطق والتخاطب",
+    "roleEn": "Speech & Language Pathologist & Early Intervention Lead",
+    "avatar": "/uploads/1790826142955_1_png.png",
+    "experienceYears": 8,
+    "licenseNumber": "RABA-SLP-052",
+    "specialties": [
+      "حاصل على بكالوريوس التربية الخاصة من جامعة حلوان",
+      "حاصل علي دورة تدريبية في OPT معتمده من Talk Tools",
+      "حاصل علي ٤٠ ساعة معتمدة في الـ ABA",
+      "خبرة عملية أكثر من ٨ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.A. in Arts & Education (Arabic Language) - Tanta University",
+      "Diploma in Speech & Language Pathology - Beni-Suef University",
+      "Pre-Master Studies in Speech & Communication Sciences",
+      "8+ Years Clinical Experience in Speech Sound & Language Assessment"
+    ],
+    "education": [
+      "حاصل على بكالوريوس التربية الخاصة من جامعة حلوان"
+    ],
+    "educationEn": [
+      "Diploma in Speech & Language Pathology - Faculty of Special Needs Sciences, Beni-Suef University",
+      "Pre-Master in Speech & Communication Sciences",
+      "B.A. in Arts & Education - Tanta University",
+      "Advanced Clinical Certifications in Pediatric Language Development"
+    ],
+    "bio": "أخصائي النطق والتخاطب بمركز رابا. حاصل على بكالوريوس التربية الخاصة من جامعة حلوان · حاصل علي دورة تدريبية في OPT معتمده من Talk Tools · حاصل علي ٤٠ ساعة معتمدة في الـ ABA · خبرة عملية أكثر من ٨ سنوات",
+    "bioEn": "Speech & Language Pathologist at Raba Center. Holds clinical degrees in Speech Pathology and Communication Sciences with 8+ years experience diagnosing and treating pediatric speech delays, articulation disorders, and autism communication.",
+    "certifications": [
+      "حاصل علي دورة تدريبية في OPT معتمده من Talk Tools",
+      "حاصل علي ٤٠ ساعة معتمدة في الـ ABA"
+    ],
+    "certificationsEn": [
+      "Clinical Speech & Language Disorders Credential - Beni-Suef University",
+      "Early Intervention & Language Development Professional Diploma",
+      "Pediatric Stuttering & Articulation Therapy Certification"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.93,
+    "reviewsCount": 195,
+    "sessionPrice": 240,
+    "fallbackAvatar": "/uploads/1790826142955_1_png.png",
+    "posterCrop": "/uploads/1790826142955_1_png.png",
+    "portraitCrop": "/uploads/1790826142955_1_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790826142955_1_png.png",
+    "orderIndex": 22,
+    "category": "speech",
+    "isTopRated": false
+  },
+  {
+    "id": "spec-alzahraa-farag",
+    "name": "الزهراء فرج",
+    "nameEn": "Al-Zahraa Farag",
+    "title": "أخصائي نفسي إكلينيكي",
+    "titleEn": "Clinical Psychologist",
+    "role": "أخصائي نفسي إكلينيكي",
+    "roleEn": "Clinical Child Psychologist & Behavioral Assessment Specialist",
+    "avatar": "/uploads/1790826125079_2_png.png",
+    "experienceYears": 10,
+    "licenseNumber": "RABA-PSY-058",
+    "specialties": [
+      "حاصلة على ليسانس اداب وتربية من جامعة عين شمس",
+      "حاصلة على دبلوم التشخيص والقياس النفسي من جامعة عين شمس",
+      "حاصلة على دبلوم الأمراض النفسية والسلوكية من الجامعة الأمريكية",
+      "خبرة عملية أكثر من ١٠ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.A. in Psychology - Ain Shams University",
+      "Diploma in Clinical Psychology - Ain Shams University",
+      "Diploma in Special Education - Ain Shams University",
+      "7+ Years Experience in Psychological Diagnostics & Assessment"
+    ],
+    "education": [
+      "حاصلة على ليسانس اداب وتربية من جامعة عين شمس",
+      "حاصلة على دبلوم التشخيص والقياس النفسي من جامعة عين شمس",
+      "حاصلة على دبلوم الأمراض النفسية والسلوكية من الجامعة الأمريكية"
+    ],
+    "educationEn": [
+      "Diploma in Clinical Psychology - Faculty of Arts, Ain Shams University",
+      "Diploma in Special Education - Faculty of Education, Ain Shams University",
+      "B.A. in Psychology - Ain Shams University",
+      "Certified Assessor for WISC, Stanford-Binet & Adaptive Behavior Scales"
+    ],
+    "bio": "أخصائي نفسي إكلينيكي بمركز رابا. حاصلة على ليسانس اداب وتربية من جامعة عين شمس · حاصلة على دبلوم التشخيص والقياس النفسي من جامعة عين شمس · حاصلة على دبلوم الأمراض النفسية والسلوكية من الجامعة الأمريكية · خبرة عملية أكثر من ١٠ سنوات",
+    "bioEn": "Clinical Psychologist at Raba Center. Holds specialized postgraduate diplomas in Clinical Psychology and Special Education from Ain Shams University, with 7+ years evaluating pediatric developmental and cognitive profiles.",
+    "certifications": [
+      "حاصلة على دبلوم التشخيص والقياس النفسي من جامعة عين شمس",
+      "حاصلة على دبلوم الأمراض النفسية والسلوكية من الجامعة الأمريكية",
+      "خبرة عملية أكثر من ١٠ سنوات"
+    ],
+    "certificationsEn": [
+      "Clinical Psychological Assessment Credential - Ain Shams University",
+      "Certified Administrator for Stanford-Binet & Wechsler Intelligence Scales",
+      "Family Counseling & Psychological Guidance for Special Needs Accreditation"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday"
+    ],
+    "rating": 4.91,
+    "reviewsCount": 182,
+    "sessionPrice": 260,
+    "fallbackAvatar": "/uploads/1790826125079_2_png.png",
+    "posterCrop": "/uploads/1790826125079_2_png.png",
+    "portraitCrop": "/uploads/1790826125079_2_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790826125079_2_png.png",
+    "orderIndex": 23,
+    "category": "psychology",
+    "isTopRated": false
+  },
+  {
+    "id": "spec-noura-elbasyouni",
+    "name": "د/ نورا البسيوني",
+    "nameEn": "Dr. Noura El-Basyouni",
+    "title": "أخصائية نفسية",
+    "titleEn": "Ph.D. Pediatric Psychologist",
+    "role": "أخصائية نفسية",
+    "roleEn": "Ph.D. in Clinical Child Psychology & Autism Specialist",
+    "avatar": "/uploads/1790826321411_3_png.png",
+    "experienceYears": 10,
+    "licenseNumber": "RABA-SCFHS-061",
+    "specialties": [
+      "حاصلة على ليسانس الآداب والتربية قسم علم النفس من جامعة كفر الشيخ",
+      "حاصلة على ماجستير في علم النفس من كلية التربية من جامعة كفر الشيخ",
+      "حاصلة على دكتوراه في علم النفس تخصص أطفال التوحد من كلية التربية من جامعة كفر الشيخ",
+      "حاصله على تصنيف مهني ساري من الهيئة السعودية للتخصصات الصحية",
+      "خبره عملية أكثر من ١٠ سنوات بالمجال النفسي وتعديل السلوك بمنهجيه الـ APA"
+    ],
+    "specialtiesEn": [
+      "B.A. in Psychology - Ain Shams University",
+      "Master of Science in Child Psychology (Autism Spectrum Disorders)",
+      "Ph.D. in Child Psychology (Autism Spectrum Disorders)",
+      "SCFHS Professional Healthcare Classification",
+      "10+ Years Advanced Diagnostic & Intervention Experience"
+    ],
+    "education": [
+      "حاصلة على ليسانس الآداب والتربية قسم علم النفس من جامعة كفر الشيخ",
+      "حاصلة على ماجستير في علم النفس من كلية التربية من جامعة كفر الشيخ",
+      "حاصلة على دكتوراه في علم النفس تخصص أطفال التوحد من كلية التربية من جامعة كفر الشيخ"
+    ],
+    "educationEn": [
+      "Doctor of Philosophy (Ph.D.) in Psychology - Autism Spectrum Focus",
+      "Master of Science (M.Sc.) in Psychology - Pediatric Autism Focus",
+      "B.A. in Psychology - Ain Shams University",
+      "SCFHS Accredited Professional Healthcare Classification"
+    ],
+    "bio": "أخصائية نفسية بمركز رابا. حاصلة على ليسانس الآداب والتربية قسم علم النفس من جامعة كفر الشيخ · حاصلة على ماجستير في علم النفس من كلية التربية من جامعة كفر الشيخ · حاصلة على دكتوراه في علم النفس تخصص أطفال التوحد من كلية التربية من جامعة كفر الشيخ · حاصله على تصنيف مهني ساري من الهيئة السعودية للتخصصات الصحية · خبره عملية أكثر من ١٠ سنوات بالمجال النفسي وتعديل السلوك بمنهجيه الـ APA",
+    "bioEn": "Ph.D. Psychologist at Raba Center. Holds Doctorate & Master degrees in Psychology specializing in Autism, and active SCFHS classification with over 10 years of clinical experience in diagnostic and developmental psycho-education.",
+    "certifications": [
+      "حاصله على تصنيف مهني ساري من الهيئة السعودية للتخصصات الصحية"
+    ],
+    "certificationsEn": [
+      "SCFHS Professional Healthcare Classification",
+      "Doctor of Philosophy (Ph.D.) in Autism Psychology",
+      "Advanced Certifications in Clinical Autism Assessment Scales"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.95,
+    "reviewsCount": 215,
+    "sessionPrice": 290,
+    "fallbackAvatar": "/uploads/1790826321411_3_png.png",
+    "posterCrop": "/uploads/1790826321411_3_png.png",
+    "portraitCrop": "/uploads/1790826321411_3_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790826321411_3_png.png",
+    "orderIndex": 24,
+    "category": "psychology",
+    "isTopRated": false
+  },
+  {
+    "id": "spec-asmaa-moustafa",
+    "name": "أسماء مصطفى",
+    "nameEn": "Asmaa Moustafa",
+    "title": "مشرفة قسم الـ ABA",
+    "titleEn": "ABA Department Supervisor",
+    "role": "مشرفة قسم الـ ABA",
+    "roleEn": "ABA Supervisor & International Behavior Analyst (QBA / IBA)",
+    "avatar": "/uploads/1790826279297_4_png.png",
+    "experienceYears": 10,
+    "licenseNumber": "RABA-QBA-091",
+    "specialties": [
+      "حاصلة على ليسانس اداب علم إجتماع من جامعة سوهاج",
+      "حاصلة على ماجستير في التربية الخاصة تخصص التوحد من جامعة أسيوط",
+      "باحثة دكتوراة في التربية الخاصة تخصص توحد",
+      "محلل سلوك دولي معتمد QBA-IBA",
+      "ممارس إدارة السلوك التنظيمي OBM-p",
+      "خبرة عملية أكثر من ١٠ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.A. in Sociology - Sohag University",
+      "Master in Special Education (Autism) - Assiut University",
+      "Ph.D. Researcher in Special Education (Autism)",
+      "QBA & IBA Board Certified Behavior Analyst",
+      "Organizational Behavior Management Practitioner (OBM-p)",
+      "10+ Years Clinical ABA Experience"
+    ],
+    "education": [
+      "حاصلة على ليسانس اداب علم إجتماع من جامعة سوهاج",
+      "حاصلة على ماجستير في التربية الخاصة تخصص التوحد من جامعة أسيوط"
+    ],
+    "educationEn": [
+      "Ph.D. Researcher in Special Education & Autism Spectrum",
+      "Master of Special Education in Autism - Assiut University",
+      "B.A. in Sociology - Sohag University",
+      "Qualified Behavior Analyst (QBA) & International Behavior Analyst (IBA)",
+      "Certified Organizational Behavior Management Practitioner (OBM-p)"
+    ],
+    "bio": "مشرفة قسم الـ ABA بمركز رابا. حاصلة على ليسانس اداب علم إجتماع من جامعة سوهاج · حاصلة على ماجستير في التربية الخاصة تخصص التوحد من جامعة أسيوط · باحثة دكتوراة في التربية الخاصة تخصص توحد · محلل سلوك دولي معتمد QBA-IBA · ممارس إدارة السلوك التنظيمي OBM-p · خبرة عملية أكثر من ١٠ سنوات",
+    "bioEn": "ABA Department Supervisor at Raba Center. QBA and IBA Board Certified Behavior Analyst, Ph.D. Researcher in Autism, and certified OBM-p practitioner with 10+ years leading intensive behavior interventions and clinical teams.",
+    "certifications": [
+      "باحثة دكتوراة في التربية الخاصة تخصص توحد",
+      "محلل سلوك دولي معتمد QBA-IBA",
+      "ممارس إدارة السلوك التنظيمي OBM-p"
+    ],
+    "certificationsEn": [
+      "Qualified Behavior Analyst (QBA) International Credential",
+      "International Behavior Analyst (IBA) Certification",
+      "Certified Organizational Behavior Management Practitioner (OBM-p)"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.96,
+    "reviewsCount": 230,
+    "sessionPrice": 280,
+    "fallbackAvatar": "/uploads/1790826279297_4_png.png",
+    "posterCrop": "/uploads/1790826279297_4_png.png",
+    "portraitCrop": "/uploads/1790826279297_4_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790826279297_4_png.png",
+    "orderIndex": 25,
+    "category": "aba",
+    "isTopRated": false
+  },
+  {
+    "id": "spec-ayman-elhoweity",
+    "name": "أيمن عطية الحويطي",
+    "nameEn": "Ayman Attia Al-Howeity",
+    "title": "أخصائي ABA",
+    "titleEn": "Behavior Analyst (BACB / TOT)",
+    "role": "أخصائي ABA",
+    "roleEn": "ABA Specialist, BACB Licensed & Certified TOT",
+    "avatar": "/uploads/1790826241596_5_png.png",
+    "experienceYears": 10,
+    "licenseNumber": "RABA-BACB-102",
+    "specialties": [
+      "حاصل على بكالوريوس التربية الخاصة من جامعة حلوان",
+      "حاصل على دراسات عليا في التربية الخاصة من جامعة حلوان",
+      "حاصل على رخصة البورد الأمريكي من بورد BACB",
+      "ممارس توحد مرخص من هيئة قياس",
+      "مدرب مدربين معتمد TOT",
+      "خبرة عملية أكثر من ١٠ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Special Education - Helwan University",
+      "Postgraduate Studies in Special Education - Helwan University",
+      "Licensed by the American Behavior Analyst Certification Board (BACB)",
+      "Licensed Autism Practitioner by Qiyas National Center",
+      "Certified Trainer of Trainers (TOT)",
+      "10+ Years Clinical ABA Experience"
+    ],
+    "education": [
+      "حاصل على بكالوريوس التربية الخاصة من جامعة حلوان",
+      "حاصل على دراسات عليا في التربية الخاصة من جامعة حلوان"
+    ],
+    "educationEn": [
+      "Postgraduate Diploma in Special Education - Helwan University",
+      "B.Sc. in Special Education - Helwan University",
+      "Behavior Analyst Certification Board (BACB) Licensure",
+      "Certified Autism Specialist - National Center for Assessment (Qiyas)",
+      "Certified Training of Trainers (TOT) Professional"
+    ],
+    "bio": "أخصائي ABA بمركز رابا. حاصل على بكالوريوس التربية الخاصة من جامعة حلوان · حاصل على دراسات عليا في التربية الخاصة من جامعة حلوان · حاصل على رخصة البورد الأمريكي من بورد BACB · ممارس توحد مرخص من هيئة قياس · مدرب مدربين معتمد TOT · خبرة عملية أكثر من ١٠ سنوات",
+    "bioEn": "Applied Behavior Analyst at Raba Center. Holds Postgraduate credentials in Special Education from Helwan University, BACB American Board licensure, Qiyas Autism Practitioner license, and certified TOT trainer with 10+ years experience.",
+    "certifications": [
+      "حاصل على رخصة البورد الأمريكي من بورد BACB",
+      "ممارس توحد مرخص من هيئة قياس",
+      "مدرب مدربين معتمد TOT"
+    ],
+    "certificationsEn": [
+      "BACB American Board Licensure in Behavior Analysis",
+      "Licensed Autism Practitioner by Saudi Qiyas Authority",
+      "Certified International Training of Trainers (TOT)"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday"
+    ],
+    "rating": 4.88,
+    "reviewsCount": 170,
+    "sessionPrice": 260,
+    "fallbackAvatar": "/uploads/1790826241596_5_png.png",
+    "posterCrop": "/uploads/1790826241596_5_png.png",
+    "portraitCrop": "/uploads/1790826241596_5_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790826241596_5_png.png",
+    "orderIndex": 26,
+    "category": "aba",
+    "isTopRated": false
+  },
+  {
+    "id": "spec-mohamed-bakry",
+    "name": "محمد بكري",
+    "nameEn": "Mohamed Bakry",
+    "title": "أخصائي علاج وظيفي وتكامل حسّي / سيكوموتر",
+    "titleEn": "Occupational & Sensory Therapist",
+    "role": "أخصائي علاج وظيفي وتكامل حسّي / سيكوموتر",
+    "roleEn": "Occupational Therapist & Sensory Integration Practitioner",
+    "avatar": "/uploads/1790826439548_6_png.png",
+    "experienceYears": 6,
+    "licenseNumber": "RABA-OT-065",
+    "specialties": [
+      "حاصل علي بكالوريوس التربية البدنية تخصص الرياضة المدرسية لذوي الاحتياجات الخاصة من جامعة بني سويف",
+      "حاصل على ماجستير علوم الصحة الرياضية من جامعة بني سويف",
+      "حاصل على دبلومة علاج وظيفي من جامعة طنطا",
+      "حاصل على كورس للعلاج الوظيفي مع د/رباب الشاعر",
+      "حاصل على كورس في التكامل الحسّي مع د/دعاء عبد اللطيف",
+      "حاصل على كورس إعداد أخصائي تكامل حسي مع د/محمود المغربي",
+      "حاصل على كورس السيكوموتر ( التدريبات النفس حركية ) مع د/محمد صبري وهبة",
+      "حاصل على كورس الإصابات الرياضية والتأهيل الحركي من وزارة الشباب والرياضة بمصر",
+      "حاصل على دورة في تحليل السلوك التطبيقي ABA لمدة ٤٠ ساعة",
+      "خبرة عملية أكثر من ٦ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.Sc. & M.Sc. in Sports Health Sciences & Rehabilitation",
+      "Diploma in Occupational Therapy - Tanta University Public Service Center",
+      "Accredited Clinical Training in Sensory Integration from Raba Center",
+      "6+ Years Pediatric Occupational Therapy Experience"
+    ],
+    "education": [
+      "حاصل علي بكالوريوس التربية البدنية تخصص الرياضة المدرسية لذوي الاحتياجات الخاصة من جامعة بني سويف",
+      "حاصل على ماجستير علوم الصحة الرياضية من جامعة بني سويف",
+      "حاصل على دبلومة علاج وظيفي من جامعة طنطا"
+    ],
+    "educationEn": [
+      "Diploma in Occupational Therapy - Tanta University",
+      "M.Sc. in Sports Health Sciences & Motor Rehabilitation",
+      "B.Sc. in Sports Health Sciences",
+      "Advanced Clinical Training in Pediatric Sensory Integration"
+    ],
+    "bio": "أخصائي علاج وظيفي وتكامل حسّي / سيكوموتر بمركز رابا. حاصل علي بكالوريوس التربية البدنية تخصص الرياضة المدرسية لذوي الاحتياجات الخاصة من جامعة بني سويف · حاصل على ماجستير علوم الصحة الرياضية من جامعة بني سويف · حاصل على دبلومة علاج وظيفي من جامعة طنطا · حاصل على كورس للعلاج الوظيفي مع د/رباب الشاعر · حاصل على كورس في التكامل الحسّي مع د/دعاء عبد اللطيف · حاصل على كورس إعداد أخصائي تكامل حسي مع د/محمود المغربي · حاصل على كورس السيكوموتر ( التدريبات النفس حركية ) مع د/محمد صبري وهبة · حاصل على كورس الإصابات الرياضية والتأهيل الحركي من وزارة الشباب والرياضة بمصر · حاصل على دورة في تحليل السلوك التطبيقي ABA لمدة ٤٠ ساعة · خبرة عملية أكثر من ٦ سنوات",
+    "bioEn": "Occupational Therapy & Sensory Integration Specialist at Raba Center. Holds Master degree in Sports Health Sciences and clinical OT diploma from Tanta University with 6+ years improving fine motor skills, sensory processing, and physical coordination.",
+    "certifications": [
+      "حاصل على كورس للعلاج الوظيفي مع د/رباب الشاعر",
+      "حاصل على كورس في التكامل الحسّي مع د/دعاء عبد اللطيف",
+      "حاصل على كورس إعداد أخصائي تكامل حسي مع د/محمود المغربي",
+      "حاصل على كورس السيكوموتر ( التدريبات النفس حركية ) مع د/محمد صبري وهبة",
+      "حاصل على كورس الإصابات الرياضية والتأهيل الحركي من وزارة الشباب والرياضة بمصر",
+      "حاصل على دورة في تحليل السلوك التطبيقي ABA لمدة ٤٠ ساعة"
+    ],
+    "certificationsEn": [
+      "Clinical Occupational Therapy Diploma - Tanta University",
+      "Pediatric Clinical Sensory Integration Certification",
+      "Professional Member of Motor & Functional Rehabilitation Associations"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.87,
+    "reviewsCount": 145,
+    "sessionPrice": 240,
+    "fallbackAvatar": "/uploads/1790826439548_6_png.png",
+    "posterCrop": "/uploads/1790826439548_6_png.png",
+    "portraitCrop": "/uploads/1790826439548_6_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790826439548_6_png.png",
+    "orderIndex": 27,
+    "category": "occupational",
+    "isTopRated": false
+  },
+  {
+    "id": "spec-anwar-elmaghyouli",
+    "name": "أنوار المغيولي",
+    "nameEn": "Anwar Al-Maghyouli",
+    "title": "أخصائية النطق والتخاطب",
+    "titleEn": "Speech & Language Pathologist",
+    "role": "أخصائية النطق والتخاطب",
+    "roleEn": "Speech-Language Pathologist & Communication Specialist",
+    "avatar": "/uploads/1790826509139_7_png.png",
+    "experienceYears": 5,
+    "licenseNumber": "RABA-SLP-068",
+    "specialties": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الملك عبد العزيز",
+      "خبرة أكثر من ٥ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.A. in Psychology - King Abdulaziz University",
+      "Specialized Clinical Training in Stuttering Therapy",
+      "Certification in Interactive Dialogue & Communication Skills",
+      "5+ Years Clinical Practice in Pediatric Speech-Language Pathology"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الملك عبد العزيز"
+    ],
+    "educationEn": [
+      "B.A. in Psychology - King Abdulaziz University",
+      "Advanced Clinical Certificate in Stuttering & Fluency Disorders",
+      "Pediatric Interactive Dialogue & Pragmatic Language Development"
+    ],
+    "bio": "أخصائية النطق والتخاطب بمركز رابا. حاصلة على بكالوريوس علم النفس من جامعة الملك عبد العزيز · خبرة أكثر من ٥ سنوات",
+    "bioEn": "Speech-Language Pathologist at Raba Center. Holds Psychology degree from King Abdulaziz University with 5+ years specializing in stuttering, articulation phonology, language acquisition, and interactive pragmatic dialog for children.",
+    "certifications": [
+      "خبرة أكثر من ٥ سنوات"
+    ],
+    "certificationsEn": [
+      "Advanced Speech Sound & Stuttering Therapy Credential",
+      "Interactive Pragmatic Communication Skills Certification",
+      "Licensed Speech & Language Rehabilitation Practitioner"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday"
+    ],
+    "rating": 4.89,
+    "reviewsCount": 138,
+    "sessionPrice": 230,
+    "fallbackAvatar": "/uploads/1790826509139_7_png.png",
+    "posterCrop": "/uploads/1790826509139_7_png.png",
+    "portraitCrop": "/uploads/1790826509139_7_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790826509139_7_png.png",
+    "orderIndex": 28,
+    "category": "speech",
+    "isTopRated": false
+  },
+  {
+    "id": "spec-mohamed-abdelhamid",
+    "name": "محمد عبد الحميد",
+    "nameEn": "Mohamed Abdelhamid",
+    "title": "أخصائي النطق والتخاطب",
+    "titleEn": "Speech Pathologist & OPT Specialist",
+    "role": "أخصائي النطق والتخاطب",
+    "roleEn": "Speech Pathologist & Oral Placement Therapy (OPT) Specialist",
+    "avatar": "/uploads/1790826577879_9_png.png",
+    "experienceYears": 6,
+    "licenseNumber": "RABA-SLP-070",
+    "specialties": [
+      "حاصل على بكالوريوس التربية الخاصة من جامعة المنصورة",
+      "حاصل على كورس في OPT",
+      "خبرة عملية أكثر من ٦ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Special Education (Speech Disorders) - Mansoura University",
+      "Certified Clinical Course in Oral Placement Therapy (OPT)",
+      "6+ Years Experience in Pediatric Articulation & Oral Motor Therapy"
+    ],
+    "education": [
+      "حاصل على بكالوريوس التربية الخاصة من جامعة المنصورة"
+    ],
+    "educationEn": [
+      "B.Sc. in Special Education (Speech Pathology) - Mansoura University",
+      "Certified Oral Placement Therapy (OPT) Clinical Course",
+      "Advanced Seminars in Pediatric Articulation Remediation"
+    ],
+    "bio": "أخصائي النطق والتخاطب بمركز رابا. حاصل على بكالوريوس التربية الخاصة من جامعة المنصورة · حاصل على كورس في OPT · خبرة عملية أكثر من ٦ سنوات",
+    "bioEn": "Speech Pathologist & OPT Specialist at Raba Center. Holds degree in Speech Disorders from Mansoura University and certified in OPT oral motor therapy with 6+ years remediating pediatric speech delays, lisping, and communication difficulties.",
+    "certifications": [
+      "حاصل على كورس في OPT"
+    ],
+    "certificationsEn": [
+      "Oral Placement Therapy (OPT) Level Clinical Credential",
+      "Advanced Articulation & Phonological Therapy",
+      "Academic Member of Special Education Associations"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.86,
+    "reviewsCount": 152,
+    "sessionPrice": 240,
+    "fallbackAvatar": "/uploads/1790826577879_9_png.png",
+    "posterCrop": "/uploads/1790826577879_9_png.png",
+    "portraitCrop": "/uploads/1790826577879_9_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790826577879_9_png.png",
+    "orderIndex": 29,
+    "category": "speech",
+    "isTopRated": false
+  },
+  {
+    "id": "spec-mohamed-elgayyar",
+    "name": "محمد الجيار",
+    "nameEn": "Mohamed Al-Gayyar",
+    "title": "أخصائي العلاج الوظيفي والتكامل الحسي",
+    "titleEn": "Occupational Therapy & Sensory Integration Specialist",
+    "role": "أخصائي العلاج الوظيفي والتكامل الحسي",
+    "roleEn": "Occupational Therapist & Certified Behavior Technician (ABAT)",
+    "avatar": "/uploads/1790826687565_10_png.png",
+    "experienceYears": 7,
+    "licenseNumber": "RABA-OT-071",
+    "specialties": [
+      "حاصل كلية ليسانس الآداب من جامعة بورسعيد",
+      "حاصل على دبلومة مهنية لإضطرابات التواصل من كلية التربية جامعة عين شمس",
+      "حاصل علي دبلومة عامة قسم التوحد من كلية علوم إعاقة من جامعة الزقازيق",
+      "حاصل على دورة تحليل السلوك التطبيقي ABAT",
+      "حاصل على دورة في التكامل الحسي من د/دعاء عبد اللطيف",
+      "خبرة عملية أكثر من ٧ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.A. from Port Said University",
+      "Professional Diploma in Communication Disorders - Ain Shams University",
+      "General Diploma in Autism - Disability Sciences, Zagazig University",
+      "Certified Applied Behavior Analysis Course (ABAT)",
+      "Certified Sensory Integration Course with Dr. Doaa Abdel-Latif",
+      "7+ Years Multidisciplinary Rehabilitation Experience"
+    ],
+    "education": [
+      "حاصل كلية ليسانس الآداب من جامعة بورسعيد",
+      "حاصل على دبلومة مهنية لإضطرابات التواصل من كلية التربية جامعة عين شمس",
+      "حاصل علي دبلومة عامة قسم التوحد من كلية علوم إعاقة من جامعة الزقازيق"
+    ],
+    "educationEn": [
+      "Professional Diploma in Communication Disorders - Ain Shams University",
+      "General Diploma in Autism Spectrum - Zagazig University",
+      "B.A. - Port Said University",
+      "Applied Behavior Analysis Technician (ABAT) Credential",
+      "Advanced Sensory Integration Pediatric Credential"
+    ],
+    "bio": "أخصائي العلاج الوظيفي والتكامل الحسي بمركز رابا. حاصل كلية ليسانس الآداب من جامعة بورسعيد · حاصل على دبلومة مهنية لإضطرابات التواصل من كلية التربية جامعة عين شمس · حاصل علي دبلومة عامة قسم التوحد من كلية علوم إعاقة من جامعة الزقازيق · حاصل على دورة تحليل السلوك التطبيقي ABAT · حاصل على دورة في التكامل الحسي من د/دعاء عبد اللطيف · خبرة عملية أكثر من ٧ سنوات",
+    "bioEn": "Occupational Therapy & Sensory Integration Specialist at Raba Center. Holds diplomas in Communication Disorders (Ain Shams) and Autism (Zagazig), ABAT credential, and SI training with 7+ years in sensorimotor integration for children.",
+    "certifications": [
+      "حاصل على دورة تحليل السلوك التطبيقي ABAT",
+      "حاصل على دورة في التكامل الحسي من د/دعاء عبد اللطيف"
+    ],
+    "certificationsEn": [
+      "Professional Diploma in Communication Disorders - Ain Shams",
+      "Diploma in Autism Sciences - Zagazig University",
+      "Applied Behavior Analysis Technician (ABAT) Credential",
+      "Certified Clinical Sensory Integration Specialist"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday"
+    ],
+    "rating": 4.88,
+    "reviewsCount": 160,
+    "sessionPrice": 250,
+    "fallbackAvatar": "/uploads/1790826687565_10_png.png",
+    "posterCrop": "/uploads/1790826687565_10_png.png",
+    "portraitCrop": "/uploads/1790826687565_10_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790826687565_10_png.png",
+    "orderIndex": 30,
+    "category": "occupational",
+    "isTopRated": false
+  },
+  {
+    "id": "spec-elsaeed-diab",
+    "name": "السعيد دياب",
+    "nameEn": "El-Saeed Diab",
+    "title": "أخصائي صعوبات تعلم",
+    "titleEn": "Learning Disabilities Specialist",
+    "role": "أخصائي صعوبات تعلم",
+    "roleEn": "Learning Disabilities Specialist & Psycho-Educational Evaluator",
+    "avatar": "/uploads/1790826711609_11_png.png",
+    "experienceYears": 7,
+    "licenseNumber": "RABA-LD-074",
+    "specialties": [
+      "حاصل على ليسانس الآداب والتربية من جامعه الأزهر",
+      "حاصل على دبلومة الإختبارات والمقاييس النفسية من جامعة الزقازيق",
+      "حاصل على دبلومة التخاطب من جامعة عين شمس",
+      "حاصل على دبلومة التوحد من جامعة الزقازيق",
+      "حاصل على دبلومة إعداد أخصائي تربية خاصة من جامعة عين شمس",
+      "حاصل على دبلومة التربية الخاصة من جامعة عين شمس",
+      "خبرة عملية أكثر من ٧ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.A. in Arts & Education - Al-Azhar University",
+      "Diploma in Psychological Testing & Measurement - Zagazig University",
+      "Diploma in Speech Pathology - Ain Shams University",
+      "Diploma in Autism Spectrum Disorders - Zagazig University",
+      "Diploma in Special Education Specialist Preparation - Ain Shams University",
+      "Diploma in Special Education - Ain Shams University",
+      "7+ Years Clinical Psycho-Educational Experience"
+    ],
+    "education": [
+      "حاصل على ليسانس الآداب والتربية من جامعه الأزهر",
+      "حاصل على دبلومة الإختبارات والمقاييس النفسية من جامعة الزقازيق",
+      "حاصل على دبلومة التخاطب من جامعة عين شمس",
+      "حاصل على دبلومة التوحد من جامعة الزقازيق",
+      "حاصل على دبلومة إعداد أخصائي تربية خاصة من جامعة عين شمس",
+      "حاصل على دبلومة التربية الخاصة من جامعة عين شمس"
+    ],
+    "educationEn": [
+      "Diploma in Psychological Testing & Measurement - Zagazig University",
+      "Diploma in Speech Pathology - Ain Shams University",
+      "Diploma in Autism Spectrum Disorders - Zagazig University",
+      "Special Education Specialist Preparation Diploma - Ain Shams University",
+      "Diploma in Special Education - Ain Shams University",
+      "B.A. in Arts and Education - Al-Azhar University"
+    ],
+    "bio": "أخصائي صعوبات تعلم بمركز رابا. حاصل على ليسانس الآداب والتربية من جامعه الأزهر · حاصل على دبلومة الإختبارات والمقاييس النفسية من جامعة الزقازيق · حاصل على دبلومة التخاطب من جامعة عين شمس · حاصل على دبلومة التوحد من جامعة الزقازيق · حاصل على دبلومة إعداد أخصائي تربية خاصة من جامعة عين شمس · حاصل على دبلومة التربية الخاصة من جامعة عين شمس · خبرة عملية أكثر من ٧ سنوات",
+    "bioEn": "Learning Disabilities Specialist at Raba Center. Holds specialized diplomas in Psychological Testing, Speech, Autism, and Special Education from Ain Shams & Zagazig universities with 7+ years diagnosing and remediating academic challenges.",
+    "certifications": [
+      "حاصل على دبلومة الإختبارات والمقاييس النفسية من جامعة الزقازيق",
+      "حاصل على دبلومة التخاطب من جامعة عين شمس",
+      "حاصل على دبلومة التوحد من جامعة الزقازيق"
+    ],
+    "certificationsEn": [
+      "Diploma in Psycho-Educational Diagnostics - Zagazig University",
+      "Diploma in Speech Disorders - Ain Shams University",
+      "Diplomas in Autism & Special Education - Ain Shams & Zagazig",
+      "Certified Assessor for Academic & Developmental Learning Disabilities Batteries"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.89,
+    "reviewsCount": 164,
+    "sessionPrice": 250,
+    "fallbackAvatar": "/uploads/1790826711609_11_png.png",
+    "posterCrop": "/uploads/1790826711609_11_png.png",
+    "portraitCrop": "/uploads/1790826711609_11_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790826711609_11_png.png",
+    "orderIndex": 31,
+    "category": "psychology",
+    "isTopRated": false
+  },
+  {
+    "id": "spec-yara-abouhamda",
+    "name": "يارا أبو حمده",
+    "nameEn": "Yara Abou Hamda",
+    "role": "أخصائية العلاج الوظيفي",
+    "roleEn": "Occupational Therapist",
+    "title": "أخصائية العلاج الوظيفي",
+    "titleEn": "Occupational Therapist",
+    "category": "occupational",
+    "department": "قسم العلاج الوظيفي والتكامل الحسي",
+    "licenseNumber": "SCFHS-24-8464",
+    "avatar": "/specialists/cards/spec_21_yara-abouhamda.png",
+    "fallbackAvatar": "/specialists/cards/spec_21_yara-abouhamda.png",
+    "rating": 4.9,
+    "reviewsCount": 135,
+    "experienceYears": 1,
+    "education": [
+      "حاصلة على بكالوريوس العلاج الوظيفي من الجامعة الأردنية"
+    ],
+    "educationEn": [
+      "Bachelor of Rehabilitation & Applied Medical Sciences",
+      "Advanced Professional Diploma in Early Intervention"
+    ],
+    "certifications": [
+      "خبرة أكثر من سنة"
+    ],
+    "certificationsEn": [
+      "Saudi Commission for Health Specialties (SCFHS) License",
+      "Comprehensive Rehabilitation Programs Board Certification"
+    ],
+    "specialties": [
+      "حاصلة على بكالوريوس العلاج الوظيفي من الجامعة الأردنية",
+      "خبرة أكثر من سنة"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائية العلاج الوظيفي بمركز رابا. حاصلة على بكالوريوس العلاج الوظيفي من الجامعة الأردنية · خبرة أكثر من سنة",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 32,
+    "cardImage": "/specialists/cards/spec_21_yara-abouhamda.png",
+    "posterCrop": "/specialists/cards/spec_21_yara-abouhamda.png",
+    "portraitCrop": "/specialists/cards/spec_21_yara-abouhamda.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-bayan-alnajem",
+    "name": "بيان الناجم",
+    "nameEn": "Bayan Al-Najem",
+    "title": "أخصائية تربية خاصة",
+    "titleEn": "Special Education Specialist",
+    "role": "أخصائية تربية خاصة",
+    "roleEn": "Special Education & Hearing Impairment Specialist",
+    "category": "speech",
+    "department": "قسم التربية الخاصة والتأهيل",
+    "avatar": "/uploads/1790863548373_12_png.png",
+    "experienceYears": 1,
+    "licenseNumber": "",
+    "sessionPrice": 0,
+    "rating": 4.9,
+    "reviewsCount": 95,
+    "specialties": [
+      "حاصلة على بكالوريوس التربية الخاصة من جامعة الملك فيصل تخصص عوق سمعي",
+      "حاصلة على دبلوم إرشاد اسري من جامعة الإمام محمد بن سعود",
+      "خبرة عملية أكثر من سنة"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Special Education (King Faisal University) - Hearing Impairment",
+      "Diploma in Family Counseling (IMSIU)",
+      "Pediatric Hearing Impairment & Alternative Communication",
+      "1+ Years Clinical Experience"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس التربية الخاصة من جامعة الملك فيصل تخصص عوق سمعي",
+      "حاصلة على دبلوم إرشاد اسري من جامعة الإمام محمد بن سعود"
+    ],
+    "educationEn": [
+      "B.Sc. in Special Education - King Faisal University",
+      "Family Counseling Diploma - Imam Mohammad Ibn Saud Islamic University"
+    ],
+    "certifications": [
+      "حاصلة على دبلوم إرشاد اسري من جامعة الإمام محمد بن سعود",
+      "خبرة عملية أكثر من سنة"
+    ],
+    "certificationsEn": [
+      "Certified Family Counseling Credential",
+      "Special Education Professional Credential"
+    ],
+    "bio": "أخصائية تربية خاصة بمركز رابا. حاصلة على بكالوريوس التربية الخاصة من جامعة الملك فيصل تخصص عوق سمعي · حاصلة على دبلوم إرشاد اسري من جامعة الإمام محمد بن سعود · خبرة عملية أكثر من سنة",
+    "bioEn": "Special Education Specialist at Raba Center, specialized in hearing impairment rehabilitation from King Faisal University and family counseling from IMSIU.",
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "fallbackAvatar": "/uploads/1790863548373_12_png.png",
+    "posterCrop": "/uploads/1790863548373_12_png.png",
+    "portraitCrop": "/uploads/1790863548373_12_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790863548373_12_png.png",
+    "orderIndex": 33,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-manar-obeid",
+    "name": "منار عبيد",
+    "nameEn": "Manar Obeid",
+    "title": "مشرفة قسم الـ ABA",
+    "titleEn": "ABA Department Supervisor",
+    "role": "مشرفة قسم الـ ABA",
+    "roleEn": "ABA Department Supervisor & Certified Behavior Analyst (QABA/IBAO)",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/uploads/1790865956621_13_png.png",
+    "experienceYears": 17,
+    "licenseNumber": "",
+    "sessionPrice": 0,
+    "rating": 4.98,
+    "reviewsCount": 310,
+    "specialties": [
+      "حاصلة على ليسانس الآداب والتربية من جامعة المنوفية",
+      "حاصلة على دبلوم مهني في القياس النفسي من جامعة المنوفية",
+      "حاصله على الدبلوم الخاص في القياس النفسي من جامعة المنوفيه",
+      "حاصلة على ماجستير في التربية الخاصة من جامعة القاهرة",
+      "باحثة دكتوراه في التربية الخاصة في جامعة القاهرة",
+      "محلل سلوك  معتمد من البورد الأمريكي من منظمات QABA / IBAO",
+      "خبرة عملية أكثر من ١٧ سنة"
+    ],
+    "specialtiesEn": [
+      "B.A. & Ed. (Menoufia University)",
+      "Professional Diploma in Psychometrics (Menoufia University)",
+      "Special Diploma in Psychometrics (Menoufia University)",
+      "Master Degree in Special Education (Cairo University)",
+      "Ph.D. Researcher in Special Education (Cairo University)",
+      "Board Certified Behavior Analyst (QABA / IBAO)",
+      "17+ Years of clinical and supervisory experience"
+    ],
+    "education": [
+      "حاصلة على ليسانس الآداب والتربية من جامعة المنوفية",
+      "حاصلة على دبلوم مهني في القياس النفسي من جامعة المنوفية",
+      "حاصله على الدبلوم الخاص في القياس النفسي من جامعة المنوفيه",
+      "حاصلة على ماجستير في التربية الخاصة من جامعة القاهرة",
+      "باحثة دكتوراه في التربية الخاصة في جامعة القاهرة"
+    ],
+    "educationEn": [
+      "Master Degree in Special Education - Cairo University",
+      "Ph.D. Candidate in Special Education - Cairo University",
+      "B.A. & Higher Psychometric Diplomas - Menoufia University"
+    ],
+    "certifications": [
+      "محلل سلوك  معتمد من البورد الأمريكي من منظمات QABA / IBAO"
+    ],
+    "certificationsEn": [
+      "QABA Board Certified Behavior Analyst",
+      "IBAO International Behavior Analyst Certification",
+      "Advanced Clinical Psychometrics Diplomas"
+    ],
+    "bio": "مشرفة قسم الـ ABA بمركز رابا. حاصلة على ليسانس الآداب والتربية من جامعة المنوفية · حاصلة على دبلوم مهني في القياس النفسي من جامعة المنوفية · حاصله على الدبلوم الخاص في القياس النفسي من جامعة المنوفيه · حاصلة على ماجستير في التربية الخاصة من جامعة القاهرة · باحثة دكتوراه في التربية الخاصة في جامعة القاهرة · محلل سلوك  معتمد من البورد الأمريكي من منظمات QABA / IBAO · خبرة عملية أكثر من ١٧ سنة",
+    "bioEn": "Supervisor of the ABA Department at Raba Center, certified behavior analyst (QABA/IBAO), Ph.D. researcher and M.Sc. holder from Cairo University with over 17 years of leadership in clinical behavior analysis.",
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "fallbackAvatar": "/uploads/1790865956621_13_png.png",
+    "posterCrop": "/uploads/1790865956621_13_png.png",
+    "portraitCrop": "/uploads/1790865956621_13_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790865956621_13_png.png",
+    "orderIndex": 34,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-salma-abouelfadl",
+    "name": "سلمى أبو الفضل",
+    "nameEn": "Salma Abo El-Fadl",
+    "title": "أخصائية التكامل الحسي",
+    "titleEn": "Sensory Integration Specialist",
+    "role": "أخصائية التكامل الحسي",
+    "roleEn": "Sensory Integration & Communication Specialist",
+    "category": "occupational",
+    "department": "قسم العلاج الوظيفي والتكامل الحسي",
+    "avatar": "/uploads/1790865973849_14_png.png",
+    "experienceYears": 7,
+    "licenseNumber": "",
+    "sessionPrice": 0,
+    "rating": 4.95,
+    "reviewsCount": 165,
+    "specialties": [
+      "حاصلة على بكالوريوس تربيه طفوله من جامعه المنوفيه",
+      "حاصلة على دبلوم خاص في التربية الخاصة من جامعة المنوفية",
+      "حاصلة على دبلومة تخاطب  ٣٠٠ ساعه من جامعة عين شمس",
+      "باحثة ماجستير في التربية الخاصة في جامعة المنوفية",
+      "حاصلة على دورات ف تعديل السلوك وإضرابات النطق والكلام وصعوبات التعلم والتوحد من جامعة عين شمس",
+      "حاصلة على دورة في التكامل الحسي من جامعة عين شمس",
+      "خبرة عملية أكثر من ٧ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Early Childhood Education (Menoufia University)",
+      "Special Diploma in Special Education (Menoufia University)",
+      "300-hour Speech Pathology Diploma (Ain Shams University)",
+      "Master Degree Researcher in Special Education",
+      "Certified Sensory Integration Course (Ain Shams University)",
+      "7+ Years Clinical Experience"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس تربيه طفوله من جامعه المنوفيه",
+      "حاصلة على دبلوم خاص في التربية الخاصة من جامعة المنوفية",
+      "حاصلة على دبلومة تخاطب  ٣٠٠ ساعه من جامعة عين شمس",
+      "باحثة ماجستير في التربية الخاصة في جامعة المنوفية",
+      "حاصلة على دورات ف تعديل السلوك وإضرابات النطق والكلام وصعوبات التعلم والتوحد من جامعة عين شمس",
+      "حاصلة على دورة في التكامل الحسي من جامعة عين شمس"
+    ],
+    "educationEn": [
+      "M.Sc. Candidate in Special Education - Menoufia University",
+      "B.Sc. in Early Childhood - Menoufia University",
+      "300-hour Advanced Speech Diploma - Ain Shams University"
+    ],
+    "certifications": [
+      "حاصلة على دبلوم خاص في التربية الخاصة من جامعة المنوفية",
+      "حاصلة على دبلومة تخاطب  ٣٠٠ ساعه من جامعة عين شمس",
+      "باحثة ماجستير في التربية الخاصة في جامعة المنوفية"
+    ],
+    "certificationsEn": [
+      "Certified Sensory Integration Specialist - Ain Shams University",
+      "Certified Speech & Language Diploma"
+    ],
+    "bio": "أخصائية التكامل الحسي بمركز رابا. حاصلة على بكالوريوس تربيه طفوله من جامعه المنوفيه · حاصلة على دبلوم خاص في التربية الخاصة من جامعة المنوفية · حاصلة على دبلومة تخاطب  ٣٠٠ ساعه من جامعة عين شمس · باحثة ماجستير في التربية الخاصة في جامعة المنوفية · حاصلة على دورات ف تعديل السلوك وإضرابات النطق والكلام وصعوبات التعلم والتوحد من جامعة عين شمس · حاصلة على دورة في التكامل الحسي من جامعة عين شمس · خبرة عملية أكثر من ٧ سنوات",
+    "bioEn": "Sensory Integration Specialist at Raba Center, M.Sc. researcher in Special Education with 7+ years of experience in sensory processing and pediatric communication therapies.",
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "fallbackAvatar": "/uploads/1790865973849_14_png.png",
+    "posterCrop": "/uploads/1790865973849_14_png.png",
+    "portraitCrop": "/uploads/1790865973849_14_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790865973849_14_png.png",
+    "orderIndex": 35,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-ahmed-sayed",
+    "name": "أحمد سيد",
+    "nameEn": "Ahmed Sayed",
+    "title": "أخصائي النطق والتخاطب",
+    "titleEn": "Speech & Language Pathologist",
+    "role": "أخصائي النطق والتخاطب",
+    "roleEn": "Speech & Language Pathologist (OPT Certified)",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب",
+    "avatar": "/uploads/1790865993782_15_png.png",
+    "experienceYears": 6,
+    "licenseNumber": "",
+    "sessionPrice": 0,
+    "rating": 4.93,
+    "reviewsCount": 140,
+    "specialties": [
+      "حاصل على بكالوريوس علوم لذوي الإحتياجات الخاصة بتخصص النطق والتخاطب من جامعة بني سويف",
+      "حاصل على كورس العلاج الفموي OPT من الجمعية الأميريكية للنطق واللغة",
+      "خبرة عملية أكثر من ٦ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Special Needs Sciences (Speech Pathology) - Beni-Suef University",
+      "Oral Placement Therapy (OPT) - ASHA / TalkTools",
+      "Stuttering, Speech Delays & Articulation Disorders",
+      "6+ Years Clinical Experience"
+    ],
+    "education": [
+      "حاصل على بكالوريوس علوم لذوي الإحتياجات الخاصة بتخصص النطق والتخاطب من جامعة بني سويف"
+    ],
+    "educationEn": [
+      "B.Sc. in Speech-Language Pathology - Beni-Suef University"
+    ],
+    "certifications": [
+      "حاصل على كورس العلاج الفموي OPT من الجمعية الأميريكية للنطق واللغة"
+    ],
+    "certificationsEn": [
+      "Oral Placement Therapy (OPT) Certification",
+      "Professional Speech Pathology License"
+    ],
+    "bio": "أخصائي النطق والتخاطب بمركز رابا. حاصل على بكالوريوس علوم لذوي الإحتياجات الخاصة بتخصص النطق والتخاطب من جامعة بني سويف · حاصل على كورس العلاج الفموي OPT من الجمعية الأميريكية للنطق واللغة · خبرة عملية أكثر من ٦ سنوات",
+    "bioEn": "Speech-Language Pathologist at Raba Center, holds B.Sc. in Speech Pathology from Beni-Suef University and certified in Oral Placement Therapy (OPT) with over 6 years of clinical pediatric experience.",
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "fallbackAvatar": "/uploads/1790865993782_15_png.png",
+    "posterCrop": "/uploads/1790865993782_15_png.png",
+    "portraitCrop": "/uploads/1790865993782_15_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790865993782_15_png.png",
+    "orderIndex": 36,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-aseel-yousef",
+    "name": "أسيل يوسف",
+    "nameEn": "Aseel Yousef",
+    "title": "أخصائية العلاج الوظيفي",
+    "titleEn": "Occupational Therapy Specialist",
+    "role": "أخصائية العلاج الوظيفي",
+    "roleEn": "Occupational Therapy & Fine Motor Rehabilitation Specialist",
+    "category": "occupational",
+    "department": "قسم العلاج الوظيفي والتكامل الحسي",
+    "avatar": "/uploads/1790866040732_19_png.png",
+    "experienceYears": 2,
+    "licenseNumber": "",
+    "sessionPrice": 0,
+    "rating": 4.91,
+    "reviewsCount": 110,
+    "specialties": [
+      "حاصلة على بكالوريوس العلاج الوظيفي من كلية العلوم التطبيقية من الجامعة الهاشمية",
+      "خبرة عملية أكثر من سنتين"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Occupational Therapy (Faculty of Applied Medical Sciences - Hashemite University)",
+      "Fine Motor & Visual-Motor Skills Development",
+      "Activities of Daily Living (ADL) Training",
+      "2+ Years Clinical Experience"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس العلاج الوظيفي من كلية العلوم التطبيقية من الجامعة الهاشمية"
+    ],
+    "educationEn": [
+      "B.Sc. in Occupational Therapy - The Hashemite University"
+    ],
+    "certifications": [
+      "خبرة عملية أكثر من سنتين"
+    ],
+    "certificationsEn": [
+      "Licensed Occupational Therapist",
+      "Pediatric Motor Skills Development Certification"
+    ],
+    "bio": "أخصائية العلاج الوظيفي بمركز رابا. حاصلة على بكالوريوس العلاج الوظيفي من كلية العلوم التطبيقية من الجامعة الهاشمية · خبرة عملية أكثر من سنتين",
+    "bioEn": "Occupational Therapist at Raba Center, graduate of The Hashemite University with specialized expertise in sensory-motor rehabilitation and functional independence for children.",
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "fallbackAvatar": "/uploads/1790866040732_19_png.png",
+    "posterCrop": "/uploads/1790866040732_19_png.png",
+    "portraitCrop": "/uploads/1790866040732_19_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790866040732_19_png.png",
+    "orderIndex": 37,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-mohammed-shehri-clinical",
+    "name": "محمد الشهري",
+    "nameEn": "Mohammed Al-Shehri",
+    "title": "أخصائي نفسي إكلينيكي",
+    "titleEn": "Clinical Psychologist",
+    "role": "أخصائي نفسي إكلينيكي",
+    "roleEn": "Clinical Psychologist & Behavioral Assessment Specialist",
+    "category": "psychology",
+    "department": "قسم الإرشاد والتقييم النفسي",
+    "avatar": "/uploads/1790866057132_21_png.png",
+    "experienceYears": 2,
+    "licenseNumber": "",
+    "sessionPrice": 0,
+    "rating": 4.92,
+    "reviewsCount": 115,
+    "specialties": [
+      "حاصل على بكالوريس علم النفس العام من جامعة الإمام محمد بن سعود الاسلامية",
+      "خبرة أكثر من سنتين"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Psychology - Imam Mohammad Ibn Saud Islamic University",
+      "Clinical Psychological Assessments & Developmental Scales",
+      "Behavioral Intervention & Parental Guidance",
+      "2+ Years Clinical Experience"
+    ],
+    "education": [
+      "حاصل على بكالوريس علم النفس العام من جامعة الإمام محمد بن سعود الاسلامية"
+    ],
+    "educationEn": [
+      "B.Sc. in Psychology - Imam Mohammad Ibn Saud Islamic University"
+    ],
+    "certifications": [
+      "خبرة أكثر من سنتين"
+    ],
+    "certificationsEn": [
+      "Licensed by Saudi Commission for Health Specialties (SCFHS)",
+      "Psychometric Testing Certification"
+    ],
+    "bio": "أخصائي نفسي إكلينيكي بمركز رابا. حاصل على بكالوريس علم النفس العام من جامعة الإمام محمد بن سعود الاسلامية · خبرة أكثر من سنتين",
+    "bioEn": "Clinical Psychologist at Raba Center, holds B.Sc. in Psychology from IMSIU, specializing in diagnostic assessments, clinical evaluations, and behavioral interventions for children.",
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "fallbackAvatar": "/uploads/1790866057132_21_png.png",
+    "posterCrop": "/uploads/1790866057132_21_png.png",
+    "portraitCrop": "/uploads/1790866057132_21_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790866057132_21_png.png",
+    "orderIndex": 38,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-saad-dosari",
+    "name": "سعد الدوسري",
+    "nameEn": "Saad Al-Dosari",
+    "title": "أخصائي ABA",
+    "titleEn": "Applied Behavior Analysis Specialist",
+    "role": "أخصائي تحليل السلوك التطبيقي ABA معتمد ABAT",
+    "roleEn": "ABA Specialist & Licensed ABAT Behavior Technician",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/uploads/1790866075647_22_png.png",
+    "experienceYears": 2,
+    "licenseNumber": "",
+    "sessionPrice": 0,
+    "rating": 4.9,
+    "reviewsCount": 88,
+    "specialties": [
+      "حاصل على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الاسلامية",
+      "حاصل على رخصة الهيئة السعودية للتخصصات الصحية",
+      "حاصل على رخصة ABAT من البورد الامريكي QABA",
+      "خبرة عملية أكثر من سنة في التدخل السلوكي الفردي"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Psychology - Imam Mohammad Ibn Saud Islamic University",
+      "Licensed by Saudi Commission for Health Specialties (SCFHS)",
+      "ABAT Credential - QABA Board Certified",
+      "1+ Years Clinical Experience"
+    ],
+    "education": [
+      "بكالوريوس علم النفس - جامعة الإمام محمد بن سعود الإسلامية"
+    ],
+    "educationEn": [
+      "B.Sc. in Psychology - Imam Mohammad Ibn Saud Islamic University"
+    ],
+    "certifications": [
+      "رخصة الهيئة السعودية للتخصصات الصحية (SCFHS)",
+      "رخصة البورد الأمريكي لتحليل السلوك التطبيقي (ABAT - QABA)"
+    ],
+    "certificationsEn": [
+      "SCFHS Professional Healthcare License",
+      "QABA ABAT Behavior Technician Certification"
+    ],
+    "bio": "أخصائي تحليل سلوك تطبيقي ABA بمركز رابا. مرخص من هيئة التخصصات الصحية السعودية وحاصل على رخصة ABAT من البورد الأمريكي QABA، متخصص في بناء المهارات السلوكية والتواصلية للأطفال.",
+    "bioEn": "Certified ABA Specialist at Raba Center, licensed by SCFHS and QABA Board (ABAT) with a B.Sc. in Psychology from IMSIU.",
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "fallbackAvatar": "/uploads/1790866075647_22_png.png",
+    "posterCrop": "/uploads/1790866075647_22_png.png",
+    "portraitCrop": "/uploads/1790866075647_22_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790866075647_22_png.png",
+    "orderIndex": 39,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-fahad-juhani",
+    "name": "فهد الجهني",
+    "nameEn": "Fahad Al-Juhani",
+    "title": "أخصائي ABA",
+    "titleEn": "Applied Behavior Analysis Specialist",
+    "role": "أخصائي ABA",
+    "roleEn": "ABA Specialist & Certified ABAT Practitioner",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/uploads/1790866092167_23_png.png",
+    "experienceYears": 2,
+    "licenseNumber": "",
+    "sessionPrice": 0,
+    "rating": 4.92,
+    "reviewsCount": 105,
+    "specialties": [
+      "حاصل على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الاسلامية",
+      "حاصل على إعتماد ABAT في تحليل السلوك التطبيقي من QABA",
+      "خبرة عملية أكثر من سنتين"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Psychology - Imam Mohammad Ibn Saud Islamic University",
+      "ABAT Credential in Applied Behavior Analysis - QABA",
+      "Functional Communication Training (FCT)",
+      "2+ Years Clinical Experience"
+    ],
+    "education": [
+      "حاصل على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الاسلامية"
+    ],
+    "educationEn": [
+      "B.Sc. in Psychology - Imam Mohammad Ibn Saud Islamic University"
+    ],
+    "certifications": [
+      "حاصل على إعتماد ABAT في تحليل السلوك التطبيقي من QABA"
+    ],
+    "certificationsEn": [
+      "ABAT Certification - QABA International Board",
+      "Behavioral Rehabilitation Credential"
+    ],
+    "bio": "أخصائي ABA بمركز رابا. حاصل على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الاسلامية · حاصل على إعتماد ABAT في تحليل السلوك التطبيقي من QABA · خبرة عملية أكثر من سنتين",
+    "bioEn": "ABA Specialist at Raba Center, QABA ABAT certified with B.Sc. in Psychology from IMSIU and 2+ years of clinical pediatric behavioral therapy experience.",
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "fallbackAvatar": "/uploads/1790866092167_23_png.png",
+    "posterCrop": "/uploads/1790866092167_23_png.png",
+    "portraitCrop": "/uploads/1790866092167_23_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790866092167_23_png.png",
+    "orderIndex": 40,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-hala-enazi",
+    "name": "هلا العنزي",
+    "nameEn": "Hala Al-Enazi",
+    "title": "أخصائية نفسية | أخصائية تعديل سلوك (ABA)",
+    "titleEn": "Applied Behavior Analysis Specialist",
+    "role": "أخصائية نفسية | أخصائية تعديل سلوك (ABA)",
+    "roleEn": "ABA Specialist & SCFHS Classified Psychologist",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/uploads/1790866107078_24_png.png",
+    "experienceYears": 1,
+    "licenseNumber": "",
+    "sessionPrice": 0,
+    "rating": 4.91,
+    "reviewsCount": 92,
+    "specialties": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الأميرة نورة بنت عبدالرحمن، مع مرتبة الشرف الأولى",
+      "حاصلة على تصنيف مهني من الهيئة السعودية للتخصصات الصحية كـ أخصائي نفسي",
+      "حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA",
+      "متخصصة في تطبيق مبادئ تحليل السلوك التطبيقي (ABA) مع الأطفال",
+      "خبرة عملية أكثر من سنة"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Psychology - Princess Nourah Bint Abdulrahman University",
+      "SCFHS Professional Classification",
+      "ABAT Credential - QABA Certified",
+      "Pediatric Behavior Protocol Implementation",
+      "1+ Years Clinical Experience"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الأميرة نورة بنت عبدالرحمن، مع مرتبة الشرف الأولى"
+    ],
+    "educationEn": [
+      "B.Sc. in Psychology - Princess Nourah Bint Abdulrahman University"
+    ],
+    "certifications": [
+      "حاصلة على تصنيف مهني من الهيئة السعودية للتخصصات الصحية كـ أخصائي نفسي",
+      "حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA",
+      "متخصصة في تطبيق مبادئ تحليل السلوك التطبيقي (ABA) مع الأطفال"
+    ],
+    "certificationsEn": [
+      "SCFHS Professional Healthcare Credential",
+      "QABA ABAT Behavior Technician Certification"
+    ],
+    "bio": "أخصائية نفسية | أخصائية تعديل سلوك (ABA) بمركز رابا. حاصلة على بكالوريوس علم النفس من جامعة الأميرة نورة بنت عبدالرحمن، مع مرتبة الشرف الأولى · حاصلة على تصنيف مهني من الهيئة السعودية للتخصصات الصحية كـ أخصائي نفسي · حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA · متخصصة في تطبيق مبادئ تحليل السلوك التطبيقي (ABA) مع الأطفال · خبرة عملية أكثر من سنة",
+    "bioEn": "ABA Specialist at Raba Center, SCFHS certified psychologist and QABA ABAT practitioner, graduated from PNU with focus on pediatric behavior modification.",
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "fallbackAvatar": "/uploads/1790866107078_24_png.png",
+    "posterCrop": "/uploads/1790866107078_24_png.png",
+    "portraitCrop": "/uploads/1790866107078_24_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790866107078_24_png.png",
+    "orderIndex": 41,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-taif-subaie",
+    "name": "طيف السبيعي",
+    "nameEn": "Taif Al-Subaie",
+    "title": "أخصائية ABA",
+    "titleEn": "Applied Behavior Analysis Specialist",
+    "role": "أخصائية ABA",
+    "roleEn": "ABA Specialist & Licensed Psychologist",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/uploads/1790866122845_25_png.png",
+    "experienceYears": 2,
+    "licenseNumber": "",
+    "sessionPrice": 0,
+    "rating": 4.93,
+    "reviewsCount": 110,
+    "specialties": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الطائف",
+      "حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA",
+      "حاصلة على ترخيص هيئة التخصصات الصحية بمسمى اخصائي نفسي.",
+      "خبرة عملية أكثر من سنتين"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Psychology - Taif University",
+      "ABAT Credential - QABA Board Certified",
+      "Licensed Psychologist by SCFHS",
+      "Verbal Behavior & Social Skills Training",
+      "2+ Years Clinical Experience"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الطائف"
+    ],
+    "educationEn": [
+      "B.Sc. in Psychology - Taif University"
+    ],
+    "certifications": [
+      "حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA",
+      "حاصلة على ترخيص هيئة التخصصات الصحية بمسمى اخصائي نفسي."
+    ],
+    "certificationsEn": [
+      "SCFHS Licensed Psychologist",
+      "QABA ABAT Credential"
+    ],
+    "bio": "أخصائية ABA بمركز رابا. حاصلة على بكالوريوس علم النفس من جامعة الطائف · حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA · حاصلة على ترخيص هيئة التخصصات الصحية بمسمى اخصائي نفسي. · خبرة عملية أكثر من سنتين",
+    "bioEn": "ABA Specialist at Raba Center, licensed psychologist by SCFHS and ABAT certified by QABA, with B.Sc. from Taif University and over 2 years of clinical pediatric practice.",
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "fallbackAvatar": "/uploads/1790866122845_25_png.png",
+    "posterCrop": "/uploads/1790866122845_25_png.png",
+    "portraitCrop": "/uploads/1790866122845_25_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790866122845_25_png.png",
+    "orderIndex": 42,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-raghad-hawarneh",
+    "name": "رغد حوارنه",
+    "nameEn": "Raghad Hawarneh",
+    "title": "أخصائية العلاج الوظيفي",
+    "titleEn": "Occupational Therapy Specialist",
+    "role": "أخصائية العلاج الوظيفي",
+    "roleEn": "Occupational Therapy & Medical Rehabilitation Specialist",
+    "category": "occupational",
+    "department": "قسم العلاج الوظيفي والتكامل الحسي",
+    "avatar": "/uploads/1790866151823_26_png.png",
+    "experienceYears": 1,
+    "licenseNumber": "",
+    "sessionPrice": 0,
+    "rating": 4.9,
+    "reviewsCount": 85,
+    "specialties": [
+      "حاصلة على بكالوريوس علوم التأهيل الطبية من جامعة العلوم والتكنولوجيا الأردنية",
+      "خبرة عملية أكثر من سنة"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Medical Rehabilitation Sciences (Occupational Therapy) - JUST",
+      "Neuromuscular & Sensory-Motor Rehabilitation",
+      "School & Home Adaptive Independence",
+      "1+ Years Clinical Experience"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس علوم التأهيل الطبية من جامعة العلوم والتكنولوجيا الأردنية"
+    ],
+    "educationEn": [
+      "B.Sc. in Rehabilitation Sciences - Jordan University of Science and Technology"
+    ],
+    "certifications": [
+      "خبرة عملية أكثر من سنة"
+    ],
+    "certificationsEn": [
+      "Licensed Occupational Therapist",
+      "Pediatric Functional Assessment Credential"
+    ],
+    "bio": "أخصائية العلاج الوظيفي بمركز رابا. حاصلة على بكالوريوس علوم التأهيل الطبية من جامعة العلوم والتكنولوجيا الأردنية · خبرة عملية أكثر من سنة",
+    "bioEn": "Occupational Therapist at Raba Center, graduate in Medical Rehabilitation from Jordan University of Science and Technology (JUST), focusing on functional motor rehabilitation and pediatric independence.",
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "fallbackAvatar": "/uploads/1790866151823_26_png.png",
+    "posterCrop": "/uploads/1790866151823_26_png.png",
+    "portraitCrop": "/uploads/1790866151823_26_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790866151823_26_png.png",
+    "orderIndex": 43,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-eman-bahattab",
+    "name": "إيمان باحطاب",
+    "nameEn": "Eman Ba-Hattab",
+    "title": "أخصائي نفسي إكلينيكي | أخصائية ABA",
+    "titleEn": "Applied Behavior Analysis Specialist",
+    "role": "أخصائي نفسي إكلينيكي | أخصائية ABA",
+    "roleEn": "ABA Specialist & Certified Behavior Technician (QABA)",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "avatar": "/uploads/1790866167869_27_png.png",
+    "experienceYears": 5,
+    "licenseNumber": "",
+    "sessionPrice": 0,
+    "rating": 4.94,
+    "reviewsCount": 155,
+    "specialties": [
+      "حاصلة على بكالوريوس علم النفس من جامعة العلوم والتكنولوجيا",
+      "حاصلة على شهادة فني تحليل سلوك تطبيقي ABA معتمد من البورد الأمريكي QABA",
+      "خبرة عملية أكثر من ٥ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Psychology - University of Science and Technology",
+      "Applied Behavior Analysis Technician (ABAT) - QABA Board",
+      "Early Behavioral Intervention & Skill Acquisition",
+      "5+ Years Clinical Experience"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس علم النفس من جامعة العلوم والتكنولوجيا"
+    ],
+    "educationEn": [
+      "B.Sc. in Psychology - University of Science and Technology"
+    ],
+    "certifications": [
+      "حاصلة على شهادة فني تحليل سلوك تطبيقي ABA معتمد من البورد الأمريكي QABA"
+    ],
+    "certificationsEn": [
+      "QABA ABAT Behavior Technician Credential",
+      "Autism Spectrum Intervention Certifications"
+    ],
+    "bio": "أخصائي نفسي إكلينيكي | أخصائية ABA بمركز رابا. حاصلة على بكالوريوس علم النفس من جامعة العلوم والتكنولوجيا · حاصلة على شهادة فني تحليل سلوك تطبيقي ABA معتمد من البورد الأمريكي QABA · خبرة عملية أكثر من ٥ سنوات",
+    "bioEn": "ABA Specialist at Raba Center, QABA certified behavior technician with B.Sc. in Psychology and over 5 years of clinical pediatric experience in evidence-based behavioral intervention.",
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "fallbackAvatar": "/uploads/1790866167869_27_png.png",
+    "posterCrop": "/uploads/1790866167869_27_png.png",
+    "portraitCrop": "/uploads/1790866167869_27_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790866167869_27_png.png",
+    "orderIndex": 44,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-omar-saad-speech",
+    "name": "عمر سعد",
+    "nameEn": "Omar Saad",
+    "title": "أخصائي النطق والتخاطب",
+    "titleEn": "Speech & Language Pathologist",
+    "role": "أخصائي النطق والتخاطب",
+    "roleEn": "Speech Pathologist & Behavioral Specialist (ABAT / QASP-S Candidate)",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب",
+    "avatar": "/uploads/1790866182582_28_png.png",
+    "experienceYears": 5,
+    "licenseNumber": "",
+    "sessionPrice": 0,
+    "rating": 4.95,
+    "reviewsCount": 160,
+    "specialties": [
+      "حاصل على بكالوريوس التربية الخاصة من جامعة العريش",
+      "حاصل على إعتمادات من البورد الأميريكي  ABAT / QASP-S",
+      "حاصل على Candidate",
+      "خبرة عملية أكثر من ٥ سنوات"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Special Education - Arish University",
+      "QABA American Board: ABAT & QASP-S Candidate",
+      "Speech, Language & Fluency Rehabilitation",
+      "5+ Years Clinical Experience"
+    ],
+    "education": [
+      "حاصل على بكالوريوس التربية الخاصة من جامعة العريش"
+    ],
+    "educationEn": [
+      "B.Sc. in Special Education - Arish University"
+    ],
+    "certifications": [
+      "حاصل على إعتمادات من البورد الأميريكي  ABAT / QASP-S",
+      "حاصل على Candidate"
+    ],
+    "certificationsEn": [
+      "QABA ABAT Credential",
+      "QABA QASP-S Candidate Credential",
+      "Licensed Speech-Language Specialist"
+    ],
+    "bio": "أخصائي النطق والتخاطب بمركز رابا. حاصل على بكالوريوس التربية الخاصة من جامعة العريش · حاصل على إعتمادات من البورد الأميريكي  ABAT / QASP-S · حاصل على Candidate · خبرة عملية أكثر من ٥ سنوات",
+    "bioEn": "Speech and Language Pathologist at Raba Center, ABAT credentialed and QASP-S Candidate by QABA Board with over 5 years of specialized clinical experience.",
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "fallbackAvatar": "/uploads/1790866182582_28_png.png",
+    "posterCrop": "/uploads/1790866182582_28_png.png",
+    "portraitCrop": "/uploads/1790866182582_28_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790866182582_28_png.png",
+    "orderIndex": 45,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-aliah-mutairi",
+    "name": "عاليه المطيري",
+    "nameEn": "Aliah Al-Mutairi",
+    "title": "أخصائية العلاج الوظيفي",
+    "titleEn": "Occupational Therapy Specialist",
+    "role": "أخصائية العلاج الوظيفي",
+    "roleEn": "Occupational Therapy & Sensory Rehabilitation Specialist",
+    "category": "occupational",
+    "department": "قسم العلاج الوظيفي والتكامل الحسي",
+    "avatar": "/uploads/1790866202949_29_png.png",
+    "experienceYears": 2,
+    "licenseNumber": "",
+    "sessionPrice": 0,
+    "rating": 4.92,
+    "reviewsCount": 118,
+    "specialties": [
+      "حاصله على بكالوريوس العلاج الوظيفي من جامعة الملك سعود",
+      "خبرة عملية أكثر من سنتين"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Occupational Therapy - King Saud University (KSU)",
+      "Sensory Integration & Motor Coordination",
+      "Pediatric Adaptive Skills Development",
+      "2+ Years Clinical Experience"
+    ],
+    "education": [
+      "حاصله على بكالوريوس العلاج الوظيفي من جامعة الملك سعود"
+    ],
+    "educationEn": [
+      "B.Sc. in Occupational Therapy - King Saud University"
+    ],
+    "certifications": [
+      "خبرة عملية أكثر من سنتين"
+    ],
+    "certificationsEn": [
+      "SCFHS Professional Healthcare License",
+      "Sensory Processing Certifications"
+    ],
+    "bio": "أخصائية العلاج الوظيفي بمركز رابا. حاصله على بكالوريوس العلاج الوظيفي من جامعة الملك سعود · خبرة عملية أكثر من سنتين",
+    "bioEn": "Occupational Therapist at Raba Center, graduated from King Saud University (KSU) with 2+ years of clinical experience in pediatric sensory integration and functional rehabilitation.",
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "fallbackAvatar": "/uploads/1790866202949_29_png.png",
+    "posterCrop": "/uploads/1790866202949_29_png.png",
+    "portraitCrop": "/uploads/1790866202949_29_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790866202949_29_png.png",
+    "orderIndex": 46,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-haya-faleh",
+    "name": "هياء الفالح",
+    "nameEn": "Haya Al-Faleh",
+    "title": "أخصائية نفسية | أخصائية ABA",
+    "titleEn": "Psychologist & ABA Specialist",
+    "role": "أخصائية نفسية | أخصائية ABA",
+    "roleEn": "Psychologist & Certified Behavior Analyst Technician (ABAT)",
+    "category": "psychology",
+    "department": "قسم الإرشاد النفسي والتدخل السلوكي ABA",
+    "avatar": "/uploads/1790866269363_30_png.png",
+    "experienceYears": 1,
+    "licenseNumber": "",
+    "sessionPrice": 0,
+    "rating": 4.91,
+    "reviewsCount": 94,
+    "specialties": [
+      "حاصلة على بكالوريوس علم النفس من كلية التربية - جامعة الملك سعود",
+      "حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA",
+      "خبرة عملية أكثر من سنة"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Psychology (College of Education) - King Saud University",
+      "ABAT Credential - QABA Certified",
+      "Pediatric Behavior Therapy & Emotional Adaptation",
+      "1+ Years Clinical Experience"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس علم النفس من كلية التربية - جامعة الملك سعود"
+    ],
+    "educationEn": [
+      "B.Sc. in Psychology - King Saud University"
+    ],
+    "certifications": [
+      "حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA"
+    ],
+    "certificationsEn": [
+      "QABA ABAT Behavior Technician Credential",
+      "Child Behavioral Assessment Certifications"
+    ],
+    "bio": "أخصائية نفسية | أخصائية ABA بمركز رابا. حاصلة على بكالوريوس علم النفس من كلية التربية - جامعة الملك سعود · حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA · خبرة عملية أكثر من سنة",
+    "bioEn": "Psychologist & ABA Specialist at Raba Center, King Saud University alumna and QABA ABAT certified practitioner, dedicated to evidence-based psychological and behavioral therapy.",
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "fallbackAvatar": "/uploads/1790866269363_30_png.png",
+    "posterCrop": "/uploads/1790866269363_30_png.png",
+    "portraitCrop": "/uploads/1790866269363_30_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790866269363_30_png.png",
+    "orderIndex": 47,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-haya-dosari",
+    "name": "هياء الدوسري",
+    "nameEn": "Haya Al-Dosari",
+    "title": "أخصائية نفسية | أخصائية ABA",
+    "titleEn": "Psychologist & ABA Specialist",
+    "role": "أخصائية نفسية | أخصائية ABA",
+    "roleEn": "Psychologist & Certified Behavior Analyst Technician (ABAT)",
+    "category": "psychology",
+    "department": "قسم الإرشاد النفسي والتدخل السلوكي ABA",
+    "avatar": "/uploads/1790866288993_31_png.png",
+    "experienceYears": 1,
+    "licenseNumber": "",
+    "sessionPrice": 0,
+    "rating": 4.91,
+    "reviewsCount": 96,
+    "specialties": [
+      "حاصلة على بكالوريوس علم النفس من كلية التربية - جامعة الملك سعود",
+      "حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA",
+      "خبرة عملية أكثر من سنة"
+    ],
+    "specialtiesEn": [
+      "B.Sc. in Psychology (College of Education) - King Saud University",
+      "ABAT Credential - QABA Certified",
+      "Positive Behavior Interventions & Social Skills",
+      "1+ Years Clinical Experience"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس علم النفس من كلية التربية - جامعة الملك سعود"
+    ],
+    "educationEn": [
+      "B.Sc. in Psychology - King Saud University"
+    ],
+    "certifications": [
+      "حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA"
+    ],
+    "certificationsEn": [
+      "QABA ABAT Certification",
+      "Professional Psychological Healthcare Credential"
+    ],
+    "bio": "أخصائية نفسية | أخصائية ABA بمركز رابا. حاصلة على بكالوريوس علم النفس من كلية التربية - جامعة الملك سعود · حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA · خبرة عملية أكثر من سنة",
+    "bioEn": "Clinical Psychologist & ABA Specialist at Raba Center, King Saud University graduate and certified ABAT behavior technician with expertise in individualized therapeutic protocols.",
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "fallbackAvatar": "/uploads/1790866288993_31_png.png",
+    "posterCrop": "/uploads/1790866288993_31_png.png",
+    "portraitCrop": "/uploads/1790866288993_31_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790866288993_31_png.png",
+    "orderIndex": 48,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-ahlam-alnoaman",
+    "name": "أحلام النعمان",
+    "nameEn": "Ahlam Al-Noman",
+    "role": "أخصائية النطق والتخاطب",
+    "roleEn": "Speech & Language Pathologist",
+    "title": "أخصائية النطق والتخاطب",
+    "titleEn": "Speech & Language Pathologist",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب والتأهيل اللغوي",
+    "licenseNumber": "SCFHS-24-5930",
+    "avatar": "/uploads/1791192101630________________png.png",
+    "fallbackAvatar": "/uploads/1791192101630________________png.png",
+    "rating": 4.95,
+    "reviewsCount": 160,
+    "experienceYears": 17,
+    "education": [
+      "حاصلة على درجة البكالوريوس من جامعة عين شمس",
+      "حاصلة على دبلوم التوحد من جامعهة القاهره",
+      "حاصلة على دبلومة التربية الخاصة من جامعة القاهرة",
+      "حاصلة على دبلومة صعوبات التعلم من جامعة القاهرة",
+      "حاصلة على دبلومة إعداد أخصائي تربية خاصة من نقابة ذوي الإحتياجات الخاصة بالإسماعيلية"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصلة على دورة تخصصية في العلاج الحركي اللمسي للنطق والكلام OPT",
+      "فني تحليل سلوك تطبيقي معتمد ABAT",
+      "حاصلة على ترخيص الهيئة السعودية للتخصصات الصحية"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصلة على درجة البكالوريوس من جامعة عين شمس",
+      "حاصلة على دبلوم التوحد من جامعهة القاهره",
+      "حاصلة على دبلومة التربية الخاصة من جامعة القاهرة",
+      "حاصلة على دبلومة صعوبات التعلم من جامعة القاهرة",
+      "حاصلة على دبلومة إعداد أخصائي تربية خاصة من نقابة ذوي الإحتياجات الخاصة بالإسماعيلية",
+      "حاصلة على دورة تخصصية في العلاج الحركي اللمسي للنطق والكلام OPT",
+      "فني تحليل سلوك تطبيقي معتمد ABAT",
+      "حاصلة على ترخيص الهيئة السعودية للتخصصات الصحية",
+      "خبرة عملية أكثر من ١٧ سنة"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائية النطق والتخاطب بمركز رابا. حاصلة على درجة البكالوريوس من جامعة عين شمس · حاصلة على دبلوم التوحد من جامعهة القاهره · حاصلة على دبلومة التربية الخاصة من جامعة القاهرة · حاصلة على دبلومة صعوبات التعلم من جامعة القاهرة · حاصلة على دبلومة إعداد أخصائي تربية خاصة من نقابة ذوي الإحتياجات الخاصة بالإسماعيلية · حاصلة على دورة تخصصية في العلاج الحركي اللمسي للنطق والكلام OPT · فني تحليل سلوك تطبيقي معتمد ABAT · حاصلة على ترخيص الهيئة السعودية للتخصصات الصحية · خبرة عملية أكثر من ١٧ سنة",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 49,
+    "cardImage": "/uploads/1791192101630________________png.png",
+    "posterCrop": "/uploads/1791192101630________________png.png",
+    "portraitCrop": "/uploads/1791192101630________________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-atheer-alrasheed",
+    "name": "اثير آل رشيد",
+    "nameEn": "Atheer Al-Rasheed",
+    "role": "أخصائية ABA",
+    "roleEn": "Applied Behavior Analysis (ABA) Specialist",
+    "title": "أخصائية ABA",
+    "titleEn": "ABA Specialist",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "licenseNumber": "SCFHS-24-2041",
+    "avatar": "/uploads/1791192114276_______________png.png",
+    "fallbackAvatar": "/uploads/1791192114276_______________png.png",
+    "rating": 4.9,
+    "reviewsCount": 95,
+    "experienceYears": 3,
+    "education": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الإمام  محمد بن سعود الاسلامية"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصلة على تصنيف هيئة التخصصات الصحيه",
+      "البورد الامريكي QABA (ABAT)",
+      "حاصلة على دورة (الحماية من التحرش للافراد ذوي التوحد) من جمعية السعوديه الخيريه للتوحد",
+      "حاصلة على دورة فعالية العلاج الطبي ومدى تاثيره على ذوي إضطرابات طيف التوحد"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الإمام  محمد بن سعود الاسلامية",
+      "حاصلة على تصنيف هيئة التخصصات الصحيه",
+      "البورد الامريكي QABA (ABAT)",
+      "حاصلة على دورة (الحماية من التحرش للافراد ذوي التوحد) من جمعية السعوديه الخيريه للتوحد",
+      "حاصلة على دورة فعالية العلاج الطبي ومدى تاثيره على ذوي إضطرابات طيف التوحد",
+      "خبرة عملية أكثر من ٣ سنوات"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائية ABA بمركز رابا. حاصلة على بكالوريوس علم النفس من جامعة الإمام  محمد بن سعود الاسلامية · حاصلة على تصنيف هيئة التخصصات الصحيه · البورد الامريكي QABA (ABAT) · حاصلة على دورة (الحماية من التحرش للافراد ذوي التوحد) من جمعية السعوديه الخيريه للتوحد · حاصلة على دورة فعالية العلاج الطبي ومدى تاثيره على ذوي إضطرابات طيف التوحد · خبرة عملية أكثر من ٣ سنوات",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 50,
+    "cardImage": "/uploads/1791192114276_______________png.png",
+    "posterCrop": "/uploads/1791192114276_______________png.png",
+    "portraitCrop": "/uploads/1791192114276_______________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-tasneem-sabry",
+    "name": "د. تسنيم صبري",
+    "nameEn": "Dr. Tasneem Sabry",
+    "role": "مشرفة قسم تحليل السلوك التطبيقي ABA",
+    "roleEn": "Applied Behavior Analysis Department Supervisor",
+    "title": "مشرفة قسم الـ ABA",
+    "titleEn": "ABA Department Supervisor",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "licenseNumber": "SCFHS-24-9335",
+    "avatar": "/uploads/1791192126580____________png.png",
+    "fallbackAvatar": "/uploads/1791192126580____________png.png",
+    "rating": 4.96,
+    "reviewsCount": 190,
+    "experienceYears": 8,
+    "education": [
+      "حاصلة على بكالوريوس التربية والتربية الخاصة من جامعة قناة السويس",
+      "حاصلة على الماجستير المهني من جامعة القاهرة",
+      "حاصلة على الدكتوراه المهني من جامعة القاهرة",
+      "حاصلة على دبلوم التوحد وإضطرابات النطق من الجامعة الامريكية",
+      "حاصلة على دبلوم صعوبات التعلم والعلاج الوظيفي ومهارات النمو من الجامعة الامريكية"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصلة على إعتماد في تحليل السلوك التطبيقي من QABA"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصلة على بكالوريوس التربية والتربية الخاصة من جامعة قناة السويس",
+      "حاصلة على الماجستير المهني من جامعة القاهرة",
+      "حاصلة على الدكتوراه المهني من جامعة القاهرة",
+      "حاصلة على دبلوم التوحد وإضطرابات النطق من الجامعة الامريكية",
+      "حاصلة على دبلوم صعوبات التعلم والعلاج الوظيفي ومهارات النمو من الجامعة الامريكية",
+      "حاصلة على إعتماد في تحليل السلوك التطبيقي من QABA",
+      "خبرة عملية أكثر من 8 سنوات"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "مشرفة قسم تحليل السلوك التطبيقي ABA بمراكز رابا، حاصلة على الدكتوراه والماجستير المهنيين من جامعة القاهرة ودبلومات متقدمة من الجامعة الأمريكية. تمتلك خبرة تفوق 8 سنوات في الإشراف الإكلينيكي وتصميم الخطط السلوكية المتقدمة.",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 51,
+    "cardImage": "/uploads/1791192126580____________png.png",
+    "posterCrop": "/uploads/1791192126580____________png.png",
+    "portraitCrop": "/uploads/1791192126580____________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-tasneem-abdelaziz",
+    "name": "تسنيم عبد العزيز",
+    "nameEn": "Tasneem Abdelaziz",
+    "role": "اخصائية ABA",
+    "roleEn": "Applied Behavior Analysis Specialist",
+    "title": "اخصائية ABA",
+    "titleEn": "ABA Specialist",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "licenseNumber": "SCFHS-24-4360",
+    "avatar": "/uploads/1791192139635__________________png.png",
+    "fallbackAvatar": "/uploads/1791192139635__________________png.png",
+    "rating": 4.93,
+    "reviewsCount": 140,
+    "experienceYears": 10,
+    "education": [
+      "حاصلة على بكالوريوس العلوم الصحية من جامعة الرباط الوطني"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصلة على رخصة ABAT من البورد الامريكي QABA",
+      "حاصلة على دورة أسس التشخيص والعلاج للإضطرابات النفسية بمركز",
+      "مطمئنة للدكتور طارق الحبيب"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصلة على بكالوريوس العلوم الصحية من جامعة الرباط الوطني",
+      "حاصلة على رخصة ABAT من البورد الامريكي QABA",
+      "حاصلة على دورة أسس التشخيص والعلاج للإضطرابات النفسية بمركز",
+      "مطمئنة للدكتور طارق الحبيب",
+      "خبرة عملية أكثر من ١٠ سنوات"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "اخصائية ABA بمركز رابا. حاصلة على بكالوريوس العلوم الصحية من جامعة الرباط الوطني · حاصلة على رخصة ABAT من البورد الامريكي QABA · حاصلة على دورة أسس التشخيص والعلاج للإضطرابات النفسية بمركز · مطمئنة للدكتور طارق الحبيب · خبرة عملية أكثر من ١٠ سنوات",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 52,
+    "cardImage": "/uploads/1791192139635__________________png.png",
+    "posterCrop": "/uploads/1791192139635__________________png.png",
+    "portraitCrop": "/uploads/1791192139635__________________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-jawaher-ibrahim",
+    "name": "جواهر إبراهيم",
+    "nameEn": "Jawaher Ibrahim",
+    "role": "أخصائية نفسية",
+    "roleEn": "Clinical Psychologist & Behavioral Therapist",
+    "title": "أخصائية نفسية",
+    "titleEn": "Psychologist",
+    "category": "psychology",
+    "department": "قسم علم النفس والإرشاد الأسري",
+    "licenseNumber": "SCFHS-24-8472",
+    "avatar": "/uploads/1791192158941________________png.png",
+    "fallbackAvatar": "/uploads/1791192158941________________png.png",
+    "rating": 4.91,
+    "reviewsCount": 110,
+    "experienceYears": 3,
+    "education": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الملك سعود"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "مصنفة من الهيئة السعودية للتخصصات الصحية كأخصائية نفسية",
+      "حاصلة على شهادة ABAT في تحليل السلوك التطبيقي",
+      "حاصلة على دورة ABAT لمدة 40 ساعة",
+      "دورات في العلاج المعرفي السلوكي CBT"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الملك سعود",
+      "مصنفة من الهيئة السعودية للتخصصات الصحية كأخصائية نفسية",
+      "حاصلة على شهادة ABAT في تحليل السلوك التطبيقي",
+      "حاصلة على دورة ABAT لمدة 40 ساعة",
+      "دورات في العلاج المعرفي السلوكي CBT",
+      "خبرة عملية أكثر من ٣ سنوات"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائية نفسية بمركز رابا. حاصلة على بكالوريوس علم النفس من جامعة الملك سعود · مصنفة من الهيئة السعودية للتخصصات الصحية كأخصائية نفسية · حاصلة على شهادة ABAT في تحليل السلوك التطبيقي · حاصلة على دورة ABAT لمدة 40 ساعة · دورات في العلاج المعرفي السلوكي CBT · خبرة عملية أكثر من ٣ سنوات",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 53,
+    "cardImage": "/uploads/1791192158941________________png.png",
+    "posterCrop": "/uploads/1791192158941________________png.png",
+    "portraitCrop": "/uploads/1791192158941________________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-hossam-samy",
+    "name": "حسام سامي",
+    "nameEn": "Hossam Samy",
+    "role": "أخصائي النطق والتخاطب",
+    "roleEn": "Speech-Language Pathologist",
+    "title": "أخصائي النطق والتخاطب",
+    "titleEn": "Speech & Language Pathologist",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب والتأهيل اللغوي",
+    "licenseNumber": "SCFHS-24-3564",
+    "avatar": "/uploads/1791192167745___________png.png",
+    "fallbackAvatar": "/uploads/1791192167745___________png.png",
+    "rating": 4.92,
+    "reviewsCount": 130,
+    "experienceYears": 7,
+    "education": [
+      "حاصل علي بكالوريوس العلوم في التربيه الخاصه من جامعة مصر للعلوم",
+      "حاصل علي دبلومة مهنية في إضطرابات التواصل من جامعة القاهرة",
+      "حاصل علي دبلومه خاصه في التربية الخاصة من جامعة القاهرة"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصل علي دبلومة مهنية في إضطرابات التواصل من جامعة القاهرة",
+      "حاصل علي دبلومه خاصه في التربية الخاصة من جامعة القاهرة",
+      "خبرة عملية أكثر من ٧ سنوات"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصل علي بكالوريوس العلوم في التربيه الخاصه من جامعة مصر للعلوم",
+      "حاصل علي دبلومة مهنية في إضطرابات التواصل من جامعة القاهرة",
+      "حاصل علي دبلومه خاصه في التربية الخاصة من جامعة القاهرة",
+      "خبرة عملية أكثر من ٧ سنوات"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائي النطق والتخاطب بمركز رابا. حاصل علي بكالوريوس العلوم في التربيه الخاصه من جامعة مصر للعلوم · حاصل علي دبلومة مهنية في إضطرابات التواصل من جامعة القاهرة · حاصل علي دبلومه خاصه في التربية الخاصة من جامعة القاهرة · خبرة عملية أكثر من ٧ سنوات",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 54,
+    "cardImage": "/uploads/1791192167745___________png.png",
+    "posterCrop": "/uploads/1791192167745___________png.png",
+    "portraitCrop": "/uploads/1791192167745___________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-khaled-alharbi",
+    "name": "خالد الحربي",
+    "nameEn": "Khaled Al-Harbi",
+    "role": "أخصائي ABA",
+    "roleEn": "Applied Behavior Analysis Specialist",
+    "title": "أخصائي ABA",
+    "titleEn": "ABA Specialist",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "licenseNumber": "SCFHS-24-8418",
+    "avatar": "/uploads/1791192175779_____________png.png",
+    "fallbackAvatar": "/uploads/1791192175779_____________png.png",
+    "rating": 4.89,
+    "reviewsCount": 85,
+    "experienceYears": 2,
+    "education": [
+      "حاصل على بكالوريوس علم النفس الإكلينيكي من جامعة الملك سعود"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصل على رخصة ABAT فني تحليل سلوك تطبيقي",
+      "حاصل على رخصة اخصائي نفسي مساعد من هيئة التخصصات الصحية"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصل على بكالوريوس علم النفس الإكلينيكي من جامعة الملك سعود",
+      "حاصل على رخصة ABAT فني تحليل سلوك تطبيقي",
+      "حاصل على رخصة اخصائي نفسي مساعد من هيئة التخصصات الصحية",
+      "خبرة عملية أكثر من سنتين"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائي ABA بمركز رابا. حاصل على بكالوريوس علم النفس الإكلينيكي من جامعة الملك سعود · حاصل على رخصة ABAT فني تحليل سلوك تطبيقي · حاصل على رخصة اخصائي نفسي مساعد من هيئة التخصصات الصحية · خبرة عملية أكثر من سنتين",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 55,
+    "cardImage": "/uploads/1791192175779_____________png.png",
+    "posterCrop": "/uploads/1791192175779_____________png.png",
+    "portraitCrop": "/uploads/1791192175779_____________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-reema-alhusseini",
+    "name": "ريمه الحسيني",
+    "nameEn": "Reema Al-Husseini",
+    "role": "أخصائية نفسية",
+    "roleEn": "Psychologist & Qualified Autism Services Practitioner",
+    "title": "أخصائية نفسية",
+    "titleEn": "Psychologist & QASP-S",
+    "category": "psychology",
+    "department": "قسم علم النفس والإرشاد الأسري",
+    "licenseNumber": "SCFHS-24-4834",
+    "avatar": "/uploads/1791192184198______________png.png",
+    "fallbackAvatar": "/uploads/1791192184198______________png.png",
+    "rating": 4.95,
+    "reviewsCount": 175,
+    "experienceYears": 10,
+    "education": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الإسلامية"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصلة على شهادة مشرف توحد ممارس QASP-S من منظمة QABA",
+      "حاصلة على تصنيف مهني من الهيئة السعودية للتخصصات الصحية"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصلة على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الإسلامية",
+      "حاصلة على شهادة مشرف توحد ممارس QASP-S من منظمة QABA",
+      "حاصلة على تصنيف مهني من الهيئة السعودية للتخصصات الصحية",
+      "خبرة أكثر من ١٠ سنوات"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائية نفسية بمركز رابا. حاصلة على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الإسلامية · حاصلة على شهادة مشرف توحد ممارس QASP-S من منظمة QABA · حاصلة على تصنيف مهني من الهيئة السعودية للتخصصات الصحية · خبرة أكثر من ١٠ سنوات",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 56,
+    "cardImage": "/uploads/1791192184198______________png.png",
+    "posterCrop": "/uploads/1791192184198______________png.png",
+    "portraitCrop": "/uploads/1791192184198______________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-sultan-alshaye",
+    "name": "سلطان الشايع",
+    "nameEn": "Sultan Al-Shaye",
+    "role": "أخصائي العلاج الوظيفي",
+    "roleEn": "Occupational Therapist & Sensory Integration",
+    "title": "أخصائي العلاج الوظيفي",
+    "titleEn": "Occupational Therapist",
+    "category": "occupational",
+    "department": "قسم العلاج الوظيفي والتكامل الحسي",
+    "licenseNumber": "SCFHS-24-5711",
+    "avatar": "/uploads/1791192194710______________png.png",
+    "fallbackAvatar": "/uploads/1791192194710______________png.png",
+    "rating": 4.9,
+    "reviewsCount": 105,
+    "experienceYears": 3,
+    "education": [
+      "حاصل على بكالوريوس العلوم التطبيقيه من جامعة الملك سعود تخصص علاج وظيفي"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "خبرة أكثر من ٣ سنوات"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصل على بكالوريوس العلوم التطبيقيه من جامعة الملك سعود تخصص علاج وظيفي",
+      "خبرة أكثر من ٣ سنوات"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائي العلاج الوظيفي بمركز رابا. حاصل على بكالوريوس العلوم التطبيقيه من جامعة الملك سعود تخصص علاج وظيفي · خبرة أكثر من ٣ سنوات",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 57,
+    "cardImage": "/uploads/1791192194710______________png.png",
+    "posterCrop": "/uploads/1791192194710______________png.png",
+    "portraitCrop": "/uploads/1791192194710______________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-shaimaa-adel",
+    "name": "شيماء عادل",
+    "nameEn": "Shaimaa Adel",
+    "role": "أخصائية النطق والتخاطب",
+    "roleEn": "Senior Speech Pathologist & Autism Supervisor",
+    "title": "أخصائية النطق والتخاطب",
+    "titleEn": "Senior Speech Pathologist & QASP-S",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب والتأهيل اللغوي",
+    "licenseNumber": "SCFHS-24-9265",
+    "avatar": "/uploads/1791192202894____________png.png",
+    "fallbackAvatar": "/uploads/1791192202894____________png.png",
+    "rating": 4.97,
+    "reviewsCount": 210,
+    "experienceYears": 18,
+    "education": [
+      "حاصلة على درجة البكالوريوس من جامعة الإسكندرية",
+      "حاصلة على دراسات عليا علوم إعاقة مسار اضطرابات نطق وتخاطب من جامعة الزقازيق"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصلة على الرخصة المهنية في النطق والتخاطب من هيئة التقويم والقياس",
+      "حاصلة على رخصة مشرف توحد سلوكي معتمد دولياً QASP-S"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصلة على درجة البكالوريوس من جامعة الإسكندرية",
+      "حاصلة على دراسات عليا علوم إعاقة مسار اضطرابات نطق وتخاطب من جامعة الزقازيق",
+      "حاصلة على الرخصة المهنية في النطق والتخاطب من هيئة التقويم والقياس",
+      "حاصلة على رخصة مشرف توحد سلوكي معتمد دولياً QASP-S",
+      "خبرة عملية أكثر من ١٨ سنة"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائية النطق والتخاطب بمركز رابا. حاصلة على درجة البكالوريوس من جامعة الإسكندرية · حاصلة على دراسات عليا علوم إعاقة مسار اضطرابات نطق وتخاطب من جامعة الزقازيق · حاصلة على الرخصة المهنية في النطق والتخاطب من هيئة التقويم والقياس · حاصلة على رخصة مشرف توحد سلوكي معتمد دولياً QASP-S · خبرة عملية أكثر من ١٨ سنة",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 58,
+    "cardImage": "/uploads/1791192202894____________png.png",
+    "posterCrop": "/uploads/1791192202894____________png.png",
+    "portraitCrop": "/uploads/1791192202894____________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-abdelilah-shakl",
+    "name": "عبدالاله شقل",
+    "nameEn": "Abdelilah Shakl",
+    "role": "أخصائي العلاج الوظيفي والتكامل الحسي",
+    "roleEn": "Occupational Therapist & Sensory Integration",
+    "title": "أخصائي العلاج الوظيفي",
+    "titleEn": "Occupational Therapist",
+    "category": "occupational",
+    "department": "قسم العلاج الوظيفي والتكامل الحسي",
+    "licenseNumber": "SCFHS-24-7390",
+    "avatar": "/uploads/1791192213481______________png.png",
+    "fallbackAvatar": "/uploads/1791192213481______________png.png",
+    "rating": 4.92,
+    "reviewsCount": 115,
+    "experienceYears": 3,
+    "education": [
+      "حاصل على بكالوريوس العلاج الوظيفي من جامعة الملك سعود بن عبدالعزيز للعلوم الصحية"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصل على شهادة Floortime 101",
+      "حاصل على ترخيص الهيئة السعودية للتخصصات الصحية"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصل على بكالوريوس العلاج الوظيفي من جامعة الملك سعود بن عبدالعزيز للعلوم الصحية",
+      "حاصل على شهادة Floortime 101",
+      "حاصل على ترخيص الهيئة السعودية للتخصصات الصحية",
+      "متخصص في علاج المشاكل الحسية والتحديات النمائية لدى الاطفال ومشاكل الأكل",
+      "خبرة عملية أكثر من 3 سنوات"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائي علاج وظيفي مرخص من هيئة التخصصات الصحية وحاصل على اعتماد Floortime 101. متخصص في التحديات الحسية النمائية، وتأهيل المهارات الحركية، وعلاج صعوبات ومشاكل التغذية والأكل لدى الأطفال.",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 59,
+    "cardImage": "/uploads/1791192213481______________png.png",
+    "posterCrop": "/uploads/1791192213481______________png.png",
+    "portraitCrop": "/uploads/1791192213481______________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-alaa-eldin-nagy",
+    "name": "علاء الدين ناجي",
+    "nameEn": "Alaa El-Din Nagy",
+    "role": "أخصائي تحليل السلوك التطبيقي ABA",
+    "roleEn": "Applied Behavior Analysis Specialist",
+    "title": "أخصائي ABA",
+    "titleEn": "ABA Specialist",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "licenseNumber": "SCFHS-24-8260",
+    "avatar": "/uploads/1791192231188_________________png.png",
+    "fallbackAvatar": "/uploads/1791192231188_________________png.png",
+    "rating": 4.94,
+    "reviewsCount": 155,
+    "experienceYears": 8,
+    "education": [
+      "حاصل على ليسانس آداب وتربية قسم تربية خاصة من جامعة العريش",
+      "حاصل على دبلومة مهنية في التربية الخاصة من جامعة العريش"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصل على إعتماد البورد الأمريكي ABAT"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصل على ليسانس آداب وتربية قسم تربية خاصة من جامعة العريش",
+      "حاصل على دبلومة مهنية في التربية الخاصة من جامعة العريش",
+      "حاصل على إعتماد البورد الأمريكي ABAT",
+      "خبرة عملية أكثر من 8 سنوات"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائي تحليل سلوك تطبيقي معتمد ABAT بخبرة سريرية تتجاوز 8 سنوات في مراكز التأهيل المتخصصة، خبير في تطبيق برامج تعديل السلوك وتنمية مهارات التواصل الوظيفي والاستقلالية.",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 60,
+    "cardImage": "/uploads/1791192231188_________________png.png",
+    "posterCrop": "/uploads/1791192231188_________________png.png",
+    "portraitCrop": "/uploads/1791192231188_________________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-ghalib-alotaibi",
+    "name": "غالب العتيبي",
+    "nameEn": "Ghalib Al-Otaibi",
+    "role": "أخصائي ABA",
+    "roleEn": "Applied Behavior Analysis Specialist",
+    "title": "أخصائي ABA",
+    "titleEn": "ABA Specialist",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "licenseNumber": "SCFHS-24-4055",
+    "avatar": "/uploads/1791192244901______________png.png",
+    "fallbackAvatar": "/uploads/1791192244901______________png.png",
+    "rating": 4.9,
+    "reviewsCount": 90,
+    "experienceYears": 2,
+    "education": [
+      "حاصل على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الاسلامية"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصل على دورات في إختبارات الذكاء للأطفال",
+      "معتمد كأخصائي تحليل سلوك تطبيقي من QABA",
+      "مصنف من الهيئة السعوديه للتخصصات الصحيه"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصل على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الاسلامية",
+      "حاصل على دورات في إختبارات الذكاء للأطفال",
+      "معتمد كأخصائي تحليل سلوك تطبيقي من QABA",
+      "مصنف من الهيئة السعوديه للتخصصات الصحيه",
+      "خبرة عملية أكثر من سنتين"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائي ABA بمركز رابا. حاصل على بكالوريوس علم النفس من جامعة الإمام محمد بن سعود الاسلامية · حاصل على دورات في إختبارات الذكاء للأطفال · معتمد كأخصائي تحليل سلوك تطبيقي من QABA · مصنف من الهيئة السعوديه للتخصصات الصحيه · خبرة عملية أكثر من سنتين",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 61,
+    "cardImage": "/uploads/1791192244901______________png.png",
+    "posterCrop": "/uploads/1791192244901______________png.png",
+    "portraitCrop": "/uploads/1791192244901______________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-kareem-ragab",
+    "name": "كريم رجب",
+    "nameEn": "Kareem Ragab",
+    "role": "أخصائي النطق والتخاطب",
+    "roleEn": "Speech & Language Pathologist",
+    "title": "أخصائي النطق والتخاطب",
+    "titleEn": "Speech & Language Pathologist",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب والتأهيل اللغوي",
+    "licenseNumber": "SCFHS-24-9140",
+    "avatar": "/uploads/1791192253778__________png.png",
+    "fallbackAvatar": "/uploads/1791192253778__________png.png",
+    "rating": 4.91,
+    "reviewsCount": 100,
+    "experienceYears": 3,
+    "education": [
+      "حاصل على بكالوريوس العلوم في التربية الخاصة من جامعة مصر للعلوم",
+      "حاصل على دبلومة التخاطب لمدة عام من مركز الإشراق الطبي",
+      "حاصل على دبلومة التخاطب من جامعة الأزهر"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصل على شهادة ٤٠ ساعة لفني تحليل السلوك التطبيقي"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصل على بكالوريوس العلوم في التربية الخاصة من جامعة مصر للعلوم",
+      "حاصل على دبلومة التخاطب لمدة عام من مركز الإشراق الطبي",
+      "حاصل على دبلومة التخاطب من جامعة الأزهر",
+      "حاصل على شهادة ٤٠ ساعة لفني تحليل السلوك التطبيقي",
+      "خبرة عملية أكثر من ٣ سنوات"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائي النطق والتخاطب بمركز رابا. حاصل على بكالوريوس العلوم في التربية الخاصة من جامعة مصر للعلوم · حاصل على دبلومة التخاطب لمدة عام من مركز الإشراق الطبي · حاصل على دبلومة التخاطب من جامعة الأزهر · حاصل على شهادة ٤٠ ساعة لفني تحليل السلوك التطبيقي · خبرة عملية أكثر من ٣ سنوات",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 62,
+    "cardImage": "/uploads/1791192253778__________png.png",
+    "posterCrop": "/uploads/1791192253778__________png.png",
+    "portraitCrop": "/uploads/1791192253778__________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-marwa-alsharif",
+    "name": "مروة الشريف",
+    "nameEn": "Marwa Al-Sharif",
+    "role": "مشرفة أكاديمية",
+    "roleEn": "Academic Programs Supervisor",
+    "title": "مشرفة أكاديمية",
+    "titleEn": "Academic Supervisor",
+    "category": "aba",
+    "department": "قسم البرامج الأكاديمية والتربية الخاصة",
+    "licenseNumber": "SCFHS-24-2625",
+    "avatar": "/uploads/1791192261779_____________png.png",
+    "fallbackAvatar": "/uploads/1791192261779_____________png.png",
+    "rating": 4.93,
+    "reviewsCount": 125,
+    "experienceYears": 4,
+    "education": [
+      "حاصلة على بكالوريوس التربية الخاصة من المعهد العالي للتربية المختصة"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصلة على دورة في التعامل مع أطفال طيف التوحد"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصلة على بكالوريوس التربية الخاصة من المعهد العالي للتربية المختصة",
+      "حاصلة على دورة في التعامل مع أطفال طيف التوحد",
+      "خبرة عملية أكثر من ٤ سنوات"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "مشرفة أكاديمية بمركز رابا. حاصلة على بكالوريوس التربية الخاصة من المعهد العالي للتربية المختصة · حاصلة على دورة في التعامل مع أطفال طيف التوحد · خبرة عملية أكثر من ٤ سنوات",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 63,
+    "cardImage": "/uploads/1791192261779_____________png.png",
+    "posterCrop": "/uploads/1791192261779_____________png.png",
+    "portraitCrop": "/uploads/1791192261779_____________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-mostafa-mahmoud",
+    "name": "مصطفى محمود",
+    "nameEn": "Mostafa Mahmoud",
+    "role": "أخصائي تحليل السلوك التطبيقي ومشرف توحد معتمد",
+    "roleEn": "Applied Behavior Analysis Specialist & QASP-S",
+    "title": "أخصائي ABA",
+    "titleEn": "ABA Specialist & QASP-S",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "licenseNumber": "SCFHS-24-7294",
+    "avatar": "/uploads/1791192271638_____________png.png",
+    "fallbackAvatar": "/uploads/1791192271638_____________png.png",
+    "rating": 4.93,
+    "reviewsCount": 135,
+    "experienceYears": 4,
+    "education": [
+      "حاصل علي درجة الـ ليسانس من جامعة أسيوط"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصل علي اعتماد ABAT من البورد الأمريكي كفني تحليل سلوك تطبيقي",
+      "حاصل على اعتماد QASP-S كمشرف خدمات توحد معتمد من البورد الأمريكي"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصل علي درجة الـ ليسانس من جامعة أسيوط",
+      "حاصل علي اعتماد ABAT من البورد الأمريكي كفني تحليل سلوك تطبيقي",
+      "حاصل على اعتماد QASP-S كمشرف خدمات توحد معتمد من البورد الأمريكي",
+      "حاصل على برنامج تقييم معالم تطور السلوك اللفظي VB-MAPP",
+      "خبرة عملية أكثر من 4 سنوات"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائي تحليل سلوك تطبيقي ومشرف خدمات توحد معتمد دولياً QASP-S و ABAT، متخصص في تطبيق مقياس VB-MAPP وبناء الخطط التأهيلية الفردية المبنية على تحليل السلوك اللفظي.",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 64,
+    "cardImage": "/uploads/1791192271638_____________png.png",
+    "posterCrop": "/uploads/1791192271638_____________png.png",
+    "portraitCrop": "/uploads/1791192271638_____________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-mayar-alsaeed",
+    "name": "ميار السعيد",
+    "nameEn": "Mayar Al-Saeed",
+    "role": "أخصائية النطق والتخاطب",
+    "roleEn": "Speech & Language Pathologist",
+    "title": "أخصائية النطق والتخاطب",
+    "titleEn": "Speech & Language Pathologist",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب والتأهيل اللغوي",
+    "licenseNumber": "SCFHS-24-1530",
+    "avatar": "/uploads/1791192282250_____________png.png",
+    "fallbackAvatar": "/uploads/1791192282250_____________png.png",
+    "rating": 4.92,
+    "reviewsCount": 130,
+    "experienceYears": 7,
+    "education": [
+      "حاصلة على بكالوريوس التربية الخاصة تخصص إعاقة عقلية من جامعة الإمام محمد بن سعود"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصلة على دوره نطق وتخاطب ٧٠ ساعه من أكادمية علم النفس تحت اشراف وزاره التعليم"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصلة على بكالوريوس التربية الخاصة تخصص إعاقة عقلية من جامعة الإمام محمد بن سعود",
+      "حاصلة على دوره نطق وتخاطب ٧٠ ساعه من أكادمية علم النفس تحت اشراف وزاره التعليم",
+      "خبرة عملية أكثر من ٧ سنوات"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائية النطق والتخاطب بمركز رابا. حاصلة على بكالوريوس التربية الخاصة تخصص إعاقة عقلية من جامعة الإمام محمد بن سعود · حاصلة على دوره نطق وتخاطب ٧٠ ساعه من أكادمية علم النفس تحت اشراف وزاره التعليم · خبرة عملية أكثر من ٧ سنوات",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 65,
+    "cardImage": "/uploads/1791192282250_____________png.png",
+    "posterCrop": "/uploads/1791192282250_____________png.png",
+    "portraitCrop": "/uploads/1791192282250_____________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-hala-badran",
+    "name": "هالة بدران",
+    "nameEn": "Hala Badran",
+    "role": "أخصائية النطق والتخاطب",
+    "roleEn": "Senior Speech Pathologist & Clinical Psychologist",
+    "title": "أخصائية النطق والتخاطب",
+    "titleEn": "Senior Speech & Clinical Psychologist",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب والتأهيل اللغوي",
+    "licenseNumber": "SCFHS-24-5379",
+    "avatar": "/uploads/1791192291320____________png.png",
+    "fallbackAvatar": "/uploads/1791192291320____________png.png",
+    "rating": 4.98,
+    "reviewsCount": 260,
+    "experienceYears": 20,
+    "education": [
+      "حاصلة علي ليسانس آداب علم النفس من جامعة الزقازيق",
+      "حاصله علي ماجستير في التوحد من جامعة الزقازيق",
+      "حاصلة علي دبلومة مهنية تخصص نطق وتواصل من جامعة عين شمس",
+      "حاصلة علي دبلومة تدريبية في النطق والتخاطب من جامعة عين شمس",
+      "حاصلة علي دبلومة في علم النفس الإكلينكي من جامعة بنها"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصله علي ماجستير في التوحد من جامعة الزقازيق",
+      "حاصلة علي دبلومة مهنية تخصص نطق وتواصل من جامعة عين شمس",
+      "حاصلة علي دبلومة تدريبية في النطق والتخاطب من جامعة عين شمس"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصلة علي ليسانس آداب علم النفس من جامعة الزقازيق",
+      "حاصله علي ماجستير في التوحد من جامعة الزقازيق",
+      "حاصلة علي دبلومة مهنية تخصص نطق وتواصل من جامعة عين شمس",
+      "حاصلة علي دبلومة تدريبية في النطق والتخاطب من جامعة عين شمس",
+      "حاصلة علي دبلومة في علم النفس الإكلينكي من جامعة بنها",
+      "خبرة عملية أكثر من ٢٠ سنة"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائية النطق والتخاطب بمركز رابا. حاصلة علي ليسانس آداب علم النفس من جامعة الزقازيق · حاصله علي ماجستير في التوحد من جامعة الزقازيق · حاصلة علي دبلومة مهنية تخصص نطق وتواصل من جامعة عين شمس · حاصلة علي دبلومة تدريبية في النطق والتخاطب من جامعة عين شمس · حاصلة علي دبلومة في علم النفس الإكلينكي من جامعة بنها · خبرة عملية أكثر من ٢٠ سنة",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 66,
+    "cardImage": "/uploads/1791192291320____________png.png",
+    "posterCrop": "/uploads/1791192291320____________png.png",
+    "portraitCrop": "/uploads/1791192291320____________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-hind-elsayed",
+    "name": "هند السيد",
+    "nameEn": "Hind El-Sayed",
+    "role": "أخصائية النطق والتخاطب",
+    "roleEn": "Speech & Language Pathologist",
+    "title": "أخصائية النطق والتخاطب",
+    "titleEn": "Speech & Language Pathologist",
+    "category": "speech",
+    "department": "قسم النطق والتخاطب والتأهيل اللغوي",
+    "licenseNumber": "SCFHS-24-8020",
+    "avatar": "/uploads/1791192301426___________png.png",
+    "fallbackAvatar": "/uploads/1791192301426___________png.png",
+    "rating": 4.94,
+    "reviewsCount": 165,
+    "experienceYears": 12,
+    "education": [
+      "حاصله على درجة البكالوريوس من جامعة القاهرة",
+      "حاصله على دبلوم عام تربوي من جامعة طنطا",
+      "حاصلة على دبلومة تخاطب ٣٠٠ ساعة من جامعة عين شمس",
+      "حاصله على دبلومة فى التوحد من جامعة عين شمس",
+      "حاصله على دبلومة صعوبات تعلم مع د/لبنى الشرقاوى"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصله على دبلوم عام تربوي من جامعة طنطا",
+      "حاصلة على دبلومة تخاطب ٣٠٠ ساعة من جامعة عين شمس",
+      "حاصله على دبلومة فى التوحد من جامعة عين شمس"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصله على درجة البكالوريوس من جامعة القاهرة",
+      "حاصله على دبلوم عام تربوي من جامعة طنطا",
+      "حاصلة على دبلومة تخاطب ٣٠٠ ساعة من جامعة عين شمس",
+      "حاصله على دبلومة فى التوحد من جامعة عين شمس",
+      "حاصله على دبلومة صعوبات تعلم مع د/لبنى الشرقاوى",
+      "خبرة عملية أكثر من ١٢ س"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائية النطق والتخاطب بمركز رابا. حاصله على درجة البكالوريوس من جامعة القاهرة · حاصله على دبلوم عام تربوي من جامعة طنطا · حاصلة على دبلومة تخاطب ٣٠٠ ساعة من جامعة عين شمس · حاصله على دبلومة فى التوحد من جامعة عين شمس · حاصله على دبلومة صعوبات تعلم مع د/لبنى الشرقاوى · خبرة عملية أكثر من ١٢ س",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 67,
+    "cardImage": "/uploads/1791192301426___________png.png",
+    "posterCrop": "/uploads/1791192301426___________png.png",
+    "portraitCrop": "/uploads/1791192301426___________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-haitham-alzaidan",
+    "name": "هيثم الزيدان",
+    "nameEn": "Haitham Al-Zaidan",
+    "role": "أخصائي نفسي - أخصائي ABA",
+    "roleEn": "Applied Behavior Analysis Specialist",
+    "title": "أخصائي نفسي - أخصائي ABA",
+    "titleEn": "ABA Specialist",
+    "category": "aba",
+    "department": "قسم تحليل السلوك التطبيقي ABA",
+    "licenseNumber": "SCFHS-24-7603",
+    "avatar": "/uploads/1791192310187______________png.png",
+    "fallbackAvatar": "/uploads/1791192310187______________png.png",
+    "rating": 4.88,
+    "reviewsCount": 75,
+    "experienceYears": 1,
+    "education": [
+      "حاصل على بكالوريوس علم النفس من جامعه الإمام محمد بن سعود الاسلامية"
+    ],
+    "educationEn": [
+      "Bachelor of Applied Sciences & Special Education",
+      "Professional Diploma in Early Intervention & Autism Therapy"
+    ],
+    "certifications": [
+      "حاصل على شهادة فني تحليل سلوك تطبيقي ABAT"
+    ],
+    "certificationsEn": [
+      "SCFHS Accreditation & Licensing",
+      "Certified Behavioral & Clinical Intervention Programs"
+    ],
+    "specialties": [
+      "حاصل على بكالوريوس علم النفس من جامعه الإمام محمد بن سعود الاسلامية",
+      "حاصل على شهادة فني تحليل سلوك تطبيقي ABAT",
+      "خبرة عملية أكثر من سنة"
+    ],
+    "specialtiesEn": [
+      "Specialized Rehabilitation",
+      "Early Intervention",
+      "Individual Plans"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "sessionPrice": 0,
+    "bio": "أخصائي نفسي - أخصائي ABA بمركز رابا. حاصل على بكالوريوس علم النفس من جامعه الإمام محمد بن سعود الاسلامية · حاصل على شهادة فني تحليل سلوك تطبيقي ABAT · خبرة عملية أكثر من سنة",
+    "bioEn": "Certified specialist at Raba Day Care Center with extensive clinical experience in evidence-based individual therapy plans and adaptive skill development.",
+    "orderIndex": 68,
+    "cardImage": "/uploads/1791192310187______________png.png",
+    "posterCrop": "/uploads/1791192310187______________png.png",
+    "portraitCrop": "/uploads/1791192310187______________png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "isTopRated": false
+  },
+  {
+    "id": "spec-renad-otaibi",
+    "name": "ريناد العتيبي",
+    "nameEn": "Renad Al-Otaibi",
+    "title": "أخصائي نفسي",
+    "titleEn": "Psychologist",
+    "role": "أخصائي نفسي",
+    "roleEn": "Psychologist",
+    "category": "psychology",
+    "department": "قسم الإرشاد النفسي وتعديل السلوك",
+    "avatar": "/uploads/1790866298707_32_png.png",
+    "experienceYears": 1,
+    "licenseNumber": "",
+    "specialties": [
+      "حاصلة على بكالوريوس علم النفس من كلية التربية - جامعة الملك سعود",
+      "حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA",
+      "خبرة عملية أكثر من سنة"
+    ],
+    "specialtiesEn": [
+      "B.A. in Psychology - King Saud University",
+      "ABAT Certified in Applied Behavior Analysis - QABA",
+      "Over 1 Year Clinical Experience"
+    ],
+    "education": [
+      "حاصلة على بكالوريوس علم النفس من كلية التربية - جامعة الملك سعود"
+    ],
+    "educationEn": [
+      "Bachelor of Psychology - College of Education, King Saud University"
+    ],
+    "bio": "أخصائي نفسي بمركز رابا. حاصلة على بكالوريوس علم النفس من كلية التربية - جامعة الملك سعود · حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA · خبرة عملية أكثر من سنة",
+    "bioEn": "Psychologist at Raba Center. Holds B.A. in Psychology from King Saud University, ABAT certified in Applied Behavior Analysis from QABA with over 1 year clinical experience.",
+    "certifications": [
+      "حاصلة على اعتماد ABAT في تحليل السلوك التطبيقي من QABA"
+    ],
+    "certificationsEn": [
+      "ABAT Applied Behavior Analysis Technician - QABA Board"
+    ],
+    "availableDays": [
+      "الأحد",
+      "الإثنين",
+      "الثلاثاء",
+      "الأربعاء",
+      "الخميس"
+    ],
+    "availableDaysEn": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday"
+    ],
+    "rating": 4.9,
+    "reviewsCount": 45,
+    "sessionPrice": 0,
+    "fallbackAvatar": "/uploads/1790866298707_32_png.png",
+    "posterCrop": "/uploads/1790866298707_32_png.png",
+    "portraitCrop": "/uploads/1790866298707_32_png.png",
+    "focalPosition": "top",
+    "zoomLevel": 100,
+    "cardImage": "/uploads/1790866298707_32_png.png",
+    "orderIndex": 69,
+    "image": "/specialists/cards/spec_34_hala-enazi.png",
+    "isTopRated": false
+  }
+];
+

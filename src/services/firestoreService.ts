@@ -41,7 +41,22 @@ export interface FirestoreErrorInfo {
   };
 }
 
-export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+export function withTimeout<T>(promise: Promise<T>, timeoutMs = 3000, fallback?: T): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((resolve, reject) => {
+      setTimeout(() => {
+        if (fallback !== undefined) {
+          resolve(fallback);
+        } else {
+          reject(new Error(`Firestore operation timed out after ${timeoutMs}ms`));
+        }
+      }, timeoutMs);
+    })
+  ]);
+}
+
+export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null, shouldThrow = false) {
   const errMessage = error instanceof Error ? error.message : String(error);
   
   const errInfo: FirestoreErrorInfo = {
@@ -61,11 +76,12 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
     path
   };
 
-  // Explicit, unmasked error logging in console and network trace
-  console.error(`🚨 [Firestore Error - ${operationType.toUpperCase()}] Collection/Doc: [${path}]:`, errMessage);
-  console.error('Context:', JSON.stringify(errInfo));
+  // Safe diagnostic logging without breaking application render
+  console.warn(`[Firestore Notice - ${operationType.toUpperCase()}] Collection/Doc: [${path}]:`, errMessage);
   
-  throw new Error(JSON.stringify(errInfo));
+  if (shouldThrow) {
+    throw new Error(JSON.stringify(errInfo));
+  }
 }
 
 // ============================================================================
@@ -90,7 +106,7 @@ export async function saveSiteSettingToFirestore(key: string, data: any): Promis
     }, { merge: true });
     console.log(`[Firestore] Successfully saved site setting: ${key}`);
   } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, path);
+    handleFirestoreError(error, OperationType.WRITE, path, false);
   }
 }
 
@@ -107,37 +123,37 @@ export async function deleteSiteSettingFromFirestore(key: string): Promise<void>
     await deleteDoc(docRef);
     console.log(`[Firestore] Successfully deleted site setting: ${key}`);
   } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, path);
+    handleFirestoreError(error, OperationType.DELETE, path, false);
   }
 }
 
 /**
- * Fetches a single site setting from Firestore
+ * Fetches a single site setting from Firestore with strict 3000ms timeout
  */
 export async function getSiteSettingFromFirestore(key: string): Promise<any | null> {
   const path = `site_settings/${key}`;
   try {
     const docRef = doc(db, 'site_settings', key);
-    const snap = await getDoc(docRef);
+    const snap = await withTimeout(getDoc(docRef), 3000);
     if (!snap.exists()) {
       return null;
     }
     const val = snap.data();
     return val?.data !== undefined ? val.data : val;
   } catch (error) {
-    handleFirestoreError(error, OperationType.GET, path);
+    handleFirestoreError(error, OperationType.GET, path, false);
     return null;
   }
 }
 
 /**
- * Fetches all site settings from Firestore
+ * Fetches all site settings from Firestore with strict 3000ms timeout and safe fallback
  */
 export async function getAllSiteSettingsFromFirestore(): Promise<Record<string, any>> {
   const path = 'site_settings';
   try {
     const colRef = collection(db, 'site_settings');
-    const snap = await getDocs(colRef);
+    const snap = await withTimeout(getDocs(colRef), 3000);
     const result: Record<string, any> = {};
     snap.forEach((d) => {
       const docData = d.data();
@@ -145,7 +161,7 @@ export async function getAllSiteSettingsFromFirestore(): Promise<Record<string, 
     });
     return result;
   } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, path);
+    handleFirestoreError(error, OperationType.LIST, path, false);
     return {};
   }
 }
@@ -170,9 +186,9 @@ export function subscribeSiteSettings(
       onUpdate(data);
     },
     (error) => {
-      console.error('[Firestore Realtime Error] site_settings listener error:', error);
+      console.warn('[Firestore Realtime Notice] site_settings listener info:', error?.message || error);
       if (onError) onError(error);
-      handleFirestoreError(error, OperationType.LIST, path);
+      handleFirestoreError(error, OperationType.LIST, path, false);
     }
   );
 }
@@ -214,14 +230,14 @@ export async function getSpecialistsFromFirestore(): Promise<Specialist[]> {
   const path = 'specialists';
   try {
     const colRef = collection(db, 'specialists');
-    const snap = await getDocs(colRef);
+    const snap = await withTimeout(getDocs(colRef), 3000);
     const list: Specialist[] = [];
     snap.forEach((d) => {
       list.push(d.data() as Specialist);
     });
     return list;
   } catch (error) {
-    handleFirestoreError(error, OperationType.LIST, path);
+    handleFirestoreError(error, OperationType.LIST, path, false);
     return [];
   }
 }

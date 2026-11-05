@@ -10,7 +10,8 @@
   RewriteEngine On
   RewriteBase /
   RewriteRule ^index\.html$ - [L]
-  RewriteRule ^(robots\.txt|sitemap\.xml)$ - [L]
+  RewriteRule ^(robots\.txt|sitemap\.xml|llms\.txt)$ - [L]
+  RewriteRule ^\.well-known/ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME} !-l
