@@ -102,11 +102,14 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
     const el = sliderRef.current;
     if (!el) return;
 
-    updateScrollState();
+    const initialTimer = setTimeout(() => {
+      updateScrollState();
+    }, 120);
     el.addEventListener('scroll', updateScrollState, { passive: true });
     window.addEventListener('resize', updateScrollState, { passive: true });
 
     return () => {
+      clearTimeout(initialTimer);
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
         rafIdRef.current = null;

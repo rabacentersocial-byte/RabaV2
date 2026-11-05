@@ -24,21 +24,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
-    // Only eagerly initialize Firebase if on admin/login page or if active session exists.
-    // For general public visitors, defer to 5s to eliminate TBT and ensure near-100 mobile performance.
+    // CRITICAL: Public landing visitors NEVER load firebase/auth or iframe.js
+    // Only load if on admin/login page or if active session exists.
     const isAuthRoute = typeof window !== 'undefined' && (
       window.location.hash.includes('admin') || 
       window.location.hash.includes('login') ||
       Boolean(localStorage.getItem('raba_admin_session_auth'))
     );
-    const delay = isAuthRoute ? 100 : 5000;
+
+    if (!isAuthRoute) {
+      return;
+    }
 
     const initTimer = setTimeout(async () => {
       try {
-        const [{ auth }, { onAuthStateChanged }] = await Promise.all([
+        const [{ getLazyAuth }, { onAuthStateChanged }] = await Promise.all([
           import('../lib/firebase'),
           import('firebase/auth')
         ]);
+        const auth = await getLazyAuth();
 
         unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
           setUser(currentUser);
@@ -70,7 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } catch (err) {
         console.warn('[AuthContext] Deferred Firebase Auth notice:', err);
       }
-    }, delay);
+    }, 200);
 
     return () => {
       clearTimeout(initTimer);
@@ -80,10 +84,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signInWithGoogle = async () => {
     try {
-      const [{ auth, googleAuthProvider }, { signInWithPopup }] = await Promise.all([
+      const [{ getLazyAuth, getGoogleAuthProvider }, { signInWithPopup }] = await Promise.all([
         import('../lib/firebase'),
         import('firebase/auth')
       ]);
+      const auth = await getLazyAuth();
+      const googleAuthProvider = await getGoogleAuthProvider();
       await signInWithPopup(auth, googleAuthProvider);
     } catch (err) {
       console.error('Sign-in error:', err);
@@ -93,10 +99,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
-      const [{ auth }, { signOut }] = await Promise.all([
+      const [{ getLazyAuth }, { signOut }] = await Promise.all([
         import('../lib/firebase'),
         import('firebase/auth')
       ]);
+      const auth = await getLazyAuth();
       await signOut(auth);
       setIdToken(null);
     } catch (err) {

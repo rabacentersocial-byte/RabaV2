@@ -1,10 +1,8 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import type { Auth } from 'firebase/auth';
 import { 
   getFirestore, 
   initializeFirestore, 
-  doc, 
-  getDocFromServer,
   setLogLevel 
 } from 'firebase/firestore';
 import localConfig from '../../firebase-applet-config.json';
@@ -20,12 +18,36 @@ export const firebaseConfig = {
   firestoreDatabaseId: import.meta.env.VITE_FIREBASE_DATABASE_ID || localConfig?.firestoreDatabaseId,
 };
 
-// Silence internal Firestore retry transport logs to prevent harmless connection probe warnings from flooding the console
+// Silence internal Firestore retry transport logs
 setLogLevel('silent');
 
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const googleAuthProvider = new GoogleAuthProvider();
+export const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+
+// Lazy Auth instance: NEVER initialized eagerly on public landing pages.
+// Using browserLocalPersistence without browserPopupRedirectResolver prevents the 93 KiB iframe.js from being injected!
+let _cachedAuth: Auth | null = null;
+
+export async function getLazyAuth(): Promise<Auth> {
+  if (!_cachedAuth) {
+    const { initializeAuth, browserLocalPersistence } = await import('firebase/auth');
+    _cachedAuth = initializeAuth(app, {
+      persistence: browserLocalPersistence
+    });
+  }
+  return _cachedAuth;
+}
+
+// Auth proxy that provides safe synchronous access to currentUser without importing firebase/auth eagerly
+export const auth = {
+  get currentUser() {
+    return _cachedAuth ? _cachedAuth.currentUser : null;
+  }
+} as any;
+
+export async function getGoogleAuthProvider() {
+  const { GoogleAuthProvider } = await import('firebase/auth');
+  return new GoogleAuthProvider();
+}
 
 const dbId = firebaseConfig.firestoreDatabaseId && firebaseConfig.firestoreDatabaseId !== '(default)'
   ? firebaseConfig.firestoreDatabaseId
@@ -43,23 +65,4 @@ function initDb() {
 }
 
 export const db = initDb();
-
-// Test connection on boot as mandated by skill
-async function testConnection() {
-  try {
-    if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      return;
-    }
-    await getDocFromServer(doc(db, 'test', 'connection'));
-  } catch (error: any) {
-    if (error?.code === 'unavailable' || (error instanceof Error && (error.message.includes('the client is offline') || error.message.includes('unavailable')))) {
-      // Running in offline mode
-      return;
-    }
-    if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.warn("Please check your Firebase configuration or network connection.");
-    }
-  }
-}
-testConnection();
 

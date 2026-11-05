@@ -71,4 +71,13 @@ scheduleIdleWork(() => {
   } catch (e) {
     console.warn('[main] Persistent sync notice:', e);
   }
-}, 2200);
+
+  // Register PWA service worker during idle time so it never blocks FCP, LCP, or TBT
+  if (typeof window !== 'undefined' && 'serviceWorker' in navigator && !window.location.hash.includes('admin')) {
+    try {
+      navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+    } catch {
+      // ignore
+    }
+  }
+}, 3000);

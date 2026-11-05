@@ -169,7 +169,7 @@ export const Hero: React.FC<HeroProps> = ({
       className="relative pt-6 pb-12 md:pt-16 md:pb-28 overflow-hidden border-b border-slate-200/80 dark:border-white/10"
     >
       {/* Background Decorative Stars (Teal & Golden Amber from Logo) */}
-      <div className="absolute top-8 left-1/2 -translate-x-1/2 text-sky-500 dark:text-[#00E5BE] opacity-80 select-none pointer-events-none animate-pulse">
+      <div className="absolute top-8 left-1/2 -translate-x-1/2 text-sky-500 dark:text-[#00E5BE] opacity-70 select-none pointer-events-none">
         <svg viewBox="0 0 24 24" className="w-8 h-8 fill-current">
           <path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z" />
         </svg>
@@ -312,7 +312,7 @@ export const Hero: React.FC<HeroProps> = ({
                     {isArabic ? `+${dailyChildrenCount} أطفال جدد` : `+${dailyChildrenCount} Today`}
                   </span>
                   {isWithinHours && (
-                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white animate-ping shrink-0 will-change-transform will-change-opacity transform-gpu" />
+                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white shrink-0 opacity-90 shadow-xs" />
                   )}
                 </a>
 
