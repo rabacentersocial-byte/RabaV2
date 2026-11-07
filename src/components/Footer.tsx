@@ -28,6 +28,7 @@ import { usePWAInstall } from '../hooks/usePWAInstall';
 
 interface FooterProps {
   onOpenAdmin?: () => void;
+  onOpenBlogPage?: () => void;
 }
 
 // Custom SVGs for platforms not directly in standard icons
@@ -49,7 +50,7 @@ const SnapchatIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' 
   </svg>
 );
 
-export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
+export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) => {
   const { t, isArabic } = useLanguage();
   const { isIOS } = usePWAInstall();
   const [social, setSocial] = useState<SocialLinksSettings>(() => getStoredSocialSettings());
@@ -300,7 +301,16 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
             <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-300">
               {/* Blog Link */}
               <li>
-                <a href="#blog" className="hover:text-[#2E86EB] dark:hover:text-[#FFD23F] transition-colors flex items-center gap-1.5 font-bold text-[#2E86EB] dark:text-[#4A9CFF]">
+                <a 
+                  href="#blog-directory" 
+                  onClick={(e) => {
+                    if (onOpenBlogPage) {
+                      e.preventDefault();
+                      onOpenBlogPage();
+                    }
+                  }}
+                  className="hover:text-[#2E86EB] dark:hover:text-[#FFD23F] transition-colors flex items-center gap-1.5 font-bold text-[#2E86EB] dark:text-[#4A9CFF] cursor-pointer"
+                >
                   <BookOpen className="w-3.5 h-3.5" />
                   <span>{isArabic ? 'المدونة الطبية والدليل الإكلينيكي' : 'Clinical Blog & Knowledge Guide'}</span>
                   <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-blue-500/15 text-blue-800 dark:text-[#4A9CFF] font-black">

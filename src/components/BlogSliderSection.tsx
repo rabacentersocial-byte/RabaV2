@@ -31,11 +31,13 @@ import { getStoredBlogPosts } from '../data/blogCustomizer';
 interface BlogSliderSectionProps {
   onOpenBooking?: () => void;
   onBookSpecialist?: (specialist: Specialist) => void;
+  onOpenBlogPage?: () => void;
 }
 
 export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
   onOpenBooking,
   onBookSpecialist,
+  onOpenBlogPage,
 }) => {
   const { isArabic } = useLanguage();
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -249,22 +251,34 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
             </p>
           </div>
 
-          {/* Navigation Arrows */}
-          <div className="flex items-center gap-3 shrink-0 self-start md:self-end">
-            <button
-              onClick={scrollRight}
-              aria-label={isArabic ? 'السابق' : 'Previous'}
-              className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-white/15 text-slate-700 dark:text-white flex items-center justify-center hover:bg-[#dff1ec]/60 dark:hover:bg-teal-950/60 hover:text-[#0d5c52] dark:hover:text-[#2dd4bf] hover:border-[#0d5c52]/30 shadow-xs hover:scale-105 active:scale-95 transition-all cursor-pointer"
-            >
-              {isArabic ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-            </button>
-            <button
-              onClick={scrollLeft}
-              aria-label={isArabic ? 'التالي' : 'Next'}
-              className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-white/15 text-slate-700 dark:text-white flex items-center justify-center hover:bg-[#dff1ec]/60 dark:hover:bg-teal-950/60 hover:text-[#0d5c52] dark:hover:text-[#2dd4bf] hover:border-[#0d5c52]/30 shadow-xs hover:scale-105 active:scale-95 transition-all cursor-pointer"
-            >
-              {isArabic ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
-            </button>
+          {/* Navigation & View All Action */}
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0 self-start md:self-end flex-wrap">
+            {onOpenBlogPage && (
+              <button
+                onClick={onOpenBlogPage}
+                className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-[#dff1ec] dark:bg-teal-950/60 hover:bg-[#dff1ec]/90 text-[#0d5c52] dark:text-[#2dd4bf] border border-[#0d5c52]/20 dark:border-[#2dd4bf]/20 text-xs sm:text-sm font-black transition-all cursor-pointer shadow-xs hover:scale-[1.02]"
+              >
+                <span>{isArabic ? 'تصفح دليل المقالات الشامل' : 'Browse All Articles'}</span>
+                {isArabic ? <ArrowLeft className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
+              </button>
+            )}
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={scrollRight}
+                aria-label={isArabic ? 'السابق' : 'Previous'}
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-white/15 text-slate-700 dark:text-white flex items-center justify-center hover:bg-[#dff1ec]/60 dark:hover:bg-teal-950/60 hover:text-[#0d5c52] dark:hover:text-[#2dd4bf] hover:border-[#0d5c52]/30 shadow-xs hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              >
+                {isArabic ? <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" /> : <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />}
+              </button>
+              <button
+                onClick={scrollLeft}
+                aria-label={isArabic ? 'التالي' : 'Next'}
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-white/15 text-slate-700 dark:text-white flex items-center justify-center hover:bg-[#dff1ec]/60 dark:hover:bg-teal-950/60 hover:text-[#0d5c52] dark:hover:text-[#2dd4bf] hover:border-[#0d5c52]/30 shadow-xs hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              >
+                {isArabic ? <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" /> : <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />}
+              </button>
+            </div>
           </div>
         </div>
 

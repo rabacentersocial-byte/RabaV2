@@ -39,11 +39,13 @@ interface NavbarProps {
   onOpenServicesPage?: () => void;
   onOpenBranchesPage?: () => void;
   onOpenOffersPage?: () => void;
+  onOpenBlogPage?: () => void;
   onGoHome?: () => void;
   isSpecialistsPageOpen?: boolean;
   isServicesPageOpen?: boolean;
   isBranchesPageOpen?: boolean;
   isOffersPageOpen?: boolean;
+  isBlogPageOpen?: boolean;
   unreadCount?: number;
   cartCount?: number;
 }
@@ -57,11 +59,13 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenServicesPage,
   onOpenBranchesPage,
   onOpenOffersPage,
+  onOpenBlogPage,
   onGoHome,
   isSpecialistsPageOpen = false,
   isServicesPageOpen = false,
   isBranchesPageOpen = false,
   isOffersPageOpen = false,
+  isBlogPageOpen = false,
   unreadCount
 }) => {
   const { theme, toggleTheme } = useTheme();
@@ -271,18 +275,22 @@ export const Navbar: React.FC<NavbarProps> = ({
             <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5 p-1 rounded-full liquid-glass-pill" aria-label="القائمة الرئيسية">
               {navLinks.map((link) => {
                 const isLinkActive = 
+                  (link.href === '#blog' && isBlogPageOpen) ||
                   (link.href === '#offers' && isOffersPageOpen) ||
                   (link.href === '#services' && isServicesPageOpen) || 
                   (link.href === '#specialists' && isSpecialistsPageOpen) ||
                   (link.href === '#branches' && isBranchesPageOpen) ||
-                  (link.href === '#hero' && !isServicesPageOpen && !isSpecialistsPageOpen && !isBranchesPageOpen && !isOffersPageOpen);
+                  (link.href === '#hero' && !isServicesPageOpen && !isSpecialistsPageOpen && !isBranchesPageOpen && !isOffersPageOpen && !isBlogPageOpen);
 
                 return (
                   <a
                     key={link.href}
                     href={link.href}
                     onClick={(e) => {
-                      if (link.href === '#offers' && onOpenOffersPage) {
+                      if (link.href === '#blog' && onOpenBlogPage) {
+                        e.preventDefault();
+                        onOpenBlogPage();
+                      } else if (link.href === '#offers' && onOpenOffersPage) {
                         e.preventDefault();
                         onOpenOffersPage();
                       } else if (link.href === '#services' && onOpenServicesPage) {
@@ -297,7 +305,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       } else if (link.href === '#hero' && onGoHome) {
                         e.preventDefault();
                         onGoHome();
-                      } else if (onGoHome && (isSpecialistsPageOpen || isServicesPageOpen || isBranchesPageOpen || isOffersPageOpen)) {
+                      } else if (onGoHome && (isSpecialistsPageOpen || isServicesPageOpen || isBranchesPageOpen || isOffersPageOpen || isBlogPageOpen)) {
                         onGoHome();
                       }
                     }}
@@ -504,7 +512,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                             href={item.href}
                             onClick={(e) => {
                               setMobileMenuOpen(false);
-                              if (item.href === '#offers' && onOpenOffersPage) {
+                              if (item.href === '#blog' && onOpenBlogPage) {
+                                e.preventDefault();
+                                onOpenBlogPage();
+                              } else if (item.href === '#offers' && onOpenOffersPage) {
                                 e.preventDefault();
                                 onOpenOffersPage();
                               } else if (item.href === '#services' && onOpenServicesPage) {
@@ -519,7 +530,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                               } else if (item.href === '#hero' && onGoHome) {
                                 e.preventDefault();
                                 onGoHome();
-                              } else if (onGoHome && (isSpecialistsPageOpen || isServicesPageOpen || isBranchesPageOpen || isOffersPageOpen)) {
+                              } else if (onGoHome && (isSpecialistsPageOpen || isServicesPageOpen || isBranchesPageOpen || isOffersPageOpen || isBlogPageOpen)) {
                                 onGoHome();
                               }
                             }}

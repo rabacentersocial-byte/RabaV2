@@ -50,6 +50,7 @@ const SpecialistsDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport
 const ServicesDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/ServicesDirectoryPage')).then((m: any) => ({ default: m.default || m.ServicesDirectoryPage || (() => null) })));
 const BranchesDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BranchesDirectoryPage')).then((m: any) => ({ default: m.default || m.BranchesDirectoryPage || (() => null) })));
 const OffersDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/OffersDirectoryPage')).then((m: any) => ({ default: m.default || m.OffersDirectoryPage || (() => null) })));
+const BlogDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BlogDirectoryPage')).then((m: any) => ({ default: m.default || m.BlogDirectoryPage || (() => null) })));
 const SpecialistCvModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/SpecialistCvModal')).then((m: any) => ({ default: m.default || m.SpecialistCvModal || (() => null) })));
 const BookingModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BookingModal')).then((m: any) => ({ default: m.default || m.BookingModal || (() => null) })));
 const NotificationCenterModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/NotificationCenterModal')).then((m: any) => ({ default: m.default || m.NotificationCenterModal || (() => null) })));
@@ -398,14 +399,35 @@ export default function App() {
   const [isServicesPageOpen, setIsServicesPageOpen] = useState(false);
   const [isBranchesPageOpen, setIsBranchesPageOpen] = useState(false);
   const [isOffersPageOpen, setIsOffersPageOpen] = useState(false);
+  const [isBlogPageOpen, setIsBlogPageOpen] = useState(false);
+  const [activeBlogSlug, setActiveBlogSlug] = useState<string | null>(null);
   const [adminSession, setAdminSession] = useState<AdminUser | null>(() => getStoredAdminSession());
   const [cartCount, setCartCount] = useState(0);
   const [selectedCourseForRegistration, setSelectedCourseForRegistration] = useState<CourseItem | null>(null);
   const [isCourseRegistrationOpen, setIsCourseRegistrationOpen] = useState(false);
 
-  // Ensure default view on initial mount is strictly the Home page
+  // Check initial route / hash
   useEffect(() => {
-    const initialHash = window.location.hash;
+    const initialHash = window.location.hash.toLowerCase();
+    const initialPath = window.location.pathname.toLowerCase();
+    
+    // Dedicated Blog Route Check
+    if (
+      initialHash === '#blog-directory' ||
+      initialHash === '#blog-page' ||
+      initialHash === '#articles' ||
+      initialHash.startsWith('#blog/') ||
+      initialPath === '/blog' ||
+      initialPath === '/articles'
+    ) {
+      setIsBlogPageOpen(true);
+      if (initialHash.startsWith('#blog/')) {
+        setActiveBlogSlug(window.location.hash.replace('#blog/', ''));
+      }
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+      return;
+    }
+
     if (
       initialHash === '#specialists-directory' || 
       initialHash === '#specialists-page' ||
@@ -423,6 +445,7 @@ export default function App() {
       setIsServicesPageOpen(false);
       setIsBranchesPageOpen(false);
       setIsOffersPageOpen(false);
+      setIsBlogPageOpen(false);
     }
     // Scroll to top of the Home page on initial load
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
@@ -438,6 +461,7 @@ export default function App() {
     setIsServicesPageOpen(false);
     setIsBranchesPageOpen(false);
     setIsOffersPageOpen(false);
+    setIsBlogPageOpen(false);
     window.location.hash = '#specialists-directory';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -447,6 +471,7 @@ export default function App() {
     setIsSpecialistsPageOpen(false);
     setIsBranchesPageOpen(false);
     setIsOffersPageOpen(false);
+    setIsBlogPageOpen(false);
     window.location.hash = '#services-directory';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -456,6 +481,7 @@ export default function App() {
     setIsSpecialistsPageOpen(false);
     setIsServicesPageOpen(false);
     setIsOffersPageOpen(false);
+    setIsBlogPageOpen(false);
     window.location.hash = '#branches-directory';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -465,7 +491,24 @@ export default function App() {
     setIsSpecialistsPageOpen(false);
     setIsServicesPageOpen(false);
     setIsBranchesPageOpen(false);
+    setIsBlogPageOpen(false);
     window.location.hash = '#offers-directory';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenBlogPage = (postSlug?: string) => {
+    setIsBlogPageOpen(true);
+    setIsSpecialistsPageOpen(false);
+    setIsServicesPageOpen(false);
+    setIsBranchesPageOpen(false);
+    setIsOffersPageOpen(false);
+    if (postSlug) {
+      setActiveBlogSlug(postSlug);
+      window.location.hash = `#blog/${postSlug}`;
+    } else {
+      setActiveBlogSlug(null);
+      window.location.hash = '#blog-directory';
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -474,6 +517,8 @@ export default function App() {
     setIsServicesPageOpen(false);
     setIsBranchesPageOpen(false);
     setIsOffersPageOpen(false);
+    setIsBlogPageOpen(false);
+    setActiveBlogSlug(null);
     if (
       window.location.hash === '#specialists-directory' || 
       window.location.hash === '#specialists-page' ||
@@ -484,7 +529,12 @@ export default function App() {
       window.location.hash === '#offers-directory' ||
       window.location.hash === '#offers-page' ||
       window.location.hash === '#offers' ||
-      window.location.hash === '#activities'
+      window.location.hash === '#activities' ||
+      window.location.hash === '#blog-directory' ||
+      window.location.hash === '#blog-page' ||
+      window.location.hash === '#articles' ||
+      window.location.hash.startsWith('#blog/') ||
+      (window.location.hash.startsWith('#blog-') && window.location.hash !== '#blog')
     ) {
       window.history.pushState('', document.title, window.location.pathname + window.location.search);
     }
@@ -512,6 +562,18 @@ export default function App() {
         window.location.hash === '#offers' ||
         window.location.hash === '#activities'
       );
+      
+      const hash = window.location.hash.toLowerCase();
+      const isBlog = 
+        hash === '#blog-directory' ||
+        hash === '#blog-page' ||
+        hash === '#articles' ||
+        hash.startsWith('#blog/') ||
+        (hash.startsWith('#blog-') && hash !== '#blog');
+      setIsBlogPageOpen(isBlog);
+      if (window.location.hash.startsWith('#blog/')) {
+        setActiveBlogSlug(window.location.hash.replace('#blog/', ''));
+      }
     };
     const handleAuthChange = (e: any) => {
       setAdminSession(e?.detail || getStoredAdminSession());
@@ -707,11 +769,13 @@ export default function App() {
         onOpenServicesPage={handleOpenServicesPage}
         onOpenBranchesPage={handleOpenBranchesPage}
         onOpenOffersPage={handleOpenOffersPage}
+        onOpenBlogPage={handleOpenBlogPage}
         onGoHome={handleBackToHome}
         isSpecialistsPageOpen={isSpecialistsPageOpen}
         isServicesPageOpen={isServicesPageOpen}
         isBranchesPageOpen={isBranchesPageOpen}
         isOffersPageOpen={isOffersPageOpen}
+        isBlogPageOpen={isBlogPageOpen}
         unreadCount={unreadCount}
         cartCount={cartCount}
       />
@@ -765,6 +829,19 @@ export default function App() {
                 if (notes) setBookingInitialNotes(notes);
                 setIsBookingOpen(true);
               }}
+            />
+          </Suspense>
+        ) : isBlogPageOpen ? (
+          /* Dedicated Articles & Clinical Blog Directory Page */
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-teal-500 font-bold">جاري تحميل المدونة الطبية والدليل المعرفي...</div>}>
+            <BlogDirectoryPage
+              onBackToHome={handleBackToHome}
+              onOpenBooking={(notes) => {
+                if (notes) setBookingInitialNotes(notes);
+                setIsBookingOpen(true);
+              }}
+              onBookSpecialist={handleSelectSpecialistForBooking}
+              initialPostSlug={activeBlogSlug}
             />
           </Suspense>
         ) : (
@@ -885,6 +962,7 @@ export default function App() {
                   <BlogSliderSection
                     onOpenBooking={handleOpenBooking}
                     onBookSpecialist={handleSelectSpecialistForBooking}
+                    onOpenBlogPage={handleOpenBlogPage}
                   />
                 </Suspense>
               </LazySection>
@@ -898,7 +976,10 @@ export default function App() {
       {modules.footer && (
         <LazySection minHeight="280px">
           <Suspense fallback={null}>
-            <Footer onOpenAdmin={() => setIsAdminOpen(true)} />
+            <Footer 
+              onOpenAdmin={() => setIsAdminOpen(true)} 
+              onOpenBlogPage={handleOpenBlogPage}
+            />
           </Suspense>
         </LazySection>
       )}
