@@ -24,7 +24,7 @@ export function saveAndBroadcastCustomerRequest(request: Appointment): Appointme
     const list: Appointment[] = saved ? JSON.parse(saved) : [];
     
     // 2. Prepend new request
-    const updated = [request, ...list];
+    const updated = [request, ...list.filter(a => a.id !== request.id)];
     localStorage.setItem('raba_appointments', JSON.stringify(updated));
     savePersistentModule('raba_appointments', updated);
 
@@ -62,7 +62,19 @@ export function saveAndBroadcastCustomerRequest(request: Appointment): Appointme
     localStorage.setItem('raba_notifications', JSON.stringify(updatedNotifs));
     savePersistentModule('raba_notifications', updatedNotifs);
 
-    // 4. Dispatch custom window events
+    // 4. Asynchronously persist to Firestore & Backend API
+    import('../services/firestoreService').then(m => {
+      m.saveAppointmentToFirestore(request).catch(err => {
+        console.error('[CustomerRequests] Error saving appointment to Firestore:', err);
+      });
+      if (request.requestType === 'quick_consultation' || request.requestType === 'shadow_teacher') {
+        m.saveCustomerRequestToFirestore(request).catch(() => {});
+      }
+    }).catch(err => {
+      console.error('[CustomerRequests] Failed to import firestoreService:', err);
+    });
+
+    // 5. Dispatch custom window events
     window.dispatchEvent(new CustomEvent(DISPATCH_REQUEST_EVENT, { detail: request }));
     window.dispatchEvent(new CustomEvent('raba_notifications_updated', { detail: updatedNotifs }));
 
@@ -70,6 +82,24 @@ export function saveAndBroadcastCustomerRequest(request: Appointment): Appointme
   } catch (err) {
     console.error('Error saving customer request:', err);
     return request;
+  }
+}
+
+/**
+ * Async version of saveAndBroadcastCustomerRequest that awaits database persistence
+ * and returns true only if the record was successfully saved to Firestore or backend.
+ */
+export async function saveAndBroadcastCustomerRequestAsync(request: Appointment): Promise<boolean> {
+  // Update local storage and UI events first for instant reactivity
+  saveAndBroadcastCustomerRequest(request);
+
+  try {
+    const { saveAppointmentToFirestore } = await import('../services/firestoreService');
+    const firestoreSuccess = await saveAppointmentToFirestore(request);
+    return firestoreSuccess;
+  } catch (err) {
+    console.error('[CustomerRequests] Async persistence error:', err);
+    return false;
   }
 }
 
@@ -114,6 +144,12 @@ export function dispatchCustomerRequest(payload: DispatchCustomerRequestPayload)
   };
 
   return saveAndBroadcastCustomerRequest(req);
+}
+
+export async function dispatchCustomerRequestAsync(payload: DispatchCustomerRequestPayload): Promise<Appointment> {
+  const req = dispatchCustomerRequest(payload);
+  await saveAndBroadcastCustomerRequestAsync(req);
+  return req;
 }
 
 export function getCustomerWhatsAppMessage(request: Appointment, isArabic = true): string {

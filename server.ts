@@ -258,6 +258,32 @@ function getPort(): number {
   return 3000;
 }
 
+// Startup Production Environment Configuration Check
+function validateServerEnvironment() {
+  const missingCritical: string[] = [];
+  let localConfigExists = false;
+  try {
+    localConfigExists = fs.existsSync(path.resolve(process.cwd(), 'firebase-applet-config.json'));
+  } catch {
+    localConfigExists = false;
+  }
+  if (isProduction) {
+    if (!process.env.APP_URL && !process.env.VITE_APP_URL) {
+      console.warn('⚠️ [Production Notice] APP_URL is not set. Relative URLs will resolve to incoming host.');
+    }
+    if (!process.env.FIREBASE_PROJECT_ID && !localConfigExists) {
+      missingCritical.push('FIREBASE_PROJECT_ID');
+    }
+  }
+  if (missingCritical.length > 0) {
+    console.warn(`⚠️ [Production Warning] Missing environment variables: ${missingCritical.join(', ')}`);
+  } else {
+    console.log('[Server Environment] Production environment configuration verified.');
+  }
+}
+
+validateServerEnvironment();
+
 async function startServer() {
   const app = express();
   const PORT = getPort();
@@ -602,17 +628,19 @@ async function startServer() {
     }
   });
 
-  // Public Appointment Booking Endpoint (Rate Limited, Sanitized, Validated)
+  // Public Appointment Booking Endpoint (Rate Limited, Sanitized, Validated, Multi-Tier Persistence)
   app.post('/api/db/appointments', appointmentLimiter, async (req: Request, res: Response) => {
     try {
       const rawBody = req.body || {};
       const patientName = sanitizeString(rawBody.patientName || rawBody.patient_name || rawBody.name, 100);
       const phone = sanitizePhone(rawBody.phone || rawBody.phoneNumber);
-      const specialist = sanitizeString(rawBody.specialist || rawBody.doctorName || rawBody.doctor_name, 100);
-      const service = sanitizeString(rawBody.service || rawBody.specialty, 100);
+      const specialist = sanitizeString(rawBody.specialist || rawBody.doctorName || rawBody.doctor_name || rawBody.specialistName, 100);
+      const service = sanitizeString(rawBody.service || rawBody.specialty || rawBody.serviceName || rawBody.serviceTitle, 100);
       const date = sanitizeDate(rawBody.date) || sanitizeString(rawBody.date, 30);
-      const time = sanitizeString(rawBody.time, 30);
+      const time = sanitizeString(rawBody.time || rawBody.timeSlot, 30);
       const notes = sanitizeString(rawBody.notes, 500);
+      const id = rawBody.id || `apt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+      const referenceNumber = rawBody.referenceNumber || `RB-${id.slice(-6).toUpperCase()}`;
 
       if (!patientName || !phone) {
         return res.status(400).json({
@@ -622,19 +650,65 @@ async function startServer() {
       }
 
       const cleanAppt = {
+        id,
+        referenceNumber,
         patientName,
+        parentName: sanitizeString(rawBody.parentName || patientName, 100),
         phone,
-        specialist,
-        service,
+        specialist: specialist || 'الفريق الاستشاري',
+        service: service || 'استشارة تأهيلية',
         date: date || new Date().toISOString().slice(0, 10),
         time: time || '09:00 ص',
         notes,
-        status: 'pending'
+        status: rawBody.status || 'pending',
+        createdAt: rawBody.createdAt || new Date().toISOString()
       };
 
-      const newAppt = await createDbAppointment(cleanAppt);
+      // 1. Resilient Disk Persistence (data/appointments.json)
+      try {
+        const apptFilePath = path.join(DATA_DIR, 'appointments.json');
+        let currentAppts: any[] = [];
+        if (fs.existsSync(apptFilePath)) {
+          try {
+            currentAppts = JSON.parse(fs.readFileSync(apptFilePath, 'utf-8'));
+          } catch {
+            currentAppts = [];
+          }
+        }
+        currentAppts = [cleanAppt, ...currentAppts.filter((a: any) => a.id !== cleanAppt.id)];
+        fs.writeFileSync(apptFilePath, JSON.stringify(currentAppts, null, 2), 'utf-8');
+      } catch (diskErr) {
+        console.warn('[Raba Server] Disk write notice for appointments.json:', diskErr);
+      }
 
-      // Non-blocking mirror to Supabase in background queue (avoids latency on client)
+      // 2. Resilient Firebase Admin Firestore Persistence (Bypasses client rules)
+      if (adminDb) {
+        try {
+          await adminDb.collection('appointments').doc(cleanAppt.id).set(cleanAppt, { merge: true });
+        } catch (fErr: any) {
+          console.warn('[Firebase Admin Notice] Appointment write notice:', fErr?.message || fErr);
+        }
+      }
+
+      // 3. Cloud SQL Database Insert (with graceful fallback if DB is scaling or offline)
+      let savedDbAppt = cleanAppt;
+      try {
+        const result = await createDbAppointment({
+          patientName: cleanAppt.patientName,
+          phone: cleanAppt.phone,
+          specialist: cleanAppt.specialist,
+          service: cleanAppt.service,
+          date: cleanAppt.date,
+          time: cleanAppt.time,
+          status: cleanAppt.status,
+          notes: cleanAppt.notes
+        });
+        if (result) savedDbAppt = { ...cleanAppt, ...result };
+      } catch (sqlErr) {
+        console.warn('[Cloud SQL Notice] Record persisted to disk and Firestore; Cloud SQL deferred:', sqlErr);
+      }
+
+      // 4. Non-blocking mirror to Supabase in background queue
       const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
       const supabaseKey = process.env.SUPABASE_API_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
       if (supabaseUrl && supabaseKey) {
@@ -643,14 +717,14 @@ async function startServer() {
             const { createClient } = await import('@supabase/supabase-js');
             const client = createClient(supabaseUrl, supabaseKey);
             await client.from('appointments').insert([{
-              patient_name: patientName,
-              phone,
-              specialist,
-              service,
+              patient_name: cleanAppt.patientName,
+              phone: cleanAppt.phone,
+              specialist: cleanAppt.specialist,
+              service: cleanAppt.service,
               date: cleanAppt.date,
               time: cleanAppt.time,
-              notes,
-              status: 'pending'
+              notes: cleanAppt.notes,
+              status: cleanAppt.status
             }]);
           } catch (sErr) {
             console.warn('[Supabase] Background appointment mirror notice:', sErr);
@@ -658,7 +732,7 @@ async function startServer() {
         });
       }
 
-      res.json({ success: true, appointment: newAppt });
+      return res.json({ success: true, appointment: savedDbAppt });
     } catch (error: any) {
       return sendSafeError(res, 500, 'فشل تأكيد موعد الحجز، يرجى المحاولة لاحقاً', error);
     }

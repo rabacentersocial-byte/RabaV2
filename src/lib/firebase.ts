@@ -18,6 +18,26 @@ export const firebaseConfig = {
   firestoreDatabaseId: import.meta.env.VITE_FIREBASE_DATABASE_ID || localConfig?.firestoreDatabaseId,
 };
 
+// Startup environment validation check: Logs explicit notice if production keys are undefined or default placeholders
+export function validateFirebaseConfig(): { isValid: boolean; missingKeys: string[] } {
+  const criticalKeys: (keyof typeof firebaseConfig)[] = ['apiKey', 'authDomain', 'projectId', 'appId'];
+  const missing = criticalKeys.filter(
+    (key) => !firebaseConfig[key] || firebaseConfig[key] === 'your-api-key' || firebaseConfig[key] === 'your-project-id'
+  );
+
+  if (missing.length > 0) {
+    console.warn(
+      `⚠️ [Firebase Production Config Notice] Missing or placeholder environment variables: [${missing.join(', ')}]. ` +
+      `Ensure VITE_FIREBASE_* variables are set in production or included in firebase-applet-config.json.`
+    );
+    return { isValid: false, missingKeys: missing };
+  }
+  return { isValid: true, missingKeys: [] };
+}
+
+// Perform synchronous startup validation
+validateFirebaseConfig();
+
 // Silence internal Firestore retry transport logs
 setLogLevel('silent');
 

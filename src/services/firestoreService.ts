@@ -13,7 +13,7 @@ import {
   Unsubscribe
 } from 'firebase/firestore';
 import { db, auth } from '../lib/firebase';
-import { Appointment, ParentReview, Specialist, BlogPost } from '../types';
+import { Appointment, ParentReview, Specialist, BlogPost, AdminUser } from '../types';
 
 export enum OperationType {
   CREATE = 'create',
@@ -84,6 +84,35 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   }
 }
 
+/**
+ * Recursively removes any keys with `undefined` values from an object.
+ * In Firestore Web SDK v9/v10, passing `undefined` anywhere inside a document payload
+ * throws an unhandled "Unsupported field value: undefined" exception that crashes writes in production.
+ */
+export function sanitizeFirestoreData<T>(obj: T): T {
+  if (obj === null || obj === undefined) {
+    return null as any;
+  }
+  if (Array.isArray(obj)) {
+    return obj
+      .filter((item) => item !== undefined)
+      .map((item) => (typeof item === 'object' && item !== null ? sanitizeFirestoreData(item) : item)) as any;
+  }
+  if (typeof obj === 'object') {
+    if (obj instanceof Date) return obj as any;
+    const clean: Record<string, any> = {};
+    for (const [key, value] of Object.entries(obj)) {
+      if (value !== undefined) {
+        clean[key] = (typeof value === 'object' && value !== null)
+          ? sanitizeFirestoreData(value)
+          : value;
+      }
+    }
+    return clean as any;
+  }
+  return obj;
+}
+
 // ============================================================================
 // 1. DYNAMIC SITE SETTINGS (Synchronized with Admin Dashboard & Visitor UI)
 // ============================================================================
@@ -99,11 +128,11 @@ export async function saveSiteSettingToFirestore(key: string, data: any): Promis
   }
   try {
     const docRef = doc(db, 'site_settings', key);
-    await setDoc(docRef, {
+    await setDoc(docRef, sanitizeFirestoreData({
       key,
       data,
       updatedAt: new Date().toISOString()
-    }, { merge: true });
+    }), { merge: true });
     console.log(`[Firestore] Successfully saved site setting: ${key}`);
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, path, false);
@@ -205,7 +234,7 @@ export async function saveSpecialistToFirestore(specialist: Specialist): Promise
   }
   try {
     const docRef = doc(db, 'specialists', docId);
-    await setDoc(docRef, specialist, { merge: true });
+    await setDoc(docRef, sanitizeFirestoreData(specialist), { merge: true });
     console.log(`[Firestore] Successfully saved specialist: ${specialist.name} (${docId})`);
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, path);
@@ -270,16 +299,24 @@ export function subscribeSpecialists(
 // ============================================================================
 
 export async function saveAppointmentToFirestore(appointment: Appointment): Promise<boolean> {
-  const docId = appointment.id || `apt-${Date.now()}`;
+  const docId = appointment.id || `apt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
   const path = `appointments/${docId}`;
   try {
     const docRef = doc(db, 'appointments', docId);
-    
-    const payload = {
+
+    // Normalize status to strictly allowed values in firestore.rules
+    let normalizedStatus = appointment.status || 'pending';
+    if (!['new', 'pending', 'confirmed', 'completed', 'cancelled'].includes(normalizedStatus)) {
+      normalizedStatus = 'pending';
+    }
+
+    const payload = sanitizeFirestoreData({
       id: docId,
-      patientName: appointment.childName || appointment.guardianName || 'مستفيد',
-      parentName: appointment.guardianName || 'ولي أمر',
-      phone: appointment.guardianPhone || '0500000000',
+      referenceNumber: appointment.referenceNumber || `RB-${docId.slice(-6).toUpperCase()}`,
+      patientName: (appointment.childName || appointment.guardianName || 'مستفيد').trim(),
+      parentName: (appointment.guardianName || 'ولي أمر').trim(),
+      phone: (appointment.guardianPhone || '0500000000').trim(),
+      guardianEmail: appointment.guardianEmail || '',
       serviceId: appointment.serviceId || 'general',
       serviceName: appointment.serviceTitle || 'استشارة تأهيلية',
       specialistId: appointment.specialistId || 'general',
@@ -287,15 +324,58 @@ export async function saveAppointmentToFirestore(appointment: Appointment): Prom
       branch: (appointment as any).branch || 'النرجس',
       date: appointment.date || new Date().toISOString().split('T')[0],
       time: appointment.timeSlot || '10:00 AM',
-      status: appointment.status || 'pending',
+      status: normalizedStatus,
       notes: appointment.notes || '',
-      createdAt: new Date().toISOString()
-    };
+      childAge: typeof appointment.childAge === 'number' ? appointment.childAge : 5,
+      requestType: appointment.requestType || 'appointment',
+      requestSource: appointment.requestSource || 'الموقع الإلكتروني',
+      paymentStatus: appointment.paymentStatus || 'unpaid',
+      amount: typeof appointment.amount === 'number' ? appointment.amount : 0,
+      createdAt: appointment.createdAt || new Date().toISOString()
+    });
 
     await setDoc(docRef, payload, { merge: true });
-    console.log(`[Firestore] Successfully created appointment: ${docId}`);
+    console.log(`[Firestore] Successfully created appointment in Firestore: ${docId}`);
+
+    // Asynchronously replicate to backend API for dual persistence (Cloud SQL + local disk sync)
+    try {
+      fetch('/api/db/appointments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).catch((apiErr) => {
+        console.warn('[API Notice] Server API appointment replicate notice:', apiErr?.message || apiErr);
+      });
+    } catch {
+      // non-blocking
+    }
+
     return true;
   } catch (error) {
+    console.error(`[Firestore Error - WRITE] Failed to save appointment to ${path}:`, error);
+    handleFirestoreError(error, OperationType.WRITE, path);
+    return false;
+  }
+}
+
+/**
+ * Saves a customer inquiry or quick consultation request to the 'customer_requests' collection
+ */
+export async function saveCustomerRequestToFirestore(request: Appointment): Promise<boolean> {
+  const docId = request.id || `req-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+  const path = `customer_requests/${docId}`;
+  try {
+    const docRef = doc(db, 'customer_requests', docId);
+    const payload = sanitizeFirestoreData({
+      ...request,
+      id: docId,
+      createdAt: request.createdAt || new Date().toISOString()
+    });
+    await setDoc(docRef, payload, { merge: true });
+    console.log(`[Firestore] Successfully created customer request: ${docId}`);
+    return true;
+  } catch (error) {
+    console.error(`[Firestore Error - WRITE] Failed to save customer request to ${path}:`, error);
     handleFirestoreError(error, OperationType.WRITE, path);
     return false;
   }
@@ -416,7 +496,7 @@ export async function saveTestimonialToFirestore(review: ParentReview): Promise<
   try {
     const docRef = doc(db, 'testimonials', docId);
 
-    const payload = {
+    const payload = sanitizeFirestoreData({
       id: docId,
       parentName: review.parentName || 'ولي أمر مستفيد',
       parentNameEn: review.parentNameEn || 'Beneficiary Parent',
@@ -428,12 +508,13 @@ export async function saveTestimonialToFirestore(review: ParentReview): Promise<
       date: review.date || 'اليوم',
       isAnonymous: Boolean(review.isAnonymous),
       avatar: review.avatar || ''
-    };
+    });
 
     await setDoc(docRef, payload, { merge: true });
     console.log(`[Firestore] Successfully saved review: ${docId}`);
     return true;
   } catch (error) {
+    console.error(`[Firestore Error - WRITE] Failed to save testimonial to ${path}:`, error);
     handleFirestoreError(error, OperationType.WRITE, path);
     return false;
   }
@@ -501,7 +582,7 @@ export async function saveBlogPostToFirestore(post: BlogPost): Promise<void> {
   }
   try {
     const docRef = doc(db, 'blog_posts', docId);
-    await setDoc(docRef, { ...post, id: docId }, { merge: true });
+    await setDoc(docRef, sanitizeFirestoreData({ ...post, id: docId }), { merge: true });
     console.log(`[Firestore] Successfully saved blog post: ${docId}`);
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, path);
@@ -519,5 +600,64 @@ export async function deleteBlogPostFromFirestore(postId: string): Promise<void>
     console.log(`[Firestore] Successfully deleted blog post: ${postId}`);
   } catch (error) {
     handleFirestoreError(error, OperationType.DELETE, path);
+  }
+}
+
+// ============================================================================
+// 6. ADMIN USERS & ACCOUNTS (RBAC System)
+// ============================================================================
+
+export async function saveAdminUserToFirestore(user: AdminUser): Promise<boolean> {
+  const docId = user.id;
+  const path = `admins/${docId}`;
+  if (!auth.currentUser) {
+    return false;
+  }
+  try {
+    const docRef = doc(db, 'admins', docId);
+    // Exclude plaintext password from Firestore
+    const { password: _, ...cleanUser } = user;
+    await setDoc(docRef, sanitizeFirestoreData({
+      ...cleanUser,
+      updatedAt: new Date().toISOString()
+    }), { merge: true });
+    console.log(`[Firestore] Successfully saved admin user: ${user.username} (${docId})`);
+    return true;
+  } catch (error) {
+    console.error(`[Firestore Error - WRITE] Failed to save admin user to ${path}:`, error);
+    handleFirestoreError(error, OperationType.WRITE, path);
+    return false;
+  }
+}
+
+export async function deleteAdminUserFromFirestore(userId: string): Promise<boolean> {
+  const path = `admins/${userId}`;
+  if (!auth.currentUser) {
+    return false;
+  }
+  try {
+    const docRef = doc(db, 'admins', userId);
+    await deleteDoc(docRef);
+    console.log(`[Firestore] Successfully deleted admin user: ${userId}`);
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, path);
+    return false;
+  }
+}
+
+export async function getAdminUsersFromFirestore(): Promise<AdminUser[]> {
+  const path = 'admins';
+  try {
+    const colRef = collection(db, 'admins');
+    const snap = await withTimeout(getDocs(colRef), 3000);
+    const list: AdminUser[] = [];
+    snap.forEach((d) => {
+      list.push(d.data() as AdminUser);
+    });
+    return list;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.LIST, path, false);
+    return [];
   }
 }

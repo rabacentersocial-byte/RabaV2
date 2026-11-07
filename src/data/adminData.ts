@@ -1,4 +1,5 @@
 import { AdminUser, PermissionId, UserRole } from '../types';
+import { savePersistentModule, SYNC_KEYS } from '../utils/persistentSync';
 
 export interface PermissionDefinition {
   id: PermissionId;
@@ -322,11 +323,12 @@ export const getStoredAdminUsers = (): AdminUser[] => {
 
 export const saveStoredAdminUsers = (users: AdminUser[]): void => {
   try {
-    // Strip passwords before persisting to localStorage
+    // Strip passwords before persisting to storage
     const cleanUsers = users.map(({ password: _, ...cleanUser }) => cleanUser);
     localStorage.setItem('raba_admin_users', JSON.stringify(cleanUsers));
-  } catch {
-    // ignore
+    savePersistentModule(SYNC_KEYS.ADMIN_USERS, cleanUsers);
+  } catch (err) {
+    console.error('[AdminData] Error persisting admin users:', err);
   }
 };
 

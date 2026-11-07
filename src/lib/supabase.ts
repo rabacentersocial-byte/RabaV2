@@ -1,4 +1,4 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 export interface SupabaseConfig {
   url: string;
@@ -48,7 +48,7 @@ export function saveStoredSupabaseConfig(config: SupabaseConfig): void {
 
 let cachedClient: SupabaseClient | null = null;
 
-export function getSupabaseClient(): SupabaseClient | null {
+export async function getSupabaseClient(): Promise<SupabaseClient | null> {
   if (cachedClient) return cachedClient;
 
   const config = getStoredSupabaseConfig();
@@ -57,6 +57,7 @@ export function getSupabaseClient(): SupabaseClient | null {
   }
 
   try {
+    const { createClient } = await import('@supabase/supabase-js');
     cachedClient = createClient(config.url, config.anonKey, {
       auth: {
         persistSession: true,
@@ -89,6 +90,7 @@ export async function testSupabaseConnection(url?: string, anonKey?: string): Pr
   }
 
   try {
+    const { createClient } = await import('@supabase/supabase-js');
     const client = createClient(targetUrl, targetKey);
     // Ping Supabase using a light call (get auth session or query information)
     const { error } = await client.auth.getSession();

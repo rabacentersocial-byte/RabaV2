@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { 
   GraduationCap, 
   CheckCircle2, 
@@ -20,7 +19,8 @@ import confetti from 'canvas-confetti';
 import { Appointment } from '../types';
 import { 
   generateRequestReference, 
-  saveAndBroadcastCustomerRequest, 
+  saveAndBroadcastCustomerRequest,
+  saveAndBroadcastCustomerRequestAsync,
   getCustomerWhatsAppMessage 
 } from '../data/customerRequests';
 
@@ -88,7 +88,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
     }
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
 
@@ -138,16 +138,16 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
       readByAdmin: false
     };
 
-    saveAndBroadcastCustomerRequest(newRequest);
+    try {
+      await saveAndBroadcastCustomerRequestAsync(newRequest);
 
-    if (onSubmitRequest) {
-      onSubmitRequest(newRequest);
-    }
+      if (onSubmitRequest) {
+        onSubmitRequest(newRequest);
+      }
 
-    setTimeout(() => {
-      setIsSubmitting(false);
       setSubmittedRequest(newRequest);
       setIsSubmitted(true);
+
       try {
         confetti({
           particleCount: 65,
@@ -157,7 +157,16 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
       } catch (err) {
         // ignore
       }
-    }, 600);
+    } catch (err: any) {
+      console.error('[ShadowTeacherSection Error]:', err);
+      setErrorMessage(
+        isArabic
+          ? 'عذراً، تعذر إرسال طلب خدمة سِوار إلى قاعدة البيانات. يرجى التحقق من اتصالك والمحاولة مجدداً.'
+          : 'Failed to record Sewar request in database. Please check your connection and try again.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleWhatsAppDirect = () => {
@@ -361,66 +370,62 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                 </div>
 
                 {/* Success State */}
-                <AnimatePresence>
-                  {isSubmitted ? (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      className="bg-white/95 dark:bg-[#0D1B2A]/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 text-center shadow-lg border border-white/20 space-y-2.5 sm:space-y-3 my-1 sm:my-2 text-slate-900 dark:text-white"
-                    >
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#22C55E]/15 border border-[#22C55E]/30 text-[#22C55E] rounded-full flex items-center justify-center mx-auto shadow-inner">
-                        <CheckCircle2 className="w-6 h-6 sm:w-7 sm:h-7" />
-                      </div>
-                      <div>
-                        <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
-                          {isArabic ? 'تم استلام طلبكم في خدمة سِوار بنجاح!' : 'Sewar Request Received Successfully!'}
-                        </h4>
-                        {submittedRequest && (
-                          <div className="my-2 p-2 sm:p-2.5 bg-slate-50 dark:bg-white/5 border border-[#2E86EB]/30 rounded-xl text-center space-y-1">
-                            <div className="flex items-center justify-between text-[11px] sm:text-xs px-1 text-slate-700 dark:text-slate-300">
-                              <span className="text-slate-600 dark:text-slate-300">{isArabic ? 'المدينة المحددة:' : 'Selected City:'}</span>
-                              <span className="font-bold text-[#2E86EB] flex items-center gap-1">
-                                <MapPin className="w-3 h-3" />
-                                <span>{submittedRequest.city || 'الرياض'}</span>
-                              </span>
-                            </div>
-                            <div className="flex items-center justify-between text-[11px] sm:text-xs px-1 pt-1 border-t border-slate-200/60 dark:border-white/10">
-                              <span className="text-[10px] text-slate-600 dark:text-slate-300 block">{isArabic ? 'الرقم المرجعي للطلب:' : 'Reference Number:'}</span>
-                              <span className="font-mono font-black text-[#2E86EB] dark:text-[#3B92F5] text-xs sm:text-sm tracking-wider">
-                                {submittedRequest.referenceNumber}
-                              </span>
-                            </div>
+                {isSubmitted ? (
+                  <div
+                    className="bg-white/95 dark:bg-[#0D1B2A]/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 text-center shadow-lg border border-white/20 space-y-2.5 sm:space-y-3 my-1 sm:my-2 text-slate-900 dark:text-white transition-all duration-300 animate-in fade-in zoom-in-95"
+                  >
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#22C55E]/15 border border-[#22C55E]/30 text-[#22C55E] rounded-full flex items-center justify-center mx-auto shadow-inner">
+                      <CheckCircle2 className="w-6 h-6 sm:w-7 sm:h-7" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+                        {isArabic ? 'تم استلام طلبكم في خدمة سِوار بنجاح!' : 'Sewar Request Received Successfully!'}
+                      </h4>
+                      {submittedRequest && (
+                        <div className="my-2 p-2 sm:p-2.5 bg-slate-50 dark:bg-white/5 border border-[#2E86EB]/30 rounded-xl text-center space-y-1">
+                          <div className="flex items-center justify-between text-[11px] sm:text-xs px-1 text-slate-700 dark:text-slate-300">
+                            <span className="text-slate-600 dark:text-slate-300">{isArabic ? 'المدينة المحددة:' : 'Selected City:'}</span>
+                            <span className="font-bold text-[#2E86EB] flex items-center gap-1">
+                              <MapPin className="w-3 h-3" />
+                              <span>{submittedRequest.city || 'الرياض'}</span>
+                            </span>
                           </div>
-                        )}
-                        <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-                          {isArabic 
-                            ? 'تم تسجيل طلبكم بنجاح في نظام مركز رابا، وسيتواصل معكم منسق خدمة سِوار (معلم الظل والدمج المدرسي) لترتيب التقييم والمطابقة.' 
-                            : 'Our Sewar inclusion coordinator will contact you shortly to arrange the initial assessment.'}
-                        </p>
-                      </div>
+                          <div className="flex items-center justify-between text-[11px] sm:text-xs px-1 pt-1 border-t border-slate-200/60 dark:border-white/10">
+                            <span className="text-[10px] text-slate-600 dark:text-slate-300 block">{isArabic ? 'الرقم المرجعي للطلب:' : 'Reference Number:'}</span>
+                            <span className="font-mono font-black text-[#2E86EB] dark:text-[#3B92F5] text-xs sm:text-sm tracking-wider">
+                              {submittedRequest.referenceNumber}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                      <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                        {isArabic 
+                          ? 'تم تسجيل طلبكم بنجاح في نظام مركز رابا، وسيتواصل معكم منسق خدمة سِوار (معلم الظل والدمج المدرسي) لترتيب التقييم والمطابقة.' 
+                          : 'Our Sewar inclusion coordinator will contact you shortly to arrange the initial assessment.'}
+                      </p>
+                    </div>
 
-                      <div className="flex flex-col gap-1.5 sm:gap-2 pt-1">
-                        <button
-                          onClick={handleWhatsAppDirect}
-                          className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white font-bold py-2 sm:py-2.5 px-3 rounded-lg sm:rounded-xl flex items-center justify-center gap-1.5 text-xs shadow-md transition-all active:scale-98 cursor-pointer"
-                        >
-                          <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                          <span>{isArabic ? 'متابعة فورية عبر واتساب' : 'Direct Follow-up on WhatsApp'}</span>
-                        </button>
+                    <div className="flex flex-col gap-1.5 sm:gap-2 pt-1">
+                      <button
+                        onClick={handleWhatsAppDirect}
+                        className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white font-bold py-2 sm:py-2.5 px-3 rounded-lg sm:rounded-xl flex items-center justify-center gap-1.5 text-xs shadow-md transition-all active:scale-98 cursor-pointer"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        <span>{isArabic ? 'متابعة فورية عبر واتساب' : 'Direct Follow-up on WhatsApp'}</span>
+                      </button>
 
-                        <button
-                          onClick={() => {
-                            setIsSubmitted(false);
-                            setFormData({ name: '', city: 'الرياض', phone: '' });
-                          }}
-                          className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium underline py-0.5 cursor-pointer"
-                        >
-                          {isArabic ? 'إرسال طلب إضافي' : 'Submit another request'}
-                        </button>
-                      </div>
-                    </motion.div>
-                  ) : (
+                      <button
+                        onClick={() => {
+                          setIsSubmitted(false);
+                          setFormData({ name: '', city: 'الرياض', phone: '' });
+                        }}
+                        className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium underline py-0.5 cursor-pointer"
+                      >
+                        {isArabic ? 'إرسال طلب إضافي' : 'Submit another request'}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
                     /* Compact Booking Form */
                     <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-3 relative z-10">
                       
@@ -522,8 +527,6 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
 
                     </form>
                   )}
-                </AnimatePresence>
-
               </div>
             </div>
 

@@ -871,4 +871,42 @@ body {
   }
 }
 
+/* ==========================================================================
+   PURE GPU-ACCELERATED CSS MARQUEES (0ms CPU / Zero Forced Reflows)
+   ========================================================================== */
+@keyframes raba-partners-marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes raba-accred-marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-partners-marquee {
+  animation: raba-partners-marquee 45s linear infinite;
+  will-change: transform;
+}
+
+.animate-accred-marquee {
+  animation: raba-accred-marquee 36s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-partners-marquee,
+  .animate-accred-marquee {
+    animation-play-state: paused !important;
+  }
+}
+
 

@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { CourseItem } from '../data/coursesData';
 import { useLanguage } from '../context/LanguageContext';
-import { dispatchCustomerRequest } from '../data/customerRequests';
+import { dispatchCustomerRequest, dispatchCustomerRequestAsync } from '../data/customerRequests';
 
 interface CourseRegistrationModalProps {
   course: CourseItem | null;
@@ -34,6 +34,7 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
   const [qualification, setQualification] = useState('');
   const [paymentPlan, setPaymentPlan] = useState<'tamara' | 'emkan' | 'cash'>('tamara');
   const [notes, setNotes] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -47,33 +48,40 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
   );
   const whatsappUrl = `https://wa.me/966575100100?text=${whatsappMessage}`;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName || !phone) return;
+    if (!fullName.trim() || !phone.trim()) return;
 
+    setErrorMessage('');
     setIsSubmitting(true);
 
     try {
-      dispatchCustomerRequest({
-        clientName: fullName,
+      await dispatchCustomerRequestAsync({
+        clientName: fullName.trim(),
         childName: `تسجيل دورة: ${course.shortTitle || course.titleAr}`,
-        phone: phone,
+        phone: phone.trim(),
+        email: email.trim(),
         serviceType: 'منصة رابا التعليمية - دورات وتدريب',
         sourcePage: 'سلايدر الكورسات والدورات',
         notes: `الدورة: ${course.titleAr} | الساعات: ${course.hoursBadgeAr} | المدينة: ${city} | التخصص: ${qualification} | طريقة الدفع المفضلة: ${paymentPlan} | ملاحظات: ${notes}`
       });
-    } catch {
-      // fallback
-    }
 
-    setTimeout(() => {
-      setIsSubmitting(false);
       setIsSuccess(true);
-    }, 600);
+    } catch (err: any) {
+      console.error('[CourseRegistrationModal Error]:', err);
+      setErrorMessage(
+        isArabic
+          ? 'عذراً، حدث خطأ أثناء إرسال طلب التسجيل. يرجى التحقق من اتصالك والمحاولة مجدداً.'
+          : 'Failed to record registration in database. Please check your connection and try again.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
     setIsSuccess(false);
+    setErrorMessage('');
     setFullName('');
     setPhone('');
     setEmail('');
@@ -160,6 +168,11 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
+              {errorMessage && (
+                <div className="p-3 bg-rose-500/15 border border-rose-500/30 rounded-xl text-xs text-rose-700 dark:text-rose-200 font-bold">
+                  {errorMessage}
+                </div>
+              )}
               {/* Highlights badge bar */}
               <div className="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl border border-slate-200 dark:border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
                 <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200 font-bold">

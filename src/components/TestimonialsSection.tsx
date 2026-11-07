@@ -16,6 +16,7 @@ import confetti from 'canvas-confetti';
 import { PARENT_REVIEWS, SPECIALISTS } from '../data/mockData';
 import { ParentReview } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { saveTestimonialToFirestore } from '../services/firestoreService';
 
 interface TestimonialsSectionProps {
   testimonials?: ParentReview[];
@@ -152,7 +153,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
   };
 
   // Submit new review
-  const handleAddReviewSubmit = (e: React.FormEvent) => {
+  const handleAddReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!comment.trim()) {
       setFormError(isArabic ? 'يرجى كتابة نص التقييم أو الاقتباس الخاص بتجربتك' : 'Please write your testimonial quote or feedback');
@@ -188,6 +189,13 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
       improvementDurationEn: 'New Beneficiary',
       verifiedBeneficiary: true
     };
+
+    try {
+      // Persist to Firestore collection 'testimonials'
+      await saveTestimonialToFirestore(newReview);
+    } catch (err) {
+      console.error('[TestimonialsSection] Error saving review to Firestore:', err);
+    }
 
     if (propOnAdd) {
       propOnAdd(newReview);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   CheckCircle2, 
   FileCheck, 
@@ -7,7 +7,9 @@ import {
   ShieldCheck,
   Award,
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
+  Play,
+  Pause
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { 
@@ -101,103 +103,10 @@ export const AccreditationsSection: React.FC = () => {
     };
   }) : defaultBadges;
 
-  // Duplicate 4 times for infinite loop
-  // Duplicate 4 times for infinite loop
-  const loopList = [...itemsToDisplay, ...itemsToDisplay, ...itemsToDisplay, ...itemsToDisplay];
-  const singleSetWidthRef = React.useRef(0);
-  const isIntersectingRef = React.useRef(false);
-
-  // Measure and cache singleSetWidth safely without layout thrashing
-  useEffect(() => {
-    if (!scrollRef.current) return;
-    const container = scrollRef.current;
-    
-    const measure = () => {
-      const measured = container.scrollWidth / 4;
-      if (measured > 0) {
-        singleSetWidthRef.current = measured;
-        if (container.scrollLeft === 0) {
-          container.scrollLeft = measured;
-        }
-      }
-    };
-
-    measure();
-    const ro = new ResizeObserver(() => measure());
-    ro.observe(container);
-
-    // Only run ticker when visible in viewport
-    const io = new IntersectionObserver(([entry]) => {
-      isIntersectingRef.current = entry.isIntersecting;
-    }, { threshold: 0.05 });
-    io.observe(container);
-
-    return () => {
-      ro.disconnect();
-      io.disconnect();
-    };
-  }, [itemsToDisplay.length]);
-
-  // Smooth continuous requestAnimationFrame ticker (Zero forced reflow)
-  useEffect(() => {
-    let animId: number;
-    let lastTime = performance.now();
-
-    const ticker = (time: number) => {
-      const delta = Math.min(time - lastTime, 80);
-      lastTime = time;
-
-      const singleSetWidth = singleSetWidthRef.current;
-      if (!isPaused && !isDragging && isIntersectingRef.current && scrollRef.current && singleSetWidth > 0) {
-        const container = scrollRef.current;
-        // Continuous smooth scroll using cached dimensions
-        container.scrollLeft += delta * 0.032;
-
-        // Infinite wrap bounds
-        if (container.scrollLeft >= singleSetWidth * 2.5) {
-          container.scrollLeft -= singleSetWidth;
-        } else if (container.scrollLeft <= 10) {
-          container.scrollLeft += singleSetWidth;
-        }
-      }
-
-      animId = requestAnimationFrame(ticker);
-    };
-
-    animId = requestAnimationFrame(ticker);
-    return () => cancelAnimationFrame(animId);
-  }, [isPaused, isDragging]);
-
-  // Touch gesture handlers for mobile
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setIsDragging(true);
-    hasMovedRef.current = false;
-    touchStartXRef.current = e.touches[0].clientX;
-    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (Math.abs(e.touches[0].clientX - touchStartXRef.current) > 8) {
-      hasMovedRef.current = true;
-    }
-  };
-
-  const handleTouchEnd = () => {
-    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
-    resumeTimerRef.current = setTimeout(() => {
-      setIsDragging(false);
-    }, 1800);
-  };
-
-  const handleManualStep = (direction: 'next' | 'prev') => {
-    if (!scrollRef.current) return;
-    const container = scrollRef.current;
-    const stride = 180;
-    container.scrollBy({
-      left: direction === 'next' ? stride : -stride,
-      behavior: 'smooth'
-    });
-  };
+  // Duplicate list once for pure GPU CSS marquee (-50% transform)
+  const loopList = useMemo(() => {
+    return [...itemsToDisplay, ...itemsToDisplay];
+  }, [itemsToDisplay]);
 
   const handleBadgeClick = (item: any) => {
     if (!hasMovedRef.current) {
@@ -216,55 +125,39 @@ export const AccreditationsSection: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         
-        {/* Header with Title and Mobile Navigation Arrows */}
-        <div className="flex items-center justify-between sm:justify-center gap-4 mb-4 sm:mb-6">
-          
-          {/* Prev Arrow */}
-          <button
-            onClick={() => handleManualStep('prev')}
-            aria-label={isArabic ? 'السابق' : 'Previous'}
-            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-[#2E86EB] dark:hover:text-[#2E86EB] flex items-center justify-center shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
-            title={isArabic ? 'عرض الشهادات السابقة' : 'Previous accreditations'}
-          >
-            {isArabic ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-          </button>
-
-          {/* Simple Centered Header: "معترف بنا من" */}
+        {/* Header with Title and Quick Pause/Play */}
+        <div className="flex items-center justify-center gap-3 mb-4 sm:mb-6">
           <div className="text-center">
             <h3 className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 tracking-wider">
               {isArabic ? (settings.titleAr || 'معترف بنا من') : (settings.titleEn || 'Accredited By')}
             </h3>
           </div>
 
-          {/* Next Arrow */}
+          {/* Toggle Pause/Play */}
           <button
-            onClick={() => handleManualStep('next')}
-            aria-label={isArabic ? 'التالي' : 'Next'}
+            onClick={() => setIsPaused(!isPaused)}
+            aria-label={isPaused ? 'تشغيل' : 'إيقاف'}
             className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-[#2E86EB] dark:hover:text-[#2E86EB] flex items-center justify-center shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
-            title={isArabic ? 'عرض المزيد من الشهادات' : 'Next accreditations'}
+            title={isPaused ? (isArabic ? 'تشغيل الحركة' : 'Play') : (isArabic ? 'إيقاف الحركة' : 'Pause')}
           >
-            {isArabic ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+            {isPaused ? <Play className="w-3.5 h-3.5 fill-current" /> : <Pause className="w-3.5 h-3.5 fill-current" />}
           </button>
-
         </div>
 
-        {/* Swipeable, touch-friendly, and continuous auto-scrolling loop */}
+        {/* Continuous auto-scrolling loop - Pure GPU CSS Marquee (0ms CPU / Zero Reflows) */}
         <div 
-          ref={scrollRef}
           dir="ltr"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          className="w-full overflow-x-auto scrollbar-none flex items-center py-2.5 cursor-grab active:cursor-grabbing select-none"
-          style={{
-            WebkitOverflowScrolling: 'touch',
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none'
-          }}
+          className="w-full overflow-hidden flex items-center py-2.5 select-none"
         >
-          <div className="flex items-center gap-7 sm:gap-14 shrink-0 px-4">
+          <div 
+            className="flex items-center gap-7 sm:gap-14 shrink-0 px-4 animate-accred-marquee hover:[animation-play-state:paused]"
+            style={{
+              willChange: 'transform',
+              animationPlayState: isPaused ? 'paused' : 'running'
+            }}
+          >
             {loopList.map((item, index) => (
               <div
                 key={`${item.id}-${index}`}

@@ -30,10 +30,10 @@ service cloud.firestore {
 
     // --- Entity Validation Helpers ---
     function isValidAppointment(data) {
-      return data.patientName is string && data.patientName.size() > 0 && data.patientName.size() <= 100
-        && data.phone is string && data.phone.size() >= 8 && data.phone.size() <= 30
+      return (data.patientName is string || data.parentName is string)
+        && data.phone is string && data.phone.size() >= 7 && data.phone.size() <= 35
         && data.date is string && data.date.size() <= 50
-        && data.status is string && (data.status in ['pending', 'confirmed', 'completed', 'cancelled']);
+        && data.status is string && (data.status in ['new', 'pending', 'confirmed', 'completed', 'cancelled']);
     }
 
     function isValidTestimonial(data) {
@@ -85,7 +85,19 @@ service cloud.firestore {
       allow read, write: if isSignedIn() && isValidId(adminId);
     }
 
-    // 8. Connection Test Document
+    // 8. Public Customer Requests & Inquiries
+    match /customer_requests/{requestId} {
+      allow create: if isValidId(requestId);
+      allow read, update, delete: if isSignedIn();
+    }
+
+    // 9. User Profiles & Accounts
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow write: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+    }
+
+    // 10. Connection Test Document
     match /test/connection {
       allow get: if true;
     }

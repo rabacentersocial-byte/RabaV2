@@ -61,50 +61,6 @@ export const PartnersSection: React.FC = () => {
   const [isPausedManually, setIsPausedManually] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Layout & Animation measurements
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const offsetRef = useRef(0);
-
-  const isDraggingRef = useRef(false);
-  const dragStartXRef = useRef(0);
-  const dragStartOffsetRef = useRef(0);
-
-  const animFrameRef = useRef<number | null>(null);
-  const lastTimeRef = useRef<number | null>(null);
-
-  // Card stride for responsive calculations
-  const getCardStride = () => {
-    if (typeof window !== 'undefined') {
-      const w = window.innerWidth;
-      if (w < 640) {
-        return Math.min(Math.max(w * 0.72, 220), 250) + 16;
-      }
-      if (w < 1024) {
-        return 240 + 20; // 260px stride
-      }
-      return 250 + 20; // 270px stride
-    }
-    return 270;
-  };
-
-  const getCardWidth = () => {
-    if (typeof window !== 'undefined') {
-      const w = window.innerWidth;
-      if (w < 640) {
-        return Math.min(Math.max(w * 0.72, 220), 250);
-      }
-      if (w < 1024) {
-        return 240;
-      }
-      return 250;
-    }
-    return 250;
-  };
-
-  // Speed calculation
-  const speedPxPerSec = Math.max(30, Math.min(75, 1600 / (settings.speedSeconds || 32)));
-
   // Sync with storage updates
   useEffect(() => {
     const handlePartnersUpdate = (e?: any) => {
@@ -212,137 +168,12 @@ export const PartnersSection: React.FC = () => {
     setActiveMobileIndex(idx);
   };
 
-  // Triplicate list for continuous seamless infinite loop
+  // Duplicate list once for seamless infinite pure GPU CSS marquee loop (-50% transform)
   const displayList = useMemo(() => {
     if (filteredPartners.length === 0) return [];
-    const multiplier = Math.max(3, Math.ceil(30 / filteredPartners.length));
-    const items: PartnerItem[] = [];
-    for (let i = 0; i < multiplier; i++) {
-      items.push(...filteredPartners);
-    }
-    return items;
+    return [...filteredPartners, ...filteredPartners];
   }, [filteredPartners]);
 
-  // Wrap offset within one full set of cards
-  const wrapOffset = useCallback((rawOffset: number) => {
-    const cardStride = getCardStride();
-    const singleSetWidth = totalPartners * cardStride;
-    if (singleSetWidth <= 0) return rawOffset;
-
-    let wrapped = rawOffset;
-    while (wrapped < -singleSetWidth) {
-      wrapped += singleSetWidth;
-    }
-    while (wrapped > 0) {
-      wrapped -= singleSetWidth;
-    }
-    return wrapped;
-  }, [totalPartners]);
-
-  // Initial offset positioning
-  useEffect(() => {
-    let rafId: number | null = null;
-    const updateCenter = () => {
-      if (rafId !== null) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        if (viewportRef.current) {
-          const vpWidth = viewportRef.current.clientWidth;
-          const cardWidth = getCardWidth();
-          const initialOffset = (vpWidth / 2) - (cardWidth / 2);
-          offsetRef.current = initialOffset;
-          if (trackRef.current) {
-            trackRef.current.style.transform = `translate3d(${initialOffset}px, 0, 0)`;
-          }
-        }
-      });
-    };
-    updateCenter();
-    window.addEventListener('resize', updateCenter, { passive: true });
-    return () => {
-      if (rafId !== null) cancelAnimationFrame(rafId);
-      window.removeEventListener('resize', updateCenter);
-    };
-  }, [totalPartners, selectedSector]);
-
-  // Continuous animation loop
-  useEffect(() => {
-    if (viewMode !== 'slider') return;
-
-    let active = true;
-
-    const loop = (time: number) => {
-      if (!active) return;
-      if (lastTimeRef.current === null) {
-        lastTimeRef.current = time;
-      }
-      const delta = (time - lastTimeRef.current) / 1000;
-      lastTimeRef.current = time;
-
-      // Move continuously when not dragging, not paused manually, and not hovered
-      if (!isDraggingRef.current && !isPausedManually && !isHovered) {
-        offsetRef.current -= speedPxPerSec * delta;
-        offsetRef.current = wrapOffset(offsetRef.current);
-        if (trackRef.current) {
-          trackRef.current.style.transform = `translate3d(${offsetRef.current}px, 0, 0)`;
-        }
-      }
-
-      animFrameRef.current = requestAnimationFrame(loop);
-    };
-
-    animFrameRef.current = requestAnimationFrame(loop);
-
-    return () => {
-      active = false;
-      if (animFrameRef.current) {
-        cancelAnimationFrame(animFrameRef.current);
-      }
-      lastTimeRef.current = null;
-    };
-  }, [isPausedManually, isHovered, wrapOffset, viewMode, speedPxPerSec]);
-
-  // Drag handlers
-  const handlePointerDown = (e: React.PointerEvent) => {
-    if (viewMode !== 'slider') return;
-    isDraggingRef.current = true;
-    setIsDragging(true);
-    dragStartXRef.current = e.clientX;
-    dragStartOffsetRef.current = offsetRef.current;
-
-    try {
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    } catch {}
-  };
-
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDraggingRef.current) return;
-    const deltaX = e.clientX - dragStartXRef.current;
-    const newOffset = dragStartOffsetRef.current + deltaX;
-    offsetRef.current = wrapOffset(newOffset);
-    if (trackRef.current) {
-      trackRef.current.style.transform = `translate3d(${offsetRef.current}px, 0, 0)`;
-    }
-  };
-
-  const handlePointerUp = (e: React.PointerEvent) => {
-    if (!isDraggingRef.current) return;
-    isDraggingRef.current = false;
-    setIsDragging(false);
-
-    try {
-      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
-    } catch {}
-  };
-
-  // Step button (Next / Prev)
-  const handleStep = (direction: 'next' | 'prev') => {
-    const cardStride = getCardStride();
-    const delta = direction === 'next' ? -cardStride : cardStride;
-    offsetRef.current = wrapOffset(offsetRef.current + delta);
-    if (trackRef.current) {
-      trackRef.current.style.transform = `translate3d(${offsetRef.current}px, 0, 0)`;
-    }
-  };
 
   // Sector counts
   const sectorCounts = useMemo(() => {
@@ -664,22 +495,14 @@ export const PartnersSection: React.FC = () => {
             </div>
 
             {/* --------------------------------------------------------------------- */}
-            {/* B. DESKTOP CONTINUOUS INFINITE SLIDER TRACK (On md and larger screens) */}
+            {/* B. DESKTOP CONTINUOUS INFINITE SLIDER TRACK (Pure GPU CSS Marquee)     */}
             {/* --------------------------------------------------------------------- */}
             <div className="hidden md:block">
               <div 
-                ref={viewportRef}
                 dir="ltr"
-                onPointerDown={handlePointerDown}
-                onPointerMove={handlePointerMove}
-                onPointerUp={handlePointerUp}
-                onPointerCancel={handlePointerUp}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
-                className={`relative w-full py-6 sm:py-8 overflow-hidden flex items-center touch-pan-y ${
-                  isDragging ? 'cursor-grabbing' : 'cursor-grab'
-                }`}
-                style={{ touchAction: 'pan-y' }}
+                className="relative w-full py-6 sm:py-8 overflow-hidden flex items-center"
               >
                 {/* Subtle Horizon line behind cards */}
                 <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/20 dark:via-emerald-400/25 to-transparent pointer-events-none z-0" />
@@ -690,10 +513,10 @@ export const PartnersSection: React.FC = () => {
 
                 {/* Moving Track */}
                 <div
-                  ref={trackRef}
-                  className="flex items-center gap-4 sm:gap-6 will-change-transform z-10 shrink-0"
+                  className="flex items-center gap-4 sm:gap-6 z-10 shrink-0 animate-partners-marquee hover:[animation-play-state:paused]"
                   style={{
-                    transition: isDragging ? 'none' : 'none',
+                    willChange: 'transform',
+                    animationPlayState: (isPausedManually || isHovered) ? 'paused' : 'running',
                   }}
                 >
                   {displayList.map((partner, index) => {
@@ -853,13 +676,13 @@ export const PartnersSection: React.FC = () => {
             
             {/* Live Status Hint */}
             <div className="flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full ${isDragging ? 'bg-amber-500' : isHovered ? 'bg-blue-500' : 'bg-emerald-500 animate-pulse'}`}></span>
+              <span className={`w-2 h-2 rounded-full ${isPausedManually ? 'bg-amber-500' : isHovered ? 'bg-blue-500' : 'bg-emerald-500'}`}></span>
               <span>
-                {isDragging 
-                  ? (isArabic ? 'جارٍ السحب والتمرير اليدوي...' : 'Dragging...') 
+                {isPausedManually 
+                  ? (isArabic ? 'متوقف مؤقتاً للتصفح — انقر على زر التشغيل للمتابعة' : 'Paused')
                   : isHovered
                     ? (isArabic ? 'تم إيقاف الحركة مؤقتاً للتصفح' : 'Paused on hover')
-                    : (isArabic ? 'حركة انسيابية مستمرة — مرر الماوس للتوقف أو اسحب للتنقل' : 'Continuous stream — hover to inspect')}
+                    : (isArabic ? 'حركة انسيابية مستمرة مدعومة بالمعالج الرسومي (GPU)' : 'Continuous GPU stream — hover to inspect')}
               </span>
             </div>
 
@@ -873,24 +696,6 @@ export const PartnersSection: React.FC = () => {
               >
                 {isPausedManually ? <Play className="w-3.5 h-3.5 fill-current" /> : <Pause className="w-3.5 h-3.5 fill-current" />}
                 <span>{isPausedManually ? (isArabic ? 'تشغيل' : 'Play') : (isArabic ? 'إيقاف' : 'Pause')}</span>
-              </button>
-
-              {/* Prev step */}
-              <button
-                onClick={() => handleStep('prev')}
-                aria-label={isArabic ? 'السابق' : 'Previous'}
-                className="w-8 h-8 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 hover:border-emerald-500 text-slate-700 dark:text-slate-300 hover:text-[#0D6D54] dark:hover:text-[#2DD4BF] flex items-center justify-center transition-colors cursor-pointer active:scale-95 shadow-xs"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-
-              {/* Next step */}
-              <button
-                onClick={() => handleStep('next')}
-                aria-label={isArabic ? 'التالي' : 'Next'}
-                className="w-8 h-8 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 hover:border-emerald-500 text-slate-700 dark:text-slate-300 hover:text-[#0D6D54] dark:hover:text-[#2DD4BF] flex items-center justify-center transition-colors cursor-pointer active:scale-95 shadow-xs"
-              >
-                <ChevronLeft className="w-4 h-4" />
               </button>
             </div>
 

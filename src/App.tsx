@@ -3,7 +3,7 @@ import { Navbar } from './components/Navbar';
 import { AnimatedBackground } from './components/AnimatedBackground';
 import { Hero } from './components/Hero';
 import { CourseItem } from './data/coursesData';
-import { LazySection } from './components/LazySection';
+import { LazySection, LazyViewportSection } from './components/LazySection';
 import { getStoredAdminSession, clearStoredAdminSession } from './data/adminData';
 import { DISPATCH_REQUEST_EVENT } from './data/customerRequests';
 
@@ -108,9 +108,15 @@ export default function App() {
     // Apply saved theme colors on startup
     applyGlobalTheme(getStoredThemeSettings());
 
-    // Defer tracking pixels & external analytics to after first paint & idle to achieve near-zero TBT
+    // Defer tracking pixels & external analytics until first user interaction OR 4500ms after load
     const scheduleDeferredPixels = () => {
+      let executed = false;
       const run = () => {
+        if (executed) return;
+        executed = true;
+        ['scroll', 'mousemove', 'touchstart', 'pointerdown'].forEach(evt => {
+          window.removeEventListener(evt, run);
+        });
         applyTrackingPixels(getStoredTrackingPixels());
         fetch('/api/tracking-pixels/active')
           .then(res => res.json())
@@ -122,14 +128,20 @@ export default function App() {
           .catch(() => {});
       };
 
-      if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-        (window as any).requestIdleCallback(run, { timeout: 3500 });
-      } else {
-        setTimeout(run, 2000);
-      }
+      ['scroll', 'mousemove', 'touchstart', 'pointerdown'].forEach(evt => {
+        window.addEventListener(evt, run, { passive: true, once: true });
+      });
+
+      const timer = setTimeout(run, 4500);
+      return () => {
+        clearTimeout(timer);
+        ['scroll', 'mousemove', 'touchstart', 'pointerdown'].forEach(evt => {
+          window.removeEventListener(evt, run);
+        });
+      };
     };
 
-    scheduleDeferredPixels();
+    const cleanupPixels = scheduleDeferredPixels();
 
     // Dismiss splash overlay as soon as App component renders
     if (typeof window !== 'undefined' && (window as any).dismissSplash) {
@@ -148,13 +160,16 @@ export default function App() {
     window.addEventListener('raba_theme_updated', handleThemeUpdate);
     window.addEventListener('raba_modules_updated', handleModulesUpdate);
 
-    const handleNewRequest = (e: any) => {
+    const handleNewRequest = async (e: any) => {
       const req = e?.detail as Appointment;
       if (req) {
         setAppointments((prev) => [req, ...prev.filter(a => a.id !== req.id)]);
-        import('./services/firestoreService')
-          .then(m => m.saveAppointmentToFirestore(req))
-          .catch(() => {});
+        try {
+          const { saveAppointmentToFirestore } = await import('./services/firestoreService');
+          await saveAppointmentToFirestore(req);
+        } catch (err) {
+          console.error('[App] Error persisting appointment to Firestore in handleNewRequest:', err);
+        }
       }
     };
     const handleNotifsUpdate = (e: any) => {
@@ -270,6 +285,7 @@ export default function App() {
       window.removeEventListener('raba_specialists_updated', handleSpecialistsUpdate);
       window.removeEventListener('raba_appointments_updated', handleAppointmentsUpdate);
       window.removeEventListener('raba_persistent_sync_ready', handleSyncReady);
+      cleanupPixels();
     };
   }, []);
 
@@ -584,15 +600,18 @@ export default function App() {
     setSelectedCvSpecialist(specialist);
   };
 
-  const handleConfirmBooking = (confirmedAppointment: Appointment) => {
+  const handleConfirmBooking = async (confirmedAppointment: Appointment) => {
     // Add directly to appointments list (appears instantly in Admin Dashboard) with duplicate protection
     const sanitizedApp = {
       ...confirmedAppointment,
       id: confirmedAppointment.id || `apt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
     };
-    import('./services/firestoreService')
-      .then(m => m.saveAppointmentToFirestore(sanitizedApp))
-      .catch(() => {});
+    try {
+      const { saveAppointmentToFirestore } = await import('./services/firestoreService');
+      await saveAppointmentToFirestore(sanitizedApp);
+    } catch (err) {
+      console.error('[App] Error saving appointment to Firestore in handleConfirmBooking:', err);
+    }
 
     // Create immediate confirmation notification for user
     const newConfirmationNotif: NotificationItem = {

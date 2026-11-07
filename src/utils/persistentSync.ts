@@ -6,11 +6,8 @@
  */
 
 import { loadPersistentImagesToMemory } from './persistentImageStore';
-import { 
-  saveSiteSettingToFirestore, 
-  deleteSiteSettingFromFirestore, 
-  subscribeSiteSettings 
-} from '../services/firestoreService';
+// Lazy dynamic loader for firestoreService to completely decouple @firebase/firestore and re2js from initial bundle
+const getFirestoreService = () => import('../services/firestoreService');
 
 /**
  * Returns authorization and session headers for secure server sync
@@ -223,8 +220,9 @@ export async function initPersistentSync(): Promise<void> {
       !!localStorage.getItem('raba_admin_session_auth')
     );
 
-    const setupLiveSubscriber = () => {
+    const setupLiveSubscriber = async () => {
       try {
+        const { subscribeSiteSettings } = await getFirestoreService();
         subscribeSiteSettings((settingsMap) => {
           for (const [key, data] of Object.entries(settingsMap)) {
             IN_MEMORY_SYNC_CACHE.set(key, data);
@@ -414,6 +412,7 @@ export async function savePersistentModule<T>(key: string, data: T): Promise<boo
 
   // 3. Save directly to Firestore from the client if authenticated
   try {
+    const { saveSiteSettingToFirestore } = await getFirestoreService();
     await saveSiteSettingToFirestore(key, data);
   } catch {
     // Handled or skipped if client unauthenticated
@@ -453,6 +452,7 @@ export async function deletePersistentModule(key: string, collectionName?: strin
 
     // Direct Firestore deletion if authenticated
     try {
+      const { deleteSiteSettingFromFirestore } = await getFirestoreService();
       await deleteSiteSettingFromFirestore(key);
     } catch {
       // Handled or skipped if client unauthenticated

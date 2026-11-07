@@ -35,6 +35,16 @@ export default defineConfig(() => {
           quality: 75,
         },
       }),
+      {
+        name: 'vite-plugin-async-css',
+        enforce: 'post' as const,
+        transformIndexHtml(html: string) {
+          return html.replace(
+            /<link\s+([^>]*?)rel="stylesheet"([^>]*?)href="([^"]*?\/assets\/index-[^"]*?\.css)"([^>]*?)>/gi,
+            '<link rel="preload" href="$3" as="style" onload="this.onload=null;this.rel=\'stylesheet\'" $1$2$4><noscript><link rel="stylesheet" href="$3" $1$2$4></noscript>'
+          );
+        }
+      },
       VitePWA({
         injectRegister: null,
         registerType: 'autoUpdate',
@@ -161,13 +171,19 @@ export default defineConfig(() => {
       cssCodeSplit: true,
       minify: 'esbuild',
       cssMinify: true,
-      sourcemap: true,
+      sourcemap: false,
       target: 'es2020',
       chunkSizeWarningLimit: 800,
       rollupOptions: {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
+              if (id.includes('@supabase')) {
+                return 'vendor-supabase';
+              }
+              if (id.includes('re2js')) {
+                return 'vendor-re2js';
+              }
               if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
                 return 'vendor-react';
               }
@@ -176,9 +192,6 @@ export default defineConfig(() => {
               }
               if (id.includes('lucide-react')) {
                 return 'vendor-icons';
-              }
-              if (id.includes('framer-motion') || id.includes('/motion/')) {
-                return 'vendor-motion';
               }
               if (id.includes('canvas-confetti')) {
                 return 'vendor-confetti';

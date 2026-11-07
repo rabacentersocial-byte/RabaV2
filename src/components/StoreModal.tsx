@@ -23,7 +23,8 @@ import { useLanguage } from '../context/LanguageContext';
 import { Appointment, StoreOrderItem } from '../types';
 import { 
   generateRequestReference, 
-  saveAndBroadcastCustomerRequest, 
+  saveAndBroadcastCustomerRequest,
+  saveAndBroadcastCustomerRequestAsync,
   getCustomerWhatsAppMessage 
 } from '../data/customerRequests';
 
@@ -111,6 +112,7 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'bank_transfer' | 'tamara'>('cod');
   const [notes, setNotes] = useState('');
   const [formError, setFormError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedOrder, setSubmittedOrder] = useState<Appointment | null>(null);
 
   if (!isOpen) return null;
@@ -156,7 +158,7 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
     });
   };
 
-  const handleOrderSubmit = (e: React.FormEvent) => {
+  const handleOrderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError('');
 
@@ -173,6 +175,8 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
       setFormError(isArabic ? 'يرجى كتابة المدينة والحي للتوصيل' : 'Please enter delivery city & address');
       return;
     }
+
+    setIsSubmitting(true);
 
     const orderItems: StoreOrderItem[] = cartProductList.map(item => ({
       id: item.product.id,
@@ -216,20 +220,31 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
       readByAdmin: false
     };
 
-    saveAndBroadcastCustomerRequest(newRequest);
-
-    setSubmittedOrder(newRequest);
-    setCart({});
-    setView('success');
-
     try {
-      confetti({
-        particleCount: 75,
-        spread: 70,
-        origin: { y: 0.6 }
-      });
-    } catch {
-      // ignore
+      await saveAndBroadcastCustomerRequestAsync(newRequest);
+
+      setSubmittedOrder(newRequest);
+      setCart({});
+      setView('success');
+
+      try {
+        confetti({
+          particleCount: 75,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      } catch {
+        // ignore
+      }
+    } catch (err: any) {
+      console.error('[StoreModal Error]:', err);
+      setFormError(
+        isArabic
+          ? 'عذراً، حدث خطأ أثناء إرسال طلب الشراء. يرجى التحقق من اتصالك والمحاولة مجدداً.'
+          : 'Failed to record store order in database. Please check your connection and try again.'
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

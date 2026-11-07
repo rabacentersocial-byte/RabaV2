@@ -16,7 +16,8 @@ import { useLanguage } from '../context/LanguageContext';
 import { Appointment } from '../types';
 import { 
   generateRequestReference, 
-  saveAndBroadcastCustomerRequest, 
+  saveAndBroadcastCustomerRequest,
+  saveAndBroadcastCustomerRequestAsync,
   getCustomerWhatsAppMessage 
 } from '../data/customerRequests';
 
@@ -43,11 +44,12 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
   const [preferredTime, setPreferredTime] = useState(isArabic ? 'صباحاً (09:00 ص - 12:00 م)' : 'Morning (09:00 AM - 12:00 PM)');
   const [notes, setNotes] = useState('');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedRequest, setSubmittedRequest] = useState<Appointment | null>(null);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -62,6 +64,7 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
       return;
     }
 
+    setIsSubmitting(true);
     const ref = generateRequestReference('quick_consultation');
 
     const newRequest: Appointment = {
@@ -94,22 +97,33 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
       readByAdmin: false
     };
 
-    saveAndBroadcastCustomerRequest(newRequest);
-
-    if (onSuccessSubmit) {
-      onSuccessSubmit(newRequest);
-    }
-
-    setSubmittedRequest(newRequest);
-
     try {
-      confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { y: 0.6 }
-      });
-    } catch {
-      // ignore
+      await saveAndBroadcastCustomerRequestAsync(newRequest);
+
+      if (onSuccessSubmit) {
+        onSuccessSubmit(newRequest);
+      }
+
+      setSubmittedRequest(newRequest);
+
+      try {
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.6 }
+        });
+      } catch {
+        // ignore
+      }
+    } catch (err: any) {
+      console.error('[QuickConsultationModal Error]:', err);
+      setError(
+        isArabic
+          ? 'عذراً، حدث خطأ أثناء إرسال طلب الاستشارة. يرجى التحقق من اتصالك والمحاولة مجدداً.'
+          : 'Failed to save consultation request. Please check your connection and try again.'
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -342,11 +356,12 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
             <div className="pt-2">
               <button
                 type="submit"
+                disabled={isSubmitting}
                 aria-label={isArabic ? 'إرسال طلب الاستشارة الفورية' : 'Submit Quick Consultation Request'}
-                className="w-full min-h-[48px] py-3 px-4 bg-gradient-to-r from-[#0E2A54] via-[#1B4B8A] to-[#2E86EB] hover:opacity-95 active:scale-98 text-white font-black rounded-xl text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
+                className="w-full min-h-[48px] py-3 px-4 bg-gradient-to-r from-[#0E2A54] via-[#1B4B8A] to-[#2E86EB] hover:opacity-95 active:scale-98 text-white font-black rounded-xl text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-60"
               >
                 <Send className={`w-3.5 h-3.5 ${isArabic ? 'rotate-180' : ''}`} />
-                <span>{isArabic ? 'إرسال طلب الاستشارة فوراً' : 'Submit Consultation Request'}</span>
+                <span>{isSubmitting ? (isArabic ? 'جاري الإرسال وحفظ الطلب...' : 'Submitting...') : (isArabic ? 'إرسال طلب الاستشارة فوراً' : 'Submit Consultation Request')}</span>
               </button>
 
               <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 mt-2">

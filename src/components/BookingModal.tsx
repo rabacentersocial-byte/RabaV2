@@ -21,7 +21,8 @@ import { SPECIALISTS, SERVICES, THERAPY_PACKAGES, TIME_SLOTS } from '../data/moc
 import { Specialist, ServiceItem, TherapyPackage, Appointment } from '../types';
 import { 
   generateRequestReference, 
-  saveAndBroadcastCustomerRequest, 
+  saveAndBroadcastCustomerRequest,
+  saveAndBroadcastCustomerRequestAsync,
   getCustomerWhatsAppMessage 
 } from '../data/customerRequests';
 import { useLanguage } from '../context/LanguageContext';
@@ -81,6 +82,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   // Form State
   const [formError, setFormError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [confirmedApp, setConfirmedApp] = useState<Appointment | null>(null);
 
@@ -106,6 +108,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   const handleModalClose = () => {
     setIsSubmitted(false);
+    setIsSubmitting(false);
     setConfirmedApp(null);
     setFormError('');
     onClose();
@@ -117,7 +120,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const activePackage = THERAPY_PACKAGES.find((p) => p.id === selectedPackageId) || THERAPY_PACKAGES[0];
   const activeSpecialist = SPECIALISTS.find((s) => s.id === selectedSpecialistId) || SPECIALISTS[0];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // 1. Mandatory Name Validation
@@ -134,6 +137,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     }
 
     setFormError('');
+    setIsSubmitting(true);
 
     const isNationalDay = (initialNotes && (initialNotes.includes('اليوم الوطني') || initialNotes.includes('KSA96'))) ||
                           (notes && (notes.includes('اليوم الوطني') || notes.includes('KSA96')));
@@ -177,25 +181,37 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       createdAt: new Date().toISOString(),
       requestType: requestType,
       requestSource: isNationalDay ? 'عرض اليوم الوطني' : (bookingType === 'package' ? 'باقة تأهيلية' : 'حجز جلسة سريعة'),
-      couponCode: isNationalDay ? 'KSA96-FREE' : undefined,
+      couponCode: isNationalDay ? 'KSA96-FREE' : '',
       readByAdmin: false
     };
 
-    saveAndBroadcastCustomerRequest(newAppointment);
-
     try {
-      confetti({
-        particleCount: 55,
-        spread: 60,
-        origin: { y: 0.6 }
-      });
-    } catch {
-      // ignore
-    }
+      // Await persistence across Firestore and backend database
+      await saveAndBroadcastCustomerRequestAsync(newAppointment);
 
-    setConfirmedApp(newAppointment);
-    setIsSubmitted(true);
-    onConfirmBooking(newAppointment);
+      onConfirmBooking(newAppointment);
+      setConfirmedApp(newAppointment);
+      setIsSubmitted(true);
+
+      try {
+        confetti({
+          particleCount: 55,
+          spread: 60,
+          origin: { y: 0.6 }
+        });
+      } catch {
+        // ignore
+      }
+    } catch (err: any) {
+      console.error('[BookingModal Error]:', err);
+      setFormError(
+        isArabic
+          ? 'عذراً، حدث خطأ أثناء إرسال طلب الحجز إلى قاعدة البيانات. يرجى التحقق من اتصالك والمحاولة مجدداً.'
+          : 'Failed to record booking in database. Please check your connection and try again.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const getWhatsAppLink = (app: Appointment) => {
@@ -518,11 +534,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <button
                 type="submit"
                 id="submit-booking-btn"
+                disabled={isSubmitting}
                 aria-label={isArabic ? 'تأكيد طلب حجز الموعد' : 'Confirm appointment booking request'}
-                className="w-full min-h-[48px] py-3 px-4 bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:opacity-95 active:scale-[0.98] text-white font-black rounded-xl text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
+                className="w-full min-h-[48px] py-3 px-4 bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:opacity-95 active:scale-[0.98] text-white font-black rounded-xl text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-60"
               >
                 <FileCheck2 className="w-4 h-4 shrink-0" />
-                <span>{isArabic ? 'تأكيد طلب الحجز فوراً' : 'Confirm Booking Request'}</span>
+                <span>{isSubmitting ? (isArabic ? 'جاري تأكيد وحفظ الحجز...' : 'Saving booking...') : (isArabic ? 'تأكيد طلب الحجز فوراً' : 'Confirm Booking Request')}</span>
                 {isArabic ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
               </button>
 
