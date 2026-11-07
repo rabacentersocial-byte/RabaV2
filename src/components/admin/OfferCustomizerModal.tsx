@@ -1228,7 +1228,7 @@ export const OfferCustomizerModal: React.FC<OfferCustomizerModalProps> = ({
                   </div>
 
                   <div className="space-y-1 text-[9.5px] text-emerald-100/90 pt-0.5">
-                    {terms.slice(0, 2).map((t, idx) => (
+                    {(terms || []).slice(0, 2).map((t, idx) => (
                       <div key={idx} className="flex items-start gap-1 bg-black/20 px-1.5 py-0.5 rounded-md border border-white/5">
                         <span className="font-bold shrink-0" style={{ color: styling.accentColor || '#00E5BE' }}>•</span>
                         <span className="leading-tight truncate">{t.textAr}</span>

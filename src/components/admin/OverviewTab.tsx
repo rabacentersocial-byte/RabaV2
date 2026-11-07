@@ -28,26 +28,37 @@ interface OverviewTabProps {
 }
 
 export const OverviewTab: React.FC<OverviewTabProps> = ({
-  appointments,
-  users,
+  appointments = [],
+  users = [],
   currentUser,
-  reviews,
+  reviews = [],
   onNavigateTab,
   hasPermission
 }) => {
   const { isArabic } = useLanguage();
 
-  const totalRevenue = appointments
-    .filter(a => a.status === 'confirmed' || a.status === 'completed')
-    .reduce((sum, a) => sum + (a.amount || 0), 0);
+  const safeAppointments = Array.isArray(appointments) ? appointments : [];
+  const safeUsers = Array.isArray(users) ? users : [];
+  const safeReviews = Array.isArray(reviews) ? reviews : [];
+  const safeCurrentUser = currentUser || {
+    id: 'admin-fallback',
+    name: isArabic ? 'المدير العام' : 'Administrator',
+    roleTitleAr: 'إدارة المنظومة',
+    roleTitleEn: 'System Admin',
+    department: 'الإدارة العامة'
+  };
 
-  const confirmedCount = appointments.filter(a => a.status === 'confirmed').length;
-  const pendingCount = appointments.filter(a => a.status === 'pending').length;
-  const completedCount = appointments.filter(a => a.status === 'completed').length;
-  const activeUsersCount = users.filter(u => u.status === 'active').length;
+  const totalRevenue = safeAppointments
+    .filter(a => a && (a.status === 'confirmed' || a.status === 'completed'))
+    .reduce((sum, a) => sum + (Number(a.amount) || 0), 0);
 
-  const averageRating = reviews.length > 0 
-    ? (reviews.reduce((sum, r) => sum + (r.rating || 5), 0) / reviews.length).toFixed(1)
+  const confirmedCount = safeAppointments.filter(a => a && a.status === 'confirmed').length;
+  const pendingCount = safeAppointments.filter(a => a && a.status === 'pending').length;
+  const completedCount = safeAppointments.filter(a => a && a.status === 'completed').length;
+  const activeUsersCount = safeUsers.filter(u => u && u.status === 'active').length;
+
+  const averageRating = safeReviews.length > 0 
+    ? (safeReviews.reduce((sum, r) => sum + (r.rating || 5), 0) / safeReviews.length).toFixed(1)
     : '4.9';
 
   return (
@@ -61,12 +72,12 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
               {isArabic ? 'منظومة إدارة مركز رابا للرعاية النهارية والتأهيل' : 'Raba Center Comprehensive Management Suite'}
             </span>
             <h1 className="text-2xl sm:text-3xl font-black">
-              {isArabic ? `أهلاً بك، ${currentUser.name}` : `Welcome, ${currentUser.name}`}
+              {isArabic ? `أهلاً بك، ${safeCurrentUser.name || 'المدير'}` : `Welcome, ${safeCurrentUser.name || 'Admin'}`}
             </h1>
             <p className="text-emerald-100/80 text-xs sm:text-sm mt-1 max-w-xl">
               {isArabic 
-                ? `أنت مسجل كـ (${currentUser.roleTitleAr}) - قسم ${currentUser.department}. لديك صلاحيات للتحكم بالمنظومة.` 
-                : `Logged in as (${currentUser.roleTitleEn}) - ${currentUser.department}.`}
+                ? `أنت مسجل كـ (${safeCurrentUser.roleTitleAr || 'إدارة'}) - قسم ${safeCurrentUser.department || 'الإدارة'}. لديك صلاحيات للتحكم بالمنظومة.` 
+                : `Logged in as (${safeCurrentUser.roleTitleEn || 'Admin'}) - ${safeCurrentUser.department || 'Operations'}.`}
             </p>
           </div>
 
@@ -125,7 +136,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
-            {appointments.length}
+            {safeAppointments.length}
           </div>
           <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 mt-2">
             <TrendingUp className="w-3.5 h-3.5" />
@@ -162,7 +173,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
-            {activeUsersCount} <span className="text-xs text-slate-400 font-normal">/ {users.length}</span>
+            {activeUsersCount} <span className="text-xs text-slate-400 font-normal">/ {safeUsers.length}</span>
           </div>
           <div className="text-[11px] text-indigo-600 dark:text-indigo-400 font-bold mt-2">
             {isArabic ? 'نظام الصلاحيات مفعل' : 'RBAC enabled'}
@@ -183,7 +194,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
             {averageRating} <span className="text-xs text-slate-400 font-normal">/ 5.0</span>
           </div>
           <div className="text-[11px] text-amber-600 dark:text-amber-400 font-bold mt-2">
-            {isArabic ? `${reviews.length} تقييم معتمد` : `${reviews.length} reviews`}
+            {isArabic ? `${safeReviews.length} تقييم معتمد` : `${safeReviews.length} reviews`}
           </div>
         </div>
 
@@ -214,39 +225,58 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
           </div>
 
           <div className="space-y-3">
-            {appointments.slice(0, 5).map((app, idx) => (
-              <div
-                key={`${app.id}-${idx}`}
-                className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-white/5 flex items-center justify-between gap-4"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-bold flex items-center justify-center shrink-0 text-xs">
-                    {app.childName.slice(0, 2)}
-                  </div>
-                  <div className="min-w-0">
-                    <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">
-                      {app.childName} – <span className="font-normal text-slate-500">{app.serviceTitle}</span>
-                    </h4>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                      {app.date} • {app.timeSlot} • {app.specialistName}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="text-right shrink-0">
-                  <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
-                    app.status === 'confirmed'
-                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
-                      : 'bg-amber-500/15 text-amber-700 dark:text-amber-300'
-                  }`}>
-                    {app.status === 'confirmed' ? (isArabic ? 'مؤكد' : 'Confirmed') : (isArabic ? 'قيد الانتظار' : 'Pending')}
-                  </span>
-                  <div className="text-xs font-bold text-slate-900 dark:text-white mt-1">
-                    {app.amount} {isArabic ? 'ر.س' : 'SAR'}
-                  </div>
-                </div>
+            {safeAppointments.length === 0 ? (
+              <div className="p-8 text-center rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-dashed border-slate-200 dark:border-white/10">
+                <Calendar className="w-8 h-8 mx-auto mb-2 text-slate-400 opacity-60" />
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                  {isArabic ? 'لا توجد حجوزات مسجلة حالياً' : 'No bookings registered yet'}
+                </p>
               </div>
-            ))}
+            ) : (
+              safeAppointments.slice(0, 5).map((app, idx) => {
+                const childDisplayName = (app?.childName || (app as any)?.patientName || app?.guardianName || (isArabic ? 'مستفيد' : 'Beneficiary')).trim();
+                const initial = (childDisplayName || 'م').slice(0, 2);
+                const serviceLabel = app?.serviceTitle || (app as any)?.service || (isArabic ? 'جلسة تأهيلية' : 'Rehab Session');
+                const appointmentDate = app?.date || (isArabic ? 'موعد جديد' : 'New Appointment');
+                const timeSlot = app?.timeSlot || (app as any)?.time || '';
+                const specialistName = app?.specialistName || (app as any)?.specialist || (isArabic ? 'أخصائي المركز' : 'Specialist');
+                const isConfirmed = app?.status === 'confirmed' || app?.status === 'completed';
+
+                return (
+                  <div
+                    key={`${app?.id || 'apt'}-${idx}`}
+                    className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-white/5 flex items-center justify-between gap-4"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-bold flex items-center justify-center shrink-0 text-xs">
+                        {initial}
+                      </div>
+                      <div className="min-w-0">
+                        <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">
+                          {childDisplayName} – <span className="font-normal text-slate-500">{serviceLabel}</span>
+                        </h4>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                          {appointmentDate} {timeSlot ? `• ${timeSlot}` : ''} {specialistName ? `• ${specialistName}` : ''}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-right shrink-0">
+                      <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                        isConfirmed
+                          ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                          : 'bg-amber-500/15 text-amber-700 dark:text-amber-300'
+                      }`}>
+                        {isConfirmed ? (isArabic ? 'مؤكد' : 'Confirmed') : (isArabic ? 'قيد الانتظار' : 'Pending')}
+                      </span>
+                      <div className="text-xs font-bold text-slate-900 dark:text-white mt-1">
+                        {Number(app?.amount) || 0} {isArabic ? 'ر.س' : 'SAR'}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
 
@@ -266,27 +296,40 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
             </div>
 
             <div className="space-y-3">
-              {users.slice(0, 4).map((u) => (
-                <div key={u.id} className="flex items-center justify-between gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    {u.avatar ? (
-                      <img src={u.avatar} alt={u.name} className="w-8 h-8 rounded-full object-cover shrink-0" />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-white text-xs font-bold flex items-center justify-center shrink-0">
-                        {u.name.slice(0, 2)}
-                      </div>
-                    )}
-                    <div className="min-w-0">
-                      <div className="text-xs font-bold text-slate-900 dark:text-white truncate">{u.name}</div>
-                      <div className="text-[10px] text-slate-500 truncate">{u.roleTitleAr}</div>
-                    </div>
-                  </div>
-
-                  <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full shrink-0">
-                    {u.permissions.length} {isArabic ? 'صلاحية' : 'perms'}
-                  </span>
+              {safeUsers.length === 0 ? (
+                <div className="p-4 text-center rounded-2xl bg-slate-50 dark:bg-slate-800/40 text-xs text-slate-400">
+                  {isArabic ? 'لا يوجد مستخدمين' : 'No staff members'}
                 </div>
-              ))}
+              ) : (
+                safeUsers.slice(0, 4).map((u, idx) => {
+                  const userName = (u?.name || (u as any)?.username || (isArabic ? 'مستخدم' : 'User')).trim();
+                  const userInitial = (userName || 'م').slice(0, 2);
+                  const roleLabel = u?.roleTitleAr || u?.role || (isArabic ? 'عضو فريق' : 'Staff');
+                  const permLength = Array.isArray(u?.permissions) ? u.permissions.length : 0;
+
+                  return (
+                    <div key={u?.id || `user-${idx}`} className="flex items-center justify-between gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        {u?.avatar ? (
+                          <img src={u.avatar} alt={userName} className="w-8 h-8 rounded-full object-cover shrink-0" />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-white text-xs font-bold flex items-center justify-center shrink-0">
+                            {userInitial}
+                          </div>
+                        )}
+                        <div className="min-w-0">
+                          <div className="text-xs font-bold text-slate-900 dark:text-white truncate">{userName}</div>
+                          <div className="text-[10px] text-slate-500 truncate">{roleLabel}</div>
+                        </div>
+                      </div>
+
+                      <span className="text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full shrink-0">
+                        {permLength} {isArabic ? 'صلاحية' : 'perms'}
+                      </span>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
 

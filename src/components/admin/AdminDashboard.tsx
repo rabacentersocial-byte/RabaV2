@@ -406,19 +406,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               className="flex items-center gap-1.5 sm:gap-2 p-1.5 sm:px-3 sm:py-1.5 rounded-xl sm:rounded-2xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all border border-slate-200/80 dark:border-white/10 text-xs cursor-pointer"
               title={isArabic ? 'تبديل المستخدم النشط لتجربة الصلاحيات' : 'Switch active user to test RBAC'}
             >
-              {currentUser.avatar ? (
-                <img src={currentUser.avatar} alt={currentUser.name} className="w-6 h-6 rounded-full object-cover shrink-0" />
+              {currentUser?.avatar ? (
+                <img src={currentUser.avatar} alt={currentUser.name || ''} className="w-6 h-6 rounded-full object-cover shrink-0" />
               ) : (
                 <div className="w-6 h-6 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0">
-                  {currentUser.name.slice(0, 1)}
+                  {(currentUser?.name || currentUser?.username || 'أ').slice(0, 1)}
                 </div>
               )}
               <div className="hidden md:block text-right">
                 <div className="font-bold text-slate-800 dark:text-slate-200 text-xs leading-none">
-                  {currentUser.name}
+                  {currentUser?.name || 'المدير'}
                 </div>
                 <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
-                  {currentUser.roleTitleAr}
+                  {currentUser?.roleTitleAr || 'إدارة'}
                 </div>
               </div>
               <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400" />
@@ -439,23 +439,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       key={u.id}
                       onClick={() => handleSwitchUser(u)}
                       className={`w-full text-right p-2 rounded-xl text-xs flex items-center justify-between gap-2 transition-all cursor-pointer ${
-                        u.id === currentUser.id
+                        u.id === currentUser?.id
                           ? 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-200 font-bold'
                           : 'hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
                       }`}
                       dir={isArabic ? 'rtl' : 'ltr'}
                     >
                       <div className="flex items-center gap-2 min-w-0">
-                        {u.avatar ? (
-                          <img src={u.avatar} alt={u.name} className="w-6 h-6 rounded-full object-cover shrink-0" />
+                        {u?.avatar ? (
+                          <img src={u.avatar} alt={u.name || ''} className="w-6 h-6 rounded-full object-cover shrink-0" />
                         ) : (
                           <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-xs font-bold flex items-center justify-center shrink-0">
-                            {u.name.slice(0, 1)}
+                            {(u?.name || u?.username || 'أ').slice(0, 1)}
                           </div>
                         )}
                         <div className="truncate">
-                          <div className="truncate font-bold">{u.name}</div>
-                          <div className="text-[10px] text-slate-400">{u.roleTitleAr}</div>
+                          <div className="truncate font-bold">{u?.name || u?.username || 'مستخدم'}</div>
+                          <div className="text-[10px] text-slate-400">{u?.roleTitleAr || ''}</div>
                         </div>
                       </div>
 

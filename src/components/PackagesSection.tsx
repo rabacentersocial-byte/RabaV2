@@ -427,7 +427,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
 
                     {/* Checklist (Features) */}
                     <div className="space-y-1 sm:space-y-2 mb-2.5 sm:mb-4">
-                      {(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).slice(0, 2).map((feat, idx) => (
+                      {((isArabic ? pkg.features : (pkg.featuresEn || pkg.features)) || []).slice(0, 2).map((feat, idx) => (
                         <div key={idx} className="flex items-center gap-1.5 sm:gap-2">
                           <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full ${isSummer ? 'bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-400' : theme.checkBg} flex items-center justify-center shrink-0`}>
                             <Check className="w-2.5 h-2.5 stroke-[3]" />
@@ -437,7 +437,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                           </span>
                         </div>
                       ))}
-                      {(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).slice(2, 4).map((feat, idx) => (
+                      {((isArabic ? pkg.features : (pkg.featuresEn || pkg.features)) || []).slice(2, 4).map((feat, idx) => (
                         <div key={idx + 2} className="hidden sm:flex items-center gap-2">
                           <div className={`w-4 h-4 rounded-full ${isSummer ? 'bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-400' : theme.checkBg} flex items-center justify-center shrink-0`}>
                             <Check className="w-2.5 h-2.5 stroke-[3]" />

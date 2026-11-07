@@ -178,7 +178,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
     const title = isArabic ? course.titleAr : course.titleEn;
     const hoursBadge = isArabic ? course.hoursBadgeAr : course.hoursBadgeEn;
     const description = isArabic ? course.descriptionAr : course.descriptionEn;
-    const features = isArabic ? course.featuresAr : course.featuresEn;
+    const features = (isArabic ? course.featuresAr : course.featuresEn) || course.featuresAr || [];
     const instructor = isArabic ? 'بإشراف نخبة من الأخصائيين المعتمدين' : 'Supervised by Certified Specialists';
     const theme = getCourseLogoTheme(course, index);
 
@@ -260,7 +260,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
 
             {/* Checklist of Features (4 items) */}
             <div className="space-y-1.5 sm:space-y-2.5 pt-2 sm:pt-3 border-t border-slate-100 dark:border-slate-800/80">
-              {features.slice(0, 4).map((feat, idx) => (
+              {(features || []).slice(0, 4).map((feat, idx) => (
                 <div key={idx} className="flex items-start gap-2 text-[11px] sm:text-[13px] text-slate-700 dark:text-slate-200 font-medium">
                   <span className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full ${theme.checkBg} flex items-center justify-center shrink-0 mt-0.5 transition-colors`}>
                     <Check className="w-2 h-2 sm:w-2.5 sm:h-2.5 stroke-[3]" />

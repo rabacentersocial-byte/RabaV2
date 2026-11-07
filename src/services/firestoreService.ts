@@ -411,9 +411,10 @@ export async function getAppointmentsFromFirestore(): Promise<Appointment[]> {
     const list: Appointment[] = [];
     snap.forEach((d) => {
       const data = d.data();
+      const docIdStr = String(d.id || '');
       list.push({
         id: d.id,
-        referenceNumber: data.referenceNumber || `RABA-${d.id.slice(-6)}`,
+        referenceNumber: data.referenceNumber || (docIdStr ? `RABA-${docIdStr.slice(-6)}` : 'RABA-000000'),
         childName: data.patientName || data.childName || '',
         childAge: typeof data.childAge === 'number' ? data.childAge : 5,
         guardianName: data.parentName || data.guardianName || '',
@@ -453,9 +454,10 @@ export function subscribeAppointments(
       const list: Appointment[] = [];
       snapshot.forEach((d) => {
         const data = d.data();
+        const docIdStr = String(d.id || '');
         list.push({
           id: d.id,
-          referenceNumber: data.referenceNumber || `RABA-${d.id.slice(-6)}`,
+          referenceNumber: data.referenceNumber || (docIdStr ? `RABA-${docIdStr.slice(-6)}` : 'RABA-000000'),
           childName: data.patientName || data.childName || '',
           childAge: typeof data.childAge === 'number' ? data.childAge : 5,
           guardianName: data.parentName || data.guardianName || '',

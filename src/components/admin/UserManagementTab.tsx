@@ -427,21 +427,21 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
 
                 {/* Profile Header */}
                 <div className="flex items-center gap-3.5 mb-4">
-                  {user.avatar ? (
+                  {user?.avatar ? (
                     <img
                       src={user.avatar}
-                      alt={user.name}
+                      alt={user.name || ''}
                       className="w-13 h-13 rounded-2xl object-cover border border-slate-200 dark:border-white/10 shrink-0"
                     />
                   ) : (
                     <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-800 text-white font-black text-lg flex items-center justify-center shrink-0 shadow-inner">
-                      {user.name.slice(0, 2)}
+                      {(user?.name || (user as any)?.username || 'م').slice(0, 2)}
                     </div>
                   )}
 
                   <div className="min-w-0 flex-1">
                     <h3 className="text-base font-bold text-slate-900 dark:text-white truncate">
-                      {user.name}
+                      {user?.name || 'مستخدم'}
                     </h3>
                     <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
                       {user.email}

@@ -616,8 +616,8 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
                     #{idx + 1}
                   </span>
 
-                  <div className={`w-12 h-12 rounded-xl ${pillar.bgColor} border ${pillar.borderColor} flex items-center justify-center shrink-0`}>
-                    <span className={`text-xs font-black ${pillar.color}`}>{pillar.iconName.slice(0, 3)}</span>
+                  <div className={`w-12 h-12 rounded-xl ${pillar?.bgColor || 'bg-slate-100'} border ${pillar?.borderColor || 'border-slate-200'} flex items-center justify-center shrink-0`}>
+                    <span className={`text-xs font-black ${pillar?.color || 'text-slate-700'}`}>{(pillar?.iconName || 'PIL').slice(0, 3)}</span>
                   </div>
 
                   <div className="min-w-0 flex-1">
