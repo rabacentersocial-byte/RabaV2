@@ -294,11 +294,11 @@ export const Hero: React.FC<HeroProps> = ({
           </div>
 
           {/* Left Column: Visual Presentation with Creative Liquid Glass Circular Showcase */}
-          <div className="lg:col-span-6 relative flex flex-col items-center justify-center mt-4 lg:mt-0 w-full select-none">
+          <div className="lg:col-span-6 relative flex flex-col items-center justify-center mt-4 lg:mt-0 w-full select-none min-h-[380px] lg:min-h-[460px]">
             
             {/* Unified Responsive Badges Row Above the Circle (Consistent across Mobile, Tablet & Desktop) */}
             {config.showBadges && (
-              <div className="flex items-center justify-between gap-2 w-full max-w-[280px] xs:max-w-[320px] sm:max-w-[380px] lg:max-w-[440px] xl:max-w-[460px] mb-3.5 sm:mb-4 z-20">
+              <div className="flex items-center justify-between gap-2 w-full max-w-[280px] xs:max-w-[320px] sm:max-w-[380px] lg:max-w-[440px] xl:max-w-[460px] h-9 min-h-[36px] mb-3.5 sm:mb-4 z-20">
                 {/* Live Daily Children Counter Pill */}
                 <a 
                   href="#stats-bar"

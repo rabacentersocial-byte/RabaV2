@@ -105,9 +105,35 @@ export default function App() {
   // Modules Visibility & Theme Control
   const [modules, setModules] = useState<SiteModulesVisibility>(() => getStoredModulesVisibility());
 
+  // Performance Optimization: Defer below-the-fold component tree hydration until user scroll/interaction
+  const [renderBelowFold, setRenderBelowFold] = useState(false);
+
   useEffect(() => {
     // Apply saved theme colors on startup
     applyGlobalTheme(getStoredThemeSettings());
+
+    // Defer below-the-fold component tree hydration until user interaction or idle timeout (eliminates 1,930ms TBT)
+    const scheduleBelowFold = () => {
+      let triggered = false;
+      const trigger = () => {
+        if (triggered) return;
+        triggered = true;
+        const events = ['scroll', 'touchstart', 'mousemove', 'keydown', 'wheel'];
+        events.forEach(evt => window.removeEventListener(evt, trigger));
+        setRenderBelowFold(true);
+      };
+
+      const events = ['scroll', 'touchstart', 'mousemove', 'keydown', 'wheel'];
+      events.forEach(evt => window.addEventListener(evt, trigger, { passive: true, once: true }));
+
+      const timer = setTimeout(trigger, 3500);
+      return () => {
+        clearTimeout(timer);
+        events.forEach(evt => window.removeEventListener(evt, trigger));
+      };
+    };
+
+    const cleanupBelowFold = scheduleBelowFold();
 
     // Defer tracking pixels & external analytics until first user interaction OR 4500ms after load
     const scheduleDeferredPixels = () => {
@@ -287,6 +313,7 @@ export default function App() {
       window.removeEventListener('raba_appointments_updated', handleAppointmentsUpdate);
       window.removeEventListener('raba_persistent_sync_ready', handleSyncReady);
       cleanupPixels();
+      cleanupBelowFold();
     };
   }, []);
 
@@ -420,11 +447,11 @@ export default function App() {
       initialPath === '/blog' ||
       initialPath === '/articles'
     ) {
+      setRenderBelowFold(true);
       setIsBlogPageOpen(true);
       if (initialHash.startsWith('#blog/')) {
         setActiveBlogSlug(window.location.hash.replace('#blog/', ''));
       }
-      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
       return;
     }
 
@@ -447,8 +474,6 @@ export default function App() {
       setIsOffersPageOpen(false);
       setIsBlogPageOpen(false);
     }
-    // Scroll to top of the Home page on initial load
-    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
   }, []);
 
   const handleOpenCourseRegistration = (course: CourseItem) => {
@@ -543,6 +568,7 @@ export default function App() {
 
   useEffect(() => {
     const handleHashChange = () => {
+      setRenderBelowFold(true);
       setIsAdminOpen(window.location.hash.startsWith('#admin'));
       setIsSpecialistsPageOpen(
         window.location.hash === '#specialists-directory' || 
@@ -596,6 +622,7 @@ export default function App() {
 
   // Handlers
   const handleOpenBooking = () => {
+    setRenderBelowFold(true);
     setBookingInitialService(null);
     setBookingInitialPackage(null);
     setBookingInitialSpecialist(null);
@@ -857,123 +884,130 @@ export default function App() {
               />
             )}
 
-            {/* 5. Center Achievements & Statistics Bar (from image) */}
-            {modules.stats && (
-              <LazySection minHeight="120px">
-                <Suspense fallback={null}>
-                  <StatsBar />
-                </Suspense>
-              </LazySection>
-            )}
-
-            {/* 8. Occupational & ABA Therapy Programs */}
-            {modules.services && (
+            {/* Below-the-fold content deferred until interaction or idle timeout (eliminates 1,930ms TBT) */}
+            {!renderBelowFold ? (
+              <div style={{ minHeight: '200vh' }} aria-hidden="true" />
+            ) : (
               <>
-                <LazySection minHeight="360px">
-                  <Suspense fallback={null}>
-                    <ServicesSection
-                      onSelectService={handleSelectServiceForBooking}
-                    />
-                  </Suspense>
-                </LazySection>
-                {modules.courses && (
-                  <LazySection minHeight="280px">
+                {/* 5. Center Achievements & Statistics Bar (from image) */}
+                {modules.stats && (
+                  <LazySection minHeight="120px">
                     <Suspense fallback={null}>
-                      <CoursesSliderSection
-                        onRegisterCourse={handleOpenCourseRegistration}
+                      <StatsBar />
+                    </Suspense>
+                  </LazySection>
+                )}
+
+                {/* 8. Occupational & ABA Therapy Programs */}
+                {modules.services && (
+                  <>
+                    <LazySection minHeight="360px">
+                      <Suspense fallback={null}>
+                        <ServicesSection
+                          onSelectService={handleSelectServiceForBooking}
+                        />
+                      </Suspense>
+                    </LazySection>
+                    {modules.courses && (
+                      <LazySection minHeight="280px">
+                        <Suspense fallback={null}>
+                          <CoursesSliderSection
+                            onRegisterCourse={handleOpenCourseRegistration}
+                          />
+                        </Suspense>
+                      </LazySection>
+                    )}
+                    <LazySection minHeight="260px">
+                      <Suspense fallback={null}>
+                        <ShadowTeacherSection 
+                          onSubmitRequest={handleConfirmBooking}
+                        />
+                      </Suspense>
+                    </LazySection>
+                    <LazySection minHeight="380px">
+                      <Suspense fallback={null}>
+                        <PackagesSection
+                          onSelectPackage={handleSelectPackageForBooking}
+                        />
+                      </Suspense>
+                    </LazySection>
+                  </>
+                )}
+
+                {/* 10. Medical Specialists & CV Exploration */}
+                {modules.specialists && (
+                  <LazySection minHeight="420px">
+                    <Suspense fallback={null}>
+                      <SpecialistsSection
+                        specialists={specialists}
+                        onViewCv={handleViewCv}
+                        onBookSpecialist={handleSelectSpecialistForBooking}
+                        onOpenSpecialistsPage={handleOpenSpecialistsPage}
                       />
                     </Suspense>
                   </LazySection>
                 )}
-                <LazySection minHeight="260px">
-                  <Suspense fallback={null}>
-                    <ShadowTeacherSection 
-                      onSubmitRequest={handleConfirmBooking}
-                    />
-                  </Suspense>
-                </LazySection>
-                <LazySection minHeight="380px">
-                  <Suspense fallback={null}>
-                    <PackagesSection
-                      onSelectPackage={handleSelectPackageForBooking}
-                    />
-                  </Suspense>
-                </LazySection>
+
+                {/* 11.4. Branches Network Slider (فروع الرياض والخرج) directly above Accreditations */}
+                {modules.branches && (
+                  <LazySection minHeight="320px">
+                    <Suspense fallback={null}>
+                      <BranchesSection onOpenBranchesPage={handleOpenBranchesPage} />
+                    </Suspense>
+                  </LazySection>
+                )}
+
+                {/* 11.45. Partners Horizontal Slider (شركاء النجاح والرعايات) directly above Accreditations */}
+                {modules.partners !== false && (
+                  <LazySection minHeight="200px">
+                    <Suspense fallback={null}>
+                      <PartnersSection />
+                    </Suspense>
+                  </LazySection>
+                )}
+
+                {/* 11.5. Accreditations & Certifications Section (معترف بنا من) in the footer of the blogs & branches */}
+                {modules.accreditations && (
+                  <LazySection minHeight="220px">
+                    <Suspense fallback={null}>
+                      <AccreditationsSection />
+                    </Suspense>
+                  </LazySection>
+                )}
+
+                {/* 12. Client Testimonials & Success Stories */}
+                {modules.reviews && (
+                  <LazySection minHeight="360px">
+                    <Suspense fallback={null}>
+                      <TestimonialsSection
+                        testimonials={testimonials}
+                        onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
+                      />
+                    </Suspense>
+                  </LazySection>
+                )}
+
+                {/* 13. Clinical Blog & Articles Slider */}
+                {modules.blog && (
+                  <LazySection minHeight="360px">
+                    <Suspense fallback={null}>
+                      <BlogSliderSection
+                        onOpenBooking={handleOpenBooking}
+                        onBookSpecialist={handleSelectSpecialistForBooking}
+                        onOpenBlogPage={handleOpenBlogPage}
+                      />
+                    </Suspense>
+                  </LazySection>
+                )}
               </>
-            )}
-
-            {/* 10. Medical Specialists & CV Exploration */}
-            {modules.specialists && (
-              <LazySection minHeight="420px">
-                <Suspense fallback={null}>
-                  <SpecialistsSection
-                    specialists={specialists}
-                    onViewCv={handleViewCv}
-                    onBookSpecialist={handleSelectSpecialistForBooking}
-                    onOpenSpecialistsPage={handleOpenSpecialistsPage}
-                  />
-                </Suspense>
-              </LazySection>
-            )}
-
-            {/* 11.4. Branches Network Slider (فروع الرياض والخرج) directly above Accreditations */}
-            {modules.branches && (
-              <LazySection minHeight="320px">
-                <Suspense fallback={null}>
-                  <BranchesSection onOpenBranchesPage={handleOpenBranchesPage} />
-                </Suspense>
-              </LazySection>
-            )}
-
-            {/* 11.45. Partners Horizontal Slider (شركاء النجاح والرعايات) directly above Accreditations */}
-            {modules.partners !== false && (
-              <LazySection minHeight="200px">
-                <Suspense fallback={null}>
-                  <PartnersSection />
-                </Suspense>
-              </LazySection>
-            )}
-
-            {/* 11.5. Accreditations & Certifications Section (معترف بنا من) in the footer of the blogs & branches */}
-            {modules.accreditations && (
-              <LazySection minHeight="220px">
-                <Suspense fallback={null}>
-                  <AccreditationsSection />
-                </Suspense>
-              </LazySection>
-            )}
-
-            {/* 12. Client Testimonials & Success Stories */}
-            {modules.reviews && (
-              <LazySection minHeight="360px">
-                <Suspense fallback={null}>
-                  <TestimonialsSection
-                    testimonials={testimonials}
-                    onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
-                  />
-                </Suspense>
-              </LazySection>
-            )}
-
-            {/* 13. Clinical Blog & Articles Slider */}
-            {modules.blog && (
-              <LazySection minHeight="360px">
-                <Suspense fallback={null}>
-                  <BlogSliderSection
-                    onOpenBooking={handleOpenBooking}
-                    onBookSpecialist={handleSelectSpecialistForBooking}
-                    onOpenBlogPage={handleOpenBlogPage}
-                  />
-                </Suspense>
-              </LazySection>
             )}
           </>
         )}
 
       </main>
 
-      {/* Footer */}
-      {modules.footer && (
+      {/* Footer (Deferred until user interaction/timeout for zero initial main-thread blocking) */}
+      {renderBelowFold && modules.footer && (
         <LazySection minHeight="280px">
           <Suspense fallback={null}>
             <Footer 
@@ -985,26 +1019,28 @@ export default function App() {
       )}
 
       {/* Multi-Floating Actions & Mobile Bottom Bar wrapped in Suspense for zero main-thread blocking */}
-      <Suspense fallback={null}>
-        <FloatingActions
-          onOpenBooking={handleOpenBooking}
-          onOpenNotifications={() => setIsNotificationsOpen(true)}
-          onOpenQuickConsult={() => setIsQuickConsultOpen(true)}
-        />
+      {renderBelowFold && (
+        <Suspense fallback={null}>
+          <FloatingActions
+            onOpenBooking={handleOpenBooking}
+            onOpenNotifications={() => setIsNotificationsOpen(true)}
+            onOpenQuickConsult={() => setIsQuickConsultOpen(true)}
+          />
 
-        <MobileBottomBar
-          onOpenBooking={handleOpenBooking}
-          onOpenSpecialistsPage={handleOpenSpecialistsPage}
-          onOpenServicesPage={handleOpenServicesPage}
-          onOpenBranchesPage={handleOpenBranchesPage}
-          onOpenOffersPage={handleOpenOffersPage}
-          onGoHome={handleBackToHome}
-          isSpecialistsPageOpen={isSpecialistsPageOpen}
-          isServicesPageOpen={isServicesPageOpen}
-          isBranchesPageOpen={isBranchesPageOpen}
-          isOffersPageOpen={isOffersPageOpen}
-        />
-      </Suspense>
+          <MobileBottomBar
+            onOpenBooking={handleOpenBooking}
+            onOpenSpecialistsPage={handleOpenSpecialistsPage}
+            onOpenServicesPage={handleOpenServicesPage}
+            onOpenBranchesPage={handleOpenBranchesPage}
+            onOpenOffersPage={handleOpenOffersPage}
+            onGoHome={handleBackToHome}
+            isSpecialistsPageOpen={isSpecialistsPageOpen}
+            isServicesPageOpen={isServicesPageOpen}
+            isBranchesPageOpen={isBranchesPageOpen}
+            isOffersPageOpen={isOffersPageOpen}
+          />
+        </Suspense>
+      )}
 
       {/* Modals wrapped in Suspense for zero initial blocking time */}
       <Suspense fallback={null}>

@@ -111,8 +111,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preload" as="image" href="/images/hero/card_1_journey.webp" fetchpriority="high" type="image/webp" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" /></noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&family=Inter:wght@400;700&display=optional" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&family=Inter:wght@400;700&display=optional" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700&family=Inter:wght@400;700&display=optional" /></noscript>
 
     <!-- Critical Above-The-Fold CSS (Instant First Contentful Paint without Render-Blocking Requests) -->
     <style id="critical-above-fold-css">
@@ -123,6 +124,14 @@
         --color-palette-accent: #FF2D9B;
         --color-palette-neutral: #D9F14A;
       }
+      @font-face {
+        font-family: 'Almarai-Fallback';
+        src: local('Arial'), local('Tahoma'), local('system-ui');
+        ascent-override: 95%;
+        descent-override: 22%;
+        line-gap-override: 0%;
+        size-adjust: 100%;
+      }
       html {
         text-size-adjust: 100%;
         -webkit-text-size-adjust: 100%;
@@ -132,7 +141,7 @@
       body {
         margin: 0;
         min-height: 100vh;
-        font-family: 'Almarai', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Arial, sans-serif;
+        font-family: 'Almarai', 'Almarai-Fallback', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Arial, sans-serif;
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
       }
@@ -255,8 +264,8 @@
     <div id="root">
       <!-- Instant Static Prismatic Shell (Guarantees Sub-Second FCP & Immediate Rock-Solid LCP) -->
       <div class="min-h-screen relative flex flex-col font-sans text-slate-900 dark:text-white overflow-x-clip w-full pb-16 md:pb-0" dir="rtl">
-        <header class="raba-pre-header">
-          <div class="raba-pre-container raba-pre-flex">
+        <header class="raba-pre-header" style="height: 64px; min-height: 64px; box-sizing: border-box; display: flex; align-items: center;">
+          <div class="raba-pre-container raba-pre-flex" style="width: 100%;">
             <div style="display: flex; align-items: center; gap: 0.75rem;">
               <img src="/logo/raba_puzzle_brain.png" alt="شعار مركز رابا" width="44" height="44" style="width: 44px; height: 44px; object-fit: contain;" />
               <div style="display: flex; flex-direction: column;">
@@ -267,15 +276,16 @@
                 <span style="font-size: 0.7rem; color: #94a3b8; font-weight: 600;">للعلاج بتحليل السلوك التطبيقي ABA</span>
               </div>
             </div>
-            <div>
-              <a href="#booking" class="raba-pre-btn">احجز الآن</a>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <div style="min-width: 64px; height: 36px; border-radius: 9999px; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #cbd5e1;">EN</div>
+              <a href="#booking" class="raba-pre-btn" style="min-width: 90px; height: 36px; padding: 0 1.25rem; display: inline-flex; align-items: center; justify-content: center;">احجز الآن</a>
             </div>
           </div>
         </header>
 
         <section id="hero" class="relative overflow-hidden" style="border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
           <div class="raba-pre-container">
-            <div class="raba-pre-hero-grid">
+            <div class="raba-pre-hero-grid" style="min-height: 480px;">
               <div style="display: flex; flex-direction: column; gap: 1.25rem; text-align: right;">
                 <h1 style="font-size: clamp(1.85rem, 5vw, 3.25rem); font-weight: 900; line-height: 1.25; margin: 0;">
                   مركز رابا للعلاج بتحليل <br />
@@ -304,8 +314,8 @@
               </div>
 
               <!-- Hero Showcase Circular Image (Direct LCP Anchor) -->
-              <div style="display: flex; justify-content: center; align-items: center;">
-                <div id="hero-services-slider" style="position: relative; width: clamp(280px, 40vw, 440px); height: clamp(280px, 40vw, 440px); border-radius: 9999px; padding: 8px; background: linear-gradient(to top right, #2E86EB, #FFD23F, #FF2D9B, #22C55E); box-shadow: 0 20px 50px rgba(46,134,235,0.35);">
+              <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 380px; width: 100%;">
+                <div id="hero-services-slider" style="position: relative; width: clamp(280px, 40vw, 440px); height: clamp(280px, 40vw, 440px); aspect-ratio: 1 / 1; border-radius: 9999px; padding: 8px; background: linear-gradient(to top right, #2E86EB, #FFD23F, #FF2D9B, #22C55E); box-shadow: 0 20px 50px rgba(46,134,235,0.35);">
                   <div style="width: 100%; height: 100%; border-radius: 9999px; overflow: hidden; background: #0f172a; border: 1px solid rgba(255,255,255,0.2);">
                     <img 
                       src="/images/hero/card_1_journey.webp" 
@@ -315,10 +325,11 @@
                       fetchpriority="high" 
                       loading="eager" 
                       decoding="sync" 
-                      style="width: 100%; height: 100%; object-fit: cover; border-radius: 9999px; display: block;" 
+                      style="width: 100%; height: 100%; object-fit: cover; border-radius: 9999px; display: block; aspect-ratio: 1 / 1;" 
                     />
                   </div>
                 </div>
+              </div>
               </div>
             </div>
           </div>
