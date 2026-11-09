@@ -16,7 +16,6 @@ import confetti from 'canvas-confetti';
 import { PARENT_REVIEWS, SPECIALISTS } from '../data/mockData';
 import { ParentReview } from '../types';
 import { useLanguage } from '../context/LanguageContext';
-import { saveTestimonialToFirestore } from '../services/firestoreService';
 
 interface TestimonialsSectionProps {
   testimonials?: ParentReview[];
@@ -191,7 +190,8 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
     };
 
     try {
-      // Persist to Firestore collection 'testimonials'
+      // Persist to Firestore collection 'testimonials' via dynamic import to decouple Firebase from initial bundle
+      const { saveTestimonialToFirestore } = await import('../services/firestoreService');
       await saveTestimonialToFirestore(newReview);
     } catch (err) {
       console.error('[TestimonialsSection] Error saving review to Firestore:', err);

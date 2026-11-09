@@ -174,6 +174,12 @@ export default defineConfig(() => {
       sourcemap: false,
       target: 'es2020',
       chunkSizeWarningLimit: 800,
+      modulePreload: {
+        polyfill: false,
+        resolveDependencies(filename, deps) {
+          return deps.filter(dep => !dep.includes('firebase') && !dep.includes('supabase') && !dep.includes('re2js'));
+        },
+      },
       rollupOptions: {
         output: {
           manualChunks(id) {

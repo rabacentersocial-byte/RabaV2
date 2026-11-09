@@ -1,12 +1,49 @@
 {
-  "$schema": "https://agentic-resource-discovery.org/schema/v1/ard.json",
-  "name": "Raba Center for ABA Therapy & Autism Rehabilitation",
-  "short_name": "Raba Center",
-  "description": "Comprehensive autism rehabilitation, ABA behavioral therapy, diagnostic assessments, speech-language pathology, occupational therapy, and school shadow teacher services in Saudi Arabia.",
+  "$schema": "https://schemastore.org/schemas/json/ard.json",
+  "version": "1.0",
+  "name": "RABA Center - مركز رابا للعلاج بتحليل السلوك التطبيقي",
+  "description": "مركز رابا لتقديم خدمات التأهيل الشامل وتحليل السلوك التطبيقي ABA والنطق والتخاطب والعلاج الوظيفي والتكامل الحسي في المملكة العربية السعودية",
   "url": "https://rabacenters.com",
   "canonical_url": "https://rabacenters.com",
   "default_locale": "ar-SA",
   "supported_locales": ["ar-SA", "en-US"],
+  "entries": [
+    {
+      "id": "llms-documentation",
+      "name": "RABA Center AI Documentation (llms.txt)",
+      "type": "llms-txt",
+      "url": "https://rabacenters.com/llms.txt",
+      "description": "دليل شامل لخدمات وفروع وبرامج مركز رابا مهيأ لنماذج الذكاء الاصطناعي"
+    },
+    {
+      "id": "website-home",
+      "name": "الصفحة الرئيسية - مركز رابا",
+      "type": "web",
+      "url": "https://rabacenters.com/",
+      "description": "البوابة الرئيسية لحجز جلسات التقييم والاطلاع على البرامج التأهيلية والدورات التدريبية"
+    },
+    {
+      "id": "services-programs",
+      "name": "البرامج والخدمات التأهيلية",
+      "type": "web",
+      "url": "https://rabacenters.com/#services",
+      "description": "برامج تحليل السلوك التطبيقي المكثف ABA والتشخيص والتقييم والعلاج الوظيفي"
+    },
+    {
+      "id": "specialists-directory",
+      "name": "دليل الأخصائيين والاستشاريين",
+      "type": "web",
+      "url": "https://rabacenters.com/#specialists",
+      "description": "نخبة من الاستشاريين والأخصائيين المعتمدين في رعاية وتأهيل التوحد"
+    },
+    {
+      "id": "booking-clinical",
+      "name": "حجز تقييم واستشارة سريرية",
+      "type": "web",
+      "url": "https://rabacenters.com/#booking",
+      "description": "حجز مباشر لمواعيد الجلسات التشخيصية والاستشارات الأسرية"
+    }
+  ],
   "resources": [
     {
       "name": "Services & Programs",
@@ -17,11 +54,6 @@
       "name": "Specialists Directory",
       "description": "Certified behavioral therapists, speech clinicians, and occupational practitioners",
       "url": "https://rabacenters.com/#specialists"
-    },
-    {
-      "name": "Sewar Shadow Teacher Service",
-      "description": "Specialized school shadow teaching and educational mainstreaming support",
-      "url": "https://rabacenters.com/#shadow-teacher"
     },
     {
       "name": "Booking & Clinical Assessment",
