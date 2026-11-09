@@ -4,66 +4,33 @@
   "name": "RABA Center - مركز رابا للعلاج بتحليل السلوك التطبيقي",
   "description": "مركز رابا لتقديم خدمات التأهيل الشامل وتحليل السلوك التطبيقي ABA والنطق والتخاطب والعلاج الوظيفي والتكامل الحسي في المملكة العربية السعودية",
   "url": "https://rabacenters.com",
-  "canonical_url": "https://rabacenters.com",
-  "default_locale": "ar-SA",
-  "supported_locales": ["ar-SA", "en-US"],
   "entries": [
     {
-      "id": "llms-documentation",
-      "name": "RABA Center AI Documentation (llms.txt)",
-      "type": "llms-txt",
+      "identifier": "raba-llms-documentation",
+      "displayName": "RABA Center AI Documentation (llms.txt)",
+      "description": "دليل شامل لخدمات وفروع وبرامج مركز رابا مهيأ لنماذج الذكاء الاصطناعي",
       "url": "https://rabacenters.com/llms.txt",
-      "description": "دليل شامل لخدمات وفروع وبرامج مركز رابا مهيأ لنماذج الذكاء الاصطناعي"
+      "type": "text/markdown; charset=utf-8",
+      "mediaType": "text/markdown; charset=utf-8",
+      "representativeQueries": [
+        "ما هي خدمات مركز رابا لتحليل السلوك التطبيقي ABA؟",
+        "فروع مركز رابا في الرياض وجدة والخبر والأحساء والخرج",
+        "دورات تحليل السلوك التطبيقي المعتمدة QABA و PEAK في مركز رابا",
+        "حجز جلسة تقييم طيف التوحد وتأخر النطق والتخاطب"
+      ]
     },
     {
-      "id": "website-home",
-      "name": "الصفحة الرئيسية - مركز رابا",
-      "type": "web",
+      "identifier": "raba-homepage",
+      "displayName": "الصفحة الرئيسية - مركز رابا",
+      "description": "البوابة الرئيسية لحجز جلسات التقييم والاطلاع على البرامج التأهيلية والدورات التدريبية",
       "url": "https://rabacenters.com/",
-      "description": "البوابة الرئيسية لحجز جلسات التقييم والاطلاع على البرامج التأهيلية والدورات التدريبية"
-    },
-    {
-      "id": "services-programs",
-      "name": "البرامج والخدمات التأهيلية",
-      "type": "web",
-      "url": "https://rabacenters.com/#services",
-      "description": "برامج تحليل السلوك التطبيقي المكثف ABA والتشخيص والتقييم والعلاج الوظيفي"
-    },
-    {
-      "id": "specialists-directory",
-      "name": "دليل الأخصائيين والاستشاريين",
-      "type": "web",
-      "url": "https://rabacenters.com/#specialists",
-      "description": "نخبة من الاستشاريين والأخصائيين المعتمدين في رعاية وتأهيل التوحد"
-    },
-    {
-      "id": "booking-clinical",
-      "name": "حجز تقييم واستشارة سريرية",
-      "type": "web",
-      "url": "https://rabacenters.com/#booking",
-      "description": "حجز مباشر لمواعيد الجلسات التشخيصية والاستشارات الأسرية"
-    }
-  ],
-  "resources": [
-    {
-      "name": "Services & Programs",
-      "description": "Comprehensive developmental and behavioral rehabilitation programs",
-      "url": "https://rabacenters.com/#services"
-    },
-    {
-      "name": "Specialists Directory",
-      "description": "Certified behavioral therapists, speech clinicians, and occupational practitioners",
-      "url": "https://rabacenters.com/#specialists"
-    },
-    {
-      "name": "Booking & Clinical Assessment",
-      "description": "Direct appointment registration and clinical consultation requests",
-      "url": "https://rabacenters.com/#booking"
-    },
-    {
-      "name": "LLMs Content Summary",
-      "description": "Structured plain-text summary and agentic manifest",
-      "url": "https://rabacenters.com/llms.txt"
+      "type": "text/html; charset=utf-8",
+      "mediaType": "text/html; charset=utf-8",
+      "representativeQueries": [
+        "حجز موعد في مركز رابا",
+        "خدمة سوار معلم الظل والدمج المدرسي",
+        "برامج العلاج الوظيفي والتكامل الحسي للأطفال"
+      ]
     }
   ]
 }

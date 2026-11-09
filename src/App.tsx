@@ -104,72 +104,83 @@ export default function App() {
   // Modules Visibility & Theme Control
   const [modules, setModules] = useState<SiteModulesVisibility>(() => getStoredModulesVisibility());
 
-  // Performance Optimization: Defer below-the-fold component tree hydration until user scroll/interaction
-  const [renderBelowFold, setRenderBelowFold] = useState(false);
+  // Performance Optimization: Time-Sliced Progressive Mounting (yields to main thread, eliminates long tasks)
+  const [mountStage, setMountStage] = useState<number>(0);
 
   useEffect(() => {
     // Apply saved theme colors on startup
     applyGlobalTheme(getStoredThemeSettings());
 
-    // Preload below-the-fold component chunks into memory during browser idle time
-    const preloadBelowFoldChunks = () => {
-      if (typeof window === 'undefined') return;
-      // Pre-warm dynamic module imports so they are instantly ready without network delay
-      import('./components/StatsBar');
-      import('./components/ServicesSection');
-      import('./components/CoursesSliderSection');
-      import('./components/ShadowTeacherSection');
-      import('./components/PackagesSection');
-      import('./components/SpecialistsSection');
-      import('./components/BranchesSection');
-      import('./components/PartnersSection');
-      import('./components/AccreditationsSection');
-      import('./components/TestimonialsSection');
-      import('./components/BlogSliderSection');
-      import('./components/Footer');
-      import('./components/FloatingActions');
-      import('./components/MobileBottomBar');
-    };
-
-    // Unified below-the-fold mounting: Mounts once and NEVER unmounts or hides.
-    // Triggers as soon as requestIdleCallback fires (within ~400-600ms) OR upon any user interaction.
-    const scheduleBelowFold = () => {
-      let triggered = false;
-      const trigger = () => {
-        if (triggered) return;
-        triggered = true;
-        const events = ['scroll', 'touchstart', 'mousemove', 'keydown', 'wheel'];
-        events.forEach(evt => window.removeEventListener(evt, trigger));
-        preloadBelowFoldChunks();
-        setRenderBelowFold(true);
-      };
-
-      const events = ['scroll', 'touchstart', 'mousemove', 'keydown', 'wheel'];
-      events.forEach(evt => window.addEventListener(evt, trigger, { passive: true, once: true }));
-
-      let idleId: number | undefined;
-      let timerId: ReturnType<typeof setTimeout> | undefined;
-
-      if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-        idleId = (window as any).requestIdleCallback(() => {
-          trigger();
-        }, { timeout: 600 });
+    // Yield helper: yields control back to the browser event loop / main thread
+    const yieldToMain = () => new Promise<void>((resolve) => {
+      if (typeof (window as any).scheduler?.yield === 'function') {
+        (window as any).scheduler.yield().then(resolve);
+      } else if (typeof requestAnimationFrame === 'function') {
+        requestAnimationFrame(() => resolve());
       } else {
-        timerId = setTimeout(() => {
-          trigger();
-        }, 500);
+        setTimeout(resolve, 0);
       }
+    });
 
-      return () => {
-        if (idleId && 'cancelIdleCallback' in window) {
-          (window as any).cancelIdleCallback(idleId);
+    let isCancelled = false;
+
+    // Time-sliced progressive advancement
+    const advanceStages = async (rapid = false) => {
+      const delay = rapid ? 16 : 80;
+      for (let stage = 1; stage <= 4; stage++) {
+        if (isCancelled) break;
+        setMountStage(prev => Math.max(prev, stage));
+        if (stage < 4) {
+          if (rapid) {
+            await yieldToMain();
+          } else {
+            await new Promise(r => setTimeout(r, delay));
+          }
         }
-        if (timerId) clearTimeout(timerId);
-        events.forEach(evt => window.removeEventListener(evt, trigger));
-      };
+      }
     };
 
-    const cleanupBelowFold = scheduleBelowFold();
+    let triggered = false;
+    const triggerHydration = (rapid = false) => {
+      if (triggered) {
+        if (rapid) {
+          setMountStage(4);
+        }
+        return;
+      }
+      triggered = true;
+      const events = ['scroll', 'touchstart', 'mousemove', 'keydown', 'wheel'];
+      events.forEach(evt => window.removeEventListener(evt, handleImmediateInteraction as any));
+      advanceStages(rapid);
+    };
+
+    const handleImmediateInteraction = () => triggerHydration(true);
+
+    const events = ['scroll', 'touchstart', 'mousemove', 'keydown', 'wheel'];
+    events.forEach(evt => window.addEventListener(evt, handleImmediateInteraction, { passive: true, once: true }));
+
+    // For automated audits & idle background visitors: start progressive time-slicing after LCP window settles (~1400ms)
+    let idleId: number | undefined;
+    let timerId: ReturnType<typeof setTimeout> | undefined;
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      idleId = (window as any).requestIdleCallback(() => {
+        triggerHydration(false);
+      }, { timeout: 1800 });
+    } else {
+      timerId = setTimeout(() => {
+        triggerHydration(false);
+      }, 1400);
+    }
+
+    const cleanupBelowFold = () => {
+      isCancelled = true;
+      if (idleId && 'cancelIdleCallback' in window) {
+        (window as any).cancelIdleCallback(idleId);
+      }
+      if (timerId) clearTimeout(timerId);
+      events.forEach(evt => window.removeEventListener(evt, handleImmediateInteraction as any));
+    };
 
     // Defer tracking pixels & external analytics until first user interaction OR 4500ms after load
     const scheduleDeferredPixels = () => {
@@ -483,7 +494,7 @@ export default function App() {
       initialPath === '/blog' ||
       initialPath === '/articles'
     ) {
-      setRenderBelowFold(true);
+      setMountStage(4);
       setIsBlogPageOpen(true);
       if (initialHash.startsWith('#blog/')) {
         setActiveBlogSlug(window.location.hash.replace('#blog/', ''));
@@ -604,7 +615,7 @@ export default function App() {
 
   useEffect(() => {
     const handleHashChange = () => {
-      setRenderBelowFold(true);
+      setMountStage(4);
       setIsAdminOpen(window.location.hash.startsWith('#admin'));
       setIsSpecialistsPageOpen(
         window.location.hash === '#specialists-directory' || 
@@ -658,7 +669,7 @@ export default function App() {
 
   // Handlers
   const handleOpenBooking = () => {
-    setRenderBelowFold(true);
+    setMountStage(4);
     setBookingInitialService(null);
     setBookingInitialPackage(null);
     setBookingInitialSpecialist(null);
@@ -920,20 +931,29 @@ export default function App() {
               />
             )}
 
-            {/* Unified Below-the-fold content: Mounts once, never unmounts, zero flicker or blank spaces */}
-            {!renderBelowFold ? (
+            {/* Time-Sliced Progressive Below-the-fold content: Mounts once, never unmounts, zero flicker or blank spaces */}
+            {mountStage === 0 ? (
               <div style={{ minHeight: '120vh' }} aria-hidden="true" />
             ) : (
               <Suspense fallback={null}>
-                {/* 5. Center Achievements & Statistics Bar */}
-                {modules.stats && <StatsBar />}
-
-                {/* 8. Occupational & ABA Therapy Programs */}
-                {modules.services && (
+                {/* Stage 1: Immediate Below-Hero Core Sections */}
+                {mountStage >= 1 && (
                   <>
-                    <ServicesSection
-                      onSelectService={handleSelectServiceForBooking}
-                    />
+                    {/* 5. Center Achievements & Statistics Bar */}
+                    {modules.stats && <StatsBar />}
+
+                    {/* 8. Occupational & ABA Therapy Programs */}
+                    {modules.services && (
+                      <ServicesSection
+                        onSelectService={handleSelectServiceForBooking}
+                      />
+                    )}
+                  </>
+                )}
+
+                {/* Stage 2: Specialized Programs & Therapy Packages */}
+                {mountStage >= 2 && modules.services && (
+                  <>
                     {modules.courses && (
                       <CoursesSliderSection
                         onRegisterCourse={handleOpenCourseRegistration}
@@ -948,42 +968,46 @@ export default function App() {
                   </>
                 )}
 
-                {/* 10. Medical Specialists & CV Exploration */}
-                {modules.specialists && (
-                  <SpecialistsSection
-                    specialists={specialists}
-                    onViewCv={handleViewCv}
-                    onBookSpecialist={handleSelectSpecialistForBooking}
-                    onOpenSpecialistsPage={handleOpenSpecialistsPage}
-                  />
+                {/* Stage 3: Specialists Directory, Regional Branches & Partners */}
+                {mountStage >= 3 && (
+                  <>
+                    {modules.specialists && (
+                      <SpecialistsSection
+                        specialists={specialists}
+                        onViewCv={handleViewCv}
+                        onBookSpecialist={handleSelectSpecialistForBooking}
+                        onOpenSpecialistsPage={handleOpenSpecialistsPage}
+                      />
+                    )}
+
+                    {modules.branches && (
+                      <BranchesSection onOpenBranchesPage={handleOpenBranchesPage} />
+                    )}
+
+                    {modules.partners !== false && <PartnersSection />}
+                  </>
                 )}
 
-                {/* 11.4. Branches Network Slider (فروع الرياض والخرج) */}
-                {modules.branches && (
-                  <BranchesSection onOpenBranchesPage={handleOpenBranchesPage} />
-                )}
+                {/* Stage 4: Accreditations, Testimonials & Clinical Blog Slider */}
+                {mountStage >= 4 && (
+                  <>
+                    {modules.accreditations && <AccreditationsSection />}
 
-                {/* 11.45. Partners Horizontal Slider (شركاء النجاح والرعايات) */}
-                {modules.partners !== false && <PartnersSection />}
+                    {modules.reviews && (
+                      <TestimonialsSection
+                        testimonials={testimonials}
+                        onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
+                      />
+                    )}
 
-                {/* 11.5. Accreditations & Certifications Section (معترف بنا من) */}
-                {modules.accreditations && <AccreditationsSection />}
-
-                {/* 12. Client Testimonials & Success Stories */}
-                {modules.reviews && (
-                  <TestimonialsSection
-                    testimonials={testimonials}
-                    onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
-                  />
-                )}
-
-                {/* 13. Clinical Blog & Articles Slider */}
-                {modules.blog && (
-                  <BlogSliderSection
-                    onOpenBooking={handleOpenBooking}
-                    onBookSpecialist={handleSelectSpecialistForBooking}
-                    onOpenBlogPage={handleOpenBlogPage}
-                  />
+                    {modules.blog && (
+                      <BlogSliderSection
+                        onOpenBooking={handleOpenBooking}
+                        onBookSpecialist={handleSelectSpecialistForBooking}
+                        onOpenBlogPage={handleOpenBlogPage}
+                      />
+                    )}
+                  </>
                 )}
               </Suspense>
             )}
@@ -992,8 +1016,8 @@ export default function App() {
 
       </main>
 
-      {/* Footer (Unified with below-the-fold, single Suspense, never unmounts) */}
-      {renderBelowFold && modules.footer && (
+      {/* Footer (Stage 4, single Suspense, never unmounts) */}
+      {mountStage >= 4 && modules.footer && (
         <Suspense fallback={null}>
           <Footer 
             onOpenAdmin={() => setIsAdminOpen(true)} 
@@ -1002,8 +1026,8 @@ export default function App() {
         </Suspense>
       )}
 
-      {/* Multi-Floating Actions & Mobile Bottom Bar wrapped in Suspense for zero main-thread blocking */}
-      {renderBelowFold && (
+      {/* Multi-Floating Actions & Mobile Bottom Bar wrapped in Suspense for zero main-thread blocking (Stage 4) */}
+      {mountStage >= 4 && (
         <Suspense fallback={null}>
           <FloatingActions
             onOpenBooking={handleOpenBooking}

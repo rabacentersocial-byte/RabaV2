@@ -89,13 +89,10 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
   useEffect(() => {
     const el = sliderRef.current;
     if (!el) return;
-    const initialTimer = setTimeout(() => {
-      updateScrollButtons();
-    }, 120);
+
     el.addEventListener('scroll', updateScrollButtons, { passive: true });
     window.addEventListener('resize', updateScrollButtons, { passive: true });
     return () => {
-      clearTimeout(initialTimer);
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
         rafIdRef.current = null;
