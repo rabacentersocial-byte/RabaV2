@@ -5,42 +5,66 @@ interface LazySectionProps {
   minHeight?: string;
   rootMargin?: string;
   id?: string;
+  className?: string;
 }
 
 /**
- * True Viewport-Gated Section Loader (<LazyViewportSection>)
- * Defers mounting and executing below-the-fold component trees until the user scrolls within 200px.
+ * Strict "Mount-Once, Never-Unmount" Viewport Section Component (<LazyViewportSection>)
  * 
- * - Eliminates 100% of below-the-fold CPU parse/execution time during initial Lighthouse testing
- * - Strictly prevents layout shifts (CLS = 0) with reserved minHeight and content-visibility
- * - Provides an idle fallback of 4.5s for deep crawlers
+ * Guarantees:
+ * 1. Strictly transitions state ONE WAY (false -> true).
+ * 2. As soon as the section intersects or hydrates, observer is disconnected immediately.
+ * 3. NEVER unmounts, hides, or re-renders when scrolling in and out of the viewport.
+ * 4. Zero `content-visibility: auto` to prevent mobile browsers from dropping cached layer textures on fast scroll.
+ * 5. Eliminates layout shifts (CLS = 0) with reserved minHeight until hydration.
  */
 export const LazySection: React.FC<LazySectionProps> = ({
   children,
   minHeight = '280px',
-  rootMargin = '200px 0px',
-  id
+  rootMargin = '400px 0px',
+  id,
+  className
 }) => {
-  const [shouldRender, setShouldRender] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // If already mounted, never observe again
+    if (hasMounted) return;
+
     if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
-      setShouldRender(true);
+      setHasMounted(true);
       return;
     }
 
-    // Idle fallback: trigger after 4.5 seconds so background crawlers get full HTML
-    const idleTimer = setTimeout(() => {
-      setShouldRender(true);
-    }, 4500);
+    // Fast idle fallback so crawlers and fast readers get full HTML
+    let idleId: number | undefined;
+    let timerId: ReturnType<typeof setTimeout> | undefined;
+
+    const onTrigger = () => {
+      setHasMounted(true);
+      if (observer) {
+        observer.disconnect();
+      }
+    };
+
+    if ('requestIdleCallback' in window) {
+      idleId = (window as any).requestIdleCallback(onTrigger, { timeout: 1500 });
+    } else {
+      timerId = setTimeout(onTrigger, 1500);
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setShouldRender(true);
-          clearTimeout(idleTimer);
-          observer.disconnect();
+          setHasMounted(true);
+          if (idleId && 'cancelIdleCallback' in window) {
+            (window as any).cancelIdleCallback(idleId);
+          }
+          if (timerId) {
+            clearTimeout(timerId);
+          }
+          observer.disconnect(); // Never unmount or hide again!
         }
       },
       {
@@ -55,22 +79,29 @@ export const LazySection: React.FC<LazySectionProps> = ({
     }
 
     return () => {
-      clearTimeout(idleTimer);
+      if (idleId && 'cancelIdleCallback' in window) {
+        (window as any).cancelIdleCallback(idleId);
+      }
+      if (timerId) {
+        clearTimeout(timerId);
+      }
       observer.disconnect();
     };
-  }, [rootMargin]);
+  }, [rootMargin, hasMounted]);
 
   return (
     <div
       ref={containerRef}
       id={id}
+      className={className}
       style={{
-        minHeight: shouldRender ? undefined : minHeight,
-        contentVisibility: shouldRender ? undefined : 'auto',
-        containIntrinsicSize: shouldRender ? undefined : `1px ${minHeight}`
+        minHeight: hasMounted ? undefined : minHeight,
+        // CRITICAL: Absolutely NO content-visibility: auto here!
+        // Mobile browsers discard textures of off-screen elements with content-visibility: auto,
+        // resulting in blank white/dark delays when scrolling back up.
       }}
     >
-      {shouldRender ? children : null}
+      {hasMounted ? children : null}
     </div>
   );
 };

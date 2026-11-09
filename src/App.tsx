@@ -3,7 +3,6 @@ import { Navbar } from './components/Navbar';
 import { AnimatedBackground } from './components/AnimatedBackground';
 import { Hero } from './components/Hero';
 import { CourseItem } from './data/coursesData';
-import { LazySection, LazyViewportSection } from './components/LazySection';
 import { getStoredAdminSession, clearStoredAdminSession } from './data/adminData';
 import { DISPATCH_REQUEST_EVENT } from './data/customerRequests';
 
@@ -112,7 +111,28 @@ export default function App() {
     // Apply saved theme colors on startup
     applyGlobalTheme(getStoredThemeSettings());
 
-    // Defer below-the-fold component tree hydration until user interaction or idle timeout (eliminates 1,930ms TBT)
+    // Preload below-the-fold component chunks into memory during browser idle time
+    const preloadBelowFoldChunks = () => {
+      if (typeof window === 'undefined') return;
+      // Pre-warm dynamic module imports so they are instantly ready without network delay
+      import('./components/StatsBar');
+      import('./components/ServicesSection');
+      import('./components/CoursesSliderSection');
+      import('./components/ShadowTeacherSection');
+      import('./components/PackagesSection');
+      import('./components/SpecialistsSection');
+      import('./components/BranchesSection');
+      import('./components/PartnersSection');
+      import('./components/AccreditationsSection');
+      import('./components/TestimonialsSection');
+      import('./components/BlogSliderSection');
+      import('./components/Footer');
+      import('./components/FloatingActions');
+      import('./components/MobileBottomBar');
+    };
+
+    // Unified below-the-fold mounting: Mounts once and NEVER unmounts or hides.
+    // Triggers as soon as requestIdleCallback fires (within ~400-600ms) OR upon any user interaction.
     const scheduleBelowFold = () => {
       let triggered = false;
       const trigger = () => {
@@ -120,15 +140,31 @@ export default function App() {
         triggered = true;
         const events = ['scroll', 'touchstart', 'mousemove', 'keydown', 'wheel'];
         events.forEach(evt => window.removeEventListener(evt, trigger));
+        preloadBelowFoldChunks();
         setRenderBelowFold(true);
       };
 
       const events = ['scroll', 'touchstart', 'mousemove', 'keydown', 'wheel'];
       events.forEach(evt => window.addEventListener(evt, trigger, { passive: true, once: true }));
 
-      const timer = setTimeout(trigger, 3500);
+      let idleId: number | undefined;
+      let timerId: ReturnType<typeof setTimeout> | undefined;
+
+      if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+        idleId = (window as any).requestIdleCallback(() => {
+          trigger();
+        }, { timeout: 600 });
+      } else {
+        timerId = setTimeout(() => {
+          trigger();
+        }, 500);
+      }
+
       return () => {
-        clearTimeout(timer);
+        if (idleId && 'cancelIdleCallback' in window) {
+          (window as any).cancelIdleCallback(idleId);
+        }
+        if (timerId) clearTimeout(timerId);
         events.forEach(evt => window.removeEventListener(evt, trigger));
       };
     };
@@ -884,138 +920,86 @@ export default function App() {
               />
             )}
 
-            {/* Below-the-fold content deferred until interaction or idle timeout (eliminates 1,930ms TBT) */}
+            {/* Unified Below-the-fold content: Mounts once, never unmounts, zero flicker or blank spaces */}
             {!renderBelowFold ? (
-              <div style={{ minHeight: '200vh' }} aria-hidden="true" />
+              <div style={{ minHeight: '120vh' }} aria-hidden="true" />
             ) : (
-              <>
-                {/* 5. Center Achievements & Statistics Bar (from image) */}
-                {modules.stats && (
-                  <LazySection minHeight="120px">
-                    <Suspense fallback={null}>
-                      <StatsBar />
-                    </Suspense>
-                  </LazySection>
-                )}
+              <Suspense fallback={null}>
+                {/* 5. Center Achievements & Statistics Bar */}
+                {modules.stats && <StatsBar />}
 
                 {/* 8. Occupational & ABA Therapy Programs */}
                 {modules.services && (
                   <>
-                    <LazySection minHeight="360px">
-                      <Suspense fallback={null}>
-                        <ServicesSection
-                          onSelectService={handleSelectServiceForBooking}
-                        />
-                      </Suspense>
-                    </LazySection>
+                    <ServicesSection
+                      onSelectService={handleSelectServiceForBooking}
+                    />
                     {modules.courses && (
-                      <LazySection minHeight="280px">
-                        <Suspense fallback={null}>
-                          <CoursesSliderSection
-                            onRegisterCourse={handleOpenCourseRegistration}
-                          />
-                        </Suspense>
-                      </LazySection>
+                      <CoursesSliderSection
+                        onRegisterCourse={handleOpenCourseRegistration}
+                      />
                     )}
-                    <LazySection minHeight="260px">
-                      <Suspense fallback={null}>
-                        <ShadowTeacherSection 
-                          onSubmitRequest={handleConfirmBooking}
-                        />
-                      </Suspense>
-                    </LazySection>
-                    <LazySection minHeight="380px">
-                      <Suspense fallback={null}>
-                        <PackagesSection
-                          onSelectPackage={handleSelectPackageForBooking}
-                        />
-                      </Suspense>
-                    </LazySection>
+                    <ShadowTeacherSection 
+                      onSubmitRequest={handleConfirmBooking}
+                    />
+                    <PackagesSection
+                      onSelectPackage={handleSelectPackageForBooking}
+                    />
                   </>
                 )}
 
                 {/* 10. Medical Specialists & CV Exploration */}
                 {modules.specialists && (
-                  <LazySection minHeight="420px">
-                    <Suspense fallback={null}>
-                      <SpecialistsSection
-                        specialists={specialists}
-                        onViewCv={handleViewCv}
-                        onBookSpecialist={handleSelectSpecialistForBooking}
-                        onOpenSpecialistsPage={handleOpenSpecialistsPage}
-                      />
-                    </Suspense>
-                  </LazySection>
+                  <SpecialistsSection
+                    specialists={specialists}
+                    onViewCv={handleViewCv}
+                    onBookSpecialist={handleSelectSpecialistForBooking}
+                    onOpenSpecialistsPage={handleOpenSpecialistsPage}
+                  />
                 )}
 
-                {/* 11.4. Branches Network Slider (فروع الرياض والخرج) directly above Accreditations */}
+                {/* 11.4. Branches Network Slider (فروع الرياض والخرج) */}
                 {modules.branches && (
-                  <LazySection minHeight="320px">
-                    <Suspense fallback={null}>
-                      <BranchesSection onOpenBranchesPage={handleOpenBranchesPage} />
-                    </Suspense>
-                  </LazySection>
+                  <BranchesSection onOpenBranchesPage={handleOpenBranchesPage} />
                 )}
 
-                {/* 11.45. Partners Horizontal Slider (شركاء النجاح والرعايات) directly above Accreditations */}
-                {modules.partners !== false && (
-                  <LazySection minHeight="200px">
-                    <Suspense fallback={null}>
-                      <PartnersSection />
-                    </Suspense>
-                  </LazySection>
-                )}
+                {/* 11.45. Partners Horizontal Slider (شركاء النجاح والرعايات) */}
+                {modules.partners !== false && <PartnersSection />}
 
-                {/* 11.5. Accreditations & Certifications Section (معترف بنا من) in the footer of the blogs & branches */}
-                {modules.accreditations && (
-                  <LazySection minHeight="220px">
-                    <Suspense fallback={null}>
-                      <AccreditationsSection />
-                    </Suspense>
-                  </LazySection>
-                )}
+                {/* 11.5. Accreditations & Certifications Section (معترف بنا من) */}
+                {modules.accreditations && <AccreditationsSection />}
 
                 {/* 12. Client Testimonials & Success Stories */}
                 {modules.reviews && (
-                  <LazySection minHeight="360px">
-                    <Suspense fallback={null}>
-                      <TestimonialsSection
-                        testimonials={testimonials}
-                        onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
-                      />
-                    </Suspense>
-                  </LazySection>
+                  <TestimonialsSection
+                    testimonials={testimonials}
+                    onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
+                  />
                 )}
 
                 {/* 13. Clinical Blog & Articles Slider */}
                 {modules.blog && (
-                  <LazySection minHeight="360px">
-                    <Suspense fallback={null}>
-                      <BlogSliderSection
-                        onOpenBooking={handleOpenBooking}
-                        onBookSpecialist={handleSelectSpecialistForBooking}
-                        onOpenBlogPage={handleOpenBlogPage}
-                      />
-                    </Suspense>
-                  </LazySection>
+                  <BlogSliderSection
+                    onOpenBooking={handleOpenBooking}
+                    onBookSpecialist={handleSelectSpecialistForBooking}
+                    onOpenBlogPage={handleOpenBlogPage}
+                  />
                 )}
-              </>
+              </Suspense>
             )}
           </>
         )}
 
       </main>
 
-      {/* Footer (Deferred until user interaction/timeout for zero initial main-thread blocking) */}
+      {/* Footer (Unified with below-the-fold, single Suspense, never unmounts) */}
       {renderBelowFold && modules.footer && (
-        <LazySection minHeight="280px">
-          <Suspense fallback={null}>
-            <Footer 
-              onOpenAdmin={() => setIsAdminOpen(true)} 
-              onOpenBlogPage={handleOpenBlogPage}
-            />
-          </Suspense>
-        </LazySection>
+        <Suspense fallback={null}>
+          <Footer 
+            onOpenAdmin={() => setIsAdminOpen(true)} 
+            onOpenBlogPage={handleOpenBlogPage}
+          />
+        </Suspense>
       )}
 
       {/* Multi-Floating Actions & Mobile Bottom Bar wrapped in Suspense for zero main-thread blocking */}
