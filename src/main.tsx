@@ -7,9 +7,17 @@ import { AuthProvider } from './context/AuthContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { updateTabFavicon } from './data/siteCustomizer';
 import { initPersistentSync, hydratePersistentData } from './utils/persistentSync';
+import { initWebMcp } from './utils/webMcp';
 import './index.css';
 
 console.log('[Raba main] Initializing core modules...');
+
+// Initialize WebMCP tools for in-browser AI agents
+try {
+  initWebMcp();
+} catch (e) {
+  console.warn('[main] WebMCP notice:', e);
+}
 
 // Pre-hydrate persistent data synchronously before React renders so incognito mode has instant data
 try {

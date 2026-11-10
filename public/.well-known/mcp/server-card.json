@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "raba-center-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP (Model Context Protocol) Server for RABA Center - Specialized Applied Behavior Analysis (ABA) & Pediatric Rehabilitation Centers",
+  "endpoint": "https://rabacenters.com/api/mcp",
+  "transport": {
+    "type": "sse",
+    "url": "https://rabacenters.com/api/mcp/sse"
+  },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    },
+    "resources": {
+      "subscribe": false,
+      "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    }
+  },
+  "info": {
+    "title": "مركز رابا للعلاج بتحليل السلوك التطبيقي والتأهيل الشامل | RABA Center",
+    "description": "واجهة الذكاء الاصطناعي وخدمات الوكلاء (Agentic Interface) لحجز مواعيد التقييم والتشخيص، استعراض الخدمات الإكلينيكية، بيانات الفروع والأخصائيين المعتمدين.",
+    "website": "https://rabacenters.com",
+    "contact": {
+      "email": "info@rabacenters.com",
+      "phone": "+966575100100"
+    }
+  },
+  "tools": [
+    {
+      "name": "book_rehabilitation_appointment",
+      "description": "حجز موعد تشخيص وتقييم مبكر أو جلسة علاجية في مركز رابا (ABA، تخاطب، علاج وظيفي)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "parentName": { "type": "string", "description": "اسم ولي الأمر" },
+          "phone": { "type": "string", "description": "رقم الهاتف للتواصل" },
+          "childName": { "type": "string", "description": "اسم الطفل" },
+          "childAge": { "type": "number", "description": "عمر الطفل بالسنين" },
+          "service": { "type": "string", "description": "الخدمة المطلوبة (ABA، تخاطب، تكامل حسي، تشخيص)" },
+          "branch": { "type": "string", "description": "الفرع المفضل" }
+        },
+        "required": ["parentName", "phone", "service"]
+      }
+    },
+    {
+      "name": "get_center_services",
+      "description": "استعراض قائمة برامج وخدمات مركز رابا التأهيلية والتشخيصية",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_branches_and_contacts",
+      "description": "الحصول على بيانات فروع مركز رابا في المملكة وأرقام التواصل وساعات العمل",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ]
+}

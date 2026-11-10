@@ -112,6 +112,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   // Focused, professional navigation links strictly representing the core sections
   const navLinks = [
     { label: t('nav.home'), href: '#hero' },
+    { label: isArabic ? 'من نحن' : 'About Us', href: '#about' },
     { label: isArabic ? 'الخدمات' : 'Services', href: '#services' },
     { label: isArabic ? 'العروض والأنشطة' : 'Offers & Activities', href: '#offers' },
     { label: isArabic ? 'خدمة سِوار (معلم الظل)' : 'Sewar (Shadow Teacher)', href: '#shadow-teacher' },
@@ -121,6 +122,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: isArabic ? 'شركاء النجاح' : 'Success Partners', href: '#partners' },
     { label: isArabic ? 'الاعتمادات' : 'Accreditations', href: '#accreditations-section' },
     { label: t('nav.stories'), href: '#testimonials' },
+    { label: isArabic ? 'اتصل بنا' : 'Contact Us', href: '#contact' },
   ];
 
   // Mobile navigation categorized items with custom professional icons & styling
@@ -237,6 +239,38 @@ export const Navbar: React.FC<NavbarProps> = ({
           href: '#testimonials',
           icon: Star,
           iconBg: 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30',
+          badge: null,
+        },
+      ]
+    },
+    {
+      sectionTitle: isArabic ? 'عن المركز والمعلومات القانونية' : 'About & Legal Hub',
+      items: [
+        {
+          id: 'about',
+          label: isArabic ? 'عن مركز رابا' : 'About RABA Center',
+          subtitle: isArabic ? 'رؤيتنا ورسالتنا وفلسفة العلاج' : 'Our Mission, Vision & Approach',
+          href: '/about',
+          icon: ShieldCheck,
+          iconBg: 'bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30',
+          badge: null,
+        },
+        {
+          id: 'contact',
+          label: isArabic ? 'اتصل بنا والتواصل' : 'Contact Us',
+          subtitle: isArabic ? 'خدمة العملاء وأرقام الفروع والموقع' : 'Customer Service & Contact Details',
+          href: '/contact',
+          icon: Phone,
+          iconBg: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30',
+          badge: null,
+        },
+        {
+          id: 'terms',
+          label: isArabic ? 'الشروط والأحكام والخصوصية' : 'Terms & Privacy',
+          subtitle: isArabic ? 'سياسة الخصوصية وحقوق المستفيدين' : 'Terms of Service & Privacy Policy',
+          href: '/terms',
+          icon: BookOpen,
+          iconBg: 'bg-purple-500/15 text-purple-700 dark:text-purple-400 border-purple-500/30',
           badge: null,
         },
       ]

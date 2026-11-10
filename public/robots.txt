@@ -4,8 +4,13 @@ Allow: /
 Disallow: /api/
 Disallow: /data/admin_users.json
 
+# Content Signals (AI Agent & Crawler Directives)
+Content-Signal: search=yes, ai-train=no
+
 # Host
 Host: https://rabacenters.com
 
-# Sitemaps
+# Sitemaps & LLM Context
 Sitemap: https://rabacenters.com/sitemap.xml
+# LLMs Text File: https://rabacenters.com/llms.txt
+# MCP Server Card: https://rabacenters.com/.well-known/mcp/server-card.json

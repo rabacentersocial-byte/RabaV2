@@ -399,12 +399,29 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
 
         </div>
 
-        {/* Bottom Bar with Back to Top & Admin Access */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
-          <div className="flex flex-wrap items-center gap-4">
+        {/* Bottom Bar with Links, Back to Top & Admin Access */}
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 text-center sm:text-start">
             <p className="font-medium">
               {isArabic ? (footer.copyrightAr || t.footer.copyright) : (footer.copyrightEn || t.footer.copyright)}
             </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <a href="/about" className="hover:text-[#2E86EB] dark:hover:text-[#FFD23F] transition-colors font-semibold">
+                {isArabic ? 'من نحن' : 'About Us'}
+              </a>
+              <span className="text-slate-300 dark:text-white/20 select-none">•</span>
+              <a href="/contact" className="hover:text-[#2E86EB] dark:hover:text-[#FFD23F] transition-colors font-semibold">
+                {isArabic ? 'اتصل بنا' : 'Contact Us'}
+              </a>
+              <span className="text-slate-300 dark:text-white/20 select-none">•</span>
+              <a href="/terms" className="hover:text-[#2E86EB] dark:hover:text-[#FFD23F] transition-colors font-semibold">
+                {isArabic ? 'الشروط والأحكام' : 'Terms of Service'}
+              </a>
+              <span className="text-slate-300 dark:text-white/20 select-none">•</span>
+              <a href="/privacy" className="hover:text-[#2E86EB] dark:hover:text-[#FFD23F] transition-colors font-semibold">
+                {isArabic ? 'سياسة الخصوصية' : 'Privacy Policy'}
+              </a>
+            </div>
             {onOpenAdmin && (
               <button
                 onClick={onOpenAdmin}

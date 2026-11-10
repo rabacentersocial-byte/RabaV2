@@ -319,7 +319,16 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           </div>
         ) : (
           /* ULTRA-STREAMLINED MOBILE-OPTIMIZED FORM */
-          <form onSubmit={handleSubmit} className="overflow-y-auto flex-1 p-3.5 sm:p-5 space-y-3 sm:space-y-3.5">
+          <form 
+            onSubmit={handleSubmit} 
+            {...({
+              toolname: "book_rehabilitation_appointment",
+              tooldescription: "حجز موعد تقييم وتشخيص مبكر أو جلسة علاجية في مركز رابا (ABA، تخاطب، تكامل حسي)"
+            } as any)}
+            data-toolname="book_rehabilitation_appointment"
+            data-tooldescription="حجز موعد تقييم وتشخيص مبكر أو جلسة علاجية في مركز رابا (ABA، تخاطب، تكامل حسي)"
+            className="overflow-y-auto flex-1 p-3.5 sm:p-5 space-y-3 sm:space-y-3.5"
+          >
             
             {formError && (
               <div className="p-2.5 bg-rose-500/15 border border-rose-500/30 rounded-xl text-xs text-rose-700 dark:text-rose-200 font-bold flex items-center gap-2">

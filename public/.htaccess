@@ -50,10 +50,14 @@
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
 
-  # HTML pages revalidate immediately
+  # HTML pages revalidate immediately & advertise Agent resources via RFC 8288 Link headers
   <FilesMatch "\.(html|htm)$">
     Header set Cache-Control "public, max-age=0, must-revalidate"
+    Header set Link '</llms.txt>; rel="alternate"; type="text/markdown", </.well-known/mcp/server-card.json>; rel="service-desc"'
   </FilesMatch>
+
+  # Error Document for missing pages
+  ErrorDocument 404 /404.html
 
   # Security Headers
   Header always set X-Content-Type-Options "nosniff"

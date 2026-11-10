@@ -1391,6 +1391,118 @@ async function startServer() {
     }
   });
 
+  // --- Agent-Readiness & Discovery Directives (RFC 8288 Link, Markdown Content Negotiation, WebMCP & Real 404) ---
+  const publicDir = path.join(process.cwd(), 'public');
+  const llmsFilePath = path.join(publicDir, 'llms.txt');
+  const serverCardPath = path.join(publicDir, '.well-known', 'mcp', 'server-card.json');
+
+  // Explicit MCP Server Card route (SEP-1649)
+  app.get(['/.well-known/mcp/server-card.json', '/api/mcp/server-card.json'], (_req: Request, res: Response) => {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    if (fs.existsSync(serverCardPath)) {
+      return res.sendFile(serverCardPath);
+    }
+    return res.status(200).json({
+      name: 'raba-center-mcp-server',
+      version: '1.0.0',
+      description: 'MCP server for RABA Center'
+    });
+  });
+
+  // Explicit llms.txt route
+  app.get('/llms.txt', (_req: Request, res: Response) => {
+    res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.setHeader('Link', '</llms.txt>; rel="alternate"; type="text/markdown", </.well-known/mcp/server-card.json>; rel="service-desc"');
+    if (fs.existsSync(llmsFilePath)) {
+      return res.sendFile(llmsFilePath);
+    }
+    return res.status(200).send('# مركز رابا للتأهيل\n\nخدمات تحليل السلوك التطبيقي ABA');
+  });
+
+  // Agent middleware for Link headers, Markdown serving, and real 404 detection
+  app.use((req: Request, res: Response, next) => {
+    // 1. Emit RFC 8288 Link header advertising llms.txt & MCP Server Card
+    res.setHeader('Link', '</llms.txt>; rel="alternate"; type="text/markdown", </.well-known/mcp/server-card.json>; rel="service-desc"');
+
+    // 2. Serve Markdown if an agent requests it via Accept: text/markdown or ?format=markdown
+    const acceptHeader = (req.headers.accept || '').toLowerCase();
+    const isMarkdownRequested = 
+      acceptHeader.includes('text/markdown') || 
+      acceptHeader.includes('text/x-markdown') || 
+      req.query.format === 'markdown';
+
+    if (isMarkdownRequested) {
+      if (fs.existsSync(llmsFilePath)) {
+        res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+        return res.sendFile(llmsFilePath);
+      }
+    }
+
+    // 3. Skip static assets, Vite internal files, API endpoints, uploaded files
+    if (
+      req.path.startsWith('/api/') ||
+      req.path.startsWith('/@') ||
+      req.path.startsWith('/src/') ||
+      req.path.startsWith('/node_modules/') ||
+      req.path.startsWith('/public/') ||
+      req.path.startsWith('/assets/') ||
+      req.path.startsWith('/images/') ||
+      req.path.startsWith('/logo/') ||
+      req.path.startsWith('/uploads/') ||
+      req.path.startsWith('/.well-known/') ||
+      req.path.includes('.')
+    ) {
+      return next();
+    }
+
+    // 4. Validate known SPA client routes; return a real HTTP 404 for missing pages
+    const VALID_ROUTES = new Set([
+      '/',
+      '/index.html',
+      '/about',
+      '/contact',
+      '/terms',
+      '/terms-of-service',
+      '/privacy',
+      '/privacy-policy',
+      '/services',
+      '/services-directory',
+      '/specialists',
+      '/specialists-directory',
+      '/branches',
+      '/branches-directory',
+      '/offers',
+      '/offers-directory',
+      '/blog',
+      '/blog-directory',
+      '/articles',
+      '/booking',
+      '/admin',
+      '/login'
+    ]);
+
+    const isDynamicValid = 
+      req.path.startsWith('/blog/') || 
+      req.path.startsWith('/articles/') || 
+      req.path.startsWith('/specialist/');
+
+    if (!VALID_ROUTES.has(req.path) && !isDynamicValid) {
+      res.status(404);
+      if (req.accepts('html')) {
+        const custom404 = path.join(publicDir, '404.html');
+        if (fs.existsSync(custom404)) {
+          return res.sendFile(custom404);
+        }
+        return res.send(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>404 - الصفحة غير موجودة</title></head><body style="background:#0D1B2A;color:#fff;text-align:center;padding:50px;font-family:sans-serif"><h1>404</h1><p>الصفحة المطلوبة غير موجودة.</p><a href="/" style="color:#2E86EB">الرئيسية</a></body></html>`);
+      }
+      return res.json({ error: 'Page not found', status: 404, path: req.path });
+    }
+
+    next();
+  });
+
   // --- Vite Dev Server Middleware or Production Static Serving ---
   let viteInstance: any = null;
   const distPath = path.join(process.cwd(), 'dist');
