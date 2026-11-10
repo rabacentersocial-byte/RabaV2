@@ -334,7 +334,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 onClick={() => handleScroll('prev')}
                 disabled={!canScrollPrev}
                 aria-label={isArabic ? 'الخدمة السابقة' : 'Previous program'}
-                className={`w-10 h-10 rounded-full liquid-glass-btn flex items-center justify-center shadow-xs transition-all cursor-pointer ${
+                className={`w-11 h-11 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn flex items-center justify-center shadow-xs transition-transform duration-200 cursor-pointer ${
                   canScrollPrev
                     ? 'hover:scale-105 active:scale-95 text-slate-700 dark:text-slate-200'
                     : 'opacity-40 cursor-not-allowed text-slate-400'
@@ -347,7 +347,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 onClick={() => handleScroll('next')}
                 disabled={!canScrollNext}
                 aria-label={isArabic ? 'الخدمة التالية' : 'Next program'}
-                className={`w-10 h-10 rounded-full liquid-glass-btn flex items-center justify-center shadow-xs transition-all cursor-pointer ${
+                className={`w-11 h-11 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn flex items-center justify-center shadow-xs transition-transform duration-200 cursor-pointer ${
                   canScrollNext
                     ? 'hover:scale-105 active:scale-95 text-slate-700 dark:text-slate-200'
                     : 'opacity-40 cursor-not-allowed text-slate-400'
@@ -497,18 +497,22 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
           </div>
 
           {/* Slider Indicator Dots */}
-          <div className="flex justify-center items-center gap-2 mt-6">
+          <div className="flex justify-center items-center gap-1 mt-6">
             {filteredServices.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => scrollToIndex(idx)}
                 aria-label={`الخدمة ${idx + 1}`}
-                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                  currentIndex === idx 
-                    ? 'w-8 bg-[#0B3B36] dark:bg-[#00E5BE]' 
-                    : 'w-2 bg-slate-300 dark:bg-white/20 hover:bg-slate-400 dark:hover:bg-white/40'
-                }`}
-              />
+                className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer p-0 m-0 bg-transparent border-0"
+              >
+                <span
+                  className={`block h-2 rounded-full transition-colors duration-200 ${
+                    currentIndex === idx 
+                      ? 'w-8 bg-[#0B3B36] dark:bg-[#00E5BE]' 
+                      : 'w-2 bg-slate-300 dark:bg-white/20 hover:bg-slate-400 dark:hover:bg-white/40'
+                  }`}
+                />
+              </button>
             ))}
           </div>
         </div>

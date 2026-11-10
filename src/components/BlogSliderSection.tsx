@@ -256,7 +256,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
             {onOpenBlogPage && (
               <button
                 onClick={onOpenBlogPage}
-                className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-[#dff1ec] dark:bg-teal-950/60 hover:bg-[#dff1ec]/90 text-[#0d5c52] dark:text-[#2dd4bf] border border-[#0d5c52]/20 dark:border-[#2dd4bf]/20 text-xs sm:text-sm font-black transition-all cursor-pointer shadow-xs hover:scale-[1.02]"
+                className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-[#dff1ec] dark:bg-teal-950/60 hover:bg-[#dff1ec]/90 text-[#0d5c52] dark:text-[#2dd4bf] border border-[#0d5c52]/20 dark:border-[#2dd4bf]/20 text-xs sm:text-sm font-black transition-colors duration-200 cursor-pointer shadow-xs"
               >
                 <span>{isArabic ? 'تصفح دليل المقالات الشامل' : 'Browse All Articles'}</span>
                 {isArabic ? <ArrowLeft className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
@@ -267,14 +267,14 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
               <button
                 onClick={scrollRight}
                 aria-label={isArabic ? 'السابق' : 'Previous'}
-                className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-white/15 text-slate-700 dark:text-white flex items-center justify-center hover:bg-[#dff1ec]/60 dark:hover:bg-teal-950/60 hover:text-[#0d5c52] dark:hover:text-[#2dd4bf] hover:border-[#0d5c52]/30 shadow-xs hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-white/15 text-slate-700 dark:text-white flex items-center justify-center hover:bg-[#dff1ec]/60 dark:hover:bg-teal-950/60 hover:text-[#0d5c52] dark:hover:text-[#2dd4bf] hover:border-[#0d5c52]/30 shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer"
               >
                 {isArabic ? <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" /> : <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />}
               </button>
               <button
                 onClick={scrollLeft}
                 aria-label={isArabic ? 'التالي' : 'Next'}
-                className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-white/15 text-slate-700 dark:text-white flex items-center justify-center hover:bg-[#dff1ec]/60 dark:hover:bg-teal-950/60 hover:text-[#0d5c52] dark:hover:text-[#2dd4bf] hover:border-[#0d5c52]/30 shadow-xs hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-white/15 text-slate-700 dark:text-white flex items-center justify-center hover:bg-[#dff1ec]/60 dark:hover:bg-teal-950/60 hover:text-[#0d5c52] dark:hover:text-[#2dd4bf] hover:border-[#0d5c52]/30 shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer"
               >
                 {isArabic ? <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" /> : <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />}
               </button>
@@ -290,9 +290,9 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-4 py-2 min-h-[40px] rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-colors duration-200 cursor-pointer ${
                   isActive
-                    ? 'bg-gradient-to-r from-[#0d5c52] to-[#115e59] text-white font-black shadow-md shadow-teal-900/20 scale-[1.02] border border-[#0d5c52]'
+                    ? 'bg-gradient-to-r from-[#0d5c52] to-[#115e59] text-white font-black shadow-md shadow-teal-900/20 border border-[#0d5c52]'
                     : 'bg-white/80 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 hover:border-[#0d5c52]/40 hover:text-[#0d5c52] dark:hover:text-[#2dd4bf]'
                 }`}
               >

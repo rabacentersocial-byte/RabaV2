@@ -349,7 +349,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         onGoHome();
                       }
                     }}
-                    className={`px-3 py-1.5 text-xs xl:text-sm font-bold rounded-full transition-all duration-200 ${
+                    className={`px-3 py-1.5 text-xs xl:text-sm font-bold rounded-full transition-colors duration-200 ${
                       isLinkActive
                         ? 'bg-[#2E86EB] text-white shadow-md shadow-blue-500/25 border-t border-white/40'
                         : isDark
@@ -406,7 +406,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={onOpenBooking}
                 id="header-quick-book-btn"
-                className="relative group overflow-hidden flex items-center gap-2 bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:from-[#1D74D8] hover:to-[#16A34A] active:scale-95 text-white text-xs sm:text-sm font-black px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl transition-all duration-300 shadow-md shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 border border-white/30 cursor-pointer"
+                className="relative group overflow-hidden flex items-center gap-2 bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:from-[#1D74D8] hover:to-[#16A34A] active:scale-95 text-white text-xs sm:text-sm font-black px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl transition-transform duration-200 shadow-md shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 border border-white/30 cursor-pointer"
               >
                 {/* Shimmer light sweep animation */}
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/35 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
@@ -519,7 +519,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       setMobileMenuOpen(false);
                       onOpenBooking();
                     }}
-                    className="px-3.5 py-2 rounded-xl bg-[#2E86EB] hover:bg-[#2575d0] text-white text-xs font-black shadow-xs cursor-pointer active:scale-95 transition-all flex items-center gap-1 shrink-0"
+                    className="px-3.5 py-2 rounded-xl bg-[#2E86EB] hover:bg-[#2575d0] text-white text-xs font-black shadow-xs cursor-pointer active:scale-95 transition-transform duration-200 flex items-center gap-1 shrink-0"
                   >
                     <span>{t('nav.bookNow')}</span>
                     {isArabic ? <ChevronLeft className="w-3.5 h-3.5 stroke-[3]" /> : <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />}
@@ -574,7 +574,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                                 onGoHome();
                               }
                             }}
-                            className={`group p-2.5 rounded-2xl transition-all flex items-center justify-between border cursor-pointer ${
+                            className={`group p-2.5 rounded-2xl transition-colors duration-200 flex items-center justify-between border cursor-pointer ${
                               isLinkActive
                                 ? 'bg-gradient-to-r from-[#1B4B8A] to-[#2E86EB] text-white shadow-sm border-blue-500/40 ring-1 ring-[#FFD23F]/40'
                                 : item.badgeHighlight
@@ -642,7 +642,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <div className="grid grid-cols-2 gap-2">
                   <a
                     href="tel:0575100100"
-                    className={`py-2 px-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 border transition-all cursor-pointer ${
+                    className={`py-2 px-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 border transition-colors duration-200 cursor-pointer ${
                       isDark
                         ? 'bg-white/5 hover:bg-white/10 border-white/10 text-white'
                         : 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-800'
@@ -656,7 +656,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     href="https://wa.me/966575100100"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="py-2 px-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 transition-all cursor-pointer"
+                    className="py-2 px-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 transition-colors duration-200 cursor-pointer"
                   >
                     <MessageCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                     <span className="truncate">{isArabic ? 'واتساب الاستشارات' : 'WhatsApp'}</span>

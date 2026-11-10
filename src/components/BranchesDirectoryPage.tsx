@@ -616,18 +616,22 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
             </div>
 
             {/* Slider Dot Indicators */}
-            <div className="flex justify-center items-center gap-2 mt-6">
+            <div className="flex justify-center items-center gap-1 mt-6">
               {filteredBranches.map((_, idx) => (
                 <button
                   key={idx}
                   onClick={() => scrollToIndex(idx)}
                   aria-label={`الانتقال للفرع ${idx + 1}`}
-                  className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                    currentIndex === idx 
-                      ? 'w-8 bg-[#0D6D54] dark:bg-[#00E5BE]' 
-                      : 'w-2 bg-slate-300 dark:bg-white/20 hover:bg-slate-400'
-                  }`}
-                />
+                  className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer p-0 m-0 bg-transparent border-0"
+                >
+                  <span
+                    className={`block h-2 rounded-full transition-colors duration-200 ${
+                      currentIndex === idx 
+                        ? 'w-8 bg-[#0D6D54] dark:bg-[#00E5BE]' 
+                        : 'w-2 bg-slate-300 dark:bg-white/20 hover:bg-slate-400'
+                    }`}
+                  />
+                </button>
               ))}
             </div>
           </div>

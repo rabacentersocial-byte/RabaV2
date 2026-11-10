@@ -345,7 +345,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
                   onClick={() => handleScroll('prev')}
                   disabled={!canScrollPrev}
                   aria-label={isArabic ? 'الكورس السابق' : 'Previous course'}
-                  className={`w-11 h-11 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-sm transition-all cursor-pointer ${
+                  className={`w-11 h-11 min-w-[44px] min-h-[44px] rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-sm transition-transform duration-200 cursor-pointer ${
                     canScrollPrev 
                       ? 'hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white active:scale-95' 
                       : 'opacity-40 cursor-not-allowed'
@@ -359,7 +359,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
                   onClick={() => handleScroll('next')}
                   disabled={!canScrollNext}
                   aria-label={isArabic ? 'الكورس التالي' : 'Next course'}
-                  className={`w-11 h-11 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-sm transition-all cursor-pointer ${
+                  className={`w-11 h-11 min-w-[44px] min-h-[44px] rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-sm transition-transform duration-200 cursor-pointer ${
                     canScrollNext 
                       ? 'hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white active:scale-95' 
                       : 'opacity-40 cursor-not-allowed'
@@ -390,18 +390,22 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
           </div>
 
           {/* Slider Indicator Dots */}
-          <div className="flex justify-center items-center gap-2 mt-6">
+          <div className="flex justify-center items-center gap-1 mt-6">
             {activeCourses.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => scrollToIndex(idx)}
                 aria-label={`الكورس ${idx + 1}`}
-                className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                  currentIndex === idx 
-                    ? 'w-8 bg-[#0a3530] dark:bg-[#2dd4bf]' 
-                    : 'w-2 bg-slate-300 dark:bg-white/20 hover:bg-slate-400 dark:hover:bg-white/40'
-                }`}
-              />
+                className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer p-0 m-0 bg-transparent border-0"
+              >
+                <span
+                  className={`block h-2 rounded-full transition-colors duration-200 ${
+                    currentIndex === idx 
+                      ? 'w-8 bg-[#0a3530] dark:bg-[#2dd4bf]' 
+                      : 'w-2 bg-slate-300 dark:bg-white/20 hover:bg-slate-400 dark:hover:bg-white/40'
+                  }`}
+                />
+              </button>
             ))}
           </div>
         </div>

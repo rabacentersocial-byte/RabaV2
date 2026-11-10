@@ -1431,6 +1431,7 @@ async function startServer() {
     const isMarkdownRequested = 
       acceptHeader.includes('text/markdown') || 
       acceptHeader.includes('text/x-markdown') || 
+      acceptHeader.includes('application/markdown') ||
       req.query.format === 'markdown' ||
       req.query.alt === 'markdown';
 

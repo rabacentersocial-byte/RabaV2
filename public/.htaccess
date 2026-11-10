@@ -19,10 +19,12 @@
   RewriteEngine On
   RewriteBase /
 
-  # 1. Agent Content Negotiation: If client requests Markdown, serve llms.txt immediately!
+  # 1. Agent Content Negotiation: If client requests Markdown, serve llms.txt immediately for any path
+  RewriteCond %{REQUEST_URI} !^/llms\.txt$ [NC]
   RewriteCond %{HTTP:Accept} text/(x-)?markdown [NC,OR]
+  RewriteCond %{HTTP:Accept} application/markdown [NC,OR]
   RewriteCond %{QUERY_STRING} (format=markdown|alt=markdown) [NC]
-  RewriteRule ^(index\.html)?$ /llms.txt [L]
+  RewriteRule ^ /llms.txt [L]
 
   # 2. Allow existing physical files and directories to be served directly
   RewriteCond %{REQUEST_FILENAME} -f [OR]

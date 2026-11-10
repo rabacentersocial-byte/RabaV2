@@ -1,17 +1,17 @@
 {
   "$schema": "https://schemastore.org/schemas/json/ard.json",
   "version": "1.0",
-  "name": "RABA Center - مركز رابا للعلاج بتحليل السلوك التطبيقي",
-  "description": "مركز رابا لتقديم خدمات التأهيل الشامل وتحليل السلوك التطبيقي ABA والنطق والتخاطب والعلاج الوظيفي والتكامل الحسي في المملكة العربية السعودية",
+  "name": "RABA Center - مركز رابا",
+  "description": "مركز رابا للعلاج بتحليل السلوك التطبيقي ABA وخدمات التأهيل الشامل",
   "url": "https://rabacenters.com",
   "entries": [
     {
-      "identifier": "raba-llms-documentation",
-      "displayName": "RABA Center AI Documentation (llms.txt)",
-      "description": "دليل شامل لخدمات وفروع وبرامج مركز رابا مهيأ لنماذج الذكاء الاصطناعي",
+      "identifier": "urn:air:rabacenters:documentation:llms-txt",
+      "displayName": "RABA Center AI Documentation",
+      "description": "دليل خدمات وفروع مركز رابا لنماذج الذكاء الاصطناعي",
       "url": "https://rabacenters.com/llms.txt",
-      "type": "text/markdown; charset=utf-8",
-      "mediaType": "text/markdown; charset=utf-8",
+      "type": "text/markdown",
+      "mediaType": "text/markdown",
       "representativeQueries": [
         "ما هي خدمات مركز رابا لتحليل السلوك التطبيقي ABA؟",
         "فروع مركز رابا في الرياض وجدة والخبر والأحساء والخرج",
@@ -20,12 +20,12 @@
       ]
     },
     {
-      "identifier": "raba-homepage",
-      "displayName": "الصفحة الرئيسية - مركز رابا",
-      "description": "البوابة الرئيسية لحجز جلسات التقييم والاطلاع على البرامج التأهيلية والدورات التدريبية",
+      "identifier": "urn:air:rabacenters:portal:homepage",
+      "displayName": "الصفحة الرئيسية لمركز رابا",
+      "description": "البوابة الرئيسية لحجز جلسات التقييم والاطلاع على البرامج التأهيلية",
       "url": "https://rabacenters.com/",
-      "type": "text/html; charset=utf-8",
-      "mediaType": "text/html; charset=utf-8",
+      "type": "text/markdown",
+      "mediaType": "text/markdown",
       "representativeQueries": [
         "حجز موعد في مركز رابا",
         "خدمة سوار معلم الظل والدمج المدرسي",

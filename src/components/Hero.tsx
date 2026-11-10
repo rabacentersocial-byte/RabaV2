@@ -227,7 +227,7 @@ export const Hero: React.FC<HeroProps> = ({
 
             {/* Value checklist bullets with Liquid Glass Kit containers */}
             <div className="space-y-3 pt-2 text-sm sm:text-base text-slate-800 dark:text-slate-100 font-medium">
-              <div className="flex items-center gap-3 p-3.5 rounded-2xl liquid-glass-card shadow-xs transition-all">
+              <div className="flex items-center gap-3 p-3.5 rounded-2xl liquid-glass-card shadow-xs transition-colors duration-200">
                 <span className="w-7 h-7 rounded-xl bg-[#2E86EB]/15 text-[#2E86EB] border border-[#2E86EB]/30 flex items-center justify-center shrink-0 shadow-2xs">
                   <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />
                 </span>
@@ -238,7 +238,7 @@ export const Hero: React.FC<HeroProps> = ({
                 </span>
               </div>
 
-              <div className="flex items-center gap-3 p-3.5 rounded-2xl liquid-glass-card shadow-xs transition-all">
+              <div className="flex items-center gap-3 p-3.5 rounded-2xl liquid-glass-card shadow-xs transition-colors duration-200">
                 <span className="w-7 h-7 rounded-xl bg-[#22C55E]/15 text-[#22C55E] border border-[#22C55E]/30 flex items-center justify-center shrink-0 shadow-2xs">
                   <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />
                 </span>
@@ -249,7 +249,7 @@ export const Hero: React.FC<HeroProps> = ({
                 </span>
               </div>
 
-              <div className="flex items-center gap-3 p-3.5 rounded-2xl liquid-glass-card shadow-xs transition-all">
+              <div className="flex items-center gap-3 p-3.5 rounded-2xl liquid-glass-card shadow-xs transition-colors duration-200">
                 <span className="w-7 h-7 rounded-xl bg-[#FFD23F]/20 text-amber-700 dark:text-[#FFD23F] border border-[#FFD23F]/40 flex items-center justify-center shrink-0 shadow-2xs">
                   <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />
                 </span>
@@ -268,7 +268,7 @@ export const Hero: React.FC<HeroProps> = ({
                 id="hero-register-btn"
                 onClick={onOpenBooking}
                 aria-label={isArabic ? 'سجل الآن في برامج التأهيل والتطوير بمركز رابا' : 'Register now for rehabilitation programs at Raba Center'}
-                className="relative group overflow-hidden bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:from-[#1D74D8] hover:to-[#16A34A] text-white font-black px-6 sm:px-8 py-3.5 min-h-[48px] rounded-2xl border-t border-white/60 border-x border-b border-white/20 shadow-[0_12px_32px_rgba(46,134,235,0.35),inset_0_1px_1px_rgba(255,255,255,0.4)] hover:shadow-xl active:scale-95 transition-all text-sm sm:text-base text-center justify-center flex items-center cursor-pointer"
+                className="relative group overflow-hidden bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:from-[#1D74D8] hover:to-[#16A34A] text-white font-black px-6 sm:px-8 py-3.5 min-h-[48px] rounded-2xl border-t border-white/60 border-x border-b border-white/20 shadow-[0_12px_32px_rgba(46,134,235,0.35),inset_0_1px_1px_rgba(255,255,255,0.4)] hover:shadow-xl active:scale-95 transition-transform duration-200 text-sm sm:text-base text-center justify-center flex items-center cursor-pointer"
               >
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
                 <span className="relative z-10">{isArabic ? 'سجل الآن' : 'Register Now'}</span>
@@ -281,7 +281,7 @@ export const Hero: React.FC<HeroProps> = ({
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={isArabic ? 'شاهد فيديو تعريفي عن مركز رابا على منصة إكس' : 'Watch introductory video on X (Twitter)'}
-                className="flex items-center justify-center gap-3 text-slate-800 dark:text-white hover:text-[#2E86EB] dark:hover:text-[#2E86EB] font-bold transition-all group cursor-pointer text-sm sm:text-base py-2 min-h-[48px]"
+                className="flex items-center justify-center gap-3 text-slate-800 dark:text-white hover:text-[#2E86EB] dark:hover:text-[#2E86EB] font-bold transition-colors duration-200 group cursor-pointer text-sm sm:text-base py-2 min-h-[48px]"
                 title={isArabic ? 'شاهد فيديو تعريفي عن مركز رابا على منصة X' : 'Watch introductory video on X (Twitter)'}
               >
                 <div className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn text-slate-900 dark:text-white flex items-center justify-center shadow-lg group-hover:scale-110 active:scale-95 transition-transform shrink-0">
@@ -302,7 +302,7 @@ export const Hero: React.FC<HeroProps> = ({
                 {/* Live Daily Children Counter Pill */}
                 <a 
                   href="#stats-bar"
-                  className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full bg-[#22C55E] text-white text-[11px] sm:text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer border border-emerald-400/40"
+                  className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full bg-[#22C55E] text-white text-[11px] sm:text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition-transform duration-200 cursor-pointer border border-emerald-400/40"
                   title={isArabic ? `+${dailyChildrenCount} أطفال جدد اليوم (إجمالي المستفيدين: ${formattedTotal}+)` : `+${dailyChildrenCount} Enrolled Today`}
                 >
                   <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#FFD23F] text-slate-950 flex items-center justify-center text-[9px] sm:text-[10px] font-black shrink-0 shadow-xs">
@@ -319,7 +319,7 @@ export const Hero: React.FC<HeroProps> = ({
                 {/* Instant Booking Notice Pill */}
                 <button 
                   onClick={onOpenBooking}
-                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full liquid-glass-btn bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold shadow-md border border-slate-200 dark:border-white/20 hover:scale-105 active:scale-95 transition-all cursor-pointer backdrop-blur-md"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full liquid-glass-btn bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-white text-[11px] sm:text-xs font-bold shadow-md border border-slate-200 dark:border-white/20 hover:scale-105 active:scale-95 transition-transform duration-200 cursor-pointer backdrop-blur-md"
                   title={isArabic ? 'انقر لتقديم طلب تسجيل جديد' : 'Click to register'}
                 >
                   <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2E86EB] shrink-0" />
@@ -336,7 +336,7 @@ export const Hero: React.FC<HeroProps> = ({
               onMouseLeave={() => setIsPaused(false)}
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
-              className="relative w-[280px] h-[280px] xs:w-[320px] xs:h-[320px] sm:w-[380px] sm:h-[380px] lg:w-[440px] lg:h-[440px] xl:w-[460px] xl:h-[460px] rounded-full p-2 sm:p-2.5 bg-gradient-to-tr from-[#2E86EB] via-[#FFD23F] via-[#FF2D9B] to-[#22C55E] shadow-[0_20px_50px_rgba(46,134,235,0.35),0_0_30px_rgba(0,229,190,0.2)] group select-none transition-all duration-300 shrink-0 aspect-square"
+              className="relative w-[280px] h-[280px] xs:w-[320px] xs:h-[320px] sm:w-[380px] sm:h-[380px] lg:w-[440px] lg:h-[440px] xl:w-[460px] xl:h-[460px] rounded-full p-2 sm:p-2.5 bg-gradient-to-tr from-[#2E86EB] via-[#FFD23F] via-[#FF2D9B] to-[#22C55E] shadow-[0_20px_50px_rgba(46,134,235,0.35),0_0_30px_rgba(0,229,190,0.2)] group select-none transition-transform duration-300 shrink-0 aspect-square"
               style={{ aspectRatio: '1 / 1' }}
             >
               {/* Luminous Brand Aura Behind Circle */}
@@ -404,12 +404,16 @@ export const Hero: React.FC<HeroProps> = ({
                           key={s.id || idx}
                           onClick={() => setCurrentSlideIndex(idx)}
                           aria-label={isArabic ? `الانتقال إلى الشريحة ${idx + 1}` : `Go to slide ${idx + 1}`}
-                          className={`transition-all duration-300 rounded-full cursor-pointer p-1 ${
-                            idx === currentSlideIndex
-                              ? 'w-6 h-2 bg-gradient-to-r from-[#2E86EB] via-[#FFD23F] to-[#22C55E] shadow-sm'
-                              : 'w-2 h-2 bg-white/40 hover:bg-white/80'
-                          }`}
-                        />
+                          className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer p-0 m-0 bg-transparent border-0"
+                        >
+                          <span
+                            className={`block rounded-full transition-colors duration-200 ${
+                              idx === currentSlideIndex
+                                ? 'w-6 h-2.5 bg-gradient-to-r from-[#2E86EB] via-[#FFD23F] to-[#22C55E] shadow-xs'
+                                : 'w-2.5 h-2.5 bg-white/40 hover:bg-white/80'
+                            }`}
+                          />
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -425,7 +429,7 @@ export const Hero: React.FC<HeroProps> = ({
                     id="hero-slider-prev-btn"
                     onClick={handlePrev}
                     aria-label={isArabic ? 'الشريحة السابقة في المعرض الدائري' : 'Previous slide in carousel'}
-                    className="absolute -right-3 sm:-right-4 lg:-right-5 top-1/2 -translate-y-1/2 z-30 w-12 h-12 min-w-[48px] min-h-[48px] rounded-full liquid-glass-btn bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-white border border-white/60 dark:border-white/20 shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer backdrop-blur-md"
+                    className="absolute -right-3 sm:-right-4 lg:-right-5 top-1/2 -translate-y-1/2 z-30 w-12 h-12 min-w-[48px] min-h-[48px] rounded-full liquid-glass-btn bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-white border border-white/60 dark:border-white/20 shadow-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-transform duration-200 cursor-pointer backdrop-blur-md"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
@@ -435,7 +439,7 @@ export const Hero: React.FC<HeroProps> = ({
                     id="hero-slider-next-btn"
                     onClick={handleNext}
                     aria-label={isArabic ? 'الشريحة التالية في المعرض الدائري' : 'Next slide in carousel'}
-                    className="absolute -left-3 sm:-left-4 lg:-left-5 top-1/2 -translate-y-1/2 z-30 w-12 h-12 min-w-[48px] min-h-[48px] rounded-full liquid-glass-btn bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-white border border-white/60 dark:border-white/20 shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer backdrop-blur-md"
+                    className="absolute -left-3 sm:-left-4 lg:-left-5 top-1/2 -translate-y-1/2 z-30 w-12 h-12 min-w-[48px] min-h-[48px] rounded-full liquid-glass-btn bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-white border border-white/60 dark:border-white/20 shadow-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-transform duration-200 cursor-pointer backdrop-blur-md"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>

@@ -273,7 +273,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
             
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full border border-slate-300 dark:border-white/15 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold transition-all shadow-2xs cursor-pointer active:scale-95"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full border border-slate-300 dark:border-white/15 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold transition-colors duration-200 shadow-2xs cursor-pointer active:scale-95"
             >
               <Plus className="w-3.5 h-3.5 text-[#0D6D54] dark:text-[#2DD4BF]" />
               <span>{isArabic ? 'شاركنا رأيك' : 'Add review'}</span>
@@ -283,7 +283,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
             <button
               onClick={() => handleScroll('prev')}
               aria-label={isArabic ? 'التقييم السابق' : 'Previous review'}
-              className="w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer"
+              className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer"
             >
               {isArabic ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
             </button>
@@ -292,7 +292,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
             <button
               onClick={() => handleScroll('next')}
               aria-label={isArabic ? 'التقييم التالي' : 'Next review'}
-              className="w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer"
+              className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer"
             >
               {isArabic ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
             </button>
@@ -309,7 +309,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
               <button
                 key={tab.id}
                 onClick={() => setFilterTopic(tab.id)}
-                className={`rounded-full px-5 py-2.5 text-xs sm:text-sm font-semibold transition-all cursor-pointer shrink-0 shadow-2xs whitespace-nowrap ${
+                className={`rounded-full px-5 py-2.5 text-xs sm:text-sm font-semibold transition-colors duration-200 cursor-pointer shrink-0 shadow-2xs whitespace-nowrap ${
                   isActive
                     ? 'bg-[#2E86EB] dark:bg-[#2E86EB] text-white dark:text-white font-bold border border-[#2E86EB] shadow-sm'
                     : 'bg-white dark:bg-[#111827] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/90 dark:border-white/10'
