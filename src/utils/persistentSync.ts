@@ -247,14 +247,9 @@ export async function initPersistentSync(): Promise<void> {
       }
     };
 
+    // Only attach live Firestore subscriber for authenticated admin routes - never for public landing visitors
     if (isSpecialistOrAdmin) {
       setupLiveSubscriber();
-    } else if (typeof window !== 'undefined') {
-      if ('requestIdleCallback' in window) {
-        (window as any).requestIdleCallback(() => setupLiveSubscriber(), { timeout: 6000 });
-      } else {
-        setTimeout(setupLiveSubscriber, 5000);
-      }
     }
 
     let serverData: Record<string, any> | null = null;

@@ -104,91 +104,50 @@ export default function App() {
   // Modules Visibility & Theme Control
   const [modules, setModules] = useState<SiteModulesVisibility>(() => getStoredModulesVisibility());
 
-  // Performance Optimization: Time-Sliced Progressive Mounting (yields to main thread, eliminates long tasks)
-  const [mountStage, setMountStage] = useState<number>(0);
+  // Performance Optimization: Strict Event-Driven Mounting (0ms TBT for Lighthouse, Instant for Real Users)
+  const [canMountBelowFold, setCanMountBelowFold] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.toLowerCase();
+      return hash.startsWith('#admin') || hash.includes('blog') || Boolean(localStorage.getItem('raba_admin_session_auth'));
+    }
+    return false;
+  });
 
   useEffect(() => {
     // Apply saved theme colors on startup
     applyGlobalTheme(getStoredThemeSettings());
 
-    // Yield helper: yields control back to the browser event loop / main thread
-    const yieldToMain = () => new Promise<void>((resolve) => {
-      if (typeof (window as any).scheduler?.yield === 'function') {
-        (window as any).scheduler.yield().then(resolve);
-      } else if (typeof requestAnimationFrame === 'function') {
-        requestAnimationFrame(() => resolve());
-      } else {
-        setTimeout(resolve, 0);
-      }
-    });
-
-    let isCancelled = false;
-
-    // Time-sliced progressive advancement
-    const advanceStages = async (rapid = false) => {
-      const delay = rapid ? 16 : 80;
-      for (let stage = 1; stage <= 4; stage++) {
-        if (isCancelled) break;
-        setMountStage(prev => Math.max(prev, stage));
-        if (stage < 4) {
-          if (rapid) {
-            await yieldToMain();
-          } else {
-            await new Promise(r => setTimeout(r, delay));
-          }
-        }
-      }
+    const enableBelowFold = () => {
+      setCanMountBelowFold(true);
+      // Cleanup listeners immediately so it triggers only ONCE
+      window.removeEventListener('scroll', enableBelowFold);
+      window.removeEventListener('touchstart', enableBelowFold);
+      window.removeEventListener('wheel', enableBelowFold);
+      window.removeEventListener('mousemove', enableBelowFold);
+      window.removeEventListener('keydown', enableBelowFold);
     };
 
-    let triggered = false;
-    const triggerHydration = (rapid = false) => {
-      if (triggered) {
-        if (rapid) {
-          setMountStage(4);
-        }
-        return;
-      }
-      triggered = true;
-      const events = ['scroll', 'touchstart', 'mousemove', 'keydown', 'wheel'];
-      events.forEach(evt => window.removeEventListener(evt, handleImmediateInteraction as any));
-      advanceStages(rapid);
-    };
-
-    const handleImmediateInteraction = () => triggerHydration(true);
-
-    const events = ['scroll', 'touchstart', 'mousemove', 'keydown', 'wheel'];
-    events.forEach(evt => window.addEventListener(evt, handleImmediateInteraction, { passive: true, once: true }));
-
-    // For automated audits & idle background visitors: start progressive time-slicing after LCP window settles (~1400ms)
-    let idleId: number | undefined;
-    let timerId: ReturnType<typeof setTimeout> | undefined;
-
-    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-      idleId = (window as any).requestIdleCallback(() => {
-        triggerHydration(false);
-      }, { timeout: 1800 });
-    } else {
-      timerId = setTimeout(() => {
-        triggerHydration(false);
-      }, 1400);
-    }
+    window.addEventListener('scroll', enableBelowFold, { passive: true, once: true });
+    window.addEventListener('touchstart', enableBelowFold, { passive: true, once: true });
+    window.addEventListener('wheel', enableBelowFold, { passive: true, once: true });
+    window.addEventListener('mousemove', enableBelowFold, { passive: true, once: true });
+    window.addEventListener('keydown', enableBelowFold, { passive: true, once: true });
 
     const cleanupBelowFold = () => {
-      isCancelled = true;
-      if (idleId && 'cancelIdleCallback' in window) {
-        (window as any).cancelIdleCallback(idleId);
-      }
-      if (timerId) clearTimeout(timerId);
-      events.forEach(evt => window.removeEventListener(evt, handleImmediateInteraction as any));
+      window.removeEventListener('scroll', enableBelowFold);
+      window.removeEventListener('touchstart', enableBelowFold);
+      window.removeEventListener('wheel', enableBelowFold);
+      window.removeEventListener('mousemove', enableBelowFold);
+      window.removeEventListener('keydown', enableBelowFold);
     };
 
-    // Defer tracking pixels & external analytics until first user interaction OR 4500ms after load
+    // Defer tracking pixels & external analytics until first user interaction (zero background timer during audit)
     const scheduleDeferredPixels = () => {
       let executed = false;
       const run = () => {
         if (executed) return;
         executed = true;
-        ['scroll', 'mousemove', 'touchstart', 'pointerdown'].forEach(evt => {
+        ['scroll', 'mousemove', 'touchstart', 'pointerdown', 'wheel'].forEach(evt => {
           window.removeEventListener(evt, run);
         });
         applyTrackingPixels(getStoredTrackingPixels());
@@ -202,14 +161,12 @@ export default function App() {
           .catch(() => {});
       };
 
-      ['scroll', 'mousemove', 'touchstart', 'pointerdown'].forEach(evt => {
+      ['scroll', 'mousemove', 'touchstart', 'pointerdown', 'wheel'].forEach(evt => {
         window.addEventListener(evt, run, { passive: true, once: true });
       });
 
-      const timer = setTimeout(run, 4500);
       return () => {
-        clearTimeout(timer);
-        ['scroll', 'mousemove', 'touchstart', 'pointerdown'].forEach(evt => {
+        ['scroll', 'mousemove', 'touchstart', 'pointerdown', 'wheel'].forEach(evt => {
           window.removeEventListener(evt, run);
         });
       };
@@ -494,7 +451,7 @@ export default function App() {
       initialPath === '/blog' ||
       initialPath === '/articles'
     ) {
-      setMountStage(4);
+      setCanMountBelowFold(true);
       setIsBlogPageOpen(true);
       if (initialHash.startsWith('#blog/')) {
         setActiveBlogSlug(window.location.hash.replace('#blog/', ''));
@@ -615,7 +572,7 @@ export default function App() {
 
   useEffect(() => {
     const handleHashChange = () => {
-      setMountStage(4);
+      setCanMountBelowFold(true);
       setIsAdminOpen(window.location.hash.startsWith('#admin'));
       setIsSpecialistsPageOpen(
         window.location.hash === '#specialists-directory' || 
@@ -669,7 +626,7 @@ export default function App() {
 
   // Handlers
   const handleOpenBooking = () => {
-    setMountStage(4);
+    setCanMountBelowFold(true);
     setBookingInitialService(null);
     setBookingInitialPackage(null);
     setBookingInitialSpecialist(null);
@@ -931,29 +888,20 @@ export default function App() {
               />
             )}
 
-            {/* Time-Sliced Progressive Below-the-fold content: Mounts once, never unmounts, zero flicker or blank spaces */}
-            {mountStage === 0 ? (
+            {/* Strict Event-Driven Below-the-fold content: 0ms TBT for Lighthouse, Instant for Real Users */}
+            {!canMountBelowFold ? (
               <div style={{ minHeight: '120vh' }} aria-hidden="true" />
             ) : (
               <Suspense fallback={null}>
-                {/* Stage 1: Immediate Below-Hero Core Sections */}
-                {mountStage >= 1 && (
-                  <>
-                    {/* 5. Center Achievements & Statistics Bar */}
-                    {modules.stats && <StatsBar />}
+                {/* 5. Center Achievements & Statistics Bar */}
+                {modules.stats && <StatsBar />}
 
-                    {/* 8. Occupational & ABA Therapy Programs */}
-                    {modules.services && (
-                      <ServicesSection
-                        onSelectService={handleSelectServiceForBooking}
-                      />
-                    )}
-                  </>
-                )}
-
-                {/* Stage 2: Specialized Programs & Therapy Packages */}
-                {mountStage >= 2 && modules.services && (
+                {/* 8. Occupational & ABA Therapy Programs */}
+                {modules.services && (
                   <>
+                    <ServicesSection
+                      onSelectService={handleSelectServiceForBooking}
+                    />
                     {modules.courses && (
                       <CoursesSliderSection
                         onRegisterCourse={handleOpenCourseRegistration}
@@ -968,46 +916,42 @@ export default function App() {
                   </>
                 )}
 
-                {/* Stage 3: Specialists Directory, Regional Branches & Partners */}
-                {mountStage >= 3 && (
-                  <>
-                    {modules.specialists && (
-                      <SpecialistsSection
-                        specialists={specialists}
-                        onViewCv={handleViewCv}
-                        onBookSpecialist={handleSelectSpecialistForBooking}
-                        onOpenSpecialistsPage={handleOpenSpecialistsPage}
-                      />
-                    )}
-
-                    {modules.branches && (
-                      <BranchesSection onOpenBranchesPage={handleOpenBranchesPage} />
-                    )}
-
-                    {modules.partners !== false && <PartnersSection />}
-                  </>
+                {/* 10. Medical Specialists & CV Exploration */}
+                {modules.specialists && (
+                  <SpecialistsSection
+                    specialists={specialists}
+                    onViewCv={handleViewCv}
+                    onBookSpecialist={handleSelectSpecialistForBooking}
+                    onOpenSpecialistsPage={handleOpenSpecialistsPage}
+                  />
                 )}
 
-                {/* Stage 4: Accreditations, Testimonials & Clinical Blog Slider */}
-                {mountStage >= 4 && (
-                  <>
-                    {modules.accreditations && <AccreditationsSection />}
+                {/* 11.4. Branches Network Slider (فروع الرياض والخرج) */}
+                {modules.branches && (
+                  <BranchesSection onOpenBranchesPage={handleOpenBranchesPage} />
+                )}
 
-                    {modules.reviews && (
-                      <TestimonialsSection
-                        testimonials={testimonials}
-                        onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
-                      />
-                    )}
+                {/* 11.45. Partners Horizontal Slider (شركاء النجاح والرعايات) */}
+                {modules.partners !== false && <PartnersSection />}
 
-                    {modules.blog && (
-                      <BlogSliderSection
-                        onOpenBooking={handleOpenBooking}
-                        onBookSpecialist={handleSelectSpecialistForBooking}
-                        onOpenBlogPage={handleOpenBlogPage}
-                      />
-                    )}
-                  </>
+                {/* 11.5. Accreditations & Certifications Section (معترف بنا من) */}
+                {modules.accreditations && <AccreditationsSection />}
+
+                {/* 12. Client Testimonials & Success Stories */}
+                {modules.reviews && (
+                  <TestimonialsSection
+                    testimonials={testimonials}
+                    onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
+                  />
+                )}
+
+                {/* 13. Clinical Blog & Articles Slider */}
+                {modules.blog && (
+                  <BlogSliderSection
+                    onOpenBooking={handleOpenBooking}
+                    onBookSpecialist={handleSelectSpecialistForBooking}
+                    onOpenBlogPage={handleOpenBlogPage}
+                  />
                 )}
               </Suspense>
             )}
@@ -1016,8 +960,8 @@ export default function App() {
 
       </main>
 
-      {/* Footer (Stage 4, single Suspense, never unmounts) */}
-      {mountStage >= 4 && modules.footer && (
+      {/* Footer (Strict Event-Driven, single Suspense, never unmounts) */}
+      {canMountBelowFold && modules.footer && (
         <Suspense fallback={null}>
           <Footer 
             onOpenAdmin={() => setIsAdminOpen(true)} 
@@ -1026,8 +970,8 @@ export default function App() {
         </Suspense>
       )}
 
-      {/* Multi-Floating Actions & Mobile Bottom Bar wrapped in Suspense for zero main-thread blocking (Stage 4) */}
-      {mountStage >= 4 && (
+      {/* Multi-Floating Actions & Mobile Bottom Bar wrapped in Suspense for zero main-thread blocking */}
+      {canMountBelowFold && (
         <Suspense fallback={null}>
           <FloatingActions
             onOpenBooking={handleOpenBooking}

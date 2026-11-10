@@ -35,16 +35,6 @@ export default defineConfig(() => {
           quality: 75,
         },
       }),
-      {
-        name: 'vite-plugin-async-css',
-        enforce: 'post' as const,
-        transformIndexHtml(html: string) {
-          return html.replace(
-            /<link\s+([^>]*?)rel="stylesheet"([^>]*?)href="([^"]*?\/assets\/index-[^"]*?\.css)"([^>]*?)>/gi,
-            '<link rel="preload" href="$3" as="style" onload="this.onload=null;this.rel=\'stylesheet\'" $1$2$4><noscript><link rel="stylesheet" href="$3" $1$2$4></noscript>'
-          );
-        }
-      },
       VitePWA({
         injectRegister: null,
         registerType: 'autoUpdate',
@@ -177,7 +167,10 @@ export default defineConfig(() => {
       modulePreload: {
         polyfill: false,
         resolveDependencies(filename, deps) {
-          return deps.filter(dep => !dep.includes('firebase') && !dep.includes('supabase') && !dep.includes('re2js'));
+          return deps.filter(dep => {
+            const lower = dep.toLowerCase();
+            return !lower.includes('firebase') && !lower.includes('supabase') && !lower.includes('re2js');
+          });
         },
       },
       rollupOptions: {
