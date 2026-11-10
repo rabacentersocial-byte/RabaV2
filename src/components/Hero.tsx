@@ -376,7 +376,7 @@ export const Hero: React.FC<HeroProps> = ({
                           height={460}
                           loading={isLcpCandidate ? "eager" : "lazy"}
                           fetchPriority={isLcpCandidate ? "high" : "auto"}
-                          decoding={isLcpCandidate ? "sync" : "async"}
+                          decoding="async"
                           onError={(e) => handleImageErrorWithStore(e, s.src, '/images/hero/card_1_journey.webp')}
                           className={`w-full h-full object-cover rounded-full ${
                             s.objectPosition === 'center'

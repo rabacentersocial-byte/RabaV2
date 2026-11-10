@@ -11,6 +11,23 @@ export default defineConfig(() => {
     plugins: [
       react(), 
       tailwindcss(),
+      {
+        name: 'vite-plugin-async-css',
+        enforce: 'post' as const,
+        transformIndexHtml(html: string) {
+          return html.replace(
+            /<link\s+([^>]*?)href="([^"]*?\/assets\/[^"]*?\.css)"([^>]*?)>/gi,
+            (match, before, href, after) => {
+              if (before.includes('as="style"') || after.includes('as="style"')) {
+                return match;
+              }
+              const combined = (before + ' ' + after).replace(/rel=["']stylesheet["']/gi, '').replace(/\s+/g, ' ').trim();
+              const extraAttrs = combined ? ` ${combined}` : '';
+              return `<link rel="preload" href="${href}" as="style" onload="this.onload=null;this.rel='stylesheet'"${extraAttrs}><noscript><link rel="stylesheet" href="${href}"${extraAttrs}></noscript>`;
+            }
+          );
+        }
+      },
       ViteImageOptimizer({
         test: /\.(jpe?g|png|gif|tiff|webp|avif)$/i,
         exclude: /(uploads|aistudio)/,
