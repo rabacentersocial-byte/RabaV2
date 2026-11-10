@@ -1431,33 +1431,44 @@ async function startServer() {
     const isMarkdownRequested = 
       acceptHeader.includes('text/markdown') || 
       acceptHeader.includes('text/x-markdown') || 
-      req.query.format === 'markdown';
+      req.query.format === 'markdown' ||
+      req.query.alt === 'markdown';
 
     if (isMarkdownRequested) {
+      res.status(200);
+      res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+      res.setHeader('Vary', 'Accept, Accept-Encoding');
       if (fs.existsSync(llmsFilePath)) {
-        res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
         return res.sendFile(llmsFilePath);
       }
+      const distLlms = path.join(process.cwd(), 'dist', 'llms.txt');
+      if (fs.existsSync(distLlms)) {
+        return res.sendFile(distLlms);
+      }
+      return res.send(`# مركز رابا للعلاج بتحليل السلوك التطبيقي (ABA) والتأهيل الشامل\n\n> مركز رابا (Raba Center) في المملكة العربية السعودية من أقدم وأعرق المراكز الطبية والتأهيلية المتخصصة في تقديم خدمات التأهيل والدعم لذوي اضطراب طيف التوحد، برامج تحليل السلوك التطبيقي المكثفة (ABA)، التشخيص والتقييم النمائي المبكر، جلسات علاج النطق والتخاطب، التكامل الحسي والعلاج الوظيفي، وخدمة سِوار المتخصصة في معلم الظل والدمج المدرسي.\n\n## البرامج والخدمات العلاجية الأساسية\n- [برنامج تحليل السلوك التطبيقي المكثف ABA](https://rabacenters.com/#services)\n- [التشخيص والتقييم النمائي الشامل](https://rabacenters.com/#services)\n- [العلاج الوظيفي والتكامل الحسي](https://rabacenters.com/#services)\n- [علاج اضطرابات النطق واللغة والتخاطب](https://rabacenters.com/#services)\n- [خدمة سِوار — معلم الظل المدرسي والدمج](https://rabacenters.com/#shadow-teacher)\n- [باقات التأهيل الصيفية والمكثفة](https://rabacenters.com/#packages)\n\n## الكادر الطبي وفريق الأخصائيين\n- [دليل الأخصائيين والاستشاريين](https://rabacenters.com/#specialists)\n\n## الحجز والتواصل\n- الموقع: https://rabacenters.com\n- هاتف وواتساب: +966575100100\n- حجز استشارة: https://rabacenters.com/#booking\n`);
     }
 
-    // 3. Skip static assets, Vite internal files, API endpoints, uploaded files
+    // 3. Skip internal Vite dev assets and API endpoints
     if (
       req.path.startsWith('/api/') ||
       req.path.startsWith('/@') ||
       req.path.startsWith('/src/') ||
-      req.path.startsWith('/node_modules/') ||
-      req.path.startsWith('/public/') ||
-      req.path.startsWith('/assets/') ||
-      req.path.startsWith('/images/') ||
-      req.path.startsWith('/logo/') ||
-      req.path.startsWith('/uploads/') ||
-      req.path.startsWith('/.well-known/') ||
-      req.path.includes('.')
+      req.path.startsWith('/node_modules/')
     ) {
       return next();
     }
 
-    // 4. Validate known SPA client routes; return a real HTTP 404 for missing pages
+    // 4. Check if this is an actual existing physical file on disk (assets, images, uploads, etc.)
+    const cleanRelativePath = req.path.replace(/^\/+/, '');
+    if (cleanRelativePath) {
+      const existsInPublic = fs.existsSync(path.join(publicDir, cleanRelativePath));
+      const existsInDist = fs.existsSync(path.join(distPath, cleanRelativePath));
+      if (existsInPublic || existsInDist) {
+        return next();
+      }
+    }
+
+    // 5. Validate known SPA client routes; return a real HTTP 404 for missing pages
     const VALID_ROUTES = new Set([
       '/',
       '/index.html',
@@ -1483,12 +1494,13 @@ async function startServer() {
       '/login'
     ]);
 
+    const cleanPath = req.path.replace(/\/+$/, '') || '/';
     const isDynamicValid = 
-      req.path.startsWith('/blog/') || 
-      req.path.startsWith('/articles/') || 
-      req.path.startsWith('/specialist/');
+      cleanPath.startsWith('/blog/') || 
+      cleanPath.startsWith('/articles/') || 
+      cleanPath.startsWith('/specialist/');
 
-    if (!VALID_ROUTES.has(req.path) && !isDynamicValid) {
+    if (!VALID_ROUTES.has(cleanPath) && !isDynamicValid) {
       res.status(404);
       if (req.accepts('html')) {
         const custom404 = path.join(publicDir, '404.html');
@@ -1546,12 +1558,52 @@ async function startServer() {
           }
         }
       }));
-      app.get('*', (_req: Request, res: Response) => {
+      app.get('*', (req: Request, res: Response) => {
+        const cleanPath = req.path.replace(/\/+$/, '') || '/';
+        const isDynamicValid = 
+          cleanPath.startsWith('/blog/') || 
+          cleanPath.startsWith('/articles/') || 
+          cleanPath.startsWith('/specialist/');
+
+        const VALID_EXACT_ROUTES = new Set([
+          '/',
+          '/index.html',
+          '/about',
+          '/contact',
+          '/terms',
+          '/terms-of-service',
+          '/privacy',
+          '/privacy-policy',
+          '/services',
+          '/services-directory',
+          '/specialists',
+          '/specialists-directory',
+          '/branches',
+          '/branches-directory',
+          '/offers',
+          '/offers-directory',
+          '/blog',
+          '/blog-directory',
+          '/articles',
+          '/booking',
+          '/admin',
+          '/login'
+        ]);
+
+        if (!VALID_EXACT_ROUTES.has(cleanPath) && !isDynamicValid) {
+          res.status(404);
+          const custom404 = path.join(publicDir, '404.html');
+          if (fs.existsSync(custom404)) {
+            return res.sendFile(custom404);
+          }
+          return res.send(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>404 - الصفحة غير موجودة</title></head><body style="background:#0D1B2A;color:#fff;text-align:center;padding:50px;font-family:sans-serif"><h1>404</h1><p>الصفحة المطلوبة غير موجودة.</p><a href="/" style="color:#2E86EB">الرئيسية</a></body></html>`);
+        }
+
         res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
         if (fs.existsSync(indexPath)) {
           res.sendFile(indexPath);
         } else {
-          res.status(200).send('<!DOCTYPE html><html><head><title>مركز أبا للرعاية المتطورة</title></head><body><div style="font-family:system-ui,sans-serif;text-align:center;padding:40px;direction:rtl"><h2>جاري تجهيز الموقع...</h2><p>يرجى إعادة تحميل الصفحة خلال لحظات.</p></div></body></html>');
+          res.status(200).send('<!DOCTYPE html><html><head><title>مركز رابا للتأهيل</title></head><body><div style="font-family:system-ui,sans-serif;text-align:center;padding:40px;direction:rtl"><h2>جاري تجهيز الموقع...</h2><p>يرجى إعادة تحميل الصفحة خلال لحظات.</p></div></body></html>');
         }
       });
     } else {

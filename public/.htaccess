@@ -18,14 +18,42 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
-  RewriteRule ^index\.html$ - [L]
-  RewriteRule ^(robots\.txt|sitemap\.xml|llms\.txt)$ - [L]
+
+  # 1. Agent Content Negotiation: If client requests Markdown, serve llms.txt immediately!
+  RewriteCond %{HTTP:Accept} text/(x-)?markdown [NC,OR]
+  RewriteCond %{QUERY_STRING} (format=markdown|alt=markdown) [NC]
+  RewriteRule ^(index\.html)?$ /llms.txt [L]
+
+  # 2. Allow existing physical files and directories to be served directly
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # 3. Allow explicitly designated static root files & well-known directories
+  RewriteRule ^(robots\.txt|sitemap\.xml|llms\.txt|favicon\.ico|favicon\.svg|manifest\.webmanifest|manifest\.json|404\.html)$ - [L]
   RewriteRule ^\.well-known/ - [L]
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteCond %{REQUEST_FILENAME} !-l
-  RewriteRule . /index.html [L]
+  RewriteRule ^(assets|images|logo|uploads|data)/ - [L]
+
+  # 4. Rewrite ONLY valid SPA routes to /index.html with HTTP 200
+  RewriteRule ^(about|contact|terms|terms-of-service|privacy|privacy-policy)/?$ /index.html [L,QSA]
+  RewriteRule ^(services|services-directory|specialists|specialists-directory|branches|branches-directory|offers|offers-directory)/?$ /index.html [L,QSA]
+  RewriteRule ^(blog|blog-directory|articles|booking|admin|login)/?$ /index.html [L,QSA]
+  RewriteRule ^(blog|articles|specialist)/.+/?$ /index.html [L,QSA]
+  RewriteRule ^index\.html$ - [L]
+
+  # 5. Non-existent URLs: Explicitly return real HTTP 404 status (Agents require 404 or 410)
+  RewriteRule ^ - [R=404,L]
 </IfModule>
+
+# Ensure llms.txt is strictly served with text/markdown Content-Type and Vary: Accept
+<Files "llms.txt">
+  ForceType "text/markdown; charset=utf-8"
+  <IfModule mod_headers.c>
+    Header set Content-Type "text/markdown; charset=utf-8"
+    Header set Vary "Accept, Accept-Encoding"
+    Header set Link '</llms.txt>; rel="alternate"; type="text/markdown", </.well-known/mcp/server-card.json>; rel="service-desc"'
+  </IfModule>
+</Files>
 
 # Caching Configuration for High Performance (Resolves PageSpeed "Use efficient cache lifetimes")
 <IfModule mod_expires.c>
@@ -54,6 +82,7 @@
   <FilesMatch "\.(html|htm)$">
     Header set Cache-Control "public, max-age=0, must-revalidate"
     Header set Link '</llms.txt>; rel="alternate"; type="text/markdown", </.well-known/mcp/server-card.json>; rel="service-desc"'
+    Header set Vary "Accept, Accept-Encoding"
   </FilesMatch>
 
   # Error Document for missing pages
