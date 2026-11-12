@@ -19,22 +19,21 @@
   RewriteEngine On
   RewriteBase /
 
-  # 1. Agent Content Negotiation: If client requests Markdown, serve llms.txt immediately for any path
-  RewriteCond %{REQUEST_URI} !^/llms\.txt$ [NC]
-  RewriteCond %{HTTP:Accept} text/(x-)?markdown [NC,OR]
-  RewriteCond %{HTTP:Accept} application/markdown [NC,OR]
-  RewriteCond %{QUERY_STRING} (format=markdown|alt=markdown) [NC]
-  RewriteRule ^ /llms.txt [L]
-
-  # 2. Allow existing physical files and directories to be served directly
-  RewriteCond %{REQUEST_FILENAME} -f [OR]
-  RewriteCond %{REQUEST_FILENAME} -d
-  RewriteRule ^ - [L]
-
-  # 3. Allow explicitly designated static root files & well-known directories
+  # 1. Allow explicitly designated static root files & well-known directories directly
   RewriteRule ^(robots\.txt|sitemap\.xml|llms\.txt|favicon\.ico|favicon\.svg|manifest\.webmanifest|manifest\.json|404\.html)$ - [L]
   RewriteRule ^\.well-known/ - [L]
-  RewriteRule ^(assets|images|logo|uploads|data)/ - [L]
+  RewriteRule ^(assets|images|logo|uploads|data|specialists)/ - [L]
+
+  # 2. Allow existing physical files
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  # 3. Agent Content Negotiation: Serve Markdown (llms.txt) ONLY for valid routes (including root /)
+  RewriteCond %{HTTP:Accept} text/(x-)?markdown [NC,OR]
+  RewriteCond %{HTTP:Accept} application/markdown [NC,OR]
+  RewriteCond %{QUERY_STRING} (format=markdown|format=md|alt=markdown) [NC]
+  RewriteCond %{REQUEST_URI} ^/((about|contact|terms|terms-of-service|privacy|privacy-policy|services|services-directory|specialists|specialists-directory|branches|branches-directory|offers|offers-directory|blog|blog-directory|articles|booking|admin|login)/?|(blog|articles|specialist)/.+/?|index\.html)?$ [NC]
+  RewriteRule ^ /llms.txt [L]
 
   # 4. Rewrite ONLY valid SPA routes to /index.html with HTTP 200
   RewriteRule ^(about|contact|terms|terms-of-service|privacy|privacy-policy)/?$ /index.html [L,QSA]
@@ -42,8 +41,9 @@
   RewriteRule ^(blog|blog-directory|articles|booking|admin|login)/?$ /index.html [L,QSA]
   RewriteRule ^(blog|articles|specialist)/.+/?$ /index.html [L,QSA]
   RewriteRule ^index\.html$ - [L]
+  RewriteRule ^$ /index.html [L]
 
-  # 5. Non-existent URLs: Explicitly return real HTTP 404 status (Agents require 404 or 410)
+  # 5. Non-existent URLs: Strictly return real HTTP 404 status (Agents require 404 or 410, never 200)
   RewriteRule ^ - [R=404,L]
 </IfModule>
 
@@ -75,6 +75,10 @@
 </IfModule>
 
 <IfModule mod_headers.c>
+  # Critical for Agent Content Negotiation and CDN caching: never cache HTML for Markdown or vice-versa
+  Header always merge Vary "Accept, Accept-Encoding"
+  Header always set Link '</llms.txt>; rel="alternate"; type="text/markdown", </.well-known/mcp/server-card.json>; rel="service-desc"'
+
   # Enforce 1-year immutable caching on all static assets regardless of MIME detection
   <FilesMatch "\.(js|mjs|css|webp|png|jpg|jpeg|svg|gif|ico|woff|woff2|ttf|eot)$">
     Header set Cache-Control "public, max-age=31536000, immutable"

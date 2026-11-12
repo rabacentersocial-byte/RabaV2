@@ -183,11 +183,11 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
   return (
     <section 
       id="shadow-teacher" 
-      className="py-10 sm:py-20 relative overflow-hidden transition-colors duration-300 border-b border-slate-200/80 dark:border-white/10"
+      className="py-10 sm:py-20 relative overflow-hidden transition-colors duration-300 border-b border-slate-200/80 dark:border-white/10 [content-visibility:auto] [contain-intrinsic-size:1px_600px]"
     >
       {/* Subtle decorative background glows using 5-color palette */}
-      <div className="absolute top-10 left-1/4 w-96 h-96 bg-[#2E86EB]/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-[#FF2D9B]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-10 left-1/4 w-96 h-96 bg-[radial-gradient(circle_at_center,rgba(46,134,235,0.08)_0%,transparent_70%)] pointer-events-none transform-gpu" />
+      <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-[radial-gradient(circle_at_center,rgba(255,45,155,0.07)_0%,transparent_70%)] pointer-events-none transform-gpu" />
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 relative z-10">
         

@@ -229,7 +229,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
                 {isArabic ? 'ريال' : 'SAR'}
               </span>
               {course.originalPrice && (
-                <span className="text-xs sm:text-sm font-semibold text-slate-400 dark:text-slate-500 line-through mr-1 font-medium">
+                <span className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 line-through mr-1 font-medium">
                   {course.originalPrice} {isArabic ? 'ريال' : 'SAR'}
                 </span>
               )}
@@ -292,12 +292,12 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
   return (
     <section 
       id="courses" 
-      className="py-10 sm:py-24 bg-transparent text-slate-900 dark:text-white relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10"
+      className="py-10 sm:py-24 bg-transparent text-slate-900 dark:text-white relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10 [content-visibility:auto] [contain-intrinsic-size:1px_600px]"
       dir={isArabic ? 'rtl' : 'ltr'}
     >
       {/* Background Ambience */}
-      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-br from-teal-500/10 via-[#0d5c52]/5 to-transparent rounded-full blur-3xl pointer-events-none -z-10 opacity-50 dark:opacity-40" />
-      <div className="absolute bottom-10 left-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none -z-10 opacity-40 dark:opacity-30" />
+      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(20,184,166,0.08)_0%,transparent_70%)] pointer-events-none transform-gpu -z-10 opacity-50 dark:opacity-40" />
+      <div className="absolute bottom-10 left-10 w-96 h-96 bg-[radial-gradient(circle_at_center,rgba(6,182,212,0.07)_0%,transparent_70%)] pointer-events-none transform-gpu -z-10 opacity-40 dark:opacity-30" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 

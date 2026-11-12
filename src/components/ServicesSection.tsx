@@ -121,7 +121,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
     switch (id) {
       case 'srv-aba':
         return {
-          colorClass: 'bg-[#F59E0B]',
+          colorClass: 'bg-[#D97706]',
           colorClassHover: 'hover:border-[#F59E0B]',
           accentBorder: 'border-[#F59E0B]/30',
           lightBg: 'bg-amber-500/10 dark:bg-amber-500/15',
@@ -281,12 +281,12 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
   return (
     <section 
       id="services" 
-      className="py-16 sm:py-24 bg-transparent relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10"
+      className="py-16 sm:py-24 bg-transparent relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10 [content-visibility:auto] [contain-intrinsic-size:1px_600px]"
       dir={isArabic ? 'rtl' : 'ltr'}
     >
       {/* Background ambient lighting */}
-      <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-[#2E86EB]/10 rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="absolute bottom-10 left-1/4 w-[400px] h-[400px] bg-[#22C55E]/10 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(46,134,235,0.08)_0%,transparent_70%)] pointer-events-none transform-gpu -z-10" />
+      <div className="absolute bottom-10 left-1/4 w-[400px] h-[400px] bg-[radial-gradient(circle_at_center,rgba(34,197,94,0.07)_0%,transparent_70%)] pointer-events-none transform-gpu -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -439,7 +439,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                           {isArabic ? service.title : (service.titleEn || service.title)}
                         </h3>
                         {service.titleEn && isArabic && (
-                          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 dark:text-slate-500 block mt-0.5 truncate" dir="ltr">
+                          <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-300 block mt-0.5 truncate" dir="ltr">
                             {service.titleEn}
                           </span>
                         )}
@@ -483,7 +483,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                       <button
                         id={`book-slider-service-${service.id}`}
                         onClick={() => onSelectService(service)}
-                        className={`w-full py-2.5 sm:py-3.5 px-3 sm:px-4 ${visual.colorClass} hover:opacity-95 text-white font-black rounded-xl sm:rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md active:scale-95`}
+                        className={`w-full py-2.5 sm:py-3.5 px-3 sm:px-4 ${visual.colorClass} hover:opacity-95 text-white font-black rounded-xl sm:rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-[transform,opacity] duration-200 shadow-md active:scale-95`}
                       >
                         <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         <span>{isArabic ? 'احجز تقييم البرنامج' : 'Book Evaluation Session'}</span>
@@ -522,8 +522,9 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         {/* ================================================================= */}
         <div className="mt-12 sm:mt-16 bg-gradient-to-r from-[#0E2A54] via-[#153E75] to-[#2E86EB] rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
           {/* Luminous blue & warm gold brand highlight beams */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-blue-400/15 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-60 h-60 bg-[#FFD23F]/20 rounded-full blur-2xl pointer-events-none" />
+          {/* Luminous blue & warm gold brand highlight beams */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-[radial-gradient(circle_at_center,rgba(96,165,250,0.15)_0%,transparent_70%)] pointer-events-none transform-gpu" />
+          <div className="absolute bottom-0 left-0 w-60 h-60 bg-[radial-gradient(circle_at_center,rgba(255,210,63,0.18)_0%,transparent_70%)] pointer-events-none transform-gpu" />
 
           <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6">
             <div className="space-y-3 text-center lg:text-right">
@@ -551,7 +552,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
             <div className="flex flex-wrap items-center gap-3 shrink-0">
               <a
                 href="tel:0575100100"
-                className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs sm:text-sm font-black flex items-center gap-2 transition-all cursor-pointer backdrop-blur-md"
+                className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs sm:text-sm font-black flex items-center gap-2 transition-colors duration-200 cursor-pointer backdrop-blur-md"
               >
                 <Phone className="w-4 h-4 text-[#FFD23F]" />
                 <span dir="ltr">0575100100</span>
@@ -561,7 +562,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 href="https://wa.me/966575100100"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-black flex items-center gap-2 transition-all shadow-md cursor-pointer"
+                className="px-4 py-3 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs sm:text-sm font-black flex items-center gap-2 transition-colors duration-200 shadow-md cursor-pointer"
               >
                 <MessageCircle className="w-4 h-4" />
                 <span>{isArabic ? 'واتساب مباشر' : 'WhatsApp'}</span>
@@ -569,7 +570,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
 
               <button
                 onClick={() => onSelectService(services[0])}
-                className="px-6 py-3 rounded-2xl bg-[#2E86EB] hover:bg-[#2575d0] text-white text-xs sm:text-sm font-black flex items-center gap-2 shadow-lg shadow-blue-500/25 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                className="px-6 py-3 rounded-2xl bg-[#1D68C4] hover:bg-[#1554A1] text-white text-xs sm:text-sm font-black flex items-center gap-2 shadow-lg shadow-blue-500/25 transition-[transform,background-color] duration-200 hover:scale-105 active:scale-95 cursor-pointer"
               >
                 <Calendar className="w-4 h-4" />
                 <span>{isArabic ? 'احجز تقييم طفلك الآن' : 'Book Child Assessment'}</span>

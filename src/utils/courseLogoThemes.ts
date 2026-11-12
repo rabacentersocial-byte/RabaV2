@@ -40,7 +40,7 @@ export const COURSE_LOGO_THEMES: CourseLogoTheme[] = [
     hoursBg: 'bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800/40 text-[#2E86EB] dark:text-[#60a5fa]',
     hoursIconColor: 'text-[#2E86EB] dark:text-[#60a5fa]',
     checkBg: 'bg-blue-50 dark:bg-blue-950/60 text-[#2E86EB] dark:text-blue-400',
-    buttonBg: 'bg-[#2E86EB] hover:bg-[#1d74d8]',
+    buttonBg: 'bg-[#1D68C4] hover:bg-[#1554A1]',
     cardBorderHover: 'border-blue-100 dark:border-slate-800 hover:border-[#2E86EB]/50 hover:shadow-[0_16px_40px_rgba(46,134,235,0.16)]'
   },
 
@@ -96,7 +96,7 @@ export const COURSE_LOGO_THEMES: CourseLogoTheme[] = [
     accentHex: '#FF2D9B',
     headerBg: 'bg-pink-50/70 dark:bg-[#2e0b1d]',
     headerBorder: 'border-pink-100 dark:border-pink-950/60',
-    pillBg: 'bg-[#FF2D9B] text-white',
+    pillBg: 'bg-[#C81E78] text-white',
     iconBoxBorder: 'border-pink-200 dark:border-slate-700/60',
     iconColor: 'text-[#be185d] dark:text-[#f472b6]',
     kickerColor: 'text-[#be185d] dark:text-[#f472b6]',
@@ -106,7 +106,7 @@ export const COURSE_LOGO_THEMES: CourseLogoTheme[] = [
     hoursBg: 'bg-pink-50 dark:bg-pink-950/40 border-pink-200 dark:border-pink-800/40 text-[#be185d] dark:text-[#f472b6]',
     hoursIconColor: 'text-[#be185d] dark:text-[#f472b6]',
     checkBg: 'bg-pink-50 dark:bg-pink-950/60 text-[#be185d] dark:text-pink-400',
-    buttonBg: 'bg-[#FF2D9B] hover:bg-[#e01980]',
+    buttonBg: 'bg-[#C81E78] hover:bg-[#A61763]',
     cardBorderHover: 'border-pink-100 dark:border-slate-800 hover:border-[#FF2D9B]/50 hover:shadow-[0_16px_40px_rgba(255,45,155,0.16)]'
   },
 

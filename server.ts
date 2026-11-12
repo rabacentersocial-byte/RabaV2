@@ -1423,33 +1423,11 @@ async function startServer() {
 
   // Agent middleware for Link headers, Markdown serving, and real 404 detection
   app.use((req: Request, res: Response, next) => {
-    // 1. Emit RFC 8288 Link header advertising llms.txt & MCP Server Card
+    // 1. Emit RFC 8288 Link header and Vary headers on ALL responses for Agentic Browsing & Cache consistency
     res.setHeader('Link', '</llms.txt>; rel="alternate"; type="text/markdown", </.well-known/mcp/server-card.json>; rel="service-desc"');
+    res.setHeader('Vary', 'Accept, Accept-Encoding');
 
-    // 2. Serve Markdown if an agent requests it via Accept: text/markdown or ?format=markdown
-    const acceptHeader = (req.headers.accept || '').toLowerCase();
-    const isMarkdownRequested = 
-      acceptHeader.includes('text/markdown') || 
-      acceptHeader.includes('text/x-markdown') || 
-      acceptHeader.includes('application/markdown') ||
-      req.query.format === 'markdown' ||
-      req.query.alt === 'markdown';
-
-    if (isMarkdownRequested) {
-      res.status(200);
-      res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
-      res.setHeader('Vary', 'Accept, Accept-Encoding');
-      if (fs.existsSync(llmsFilePath)) {
-        return res.sendFile(llmsFilePath);
-      }
-      const distLlms = path.join(process.cwd(), 'dist', 'llms.txt');
-      if (fs.existsSync(distLlms)) {
-        return res.sendFile(distLlms);
-      }
-      return res.send(`# مركز رابا للعلاج بتحليل السلوك التطبيقي (ABA) والتأهيل الشامل\n\n> مركز رابا (Raba Center) في المملكة العربية السعودية من أقدم وأعرق المراكز الطبية والتأهيلية المتخصصة في تقديم خدمات التأهيل والدعم لذوي اضطراب طيف التوحد، برامج تحليل السلوك التطبيقي المكثفة (ABA)، التشخيص والتقييم النمائي المبكر، جلسات علاج النطق والتخاطب، التكامل الحسي والعلاج الوظيفي، وخدمة سِوار المتخصصة في معلم الظل والدمج المدرسي.\n\n## البرامج والخدمات العلاجية الأساسية\n- [برنامج تحليل السلوك التطبيقي المكثف ABA](https://rabacenters.com/#services)\n- [التشخيص والتقييم النمائي الشامل](https://rabacenters.com/#services)\n- [العلاج الوظيفي والتكامل الحسي](https://rabacenters.com/#services)\n- [علاج اضطرابات النطق واللغة والتخاطب](https://rabacenters.com/#services)\n- [خدمة سِوار — معلم الظل المدرسي والدمج](https://rabacenters.com/#shadow-teacher)\n- [باقات التأهيل الصيفية والمكثفة](https://rabacenters.com/#packages)\n\n## الكادر الطبي وفريق الأخصائيين\n- [دليل الأخصائيين والاستشاريين](https://rabacenters.com/#specialists)\n\n## الحجز والتواصل\n- الموقع: https://rabacenters.com\n- هاتف وواتساب: +966575100100\n- حجز استشارة: https://rabacenters.com/#booking\n`);
-    }
-
-    // 3. Skip internal Vite dev assets and API endpoints
+    // 2. Skip internal Vite dev assets and API endpoints
     if (
       req.path.startsWith('/api/') ||
       req.path.startsWith('/@') ||
@@ -1459,7 +1437,7 @@ async function startServer() {
       return next();
     }
 
-    // 4. Check if this is an actual existing physical file on disk (assets, images, uploads, etc.)
+    // 3. Check if this is an actual existing physical file on disk (assets, images, uploads, etc.)
     const cleanRelativePath = req.path.replace(/^\/+/, '');
     if (cleanRelativePath) {
       const existsInPublic = fs.existsSync(path.join(publicDir, cleanRelativePath));
@@ -1469,7 +1447,7 @@ async function startServer() {
       }
     }
 
-    // 5. Validate known SPA client routes; return a real HTTP 404 for missing pages
+    // 4. Validate known SPA client routes
     const VALID_ROUTES = new Set([
       '/',
       '/index.html',
@@ -1501,8 +1479,25 @@ async function startServer() {
       cleanPath.startsWith('/articles/') || 
       cleanPath.startsWith('/specialist/');
 
-    if (!VALID_ROUTES.has(cleanPath) && !isDynamicValid) {
+    const isRouteValid = VALID_ROUTES.has(cleanPath) || isDynamicValid;
+
+    // Detect if client or AI Agent requested Markdown representation
+    const acceptHeader = (req.headers.accept || '').toLowerCase();
+    const isMarkdownRequested = 
+      acceptHeader.includes('text/markdown') || 
+      acceptHeader.includes('text/x-markdown') || 
+      acceptHeader.includes('application/markdown') ||
+      req.query.format === 'markdown' ||
+      req.query.format === 'md' ||
+      req.query.alt === 'markdown';
+
+    // 5. If route is NOT valid, strictly return real HTTP 404 status (Never return HTTP 200!)
+    if (!isRouteValid) {
       res.status(404);
+      if (isMarkdownRequested) {
+        res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+        return res.send(`# 404 - الصفحة غير موجودة / Page Not Found\n\nالصفحة المطلوبة غير موجودة على مركز رابا.\nThe requested URL was not found on this server.\n\n- [الرئيسية / Homepage](https://rabacenters.com/)\n- [الخدمات / Services](https://rabacenters.com/#services)\n- [سياق الذكاء الاصطناعي / LLM Context](https://rabacenters.com/llms.txt)\n`);
+      }
       if (req.accepts('html')) {
         const custom404 = path.join(publicDir, '404.html');
         if (fs.existsSync(custom404)) {
@@ -1511,6 +1506,20 @@ async function startServer() {
         return res.send(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>404 - الصفحة غير موجودة</title></head><body style="background:#0D1B2A;color:#fff;text-align:center;padding:50px;font-family:sans-serif"><h1>404</h1><p>الصفحة المطلوبة غير موجودة.</p><a href="/" style="color:#2E86EB">الرئيسية</a></body></html>`);
       }
       return res.json({ error: 'Page not found', status: 404, path: req.path });
+    }
+
+    // 6. If route IS valid and Markdown is requested, serve llms.txt with HTTP 200
+    if (isMarkdownRequested) {
+      res.status(200);
+      res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+      if (fs.existsSync(llmsFilePath)) {
+        return res.sendFile(llmsFilePath);
+      }
+      const distLlms = path.join(process.cwd(), 'dist', 'llms.txt');
+      if (fs.existsSync(distLlms)) {
+        return res.sendFile(distLlms);
+      }
+      return res.send(`# مركز رابا للعلاج بتحليل السلوك التطبيقي (ABA) والتأهيل الشامل\n\n> مركز رابا (Raba Center) في المملكة العربية السعودية من أقدم وأعرق المراكز الطبية والتأهيلية المتخصصة في تقديم خدمات التأهيل والدعم لذوي اضطراب طيف التوحد، برامج تحليل السلوك التطبيقي المكثفة (ABA)، التشخيص والتقييم النمائي المبكر، جلسات علاج النطق والتخاطب، التكامل الحسي والعلاج الوظيفي، وخدمة سِوار المتخصصة في معلم الظل والدمج المدرسي.\n\n## البرامج والخدمات العلاجية الأساسية\n- [برنامج تحليل السلوك التطبيقي المكثف ABA](https://rabacenters.com/#services)\n- [التشخيص والتقييم النمائي الشامل](https://rabacenters.com/#services)\n- [العلاج الوظيفي والتكامل الحسي](https://rabacenters.com/#services)\n- [علاج اضطرابات النطق واللغة والتخاطب](https://rabacenters.com/#services)\n- [خدمة سِوار — معلم الظل المدرسي والدمج](https://rabacenters.com/#shadow-teacher)\n- [باقات التأهيل الصيفية والمكثفة](https://rabacenters.com/#packages)\n\n## الكادر الطبي وفريق الأخصائيين\n- [دليل الأخصائيين والاستشاريين](https://rabacenters.com/#specialists)\n\n## الحجز والتواصل\n- الموقع: https://rabacenters.com\n- هاتف وواتساب: +966575100100\n- حجز استشارة: https://rabacenters.com/#booking\n`);
     }
 
     next();

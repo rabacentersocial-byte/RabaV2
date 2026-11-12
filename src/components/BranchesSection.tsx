@@ -169,12 +169,12 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
   return (
     <section 
       id="branches" 
-      className="py-10 sm:py-24 bg-transparent text-slate-900 dark:text-white relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10"
+      className="py-10 sm:py-24 bg-transparent text-slate-900 dark:text-white relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10 [content-visibility:auto] [contain-intrinsic-size:1px_600px]"
       dir={isArabic ? 'rtl' : 'ltr'}
     >
       {/* Background Ambience & Lighting */}
-      <div className="absolute top-10 right-10 w-96 h-96 bg-[#2E86EB]/10 rounded-full blur-3xl pointer-events-none -z-10" />
-      <div className="absolute bottom-10 left-10 w-[500px] h-[500px] bg-[#22C55E]/10 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="absolute top-10 right-10 w-96 h-96 bg-[radial-gradient(circle_at_center,rgba(46,134,235,0.08)_0%,transparent_70%)] pointer-events-none transform-gpu -z-10" />
+      <div className="absolute bottom-10 left-10 w-[500px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(34,197,94,0.07)_0%,transparent_70%)] pointer-events-none transform-gpu -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -482,18 +482,23 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
             </div>
 
             {/* Slider Dot Indicators */}
-            <div className="flex justify-center items-center gap-2 mt-6">
+            <div className="flex justify-center items-center gap-1 mt-6">
               {filteredBranches.map((_, idx) => (
                 <button
                   key={idx}
+                  type="button"
                   onClick={() => scrollToIndex(idx)}
                   aria-label={`الانتقال للفرع ${idx + 1}`}
-                  className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                    currentIndex === idx 
-                      ? 'w-8 bg-[#2E86EB]' 
-                      : 'w-2 bg-white/20 hover:bg-white/40'
-                  }`}
-                />
+                  className="p-2 min-w-[32px] min-h-[32px] flex items-center justify-center cursor-pointer bg-transparent border-0 focus:outline-none"
+                >
+                  <span
+                    className={`block h-2 rounded-full transition-[width,background-color] duration-300 ${
+                      currentIndex === idx 
+                        ? 'w-8 bg-[#2E86EB]' 
+                        : 'w-2 bg-white/20 hover:bg-white/40'
+                    }`}
+                  />
+                </button>
               ))}
             </div>
           </div>
@@ -570,8 +575,8 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
         {/* Unified Contact Bar below Branches */}
         <div className="mt-8 sm:mt-12 bg-gradient-to-br from-[#0E1B33] via-[#112347] to-[#0D1B2A] rounded-2xl sm:rounded-3xl p-4 sm:p-6 sm:px-8 border border-blue-500/25 shadow-[0_16px_40px_rgba(13,27,42,0.55)] relative overflow-hidden text-white">
           {/* Subtle ambient lighting glows */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[#2E86EB]/15 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#FFD23F]/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[radial-gradient(circle_at_center,rgba(46,134,235,0.12)_0%,transparent_70%)] pointer-events-none transform-gpu" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-[radial-gradient(circle_at_center,rgba(255,210,63,0.08)_0%,transparent_70%)] pointer-events-none transform-gpu" />
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 sm:gap-6 relative z-10">
             

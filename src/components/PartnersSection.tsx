@@ -228,10 +228,10 @@ export const PartnersSection: React.FC = () => {
   return (
     <section 
       id="partners" 
-      className="py-16 sm:py-24 bg-transparent text-slate-900 dark:text-white relative overflow-hidden select-none border-b border-slate-200/80 dark:border-white/10 transition-colors"
+      className="py-16 sm:py-24 bg-transparent text-slate-900 dark:text-white relative overflow-hidden select-none border-b border-slate-200/80 dark:border-white/10 transition-colors [content-visibility:auto] [contain-intrinsic-size:1px_600px]"
     >
       {/* Background Subtle RABA Emerald Ambient Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[380px] bg-emerald-500/[0.04] dark:bg-emerald-400/[0.07] rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[380px] bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.06)_0%,transparent_70%)] pointer-events-none transform-gpu" />
       <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 dark:via-emerald-400/30 to-transparent pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -486,7 +486,7 @@ export const PartnersSection: React.FC = () => {
                   <span className="text-base font-black text-slate-900 dark:text-white">
                     {String(activeMobileIndex + 1).padStart(2, '0')}
                   </span>
-                  <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
+                  <span className="text-xs font-bold text-slate-600 dark:text-slate-300">
                     / {mobileFilteredPartners.length}
                   </span>
                 </div>
@@ -706,8 +706,8 @@ export const PartnersSection: React.FC = () => {
         <div className="mt-12 sm:mt-16 pt-8 border-t border-slate-200/80 dark:border-white/10">
           <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] p-3 sm:p-5 relative overflow-hidden">
             {/* Ambient glows */}
-            <div className="absolute top-0 right-0 w-48 h-48 bg-teal-500/5 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-sky-500/5 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 right-0 w-48 h-48 bg-[radial-gradient(circle_at_center,rgba(20,184,166,0.08)_0%,transparent_70%)] pointer-events-none transform-gpu" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-[radial-gradient(circle_at_center,rgba(14,165,233,0.08)_0%,transparent_70%)] pointer-events-none transform-gpu" />
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 relative z-10">
               

@@ -3038,7 +3038,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
                       onClick={(e) => handleRateDoctor(e, doctor.id, star)}
                       onMouseEnter={() => setHoveredRating({ docId: doctor.id, star })}
                       onMouseLeave={() => setHoveredRating(null)}
-                      className="p-0.5 rounded-md hover:scale-125 active:scale-95 transition-all cursor-pointer focus:outline-none focus:ring-1 focus:ring-amber-400/40"
+                      className="p-2 min-w-[36px] min-h-[36px] inline-flex items-center justify-center rounded-md hover:scale-125 active:scale-95 transition-[transform,colors] duration-200 cursor-pointer focus:outline-none focus:ring-1 focus:ring-amber-400/40"
                       title={`${star} ${isArabic ? (star === 1 ? 'نجمة' : 'نجوم') : 'stars'}`}
                       aria-label={`Rate ${star} stars`}
                     >

@@ -255,7 +255,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
                       setPwaModalTab(isIOS ? 'ios' : 'android');
                       setIsPwaModalOpen(true);
                     }}
-                    className="px-3 py-1.5 rounded-xl bg-[#2E86EB] hover:bg-[#2575d0] text-white text-xs font-black transition-all cursor-pointer shadow-xs active:scale-95 flex items-center gap-1 shrink-0"
+                    className="px-3.5 py-2 min-h-[36px] rounded-xl bg-[#1D68C4] hover:bg-[#1554A1] text-white text-xs font-black transition-[transform,background-color] duration-200 cursor-pointer shadow-xs active:scale-95 flex items-center gap-1 shrink-0"
                     title={isArabic ? 'تثبيت التطبيق' : 'Install App'}
                   >
                     <span>{isArabic ? 'تحميل' : 'Install'}</span>

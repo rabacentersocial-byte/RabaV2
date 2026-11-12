@@ -1476,7 +1476,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                             <div>
                               {pkg.originalPrice && pkg.originalPrice > pkg.price && (
                                 <div className="flex items-center gap-1 mb-0.5">
-                                  <span className="text-[9.5px] sm:text-[11px] text-slate-400 line-through font-bold">
+                                  <span className="text-[9.5px] sm:text-[11px] text-slate-600 dark:text-slate-300 line-through font-bold">
                                     {pkg.originalPrice} {isArabic ? 'ر.س' : 'SAR'}
                                   </span>
                                   <span className="text-[8.5px] sm:text-[9.5px] font-black px-1.5 py-0.2 rounded-md bg-rose-500/10 text-rose-600 dark:text-rose-400">

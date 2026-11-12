@@ -233,7 +233,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
   return (
     <section 
       id="testimonials" 
-      className="py-16 sm:py-24 bg-transparent relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10"
+      className="py-16 sm:py-24 bg-transparent relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10 [content-visibility:auto] [contain-intrinsic-size:1px_600px]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -443,8 +443,8 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
         {/* METRICS STRIP: Re-designed with custom icons & mobile-optimized responsive tiles (Moved below evaluation cards) */}
         <div className="bg-white dark:bg-[#111827] rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] mt-10 sm:mt-14 p-3 sm:p-4.5 relative overflow-hidden backdrop-blur-md">
           {/* Subtle ambient lighting */}
-          <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-48 h-48 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.08)_0%,transparent_70%)] pointer-events-none transform-gpu" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.08)_0%,transparent_70%)] pointer-events-none transform-gpu" />
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 relative z-10">
             
@@ -537,7 +537,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                   <span className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#0B3B36] dark:text-[#2DD4BF] tracking-tight leading-none">
                     4.8
                   </span>
-                  <span className="text-[10px] sm:text-xs font-bold text-slate-400 dark:text-slate-500">
+                  <span className="text-[10px] sm:text-xs font-bold text-slate-600 dark:text-slate-300">
                     / 5.0
                   </span>
                 </div>

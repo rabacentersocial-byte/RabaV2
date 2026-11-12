@@ -325,7 +325,7 @@ export const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
               {isArabic ? 'ر.س' : 'SAR'}
             </span>
             {course.originalPrice && (
-              <span className="text-xs text-slate-400 line-through font-normal">
+              <span className="text-xs text-slate-600 dark:text-slate-300 line-through font-normal">
                 {course.originalPrice} {isArabic ? 'ر.س' : 'SAR'}
               </span>
             )}

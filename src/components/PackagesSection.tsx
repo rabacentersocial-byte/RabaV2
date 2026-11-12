@@ -212,7 +212,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
   return (
     <section 
       id="packages" 
-      className="py-14 sm:py-20 relative overflow-hidden border-b border-slate-200/80 dark:border-white/10 bg-transparent transition-colors"
+      className="py-14 sm:py-20 relative overflow-hidden border-b border-slate-200/80 dark:border-white/10 bg-transparent transition-colors [content-visibility:auto] [contain-intrinsic-size:1px_600px]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -383,7 +383,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                       </span>
                       {pkg.originalPrice && (
                         <div className="flex items-center gap-1 ms-1">
-                          <span className="text-[11px] sm:text-sm line-through text-slate-400 font-semibold">
+                          <span className="text-[11px] sm:text-sm line-through text-slate-600 dark:text-slate-300 font-semibold">
                             {pkg.originalPrice.toLocaleString()} {isArabic ? 'ريال' : 'SAR'}
                           </span>
                           {savings > 0 && (
