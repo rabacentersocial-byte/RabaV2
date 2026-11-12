@@ -104,11 +104,19 @@ export default function App() {
   // Modules Visibility & Theme Control
   const [modules, setModules] = useState<SiteModulesVisibility>(() => getStoredModulesVisibility());
 
-  // Performance Optimization: Strict Event-Driven Mounting (0ms TBT for Lighthouse, Instant for Real Users)
-  const [canMountBelowFold, setCanMountBelowFold] = useState<boolean>(() => {
+  // Safe, Smooth Background Hydration: Instant Hero paint, followed by quiet idle mounting
+  const [isReadyToHydrate, setIsReadyToHydrate] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash.toLowerCase();
-      return hash.startsWith('#admin') || hash.includes('blog') || Boolean(localStorage.getItem('raba_admin_session_auth'));
+      return (
+        hash.startsWith('#admin') ||
+        hash.includes('blog') ||
+        hash.includes('specialist') ||
+        hash.includes('branch') ||
+        hash.includes('offer') ||
+        hash.includes('service') ||
+        Boolean(localStorage.getItem('raba_admin_session_auth'))
+      );
     }
     return false;
   });
@@ -117,28 +125,41 @@ export default function App() {
     // Apply saved theme colors on startup
     applyGlobalTheme(getStoredThemeSettings());
 
-    const enableBelowFold = () => {
-      setCanMountBelowFold(true);
-      // Cleanup listeners immediately so it triggers only ONCE
-      window.removeEventListener('scroll', enableBelowFold);
-      window.removeEventListener('touchstart', enableBelowFold);
-      window.removeEventListener('wheel', enableBelowFold);
-      window.removeEventListener('mousemove', enableBelowFold);
-      window.removeEventListener('keydown', enableBelowFold);
+    // Schedule hydration during browser idle time or right after initial paint
+    let idleId: number | any;
+    let timerId: any;
+
+    const triggerHydration = () => {
+      setIsReadyToHydrate(true);
+      ['scroll', 'touchstart', 'wheel', 'mousemove', 'keydown'].forEach(evt => {
+        window.removeEventListener(evt, triggerHydration);
+      });
     };
 
-    window.addEventListener('scroll', enableBelowFold, { passive: true, once: true });
-    window.addEventListener('touchstart', enableBelowFold, { passive: true, once: true });
-    window.addEventListener('wheel', enableBelowFold, { passive: true, once: true });
-    window.addEventListener('mousemove', enableBelowFold, { passive: true, once: true });
-    window.addEventListener('keydown', enableBelowFold, { passive: true, once: true });
+    if ('requestIdleCallback' in window) {
+      idleId = (window as any).requestIdleCallback(
+        () => triggerHydration(),
+        { timeout: 800 } // Guarantees mounting even on slow devices without user interaction
+      );
+    } else {
+      timerId = setTimeout(triggerHydration, 300);
+    }
+
+    // Early trigger if user interacts before idle timeout
+    ['scroll', 'touchstart', 'wheel', 'mousemove', 'keydown'].forEach(evt => {
+      window.addEventListener(evt, triggerHydration, { passive: true, once: true });
+    });
 
     const cleanupBelowFold = () => {
-      window.removeEventListener('scroll', enableBelowFold);
-      window.removeEventListener('touchstart', enableBelowFold);
-      window.removeEventListener('wheel', enableBelowFold);
-      window.removeEventListener('mousemove', enableBelowFold);
-      window.removeEventListener('keydown', enableBelowFold);
+      if (idleId && 'cancelIdleCallback' in window) {
+        (window as any).cancelIdleCallback(idleId);
+      }
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+      ['scroll', 'touchstart', 'wheel', 'mousemove', 'keydown'].forEach(evt => {
+        window.removeEventListener(evt, triggerHydration);
+      });
     };
 
     // Defer tracking pixels & external analytics until first user interaction (zero background timer during audit)
@@ -451,7 +472,7 @@ export default function App() {
       initialPath === '/blog' ||
       initialPath === '/articles'
     ) {
-      setCanMountBelowFold(true);
+      setIsReadyToHydrate(true);
       setIsBlogPageOpen(true);
       if (initialHash.startsWith('#blog/')) {
         setActiveBlogSlug(window.location.hash.replace('#blog/', ''));
@@ -572,7 +593,7 @@ export default function App() {
 
   useEffect(() => {
     const handleHashChange = () => {
-      setCanMountBelowFold(true);
+      setIsReadyToHydrate(true);
       setIsAdminOpen(window.location.hash.startsWith('#admin'));
       setIsSpecialistsPageOpen(
         window.location.hash === '#specialists-directory' || 
@@ -626,7 +647,7 @@ export default function App() {
 
   // Handlers
   const handleOpenBooking = () => {
-    setCanMountBelowFold(true);
+    setIsReadyToHydrate(true);
     setBookingInitialService(null);
     setBookingInitialPackage(null);
     setBookingInitialSpecialist(null);
@@ -888,11 +909,11 @@ export default function App() {
               />
             )}
 
-            {/* Strict Event-Driven Below-the-fold content: 0ms TBT for Lighthouse, Instant for Real Users */}
-            {!canMountBelowFold ? (
-              <div style={{ minHeight: '120vh' }} aria-hidden="true" />
+            {/* Safe, Smooth Background Hydration: Instant FCP/LCP for Hero, then quiet idle mounting */}
+            {!isReadyToHydrate ? (
+              <div className="min-h-[1200px]" style={{ minHeight: '1200px' }} aria-hidden="true" />
             ) : (
-              <Suspense fallback={null}>
+              <Suspense fallback={<div className="min-h-[1200px]" style={{ minHeight: '1200px' }} aria-hidden="true" />}>
                 {/* 5. Center Achievements & Statistics Bar */}
                 {modules.stats && <StatsBar />}
 
@@ -960,8 +981,8 @@ export default function App() {
 
       </main>
 
-      {/* Footer (Strict Event-Driven, single Suspense, never unmounts) */}
-      {canMountBelowFold && modules.footer && (
+      {/* Footer (Safe Background Hydration, single Suspense, never unmounts) */}
+      {isReadyToHydrate && modules.footer && (
         <Suspense fallback={null}>
           <Footer 
             onOpenAdmin={() => setIsAdminOpen(true)} 
@@ -971,7 +992,7 @@ export default function App() {
       )}
 
       {/* Multi-Floating Actions & Mobile Bottom Bar wrapped in Suspense for zero main-thread blocking */}
-      {canMountBelowFold && (
+      {isReadyToHydrate && (
         <Suspense fallback={null}>
           <FloatingActions
             onOpenBooking={handleOpenBooking}
