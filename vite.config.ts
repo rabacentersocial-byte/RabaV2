@@ -23,7 +23,7 @@ export default defineConfig(() => {
               }
               const combined = (before + ' ' + after).replace(/rel=["']stylesheet["']/gi, '').replace(/\s+/g, ' ').trim();
               const extraAttrs = combined ? ` ${combined}` : '';
-              return `<link rel="preload" href="${href}" as="style" onload="this.onload=null;this.rel='stylesheet'"${extraAttrs}><noscript><link rel="stylesheet" href="${href}"${extraAttrs}></noscript>`;
+              return `<link rel="preload" href="${href}" as="style" fetchpriority="high" data-raba-main-css="1" onload="this.onload=null;this.rel='stylesheet';this.dataset.rabaCssLoaded='1'" onerror="this.dataset.rabaCssLoaded='1'"${extraAttrs}><noscript><link rel="stylesheet" href="${href}"${extraAttrs}></noscript>`;
             }
           );
         }

@@ -28,33 +28,63 @@ try {
 
 const rootEl = document.getElementById('root');
 if (rootEl) {
-  try {
-    console.log('[Raba main] Mounting React tree into #root...');
-    const root = createRoot(rootEl);
-    root.render(
-      <StrictMode>
-        <ErrorBoundary>
-          <ThemeProvider>
-            <LanguageProvider>
-              <AuthProvider>
-                <App />
-              </AuthProvider>
-            </LanguageProvider>
-          </ThemeProvider>
-        </ErrorBoundary>
-      </StrictMode>,
-    );
-    console.log('[Raba main] React tree successfully dispatched to renderer.');
+  let didMount = false;
+  const mountReactApp = () => {
+    if (didMount) return;
+    didMount = true;
+    try {
+      console.log('[Raba main] Mounting React tree into #root...');
+      const root = createRoot(rootEl);
+      root.render(
+        <StrictMode>
+          <ErrorBoundary>
+            <ThemeProvider>
+              <LanguageProvider>
+                <AuthProvider>
+                  <App />
+                </AuthProvider>
+              </LanguageProvider>
+            </ThemeProvider>
+          </ErrorBoundary>
+        </StrictMode>,
+      );
+      console.log('[Raba main] React tree successfully dispatched to renderer.');
 
-    // Dismiss overlay splash screen immediately as soon as React mounts
-    if (typeof window !== 'undefined' && (window as any).dismissSplash) {
-      (window as any).dismissSplash();
+      // Dismiss overlay splash screen immediately as soon as React mounts
+      if (typeof window !== 'undefined' && (window as any).dismissSplash) {
+        (window as any).dismissSplash();
+      }
+    } catch (err) {
+      console.error('[main] Fatal render mount error:', err);
+      if (typeof window !== 'undefined' && (window as any).showAppError) {
+        (window as any).showAppError(err);
+      }
     }
-  } catch (err) {
-    console.error('[main] Fatal render mount error:', err);
-    if (typeof window !== 'undefined' && (window as any).showAppError) {
-      (window as any).showAppError(err);
-    }
+  };
+
+  // Keep the pixel-accurate pre-render shell visible until the async production stylesheet applies (zero FOUC)
+  const mainCssLink = document.querySelector<HTMLLinkElement>(
+    'link[data-raba-main-css="1"], link[as="style"][href*="/assets/"]'
+  );
+  const isMainCssReady =
+    !mainCssLink ||
+    mainCssLink.dataset.rabaCssLoaded === '1' ||
+    (mainCssLink.rel === 'stylesheet' && Boolean(mainCssLink.sheet));
+
+  if (isMainCssReady) {
+    mountReactApp();
+  } else if (mainCssLink) {
+    const onCssReady = () => {
+      if (mainCssLink.rel !== 'stylesheet') {
+        mainCssLink.rel = 'stylesheet';
+      }
+      mainCssLink.dataset.rabaCssLoaded = '1';
+      mountReactApp();
+    };
+    mainCssLink.addEventListener('load', onCssReady, { once: true });
+    mainCssLink.addEventListener('error', onCssReady, { once: true });
+    // Fail-safe fallback so React always mounts even if a network proxy strips stylesheet events
+    window.setTimeout(onCssReady, 1500);
   }
 }
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Navbar } from './components/Navbar';
 import { AnimatedBackground } from './components/AnimatedBackground';
 import { Hero } from './components/Hero';
+import { MobileBottomBar } from './components/MobileBottomBar';
 import { CourseItem } from './data/coursesData';
 import { getStoredAdminSession, clearStoredAdminSession } from './data/adminData';
 import { DISPATCH_REQUEST_EVENT } from './data/customerRequests';
@@ -70,7 +71,6 @@ const StatsBar = lazy<React.ComponentType<any>>(() => safeImport(() => import('.
 const ServicesSection = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/ServicesSection')).then((m: any) => ({ default: m.default || m.ServicesSection || (() => null) })));
 const Footer = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/Footer')).then((m: any) => ({ default: m.default || m.Footer || (() => null) })));
 const FloatingActions = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/FloatingActions')).then((m: any) => ({ default: m.default || m.FloatingActions || (() => null) })));
-const MobileBottomBar = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/MobileBottomBar')).then((m: any) => ({ default: m.default || m.MobileBottomBar || (() => null) })));
 
 
 import { 
@@ -991,29 +991,27 @@ export default function App() {
         </Suspense>
       )}
 
-      {/* Multi-Floating Actions & Mobile Bottom Bar wrapped in Suspense for zero main-thread blocking */}
-      {isReadyToHydrate && (
-        <Suspense fallback={null}>
-          <FloatingActions
-            onOpenBooking={handleOpenBooking}
-            onOpenNotifications={() => setIsNotificationsOpen(true)}
-            onOpenQuickConsult={() => setIsQuickConsultOpen(true)}
-          />
+      {/* Floating Actions & Mobile Bottom Bar rendered immediately to avoid hydration pop-in */}
+      <Suspense fallback={null}>
+        <FloatingActions
+          onOpenBooking={handleOpenBooking}
+          onOpenNotifications={() => setIsNotificationsOpen(true)}
+          onOpenQuickConsult={() => setIsQuickConsultOpen(true)}
+        />
+      </Suspense>
 
-          <MobileBottomBar
-            onOpenBooking={handleOpenBooking}
-            onOpenSpecialistsPage={handleOpenSpecialistsPage}
-            onOpenServicesPage={handleOpenServicesPage}
-            onOpenBranchesPage={handleOpenBranchesPage}
-            onOpenOffersPage={handleOpenOffersPage}
-            onGoHome={handleBackToHome}
-            isSpecialistsPageOpen={isSpecialistsPageOpen}
-            isServicesPageOpen={isServicesPageOpen}
-            isBranchesPageOpen={isBranchesPageOpen}
-            isOffersPageOpen={isOffersPageOpen}
-          />
-        </Suspense>
-      )}
+      <MobileBottomBar
+        onOpenBooking={handleOpenBooking}
+        onOpenSpecialistsPage={handleOpenSpecialistsPage}
+        onOpenServicesPage={handleOpenServicesPage}
+        onOpenBranchesPage={handleOpenBranchesPage}
+        onOpenOffersPage={handleOpenOffersPage}
+        onGoHome={handleBackToHome}
+        isSpecialistsPageOpen={isSpecialistsPageOpen}
+        isServicesPageOpen={isServicesPageOpen}
+        isBranchesPageOpen={isBranchesPageOpen}
+        isOffersPageOpen={isOffersPageOpen}
+      />
 
       {/* Modals wrapped in Suspense for zero initial blocking time */}
       <Suspense fallback={null}>
