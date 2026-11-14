@@ -110,18 +110,22 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
   const stepDeltaRef = useRef<number>(0);
   const velocityRef = useRef<number>(0);
   const isDraggingRef = useRef<boolean>(false);
-  const isHoveredRef = useRef<boolean>(false);
   const dragStartXRef = useRef<number>(0);
   const lastPointerXRef = useRef<number>(0);
   const lastPointerTimeRef = useRef<number>(0);
   const didDragMoveRef = useRef<boolean>(false);
   const lastReportedIdxRef = useRef<number>(-1);
-  const prefersReducedMotionRef = useRef<boolean>(false);
+  const onActiveIndexChangeRef = useRef(onActiveIndexChange);
+  onActiveIndexChangeRef.current = onActiveIndexChange;
+
+  const itemsSignature = useMemo(
+    () => items.map((p) => p.id).join('|'),
+    [items]
+  );
 
   // Build ring with enough items to fill the 3D panoramic arc seamlessly
   const ringItems = useMemo(() => {
     if (items.length === 0) return [];
-    if (items.length <= 2) return items;
     const targetMin = isMobile ? 9 : 13;
     const out: PartnerItem[] = [];
     while (out.length < targetMin) {
@@ -130,27 +134,14 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
     return out;
   }, [items, isMobile]);
 
-  const useStaticCenter = items.length > 0 && items.length <= 2;
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return;
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    prefersReducedMotionRef.current = mq.matches;
-    const handleChange = () => {
-      prefersReducedMotionRef.current = mq.matches;
-    };
-    mq.addEventListener('change', handleChange);
-    return () => mq.removeEventListener('change', handleChange);
-  }, []);
-
   // Reset scroll offset cleanly when filtered list changes
   useEffect(() => {
     posRef.current = 0;
     stepDeltaRef.current = 0;
     velocityRef.current = 0;
     lastReportedIdxRef.current = -1;
-    onActiveIndexChange?.(0);
-  }, [items, onActiveIndexChange]);
+    onActiveIndexChangeRef.current?.(0);
+  }, [itemsSignature]);
 
   // Expose imperative step / reset controls for Prev / Next buttons
   useEffect(() => {
@@ -172,7 +163,7 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
 
   // 60-120fps GPU-composited RAF loop updating transform & opacity directly without React re-renders
   useEffect(() => {
-    if (useStaticCenter || ringItems.length === 0) return;
+    if (ringItems.length === 0) return;
 
     let rafId = 0;
     let lastTime = performance.now();
@@ -202,14 +193,14 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
           posRef.current += velocityRef.current * dt;
           velocityRef.current *= Math.pow(0.035, dt);
           if (Math.abs(velocityRef.current) <= 0.015) velocityRef.current = 0;
-        } else if (!isPausedManually && !isHoveredRef.current && !prefersReducedMotionRef.current) {
-          const cardsPerSec = baseLen / Math.max(14, speedSeconds || 32);
+        } else if (!isPausedManually) {
+          const cardsPerSec = Math.max(0.24, baseLen / Math.max(14, speedSeconds || 32));
           posRef.current += cardsPerSec * dt;
         }
       }
 
-      // Normalize posRef cleanly to avoid float drift over long sessions
-      if (posRef.current > ringLen * 100 || posRef.current < -ringLen * 100) {
+      // Normalize posRef cleanly modulo ringLen for infinite seamless looping
+      if (posRef.current >= ringLen || posRef.current < 0) {
         posRef.current = ((posRef.current % ringLen) + ringLen) % ringLen;
       }
 
@@ -217,7 +208,7 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
       const reportedIdx = ((Math.round(pos) % baseLen) + baseLen) % baseLen;
       if (reportedIdx !== lastReportedIdxRef.current) {
         lastReportedIdxRef.current = reportedIdx;
-        onActiveIndexChange?.(reportedIdx);
+        onActiveIndexChangeRef.current?.(reportedIdx);
       }
 
       for (let i = 0; i < ringLen; i++) {
@@ -262,11 +253,10 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
 
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
-  }, [ringItems, items.length, isMobile, isPausedManually, speedSeconds, useStaticCenter, onActiveIndexChange]);
+  }, [ringItems, items.length, isMobile, isPausedManually, speedSeconds]);
 
   // Smooth mouse & touch drag interaction without forcing layout reflows
   useEffect(() => {
-    if (useStaticCenter) return;
 
     const handlePointerMove = (e: PointerEvent) => {
       if (!isDraggingRef.current) return;
@@ -303,10 +293,10 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
       window.removeEventListener('pointerup', handlePointerUp);
       window.removeEventListener('pointercancel', handlePointerUp);
     };
-  }, [isMobile, useStaticCenter]);
+  }, [isMobile]);
 
   const handleStagePointerDown = (e: React.PointerEvent) => {
-    if (useStaticCenter || e.button !== 0 && e.pointerType === 'mouse') return;
+    if (e.button !== 0 && e.pointerType === 'mouse') return;
     isDraggingRef.current = true;
     didDragMoveRef.current = false;
     stepDeltaRef.current = 0;
@@ -316,57 +306,11 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
     lastPointerTimeRef.current = performance.now();
   };
 
-  if (useStaticCenter) {
-    return (
-      <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 py-8">
-        {items.map((partner) => (
-          <div
-            key={partner.id}
-            dir={isArabic ? 'rtl' : 'ltr'}
-            onClick={() => onSelectPartner(partner)}
-            className="group w-[196px] sm:w-[224px] h-[240px] sm:h-[272px] rounded-[24px] p-3 bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-white/10 shadow-lg hover:border-emerald-500/50 transition-colors flex flex-col items-center justify-between cursor-pointer overflow-hidden"
-          >
-            <div
-              className="w-full flex-1 rounded-2xl border border-slate-200/80 bg-white flex items-center justify-center p-2.5 overflow-hidden shadow-2xs"
-              style={{ backgroundColor: '#ffffff' }}
-            >
-              <PartnerLogoRenderer
-                partnerId={partner.id}
-                logoUrl={partner.logoUrl}
-                name={partner.name}
-                accentColor={partner.accentColor}
-                letter={partner.letter}
-                imageFit={partner.imageFit}
-                imagePadding={partner.imagePadding || 'xs'}
-                logoScale={partner.logoScale ? (partner.logoScale < 120 ? 120 : partner.logoScale) : 120}
-                expandImageToEdges={partner.expandImageToEdges}
-              />
-            </div>
-            <div className="w-full text-center pt-2.5 px-1">
-              <span className="text-[11px] font-bold text-[#0D6D54] dark:text-[#2DD4BF] block truncate">
-                {partner.badge || (isArabic ? 'شريك وطني' : 'Partner')}
-              </span>
-              <h3 className="text-sm font-black text-slate-900 dark:text-white truncate mt-0.5">
-                {isArabic ? partner.name : partner.nameEn}
-              </h3>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
   return (
     <div
       ref={stageRef}
       dir="ltr"
       onPointerDown={handleStagePointerDown}
-      onMouseEnter={() => {
-        isHoveredRef.current = true;
-      }}
-      onMouseLeave={() => {
-        isHoveredRef.current = false;
-      }}
       className="relative w-full h-[240px] sm:h-[320px] md:h-[365px] overflow-hidden flex items-center justify-center touch-pan-y cursor-grab active:cursor-grabbing select-none"
       style={{
         perspective: isMobile ? '560px' : '1120px',

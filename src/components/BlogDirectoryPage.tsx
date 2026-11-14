@@ -95,6 +95,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
   // Categories list
   const categories = [
     { id: 'all', labelAr: 'جميع المقالات', labelEn: 'All Articles', icon: BookOpen },
+    { id: 'psychology', labelAr: 'علم النفس والأعصاب', labelEn: 'Psychology & Neuroscience', icon: Brain },
     { id: 'autism', labelAr: 'طيف التوحد والتدخل المبكر', labelEn: 'Autism & Early Intervention', icon: Brain },
     { id: 'aba', labelAr: 'تحليل السلوك التطبيقي (ABA)', labelEn: 'Applied Behavior Analysis', icon: Target },
     { id: 'occupational', labelAr: 'العلاج الوظيفي والتكامل الحسي', labelEn: 'Occupational Therapy', icon: Layers },
@@ -105,6 +106,14 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
   // Custom Category Icons and Card Theming (matching screenshot & BlogSliderSection)
   const getCategoryIconConfig = (cat?: string) => {
     switch (cat) {
+      case 'psychology':
+        return {
+          icon: Brain,
+          iconBoxBg: 'bg-indigo-50 dark:bg-indigo-950/60 text-[#4F46E5] dark:text-[#818cf8] border-indigo-200/90 dark:border-indigo-800/50 shadow-indigo-500/10',
+          headerBg: 'bg-gradient-to-br from-indigo-500/10 via-sky-500/[0.04] to-transparent dark:from-indigo-950/40 dark:via-transparent',
+          headerBorder: 'border-b border-indigo-100 dark:border-white/5',
+          badgeBg: 'bg-[#0284C7] text-white',
+        };
       case 'autism':
         return {
           icon: Brain,
@@ -983,14 +992,45 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
               )}
 
               {/* Main Article Paragraphs */}
-              <div className={`space-y-5 text-slate-700 dark:text-slate-200 leading-relaxed ${
+              <div className={`space-y-4 text-slate-700 dark:text-slate-200 leading-relaxed ${
                 readerFontSize === 'sm' ? 'text-xs sm:text-sm' : readerFontSize === 'lg' ? 'text-base sm:text-lg' : 'text-sm sm:text-base'
               }`}>
-                {(isArabic ? readingPost.content : (readingPost.contentEn || readingPost.content))?.map((paragraph, pIdx) => (
-                  <p key={pIdx} className="leading-relaxed font-normal">
-                    {paragraph}
-                  </p>
-                ))}
+                {(isArabic ? readingPost.content : (readingPost.contentEn || readingPost.content))?.map((block, pIdx) => {
+                  const trimmed = (block || '').trim();
+                  if (trimmed.startsWith('## ')) {
+                    return (
+                      <h3
+                        key={pIdx}
+                        className="text-lg sm:text-xl font-black text-[#0f2d29] dark:text-[#2dd4bf] pt-4 pb-1 border-b border-slate-200/80 dark:border-white/10"
+                      >
+                        {trimmed.slice(3)}
+                      </h3>
+                    );
+                  }
+                  if (trimmed.startsWith('### ')) {
+                    return (
+                      <h4
+                        key={pIdx}
+                        className="text-base sm:text-lg font-extrabold text-[#0284C7] dark:text-sky-300 pt-2.5"
+                      >
+                        {trimmed.slice(4)}
+                      </h4>
+                    );
+                  }
+                  if (trimmed.startsWith('• ')) {
+                    return (
+                      <div key={pIdx} className="flex items-start gap-2.5 pr-1 sm:pr-3">
+                        <span className="w-2 h-2 rounded-full bg-teal-600 dark:bg-[#2dd4bf] shrink-0 mt-2.5" />
+                        <span className="leading-relaxed font-normal">{trimmed.slice(2)}</span>
+                      </div>
+                    );
+                  }
+                  return (
+                    <p key={pIdx} className="leading-relaxed font-normal">
+                      {trimmed}
+                    </p>
+                  );
+                })}
               </div>
 
               {/* Tags Cloud */}

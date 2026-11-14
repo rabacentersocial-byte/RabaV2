@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { 
   BookOpen, 
   ChevronRight, 
   ChevronLeft, 
   Clock, 
-  Calendar, 
+  Calendar,
   Heart, 
   Share2, 
   ArrowLeft, 
@@ -15,18 +15,457 @@ import {
   X, 
   UserCheck, 
   Bookmark, 
-  Send,
   Brain,
   Target,
   Layers,
   MessageSquare,
-  HeartHandshake
+  HeartHandshake,
+  Play,
+  Pause
 } from 'lucide-react';
-import { BLOG_POSTS } from '../data/blogData';
 import { BlogPost, Specialist } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 import { SPECIALISTS } from '../data/mockData';
 import { getStoredBlogPosts } from '../data/blogCustomizer';
+
+interface ConcaveArcBlogHandle {
+  step: (direction: 1 | -1) => void;
+  reset: () => void;
+}
+
+interface ConcaveArcBlogSliderProps {
+  posts: BlogPost[];
+  isArabic: boolean;
+  isMobile: boolean;
+  isPausedManually: boolean;
+  likedPosts: Record<string, boolean>;
+  shareFeedback: string | null;
+  getCategoryIconConfig: (cat?: string) => {
+    icon: React.ComponentType<{ className?: string }>;
+    iconBoxBg: string;
+    headerBg: string;
+    headerBorder: string;
+    badgeBg: string;
+  };
+  onToggleLike: (e: React.MouseEvent, postId: string) => void;
+  onShare: (e: React.MouseEvent, post: BlogPost) => void;
+  onSelectPost: (post: BlogPost) => void;
+  onActiveIndexChange?: (index: number) => void;
+  controlsRef: React.MutableRefObject<ConcaveArcBlogHandle | null>;
+}
+
+/**
+ * Computes screen-space integrated X offset and 3D concave cylindrical coordinates
+ * so blog cards form a smooth panoramic inward-curving arc on both mobile and desktop.
+ */
+function computeConcaveArcCoords(
+  d: number,
+  cardW: number,
+  gap: number,
+  perspective: number,
+  maxAngleDeg: number,
+  zCenter: number,
+  zDepth: number,
+  angleSlope: number,
+  depthFreq: number
+) {
+  const absD = Math.abs(d);
+  const sign = d < 0 ? -1 : 1;
+  const maxAngleRad = (maxAngleDeg * Math.PI) / 180;
+
+  const evalAngleRad = (u: number) => maxAngleRad * Math.tanh(u * angleSlope);
+  const evalZ = (u: number) => -zCenter + zDepth * (1 - Math.cos(Math.min(Math.PI / 2, u * depthFreq)));
+  const evalFootprint = (u: number) => {
+    const z = evalZ(u);
+    const proj = perspective / Math.max(240, perspective - z);
+    const ang = evalAngleRad(u);
+    return cardW * proj * Math.cos(ang) + gap;
+  };
+
+  const steps = 8;
+  let xScreen = 0;
+  if (absD > 0.0001) {
+    const h = absD / steps;
+    for (let s = 0; s < steps; s++) {
+      xScreen += evalFootprint((s + 0.5) * h) * h;
+    }
+  }
+
+  const zPx = evalZ(absD);
+  const angleDeg = -sign * ((evalAngleRad(absD) * 180) / Math.PI);
+  const xWorld = sign * xScreen * (Math.max(240, perspective - zPx) / perspective);
+
+  return { xWorld, zPx, angleDeg };
+}
+
+const ConcaveArcBlogSlider: React.FC<ConcaveArcBlogSliderProps> = ({
+  posts,
+  isArabic,
+  isMobile,
+  isPausedManually,
+  likedPosts,
+  shareFeedback,
+  getCategoryIconConfig,
+  onToggleLike,
+  onShare,
+  onSelectPost,
+  onActiveIndexChange,
+  controlsRef,
+}) => {
+  const stageRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLElement | null)[]>([]);
+  const posRef = useRef<number>(0);
+  const stepDeltaRef = useRef<number>(0);
+  const velocityRef = useRef<number>(0);
+  const isDraggingRef = useRef<boolean>(false);
+  const dragStartXRef = useRef<number>(0);
+  const lastPointerXRef = useRef<number>(0);
+  const lastPointerTimeRef = useRef<number>(0);
+  const didDragMoveRef = useRef<boolean>(false);
+  const lastReportedIdxRef = useRef<number>(-1);
+  const onActiveIndexChangeRef = useRef(onActiveIndexChange);
+  onActiveIndexChangeRef.current = onActiveIndexChange;
+
+  const postsSignature = useMemo(
+    () => posts.map((p) => p.id).join('|'),
+    [posts]
+  );
+
+  const ringItems = useMemo(() => {
+    if (posts.length === 0) return [];
+    const targetMin = isMobile ? 9 : 13;
+    const out: BlogPost[] = [];
+    while (out.length < targetMin) {
+      out.push(...posts);
+    }
+    return out;
+  }, [posts, isMobile]);
+
+  useEffect(() => {
+    posRef.current = 0;
+    stepDeltaRef.current = 0;
+    velocityRef.current = 0;
+    lastReportedIdxRef.current = -1;
+    onActiveIndexChangeRef.current?.(0);
+  }, [postsSignature]);
+
+  useEffect(() => {
+    controlsRef.current = {
+      step: (direction: 1 | -1) => {
+        velocityRef.current = 0;
+        stepDeltaRef.current += direction;
+      },
+      reset: () => {
+        posRef.current = 0;
+        stepDeltaRef.current = 0;
+        velocityRef.current = 0;
+      },
+    };
+    return () => {
+      controlsRef.current = null;
+    };
+  }, [controlsRef]);
+
+  useEffect(() => {
+    if (ringItems.length === 0) return;
+
+    let rafId = 0;
+    let lastTime = performance.now();
+    const ringLen = ringItems.length;
+    const baseLen = Math.max(1, posts.length);
+
+    const cardW = isMobile ? 196 : 286;
+    const gap = isMobile ? 14 : 22;
+    const perspective = isMobile ? 640 : 1180;
+    const maxAngleDeg = isMobile ? 34 : 28;
+    const zCenter = isMobile ? 155 : 205;
+    const zDepth = isMobile ? 290 : 385;
+    const angleSlope = isMobile ? 0.40 : 0.34;
+    const depthFreq = isMobile ? 0.46 : 0.38;
+    const maxVisible = isMobile ? 3.15 : 4.2;
+
+    const tick = (now: number) => {
+      const dt = Math.min(0.05, Math.max(0.001, (now - lastTime) / 1000));
+      lastTime = now;
+
+      if (!isDraggingRef.current) {
+        if (Math.abs(stepDeltaRef.current) > 0.001) {
+          const move = stepDeltaRef.current * Math.min(1, dt * 11);
+          posRef.current += move;
+          stepDeltaRef.current -= move;
+        } else if (Math.abs(velocityRef.current) > 0.015) {
+          posRef.current += velocityRef.current * dt;
+          velocityRef.current *= Math.pow(0.035, dt);
+          if (Math.abs(velocityRef.current) <= 0.015) velocityRef.current = 0;
+        } else if (!isPausedManually) {
+          const cardsPerSec = isMobile ? 0.30 : 0.26;
+          posRef.current += cardsPerSec * dt;
+        }
+      }
+
+      if (posRef.current >= ringLen || posRef.current < 0) {
+        posRef.current = ((posRef.current % ringLen) + ringLen) % ringLen;
+      }
+
+      const pos = posRef.current;
+      const reportedIdx = ((Math.round(pos) % baseLen) + baseLen) % baseLen;
+      if (reportedIdx !== lastReportedIdxRef.current) {
+        lastReportedIdxRef.current = reportedIdx;
+        onActiveIndexChangeRef.current?.(reportedIdx);
+      }
+
+      for (let i = 0; i < ringLen; i++) {
+        const el = cardRefs.current[i];
+        if (!el) continue;
+
+        let d = ((i - pos) % ringLen + ringLen) % ringLen;
+        if (d > ringLen / 2) d -= ringLen;
+
+        const absD = Math.abs(d);
+        if (absD > maxVisible) {
+          el.style.opacity = '0';
+          el.style.pointerEvents = 'none';
+          el.style.transform = 'translate3d(-9999px, 0px, -400px)';
+          continue;
+        }
+
+        const { xWorld, zPx, angleDeg } = computeConcaveArcCoords(
+          d,
+          cardW,
+          gap,
+          perspective,
+          maxAngleDeg,
+          zCenter,
+          zDepth,
+          angleSlope,
+          depthFreq
+        );
+
+        const fadeWindow = isMobile ? 0.35 : 0.65;
+        const fadeStart = maxVisible - fadeWindow;
+        const opacity = absD > fadeStart ? Math.max(0, 1 - (absD - fadeStart) / fadeWindow) : 1;
+
+        el.style.transform = `translate3d(${xWorld.toFixed(2)}px, 0px, ${zPx.toFixed(2)}px) rotateY(${angleDeg.toFixed(2)}deg)`;
+        el.style.opacity = opacity.toFixed(3);
+        el.style.zIndex = String(Math.round(100 + absD * 10));
+        el.style.pointerEvents = opacity > 0.12 ? 'auto' : 'none';
+      }
+
+      rafId = requestAnimationFrame(tick);
+    };
+
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [ringItems, posts.length, isMobile, isPausedManually]);
+
+  useEffect(() => {
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!isDraggingRef.current) return;
+      const dx = e.clientX - lastPointerXRef.current;
+      const totalMove = Math.abs(e.clientX - dragStartXRef.current);
+      if (totalMove > 6) {
+        didDragMoveRef.current = true;
+      }
+
+      const stride = isMobile ? 140 : 225;
+      posRef.current -= dx / stride;
+
+      const now = performance.now();
+      const dt = Math.max(0.008, (now - lastPointerTimeRef.current) / 1000);
+      velocityRef.current = -(dx / stride) / dt * 0.45;
+
+      lastPointerXRef.current = e.clientX;
+      lastPointerTimeRef.current = now;
+    };
+
+    const handlePointerUp = () => {
+      if (!isDraggingRef.current) return;
+      isDraggingRef.current = false;
+      setTimeout(() => {
+        didDragMoveRef.current = false;
+      }, 40);
+    };
+
+    window.addEventListener('pointermove', handlePointerMove, { passive: true });
+    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointercancel', handlePointerUp);
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerUp);
+    };
+  }, [isMobile]);
+
+  const handleStagePointerDown = (e: React.PointerEvent) => {
+    if (e.button !== 0 && e.pointerType === 'mouse') return;
+    isDraggingRef.current = true;
+    didDragMoveRef.current = false;
+    stepDeltaRef.current = 0;
+    velocityRef.current = 0;
+    dragStartXRef.current = e.clientX;
+    lastPointerXRef.current = e.clientX;
+    lastPointerTimeRef.current = performance.now();
+  };
+
+  const renderCardContent = (post: BlogPost) => {
+    const isLiked = likedPosts[post.id] || false;
+    const currentLikes = (post.likesCount || 0) + (isLiked ? 1 : 0);
+    const categoryConfig = getCategoryIconConfig(post.category);
+    const CategoryIcon = categoryConfig.icon;
+
+    return (
+      <>
+        {/* 1. Integrated Custom Header with Topic Icon (No Photos) */}
+        <div className={`p-3.5 md:p-5 pb-3 md:pb-4 ${categoryConfig.headerBg} ${categoryConfig.headerBorder} relative transition-colors shrink-0`}>
+          {/* Top Row: Category Badge & Custom Integrated Icon Box */}
+          <div className="flex items-center justify-between gap-2 mb-2.5 md:mb-3.5">
+            <span className={`${categoryConfig.badgeBg} text-[9.5px] md:text-[11px] font-black px-2.5 md:px-3 py-1 rounded-xl shadow-xs tracking-tight truncate max-w-[74%]`}>
+              {isArabic ? post.categoryTitle : (post.categoryTitleEn || post.categoryTitle)}
+            </span>
+
+            <div className={`w-8 h-8 md:w-11 md:h-11 rounded-xl md:rounded-2xl ${categoryConfig.iconBoxBg} border flex items-center justify-center shrink-0 shadow-xs group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300`}>
+              <CategoryIcon className="w-4 h-4 md:w-5 md:h-5" />
+            </div>
+          </div>
+
+          {/* Integrated Metadata Strip: Reading Time, Views & Date */}
+          <div className="flex items-center justify-between gap-1.5 text-[9.5px] md:text-[11px] font-medium text-slate-500 dark:text-slate-400">
+            <span className="flex items-center gap-1 truncate">
+              <Clock className="w-3 h-3 md:w-3.5 md:h-3.5 text-amber-500 shrink-0" />
+              <span className="hidden md:inline">{post.readTimeMinutes} {isArabic ? 'دقائق قراءة' : 'min read'}</span>
+              <span className="md:hidden">{post.readTimeMinutes} {isArabic ? 'د' : 'm'}</span>
+            </span>
+
+            <span className="flex items-center gap-1 shrink-0">
+              <Eye className="w-3 h-3 md:w-3.5 md:h-3.5 text-slate-400 shrink-0" />
+              <span>{post.viewsCount}</span>
+            </span>
+
+            <span className="hidden md:flex items-center gap-1 truncate">
+              <Calendar className="w-3.5 h-3.5 text-[#0d5c52] dark:text-[#2dd4bf] shrink-0" />
+              <span className="truncate">{isArabic ? post.publishDate : (post.publishDateEn || post.publishDate)}</span>
+            </span>
+          </div>
+        </div>
+
+        {/* 2. Card Body (No Photos) */}
+        <div className="p-3.5 md:p-5 flex flex-col justify-between flex-1 min-h-0">
+          <div className="min-h-0">
+            {/* Title */}
+            <h3 className="text-xs md:text-base font-black text-slate-900 dark:text-white leading-snug line-clamp-3 md:line-clamp-2 group-hover:text-[#0d5c52] dark:group-hover:text-[#2dd4bf] transition-colors mb-1.5 md:mb-2">
+              {isArabic ? post.title : (post.titleEn || post.title)}
+            </h3>
+
+            {/* Excerpt */}
+            <p className="text-[10.5px] md:text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed mb-2 md:mb-3">
+              {isArabic ? post.excerpt : (post.excerptEn || post.excerpt)}
+            </p>
+
+            {/* Key Takeaway Snippet */}
+            {post.keyTakeaways && post.keyTakeaways.length > 0 && (
+              <div className="hidden md:block bg-[#dff1ec]/40 dark:bg-teal-950/30 border border-[#0d5c52]/15 dark:border-[#2dd4bf]/20 rounded-xl p-2.5 mb-2 text-[11px]">
+                <div className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-[#0d5c52] dark:text-[#2dd4bf] shrink-0 mt-0.5" />
+                  <span className="text-slate-700 dark:text-slate-200 line-clamp-2 leading-relaxed font-medium">
+                    {isArabic
+                      ? post.keyTakeaways[0]
+                      : (post.keyTakeawaysEn?.[0] || post.keyTakeaways[0])}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 3. Card Bottom Actions */}
+          <div className="pt-2 md:pt-3 border-t border-slate-100 dark:border-white/10 flex items-center justify-between shrink-0">
+            <span className="inline-flex items-center gap-1 md:gap-1.5 text-[10.5px] md:text-xs font-black text-[#0d5c52] dark:text-[#2dd4bf] group-hover:gap-2 transition-all">
+              <span className="hidden md:inline">{isArabic ? 'قراءة المقال بالكامل' : 'Read Article'}</span>
+              <span className="md:hidden">{isArabic ? 'اقرأ المقال' : 'Read'}</span>
+              {isArabic ? <ArrowLeft className="w-3.5 h-3.5 md:w-4 md:h-4" /> : <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4" />}
+            </span>
+
+            <div className="flex items-center gap-0.5 md:gap-1" onClick={(e) => e.stopPropagation()}>
+              {/* Like button */}
+              <button
+                type="button"
+                onClick={(e) => onToggleLike(e, post.id)}
+                aria-label="Like post"
+                className={`p-1.5 rounded-xl flex items-center gap-1 text-[10.5px] md:text-xs font-bold transition-all cursor-pointer ${
+                  isLiked
+                    ? 'text-rose-600 bg-rose-50 dark:bg-rose-500/15'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-rose-500 hover:bg-slate-100 dark:hover:bg-white/5'
+                }`}
+              >
+                <Heart className={`w-3.5 h-3.5 md:w-4 md:h-4 ${isLiked ? 'fill-rose-500 text-rose-500' : ''}`} />
+                <span>{currentLikes}</span>
+              </button>
+
+              {/* Share button */}
+              <button
+                type="button"
+                onClick={(e) => onShare(e, post)}
+                aria-label="Share post"
+                className="p-1.5 rounded-xl text-slate-500 dark:text-slate-400 hover:text-[#0d5c52] dark:hover:text-[#2dd4bf] hover:bg-slate-100 dark:hover:bg-white/5 transition-colors relative cursor-pointer"
+              >
+                <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                {shareFeedback === post.id && (
+                  <span className="absolute -top-7 right-0 text-[10px] bg-slate-900 text-white px-2 py-0.5 rounded shadow whitespace-nowrap z-20">
+                    {isArabic ? 'تم نسخ الرابط' : 'Link copied'}
+                  </span>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  return (
+    <div
+      ref={stageRef}
+      dir="ltr"
+      onPointerDown={handleStagePointerDown}
+      className="relative w-full h-[372px] sm:h-[420px] md:h-[480px] overflow-hidden flex items-center justify-center touch-pan-y cursor-grab active:cursor-grabbing select-none"
+      style={{
+        perspective: isMobile ? '640px' : '1180px',
+        perspectiveOrigin: '50% 50%',
+        transformStyle: 'preserve-3d',
+      }}
+    >
+      {/* Subtle Ambient Horizon Arc */}
+      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-gradient-to-r from-transparent via-teal-500/20 dark:via-teal-400/25 to-transparent pointer-events-none" />
+
+      {/* Desktop Left & Right Soft Edge Vignettes */}
+      <div className="hidden md:block absolute top-0 bottom-0 left-0 w-16 lg:w-24 bg-gradient-to-r from-[#F8FAFC] via-[#F8FAFC]/55 to-transparent dark:from-[#0D1B2A] dark:via-[#0D1B2A]/60 dark:to-transparent z-[200] pointer-events-none" />
+      <div className="hidden md:block absolute top-0 bottom-0 right-0 w-16 lg:w-24 bg-gradient-to-l from-[#F8FAFC] via-[#F8FAFC]/55 to-transparent dark:from-[#0D1B2A] dark:via-[#0D1B2A]/60 dark:to-transparent z-[200] pointer-events-none" />
+
+      {ringItems.map((post, idx) => (
+        <article
+          key={`blog-arc-${post.id}-${idx}`}
+          ref={(el) => {
+            cardRefs.current[idx] = el;
+          }}
+          dir={isArabic ? 'rtl' : 'ltr'}
+          onClick={() => {
+            if (!didDragMoveRef.current) {
+              onSelectPost(post);
+            }
+          }}
+          style={{
+            willChange: 'transform, opacity',
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+          }}
+          className="group absolute shrink-0 w-[196px] h-[296px] md:w-[286px] md:h-[388px] rounded-[22px] md:rounded-[28px] overflow-hidden bg-white/95 dark:bg-[#0F1E32]/95 border border-slate-200/90 dark:border-white/15 shadow-[0_18px_42px_-12px_rgba(15,23,42,0.14)] dark:shadow-[0_22px_48px_-10px_rgba(0,0,0,0.65),inset_0_1px_1px_rgba(255,255,255,0.14)] hover:border-[#0d5c52]/60 dark:hover:border-[#2dd4bf]/50 flex flex-col justify-between cursor-pointer"
+        >
+          {renderCardContent(post)}
+        </article>
+      ))}
+    </div>
+  );
+};
 
 interface BlogSliderSectionProps {
   onOpenBooking?: () => void;
@@ -40,15 +479,34 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
   onOpenBlogPage,
 }) => {
   const { isArabic } = useLanguage();
-  const sliderRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const arcControlsRef = useRef<ConcaveArcBlogHandle | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>({});
   const [shareFeedback, setShareFeedback] = useState<string | null>(null);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+  const [isPausedManually, setIsPausedManually] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false
+  );
 
   // Dynamic Stored Posts
   const [allPosts, setAllPosts] = useState<BlogPost[]>(() => getStoredBlogPosts());
+
+  // Track responsive breakpoint via ResizeObserver (zero forced reflows)
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver((entries) => {
+      const w = entries[0]?.contentRect.width;
+      if (typeof w === 'number' && w > 0) {
+        setIsMobileViewport(w < 768);
+      }
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     const handleUpdate = () => {
@@ -62,18 +520,27 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
     };
   }, []);
 
-  // Filter posts (only published and slider featured)
-  const visiblePosts = allPosts.filter(
-    (post) => (post.status === undefined || post.status === 'published') && post.isSliderFeatured !== false
+  // Filter posts (memoized to prevent breaking slider animation loop on re-renders)
+  const visiblePosts = useMemo(
+    () =>
+      allPosts.filter(
+        (post) => (post.status === undefined || post.status === 'published') && post.isSliderFeatured !== false
+      ),
+    [allPosts]
   );
 
-  const filteredPosts = activeCategory === 'all'
-    ? visiblePosts
-    : visiblePosts.filter(post => post.category === activeCategory);
+  const filteredPosts = useMemo(
+    () =>
+      activeCategory === 'all'
+        ? visiblePosts
+        : visiblePosts.filter((post) => post.category === activeCategory),
+    [visiblePosts, activeCategory]
+  );
 
   // Categories list
   const categories = [
     { id: 'all', labelAr: 'جميع المقالات', labelEn: 'All Articles' },
+    { id: 'psychology', labelAr: 'علم النفس والأعصاب', labelEn: 'Psychology & Neuroscience' },
     { id: 'autism', labelAr: 'طيف التوحد والتدخل المبكر', labelEn: 'Autism & Early Intervention' },
     { id: 'aba', labelAr: 'تحليل السلوك التطبيقي (ABA)', labelEn: 'Applied Behavior Analysis' },
     { id: 'occupational', labelAr: 'العلاج الوظيفي والتكامل الحسي', labelEn: 'Occupational Therapy' },
@@ -81,40 +548,17 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
     { id: 'family_guidance', labelAr: 'إرشادات أسرية وتعديل روتين', labelEn: 'Family Guidance' },
   ];
 
+  const stepArc = (direction: 'next' | 'prev') => {
+    const stepSign: 1 | -1 = direction === 'next' ? 1 : -1;
+    arcControlsRef.current?.step(stepSign);
+  };
+
   const scrollLeft = () => {
-    if (sliderRef.current) {
-      const scrollAmount = isArabic ? 380 : -380;
-      sliderRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
+    stepArc(isArabic ? 'next' : 'prev');
   };
 
   const scrollRight = () => {
-    if (sliderRef.current) {
-      const scrollAmount = isArabic ? -380 : 380;
-      sliderRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!touchStart) return;
-    const touchEnd = e.changedTouches[0].clientX;
-    const diff = touchStart - touchEnd;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        // Swiped left
-        if (isArabic) scrollLeft();
-        else scrollRight();
-      } else {
-        // Swiped right
-        if (isArabic) scrollRight();
-        else scrollLeft();
-      }
-    }
-    setTouchStart(null);
+    stepArc(isArabic ? 'prev' : 'next');
   };
 
   const toggleLike = (e: React.MouseEvent, postId: string) => {
@@ -155,6 +599,14 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
   // Custom Category Icons and Card Theming (replacing stock photos with integrated branding)
   const getCategoryIconConfig = (cat?: string) => {
     switch (cat) {
+      case 'psychology':
+        return {
+          icon: Brain,
+          iconBoxBg: 'bg-indigo-50 dark:bg-indigo-950/60 text-[#4F46E5] dark:text-[#818cf8] border-indigo-200/90 dark:border-indigo-800/50 shadow-indigo-500/10',
+          headerBg: 'bg-gradient-to-br from-indigo-500/10 via-sky-500/[0.04] to-transparent dark:from-indigo-950/40 dark:via-transparent',
+          headerBorder: 'border-b border-indigo-100 dark:border-white/5',
+          badgeBg: 'bg-[#0284C7] text-white',
+        };
       case 'autism':
         return {
           icon: Brain,
@@ -208,6 +660,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
 
   return (
     <section 
+      ref={sectionRef}
       id="blog" 
       className="py-16 sm:py-24 relative overflow-hidden bg-transparent text-slate-900 dark:text-white border-b border-slate-200/80 dark:border-white/10 transition-colors"
       dir={isArabic ? 'rtl' : 'ltr'}
@@ -263,7 +716,14 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
               </button>
             )}
 
-            <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-2">
+              <button
+                onClick={() => setIsPausedManually(!isPausedManually)}
+                aria-label={isPausedManually ? (isArabic ? 'تشغيل العرض' : 'Resume') : (isArabic ? 'إيقاف مؤقت' : 'Pause')}
+                className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-white/15 text-slate-700 dark:text-white flex items-center justify-center hover:bg-[#dff1ec]/60 dark:hover:bg-teal-950/60 hover:text-[#0d5c52] dark:hover:text-[#2dd4bf] hover:border-[#0d5c52]/30 shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer"
+              >
+                {isPausedManually ? <Play className="w-4 h-4 sm:w-5 sm:h-5" /> : <Pause className="w-4 h-4 sm:w-5 sm:h-5" />}
+              </button>
               <button
                 onClick={scrollRight}
                 aria-label={isArabic ? 'السابق' : 'Previous'}
@@ -289,7 +749,11 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
             return (
               <button
                 key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
+                onClick={() => {
+                  setActiveCategory(cat.id);
+                  setActiveSlideIndex(0);
+                  arcControlsRef.current?.reset();
+                }}
                 className={`px-4 py-2 min-h-[40px] rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-colors duration-200 cursor-pointer ${
                   isActive
                     ? 'bg-gradient-to-r from-[#0d5c52] to-[#115e59] text-white font-black shadow-md shadow-teal-900/20 border border-[#0d5c52]'
@@ -302,136 +766,76 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
           })}
         </div>
 
-        {/* Blog Posts Slider */}
-        <div
-          ref={sliderRef}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          className="flex gap-4 sm:gap-6 overflow-x-auto pb-6 pt-2 snap-x snap-mandatory scroll-smooth no-scrollbar"
-        >
-          {filteredPosts.map((post) => {
-            const isLiked = likedPosts[post.id] || false;
-            const currentLikes = post.likesCount + (isLiked ? 1 : 0);
-            const categoryConfig = getCategoryIconConfig(post.category);
-            const CategoryIcon = categoryConfig.icon;
-
-            return (
-              <article
-                key={post.id}
-                onClick={() => setSelectedPost(post)}
-                className="w-[88vw] max-w-[370px] sm:w-[360px] md:w-[380px] lg:w-[400px] shrink-0 snap-start liquid-glass-card rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+        {/* Mobile Top Controls above 3D Concave Slider */}
+        <div className="block md:hidden mb-2" dir={isArabic ? 'rtl' : 'ltr'}>
+          <div className="flex items-center justify-between mb-2 px-1">
+            <span className="text-xs font-bold text-slate-600 dark:text-slate-300">
+              {isArabic ? 'اسحب أو تنقّل لاستعراض المقالات' : 'Swipe or browse articles'}
+            </span>
+            <div className="flex items-center gap-2" dir="ltr">
+              <button
+                onClick={() => stepArc(isArabic ? 'next' : 'prev')}
+                aria-label={isArabic ? 'التالي' : 'Previous'}
+                className="w-11 h-11 rounded-full bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-white/10 shadow-xs flex items-center justify-center text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95 transition-transform cursor-pointer"
               >
-                {/* 1. Integrated Custom Header with Topic Icon (No Photos) */}
-                <div className={`p-6 sm:p-7 pb-5 ${categoryConfig.headerBg} ${categoryConfig.headerBorder} relative transition-colors`}>
-                  {/* Top Row: Category Badge & Custom Integrated Icon Box */}
-                  <div className="flex items-center justify-between gap-3 mb-4">
-                    {/* Category Badge matching Brand Petal Color */}
-                    <span className={`${categoryConfig.badgeBg} text-[11px] font-black px-3.5 py-1.5 rounded-xl shadow-xs tracking-tight`}>
-                      {isArabic ? post.categoryTitle : (post.categoryTitleEn || post.categoryTitle)}
-                    </span>
-
-                    {/* Custom Integrated Icon Box */}
-                    <div className={`w-12 h-12 rounded-2xl ${categoryConfig.iconBoxBg} border flex items-center justify-center shrink-0 shadow-xs group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300`}>
-                      <CategoryIcon className="w-6 h-6" />
-                    </div>
-                  </div>
-
-                  {/* Integrated Metadata Strip: Reading Time, Views & Date */}
-                  <div className="flex items-center justify-between gap-2 text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                    <span className="flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                      <span>{post.readTimeMinutes} {isArabic ? 'دقائق قراءة' : 'min read'}</span>
-                    </span>
-
-                    <span className="flex items-center gap-1.5">
-                      <Eye className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      <span>{post.viewsCount} {isArabic ? 'مشاهدة' : 'views'}</span>
-                    </span>
-
-                    <span className="flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5 text-[#0d5c52] dark:text-[#2dd4bf] shrink-0" />
-                      <span>{isArabic ? post.publishDate : (post.publishDateEn || post.publishDate)}</span>
-                    </span>
-                  </div>
-                </div>
-
-                {/* Card Body */}
-                <div className="p-5 sm:p-6 flex flex-col justify-between flex-1">
-                  <div>
-                    {/* Publication Date */}
-                    <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 mb-2.5">
-                      <Calendar className="w-3.5 h-3.5 text-[#0d5c52] dark:text-[#2dd4bf]" />
-                      <span>{isArabic ? post.publishDate : (post.publishDateEn || post.publishDate)}</span>
-                    </div>
-
-                    {/* Title */}
-                    <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug group-hover:text-[#0d5c52] dark:group-hover:text-[#2dd4bf] transition-colors mb-2.5">
-                      {isArabic ? post.title : (post.titleEn || post.title)}
-                    </h3>
-
-                    {/* Excerpt */}
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed mb-4">
-                      {isArabic ? post.excerpt : (post.excerptEn || post.excerpt)}
-                    </p>
-
-                    {/* Key Takeaway Snippet */}
-                    {post.keyTakeaways && post.keyTakeaways.length > 0 && (
-                      <div className="bg-[#dff1ec]/40 dark:bg-teal-950/30 border border-[#0d5c52]/15 dark:border-[#2dd4bf]/20 rounded-xl p-3 mb-4 text-xs">
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-[#0d5c52] dark:text-[#2dd4bf] shrink-0 mt-0.5" />
-                          <span className="text-slate-700 dark:text-slate-200 line-clamp-2 leading-relaxed font-medium">
-                            {isArabic 
-                              ? post.keyTakeaways[0] 
-                              : (post.keyTakeawaysEn?.[0] || post.keyTakeaways[0])}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Card Bottom Actions */}
-                  <div className="pt-3 border-t border-slate-100 dark:border-white/10 flex items-center justify-between">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-black text-[#0d5c52] dark:text-[#2dd4bf] group-hover:gap-2.5 transition-all">
-                      <span>{isArabic ? 'قراءة المقال بالكامل' : 'Read Article'}</span>
-                      {isArabic ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
-                    </span>
-
-                    <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                      {/* Like button */}
-                      <button
-                        onClick={(e) => toggleLike(e, post.id)}
-                        aria-label="Like post"
-                        className={`p-2 rounded-xl flex items-center gap-1 text-xs font-bold transition-all ${
-                          isLiked 
-                            ? 'text-rose-600 bg-rose-50 dark:bg-rose-500/15' 
-                            : 'text-slate-500 dark:text-slate-400 hover:text-rose-500 hover:bg-slate-100 dark:hover:bg-white/5'
-                        }`}
-                      >
-                        <Heart className={`w-4 h-4 ${isLiked ? 'fill-rose-500 text-rose-500' : ''}`} />
-                        <span>{currentLikes}</span>
-                      </button>
-
-                      {/* Share button */}
-                      <button
-                        onClick={(e) => handleShare(e, post)}
-                        aria-label="Share post"
-                        className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-[#0d5c52] dark:hover:text-[#2dd4bf] hover:bg-slate-100 dark:hover:bg-white/5 transition-colors relative"
-                      >
-                        <Share2 className="w-4 h-4" />
-                        {shareFeedback === post.id && (
-                          <span className="absolute -top-7 right-0 text-[10px] bg-slate-900 text-white px-2 py-0.5 rounded shadow whitespace-nowrap z-20">
-                            {isArabic ? 'تم نسخ الرابط' : 'Link copied'}
-                          </span>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                </div>
-              </article>
-            );
-          })}
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => stepArc(isArabic ? 'prev' : 'next')}
+                aria-label={isArabic ? 'السابق' : 'Next'}
+                className="w-11 h-11 rounded-full bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-white/10 shadow-xs flex items-center justify-center text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-95 transition-transform cursor-pointer"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
         </div>
+
+        {/* Unified 3D Concave Panoramic Arc Blog Slider (Mobile & Desktop) */}
+        {filteredPosts.length > 0 ? (
+          <div className="-mx-4 sm:-mx-6 lg:-mx-8">
+            <ConcaveArcBlogSlider
+              posts={filteredPosts}
+              isArabic={isArabic}
+              isMobile={isMobileViewport}
+              isPausedManually={isPausedManually}
+              likedPosts={likedPosts}
+              shareFeedback={shareFeedback}
+              getCategoryIconConfig={getCategoryIconConfig}
+              onToggleLike={toggleLike}
+              onShare={handleShare}
+              onSelectPost={setSelectedPost}
+              onActiveIndexChange={setActiveSlideIndex}
+              controlsRef={arcControlsRef}
+            />
+          </div>
+        ) : (
+          <div className="py-12 text-center text-sm text-slate-500 dark:text-slate-400">
+            {isArabic ? 'لا توجد مقالات في هذا التصنيف حالياً' : 'No articles in this category yet'}
+          </div>
+        )}
+
+        {/* Mobile Bottom Progress Bar & Counter */}
+        {filteredPosts.length > 2 && (
+          <div className="flex md:hidden items-center justify-between gap-4 mt-3 px-1" dir={isArabic ? 'rtl' : 'ltr'}>
+            <div className="flex-1 h-[3.5px] bg-slate-200/90 dark:bg-slate-800 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-[#0d5c52] dark:bg-[#2dd4bf] rounded-full transition-[width] duration-300"
+                style={{
+                  width: `${Math.min(100, Math.max(8, ((activeSlideIndex + 1) / Math.max(1, filteredPosts.length)) * 100))}%`
+                }}
+              />
+            </div>
+            <div className="flex items-baseline gap-1 font-sans shrink-0 tabular-nums">
+              <span className="text-base font-black text-slate-900 dark:text-white">
+                {String(activeSlideIndex + 1).padStart(2, '0')}
+              </span>
+              <span className="text-xs font-bold text-slate-600 dark:text-slate-300">
+                / {filteredPosts.length}
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Bottom Banner with Consultation Hook Aligned with Brand Palette */}
         <div className="mt-10 sm:mt-14 p-6 sm:p-8 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6 border border-[#0d5c52]/20 dark:border-[#2dd4bf]/20 bg-gradient-to-r from-[#dff1ec]/60 via-white dark:via-slate-900 to-[#dff1ec]/30 dark:from-teal-950/40 dark:to-slate-900 shadow-sm">
@@ -489,13 +893,27 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
                 );
               })()}
 
-              <button
-                onClick={() => setSelectedPost(null)}
-                className="w-9 h-9 rounded-full bg-slate-100 dark:bg-[#111827] text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1F2937] flex items-center justify-center transition-colors cursor-pointer"
-                aria-label="Close"
-              >
-                <X className="w-5 h-5" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={(e) => handleShare(e, selectedPost)}
+                  className="w-9 h-9 rounded-full bg-slate-100 dark:bg-[#111827] text-slate-700 dark:text-slate-300 hover:bg-[#dff1ec] dark:hover:bg-teal-950/60 hover:text-[#0d5c52] dark:hover:text-[#2dd4bf] flex items-center justify-center transition-colors relative cursor-pointer"
+                  aria-label={isArabic ? 'مشاركة المقال' : 'Share article'}
+                >
+                  <Share2 className="w-4 h-4" />
+                  {shareFeedback === selectedPost.id && (
+                    <span className="absolute -bottom-8 right-0 text-[10px] bg-slate-900 text-white px-2 py-0.5 rounded shadow whitespace-nowrap z-30">
+                      {isArabic ? 'تم نسخ الرابط' : 'Link copied'}
+                    </span>
+                  )}
+                </button>
+                <button
+                  onClick={() => setSelectedPost(null)}
+                  className="w-9 h-9 rounded-full bg-slate-100 dark:bg-[#111827] text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#1F2937] flex items-center justify-center transition-colors cursor-pointer"
+                  aria-label="Close"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Modal Content */}
@@ -603,12 +1021,43 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
               )}
 
               {/* Full Article Text */}
-              <div className="space-y-4 text-sm sm:text-base text-slate-700 dark:text-slate-200 leading-loose">
-                {(isArabic ? selectedPost.content : (selectedPost.contentEn || selectedPost.content)).map((paragraph, idx) => (
-                  <p key={idx} className="font-normal">
-                    {paragraph}
-                  </p>
-                ))}
+              <div className="space-y-3.5 text-sm sm:text-base text-slate-700 dark:text-slate-200 leading-loose">
+                {(isArabic ? selectedPost.content : (selectedPost.contentEn || selectedPost.content)).map((block, idx) => {
+                  const trimmed = (block || '').trim();
+                  if (trimmed.startsWith('## ')) {
+                    return (
+                      <h4
+                        key={idx}
+                        className="text-lg sm:text-xl font-black text-[#0f2d29] dark:text-[#2dd4bf] pt-4 pb-1 border-b border-slate-200/70 dark:border-white/10"
+                      >
+                        {trimmed.slice(3)}
+                      </h4>
+                    );
+                  }
+                  if (trimmed.startsWith('### ')) {
+                    return (
+                      <h5
+                        key={idx}
+                        className="text-base sm:text-lg font-extrabold text-[#0284C7] dark:text-sky-300 pt-3"
+                      >
+                        {trimmed.slice(4)}
+                      </h5>
+                    );
+                  }
+                  if (trimmed.startsWith('• ')) {
+                    return (
+                      <div key={idx} className="flex items-start gap-2.5 pr-1 sm:pr-3">
+                        <span className="w-2 h-2 rounded-full bg-[#0d5c52] dark:bg-[#2dd4bf] shrink-0 mt-3" />
+                        <span className="font-normal leading-relaxed">{trimmed.slice(2)}</span>
+                      </div>
+                    );
+                  }
+                  return (
+                    <p key={idx} className="font-normal">
+                      {trimmed}
+                    </p>
+                  );
+                })}
               </div>
 
               {/* Tags */}

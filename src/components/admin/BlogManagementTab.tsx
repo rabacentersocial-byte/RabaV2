@@ -157,18 +157,18 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
     setEditingPost(null);
     setFormTitle('');
     setFormTitleEn('');
-    setFormCategory('autism');
-    setFormCategoryTitle('طيف التوحد والتدخل المبكر');
-    setFormImage('https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=800&q=80');
+    setFormCategory('psychology');
+    setFormCategoryTitle('علم النفس والأعصاب');
+    setFormImage('/images/hero/card_2_assessment.webp');
     setFormExcerpt('');
     setFormExcerptEn('');
     setFormContent('');
     setFormKeyTakeaways('');
-    setFormAuthorName('د. هناء محمد بشير');
-    setFormAuthorRole('المدير الطبي – استشاري علم نفس');
-    setFormAuthorAvatar('/specialists/hanaa_basheer.jpg');
+    setFormAuthorName('أ. عامر قادوس');
+    setFormAuthorRole('أخصائي التأهيل العصبي وباحث علم النفس العصبي | محلل سلوك دولي IBA');
+    setFormAuthorAvatar('/specialists/61_amer-qadoos.webp');
     setFormReadTime(5);
-    setFormTags('طيف التوحد, التدخل المبكر, تأهيل');
+    setFormTags('علم النفس والأعصاب, التأهيل العصبي');
     setFormStatus('published');
     setFormIsSliderFeatured(true);
     setIsModalOpen(true);
@@ -252,6 +252,7 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
       .filter((t) => t.length > 0);
 
     const categoryColorMap: Record<string, string> = {
+      psychology: 'sky',
       autism: 'sky',
       aba: 'emerald',
       occupational: 'amber',
@@ -419,6 +420,7 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
           { id: 'slider', label: isArabic ? 'معروض في السلايدر' : 'Featured in Slider' },
           { id: 'published', label: isArabic ? 'منشور' : 'Published' },
           { id: 'draft', label: isArabic ? 'مسودة' : 'Draft' },
+          { id: 'psychology', label: isArabic ? 'علم النفس والأعصاب' : 'Psychology' },
           { id: 'autism', label: isArabic ? 'طيف التوحد' : 'Autism' },
           { id: 'aba', label: 'ABA' },
           { id: 'occupational', label: isArabic ? 'علاج وظيفي' : 'Occupational' },
@@ -624,7 +626,7 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
                     required
                     value={formTitle}
                     onChange={(e) => setFormTitle(e.target.value)}
-                    placeholder="مثال: علامات التدخل المبكر لطيف التوحد"
+                    placeholder="مثال: تفسير اضطراب تبدد الشخصية وتبدد الواقع"
                     className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#00E5BE]/30"
                   />
                 </div>
@@ -655,6 +657,7 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
                       const cat = e.target.value as any;
                       setFormCategory(cat);
                       const titles: Record<string, string> = {
+                        psychology: 'علم النفس والأعصاب',
                         autism: 'طيف التوحد والتدخل المبكر',
                         aba: 'تحليل السلوك التطبيقي (ABA)',
                         occupational: 'العلاج الوظيفي والتكامل الحسي',
@@ -665,6 +668,7 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
                     }}
                     className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-xs text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#00E5BE]/30"
                   >
+                    <option value="psychology">علم النفس والأعصاب</option>
                     <option value="autism">طيف التوحد والتدخل المبكر</option>
                     <option value="aba">تحليل السلوك التطبيقي (ABA)</option>
                     <option value="occupational">العلاج الوظيفي والتكامل الحسي</option>

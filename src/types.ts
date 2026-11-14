@@ -264,7 +264,7 @@ export interface BlogPost {
   excerptEn?: string;
   content: string[];
   contentEn?: string[];
-  category: 'autism' | 'occupational' | 'speech' | 'aba' | 'family_guidance';
+  category: 'autism' | 'occupational' | 'speech' | 'aba' | 'family_guidance' | 'psychology';
   categoryTitle: string;
   categoryTitleEn?: string;
   categoryColor: string; // e.g. 'sky' | 'emerald' | 'amber' | 'rose' | 'purple'

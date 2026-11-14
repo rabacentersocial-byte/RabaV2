@@ -317,10 +317,44 @@ export async function initPersistentSync(): Promise<void> {
       // When server/Firestore has a value, it is AUTHORITATIVE over stale browser cache
       if (serverVal !== undefined && serverVal !== null) {
         try {
-          const stringified = typeof serverVal === 'string' ? serverVal : JSON.stringify(serverVal);
+          let effectiveServerVal = serverVal;
+          if (storageKey === SYNC_KEYS.BLOG_POSTS && Array.isArray(serverVal)) {
+            const isLegacy6 =
+              serverVal.length > 0 &&
+              serverVal.length <= 6 &&
+              serverVal.every((p: any) => typeof p?.id === 'string' && /^blog-[1-6]$/.test(p.id));
+            const needsNewDefaultPosts =
+              !localStorage.getItem('raba_blog_migrated_2026_11_15_v7') &&
+              !serverVal.some((p: any) => p?.id === 'blog-pairing-aba-ahmed-abouzeid');
+
+            if (isLegacy6) {
+              const { BLOG_POSTS } = await import('../data/blogData');
+              effectiveServerVal = BLOG_POSTS;
+              localKeysToPush[storageKey] = BLOG_POSTS;
+              localStorage.setItem('raba_blog_migrated_2026_11_15_v7', '1');
+            } else if (needsNewDefaultPosts) {
+              const { BLOG_POSTS } = await import('../data/blogData');
+              const missingDefaults = BLOG_POSTS.filter(
+                (def) => !serverVal.some((p: any) => p?.id === def.id)
+              );
+              if (missingDefaults.length > 0) {
+                effectiveServerVal = [
+                  ...serverVal,
+                  ...missingDefaults.map((def, idx) => ({
+                    ...def,
+                    order: serverVal.length + idx + 1
+                  }))
+                ];
+                localKeysToPush[storageKey] = effectiveServerVal;
+              }
+              localStorage.setItem('raba_blog_migrated_2026_11_15_v7', '1');
+            }
+          }
+
+          const stringified = typeof effectiveServerVal === 'string' ? effectiveServerVal : JSON.stringify(effectiveServerVal);
           const isChanged = localValRaw !== stringified;
 
-          IN_MEMORY_SYNC_CACHE.set(storageKey, serverVal);
+          IN_MEMORY_SYNC_CACHE.set(storageKey, effectiveServerVal);
           localStorage.setItem(storageKey, stringified);
           localStorage.setItem(`raba_ts_${storageKey}`, Date.now().toString());
 
@@ -330,7 +364,7 @@ export async function initPersistentSync(): Promise<void> {
           // Dispatch reactive update event
           const eventName = EVENT_MAP[storageKey];
           if (eventName && isChanged) {
-            window.dispatchEvent(new CustomEvent(eventName, { detail: serverVal }));
+            window.dispatchEvent(new CustomEvent(eventName, { detail: effectiveServerVal }));
           }
         } catch (e) {
           console.error(`[PersistentSync] Failed to store ${storageKey}:`, e);
