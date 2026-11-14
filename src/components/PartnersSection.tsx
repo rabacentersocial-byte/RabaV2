@@ -60,14 +60,16 @@ function computeConcaveArcCoords(
   perspective: number,
   maxAngleDeg: number,
   zCenter: number,
-  zDepth: number
+  zDepth: number,
+  angleSlope: number,
+  depthFreq: number
 ) {
   const absD = Math.abs(d);
   const sign = d < 0 ? -1 : 1;
   const maxAngleRad = (maxAngleDeg * Math.PI) / 180;
 
-  const evalAngleRad = (u: number) => maxAngleRad * Math.tanh(u * 0.36);
-  const evalZ = (u: number) => -zCenter + zDepth * (1 - Math.cos(Math.min(Math.PI / 2, u * 0.4)));
+  const evalAngleRad = (u: number) => maxAngleRad * Math.tanh(u * angleSlope);
+  const evalZ = (u: number) => -zCenter + zDepth * (1 - Math.cos(Math.min(Math.PI / 2, u * depthFreq)));
   const evalFootprint = (u: number) => {
     const z = evalZ(u);
     const proj = perspective / Math.max(240, perspective - z);
@@ -120,7 +122,7 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
   const ringItems = useMemo(() => {
     if (items.length === 0) return [];
     if (items.length <= 2) return items;
-    const targetMin = isMobile ? 7 : 13;
+    const targetMin = isMobile ? 9 : 13;
     const out: PartnerItem[] = [];
     while (out.length < targetMin) {
       out.push(...items);
@@ -177,13 +179,15 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
     const ringLen = ringItems.length;
     const baseLen = Math.max(1, items.length);
 
-    const cardW = isMobile ? 164 : 216;
+    const cardW = isMobile ? 124 : 216;
     const gap = isMobile ? 12 : 18;
-    const perspective = isMobile ? 900 : 1120;
-    const maxAngleDeg = isMobile ? 26 : 31;
-    const zCenter = isMobile ? 130 : 210;
-    const zDepth = isMobile ? 240 : 390;
-    const maxVisible = isMobile ? 2.45 : 4.55;
+    const perspective = isMobile ? 560 : 1120;
+    const maxAngleDeg = isMobile ? 38 : 31;
+    const zCenter = isMobile ? 155 : 210;
+    const zDepth = isMobile ? 285 : 390;
+    const angleSlope = isMobile ? 0.42 : 0.36;
+    const depthFreq = isMobile ? 0.48 : 0.4;
+    const maxVisible = isMobile ? 3.5 : 4.55;
 
     const tick = (now: number) => {
       const dt = Math.min(0.05, Math.max(0.001, (now - lastTime) / 1000));
@@ -238,11 +242,14 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
           perspective,
           maxAngleDeg,
           zCenter,
-          zDepth
+          zDepth,
+          angleSlope,
+          depthFreq
         );
 
-        const fadeStart = maxVisible - 0.65;
-        const opacity = absD > fadeStart ? Math.max(0, 1 - (absD - fadeStart) / 0.65) : 1;
+        const fadeWindow = isMobile ? 0.35 : 0.65;
+        const fadeStart = maxVisible - fadeWindow;
+        const opacity = absD > fadeStart ? Math.max(0, 1 - (absD - fadeStart) / fadeWindow) : 1;
 
         el.style.transform = `translate3d(${xWorld.toFixed(2)}px, 0px, ${zPx.toFixed(2)}px) rotateY(${angleDeg.toFixed(2)}deg)`;
         el.style.opacity = opacity.toFixed(3);
@@ -269,7 +276,7 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
         didDragMoveRef.current = true;
       }
 
-      const stride = isMobile ? 165 : 215;
+      const stride = isMobile ? 115 : 215;
       posRef.current -= dx / stride;
 
       const now = performance.now();
@@ -360,9 +367,9 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
       onMouseLeave={() => {
         isHoveredRef.current = false;
       }}
-      className="relative w-full h-[270px] sm:h-[340px] md:h-[365px] overflow-hidden flex items-center justify-center touch-pan-y cursor-grab active:cursor-grabbing select-none"
+      className="relative w-full h-[240px] sm:h-[320px] md:h-[365px] overflow-hidden flex items-center justify-center touch-pan-y cursor-grab active:cursor-grabbing select-none"
       style={{
-        perspective: isMobile ? '900px' : '1120px',
+        perspective: isMobile ? '560px' : '1120px',
         perspectiveOrigin: '50% 50%',
         transformStyle: 'preserve-3d',
       }}
@@ -370,9 +377,9 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
       {/* Subtle Ambient Horizon Arc */}
       <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-gradient-to-r from-transparent via-emerald-500/20 dark:via-emerald-400/25 to-transparent pointer-events-none" />
 
-      {/* Left & Right Soft Edge Vignettes */}
-      <div className="absolute top-0 bottom-0 left-0 w-6 sm:w-16 md:w-24 bg-gradient-to-r from-[#F8FAFC] via-[#F8FAFC]/55 to-transparent dark:from-[#0D1B2A] dark:via-[#0D1B2A]/60 dark:to-transparent z-[200] pointer-events-none" />
-      <div className="absolute top-0 bottom-0 right-0 w-6 sm:w-16 md:w-24 bg-gradient-to-l from-[#F8FAFC] via-[#F8FAFC]/55 to-transparent dark:from-[#0D1B2A] dark:via-[#0D1B2A]/60 dark:to-transparent z-[200] pointer-events-none" />
+      {/* Desktop Left & Right Soft Edge Vignettes (Mobile shows edge-to-edge sweeping cards cleanly) */}
+      <div className="hidden md:block absolute top-0 bottom-0 left-0 w-16 lg:w-24 bg-gradient-to-r from-[#F8FAFC] via-[#F8FAFC]/55 to-transparent dark:from-[#0D1B2A] dark:via-[#0D1B2A]/60 dark:to-transparent z-[200] pointer-events-none" />
+      <div className="hidden md:block absolute top-0 bottom-0 right-0 w-16 lg:w-24 bg-gradient-to-l from-[#F8FAFC] via-[#F8FAFC]/55 to-transparent dark:from-[#0D1B2A] dark:via-[#0D1B2A]/60 dark:to-transparent z-[200] pointer-events-none" />
 
       {ringItems.map((partner, idx) => (
         <div
@@ -391,11 +398,11 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
           }}
-          className="group absolute w-[164px] h-[222px] md:w-[216px] md:h-[278px] rounded-[22px] md:rounded-[26px] p-2.5 md:p-3 bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-white/12 shadow-[0_18px_40px_-14px_rgba(15,23,42,0.16)] dark:shadow-[0_22px_45px_-12px_rgba(0,0,0,0.6)] hover:border-emerald-500/60 dark:hover:border-[#2DD4BF]/50 flex flex-col items-center justify-between cursor-pointer overflow-hidden"
+          className="group absolute w-[124px] h-[190px] md:w-[216px] md:h-[278px] rounded-[18px] md:rounded-[26px] p-2 md:p-3 bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-white/12 shadow-[0_18px_40px_-14px_rgba(15,23,42,0.16)] dark:shadow-[0_22px_45px_-12px_rgba(0,0,0,0.6)] hover:border-emerald-500/60 dark:hover:border-[#2DD4BF]/50 flex flex-col items-center justify-between cursor-pointer overflow-hidden"
         >
           {/* Logo Showcase Window (Pure white background in both light & dark themes) */}
           <div
-            className="w-full flex-1 rounded-[16px] md:rounded-[18px] border border-slate-100 dark:border-white/10 bg-white flex items-center justify-center p-2 md:p-3 overflow-hidden relative shadow-2xs"
+            className="w-full flex-1 rounded-[12px] md:rounded-[18px] border border-slate-100 dark:border-white/10 bg-white flex items-center justify-center p-1.5 md:p-3 overflow-hidden relative shadow-2xs"
             style={{ backgroundColor: '#ffffff' }}
           >
             <PartnerLogoRenderer
@@ -412,22 +419,22 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
 
             {/* Subtle Corner Action Indicator matching card affordance */}
             <span
-              className="w-7 h-7 rounded-full bg-slate-900/8 dark:bg-slate-900/12 text-slate-700 group-hover:bg-[#0D6D54] group-hover:text-white flex items-center justify-center absolute bottom-2 left-2 rtl:left-auto rtl:right-2 transition-colors pointer-events-none"
+              className="w-6 h-6 md:w-7 md:h-7 rounded-full bg-slate-900/8 dark:bg-slate-900/12 text-slate-700 group-hover:bg-[#0D6D54] group-hover:text-white flex items-center justify-center absolute bottom-1.5 left-1.5 md:bottom-2 md:left-2 rtl:left-auto rtl:right-1.5 md:rtl:right-2 transition-colors pointer-events-none"
               aria-hidden="true"
             >
-              <ArrowUpRight className="w-3.5 h-3.5 rtl:-scale-x-100" />
+              <ArrowUpRight className="w-3 h-3 md:w-3.5 md:h-3.5 rtl:-scale-x-100" />
             </span>
           </div>
 
           {/* Card Footer Metadata */}
-          <div className="w-full pt-2 md:pt-2.5 px-1 text-center shrink-0">
+          <div className="w-full pt-1.5 md:pt-2.5 px-0.5 md:px-1 text-center shrink-0">
             <span
-              className="text-[10.5px] md:text-[11px] font-bold block truncate"
+              className="text-[9.5px] md:text-[11px] font-bold block truncate"
               style={{ color: partner.accentColor || '#0D6D54' }}
             >
               {partner.badge || (isArabic ? 'شريك وطني' : 'Partner')}
             </span>
-            <h3 className="text-xs md:text-[14px] font-black text-slate-900 dark:text-white leading-tight mt-0.5 truncate group-hover:text-[#0D6D54] dark:group-hover:text-[#2DD4BF] transition-colors">
+            <h3 className="text-[11px] md:text-[14px] font-black text-slate-900 dark:text-white leading-tight mt-0.5 truncate group-hover:text-[#0D6D54] dark:group-hover:text-[#2DD4BF] transition-colors">
               {isArabic ? partner.name : partner.nameEn}
             </h3>
             <p className="hidden md:block text-[11px] text-slate-600 dark:text-slate-300 font-medium truncate mt-0.5">
