@@ -21,7 +21,6 @@ import { SPECIALISTS, SERVICES, THERAPY_PACKAGES, TIME_SLOTS } from '../data/moc
 import { Specialist, ServiceItem, TherapyPackage, Appointment } from '../types';
 import { 
   generateRequestReference, 
-  saveAndBroadcastCustomerRequest,
   saveAndBroadcastCustomerRequestAsync,
   getCustomerWhatsAppMessage 
 } from '../data/customerRequests';

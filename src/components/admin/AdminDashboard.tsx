@@ -70,6 +70,10 @@ interface AdminDashboardProps {
   onLogout?: () => void;
   appointments: Appointment[];
   onUpdateAppointments: (updated: Appointment[]) => void;
+  isSyncingAppointments?: boolean;
+  appointmentsSyncError?: string | null;
+  isFirebaseAuthenticated?: boolean;
+  onRefreshAppointments?: () => Promise<void> | void;
   reviews: ParentReview[];
   onUpdateReviews: (updated: ParentReview[]) => void;
   specialists?: Specialist[];
@@ -81,6 +85,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onLogout,
   appointments,
   onUpdateAppointments,
+  isSyncingAppointments = false,
+  appointmentsSyncError = null,
+  isFirebaseAuthenticated = false,
+  onRefreshAppointments,
   reviews,
   onUpdateReviews,
   specialists,
@@ -710,6 +718,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <AppointmentsTab
               appointments={appointments}
               onUpdateAppointments={onUpdateAppointments}
+              isSyncingAppointments={isSyncingAppointments}
+              appointmentsSyncError={appointmentsSyncError}
+              isFirebaseAuthenticated={isFirebaseAuthenticated}
+              onRefreshAppointments={onRefreshAppointments}
               hasPermission={hasPermission}
             />
           )}

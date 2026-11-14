@@ -23,7 +23,6 @@ import { useLanguage } from '../context/LanguageContext';
 import { Appointment, StoreOrderItem } from '../types';
 import { 
   generateRequestReference, 
-  saveAndBroadcastCustomerRequest,
   saveAndBroadcastCustomerRequestAsync,
   getCustomerWhatsAppMessage 
 } from '../data/customerRequests';
@@ -591,10 +590,11 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:brightness-110 text-white font-bold rounded-xl flex items-center gap-2 shadow-md cursor-pointer transition-all"
+                  disabled={isSubmitting}
+                  className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:brightness-110 text-white font-bold rounded-xl flex items-center gap-2 shadow-md cursor-pointer transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <Send className={`w-3.5 h-3.5 ${isArabic ? 'rotate-180' : ''}`} />
-                  <span>{isArabic ? 'إرسال طلب الشراء إلى الإدارة' : 'Submit Order to Admin'}</span>
+                  <span>{isSubmitting ? (isArabic ? 'جاري حفظ وإرسال الطلب...' : 'Submitting order...') : (isArabic ? 'إرسال طلب الشراء إلى الإدارة' : 'Submit Order to Admin')}</span>
                 </button>
               </div>
             </form>

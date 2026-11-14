@@ -107,6 +107,7 @@ export interface TherapyPackage {
 export type CustomerRequestType = 
   | 'appointment'          // حجز جلسة عيادة
   | 'package'              // باقة تأهيلية
+  | 'course'               // تسجيل كورس / دورة تدريبية
   | 'shadow_teacher'       // طلب خدمة معلم ظل
   | 'national_day_offer'   // عرض اليوم الوطني 96
   | 'quick_consultation'   // استشارة سريعة / اتصال هاتفي
@@ -146,10 +147,14 @@ export interface Appointment {
     intervals?: string[];
   };
   createdAt: string;
+  createdAtISO?: string;
+  updatedAt?: string;
 
   // Enriched Customer Request fields:
+  type?: string;
   requestType?: CustomerRequestType;
   requestSource?: string;
+  branch?: string;
   city?: string;
   childBirthDate?: string;
   couponCode?: string;

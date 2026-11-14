@@ -19,7 +19,6 @@ import confetti from 'canvas-confetti';
 import { Appointment } from '../types';
 import { 
   generateRequestReference, 
-  saveAndBroadcastCustomerRequest,
   saveAndBroadcastCustomerRequestAsync,
   getCustomerWhatsAppMessage 
 } from '../data/customerRequests';
@@ -124,6 +123,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
         ? `طلب تسجيل خدمة سِوار (معلم ظل مدرسي) من الموقع. المدينة: ${formData.city}`
         : `Sewar Shadow Teacher application from website. City: ${formData.city}`,
       city: formData.city,
+      branch: formData.city,
       status: 'new', // Flagged as new request in Admin Dashboard
       paymentStatus: 'unpaid',
       amount: 0,

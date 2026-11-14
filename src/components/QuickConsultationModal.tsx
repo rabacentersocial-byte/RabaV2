@@ -16,7 +16,6 @@ import { useLanguage } from '../context/LanguageContext';
 import { Appointment } from '../types';
 import { 
   generateRequestReference, 
-  saveAndBroadcastCustomerRequest,
   saveAndBroadcastCustomerRequestAsync,
   getCustomerWhatsAppMessage 
 } from '../data/customerRequests';
@@ -129,6 +128,7 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
 
   const handleClose = () => {
     setSubmittedRequest(null);
+    setError('');
     setParentName('');
     setPhone('');
     setNotes('');

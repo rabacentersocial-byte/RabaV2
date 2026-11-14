@@ -17,8 +17,9 @@ import {
 import { RabaLogo } from '../RabaLogo';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 import { AdminUser } from '../../types';
-import { authenticateAdmin } from '../../data/adminData';
+import { authenticateAdmin, authenticateAdminWithGoogle } from '../../data/adminData';
 
 interface AdminLoginPageProps {
   onLoginSuccess: (user: AdminUser) => void;
@@ -31,6 +32,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
 }) => {
   const { isArabic, toggleLanguage } = useLanguage();
   const { theme, toggleTheme } = useTheme();
+  const { signInWithGoogle } = useAuth();
   const isDark = theme === 'dark';
 
   const [identifier, setIdentifier] = useState('');
@@ -39,9 +41,48 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
   const [rememberMe, setRememberMe] = useState(true);
   
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    setErrorMessage(null);
+    setIsGoogleLoading(true);
+    try {
+      await signInWithGoogle();
+      const { getLazyAuth } = await import('../../lib/firebase');
+      const authInstance = await getLazyAuth();
+      const fbUser = authInstance.currentUser;
+      if (!fbUser) {
+        throw new Error('لم يكتمل التحقق من حساب Google');
+      }
+      const adminUser = authenticateAdminWithGoogle({
+        uid: fbUser.uid,
+        email: fbUser.email,
+        displayName: fbUser.displayName,
+        photoURL: fbUser.photoURL
+      });
+      setIsSuccess(true);
+      setTimeout(() => {
+        onLoginSuccess(adminUser);
+      }, 600);
+    } catch (err: any) {
+      console.error('[AdminLoginPage] Google sign-in error:', err);
+      const code = err?.code || '';
+      if (code === 'auth/popup-closed-by-user') {
+        setErrorMessage(isArabic ? 'تم إغلاق نافذة تسجيل الدخول قبل إتمام العملية.' : 'Sign-in popup was closed before completing.');
+      } else {
+        setErrorMessage(
+          isArabic
+            ? 'تعذر تسجيل الدخول عبر Google. تأكد من السماح بالنوافذ المنبثقة وإضافة النطاق في Firebase Auth.'
+            : 'Google sign-in failed. Please allow popups and verify Firebase Auth authorized domains.'
+        );
+      }
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -270,7 +311,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={isLoading || isGoogleLoading}
                   className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#0E2A54] to-[#2E86EB] hover:opacity-95 active:scale-[0.99] text-white font-black text-sm transition-all shadow-lg shadow-[#2E86EB]/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed mt-2"
                 >
                   {isLoading ? (
@@ -282,6 +323,40 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
                     <>
                       <Lock className="w-4 h-4 text-blue-300" />
                       <span>{isArabic ? 'تسجيل الدخول إلى لوحة التحكم' : 'Sign In to Dashboard'}</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Divider */}
+                <div className="relative flex items-center py-1">
+                  <div className="flex-grow border-t border-white/10" />
+                  <span className="flex-shrink mx-3 text-[11px] font-bold text-slate-400">
+                    {isArabic ? 'أو للمزامنة السحابية المباشرة (Firestore)' : 'Or for live Firestore Cloud Sync'}
+                  </span>
+                  <div className="flex-grow border-t border-white/10" />
+                </div>
+
+                {/* Google Cloud Auth Button */}
+                <button
+                  type="button"
+                  onClick={handleGoogleSignIn}
+                  disabled={isLoading || isGoogleLoading}
+                  className="w-full py-3 rounded-2xl bg-white hover:bg-slate-100 active:scale-[0.99] text-slate-900 font-bold text-xs sm:text-sm transition-all shadow-md flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isGoogleLoading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-slate-700 border-t-transparent rounded-full animate-spin" />
+                      <span>{isArabic ? 'جاري الاتصال بـ Google...' : 'Connecting to Google...'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z" />
+                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z" />
+                        <path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z" />
+                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z" />
+                      </svg>
+                      <span>{isArabic ? 'تسجيل الدخول عبر Google (المزامنة السحابية)' : 'Sign in with Google (Cloud Sync)'}</span>
                     </>
                   )}
                 </button>

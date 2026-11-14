@@ -31,6 +31,7 @@ import {
   optimizeImageBuffer
 } from './src/server/utils/imageOptimizer.ts';
 import {
+  adminAuth,
   adminDb,
   saveAdminFirestoreSetting,
   getAllAdminFirestoreSettings,
@@ -542,7 +543,7 @@ async function startServer() {
   });
 
   // 4. Secure Server-Side Admin Authentication Endpoint
-  app.post('/api/admin/login', adminLoginLimiter, (req: Request, res: Response) => {
+  app.post('/api/admin/login', adminLoginLimiter, async (req: Request, res: Response) => {
     try {
       const { identifier, password } = req.body || {};
       if (!identifier || !password) {
@@ -579,6 +580,19 @@ async function startServer() {
       const tokenPayload = `${matchedUser.id}:${matchedUser.username}:${Date.now()}`;
       const token = Buffer.from(tokenPayload).toString('base64');
 
+      // Generate Firebase Custom Token so client admin portal authenticates into Firestore rules (request.auth != null)
+      let customToken: string | undefined;
+      if (isFirestoreAdminConfigured()) {
+        try {
+          customToken = await adminAuth.createCustomToken(String(matchedUser.id), {
+            role: matchedUser.role,
+            email: matchedUser.email || ''
+          });
+        } catch (ctErr: any) {
+          console.warn('[Admin Auth] Notice creating Firebase custom token:', ctErr?.message || ctErr);
+        }
+      }
+
       // Strip sensitive password field before response
       const { password: _p, ...safeUser } = matchedUser;
       safeUser.lastLogin = 'الآن (متصل)';
@@ -586,7 +600,8 @@ async function startServer() {
       return res.json({
         success: true,
         user: safeUser,
-        token
+        token,
+        ...(customToken ? { customToken } : {})
       });
     } catch (err: any) {
       return sendSafeError(res, 500, 'فشل معالجة تسجيل الدخول', err);

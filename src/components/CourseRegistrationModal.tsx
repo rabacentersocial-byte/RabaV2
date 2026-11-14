@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { CourseItem } from '../data/coursesData';
 import { useLanguage } from '../context/LanguageContext';
-import { dispatchCustomerRequest, dispatchCustomerRequestAsync } from '../data/customerRequests';
+import { dispatchCustomerRequestAsync } from '../data/customerRequests';
 
 interface CourseRegistrationModalProps {
   course: CourseItem | null;
@@ -50,9 +50,21 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName.trim() || !phone.trim()) return;
-
     setErrorMessage('');
+
+    if (!fullName.trim() || fullName.trim().length < 2) {
+      setErrorMessage(isArabic ? 'يرجى كتابة الاسم الثلاثي' : 'Please enter your full name');
+      return;
+    }
+
+    const digits = phone.replace(/\D/g, '');
+    if (!phone.trim() || digits.length < 9) {
+      setErrorMessage(isArabic ? 'يرجى إدخال رقم جوال صحيح (مثال: 05XXXXXXXX)' : 'Please enter a valid mobile number (e.g. 05XXXXXXXX)');
+      return;
+    }
+
+    const parsedPrice = Number(String(course.currentPrice ?? '').replace(/[^0-9.]/g, '')) || 0;
+
     setIsSubmitting(true);
 
     try {
@@ -61,9 +73,14 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
         childName: `تسجيل دورة: ${course.shortTitle || course.titleAr}`,
         phone: phone.trim(),
         email: email.trim(),
-        serviceType: 'منصة رابا التعليمية - دورات وتدريب',
+        requestType: 'course',
+        type: 'course',
+        serviceId: course.id,
+        serviceType: course.titleAr,
         sourcePage: 'سلايدر الكورسات والدورات',
-        notes: `الدورة: ${course.titleAr} | الساعات: ${course.hoursBadgeAr} | المدينة: ${city} | التخصص: ${qualification} | طريقة الدفع المفضلة: ${paymentPlan} | ملاحظات: ${notes}`
+        city: city.trim() || 'الرياض',
+        amount: parsedPrice,
+        notes: `الدورة: ${course.titleAr} | الساعات: ${course.hoursBadgeAr} | المدينة: ${city || 'الرياض'} | التخصص: ${qualification || 'غير محدد'} | طريقة الدفع المفضلة: ${paymentPlan} | ملاحظات: ${notes || 'لا توجد'}`
       });
 
       setIsSuccess(true);

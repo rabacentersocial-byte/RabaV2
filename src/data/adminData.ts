@@ -384,11 +384,18 @@ export const getStoredAdminSession = (): AdminUser | null => {
       return null;
     }
 
-    // Verify user exists and is active
+    // Verify user exists in stored list or matches active Google/current session user
     const users = getStoredAdminUsers();
     const user = users.find(u => u.id === sessionData.userId);
     if (user && user.status === 'active') {
       return user;
+    }
+    const rawCurrent = localStorage.getItem('raba_current_admin_user');
+    if (rawCurrent) {
+      const current = JSON.parse(rawCurrent) as AdminUser;
+      if (current && current.id === sessionData.userId && current.status !== 'suspended') {
+        return current;
+      }
     }
     return null;
   } catch {
@@ -454,6 +461,18 @@ export const authenticateAdmin = async (identifier: string, pass: string): Promi
     if (response.ok) {
       const data = await response.json();
       if (data.success && data.user) {
+        if (data.customToken) {
+          try {
+            const [{ getLazyAuth }, { signInWithCustomToken }] = await Promise.all([
+              import('../lib/firebase'),
+              import('firebase/auth')
+            ]);
+            const authInstance = await getLazyAuth();
+            await signInWithCustomToken(authInstance, data.customToken);
+          } catch (fbErr) {
+            console.warn('[Admin Auth] Firebase custom token sign-in notice:', fbErr);
+          }
+        }
         saveStoredAdminSession(data.user, data.token);
         return {
           success: true,
@@ -512,4 +531,41 @@ export const authenticateAdmin = async (identifier: string, pass: string): Promi
     user: updatedUser,
     token: offlineToken
   };
+};
+
+export const authenticateAdminWithGoogle = (firebaseUser: {
+  uid: string;
+  email?: string | null;
+  displayName?: string | null;
+  photoURL?: string | null;
+}): AdminUser => {
+  const emailLower = (firebaseUser.email || '').trim().toLowerCase();
+  const users = getStoredAdminUsers();
+  const matched = emailLower
+    ? users.find((u) => u.email?.toLowerCase() === emailLower && u.status !== 'suspended')
+    : undefined;
+
+  const resolvedUser: AdminUser = matched
+    ? { ...matched, lastLogin: 'الآن (متصل عبر Google)', avatar: firebaseUser.photoURL || matched.avatar }
+    : {
+        id: firebaseUser.uid,
+        name: firebaseUser.displayName || firebaseUser.email || 'مدير النظام (Google)',
+        nameEn: firebaseUser.displayName || firebaseUser.email || 'System Admin',
+        username: (firebaseUser.email || 'admin').split('@')[0],
+        email: firebaseUser.email || 'admin@raba.sa',
+        phone: '',
+        role: 'super_admin',
+        roleTitleAr: 'المدير العام والتنفيذي',
+        roleTitleEn: 'Super Administrator',
+        department: 'الإدارة التنفيذية العليا',
+        status: 'active',
+        avatar: firebaseUser.photoURL || '',
+        permissions: ROLE_PRESETS[0].defaultPermissions,
+        createdAt: new Date().toISOString().split('T')[0],
+        lastLogin: 'الآن (متصل عبر Google)'
+      };
+
+  const sessionToken = btoa(`${resolvedUser.id}:${resolvedUser.username}:${Date.now()}`);
+  saveStoredAdminSession(resolvedUser, sessionToken);
+  return resolvedUser;
 };

@@ -219,16 +219,10 @@ export default function App() {
     window.addEventListener('raba_theme_updated', handleThemeUpdate);
     window.addEventListener('raba_modules_updated', handleModulesUpdate);
 
-    const handleNewRequest = async (e: any) => {
+    const handleNewRequest = (e: any) => {
       const req = e?.detail as Appointment;
       if (req) {
         setAppointments((prev) => [req, ...prev.filter(a => a.id !== req.id)]);
-        try {
-          const { saveAppointmentToFirestore } = await import('./services/firestoreService');
-          await saveAppointmentToFirestore(req);
-        } catch (err) {
-          console.error('[App] Error persisting appointment to Firestore in handleNewRequest:', err);
-        }
       }
     };
     const handleNotifsUpdate = (e: any) => {
@@ -455,6 +449,24 @@ export default function App() {
   const [isBlogPageOpen, setIsBlogPageOpen] = useState(false);
   const [activeBlogSlug, setActiveBlogSlug] = useState<string | null>(null);
   const [adminSession, setAdminSession] = useState<AdminUser | null>(() => readInitialAdminSession());
+  const [firebaseAdminUid, setFirebaseAdminUid] = useState<string | null>(null);
+  const [appointmentsSyncLoading, setAppointmentsSyncLoading] = useState<boolean>(false);
+  const [appointmentsSyncError, setAppointmentsSyncError] = useState<string | null>(null);
+
+  const fetchCloudAppointments = React.useCallback(async () => {
+    setAppointmentsSyncLoading(true);
+    setAppointmentsSyncError(null);
+    try {
+      const { getAppointmentsFromFirestore } = await import('./services/firestoreService');
+      const cloudList = await getAppointmentsFromFirestore();
+      setAppointments(cloudList);
+    } catch (err: any) {
+      console.error('[App] Failed to fetch appointments from Firestore:', err);
+      setAppointmentsSyncError(err?.message || String(err));
+    } finally {
+      setAppointmentsSyncLoading(false);
+    }
+  }, []);
 
   // Lazy-hydrate fallback mockData & specialist deduplication after Hero render / on interactive demand
   useEffect(() => {
@@ -478,15 +490,17 @@ export default function App() {
       } = mock;
       const { deduplicateSpecialists } = dedup;
 
-      setAppointments((prev) => {
-        if (prev.length > 0) return prev;
-        const seen = new Set<string>();
-        return INITIAL_APPOINTMENTS.filter((item) => {
-          if (!item || !item.id || seen.has(item.id)) return false;
-          seen.add(item.id);
-          return true;
+      if (!isAdminOpen) {
+        setAppointments((prev) => {
+          if (prev.length > 0) return prev;
+          const seen = new Set<string>();
+          return INITIAL_APPOINTMENTS.filter((item) => {
+            if (!item || !item.id || seen.has(item.id)) return false;
+            seen.add(item.id);
+            return true;
+          });
         });
-      });
+      }
 
       setNotifications((prev) => (prev.length > 0 ? prev : INITIAL_NOTIFICATIONS));
       setTestimonials((prev) => (prev.length > 0 ? prev : PARENT_REVIEWS));
@@ -511,13 +525,68 @@ export default function App() {
     };
   }, [isReadyToHydrate, isAdminOpen, isSpecialistsPageOpen, isNotificationsOpen, isBookingOpen]);
 
-  // Validate admin session lazily only when admin portal is opened
+  // Validate admin session & Firebase Auth state lazily only when admin portal is opened
   useEffect(() => {
     if (!isAdminOpen) return;
     import('./data/adminData')
       .then(({ getStoredAdminSession }) => setAdminSession(getStoredAdminSession()))
       .catch(() => {});
+
+    let cancelled = false;
+    let unsubAuth: (() => void) | undefined;
+    Promise.all([
+      import('./lib/firebase'),
+      import('firebase/auth')
+    ]).then(async ([{ getLazyAuth }, { onAuthStateChanged }]) => {
+      if (cancelled) return;
+      const authInstance = await getLazyAuth();
+      if (cancelled) return;
+      setFirebaseAdminUid(authInstance.currentUser?.uid || null);
+      unsubAuth = onAuthStateChanged(authInstance, (user) => {
+        if (!cancelled) {
+          setFirebaseAdminUid(user?.uid || null);
+        }
+      });
+    }).catch(() => {});
+
+    return () => {
+      cancelled = true;
+      if (unsubAuth) unsubAuth();
+    };
   }, [isAdminOpen]);
+
+  // Fetch & subscribe to live Firestore appointments whenever Admin Dashboard is active
+  useEffect(() => {
+    if (!isAdminOpen || !adminSession) return;
+    let cancelled = false;
+    let unsubAppointments: (() => void) | undefined;
+
+    fetchCloudAppointments();
+
+    import('./services/firestoreService')
+      .then(({ subscribeAppointments }) => {
+        if (cancelled) return;
+        unsubAppointments = subscribeAppointments(
+          (cloudList) => {
+            if (!cancelled) {
+              setAppointments(cloudList);
+              setAppointmentsSyncError(null);
+            }
+          },
+          (err) => {
+            if (!cancelled) {
+              setAppointmentsSyncError(err?.message || String(err));
+            }
+          }
+        );
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+      if (unsubAppointments) unsubAppointments();
+    };
+  }, [isAdminOpen, adminSession?.id, firebaseAdminUid, fetchCloudAppointments]);
   const [cartCount, setCartCount] = useState(0);
   const [selectedCourseForRegistration, setSelectedCourseForRegistration] = useState<CourseItem | null>(null);
   const [isCourseRegistrationOpen, setIsCourseRegistrationOpen] = useState(false);
@@ -784,20 +853,16 @@ export default function App() {
     setSelectedCvSpecialist(specialist);
   };
 
-  const handleConfirmBooking = async (confirmedAppointment: Appointment) => {
-    // Add directly to appointments list (appears instantly in Admin Dashboard) with duplicate protection
+  const handleConfirmBooking = (confirmedAppointment: Appointment) => {
+    // Firestore persistence already completed by the submitting modal/form before calling this callback.
+    // Update React state with duplicate protection.
     const sanitizedApp = {
       ...confirmedAppointment,
       id: confirmedAppointment.id || `apt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
     };
-    try {
-      const { saveAppointmentToFirestore } = await import('./services/firestoreService');
-      await saveAppointmentToFirestore(sanitizedApp);
-    } catch (err) {
-      console.error('[App] Error saving appointment to Firestore in handleConfirmBooking:', err);
-    }
+    setAppointments((prev) => [sanitizedApp, ...prev.filter(a => a.id !== sanitizedApp.id)]);
 
-    // Create immediate confirmation notification for user
+    // Create immediate confirmation notification for user (avoiding duplicate entry for same appointmentId)
     const newConfirmationNotif: NotificationItem = {
       id: 'notif-' + Date.now(),
       title: `تم استلام طلب حجز: ${confirmedAppointment.serviceTitle}`,
@@ -809,7 +874,11 @@ export default function App() {
       channel: 'whatsapp'
     };
 
-    setNotifications((prev) => [newConfirmationNotif, ...prev]);
+    setNotifications((prev) =>
+      prev.some((n) => n.appointmentId === confirmedAppointment.id)
+        ? prev
+        : [newConfirmationNotif, ...prev]
+    );
   };
 
   const handleMarkAllNotificationsAsRead = () => {
@@ -855,12 +924,17 @@ export default function App() {
         <AdminDashboard
           appointments={appointments}
           onUpdateAppointments={setAppointments}
+          isSyncingAppointments={appointmentsSyncLoading}
+          appointmentsSyncError={appointmentsSyncError}
+          isFirebaseAuthenticated={Boolean(firebaseAdminUid)}
+          onRefreshAppointments={fetchCloudAppointments}
           reviews={testimonials}
           onUpdateReviews={setTestimonials}
           specialists={specialists}
           onUpdateSpecialists={setSpecialists}
           onLogout={() => {
             setAdminSession(null);
+            setFirebaseAdminUid(null);
             import('./data/adminData')
               .then(({ clearStoredAdminSession }) => clearStoredAdminSession())
               .catch(() => {
@@ -871,6 +945,14 @@ export default function App() {
                   // ignore
                 }
               });
+            Promise.all([import('./lib/firebase'), import('firebase/auth')])
+              .then(async ([{ getLazyAuth }, { signOut }]) => {
+                const authInstance = await getLazyAuth();
+                if (authInstance.currentUser) {
+                  await signOut(authInstance);
+                }
+              })
+              .catch(() => {});
           }}
           onClose={() => {
             setIsAdminOpen(false);

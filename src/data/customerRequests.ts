@@ -7,6 +7,7 @@ export function generateRequestReference(type: CustomerRequestType): string {
   const prefixMap: Record<CustomerRequestType, string> = {
     appointment: 'RB',
     package: 'PKG',
+    course: 'CRS',
     shadow_teacher: 'ST',
     national_day_offer: 'ND96',
     quick_consultation: 'QC',
@@ -17,24 +18,22 @@ export function generateRequestReference(type: CustomerRequestType): string {
   return `${prefix}-${num}`;
 }
 
-export function saveAndBroadcastCustomerRequest(request: Appointment): Appointment {
+function updateLocalCacheAndNotify(request: Appointment): void {
   try {
-    // 1. Retrieve existing appointments from localStorage
     const saved = localStorage.getItem('raba_appointments') || localStorage.getItem('khotwa_appointments');
     const list: Appointment[] = saved ? JSON.parse(saved) : [];
-    
-    // 2. Prepend new request
     const updated = [request, ...list.filter(a => a.id !== request.id)];
     localStorage.setItem('raba_appointments', JSON.stringify(updated));
     savePersistentModule('raba_appointments', updated);
 
-    // 3. Create Admin Notification Item
     const savedNotifs = localStorage.getItem('raba_notifications') || localStorage.getItem('khotwa_notifications');
     const notifsList: NotificationItem[] = savedNotifs ? JSON.parse(savedNotifs) : [];
 
     let notifTitle = 'طلب عميل جديد وارد عبر الموقع';
     if (request.requestType === 'shadow_teacher') {
       notifTitle = `طلب خدمة معلم ظل جديد: ${request.guardianName}`;
+    } else if (request.requestType === 'course') {
+      notifTitle = `تسجيل دورة تدريبية جديد: ${request.serviceTitle}`;
     } else if (request.requestType === 'store_order') {
       notifTitle = `طلب شراء جديد من متجر رابا (#${request.referenceNumber})`;
     } else if (request.requestType === 'quick_consultation') {
@@ -62,45 +61,34 @@ export function saveAndBroadcastCustomerRequest(request: Appointment): Appointme
     localStorage.setItem('raba_notifications', JSON.stringify(updatedNotifs));
     savePersistentModule('raba_notifications', updatedNotifs);
 
-    // 4. Asynchronously persist to Firestore & Backend API
-    import('../services/firestoreService').then(m => {
-      m.saveAppointmentToFirestore(request).catch(err => {
-        console.error('[CustomerRequests] Error saving appointment to Firestore:', err);
-      });
-      if (request.requestType === 'quick_consultation' || request.requestType === 'shadow_teacher') {
-        m.saveCustomerRequestToFirestore(request).catch(() => {});
-      }
-    }).catch(err => {
-      console.error('[CustomerRequests] Failed to import firestoreService:', err);
-    });
-
-    // 5. Dispatch custom window events
     window.dispatchEvent(new CustomEvent(DISPATCH_REQUEST_EVENT, { detail: request }));
     window.dispatchEvent(new CustomEvent('raba_notifications_updated', { detail: updatedNotifs }));
-
-    return request;
   } catch (err) {
-    console.error('Error saving customer request:', err);
-    return request;
+    console.warn('[CustomerRequests] Local cache/event notice:', err);
   }
 }
 
+export function saveAndBroadcastCustomerRequest(request: Appointment): Appointment {
+  updateLocalCacheAndNotify(request);
+  import('../services/firestoreService').then(m => {
+    m.saveAppointmentToFirestore(request).catch(err => {
+      console.error('[CustomerRequests] Error saving appointment to Firestore:', err);
+    });
+  }).catch(err => {
+    console.error('[CustomerRequests] Failed to import firestoreService:', err);
+  });
+  return request;
+}
+
 /**
- * Async version of saveAndBroadcastCustomerRequest that awaits database persistence
- * and returns true only if the record was successfully saved to Firestore or backend.
+ * Awaits Firestore persistence strictly BEFORE updating local cache or dispatching UI events.
+ * Throws if Firestore write fails so no form displays a false confirmation screen.
  */
 export async function saveAndBroadcastCustomerRequestAsync(request: Appointment): Promise<boolean> {
-  // Update local storage and UI events first for instant reactivity
-  saveAndBroadcastCustomerRequest(request);
-
-  try {
-    const { saveAppointmentToFirestore } = await import('../services/firestoreService');
-    const firestoreSuccess = await saveAppointmentToFirestore(request);
-    return firestoreSuccess;
-  } catch (err) {
-    console.error('[CustomerRequests] Async persistence error:', err);
-    return false;
-  }
+  const { saveAppointmentToFirestore } = await import('../services/firestoreService');
+  await saveAppointmentToFirestore(request);
+  updateLocalCacheAndNotify(request);
+  return true;
 }
 
 export interface DispatchCustomerRequestPayload {
@@ -108,46 +96,59 @@ export interface DispatchCustomerRequestPayload {
   childName?: string;
   phone: string;
   email?: string;
+  serviceId?: string;
   serviceType: string;
+  specialistName?: string;
   sourcePage?: string;
   notes?: string;
   city?: string;
+  requestType?: CustomerRequestType;
+  type?: string;
+  amount?: number;
 }
 
-export function dispatchCustomerRequest(payload: DispatchCustomerRequestPayload): Appointment {
-  const req: Appointment = {
+function buildRequestFromPayload(payload: DispatchCustomerRequestPayload): Appointment {
+  const requestType: CustomerRequestType = payload.requestType || 'appointment';
+  return {
     id: 'req-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
     childName: payload.childName || payload.clientName,
     childAge: 0,
-    serviceId: 'service-custom',
+    serviceId: payload.serviceId || 'service-custom',
     serviceTitle: payload.serviceType,
     specialistId: 'spec-general',
-    specialistName: 'مركز رابا للتأهيل',
+    specialistName: payload.specialistName || 'مركز رابا للتأهيل',
     date: new Date().toISOString().split('T')[0],
     timeSlot: 'طلب جديد',
     guardianName: payload.clientName,
     guardianPhone: payload.phone,
     guardianEmail: payload.email || '',
     notes: payload.notes || payload.sourcePage || '',
-    status: 'pending',
-    requestType: 'appointment',
-    referenceNumber: generateRequestReference('appointment'),
+    status: 'new',
+    type: payload.type,
+    requestType,
+    requestSource: payload.sourcePage || 'الموقع الإلكتروني',
+    referenceNumber: generateRequestReference(requestType),
     paymentStatus: 'unpaid',
-    amount: 0,
+    amount: typeof payload.amount === 'number' ? payload.amount : 0,
     reminderSettings: {
       whatsapp: true,
       sms: false,
       email: true
     },
     createdAt: new Date().toISOString(),
-    city: payload.city || 'الرياض'
+    city: payload.city || 'الرياض',
+    branch: payload.city || 'الرياض',
+    readByAdmin: false
   };
+}
 
+export function dispatchCustomerRequest(payload: DispatchCustomerRequestPayload): Appointment {
+  const req = buildRequestFromPayload(payload);
   return saveAndBroadcastCustomerRequest(req);
 }
 
 export async function dispatchCustomerRequestAsync(payload: DispatchCustomerRequestPayload): Promise<Appointment> {
-  const req = dispatchCustomerRequest(payload);
+  const req = buildRequestFromPayload(payload);
   await saveAndBroadcastCustomerRequestAsync(req);
   return req;
 }
