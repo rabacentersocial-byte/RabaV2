@@ -215,8 +215,8 @@ export const COURSES_DATA: CourseItem[] = [
       "Task and skill analysis and educational program planning",
       "Utilizing assessment results to prepare individualized plans and track progress"
     ],
-    "priceDisplayAr": "تواصل للاستفسار عن السعر",
-    "priceDisplayEn": "Contact for Pricing",
+    "priceDisplayAr": "200 ريال (بعد الخصم - الأصل 300 ريال)",
+    "priceDisplayEn": "200 SAR (After Discount - Orig. 300 SAR)",
     "accentColor": "#6d28d9",
     "targetAudienceAr": "أخصائي تحليل السلوك التطبيقي (ABA)، وأخصائي التربية الخاصة، وأخصائي النطق واللغة، والعاملين في مجال تأهيل الأطفال ذوي اضطراب طيف التوحد والاضطرابات النمائية",
     "targetAudienceEn": "ABA specialists, special education specialists, speech-language pathologists, and professionals working in the rehabilitation of children with ASD and developmental disorders",
@@ -233,8 +233,8 @@ export const COURSES_DATA: CourseItem[] = [
     "instructorAr": "بإشراف نخبة من الأخصائيين المعتمدين",
     "instructorEn": "Supervised by Certified Specialists",
     "lessonsCount": 16,
-    "currentPrice": 0,
-    "originalPrice": 0,
+    "currentPrice": 200,
+    "originalPrice": 300,
     "videoPreviewUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
   },
   {
@@ -861,7 +861,8 @@ export function sortCoursesForDisplay(courses: CourseItem[]): CourseItem[] {
 export function getStoredCoursesData(): CourseItem[] {
   const enrichItem = (c: any): CourseItem => {
     const def = COURSES_DATA.find(d => d.id === c.id);
-    const numericPrice = (c.currentPrice !== undefined && c.currentPrice !== 0) 
+    const hasCachedPrice = c.currentPrice !== undefined && Number(c.currentPrice) > 0;
+    const numericPrice = hasCachedPrice
       ? (typeof c.currentPrice === 'number' ? c.currentPrice : parseFloat(String(c.currentPrice).replace(/[^0-9.]/g, '')) || 0)
       : (def?.currentPrice || getCourseNumericPrice(c) || getCourseNumericPrice(def as any) || 0);
 
@@ -879,8 +880,10 @@ export function getStoredCoursesData(): CourseItem[] {
       instructorAr: 'بإشراف نخبة من الأخصائيين المعتمدين',
       instructorEn: 'Supervised by Certified Specialists',
       lessonsCount: c.lessonsCount || def?.lessonsCount || 20,
+      priceDisplayAr: (!hasCachedPrice && def?.priceDisplayAr) ? def.priceDisplayAr : (c.priceDisplayAr || def?.priceDisplayAr || ''),
+      priceDisplayEn: (!hasCachedPrice && def?.priceDisplayEn) ? def.priceDisplayEn : (c.priceDisplayEn || def?.priceDisplayEn || ''),
       currentPrice: numericPrice,
-      originalPrice: c.originalPrice !== undefined ? c.originalPrice : (def?.originalPrice || 0),
+      originalPrice: (c.originalPrice !== undefined && Number(c.originalPrice) > 0) ? c.originalPrice : (def?.originalPrice || 0),
       isActive: c.isActive !== false
     };
   };

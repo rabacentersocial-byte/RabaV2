@@ -112,7 +112,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   // Focused, professional navigation links strictly representing the core sections
   const navLinks = [
     { label: t('nav.home'), href: '#hero' },
-    { label: isArabic ? 'من نحن' : 'About Us', href: '#about' },
     { label: isArabic ? 'الخدمات' : 'Services', href: '#services' },
     { label: isArabic ? 'العروض والأنشطة' : 'Offers & Activities', href: '#offers' },
     { label: isArabic ? 'خدمة سِوار (معلم الظل)' : 'Sewar (Shadow Teacher)', href: '#shadow-teacher' },
@@ -120,9 +119,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: isArabic ? 'فروعنا بالمملكة' : 'Branches', href: '#branches' },
     { label: t('nav.blog'), href: '#blog' },
     { label: isArabic ? 'شركاء النجاح' : 'Success Partners', href: '#partners' },
-    { label: isArabic ? 'الاعتمادات' : 'Accreditations', href: '#accreditations-section' },
     { label: t('nav.stories'), href: '#testimonials' },
-    { label: isArabic ? 'اتصل بنا' : 'Contact Us', href: '#contact' },
   ];
 
   // Mobile navigation categorized items with custom professional icons & styling

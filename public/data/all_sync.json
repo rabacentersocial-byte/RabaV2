@@ -1,6 +1,6 @@
 {
   "success": true,
-  "timestamp": "2026-11-14T11:19:50.162Z",
+  "timestamp": "2026-11-14T12:43:33.419Z",
   "data": {
     "raba_accreditations": [
       {
@@ -1114,8 +1114,8 @@
           "Task and skill analysis and educational program planning",
           "Utilizing assessment results to prepare individualized plans and track progress"
         ],
-        "priceDisplayAr": "تواصل للاستفسار عن السعر",
-        "priceDisplayEn": "Contact for Pricing",
+        "priceDisplayAr": "200 ريال (بعد الخصم - الأصل 300 ريال)",
+        "priceDisplayEn": "200 SAR (After Discount - Orig. 300 SAR)",
         "accentColor": "#6d28d9",
         "targetAudienceAr": "أخصائي تحليل السلوك التطبيقي (ABA)، وأخصائي التربية الخاصة، وأخصائي النطق واللغة، والعاملين في مجال تأهيل الأطفال ذوي اضطراب طيف التوحد والاضطرابات النمائية",
         "targetAudienceEn": "ABA specialists, special education specialists, speech-language pathologists, and professionals working in the rehabilitation of children with ASD and developmental disorders",
@@ -1127,8 +1127,8 @@
         "floatingBadgeEn": "VB-MAPP Track",
         "accreditationBadgeAr": "تطبيق عملي وبناء خطط فردية",
         "accreditationBadgeEn": "Practical Clinical Track",
-        "currentPrice": 0,
-        "originalPrice": 0
+        "currentPrice": 200,
+        "originalPrice": 300
       },
       {
         "id": "course-qasp-s",
