@@ -67,6 +67,177 @@ export const DEFAULT_COURSES_SETTINGS: CoursesSectionSettings = {
 
 export const COURSES_DATA: CourseItem[] = [
   {
+    "id": "course-abat",
+    "titleAr": "كورس فني تحليل سلوك تطبيقي (ABAT)",
+    "titleEn": "Applied Behavior Analysis Technician (ABAT) Course",
+    "shortTitle": "فني تحليل سلوك تطبيقي ABAT",
+    "hoursBadgeAr": "40 ساعة تدريبية معتمدة",
+    "hoursBadgeEn": "40 Certified Training Hours",
+    "hoursCount": 40,
+    "ribbonTagAr": "اعتماد البورد الأمريكي QABA",
+    "ribbonTagEn": "American Board Certification",
+    "categoryAr": "تحليل السلوك التطبيقي ABA",
+    "categoryEn": "Applied Behavior Analysis (ABA)",
+    "badgeColor": "#0d9488",
+    "tagHighlightAr": "40 ساعة تدريبية - خصم خاص لفترة محدودة",
+    "tagHighlightEn": "40 Training Hours - Special Offer",
+    "descriptionAr": "يتناول الكورس متطلبات اعتماد البورد الأمريكي لهذا المستوى والمكون من 40 ساعة تدريبية لتأهيل وإعداد أخصائيي ABA.",
+    "descriptionEn": "Covers the American QABA Board certification requirements for the 40-hour ABAT level to qualify and prepare ABA specialists.",
+    "featuresAr": [
+      "أساسيات تحليل السلوك التطبيقي ABA",
+      "جمع وتحليل البيانات وأنظمة القياس الإكلينيكي",
+      "تدخلات إكساب المهارات",
+      "تدخلات خفض السلوك",
+      "التدخل في سوابق السلوك",
+      "أخلاقيات العمل بنظام ABA",
+      "المعرفة الأساسية لاضطراب طيف التوحد"
+    ],
+    "featuresEn": [
+      "Fundamentals of Applied Behavior Analysis (ABA)",
+      "Data collection, analysis, and clinical measurement systems",
+      "Skill acquisition interventions",
+      "Behavior reduction interventions",
+      "Antecedent interventions",
+      "Ethics in ABA practice",
+      "Core knowledge of Autism Spectrum Disorder (ASD)"
+    ],
+    "priceDisplayAr": "350 ريال (بعد الخصم - الأصل 500 ريال)",
+    "priceDisplayEn": "350 SAR (After Discount - Orig. 500 SAR)",
+    "accentColor": "#0d9488",
+    "targetAudienceAr": "فنيو وأخصائيو تحليل السلوك التطبيقي، معلمو التربية الخاصة، والراغبون في اعتماد ABAT",
+    "targetAudienceEn": "ABA technicians, special educators, and ABAT certification candidates",
+    "order": 1,
+    "isActive": true,
+    "cardCoverUrl": "/images/courses/course_2_abat.webp",
+    "iconName": "briefcase",
+    "floatingBadgeAr": "اعتماد البورد الأمريكي",
+    "floatingBadgeEn": "QABA Board Track",
+    "accreditationBadgeAr": "اعتماد البورد الأمريكي QABA",
+    "accreditationBadgeEn": "QABA Board Credential",
+    "rating": 4.9,
+    "reviewsCount": 148,
+    "instructorAr": "بإشراف نخبة من الأخصائيين المعتمدين",
+    "instructorEn": "Supervised by Certified Specialists",
+    "lessonsCount": 24,
+    "currentPrice": 350,
+    "originalPrice": 500,
+    "videoPreviewUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
+  },
+  {
+    "id": "course-qba",
+    "titleAr": "كورس محلل سلوكي (QBA)",
+    "titleEn": "Qualified Behavior Analyst (QBA) Certification Course",
+    "shortTitle": "محلل سلوكي QBA",
+    "hoursBadgeAr": "270 ساعة تدريبية معتمدة",
+    "hoursBadgeEn": "270 Certified Training Hours",
+    "hoursCount": 270,
+    "ribbonTagAr": "اعتماد البورد الأمريكي QABA",
+    "ribbonTagEn": "American Board Certification",
+    "categoryAr": "المستوى الإشرافي وتحليل السلوك",
+    "categoryEn": "Supervisory Behavior Analysis",
+    "badgeColor": "#2E86EB",
+    "tagHighlightAr": "270 ساعة تدريبية تغطي المستوى الإشرافي",
+    "tagHighlightEn": "270 Supervisory Training Hours",
+    "descriptionAr": "يتناول الكورس متطلبات اعتماد البورد الأمريكي لهذا المستوى والمكون من 270 ساعة تدريبية تغطي هذا المستوى الإشرافي.",
+    "descriptionEn": "Covers the American QABA Board certification requirements for the 270-hour supervisory Qualified Behavior Analyst (QBA) level.",
+    "featuresAr": [
+      "أساسيات تحليل السلوك التطبيقي ABA",
+      "جمع وتحليل البيانات وأنظمة القياس الإكلينيكي",
+      "تدخلات إكساب المهارات",
+      "تدخلات خفض السلوك",
+      "التدخل في سوابق السلوك",
+      "أخلاقيات العمل بنظام ABA",
+      "المعرفة الأساسية لاضطراب طيف التوحد",
+      "أساليب التقييم",
+      "التدريب والإشراف"
+    ],
+    "featuresEn": [
+      "Fundamentals of Applied Behavior Analysis (ABA)",
+      "Data collection, analysis, and clinical measurement systems",
+      "Skill acquisition interventions",
+      "Behavior reduction interventions",
+      "Antecedent interventions",
+      "Ethics in ABA practice",
+      "Core knowledge of Autism Spectrum Disorder (ASD)",
+      "Assessment methods",
+      "Training and supervision"
+    ],
+    "priceDisplayAr": "5000 ريال (بعد الخصم - الأصل 7150 ريال)",
+    "priceDisplayEn": "5000 SAR (After Discount - Orig. 7150 SAR)",
+    "accentColor": "#2E86EB",
+    "targetAudienceAr": "محللو السلوك، المشرفون الإكلينيكيون، وأخصائيو التربية الخاصة المتقدمون الساعون لرخصة QBA",
+    "targetAudienceEn": "Behavior analysts, clinical supervisors, and advanced practitioners pursuing QBA",
+    "order": 2,
+    "isActive": true,
+    "cardCoverUrl": "/images/courses/course_1_qba.webp",
+    "iconName": "award",
+    "floatingBadgeAr": "المستوى الإشرافي QBA",
+    "floatingBadgeEn": "QBA Supervisory",
+    "accreditationBadgeAr": "اعتماد البورد الأمريكي QABA",
+    "accreditationBadgeEn": "QABA Board Credential",
+    "rating": 5.0,
+    "reviewsCount": 134,
+    "instructorAr": "بإشراف نخبة من الأخصائيين المعتمدين",
+    "instructorEn": "Supervised by Certified Specialists",
+    "lessonsCount": 60,
+    "currentPrice": 5000,
+    "originalPrice": 7150,
+    "videoPreviewUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
+  },
+  {
+    "id": "course-vb-mapp",
+    "titleAr": "كورس أداة تقييم ومنهج VB-MAPP",
+    "titleEn": "VB-MAPP Assessment & Curriculum Course",
+    "shortTitle": "أداة تقييم ومنهج VB-MAPP",
+    "hoursBadgeAr": "تطبيق عملي وبناء الخطط الفردية",
+    "hoursBadgeEn": "Practical Assessment & IEP Design",
+    "hoursCount": 0,
+    "ribbonTagAr": "أداة تقييم ومنهج معتمد",
+    "ribbonTagEn": "Assessment & Curriculum",
+    "categoryAr": "التقييم وتصميم البرامج الفردية",
+    "categoryEn": "Assessment & Individualized Planning",
+    "badgeColor": "#6d28d9",
+    "tagHighlightAr": "تأهيل عملي لتطبيق VB-MAPP وبناء الخطط الفردية",
+    "tagHighlightEn": "Practical VB-MAPP Administration & IEP Design",
+    "descriptionAr": "تُعد VB-MAPP (Verbal Behavior Milestones Assessment and Placement Program) من الأدوات المهمة في مجال تحليل السلوك التطبيقي (ABA)، وتُستخدم لتقييم مهارات اللغة والسلوك اللفظي والمهارات النمائية لدى الأطفال ذوي اضطراب طيف التوحد والاضطرابات النمائية الأخرى، وتحديد مستوى أدائهم الحالي، ورصد العوائق التي قد تؤثر في اكتسابهم للمهارات، وتأهيل المتدربين لتطبيقها عملياً وبناء البرامج التعليمية والخطط الفردية.",
+    "descriptionEn": "VB-MAPP (Verbal Behavior Milestones Assessment and Placement Program) is a key ABA assessment tool used to evaluate language, verbal behavior, and developmental skills in children with ASD and developmental disorders, identify learning barriers, and qualify practitioners to apply it practically in building educational programs and individualized plans.",
+    "featuresAr": [
+      "تقييم المعالم النمائية (Milestones Assessment)",
+      "تقييم العوائق (Barriers Assessment)",
+      "تقييم الانتقال (Transition Assessment)",
+      "تحليل المهام والمهارات وتخطيط البرامج التعليمية",
+      "توظيف نتائج التقييم في إعداد الخطط الفردية ومتابعة تقدم الطفل"
+    ],
+    "featuresEn": [
+      "Milestones Assessment",
+      "Barriers Assessment",
+      "Transition Assessment",
+      "Task and skill analysis and educational program planning",
+      "Utilizing assessment results to prepare individualized plans and track progress"
+    ],
+    "priceDisplayAr": "تواصل للاستفسار عن السعر",
+    "priceDisplayEn": "Contact for Pricing",
+    "accentColor": "#6d28d9",
+    "targetAudienceAr": "أخصائي تحليل السلوك التطبيقي (ABA)، وأخصائي التربية الخاصة، وأخصائي النطق واللغة، والعاملين في مجال تأهيل الأطفال ذوي اضطراب طيف التوحد والاضطرابات النمائية",
+    "targetAudienceEn": "ABA specialists, special education specialists, speech-language pathologists, and professionals working in the rehabilitation of children with ASD and developmental disorders",
+    "order": 3,
+    "isActive": true,
+    "cardCoverUrl": "/images/courses/course_3_autism_inclusion.webp",
+    "iconName": "clipboard-check",
+    "floatingBadgeAr": "تقييم ومنهج VB-MAPP",
+    "floatingBadgeEn": "VB-MAPP Track",
+    "accreditationBadgeAr": "تطبيق عملي وبناء خطط فردية",
+    "accreditationBadgeEn": "Practical Clinical Track",
+    "rating": 4.9,
+    "reviewsCount": 89,
+    "instructorAr": "بإشراف نخبة من الأخصائيين المعتمدين",
+    "instructorEn": "Supervised by Certified Specialists",
+    "lessonsCount": 16,
+    "currentPrice": 0,
+    "originalPrice": 0,
+    "videoPreviewUrl": "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
+  },
+  {
     "id": "course-autism-inclusion",
     "titleAr": "دمج أطفال التوحد في الصف",
     "titleEn": "Autism Inclusion in the Classroom",
@@ -98,7 +269,7 @@ export const COURSES_DATA: CourseItem[] = [
     "accentColor": "#0d5c52",
     "targetAudienceAr": "معلمو المدارس العادية والدمج، الأخصائيون النفسيون، وأولياء الأمور",
     "targetAudienceEn": "Mainstream teachers, school psychologists, and parents",
-    "order": 2,
+    "order": 5,
     "isActive": true,
     "cardCoverUrl": "/images/courses/course_3_autism_inclusion.webp",
     "iconName": "school",
@@ -147,7 +318,7 @@ export const COURSES_DATA: CourseItem[] = [
     "accentColor": "#0d5c52",
     "targetAudienceAr": "أخصائيو التربية الخاصة، مشرفو البرامج السلوكية، وممارسو التوحد",
     "targetAudienceEn": "Special education supervisors and autism practitioners",
-    "order": 1,
+    "order": 4,
     "isActive": true,
     "cardCoverUrl": "/images/courses/course_4_qasp.webp",
     "iconName": "users-round",
@@ -668,6 +839,25 @@ export function getCourseNumericPrice(course: CourseItem | null | undefined): nu
   return 0;
 }
 
+export const PRIORITY_COURSE_ORDER = ['course-abat', 'course-qba', 'course-vb-mapp'];
+
+/**
+ * Sorts courses so the newly featured courses appear first in exact priority order,
+ * followed by remaining courses sorted from highest price to lowest.
+ */
+export function sortCoursesForDisplay(courses: CourseItem[]): CourseItem[] {
+  return [...courses].sort((a, b) => {
+    const idxA = PRIORITY_COURSE_ORDER.indexOf(a.id);
+    const idxB = PRIORITY_COURSE_ORDER.indexOf(b.id);
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    if (idxA !== -1) return -1;
+    if (idxB !== -1) return 1;
+    const priceDiff = getCourseNumericPrice(b) - getCourseNumericPrice(a);
+    if (priceDiff !== 0) return priceDiff;
+    return (a.order || 999) - (b.order || 999);
+  });
+}
+
 export function getStoredCoursesData(): CourseItem[] {
   const enrichItem = (c: any): CourseItem => {
     const def = COURSES_DATA.find(d => d.id === c.id);
@@ -681,7 +871,9 @@ export function getStoredCoursesData(): CourseItem[] {
       cardCoverUrl: c.cardCoverUrl || def?.cardCoverUrl || '',
       iconName: c.iconName || def?.iconName || undefined,
       floatingBadgeAr: c.floatingBadgeAr || def?.floatingBadgeAr || '',
+      floatingBadgeEn: c.floatingBadgeEn || def?.floatingBadgeEn || '',
       accreditationBadgeAr: c.accreditationBadgeAr || def?.accreditationBadgeAr || c.ribbonTagAr || '',
+      accreditationBadgeEn: c.accreditationBadgeEn || def?.accreditationBadgeEn || c.ribbonTagEn || '',
       rating: c.rating || def?.rating || 4.9,
       reviewsCount: c.reviewsCount || def?.reviewsCount || 120,
       instructorAr: 'بإشراف نخبة من الأخصائيين المعتمدين',
@@ -698,20 +890,16 @@ export function getStoredCoursesData(): CourseItem[] {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        // Purge deleted courses from stored cache
-        const cleaned = parsed.filter((p: any) => p && p.id !== 'course-qba' && p.id !== 'course-abat');
-        if (cleaned.length !== parsed.length) {
-          localStorage.setItem(STORAGE_COURSES_KEY, JSON.stringify(cleaned));
-        }
+        const cleaned = parsed.filter((p: any) => p && typeof p.id === 'string');
         const existingIds = new Set(cleaned.map((p: any) => p.id));
         const missing = COURSES_DATA.filter(c => !existingIds.has(c.id));
         const combined = [...cleaned, ...missing];
-        return combined.map(enrichItem).sort((a: CourseItem, b: CourseItem) => getCourseNumericPrice(b) - getCourseNumericPrice(a));
+        return sortCoursesForDisplay(combined.map(enrichItem));
       }
     }
-    return COURSES_DATA.map(enrichItem).sort((a: CourseItem, b: CourseItem) => getCourseNumericPrice(b) - getCourseNumericPrice(a));
+    return sortCoursesForDisplay(COURSES_DATA.map(enrichItem));
   } catch {
-    return COURSES_DATA.map(enrichItem).sort((a: CourseItem, b: CourseItem) => getCourseNumericPrice(b) - getCourseNumericPrice(a));
+    return sortCoursesForDisplay(COURSES_DATA.map(enrichItem));
   }
 }
 

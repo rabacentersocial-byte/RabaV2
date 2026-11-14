@@ -14,7 +14,7 @@ import {
   Users, 
   FileText
 } from 'lucide-react';
-import { CourseItem } from '../data/coursesData';
+import { CourseItem, getCourseNumericPrice } from '../data/coursesData';
 import { useLanguage } from '../context/LanguageContext';
 import { CourseCustomIcon } from './CourseCustomIcon';
 import { getCourseLogoTheme } from '../utils/courseLogoThemes';
@@ -219,7 +219,11 @@ export const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-center">
                   <Clock className="w-4 h-4 text-[#0d5c52] dark:text-[#2dd4bf] mx-auto mb-1" />
                   <div className="text-xs font-bold text-slate-900 dark:text-white">{hoursBadge}</div>
-                  <div className="text-[10px] text-slate-500">{isArabic ? 'ساعات معتمدة' : 'Accredited Hours'}</div>
+                  <div className="text-[10px] text-slate-500">
+                    {(course.hoursCount || 0) > 0
+                      ? (isArabic ? 'ساعات معتمدة' : 'Accredited Hours')
+                      : (isArabic ? 'تدريب تطبيقي' : 'Practical Track')}
+                  </div>
                 </div>
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-center">
                   <PlayCircle className="w-4 h-4 text-[#0d5c52] dark:text-[#2dd4bf] mx-auto mb-1" />
@@ -317,16 +321,24 @@ export const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
         {/* Modal Sticky Bottom Actions */}
         <div className="p-4 sm:p-5 bg-white dark:bg-[#121c24] border-t border-slate-200 dark:border-slate-800 shrink-0 flex flex-col sm:flex-row items-center justify-between gap-4">
           {/* Price breakdown */}
-          <div className="flex items-baseline gap-2 self-start sm:self-auto">
-            <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
-              {course.currentPrice || course.priceDisplayAr || '990'}
-            </span>
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
-              {isArabic ? 'ر.س' : 'SAR'}
-            </span>
-            {course.originalPrice && (
-              <span className="text-xs text-slate-600 dark:text-slate-300 line-through font-normal">
-                {course.originalPrice} {isArabic ? 'ر.س' : 'SAR'}
+          <div className="flex items-baseline gap-2 self-start sm:self-auto flex-wrap">
+            {getCourseNumericPrice(course) > 0 ? (
+              <>
+                <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+                  {getCourseNumericPrice(course)}
+                </span>
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                  {isArabic ? 'ر.س' : 'SAR'}
+                </span>
+                {Number(course.originalPrice) > 0 && (
+                  <span className="text-xs text-slate-600 dark:text-slate-300 line-through font-normal">
+                    {course.originalPrice} {isArabic ? 'ر.س' : 'SAR'}
+                  </span>
+                )}
+              </>
+            ) : (
+              <span className="text-sm sm:text-base font-black text-slate-900 dark:text-white">
+                {isArabic ? (course.priceDisplayAr || 'تواصل للاستفسار عن السعر') : (course.priceDisplayEn || 'Contact for Pricing')}
               </span>
             )}
             <span className="text-[10px] text-emerald-600 font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40">

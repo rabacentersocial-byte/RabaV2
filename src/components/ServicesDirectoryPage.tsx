@@ -341,7 +341,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
     if (coursesFilter !== 'all') {
       result = result.filter(c => {
         if (coursesFilter === 'cas') return c.id === 'course-autism-inclusion' || c.categoryAr?.includes('توحد') || c.titleAr.includes('توحد');
-        if (coursesFilter === 'qasp') return c.id === 'course-qasp-s' || c.categoryAr?.includes('إشراف') || c.titleAr.includes('QASP');
+        if (coursesFilter === 'qasp') return c.id === 'course-qasp-s' || c.id === 'course-qba' || c.id === 'course-abat' || c.categoryAr?.includes('إشراف') || c.titleAr.includes('QASP') || c.titleAr.includes('QBA') || c.titleAr.includes('ABAT');
         if (coursesFilter === 'communication') return c.id === 'course-mand-training' || c.categoryAr?.includes('تواصل') || c.titleAr.includes('Mand');
         if (coursesFilter === 'parents') return c.targetAudienceAr?.includes('أسر') || c.categoryAr?.includes('أسر') || c.targetAudienceAr?.includes('أولياء');
         return true;
@@ -1040,7 +1040,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                 {[
                   { id: 'all', labelAr: 'جميع الدورات التدريبية', labelEn: 'All Courses', count: activeCourses.length },
                   { id: 'cas', labelAr: 'أخصائي توحد ودمج مدرسي', labelEn: 'Autism & Inclusion', count: activeCourses.filter(c => c.id === 'course-autism-inclusion' || c.categoryAr?.includes('توحد')).length },
-                  { id: 'qasp', labelAr: 'مشرف خدمات التوحد QASP-S', labelEn: 'QASP-S Supervision', count: activeCourses.filter(c => c.id === 'course-qasp-s' || c.categoryAr?.includes('إشراف')).length },
+                  { id: 'qasp', labelAr: 'اعتماد البورد QABA / QASP-S', labelEn: 'QABA Board & Supervision', count: activeCourses.filter(c => c.id === 'course-qasp-s' || c.id === 'course-qba' || c.id === 'course-abat' || c.categoryAr?.includes('إشراف')).length },
                   { id: 'communication', labelAr: 'التواصل والطلب Mand', labelEn: 'Mand Communication', count: activeCourses.filter(c => c.id === 'course-mand-training' || c.categoryAr?.includes('تواصل')).length },
                   { id: 'parents', labelAr: 'برامج أولياء الأمور والأسرة', labelEn: 'Parent Programs', count: activeCourses.filter(c => c.targetAudienceAr?.includes('أسر') || c.categoryAr?.includes('أسر')).length },
                 ].filter(f => f.count > 0 || f.id === 'all').map(f => {

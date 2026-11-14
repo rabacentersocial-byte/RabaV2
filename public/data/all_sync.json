@@ -1,6 +1,6 @@
 {
   "success": true,
-  "timestamp": "2026-11-12T09:20:24.350Z",
+  "timestamp": "2026-11-14T11:19:50.162Z",
   "data": {
     "raba_accreditations": [
       {
@@ -978,6 +978,159 @@
     ],
     "raba_courses_data_v1": [
       {
+        "id": "course-abat",
+        "titleAr": "كورس فني تحليل سلوك تطبيقي (ABAT)",
+        "titleEn": "Applied Behavior Analysis Technician (ABAT) Course",
+        "shortTitle": "فني تحليل سلوك تطبيقي ABAT",
+        "hoursBadgeAr": "40 ساعة تدريبية معتمدة",
+        "hoursBadgeEn": "40 Certified Training Hours",
+        "hoursCount": 40,
+        "ribbonTagAr": "اعتماد البورد الأمريكي QABA",
+        "ribbonTagEn": "American Board Certification",
+        "categoryAr": "تحليل السلوك التطبيقي ABA",
+        "categoryEn": "Applied Behavior Analysis (ABA)",
+        "badgeColor": "#0d9488",
+        "tagHighlightAr": "40 ساعة تدريبية - خصم خاص لفترة محدودة",
+        "tagHighlightEn": "40 Training Hours - Special Offer",
+        "descriptionAr": "يتناول الكورس متطلبات اعتماد البورد الأمريكي لهذا المستوى والمكون من 40 ساعة تدريبية لتأهيل وإعداد أخصائيي ABA.",
+        "descriptionEn": "Covers the American QABA Board certification requirements for the 40-hour ABAT level to qualify and prepare ABA specialists.",
+        "featuresAr": [
+          "أساسيات تحليل السلوك التطبيقي ABA",
+          "جمع وتحليل البيانات وأنظمة القياس الإكلينيكي",
+          "تدخلات إكساب المهارات",
+          "تدخلات خفض السلوك",
+          "التدخل في سوابق السلوك",
+          "أخلاقيات العمل بنظام ABA",
+          "المعرفة الأساسية لاضطراب طيف التوحد"
+        ],
+        "featuresEn": [
+          "Fundamentals of Applied Behavior Analysis (ABA)",
+          "Data collection, analysis, and clinical measurement systems",
+          "Skill acquisition interventions",
+          "Behavior reduction interventions",
+          "Antecedent interventions",
+          "Ethics in ABA practice",
+          "Core knowledge of Autism Spectrum Disorder (ASD)"
+        ],
+        "priceDisplayAr": "350 ريال (بعد الخصم - الأصل 500 ريال)",
+        "priceDisplayEn": "350 SAR (After Discount - Orig. 500 SAR)",
+        "accentColor": "#0d9488",
+        "targetAudienceAr": "فنيو وأخصائيو تحليل السلوك التطبيقي، معلمو التربية الخاصة، والراغبون في اعتماد ABAT",
+        "targetAudienceEn": "ABA technicians, special educators, and ABAT certification candidates",
+        "order": 1,
+        "isActive": true,
+        "cardCoverUrl": "/images/courses/course_2_abat.webp",
+        "iconName": "briefcase",
+        "floatingBadgeAr": "اعتماد البورد الأمريكي",
+        "floatingBadgeEn": "QABA Board Track",
+        "accreditationBadgeAr": "اعتماد البورد الأمريكي QABA",
+        "accreditationBadgeEn": "QABA Board Credential",
+        "currentPrice": 350,
+        "originalPrice": 500
+      },
+      {
+        "id": "course-qba",
+        "titleAr": "كورس محلل سلوكي (QBA)",
+        "titleEn": "Qualified Behavior Analyst (QBA) Certification Course",
+        "shortTitle": "محلل سلوكي QBA",
+        "hoursBadgeAr": "270 ساعة تدريبية معتمدة",
+        "hoursBadgeEn": "270 Certified Training Hours",
+        "hoursCount": 270,
+        "ribbonTagAr": "اعتماد البورد الأمريكي QABA",
+        "ribbonTagEn": "American Board Certification",
+        "categoryAr": "المستوى الإشرافي وتحليل السلوك",
+        "categoryEn": "Supervisory Behavior Analysis",
+        "badgeColor": "#2E86EB",
+        "tagHighlightAr": "270 ساعة تدريبية تغطي المستوى الإشرافي",
+        "tagHighlightEn": "270 Supervisory Training Hours",
+        "descriptionAr": "يتناول الكورس متطلبات اعتماد البورد الأمريكي لهذا المستوى والمكون من 270 ساعة تدريبية تغطي هذا المستوى الإشرافي.",
+        "descriptionEn": "Covers the American QABA Board certification requirements for the 270-hour supervisory Qualified Behavior Analyst (QBA) level.",
+        "featuresAr": [
+          "أساسيات تحليل السلوك التطبيقي ABA",
+          "جمع وتحليل البيانات وأنظمة القياس الإكلينيكي",
+          "تدخلات إكساب المهارات",
+          "تدخلات خفض السلوك",
+          "التدخل في سوابق السلوك",
+          "أخلاقيات العمل بنظام ABA",
+          "المعرفة الأساسية لاضطراب طيف التوحد",
+          "أساليب التقييم",
+          "التدريب والإشراف"
+        ],
+        "featuresEn": [
+          "Fundamentals of Applied Behavior Analysis (ABA)",
+          "Data collection, analysis, and clinical measurement systems",
+          "Skill acquisition interventions",
+          "Behavior reduction interventions",
+          "Antecedent interventions",
+          "Ethics in ABA practice",
+          "Core knowledge of Autism Spectrum Disorder (ASD)",
+          "Assessment methods",
+          "Training and supervision"
+        ],
+        "priceDisplayAr": "5000 ريال (بعد الخصم - الأصل 7150 ريال)",
+        "priceDisplayEn": "5000 SAR (After Discount - Orig. 7150 SAR)",
+        "accentColor": "#2E86EB",
+        "targetAudienceAr": "محللو السلوك، المشرفون الإكلينيكيون، وأخصائيو التربية الخاصة المتقدمون الساعون لرخصة QBA",
+        "targetAudienceEn": "Behavior analysts, clinical supervisors, and advanced practitioners pursuing QBA",
+        "order": 2,
+        "isActive": true,
+        "cardCoverUrl": "/images/courses/course_1_qba.webp",
+        "iconName": "award",
+        "floatingBadgeAr": "المستوى الإشرافي QBA",
+        "floatingBadgeEn": "QBA Supervisory",
+        "accreditationBadgeAr": "اعتماد البورد الأمريكي QABA",
+        "accreditationBadgeEn": "QABA Board Credential",
+        "currentPrice": 5000,
+        "originalPrice": 7150
+      },
+      {
+        "id": "course-vb-mapp",
+        "titleAr": "كورس أداة تقييم ومنهج VB-MAPP",
+        "titleEn": "VB-MAPP Assessment & Curriculum Course",
+        "shortTitle": "أداة تقييم ومنهج VB-MAPP",
+        "hoursBadgeAr": "تطبيق عملي وبناء الخطط الفردية",
+        "hoursBadgeEn": "Practical Assessment & IEP Design",
+        "hoursCount": 0,
+        "ribbonTagAr": "أداة تقييم ومنهج معتمد",
+        "ribbonTagEn": "Assessment & Curriculum",
+        "categoryAr": "التقييم وتصميم البرامج الفردية",
+        "categoryEn": "Assessment & Individualized Planning",
+        "badgeColor": "#6d28d9",
+        "tagHighlightAr": "تأهيل عملي لتطبيق VB-MAPP وبناء الخطط الفردية",
+        "tagHighlightEn": "Practical VB-MAPP Administration & IEP Design",
+        "descriptionAr": "تُعد VB-MAPP (Verbal Behavior Milestones Assessment and Placement Program) من الأدوات المهمة في مجال تحليل السلوك التطبيقي (ABA)، وتُستخدم لتقييم مهارات اللغة والسلوك اللفظي والمهارات النمائية لدى الأطفال ذوي اضطراب طيف التوحد والاضطرابات النمائية الأخرى، وتحديد مستوى أدائهم الحالي، ورصد العوائق التي قد تؤثر في اكتسابهم للمهارات، وتأهيل المتدربين لتطبيقها عملياً وبناء البرامج التعليمية والخطط الفردية.",
+        "descriptionEn": "VB-MAPP (Verbal Behavior Milestones Assessment and Placement Program) is a key ABA assessment tool used to evaluate language, verbal behavior, and developmental skills in children with ASD and developmental disorders, identify learning barriers, and qualify practitioners to apply it practically in building educational programs and individualized plans.",
+        "featuresAr": [
+          "تقييم المعالم النمائية (Milestones Assessment)",
+          "تقييم العوائق (Barriers Assessment)",
+          "تقييم الانتقال (Transition Assessment)",
+          "تحليل المهام والمهارات وتخطيط البرامج التعليمية",
+          "توظيف نتائج التقييم في إعداد الخطط الفردية ومتابعة تقدم الطفل"
+        ],
+        "featuresEn": [
+          "Milestones Assessment",
+          "Barriers Assessment",
+          "Transition Assessment",
+          "Task and skill analysis and educational program planning",
+          "Utilizing assessment results to prepare individualized plans and track progress"
+        ],
+        "priceDisplayAr": "تواصل للاستفسار عن السعر",
+        "priceDisplayEn": "Contact for Pricing",
+        "accentColor": "#6d28d9",
+        "targetAudienceAr": "أخصائي تحليل السلوك التطبيقي (ABA)، وأخصائي التربية الخاصة، وأخصائي النطق واللغة، والعاملين في مجال تأهيل الأطفال ذوي اضطراب طيف التوحد والاضطرابات النمائية",
+        "targetAudienceEn": "ABA specialists, special education specialists, speech-language pathologists, and professionals working in the rehabilitation of children with ASD and developmental disorders",
+        "order": 3,
+        "isActive": true,
+        "cardCoverUrl": "/images/courses/course_3_autism_inclusion.webp",
+        "iconName": "clipboard-check",
+        "floatingBadgeAr": "تقييم ومنهج VB-MAPP",
+        "floatingBadgeEn": "VB-MAPP Track",
+        "accreditationBadgeAr": "تطبيق عملي وبناء خطط فردية",
+        "accreditationBadgeEn": "Practical Clinical Track",
+        "currentPrice": 0,
+        "originalPrice": 0
+      },
+      {
         "id": "course-qasp-s",
         "titleAr": "كورس مشرف خدمات التوحد المؤهل (QASP-S)",
         "titleEn": "Qualified Autism Services Practitioner-Supervisor (QASP-S)",
@@ -1013,7 +1166,7 @@
         "accentColor": "#7C3AED",
         "targetAudienceAr": "أخصائيو التربية الخاصة، مشرفو البرامج السلوكية، وممارسو التوحد الساعون لرخصة QASP-S",
         "targetAudienceEn": "Special education supervisors, behavior therapists, and autism practitioners",
-        "order": 1,
+        "order": 4,
         "isActive": true
       },
       {
@@ -1052,7 +1205,7 @@
         "accentColor": "#0284C7",
         "targetAudienceAr": "أخصائيو السلوك، أخصائيو النطق والتخاطب، ومعلمو التربية الخاصة ومقدمو الرعاية",
         "targetAudienceEn": "Behavior therapists, SLPs, special education teachers, and shadow staff",
-        "order": 2,
+        "order": 5,
         "isActive": true
       },
       {
@@ -1091,7 +1244,7 @@
         "accentColor": "#10B981",
         "targetAudienceAr": "أخصائيو العلاج السلوكي والوظيفي، أولياء الأمور، ومعلمو التربية الخاصة",
         "targetAudienceEn": "Behavior analysts, occupational therapists, parents, and educators",
-        "order": 3,
+        "order": 6,
         "isActive": true
       },
       {
@@ -1130,7 +1283,7 @@
         "accentColor": "#8B5CF6",
         "targetAudienceAr": "أخصائيو التخاطب والنطق، محللو السلوك، ومعلمو برامج التدخل المبكر",
         "targetAudienceEn": "Speech-language pathologists, behavior analysts, and early intervention staff",
-        "order": 4,
+        "order": 7,
         "isActive": true
       },
       {
@@ -1169,7 +1322,7 @@
         "accentColor": "#06B6D4",
         "targetAudienceAr": "أخصائيو وفنيو تحليل السلوك، معلمو الظل، وممارسو التدخل المبكر",
         "targetAudienceEn": "Behavior technicians, ABAT clinicians, shadow teachers, and therapists",
-        "order": 5,
+        "order": 8,
         "isActive": true
       },
       {
@@ -1208,7 +1361,7 @@
         "accentColor": "#EC4899",
         "targetAudienceAr": "الأطباء، محللو السلوك، أخصائيو التمريض، والمشرفون الإكلينيكيون",
         "targetAudienceEn": "Physicians, behavior analysts, pediatric nurses, and clinical directors",
-        "order": 6,
+        "order": 9,
         "isActive": true
       },
       {
@@ -1247,7 +1400,7 @@
         "accentColor": "#F97316",
         "targetAudienceAr": "محللو السلوك، الأخصائيون النفسيون، ومعلمو التربية الخاصة ومقدمو الرعاية",
         "targetAudienceEn": "Behavior analysts, clinical psychologists, special educators, and caregivers",
-        "order": 7,
+        "order": 10,
         "isActive": true
       },
       {
@@ -1286,7 +1439,7 @@
         "accentColor": "#6366F1",
         "targetAudienceAr": "أخصائيو التشخيص والتقييم، محللو السلوك، والأطباء النفسيون",
         "targetAudienceEn": "Diagnostic evaluators, clinical psychologists, and behavior analysts",
-        "order": 8,
+        "order": 11,
         "isActive": true
       },
       {
@@ -1325,7 +1478,7 @@
         "accentColor": "#D97706",
         "targetAudienceAr": "حاملو رخص ABAT, QASP-S, QBA والمرشحون لاختبارات البورد",
         "targetAudienceEn": "Certified ABAT, QASP-S, and QBA clinicians and certification candidates",
-        "order": 9,
+        "order": 12,
         "isActive": true
       },
       {
@@ -1364,7 +1517,7 @@
         "accentColor": "#2563EB",
         "targetAudienceAr": "محللو السلوك، أخصائيو التخاطب، معلمو التربية الخاصة، والمشرفون الإكلينيكيون",
         "targetAudienceEn": "Behavior analysts, speech therapists, special educators, and clinical directors",
-        "order": 10,
+        "order": 13,
         "isActive": true
       },
       {
@@ -1403,7 +1556,7 @@
         "accentColor": "#EA580C",
         "targetAudienceAr": "أخصائيو ومحللو السلوك، معلمو الدمج، والمشرفون التربويون والإكلينيكيون",
         "targetAudienceEn": "Behavior analysts, inclusion specialists, educational supervisors, and clinicians",
-        "order": 11,
+        "order": 14,
         "isActive": true
       },
       {
@@ -1442,7 +1595,7 @@
         "accentColor": "#0D9488",
         "targetAudienceAr": "فنيو ومحللو السلوك، أخصائيو القياس، والمشرفون الإكلينيكيون",
         "targetAudienceEn": "Behavior technicians, clinical analysts, and special education teachers",
-        "order": 12,
+        "order": 15,
         "isActive": true
       }
     ],

@@ -201,19 +201,22 @@ export const COURSE_LOGO_THEMES: CourseLogoTheme[] = [
 
 // Mapping specific course IDs to their ideal matching logo color theme
 const COURSE_ID_THEME_MAP: Record<string, string> = {
-  'course-autism-inclusion': 'amber', // 1. Autism Classroom Inclusion: Warm Amber
-  'course-qasp-s': 'rose',          // 2. QASP-S Supervisor: Rose Magenta
-  'course-mand-training': 'purple', // 5. Mand & Speech: Royal Purple
-  'course-toilet-training': 'emerald', // 6. Toilet Training & Independence: Emerald Green
-  'course-verbal-behavior': 'cyan', // 7. Verbal Behavior: Turquoise Cyan
-  'course-specialist-assessment': 'coral', // 8. Clinical Competency: Sunset Coral
-  'course-medical-behavioral': 'rose',    // 9. Medical & Behavior: Rose Magenta
-  'course-trauma-aba': 'amber',           // 10. Trauma Informed: Warm Amber
-  'course-comorbidities': 'purple',       // 11. Dual Diagnoses: Royal Purple
-  'course-qaba-ethics': 'teal',           // 12. Ethics: Raba Teal
-  'course-peak': 'blue',                  // 13. PEAK System: Sky Blue
-  'course-bip': 'coral',                  // 14. BIP Plans: Sunset Coral
-  'course-data-graphing': 'cyan'          // 15. Data Graphing: Turquoise Cyan
+  'course-abat': 'cyan',            // 1. ABAT Technician: Turquoise Cyan
+  'course-qba': 'blue',             // 2. QBA Analyst: Primary Blue
+  'course-vb-mapp': 'purple',       // 3. VB-MAPP Assessment: Royal Purple
+  'course-autism-inclusion': 'amber', // 4. Autism Classroom Inclusion: Warm Amber
+  'course-qasp-s': 'rose',          // 5. QASP-S Supervisor: Rose Magenta
+  'course-mand-training': 'purple', // 6. Mand & Speech: Royal Purple
+  'course-toilet-training': 'emerald', // 7. Toilet Training & Independence: Emerald Green
+  'course-verbal-behavior': 'cyan', // 8. Verbal Behavior: Turquoise Cyan
+  'course-specialist-assessment': 'coral', // 9. Clinical Competency: Sunset Coral
+  'course-medical-behavioral': 'rose',    // 10. Medical & Behavior: Rose Magenta
+  'course-trauma-aba': 'amber',           // 11. Trauma Informed: Warm Amber
+  'course-comorbidities': 'purple',       // 12. Dual Diagnoses: Royal Purple
+  'course-qaba-ethics': 'cyan',           // 13. Ethics: Turquoise Cyan
+  'course-peak': 'blue',                  // 14. PEAK System: Sky Blue
+  'course-bip': 'coral',                  // 15. BIP Plans: Sunset Coral
+  'course-data-graphing': 'cyan'          // 16. Data Graphing: Turquoise Cyan
 };
 
 /**

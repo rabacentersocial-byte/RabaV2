@@ -11,6 +11,7 @@ import {
   getStoredCoursesData, 
   getStoredCoursesSettings, 
   getCourseNumericPrice,
+  sortCoursesForDisplay,
   CourseItem, 
   CoursesSectionSettings 
 } from '../data/coursesData';
@@ -32,11 +33,9 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
   const [selectedCourseForDetails, setSelectedCourseForDetails] = useState<CourseItem | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
-  // Filter active courses and sort from highest price to lowest (من الأعلى سعراً إلى الأقل)
+  // Filter active courses and keep featured priority courses at the beginning
   const activeCourses = useMemo(() => {
-    return courses
-      .filter(c => c.isActive !== false)
-      .sort((a, b) => getCourseNumericPrice(b) - getCourseNumericPrice(a));
+    return sortCoursesForDisplay(courses.filter(c => c.isActive !== false));
   }, [courses]);
 
   // Slider reference & navigation state
@@ -189,7 +188,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
           <div className="flex items-center justify-between gap-2.5">
             {/* Right in RTL: Solid Logo Theme Pill Badge */}
             <span className={`${theme.pillBg} text-[11px] sm:text-xs font-bold px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full shadow-xs transition-colors truncate max-w-[70%]`}>
-              {course.floatingBadgeAr || (isArabic ? 'الأكثر طلباً' : 'Top Choice')}
+              {isArabic ? (course.floatingBadgeAr || 'الأكثر طلباً') : (course.floatingBadgeEn || 'Top Choice')}
             </span>
 
             {/* Left in RTL: Rounded White Icon Button */}
@@ -204,7 +203,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
 
           {/* Category Kicker */}
           <div className={`${theme.kickerColor} text-[11px] sm:text-xs font-extrabold tracking-wide mt-2.5 sm:mt-4 mb-1 sm:mb-1.5 transition-colors`}>
-            {course.categoryAr || (isArabic ? 'التقييم والتشخيص النمائي' : 'Developmental Assessment')}
+            {isArabic ? (course.categoryAr || 'التقييم والتشخيص النمائي') : (course.categoryEn || 'Developmental Assessment')}
           </div>
 
           {/* Main Course Title */}
@@ -220,20 +219,28 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
         <div className="bg-white dark:bg-[#111827] p-4 sm:p-7 pt-4 sm:pt-5 rounded-b-2xl sm:rounded-b-[32px] flex-1 flex flex-col justify-between space-y-3 sm:space-y-4">
           
           <div className="space-y-2.5 sm:space-y-3.5">
-            {/* Price Row: Big number + Currency + Strikethrough Original Price */}
-            <div className="flex items-baseline gap-1.5 sm:gap-2 pt-0.5 sm:pt-1">
-              <span className={`text-2xl sm:text-4xl md:text-[44px] font-black ${theme.priceColor} tracking-tight leading-none`}>
-                {getCourseNumericPrice(course) || course.currentPrice || course.priceDisplayAr?.replace(/[^0-9]/g, '') || '100'}
-              </span>
-              <span className={`text-sm sm:text-lg font-bold ${theme.priceSub}`}>
-                {isArabic ? 'ريال' : 'SAR'}
-              </span>
-              {course.originalPrice && (
-                <span className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 line-through mr-1 font-medium">
-                  {course.originalPrice} {isArabic ? 'ريال' : 'SAR'}
+            {/* Price Row: Big number + Currency + Strikethrough Original Price (or Inquiry Label if unpriced) */}
+            {getCourseNumericPrice(course) > 0 ? (
+              <div className="flex items-baseline gap-1.5 sm:gap-2 pt-0.5 sm:pt-1">
+                <span className={`text-2xl sm:text-4xl md:text-[44px] font-black ${theme.priceColor} tracking-tight leading-none`}>
+                  {getCourseNumericPrice(course)}
                 </span>
-              )}
-            </div>
+                <span className={`text-sm sm:text-lg font-bold ${theme.priceSub}`}>
+                  {isArabic ? 'ريال' : 'SAR'}
+                </span>
+                {Number(course.originalPrice) > 0 && (
+                  <span className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 line-through mr-1 font-medium">
+                    {course.originalPrice} {isArabic ? 'ريال' : 'SAR'}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center pt-0.5 sm:pt-1 min-h-[36px] sm:min-h-[44px]">
+                <span className={`text-base sm:text-xl font-black ${theme.priceColor} tracking-tight leading-snug`}>
+                  {isArabic ? (course.priceDisplayAr || 'تواصل للاستفسار عن السعر') : (course.priceDisplayEn || 'Contact for Pricing')}
+                </span>
+              </div>
+            )}
 
             {/* Hours / Duration Badge */}
             <div>
@@ -246,7 +253,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
             {/* Sub-note / Warning or Highlight Info */}
             <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-amber-800 dark:text-amber-300 font-semibold">
               <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-              <span className="truncate">{course.tagHighlightAr || (isArabic ? 'شهادة إتمام معتمدة ومسار مهني' : 'Accredited Certificate')}</span>
+              <span className="truncate">{isArabic ? (course.tagHighlightAr || 'شهادة إتمام معتمدة ومسار مهني') : (course.tagHighlightEn || 'Accredited Certificate')}</span>
             </div>
 
             {/* Short Description */}
@@ -270,7 +277,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
             <div className="text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400 pt-0.5 sm:pt-1 flex items-center gap-1.5 flex-wrap">
               <span>{instructor}</span>
               <span>·</span>
-              <span>{course.accreditationBadgeAr || 'اعتماد دولي'}</span>
+              <span>{isArabic ? (course.accreditationBadgeAr || 'اعتماد دولي') : (course.accreditationBadgeEn || 'International Accreditation')}</span>
             </div>
           </div>
 
