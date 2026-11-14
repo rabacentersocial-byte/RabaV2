@@ -12,7 +12,6 @@ import {
   ThumbsUp,
   CalendarCheck
 } from 'lucide-react';
-import confetti from 'canvas-confetti';
 import { PARENT_REVIEWS, SPECIALISTS } from '../data/mockData';
 import { ParentReview } from '../types';
 import { useLanguage } from '../context/LanguageContext';
@@ -51,6 +50,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
+  const containerOffsetLeftRef = useRef(0);
 
   // Synchronize prop updates
   useEffect(() => {
@@ -130,19 +130,20 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
     el.scrollBy({ left: delta, behavior: 'smooth' });
   };
 
-  // Drag to scroll
+  // Drag to scroll (cached offsetLeft avoids layout thrash during mousemove)
   const handleMouseDown = (e: React.MouseEvent) => {
     const el = sliderRef.current;
     if (!el) return;
     setIsDragging(true);
-    startXRef.current = e.pageX - el.offsetLeft;
+    containerOffsetLeftRef.current = el.offsetLeft;
+    startXRef.current = e.pageX - containerOffsetLeftRef.current;
     scrollLeftRef.current = el.scrollLeft;
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !sliderRef.current) return;
     e.preventDefault();
-    const x = e.pageX - sliderRef.current.offsetLeft;
+    const x = e.pageX - containerOffsetLeftRef.current;
     const walk = (x - startXRef.current) * 1.5;
     sliderRef.current.scrollLeft = scrollLeftRef.current - walk;
   };
@@ -204,6 +205,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
     }
 
     try {
+      const { default: confetti } = await import('canvas-confetti');
       confetti({
         particleCount: 60,
         spread: 60,
@@ -261,7 +263,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
             </h2>
 
             {/* Subtitle */}
-            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-xl leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
               {isArabic 
                 ? 'كلمات صادقة من أشخاص وأسر عايشوا تجربة رابا على أرض الواقع.' 
                 : 'Honest words from people who have experienced Wellside first-hand.'}
@@ -344,7 +346,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
             return (
               <div
                 key={rev.id}
-                className="w-[82vw] max-w-[325px] sm:w-[320px] md:w-[330px] shrink-0 snap-start liquid-glass-card rounded-2xl p-4 sm:p-5 transition-all duration-300 flex flex-col justify-between"
+                className="w-[82vw] max-w-[325px] sm:w-[320px] md:w-[330px] shrink-0 snap-start liquid-glass-card rounded-2xl p-4 sm:p-5 transition-shadow duration-300 flex flex-col justify-between"
               >
                 <div>
                   
@@ -408,7 +410,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                           </h4>
                           <CheckCircle2 className="w-3 h-3 text-[#0D6D54] dark:text-[#2DD4BF] shrink-0 fill-[#0D6D54]/10 dark:fill-[#2DD4BF]/10" />
                         </div>
-                        <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 block truncate">
+                        <span className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 block truncate">
                           {displayLocation}
                         </span>
                       </div>
@@ -419,7 +421,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                       <span className="text-[11px] font-bold text-[#0D6D54] dark:text-[#2DD4BF] block max-w-[100px] truncate">
                         {displayCategory}
                       </span>
-                      <span className="text-[10px] text-slate-400 dark:text-slate-500 block mt-0.5">
+                      <span className="text-[10px] text-slate-600 dark:text-slate-300 block mt-0.5">
                         {displayDate}
                       </span>
                     </div>
@@ -428,7 +430,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
 
                   {/* "Treated by" Footnote */}
                   {displayTreatedBy && (
-                    <div className="mt-1.5 pt-1 text-[10px] text-slate-500 dark:text-slate-400 border-t border-slate-100/60 dark:border-white/5 truncate">
+                    <div className="mt-1.5 pt-1 text-[10px] text-slate-600 dark:text-slate-300 border-t border-slate-100/60 dark:border-white/5 truncate">
                       {displayTreatedBy}
                     </div>
                   )}
@@ -449,9 +451,9 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 relative z-10">
             
             {/* Metric 1: Average Rating */}
-            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-amber-400/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-amber-400/40 hover:shadow-md transition-colors duration-300 flex flex-col justify-between">
               <div className="flex items-center justify-between gap-1.5 mb-2.5">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-amber-500/10 text-amber-500 border border-amber-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-amber-500/20 transition-all">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-amber-500/10 text-amber-500 border border-amber-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-amber-500/20 transition-transform">
                   <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-amber-400 text-amber-500" />
                 </div>
                 <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-400/20 truncate">
@@ -470,16 +472,16 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                 <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 mt-1.5 leading-tight">
                   {isArabic ? 'متوسط التقييم' : 'AVERAGE RATING'}
                 </div>
-                <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                <div className="text-[10px] text-slate-600 dark:text-slate-300 mt-0.5 leading-tight">
                   {isArabic ? 'امتياز سريري موثوق' : 'Clinical Excellence'}
                 </div>
               </div>
             </div>
 
             {/* Metric 2: Verified Reviews */}
-            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-emerald-400/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-emerald-400/40 hover:shadow-md transition-colors duration-300 flex flex-col justify-between">
               <div className="flex items-center justify-between gap-1.5 mb-2.5">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-[#22C55E] border border-emerald-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-emerald-500/20 transition-all">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-[#22C55E] border border-emerald-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-emerald-500/20 transition-transform">
                   <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
                 </div>
                 <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-400/20 truncate">
@@ -493,16 +495,16 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                 <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 mt-1.5 leading-tight">
                   {isArabic ? 'تقييم موثق' : 'VERIFIED REVIEWS'}
                 </div>
-                <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                <div className="text-[10px] text-slate-600 dark:text-slate-300 mt-0.5 leading-tight">
                   {isArabic ? 'تجارب أولياء الأمور' : 'Parent Testimonials'}
                 </div>
               </div>
             </div>
 
             {/* Metric 3: Would Recommend */}
-            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-blue-400/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-blue-400/40 hover:shadow-md transition-colors duration-300 flex flex-col justify-between">
               <div className="flex items-center justify-between gap-1.5 mb-2.5">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-blue-500/10 text-[#2E86EB] dark:text-[#2E86EB] border border-blue-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-blue-500/20 transition-all">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-blue-500/10 text-[#2E86EB] dark:text-[#2E86EB] border border-blue-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-blue-500/20 transition-transform">
                   <ThumbsUp className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
                 </div>
                 <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-400/20 truncate">
@@ -516,16 +518,16 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                 <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 mt-1.5 leading-tight">
                   {isArabic ? 'يوصون بالمركز' : 'WOULD RECOMMEND'}
                 </div>
-                <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                <div className="text-[10px] text-slate-600 dark:text-slate-300 mt-0.5 leading-tight">
                   {isArabic ? 'نسبة رضا استثنائية' : 'Exceptional Satisfaction'}
                 </div>
               </div>
             </div>
 
             {/* Metric 4: Booking Experience */}
-            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-sky-400/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-sky-400/40 hover:shadow-md transition-colors duration-300 flex flex-col justify-between">
               <div className="flex items-center justify-between gap-1.5 mb-2.5">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-sky-500/20 transition-all">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-sky-500/20 transition-transform">
                   <CalendarCheck className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
                 </div>
                 <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-sky-500/10 text-sky-700 dark:text-sky-300 border border-sky-400/20 truncate">
@@ -544,7 +546,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                 <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 mt-1.5 leading-tight">
                   {isArabic ? 'تجربة الحجز' : 'BOOKING EXPERIENCE'}
                 </div>
-                <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                <div className="text-[10px] text-slate-600 dark:text-slate-300 mt-0.5 leading-tight">
                   {isArabic ? 'سلاسة وسرعة التنسيق' : 'Seamless Coordination'}
                 </div>
               </div>
@@ -575,7 +577,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
               </div>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                className="w-9 h-9 min-w-[36px] min-h-[36px] rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer flex items-center justify-center"
                 aria-label={isArabic ? 'إغلاق' : 'Close'}
               >
                 <X className="w-5 h-5" />

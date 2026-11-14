@@ -1,10 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import type { Auth } from 'firebase/auth';
-import { 
-  getFirestore, 
-  initializeFirestore, 
-  setLogLevel 
-} from 'firebase/firestore';
+import type { Firestore } from 'firebase/firestore';
 import localConfig from '../../firebase-applet-config.json';
 
 // Configure Firebase via import.meta.env with fallback to firebase-applet-config.json
@@ -38,9 +34,6 @@ export function validateFirebaseConfig(): { isValid: boolean; missingKeys: strin
 // Perform synchronous startup validation
 validateFirebaseConfig();
 
-// Silence internal Firestore retry transport logs
-setLogLevel('silent');
-
 export const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 
 // Lazy Auth instance: NEVER initialized eagerly on public landing pages.
@@ -73,16 +66,26 @@ const dbId = firebaseConfig.firestoreDatabaseId && firebaseConfig.firestoreDatab
   ? firebaseConfig.firestoreDatabaseId
   : undefined;
 
-// Configure Firestore with auto-detect long polling for maximum reliability across iframes and sandboxed environments
-function initDb() {
-  try {
-    return initializeFirestore(app, {
-      experimentalAutoDetectLongPolling: true,
-    }, dbId);
-  } catch {
-    return dbId ? getFirestore(app, dbId) : getFirestore(app);
-  }
-}
+let _cachedDb: Firestore | null = null;
+let _dbPromise: Promise<Firestore> | null = null;
 
-export const db = initDb();
+// Lazy Firestore instance: decouples @firebase/firestore and re2js completely from initial critical bundle
+export async function getLazyDb(): Promise<Firestore> {
+  if (_cachedDb) return _cachedDb;
+  if (!_dbPromise) {
+    _dbPromise = (async () => {
+      const { getFirestore, initializeFirestore, setLogLevel } = await import('firebase/firestore');
+      setLogLevel('silent');
+      try {
+        _cachedDb = initializeFirestore(app, {
+          experimentalAutoDetectLongPolling: true,
+        }, dbId);
+      } catch {
+        _cachedDb = dbId ? getFirestore(app, dbId) : getFirestore(app);
+      }
+      return _cachedDb;
+    })();
+  }
+  return _dbPromise;
+}
 

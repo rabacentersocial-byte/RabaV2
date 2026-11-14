@@ -168,8 +168,13 @@ export const DEFAULT_HERO_SLIDES: HeroSlideItem[] = [
   }
 ];
 
-import { savePersistentModule } from '../utils/persistentSync';
 import { savePersistentImage } from '../utils/persistentImageStore';
+
+const lazySavePersistentModule = (key: string, data: any) => {
+  import('../utils/persistentSync')
+    .then(({ savePersistentModule }) => savePersistentModule(key, data))
+    .catch(() => {});
+};
 
 const STORAGE_HERO_SLIDES_KEY = 'raba_hero_slides_v2';
 const STORAGE_HERO_CONFIG_KEY = 'raba_hero_slider_config_v2';
@@ -230,7 +235,7 @@ export function saveStoredHeroSlides(slides: HeroSlideItem[]): void {
     }
   });
 
-  savePersistentModule(STORAGE_HERO_SLIDES_KEY, slides);
+  lazySavePersistentModule(STORAGE_HERO_SLIDES_KEY, slides);
   dispatchSlidesUpdated();
 }
 
@@ -240,7 +245,7 @@ export function saveStoredHeroSliderConfig(config: HeroSliderConfig): void {
   } catch (err) {
     console.error('Failed to save hero slider config', err);
   }
-  savePersistentModule(STORAGE_HERO_CONFIG_KEY, config);
+  lazySavePersistentModule(STORAGE_HERO_CONFIG_KEY, config);
   dispatchSlidesUpdated();
 }
 
@@ -253,8 +258,8 @@ export function resetHeroSlidesToDefault(): HeroSlideItem[] {
   } catch (err) {
     console.error('Failed to reset hero slides', err);
   }
-  savePersistentModule(STORAGE_HERO_SLIDES_KEY, defaults);
-  savePersistentModule(STORAGE_HERO_CONFIG_KEY, defaultConfig);
+  lazySavePersistentModule(STORAGE_HERO_SLIDES_KEY, defaults);
+  lazySavePersistentModule(STORAGE_HERO_CONFIG_KEY, defaultConfig);
   dispatchSlidesUpdated();
   return defaults;
 }

@@ -69,6 +69,8 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
   }, [packages, selectedCategory]);
 
   const rafIdRef = useRef<number | null>(null);
+  const maxScrollRef = useRef(0);
+  const containerOffsetLeftRef = useRef(0);
 
   // Update scroll button states
   const updateScrollButtons = useCallback(() => {
@@ -77,9 +79,8 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
       rafIdRef.current = null;
       const el = sliderRef.current;
       if (!el) return;
-      const { scrollLeft, scrollWidth, clientWidth } = el;
-      const maxScroll = scrollWidth - clientWidth;
-      const currentScroll = Math.abs(scrollLeft);
+      const maxScroll = maxScrollRef.current;
+      const currentScroll = Math.abs(el.scrollLeft);
 
       setCanScrollLeft(currentScroll > 10);
       setCanScrollRight(currentScroll < maxScroll - 10);
@@ -90,15 +91,27 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
     const el = sliderRef.current;
     if (!el) return;
 
+    const measure = () => {
+      maxScrollRef.current = Math.max(0, el.scrollWidth - el.clientWidth);
+      containerOffsetLeftRef.current = el.offsetLeft;
+      updateScrollButtons();
+    };
+
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
+    if (ro) {
+      ro.observe(el);
+    } else {
+      window.addEventListener('resize', measure, { passive: true });
+    }
     el.addEventListener('scroll', updateScrollButtons, { passive: true });
-    window.addEventListener('resize', updateScrollButtons, { passive: true });
     return () => {
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
         rafIdRef.current = null;
       }
+      ro?.disconnect();
+      window.removeEventListener('resize', measure);
       el.removeEventListener('scroll', updateScrollButtons);
-      window.removeEventListener('resize', updateScrollButtons);
     };
   }, [updateScrollButtons, filteredPackages]);
 
@@ -119,12 +132,13 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
     el.scrollBy({ left: delta, behavior: 'smooth' });
   };
 
-  // Drag to scroll handlers
+  // Drag to scroll handlers (cached offsetLeft prevents layout thrashing)
   const handleMouseDown = (e: React.MouseEvent) => {
     const el = sliderRef.current;
     if (!el) return;
     setIsDragging(true);
-    startXRef.current = e.pageX - el.offsetLeft;
+    containerOffsetLeftRef.current = el.offsetLeft;
+    startXRef.current = e.pageX - containerOffsetLeftRef.current;
     scrollLeftRef.current = el.scrollLeft;
     movedDistanceRef.current = 0;
   };
@@ -132,7 +146,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !sliderRef.current) return;
     e.preventDefault();
-    const x = e.pageX - sliderRef.current.offsetLeft;
+    const x = e.pageX - containerOffsetLeftRef.current;
     const walk = (x - startXRef.current) * 1.5;
     movedDistanceRef.current += Math.abs(walk);
     sliderRef.current.scrollLeft = scrollLeftRef.current - walk;
@@ -252,7 +266,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
             <button
               onClick={() => handleScroll('prev')}
               aria-label={isArabic ? 'الباقة السابقة' : 'Previous package'}
-              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full liquid-glass-btn flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer text-slate-700 dark:text-slate-200"
+              className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn flex items-center justify-center shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer text-slate-700 dark:text-slate-200"
             >
               {isArabic ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
             </button>
@@ -260,7 +274,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
             <button
               onClick={() => handleScroll('next')}
               aria-label={isArabic ? 'الباقة التالية' : 'Next package'}
-              className="w-10 h-10 sm:w-11 sm:h-11 rounded-full liquid-glass-btn flex items-center justify-center shadow-xs active:scale-95 transition-all cursor-pointer text-slate-700 dark:text-slate-200"
+              className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn flex items-center justify-center shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer text-slate-700 dark:text-slate-200"
             >
               {isArabic ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
             </button>
@@ -276,7 +290,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm whitespace-nowrap transition-all duration-200 font-bold cursor-pointer ${
+                className={`px-4 sm:px-5 py-2 sm:py-2.5 min-h-[38px] rounded-full text-xs sm:text-sm whitespace-nowrap transition-colors duration-200 font-bold cursor-pointer ${
                   isActive
                     ? 'bg-[#2E86EB] text-white shadow-md shadow-blue-500/25 border-t border-white/50'
                     : 'liquid-glass-pill hover:scale-[1.02]'
@@ -311,7 +325,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
             return (
               <div
                 key={pkg.id}
-                className={`w-[76vw] min-w-[255px] max-w-[295px] sm:w-[350px] md:w-[370px] lg:w-[385px] shrink-0 snap-start liquid-glass-card rounded-2xl sm:rounded-3xl overflow-hidden border shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between relative group ${
+                className={`w-[76vw] min-w-[255px] max-w-[295px] sm:w-[350px] md:w-[370px] lg:w-[385px] shrink-0 snap-start liquid-glass-card rounded-2xl sm:rounded-3xl overflow-hidden border shadow-xs hover:shadow-xl transition-shadow duration-300 flex flex-col justify-between relative group ${
                   isSummer 
                     ? 'border-sky-400/60 dark:border-sky-500/40 ring-1 ring-sky-400/25' 
                     : 'border-slate-200/90 dark:border-white/10'
@@ -412,8 +426,8 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                     </div>
 
                     {/* Disclaimer: الغياب غير معوض */}
-                    <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 font-medium mb-2 sm:mb-3">
-                      <AlertCircle className={`w-3 h-3 ${isSummer ? 'text-sky-600/70 dark:text-sky-400/70' : 'text-slate-400'} shrink-0`} />
+                    <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 font-medium mb-2 sm:mb-3">
+                      <AlertCircle className={`w-3 h-3 ${isSummer ? 'text-sky-600/80 dark:text-sky-400' : 'text-slate-500 dark:text-slate-400'} shrink-0`} />
                       <span>{isArabic ? (pkg.disclaimerText || 'الغياب غير معوض') : (pkg.disclaimerTextEn || 'Absence is non-compensated')}</span>
                     </div>
 
@@ -475,7 +489,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                     <button
                       id={`book-package-${pkg.id}`}
                       onClick={() => onSelectPackage(pkg)}
-                      className={`w-full py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm transition-all duration-200 shadow-sm active:scale-98 cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 ${
+                      className={`w-full py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm transition-[transform,background-color,box-shadow] duration-200 shadow-sm active:scale-98 cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 ${
                         isSummer
                           ? 'bg-gradient-to-r from-sky-600 via-cyan-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white shadow-md shadow-sky-600/20'
                           : theme.btnBg
@@ -496,7 +510,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
 
         {/* Mobile Swipe Guidance Hint */}
         {filteredPackages.length > 1 && (
-          <div className="mt-2.5 flex items-center justify-center gap-1.5 text-[10.5px] font-bold text-slate-400 sm:hidden">
+          <div className="mt-2.5 flex items-center justify-center gap-1.5 text-[10.5px] font-bold text-slate-600 dark:text-slate-300 sm:hidden">
             <span>{isArabic ? 'اسحب للتنقل بين الباقات المتوفرة' : 'Swipe to explore all packages'}</span>
           </div>
         )}

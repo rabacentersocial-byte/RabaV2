@@ -474,7 +474,7 @@ export const PartnersSection: React.FC = () => {
                 {/* Horizontal Progress track */}
                 <div className="flex-1 h-[3.5px] bg-slate-200/90 dark:bg-slate-800 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-[#0D6D54] dark:bg-[#2DD4BF] rounded-full transition-all duration-300"
+                    className="h-full bg-[#0D6D54] dark:bg-[#2DD4BF] rounded-full transition-[width] duration-300"
                     style={{
                       width: `${Math.min(100, Math.max(8, ((activeMobileIndex + 1) / Math.max(1, mobileFilteredPartners.length)) * 100))}%`
                     }}
@@ -524,12 +524,12 @@ export const PartnersSection: React.FC = () => {
                       <div
                         key={`${partner.id}-${index}`}
                         dir={isArabic ? 'rtl' : 'ltr'}
-                        className="shrink-0 transition-all duration-300"
+                        className="shrink-0"
                       >
                         {/* Modern Professional Partner Card - Reduced empty spaces & centered texts */}
                         <div
                           onClick={() => setActivePartnerModal(partner)}
-                          className={`group w-[72vw] min-w-[210px] max-w-[245px] sm:min-w-0 sm:max-w-none sm:w-[240px] md:w-[250px] h-[265px] sm:h-[285px] rounded-[24px] sm:rounded-[28px] p-3 sm:p-3.5 bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-white/10 shadow-lg shadow-slate-900/5 dark:shadow-black/40 hover:shadow-2xl hover:border-blue-500/50 dark:hover:border-[#2E86EB]/50 hover:-translate-y-1.5 transition-all duration-300 flex flex-col items-center justify-between cursor-pointer relative overflow-hidden`}
+                          className={`group w-[72vw] min-w-[210px] max-w-[245px] sm:min-w-0 sm:max-w-none sm:w-[240px] md:w-[250px] h-[265px] sm:h-[285px] rounded-[24px] sm:rounded-[28px] p-3 sm:p-3.5 bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-white/10 shadow-lg shadow-slate-900/5 dark:shadow-black/40 hover:shadow-2xl hover:border-blue-500/50 dark:hover:border-[#2E86EB]/50 hover:-translate-y-1.5 transition-transform duration-300 flex flex-col items-center justify-between cursor-pointer relative overflow-hidden`}
                         >
                           {/* Top Badge: Centered in the card */}
                           <div className="flex items-center justify-center w-full pt-0.5 px-0.5 relative z-10">
@@ -551,7 +551,7 @@ export const PartnersSection: React.FC = () => {
 
                           {/* Center Framed Canvas for Logo - Pure white in both light & dark mode */}
                           <div 
-                            className="w-full h-32 sm:h-36 rounded-2xl border border-slate-200/90 dark:border-white/10 bg-white dark:bg-white flex items-center justify-center overflow-hidden transition-all relative z-10 p-2 sm:p-2.5 shadow-xs"
+                            className="w-full h-32 sm:h-36 rounded-2xl border border-slate-200/90 dark:border-white/10 bg-white dark:bg-white flex items-center justify-center overflow-hidden relative z-10 p-2 sm:p-2.5 shadow-xs"
                             style={{
                               backgroundColor: '#ffffff'
                             }}
@@ -574,7 +574,7 @@ export const PartnersSection: React.FC = () => {
                             <h3 className="text-sm sm:text-[15px] font-black text-slate-900 dark:text-white truncate max-w-full group-hover:text-emerald-700 dark:group-hover:text-[#2DD4BF] transition-colors leading-tight text-center">
                               {isArabic ? partner.name : partner.nameEn}
                             </h3>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate max-w-full mt-0.5 text-center">
+                            <p className="text-xs text-slate-600 dark:text-slate-300 font-medium truncate max-w-full mt-0.5 text-center">
                               {isArabic ? partner.category : partner.categoryEn}
                             </p>
                           </div>
@@ -598,7 +598,7 @@ export const PartnersSection: React.FC = () => {
               <div
                 key={partner.id}
                 onClick={() => setActivePartnerModal(partner)}
-                className={`group h-[265px] sm:h-[285px] rounded-[24px] sm:rounded-[28px] p-3 sm:p-3.5 bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-white/10 shadow-lg shadow-slate-900/5 dark:shadow-black/40 hover:shadow-2xl hover:border-blue-500/50 dark:hover:border-[#2E86EB]/50 hover:-translate-y-1.5 transition-all duration-300 flex flex-col items-center justify-between cursor-pointer relative overflow-hidden`}
+                className={`group h-[265px] sm:h-[285px] rounded-[24px] sm:rounded-[28px] p-3 sm:p-3.5 bg-white dark:bg-[#111827] border border-slate-200/80 dark:border-white/10 shadow-lg shadow-slate-900/5 dark:shadow-black/40 hover:shadow-2xl hover:border-blue-500/50 dark:hover:border-[#2E86EB]/50 hover:-translate-y-1.5 transition-transform duration-300 flex flex-col items-center justify-between cursor-pointer relative overflow-hidden`}
               >
                 {/* Top Badge: Centered in the card */}
                 <div className="flex items-center justify-center w-full pt-0.5 px-0.5 relative z-10">
@@ -620,7 +620,7 @@ export const PartnersSection: React.FC = () => {
 
                 {/* Center Framed Canvas for Logo - Pure white in both light & dark mode */}
                 <div 
-                  className="w-full h-32 sm:h-36 rounded-2xl border border-slate-200/90 dark:border-white/10 bg-white dark:bg-white flex items-center justify-center overflow-hidden transition-all relative z-10 p-2 sm:p-2.5 shadow-xs"
+                  className="w-full h-32 sm:h-36 rounded-2xl border border-slate-200/90 dark:border-white/10 bg-white dark:bg-white flex items-center justify-center overflow-hidden relative z-10 p-2 sm:p-2.5 shadow-xs"
                   style={{
                     backgroundColor: '#ffffff'
                   }}
@@ -643,7 +643,7 @@ export const PartnersSection: React.FC = () => {
                   <h3 className="text-sm sm:text-[15px] font-black text-slate-900 dark:text-white truncate max-w-full group-hover:text-emerald-700 dark:group-hover:text-[#2DD4BF] transition-colors leading-tight text-center">
                     {isArabic ? partner.name : partner.nameEn}
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate max-w-full mt-0.5 text-center">
+                  <p className="text-xs text-slate-600 dark:text-slate-300 font-medium truncate max-w-full mt-0.5 text-center">
                     {isArabic ? partner.category : partner.categoryEn}
                   </p>
                 </div>
@@ -672,7 +672,7 @@ export const PartnersSection: React.FC = () => {
         {/* BOTTOM CONTROLS & STATUS BAR (Desktop Only)                               */}
         {/* ========================================================================= */}
         {viewMode === 'slider' && (
-          <div className="hidden md:flex mt-4 flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400 px-2">
+          <div className="hidden md:flex mt-4 flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600 dark:text-slate-300 px-2">
             
             {/* Live Status Hint */}
             <div className="flex items-center gap-2">

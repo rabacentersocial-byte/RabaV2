@@ -5,26 +5,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { updateTabFavicon } from './data/siteCustomizer';
-import { initPersistentSync, hydratePersistentData } from './utils/persistentSync';
-import { initWebMcp } from './utils/webMcp';
 import './index.css';
-
-console.log('[Raba main] Initializing core modules...');
-
-// Initialize WebMCP tools for in-browser AI agents
-try {
-  initWebMcp();
-} catch (e) {
-  console.warn('[main] WebMCP notice:', e);
-}
-
-// Pre-hydrate persistent data synchronously before React renders so incognito mode has instant data
-try {
-  hydratePersistentData();
-} catch (e) {
-  console.warn('[main] Pre-mount hydration notice:', e);
-}
 
 const rootEl = document.getElementById('root');
 if (rootEl) {
@@ -33,7 +14,6 @@ if (rootEl) {
     if (didMount) return;
     didMount = true;
     try {
-      console.log('[Raba main] Mounting React tree into #root...');
       const root = createRoot(rootEl);
       root.render(
         <StrictMode>
@@ -48,7 +28,6 @@ if (rootEl) {
           </ErrorBoundary>
         </StrictMode>,
       );
-      console.log('[Raba main] React tree successfully dispatched to renderer.');
 
       // Dismiss overlay splash screen immediately as soon as React mounts
       if (typeof window !== 'undefined' && (window as any).dismissSplash) {
@@ -83,12 +62,12 @@ if (rootEl) {
     };
     mainCssLink.addEventListener('load', onCssReady, { once: true });
     mainCssLink.addEventListener('error', onCssReady, { once: true });
-    // Fail-safe fallback so React always mounts even if a network proxy strips stylesheet events
-    window.setTimeout(onCssReady, 1500);
+    // Fail-safe fallback so React always mounts quickly even if stylesheet load events lag
+    window.setTimeout(onCssReady, 600);
   }
 }
 
-// Safely execute initial background sync and favicon setup during idle time without blocking main thread mount
+// Safely execute background sync, WebMCP, and favicon setup during idle time without bloating critical entry JS
 const scheduleIdleWork = (fn: () => void, delayMs = 2500) => {
   if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
     (window as any).requestIdleCallback(fn, { timeout: delayMs + 1000 });
@@ -98,17 +77,20 @@ const scheduleIdleWork = (fn: () => void, delayMs = 2500) => {
 };
 
 scheduleIdleWork(() => {
-  try {
-    updateTabFavicon();
-  } catch (e) {
-    console.warn('[main] Favicon notice:', e);
-  }
+  import('./utils/webMcp')
+    .then(({ initWebMcp }) => initWebMcp())
+    .catch((e) => console.warn('[main] WebMCP notice:', e));
 
-  try {
-    initPersistentSync();
-  } catch (e) {
-    console.warn('[main] Persistent sync notice:', e);
-  }
+  import('./data/siteCustomizer')
+    .then(({ updateTabFavicon }) => updateTabFavicon())
+    .catch((e) => console.warn('[main] Favicon notice:', e));
+
+  import('./utils/persistentSync')
+    .then(({ hydratePersistentData, initPersistentSync }) => {
+      hydratePersistentData();
+      return initPersistentSync();
+    })
+    .catch((e) => console.warn('[main] Persistent sync notice:', e));
 
   // Register PWA service worker during idle time so it never blocks FCP, LCP, or TBT
   if (typeof window !== 'undefined' && 'serviceWorker' in navigator && !window.location.hash.includes('admin')) {
@@ -118,4 +100,4 @@ scheduleIdleWork(() => {
       // ignore
     }
   }
-}, 3000);
+}, 2500);

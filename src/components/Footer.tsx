@@ -211,7 +211,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
                       rel="noopener noreferrer"
                       aria-label={social.name}
                       title={`${social.name} (${social.badge})`}
-                      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl liquid-glass-btn border border-slate-200/80 dark:border-white/10 bg-white/70 dark:bg-white/[0.05] text-slate-700 dark:text-slate-300 flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-xs backdrop-blur-md ${social.hoverClass}`}
+                      className={`w-9 h-9 min-w-[36px] min-h-[36px] sm:w-10 sm:h-10 rounded-xl liquid-glass-btn border border-slate-200/80 dark:border-white/10 bg-white/70 dark:bg-white/[0.05] text-slate-700 dark:text-slate-300 flex items-center justify-center transition-[transform,colors] duration-200 hover:scale-110 active:scale-95 shadow-xs backdrop-blur-md ${social.hoverClass}`}
                     >
                       <Icon className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                     </a>
@@ -233,7 +233,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
               </div>
 
               {/* Install Card Button */}
-              <div className="p-3.5 rounded-2xl liquid-glass-card bg-white/80 dark:bg-white/[0.04] border border-slate-200/90 dark:border-white/10 hover:border-[#2E86EB]/40 transition-all duration-300 shadow-xs backdrop-blur-md">
+              <div className="p-3.5 rounded-2xl liquid-glass-card bg-white/80 dark:bg-white/[0.04] border border-slate-200/90 dark:border-white/10 hover:border-[#2E86EB]/40 transition-colors duration-300 shadow-xs backdrop-blur-md">
                 <div className="flex items-center justify-between gap-3 mb-2.5">
                   <div className="flex items-center gap-2.5">
                     <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#2E86EB] to-blue-700 flex items-center justify-center text-white font-black shadow-xs shrink-0">
@@ -243,7 +243,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
                       <div className="text-xs font-extrabold text-slate-900 dark:text-white leading-tight">
                         {isArabic ? 'تثبيت التطبيق على الجوال' : 'Install on Mobile Device'}
                       </div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                      <div className="text-[10px] text-slate-600 dark:text-slate-300">
                         {isArabic ? 'إضافة إلى الشاشة الرئيسية كـ تطبيق' : 'Add to Home Screen as Web App'}
                       </div>
                     </div>
@@ -271,7 +271,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
                       setPwaModalTab('ios');
                       setIsPwaModalOpen(true);
                     }}
-                    className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl liquid-glass-btn border border-slate-200/70 dark:border-white/10 bg-white dark:bg-white/[0.06] hover:bg-slate-50 dark:hover:bg-white/15 text-slate-800 dark:text-slate-200 text-[11px] font-bold transition-all cursor-pointer active:scale-95 shadow-xs"
+                    className="flex items-center justify-center gap-1.5 py-2 px-2 min-h-[36px] rounded-xl liquid-glass-btn border border-slate-200/70 dark:border-white/10 bg-white dark:bg-white/[0.06] hover:bg-slate-50 dark:hover:bg-white/15 text-slate-800 dark:text-slate-200 text-[11px] font-bold transition-colors cursor-pointer active:scale-95 shadow-xs"
                     aria-label="Apple iOS Web App"
                   >
                     <AppleIcon className="w-3.5 h-3.5 text-slate-800 dark:text-white" />
@@ -284,7 +284,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
                       setPwaModalTab('android');
                       setIsPwaModalOpen(true);
                     }}
-                    className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl liquid-glass-btn border border-slate-200/70 dark:border-white/10 bg-white dark:bg-white/[0.06] hover:bg-slate-50 dark:hover:bg-white/15 text-slate-800 dark:text-slate-200 text-[11px] font-bold transition-all cursor-pointer active:scale-95 shadow-xs"
+                    className="flex items-center justify-center gap-1.5 py-2 px-2 min-h-[36px] rounded-xl liquid-glass-btn border border-slate-200/70 dark:border-white/10 bg-white dark:bg-white/[0.06] hover:bg-slate-50 dark:hover:bg-white/15 text-slate-800 dark:text-slate-200 text-[11px] font-bold transition-colors cursor-pointer active:scale-95 shadow-xs"
                     aria-label="Android Web App"
                   >
                     <AndroidIcon className="w-3.5 h-3.5 text-emerald-600 dark:text-[#22C55E]" />
@@ -400,7 +400,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
         </div>
 
         {/* Bottom Bar with Links, Back to Top & Admin Access */}
-        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-600 dark:text-slate-300">
           <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 text-center sm:text-start">
             <p className="font-medium">
               {isArabic ? (footer.copyrightAr || t.footer.copyright) : (footer.copyrightEn || t.footer.copyright)}
@@ -427,7 +427,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
                 onClick={onOpenAdmin}
                 title={isArabic ? 'لوحة تحكم المنظومة' : 'Staff & Admin Portal'}
                 aria-label={isArabic ? 'لوحة تحكم المنظومة' : 'Staff & Admin Portal'}
-                className="text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 p-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors cursor-pointer"
+                className="text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 w-9 h-9 min-w-[36px] min-h-[36px] inline-flex items-center justify-center rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors cursor-pointer"
               >
                 <ShieldCheck className="w-4 h-4" />
               </button>
@@ -436,7 +436,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
           
           <button
             onClick={scrollToTop}
-            className="flex items-center gap-1.5 liquid-glass-btn text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-all cursor-pointer px-3.5 py-2 rounded-xl bg-white/70 dark:bg-white/[0.06] border border-slate-200/80 dark:border-white/10 shadow-xs hover:scale-105 active:scale-95"
+            className="flex items-center gap-1.5 min-h-[38px] liquid-glass-btn text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-transform cursor-pointer px-3.5 py-2 rounded-xl bg-white/70 dark:bg-white/[0.06] border border-slate-200/80 dark:border-white/10 shadow-xs hover:scale-105 active:scale-95"
             aria-label={isArabic ? 'الرجوع لأعلى الصفحة' : 'Back to top'}
           >
             <span className="font-bold">{t.floating.scrollTop}</span>

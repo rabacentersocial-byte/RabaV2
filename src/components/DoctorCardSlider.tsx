@@ -2837,19 +2837,21 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
     el.scrollBy({ left: delta, behavior: 'smooth' });
   };
 
-  // Drag handlers for Single Slider
+  // Drag handlers for Single Slider (cached offsetLeft avoids layout thrash during mousemove)
+  const containerOffsetLeftRef = useRef(0);
   const handleMouseDown = (e: React.MouseEvent) => {
     const el = sliderRef.current;
     if (!el) return;
     setIsDragging(true);
-    startXRef.current = e.pageX - el.offsetLeft;
+    containerOffsetLeftRef.current = el.offsetLeft;
+    startXRef.current = e.pageX - containerOffsetLeftRef.current;
     scrollLeftRef.current = el.scrollLeft;
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !sliderRef.current) return;
     e.preventDefault();
-    const x = e.pageX - sliderRef.current.offsetLeft;
+    const x = e.pageX - containerOffsetLeftRef.current;
     const walk = (x - startXRef.current) * 1.5;
     sliderRef.current.scrollLeft = scrollLeftRef.current - walk;
   };
@@ -2909,7 +2911,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
     return (
       <div
         key={doctor.id}
-        className={`w-[66vw] min-w-[220px] max-w-[260px] sm:min-w-0 sm:max-w-none sm:w-[325px] md:w-[350px] lg:w-[375px] shrink-0 snap-start self-start liquid-glass-card rounded-2xl sm:rounded-3xl overflow-hidden border ${theme.cardBorderHover} shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group`}
+        className={`w-[66vw] min-w-[220px] max-w-[260px] sm:min-w-0 sm:max-w-none sm:w-[325px] md:w-[350px] lg:w-[375px] shrink-0 snap-start self-start liquid-glass-card rounded-2xl sm:rounded-3xl overflow-hidden border ${theme.cardBorderHover} shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col group`}
       >
         {/* Top Slim Accent Strip in Doctor's Brand/Logo Color */}
         <div className={`h-1.5 w-full ${theme.topAccentBar}`} />
@@ -2946,10 +2948,10 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
           <button
             onClick={(e) => toggleFavorite(e, doctor.id)}
             aria-label="Save to favorites"
-            className="absolute top-2 sm:top-3 right-2 sm:right-3 z-10 w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/95 dark:bg-slate-900/90 shadow-md flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer text-slate-700 dark:text-slate-200 hover:text-rose-500"
+            className="absolute top-2 sm:top-3 right-2 sm:right-3 z-10 w-9 h-9 min-w-[36px] min-h-[36px] sm:w-10 sm:h-10 rounded-full bg-white/95 dark:bg-slate-900/90 shadow-md flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer text-slate-700 dark:text-slate-200 hover:text-rose-500"
           >
             <Heart 
-              className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors ${
+              className={`w-4 h-4 transition-colors ${
                 isFav ? 'fill-rose-500 text-rose-500' : 'text-slate-600 dark:text-slate-300'
               }`} 
             />
@@ -2982,7 +2984,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
                 <span className={`text-xs sm:text-base md:text-lg font-black block font-sans ${theme.expMetricColor}`}>
                   {doctor.experienceYears}
                 </span>
-                <span className="text-[7.5px] sm:text-[9.5px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-0.5">
+                <span className="text-[7.5px] sm:text-[9.5px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider block mt-0.5">
                   {isArabic ? 'سنوات خبرة' : 'YEARS EXP.'}
                 </span>
               </div>
@@ -2991,7 +2993,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
                 <span className="text-xs sm:text-base md:text-lg font-black text-slate-900 dark:text-white block font-sans">
                   {displayReviewCount}
                 </span>
-                <span className="text-[7.5px] sm:text-[9.5px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-0.5">
+                <span className="text-[7.5px] sm:text-[9.5px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider block mt-0.5">
                   {isArabic ? 'تقييم معتمد' : 'REVIEWS'}
                 </span>
               </div>
@@ -3001,14 +3003,14 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
                   <Star className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 fill-amber-400 text-amber-400" />
                   <span>{(displayRating || 4.9).toFixed(1)}</span>
                 </span>
-                <span className="text-[7.5px] sm:text-[9.5px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-0.5">
+                <span className="text-[7.5px] sm:text-[9.5px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider block mt-0.5">
                   {isArabic ? 'متوسط التقييم' : 'RATING'}
                 </span>
               </div>
             </div>
 
             {/* 5. Interactive Star Rating Widget directly on the Card */}
-            <div className="bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-500/20 rounded-xl sm:rounded-2xl p-1 sm:p-2.5 my-1 sm:my-1.5 flex items-center justify-between gap-1 transition-all shadow-2xs">
+            <div className="bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-500/20 rounded-xl sm:rounded-2xl p-1 sm:p-2.5 my-1 sm:my-1.5 flex items-center justify-between gap-1 transition-colors shadow-2xs">
               <div className="min-w-0">
                 <span className="text-[8.5px] sm:text-[11px] font-bold text-slate-800 dark:text-slate-200 block truncate">
                   {ratingToast?.docId === doctor.id
@@ -3018,7 +3020,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
                       : (isArabic ? 'أضف تقييمك:' : 'Rate:')
                   }
                 </span>
-                <span className="text-[7px] sm:text-[9.5px] text-slate-400 dark:text-slate-500 block truncate">
+                <span className="text-[7px] sm:text-[9.5px] text-slate-600 dark:text-slate-300 block truncate">
                   {userRating 
                     ? (isArabic ? 'تعديل التقييم' : 'Update') 
                     : (isArabic ? 'قيّم بالنجوم' : 'Click stars')}
@@ -3079,7 +3081,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
 
               <button
                 onClick={() => handleBook(doctor)}
-                className={`font-bold text-[10px] sm:text-sm px-2 sm:px-4 py-1 sm:py-2 rounded-lg sm:rounded-xl shadow-md transition-all active:scale-95 cursor-pointer whitespace-nowrap ${theme.bookButton}`}
+                className={`font-bold text-[10px] sm:text-sm px-2 sm:px-4 py-1 sm:py-2 rounded-lg sm:rounded-xl shadow-md transition-transform active:scale-95 cursor-pointer whitespace-nowrap ${theme.bookButton}`}
               >
                 {isArabic ? 'حجز جلسة' : 'Book visit'}
               </button>
@@ -3108,7 +3110,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
             {isArabic ? 'فريق رابا الطبي والتأهيلي' : 'Raba Medical & Rehabilitation Team'}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-2xl font-medium">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl font-medium">
             {isArabic 
               ? 'تصفح نخبة الاستشاريين والأخصائيين المعتمدين في مركز رابا لتأهيل ورعاية الأطفال'
               : 'Browse our elite certified consultants & specialists at Raba Day Care Center.'}
@@ -3120,7 +3122,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
           {onOpenSpecialistsPage && (
             <button
               onClick={onOpenSpecialistsPage}
-              className="shrink-0 flex items-center gap-2 px-4 py-2.5 sm:py-3 liquid-glass-btn text-[#2E86EB] rounded-2xl text-xs sm:text-sm font-black shadow-xs hover:shadow-md transition-all cursor-pointer group"
+              className="shrink-0 flex items-center gap-2 px-4 py-2.5 sm:py-3 liquid-glass-btn text-[#2E86EB] rounded-2xl text-xs sm:text-sm font-black shadow-xs hover:shadow-md transition-colors cursor-pointer group"
               title={isArabic ? 'فتح صفحة دليل الأخصائيين الشاملة' : 'Open Specialists Directory Page'}
             >
               <span>{isArabic ? 'عرض المزيد (دليل الأخصائيين)' : 'View More (Directory)'}</span>
@@ -3160,7 +3162,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 min-h-[38px] rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition-colors duration-200 cursor-pointer ${
                   isSelected
                     ? 'bg-[#2E86EB] text-white shadow-md shadow-blue-500/25 border-t border-white/50 font-black scale-[1.02]'
                     : 'liquid-glass-pill hover:scale-[1.02]'
@@ -3184,7 +3186,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
 
       {/* 3. Toolbar: Count, Sort Dropdown & Slider Navigation Controls */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-3 mb-6 border-b border-slate-200/70 dark:border-white/10">
-        <div className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-400">
+        <div className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300">
           {isArabic ? `${filteredDoctors.length} أخصائي متاح` : `${filteredDoctors.length} Specialists Available`}
         </div>
 
@@ -3241,16 +3243,16 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
             <button
               onClick={() => handleScroll('prev')}
               aria-label={isArabic ? 'السابق' : 'Previous'}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-white/10 shadow-xs active:scale-95 transition-all cursor-pointer"
+              className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-white/10 shadow-xs active:scale-95 transition-transform cursor-pointer"
             >
-              {isArabic ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+              {isArabic ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
             </button>
             <button
               onClick={() => handleScroll('next')}
               aria-label={isArabic ? 'التالي' : 'Next'}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-white/10 shadow-xs active:scale-95 transition-all cursor-pointer"
+              className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-white/10 shadow-xs active:scale-95 transition-transform cursor-pointer"
             >
-              {isArabic ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+              {isArabic ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
             </button>
           </div>
         </div>
@@ -3259,12 +3261,12 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
       {/* No Results Fallback */}
       {filteredDoctors.length === 0 ? (
         <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/10 p-8">
-          <p className="text-slate-500 dark:text-slate-400 font-medium mb-3">
+          <p className="text-slate-600 dark:text-slate-300 font-medium mb-3">
             {isArabic ? 'لم يتم العثور على أخصائيين يطابقون خيارات البحث أو التخصص المحدد.' : 'No specialists match your search criteria or selected specialty.'}
           </p>
           <button
             onClick={() => { setSearchQuery(''); setSelectedCategory('all'); }}
-            className="px-5 py-2 rounded-xl bg-[#0B3B36] text-white text-xs font-bold cursor-pointer hover:bg-[#124d47] transition-all"
+            className="px-5 py-2 rounded-xl bg-[#0B3B36] text-white text-xs font-bold cursor-pointer hover:bg-[#124d47] transition-colors"
           >
             {isArabic ? 'إعادة تعيين الفلاتر' : 'Reset Filters'}
           </button>
@@ -3299,7 +3301,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
               <h4 className="text-sm font-black text-slate-900 dark:text-white">
                 {isArabic ? 'هل ترغب في تصفح جميع الكفاءات الطبية بقائمة مفصلة؟' : 'Want to browse all specialists in a full list view?'}
               </h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
                 {isArabic ? 'تصفح صفحة الأخصائيين المخصصة مع فلاتر شاملة للسنوات والتخصصات وحجز المواعيد مباشرة.' : 'Visit our dedicated directory page with specialty filtering and direct booking.'}
               </p>
             </div>
@@ -3307,7 +3309,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
 
           <button
             onClick={onOpenSpecialistsPage}
-            className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-2 px-6 py-3 bg-[#0d5c52] hover:bg-[#093e37] text-white font-black rounded-2xl text-xs sm:text-sm shadow-md transition-all cursor-pointer group"
+            className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-2 px-6 py-3 bg-[#0d5c52] hover:bg-[#093e37] text-white font-black rounded-2xl text-xs sm:text-sm shadow-md transition-colors cursor-pointer group"
           >
             <span>{isArabic ? 'عرض المزيد من الأخصائيين' : 'View More Specialists'}</span>
             {isArabic ? <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> : <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}

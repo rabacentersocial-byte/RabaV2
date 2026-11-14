@@ -1,10 +1,9 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { Navbar } from './components/Navbar';
 import { AnimatedBackground } from './components/AnimatedBackground';
 import { Hero } from './components/Hero';
 import { MobileBottomBar } from './components/MobileBottomBar';
 import { CourseItem } from './data/coursesData';
-import { getStoredAdminSession, clearStoredAdminSession } from './data/adminData';
 import { DISPATCH_REQUEST_EVENT } from './data/customerRequests';
 
 // Helper that retries dynamic imports to handle transient network hiccups, dev-server restarts, and new deployments
@@ -74,14 +73,6 @@ const FloatingActions = lazy<React.ComponentType<any>>(() => safeImport(() => im
 
 
 import { 
-  INITIAL_APPOINTMENTS, 
-  INITIAL_NOTIFICATIONS,
-  PARENT_REVIEWS,
-  SERVICES,
-  THERAPY_PACKAGES,
-  SPECIALISTS
-} from './data/mockData';
-import { 
   Specialist, 
   ServiceItem, 
   TherapyPackage, 
@@ -90,15 +81,28 @@ import {
   ParentReview,
   AdminUser
 } from './types';
-import { deduplicateSpecialists } from './utils/specialistDeduplication';
-import { savePersistentModule } from './utils/persistentSync';
 import { 
   getStoredThemeSettings, 
   applyGlobalTheme, 
   getStoredModulesVisibility, 
   SiteModulesVisibility 
 } from './data/siteCustomizer';
-import { getStoredTrackingPixels, applyTrackingPixels } from './utils/trackingPixels';
+
+const readInitialAdminSession = (): AdminUser | null => {
+  if (typeof window === 'undefined') return null;
+  try {
+    const rawSession = localStorage.getItem('raba_admin_session_auth');
+    if (!rawSession) return null;
+    const session = JSON.parse(rawSession);
+    if (session?.expiresAt && Date.now() > session.expiresAt) return null;
+    const rawUser = localStorage.getItem('raba_current_admin_user');
+    if (!rawUser) return null;
+    const user = JSON.parse(rawUser) as AdminUser;
+    return user && user.status !== 'suspended' ? user : null;
+  } catch {
+    return null;
+  }
+};
 
 export default function App() {
   // Modules Visibility & Theme Control
@@ -171,13 +175,16 @@ export default function App() {
         ['scroll', 'mousemove', 'touchstart', 'pointerdown', 'wheel'].forEach(evt => {
           window.removeEventListener(evt, run);
         });
-        applyTrackingPixels(getStoredTrackingPixels());
-        fetch('/api/tracking-pixels/active')
-          .then(res => res.json())
-          .then(json => {
-            if (json.success && json.data) {
-              applyTrackingPixels(json.data);
-            }
+        import('./utils/trackingPixels')
+          .then(({ getStoredTrackingPixels, applyTrackingPixels }) => {
+            applyTrackingPixels(getStoredTrackingPixels());
+            return fetch('/api/tracking-pixels/active')
+              .then(res => res.json())
+              .then(json => {
+                if (json.success && json.data) {
+                  applyTrackingPixels(json.data);
+                }
+              });
           })
           .catch(() => {});
       };
@@ -289,23 +296,25 @@ export default function App() {
         if (savedSpec) {
           const parsed = JSON.parse(savedSpec);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            const hasStaleMocks = parsed.length !== SPECIALISTS.length ||
-              parsed.some((s: any) => 
-                s.id === 'spec-rawan-tablett' || 
-                s.id === 'spec-hossam-malki' ||
-                (s.id === 'spec-hanaa-basheer' && (!s.education || s.education.length < 5 || s.category !== 'psychology' || s.experienceYears !== 15)) ||
-                (s.id === 'spec-sara-abdelhamid' && s.name && s.name.includes('يارا')) ||
-                (s.id === 'spec-sadeem-mshari' && s.experienceYears !== 2)
-              );
-            const fullList = hasStaleMocks
-              ? SPECIALISTS
-              : parsed;
-            setSpecialists((prev) => {
-              if (prev.length === fullList.length && prev.every((s, i) => s.id === fullList[i].id && s.avatar === fullList[i].avatar)) {
-                return prev;
-              }
-              return fullList;
-            });
+            import('./data/mockData').then(({ SPECIALISTS }) => {
+              const hasStaleMocks = parsed.length !== SPECIALISTS.length ||
+                parsed.some((s: any) => 
+                  s.id === 'spec-rawan-tablett' || 
+                  s.id === 'spec-hossam-malki' ||
+                  (s.id === 'spec-hanaa-basheer' && (!s.education || s.education.length < 5 || s.category !== 'psychology' || s.experienceYears !== 15)) ||
+                  (s.id === 'spec-sara-abdelhamid' && s.name && s.name.includes('يارا')) ||
+                  (s.id === 'spec-sadeem-mshari' && s.experienceYears !== 2)
+                );
+              const fullList = hasStaleMocks
+                ? SPECIALISTS
+                : parsed;
+              setSpecialists((prev) => {
+                if (prev.length === fullList.length && prev.every((s, i) => s.id === fullList[i].id && s.avatar === fullList[i].avatar)) {
+                  return prev;
+                }
+                return fullList;
+              });
+            }).catch(() => {});
           }
         }
       } catch { /* ignore */ }
@@ -342,70 +351,59 @@ export default function App() {
     };
   }, []);
 
-  // Persistence state
+  const didHydrateDefaultsRef = useRef(false);
+
+  // Persistence state (initialized synchronously from localStorage; defaults hydrated lazily out of critical bundle)
   const [appointments, setAppointments] = useState<Appointment[]>(() => {
     try {
       const saved = localStorage.getItem('raba_appointments') || localStorage.getItem('khotwa_appointments');
-      const list: Appointment[] = saved ? JSON.parse(saved) : INITIAL_APPOINTMENTS;
-      // Deduplicate by ID to prevent duplicate key warning
+      if (!saved) return [];
+      const list: Appointment[] = JSON.parse(saved);
+      if (!Array.isArray(list)) return [];
       const seen = new Set<string>();
       return list.filter((item) => {
-        if (!item || !item.id) return false;
-        if (seen.has(item.id)) return false;
+        if (!item || !item.id || seen.has(item.id)) return false;
         seen.add(item.id);
         return true;
       });
     } catch {
-      return INITIAL_APPOINTMENTS;
+      return [];
     }
   });
 
   const [notifications, setNotifications] = useState<NotificationItem[]>(() => {
     try {
       const saved = localStorage.getItem('raba_notifications') || localStorage.getItem('khotwa_notifications');
-      return saved ? JSON.parse(saved) : INITIAL_NOTIFICATIONS;
+      const parsed = saved ? JSON.parse(saved) : [];
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
-      return INITIAL_NOTIFICATIONS;
+      return [];
     }
   });
 
   const [testimonials, setTestimonials] = useState<ParentReview[]>(() => {
     try {
       const saved = localStorage.getItem('raba_testimonials_v7');
-      return saved ? JSON.parse(saved) : PARENT_REVIEWS;
+      const parsed = saved ? JSON.parse(saved) : [];
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
-      return PARENT_REVIEWS;
+      return [];
     }
   });
 
   const [specialists, setSpecialists] = useState<Specialist[]>(() => {
     try {
       const saved = localStorage.getItem('raba_specialists');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          const hasStaleMocks = parsed.length !== SPECIALISTS.length ||
-            parsed.some((s: any) => 
-              s.id === 'spec-rawan-tablett' || 
-              s.id === 'spec-hossam-malki' ||
-              (s.id === 'spec-hanaa-basheer' && (!s.education || s.education.length < 5 || s.category !== 'psychology' || s.experienceYears !== 15)) ||
-              (s.id === 'spec-sara-abdelhamid' && s.name && s.name.includes('يارا')) ||
-              (s.id === 'spec-sadeem-mshari' && s.experienceYears !== 2)
-            );
-          if (hasStaleMocks) {
-            return deduplicateSpecialists(SPECIALISTS);
-          }
-          return deduplicateSpecialists(parsed);
-        }
-      }
-      return deduplicateSpecialists(SPECIALISTS);
+      const parsed = saved ? JSON.parse(saved) : [];
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
-      return deduplicateSpecialists(SPECIALISTS);
+      return [];
     }
   });
 
-  // Save to localStorage
+  // Save to localStorage (only when hydrated or non-empty so empty defaults don't overwrite cache pre-hydration)
   useEffect(() => {
+    if (!didHydrateDefaultsRef.current && specialists.length === 0) return;
     try {
       localStorage.setItem('raba_specialists', JSON.stringify(specialists));
     } catch {
@@ -413,6 +411,7 @@ export default function App() {
     }
   }, [specialists]);
   useEffect(() => {
+    if (!didHydrateDefaultsRef.current && appointments.length === 0) return;
     try {
       localStorage.setItem('raba_appointments', JSON.stringify(appointments));
     } catch {
@@ -421,6 +420,7 @@ export default function App() {
   }, [appointments]);
 
   useEffect(() => {
+    if (!didHydrateDefaultsRef.current && notifications.length === 0) return;
     try {
       localStorage.setItem('raba_notifications', JSON.stringify(notifications));
     } catch {
@@ -429,6 +429,7 @@ export default function App() {
   }, [notifications]);
 
   useEffect(() => {
+    if (!didHydrateDefaultsRef.current && testimonials.length === 0) return;
     try {
       localStorage.setItem('raba_testimonials_v7', JSON.stringify(testimonials));
     } catch {
@@ -453,7 +454,70 @@ export default function App() {
   const [isOffersPageOpen, setIsOffersPageOpen] = useState(false);
   const [isBlogPageOpen, setIsBlogPageOpen] = useState(false);
   const [activeBlogSlug, setActiveBlogSlug] = useState<string | null>(null);
-  const [adminSession, setAdminSession] = useState<AdminUser | null>(() => getStoredAdminSession());
+  const [adminSession, setAdminSession] = useState<AdminUser | null>(() => readInitialAdminSession());
+
+  // Lazy-hydrate fallback mockData & specialist deduplication after Hero render / on interactive demand
+  useEffect(() => {
+    if (didHydrateDefaultsRef.current) return;
+    if (!isReadyToHydrate && !isAdminOpen && !isSpecialistsPageOpen && !isNotificationsOpen && !isBookingOpen) {
+      return;
+    }
+    didHydrateDefaultsRef.current = true;
+    let cancelled = false;
+
+    Promise.all([
+      import('./data/mockData'),
+      import('./utils/specialistDeduplication')
+    ]).then(([mock, dedup]) => {
+      if (cancelled) return;
+      const {
+        INITIAL_APPOINTMENTS,
+        INITIAL_NOTIFICATIONS,
+        PARENT_REVIEWS,
+        SPECIALISTS
+      } = mock;
+      const { deduplicateSpecialists } = dedup;
+
+      setAppointments((prev) => {
+        if (prev.length > 0) return prev;
+        const seen = new Set<string>();
+        return INITIAL_APPOINTMENTS.filter((item) => {
+          if (!item || !item.id || seen.has(item.id)) return false;
+          seen.add(item.id);
+          return true;
+        });
+      });
+
+      setNotifications((prev) => (prev.length > 0 ? prev : INITIAL_NOTIFICATIONS));
+      setTestimonials((prev) => (prev.length > 0 ? prev : PARENT_REVIEWS));
+      setSpecialists((prev) => {
+        if (!prev || prev.length === 0) {
+          return deduplicateSpecialists(SPECIALISTS);
+        }
+        const hasStaleMocks = prev.length !== SPECIALISTS.length ||
+          prev.some((s: any) =>
+            s.id === 'spec-rawan-tablett' ||
+            s.id === 'spec-hossam-malki' ||
+            (s.id === 'spec-hanaa-basheer' && (!s.education || s.education.length < 5 || s.category !== 'psychology' || s.experienceYears !== 15)) ||
+            (s.id === 'spec-sara-abdelhamid' && s.name && s.name.includes('يارا')) ||
+            (s.id === 'spec-sadeem-mshari' && s.experienceYears !== 2)
+          );
+        return hasStaleMocks ? deduplicateSpecialists(SPECIALISTS) : deduplicateSpecialists(prev);
+      });
+    }).catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isReadyToHydrate, isAdminOpen, isSpecialistsPageOpen, isNotificationsOpen, isBookingOpen]);
+
+  // Validate admin session lazily only when admin portal is opened
+  useEffect(() => {
+    if (!isAdminOpen) return;
+    import('./data/adminData')
+      .then(({ getStoredAdminSession }) => setAdminSession(getStoredAdminSession()))
+      .catch(() => {});
+  }, [isAdminOpen]);
   const [cartCount, setCartCount] = useState(0);
   const [selectedCourseForRegistration, setSelectedCourseForRegistration] = useState<CourseItem | null>(null);
   const [isCourseRegistrationOpen, setIsCourseRegistrationOpen] = useState(false);
@@ -627,7 +691,13 @@ export default function App() {
       }
     };
     const handleAuthChange = (e: any) => {
-      setAdminSession(e?.detail || getStoredAdminSession());
+      if (e?.detail !== undefined) {
+        setAdminSession(e.detail);
+      } else {
+        import('./data/adminData')
+          .then(({ getStoredAdminSession }) => setAdminSession(getStoredAdminSession()))
+          .catch(() => setAdminSession(readInitialAdminSession()));
+      }
     };
     window.addEventListener('hashchange', handleHashChange);
     window.addEventListener('raba_admin_auth_changed', handleAuthChange);
@@ -791,7 +861,16 @@ export default function App() {
           onUpdateSpecialists={setSpecialists}
           onLogout={() => {
             setAdminSession(null);
-            clearStoredAdminSession();
+            import('./data/adminData')
+              .then(({ clearStoredAdminSession }) => clearStoredAdminSession())
+              .catch(() => {
+                try {
+                  localStorage.removeItem('raba_admin_session_auth');
+                  localStorage.removeItem('raba_current_admin_user');
+                } catch {
+                  // ignore
+                }
+              });
           }}
           onClose={() => {
             setIsAdminOpen(false);

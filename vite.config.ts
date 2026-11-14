@@ -183,10 +183,17 @@ export default defineConfig(() => {
       chunkSizeWarningLimit: 800,
       modulePreload: {
         polyfill: false,
-        resolveDependencies(filename, deps) {
+        resolveDependencies(_filename, deps) {
           return deps.filter(dep => {
             const lower = dep.toLowerCase();
-            return !lower.includes('firebase') && !lower.includes('supabase') && !lower.includes('re2js');
+            return (
+              !lower.includes('firebase') &&
+              !lower.includes('supabase') &&
+              !lower.includes('re2js') &&
+              !lower.includes('data-mock') &&
+              !lower.includes('data-appointments') &&
+              !lower.includes('vendor-confetti')
+            );
           });
         },
       },
@@ -200,17 +207,17 @@ export default defineConfig(() => {
               if (id.includes('re2js')) {
                 return 'vendor-re2js';
               }
-              if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
-                return 'vendor-react';
-              }
-              if (id.includes('firebase')) {
-                return 'vendor-firebase';
-              }
               if (id.includes('lucide-react')) {
                 return 'vendor-icons';
               }
               if (id.includes('canvas-confetti')) {
                 return 'vendor-confetti';
+              }
+              if (id.includes('firebase') || id.includes('@firebase')) {
+                return 'vendor-firebase';
+              }
+              if (/[/\\]node_modules[/\\](react|react-dom|scheduler)[/\\]/.test(id)) {
+                return 'vendor-react';
               }
               return 'vendor-libs';
             }

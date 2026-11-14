@@ -848,9 +848,9 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                           <button
                             onClick={(e) => toggleFavorite(service.id, e)}
                             aria-label={isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
-                            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-xs flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
+                            className="w-9 h-9 min-w-[36px] min-h-[36px] rounded-full bg-white/90 dark:bg-slate-800/90 shadow-xs flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-rose-500 transition-colors cursor-pointer"
                           >
-                            <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
+                            <Heart className={`w-4 h-4 transition-transform ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
                           </button>
                         </div>
 
@@ -864,7 +864,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                               {isArabic ? service.title : (service.titleEn || service.title)}
                             </h3>
                             {service.titleEn && isArabic && (
-                              <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 dark:text-slate-500 block mt-0.5 truncate" dir="ltr">
+                              <span className="text-[10px] sm:text-[11px] font-semibold text-slate-600 dark:text-slate-300 block mt-0.5 truncate" dir="ltr">
                                 {service.titleEn}
                               </span>
                             )}
@@ -1121,9 +1121,9 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                           <button
                             onClick={(e) => toggleFavorite(course.id, e)}
                             aria-label={isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
-                            className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-2xs flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors cursor-pointer shrink-0"
+                            className="w-9 h-9 min-w-[36px] min-h-[36px] rounded-full bg-white/90 dark:bg-slate-800/90 shadow-2xs flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-rose-500 transition-colors cursor-pointer shrink-0"
                           >
-                            <Heart className={`w-3.5 h-3.5 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
+                            <Heart className={`w-4 h-4 transition-transform ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
                           </button>
                         </div>
 
@@ -1406,9 +1406,9 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                           <button
                             onClick={(e) => toggleFavorite(pkg.id, e)}
                             aria-label={isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
-                            className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-2xs flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors cursor-pointer shrink-0"
+                            className="w-9 h-9 min-w-[36px] min-h-[36px] rounded-full bg-white/90 dark:bg-slate-800/90 shadow-2xs flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-rose-500 transition-colors cursor-pointer shrink-0"
                           >
-                            <Heart className={`w-3.5 h-3.5 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
+                            <Heart className={`w-4 h-4 transition-transform ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
                           </button>
                         </div>
 
@@ -1420,7 +1420,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                           {isArabic ? pkg.name : (pkg.nameEn || pkg.name)}
                         </h3>
 
-                        <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1 font-medium">
+                        <p className="text-[10px] sm:text-xs text-slate-600 dark:text-slate-300 mt-0.5 line-clamp-1 font-medium">
                           {isArabic ? pkg.tagline : (pkg.taglineEn || pkg.tagline)}
                         </p>
                       </div>

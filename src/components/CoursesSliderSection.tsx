@@ -77,6 +77,9 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
   };
 
   const rafIdRef = useRef<number | null>(null);
+  const maxScrollRef = useRef(0);
+  const slideWidthRef = useRef(390);
+  const containerOffsetLeftRef = useRef(0);
 
   const updateScrollState = useCallback(() => {
     if (rafIdRef.current !== null) return;
@@ -85,13 +88,13 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
       const el = sliderRef.current;
       if (!el) return;
 
-      const maxScroll = el.scrollWidth - el.clientWidth;
+      const maxScroll = maxScrollRef.current;
       const current = Math.abs(el.scrollLeft);
 
       setCanScrollPrev(current > 15);
       setCanScrollNext(current < maxScroll - 15);
 
-      const slideWidth = getSlideWidth();
+      const slideWidth = slideWidthRef.current;
       const index = Math.round(current / slideWidth);
       setCurrentIndex(Math.min(Math.max(0, index), Math.max(0, activeCourses.length - 1)));
     });
@@ -101,23 +104,36 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
     const el = sliderRef.current;
     if (!el) return;
 
+    const measure = () => {
+      maxScrollRef.current = Math.max(0, el.scrollWidth - el.clientWidth);
+      containerOffsetLeftRef.current = el.offsetLeft;
+      slideWidthRef.current = getSlideWidth();
+      updateScrollState();
+    };
+
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
+    if (ro) {
+      ro.observe(el);
+    } else {
+      window.addEventListener('resize', measure, { passive: true });
+    }
     el.addEventListener('scroll', updateScrollState, { passive: true });
-    window.addEventListener('resize', updateScrollState, { passive: true });
 
     return () => {
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
         rafIdRef.current = null;
       }
+      ro?.disconnect();
+      window.removeEventListener('resize', measure);
       el.removeEventListener('scroll', updateScrollState);
-      window.removeEventListener('resize', updateScrollState);
     };
   }, [activeCourses, updateScrollState]);
 
   const handleScroll = (direction: 'prev' | 'next') => {
     const el = sliderRef.current;
     if (!el) return;
-    const cardWidth = getSlideWidth();
+    const cardWidth = slideWidthRef.current;
 
     let delta = cardWidth;
     if (direction === 'prev') {
@@ -134,18 +150,19 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
   const scrollToIndex = (index: number) => {
     const el = sliderRef.current;
     if (!el) return;
-    const slideWidth = getSlideWidth();
+    const slideWidth = slideWidthRef.current;
     let target = index * slideWidth;
     if (isArabic) target = -target;
     el.scrollTo({ left: target, behavior: 'smooth' });
   };
 
-  // Drag handlers for mouse swipe
+  // Drag handlers for mouse swipe (cached offsetLeft avoids synchronous layout thrashing)
   const handleMouseDown = (e: React.MouseEvent) => {
     const el = sliderRef.current;
     if (!el) return;
     setIsDragging(true);
-    startXRef.current = e.pageX - el.offsetLeft;
+    containerOffsetLeftRef.current = el.offsetLeft;
+    startXRef.current = e.pageX - containerOffsetLeftRef.current;
     scrollLeftRef.current = el.scrollLeft;
     movedDistanceRef.current = 0;
   };
@@ -153,7 +170,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !sliderRef.current) return;
     e.preventDefault();
-    const x = e.pageX - sliderRef.current.offsetLeft;
+    const x = e.pageX - containerOffsetLeftRef.current;
     const walk = (x - startXRef.current) * 1.5;
     movedDistanceRef.current += Math.abs(walk);
     sliderRef.current.scrollLeft = scrollLeftRef.current - walk;
@@ -180,7 +197,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
     return (
       <div
         key={course.id}
-        className={`w-[78vw] min-w-[270px] max-w-[315px] sm:w-[350px] sm:max-w-none md:w-[370px] lg:w-[380px] shrink-0 snap-start bg-white dark:bg-[#111827] rounded-2xl sm:rounded-[32px] overflow-hidden border ${theme.cardBorderHover} shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-all duration-300 flex flex-col group relative`}
+        className={`w-[78vw] min-w-[270px] max-w-[315px] sm:w-[350px] sm:max-w-none md:w-[370px] lg:w-[380px] shrink-0 snap-start bg-white dark:bg-[#111827] rounded-2xl sm:rounded-[32px] overflow-hidden border ${theme.cardBorderHover} shadow-[0_4px_25px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-transform duration-300 flex flex-col group relative`}
       >
         {/* Top Header Section: Distinct Logo Color Container */}
         <div className={`${theme.headerBg} p-4 sm:p-7 pt-5 sm:pt-7 pb-4 sm:pb-6 rounded-t-2xl sm:rounded-t-[32px] border-b ${theme.headerBorder} relative transition-colors`}>
@@ -194,7 +211,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
             {/* Left in RTL: Rounded White Icon Button */}
             <button
               onClick={() => handleOpenDetails(course)}
-              className={`w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-white dark:bg-[#0E1526] border ${theme.iconBoxBorder} shadow-xs flex items-center justify-center ${theme.iconColor} hover:scale-105 active:scale-95 transition-all cursor-pointer group/icon shrink-0`}
+              className={`w-10 h-10 min-w-[40px] min-h-[40px] sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-white dark:bg-[#0E1526] border ${theme.iconBoxBorder} shadow-xs flex items-center justify-center ${theme.iconColor} hover:scale-105 active:scale-95 transition-transform cursor-pointer group/icon shrink-0`}
               title={isArabic ? 'معاينة وفيديو الكورس' : 'Course Video Preview'}
             >
               <CourseCustomIcon course={course} className={`w-4 h-4 sm:w-5 sm:h-5 ${theme.iconColor} group-hover/icon:scale-110 transition-transform`} />
@@ -274,7 +291,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
             </div>
 
             {/* Instructor & Accreditation Note */}
-            <div className="text-[10px] sm:text-[11px] font-medium text-slate-500 dark:text-slate-400 pt-0.5 sm:pt-1 flex items-center gap-1.5 flex-wrap">
+            <div className="text-[10px] sm:text-[11px] font-medium text-slate-600 dark:text-slate-300 pt-0.5 sm:pt-1 flex items-center gap-1.5 flex-wrap">
               <span>{instructor}</span>
               <span>·</span>
               <span>{isArabic ? (course.accreditationBadgeAr || 'اعتماد دولي') : (course.accreditationBadgeEn || 'International Accreditation')}</span>
@@ -285,7 +302,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
           <div className="pt-1.5 sm:pt-2">
             <button
               onClick={() => handleOpenDetails(course)}
-              className={`w-full ${theme.buttonBg} active:scale-[0.98] text-white text-xs sm:text-base font-bold py-2.5 sm:py-3.5 px-4 sm:px-6 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2`}
+              className={`w-full ${theme.buttonBg} active:scale-[0.98] text-white text-xs sm:text-base font-bold py-2.5 sm:py-3.5 px-4 sm:px-6 rounded-xl sm:rounded-2xl shadow-sm hover:shadow-md transition-[transform,background-color,box-shadow] cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2`}
             >
               <span>{isArabic ? 'حجز الكورس' : 'Book Course'}</span>
             </button>
@@ -341,7 +358,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
             <div className="flex items-center gap-4 self-end md:self-auto shrink-0 pt-2">
               
               {/* Courses Count */}
-              <span className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400">
+              <span className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300">
                 {isArabic ? `${activeCourses.length} كورسات متاحة` : `${activeCourses.length} Courses Available`}
               </span>
 

@@ -193,6 +193,8 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
   };
 
   const rafIdRef = useRef<number | null>(null);
+  const maxScrollRef = useRef(0);
+  const containerOffsetLeftRef = useRef(0);
 
   // Scroll capability
   const updateScrollState = useCallback(() => {
@@ -201,7 +203,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
       rafIdRef.current = null;
       const el = sliderRef.current;
       if (!el) return;
-      const maxScroll = el.scrollWidth - el.clientWidth;
+      const maxScroll = maxScrollRef.current;
       const current = Math.abs(el.scrollLeft);
       setCanScrollPrev(current > 15);
       setCanScrollNext(current < maxScroll - 15);
@@ -216,15 +218,27 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
     const el = sliderRef.current;
     if (!el) return;
 
+    const measure = () => {
+      maxScrollRef.current = Math.max(0, el.scrollWidth - el.clientWidth);
+      containerOffsetLeftRef.current = el.offsetLeft;
+      updateScrollState();
+    };
+
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
+    if (ro) {
+      ro.observe(el);
+    } else {
+      window.addEventListener('resize', measure, { passive: true });
+    }
     el.addEventListener('scroll', updateScrollState, { passive: true });
-    window.addEventListener('resize', updateScrollState, { passive: true });
     return () => {
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
         rafIdRef.current = null;
       }
+      ro?.disconnect();
+      window.removeEventListener('resize', measure);
       el.removeEventListener('scroll', updateScrollState);
-      window.removeEventListener('resize', updateScrollState);
     };
   }, [filteredServices, updateScrollState]);
 
@@ -255,7 +269,8 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
     const el = sliderRef.current;
     if (!el) return;
     setIsDragging(true);
-    startXRef.current = e.pageX - el.offsetLeft;
+    containerOffsetLeftRef.current = el.offsetLeft;
+    startXRef.current = e.pageX - containerOffsetLeftRef.current;
     scrollLeftRef.current = el.scrollLeft;
     movedDistanceRef.current = 0;
   };
@@ -263,7 +278,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !sliderRef.current) return;
     e.preventDefault();
-    const x = e.pageX - sliderRef.current.offsetLeft;
+    const x = e.pageX - containerOffsetLeftRef.current;
     const walk = (x - startXRef.current) * 1.5;
     movedDistanceRef.current += Math.abs(walk);
     sliderRef.current.scrollLeft = scrollLeftRef.current - walk;
@@ -324,7 +339,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
           {/* Right Controls: Services Count & Slider Navigation Arrows */}
           <div className="flex items-center gap-3 self-end md:self-auto shrink-0 pt-2">
             {/* Services Count Badge */}
-            <span className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400">
+            <span className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300">
               {isArabic ? `${filteredServices.length} خدمات معتمدة` : `${filteredServices.length} Specialized Services`}
             </span>
 
@@ -372,7 +387,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                     sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' });
                   }
                 }}
-                className={`px-4 py-2 rounded-full text-xs sm:text-sm whitespace-nowrap transition-all duration-200 font-bold cursor-pointer ${
+                className={`px-4 py-2 min-h-[38px] rounded-full text-xs sm:text-sm whitespace-nowrap transition-colors duration-200 font-bold cursor-pointer ${
                   isActive
                     ? 'bg-[#2E86EB] text-white shadow-md shadow-blue-500/25 border-t border-white/50'
                     : 'liquid-glass-pill hover:scale-[1.02]'
@@ -422,9 +437,9 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                       <button
                         onClick={(e) => toggleFavorite(e, service.id)}
                         aria-label={isFav ? "إزالة من المفضلة" : "إضافة إلى المفضلة"}
-                        className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-xs flex items-center justify-center text-slate-500 hover:text-rose-500 transition-colors cursor-pointer"
+                        className="w-9 h-9 min-w-[36px] min-h-[36px] sm:w-10 sm:h-10 rounded-full bg-white/90 dark:bg-slate-800/90 shadow-xs flex items-center justify-center text-slate-600 dark:text-slate-300 hover:text-rose-500 transition-colors cursor-pointer"
                       >
-                        <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-all ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
+                        <Heart className={`w-4 h-4 transition-transform ${isFav ? 'fill-rose-500 text-rose-500 scale-110' : ''}`} />
                       </button>
                     </div>
 
@@ -459,7 +474,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
 
                       {/* Key Clinical Benefits Checklist */}
                       <div className="space-y-1.5 sm:space-y-2 pt-0.5">
-                        <span className="text-[10px] sm:text-[11px] font-black text-slate-400 dark:text-slate-500 block uppercase tracking-wider">
+                        <span className="text-[10px] sm:text-[11px] font-black text-slate-600 dark:text-slate-300 block uppercase tracking-wider">
                           {isArabic ? 'أبرز مخرجات البرنامج:' : 'Key Outcomes:'}
                         </span>
                         {((isArabic ? service.benefits : (service.benefitsEn || service.benefits)) || []).slice(0, 3).map((benefit, bIdx) => (
@@ -473,7 +488,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
 
                     {/* Metadata & Direct Booking Button */}
                     <div className="pt-3 sm:pt-4 border-t border-slate-100 dark:border-white/10 space-y-2.5 sm:space-y-3">
-                      <div className="flex items-center text-[11px] sm:text-xs font-semibold text-slate-600 dark:text-slate-400">
+                      <div className="flex items-center text-[11px] sm:text-xs font-semibold text-slate-600 dark:text-slate-300">
                         <span className="flex items-center gap-1.5">
                           <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 dark:text-amber-400 shrink-0" />
                           <span className="truncate">{isArabic ? service.targetAges : (service.targetAgesEn || service.targetAges)}</span>

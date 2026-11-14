@@ -301,8 +301,13 @@ const STORAGE_LOGO_KEY = 'raba_site_logo_v3';
 const STORAGE_LOGO_KEY_OLD2 = 'raba_site_logo_v2';
 const STORAGE_LOGO_KEY_OLD = 'raba_site_logo_v1';
 
-import { savePersistentModule } from '../utils/persistentSync';
 import { savePersistentImage } from '../utils/persistentImageStore';
+
+const lazySavePersistentModule = (key: string, data: any) => {
+  import('../utils/persistentSync')
+    .then(({ savePersistentModule }) => savePersistentModule(key, data))
+    .catch(() => {});
+};
 
 // Favicon updater for browser tabs
 export function updateTabFavicon(settings?: SiteLogoSettings): void {
@@ -390,7 +395,7 @@ export function saveStoredLogoSettings(settings: SiteLogoSettings): void {
     savePersistentImage(settings.customLogoUrl, settings.customLogoUrl).catch(() => {});
   }
 
-  savePersistentModule(STORAGE_LOGO_KEY, settings);
+  lazySavePersistentModule(STORAGE_LOGO_KEY, settings);
   updateTabFavicon(settings);
   window.dispatchEvent(new CustomEvent('raba_logo_updated', { detail: settings }));
 }
@@ -403,7 +408,7 @@ export function resetLogoSettingsToDefault(): SiteLogoSettings {
   } catch (err) {
     console.error('Failed to reset logo settings', err);
   }
-  savePersistentModule(STORAGE_LOGO_KEY, DEFAULT_LOGO_SETTINGS);
+  lazySavePersistentModule(STORAGE_LOGO_KEY, DEFAULT_LOGO_SETTINGS);
   updateTabFavicon(DEFAULT_LOGO_SETTINGS);
   window.dispatchEvent(new CustomEvent('raba_logo_updated', { detail: DEFAULT_LOGO_SETTINGS }));
   return { ...DEFAULT_LOGO_SETTINGS };
@@ -426,7 +431,7 @@ export function saveStoredThemeSettings(settings: SiteThemeSettings): void {
   } catch (err) {
     console.error('Failed to save theme settings', err);
   }
-  savePersistentModule(STORAGE_THEME_KEY, settings);
+  lazySavePersistentModule(STORAGE_THEME_KEY, settings);
   applyGlobalTheme(settings);
   window.dispatchEvent(new CustomEvent('raba_theme_updated', { detail: settings }));
 }
@@ -468,7 +473,7 @@ export function saveStoredSocialSettings(settings: SocialLinksSettings): void {
   } catch (err) {
     console.error('Failed to save social settings', err);
   }
-  savePersistentModule(STORAGE_SOCIAL_KEY, settings);
+  lazySavePersistentModule(STORAGE_SOCIAL_KEY, settings);
   window.dispatchEvent(new CustomEvent('raba_social_updated', { detail: settings }));
 }
 
@@ -493,7 +498,7 @@ export function saveStoredPillars(pillars: ProgramPillarItem[]): void {
   } catch (err) {
     console.error('Failed to save pillars', err);
   }
-  savePersistentModule(STORAGE_PILLARS_KEY, pillars);
+  lazySavePersistentModule(STORAGE_PILLARS_KEY, pillars);
   window.dispatchEvent(new CustomEvent('raba_pillars_updated', { detail: pillars }));
 }
 
@@ -539,7 +544,7 @@ export function saveStoredFooterSettings(settings: FooterSettings): void {
   } catch (err) {
     console.error('Failed to save footer settings', err);
   }
-  savePersistentModule(STORAGE_FOOTER_KEY, settings);
+  lazySavePersistentModule(STORAGE_FOOTER_KEY, settings);
   window.dispatchEvent(new CustomEvent('raba_footer_updated', { detail: settings }));
 }
 
@@ -560,6 +565,6 @@ export function saveStoredModulesVisibility(modules: SiteModulesVisibility): voi
   } catch (err) {
     console.error('Failed to save modules visibility', err);
   }
-  savePersistentModule(STORAGE_MODULES_KEY, modules);
+  lazySavePersistentModule(STORAGE_MODULES_KEY, modules);
   window.dispatchEvent(new CustomEvent('raba_modules_updated', { detail: modules }));
 }

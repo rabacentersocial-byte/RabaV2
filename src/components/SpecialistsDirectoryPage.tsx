@@ -668,10 +668,10 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
                     <button
                       onClick={(e) => toggleFavorite(e, doctor.id)}
                       aria-label="Save to favorites"
-                      className="absolute top-2 sm:top-2.5 right-2 sm:right-2.5 z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/95 dark:bg-slate-900/90 shadow-md flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer text-slate-700 dark:text-slate-200 hover:text-rose-500"
+                      className="absolute top-2 sm:top-2.5 right-2 sm:right-2.5 z-10 w-9 h-9 min-w-[36px] min-h-[36px] rounded-full bg-white/95 dark:bg-slate-900/90 shadow-md flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer text-slate-700 dark:text-slate-200 hover:text-rose-500"
                     >
                       <Heart 
-                        className={`w-3.5 h-3.5 transition-colors ${
+                        className={`w-4 h-4 transition-colors ${
                           isFav ? 'fill-rose-500 text-rose-500' : 'text-slate-600 dark:text-slate-300'
                         }`} 
                       />

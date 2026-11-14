@@ -48,15 +48,6 @@ export const Hero: React.FC<HeroProps> = ({
   // Dynamic daily children counter (10 children from 8 AM to 6 PM) synchronized with cumulative beneficiaries
   const { count: dailyChildrenCount, formattedTotal, isWithinHours } = useDailyChildrenCounter(10);
 
-  // Dynamic counter badge pulse reacting exclusively with the upper counter when dailyChildrenCount updates
-  const [counterPulse, setCounterPulse] = useState(false);
-
-  useEffect(() => {
-    setCounterPulse(true);
-    const t = setTimeout(() => setCounterPulse(false), 1200);
-    return () => clearTimeout(t);
-  }, [dailyChildrenCount]);
-
   useEffect(() => {
     const handleUpdated = () => {
       const all = getStoredHeroSlides();

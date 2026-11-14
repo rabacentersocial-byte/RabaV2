@@ -528,7 +528,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div className="space-y-4">
                 {mobileNavSections.map((section, sIdx) => (
                   <div key={sIdx} className="space-y-1.5">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 px-1.5 flex items-center gap-1.5">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-slate-300 px-1.5 flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#2E86EB]/60" />
                       <span>{section.sectionTitle}</span>
                     </span>
@@ -608,7 +608,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                                   )}
                                 </div>
                                 <p className={`text-[10px] truncate font-medium mt-0.5 ${
-                                  isLinkActive ? 'text-teal-100/85' : isDark ? 'text-slate-400' : 'text-slate-500'
+                                  isLinkActive ? 'text-teal-100/85' : isDark ? 'text-slate-300' : 'text-slate-600'
                                 }`}>
                                   {item.subtitle}
                                 </p>
@@ -633,7 +633,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               {/* Direct Instant Contact Bar */}
               <div className="pt-2">
-                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 px-1.5 block mb-1.5">
+                <span className="text-[10px] font-black uppercase tracking-wider text-slate-600 dark:text-slate-300 px-1.5 block mb-1.5">
                   {isArabic ? 'تواصل مباشر مع الفريق الطبي' : 'Direct Support & Assistance'}
                 </span>
                 <div className="grid grid-cols-2 gap-2">
@@ -697,7 +697,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               </div>
 
-              <div className="text-[10px] text-center text-slate-400 dark:text-slate-500 font-medium">
+              <div className="text-[10px] text-center text-slate-600 dark:text-slate-300 font-medium">
                 {isArabic ? 'مرخص من وزارة الصحة ووزارة الموارد البشرية والتنمية الاجتماعية © 2026' : 'MOH & HRSD Certified Clinic © 2026'}
               </div>
             </div>

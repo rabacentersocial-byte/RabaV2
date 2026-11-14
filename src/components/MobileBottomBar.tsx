@@ -123,10 +123,10 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
         {/* 1. Home */}
         <button
           onClick={handleHomeClick}
-          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer min-w-[56px] min-h-[44px] ${
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-colors cursor-pointer min-w-[56px] min-h-[44px] ${
             activeTab === 'home'
               ? 'text-[#2E86EB] font-black scale-105'
-              : 'text-slate-500 dark:text-slate-400 font-semibold hover:text-slate-800 dark:hover:text-white'
+              : 'text-slate-600 dark:text-slate-300 font-semibold hover:text-slate-800 dark:hover:text-white'
           }`}
         >
           <Home className="w-5 h-5 mb-0.5" />
@@ -136,10 +136,10 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
         {/* 2. Services / Programs */}
         <button
           onClick={handleServicesClick}
-          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer min-w-[56px] min-h-[44px] ${
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-colors cursor-pointer min-w-[56px] min-h-[44px] ${
             activeTab === 'services'
               ? 'text-[#2E86EB] font-black scale-105'
-              : 'text-slate-500 dark:text-slate-400 font-semibold hover:text-slate-800 dark:hover:text-white'
+              : 'text-slate-600 dark:text-slate-300 font-semibold hover:text-slate-800 dark:hover:text-white'
           }`}
         >
           <Layers className="w-5 h-5 mb-0.5" />
@@ -161,10 +161,10 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
         {/* 4. Specialists */}
         <button
           onClick={handleSpecialistsClick}
-          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer min-w-[56px] min-h-[44px] ${
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-colors cursor-pointer min-w-[56px] min-h-[44px] ${
             activeTab === 'specialists'
               ? 'text-[#2E86EB] font-black scale-105'
-              : 'text-slate-500 dark:text-slate-400 font-semibold hover:text-slate-800 dark:hover:text-white'
+              : 'text-slate-600 dark:text-slate-300 font-semibold hover:text-slate-800 dark:hover:text-white'
           }`}
         >
           <UserCheck className="w-5 h-5 mb-0.5" />
@@ -174,10 +174,10 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
         {/* 5. Our Branches */}
         <button
           onClick={handleBranchesClick}
-          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all cursor-pointer min-w-[56px] min-h-[44px] ${
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-colors cursor-pointer min-w-[56px] min-h-[44px] ${
             activeTab === 'branches'
               ? 'text-[#2E86EB] font-black scale-105'
-              : 'text-slate-500 dark:text-slate-400 font-semibold hover:text-slate-800 dark:hover:text-white'
+              : 'text-slate-600 dark:text-slate-300 font-semibold hover:text-slate-800 dark:hover:text-white'
           }`}
         >
           <MapPin className="w-5 h-5 mb-0.5 text-[#22C55E]" />

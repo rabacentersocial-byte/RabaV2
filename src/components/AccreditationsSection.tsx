@@ -137,7 +137,7 @@ export const AccreditationsSection: React.FC = () => {
           <button
             onClick={() => setIsPaused(!isPaused)}
             aria-label={isPaused ? 'تشغيل' : 'إيقاف'}
-            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-[#2E86EB] dark:hover:text-[#2E86EB] flex items-center justify-center shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
+            className="w-9 h-9 min-w-[36px] min-h-[36px] rounded-full bg-white dark:bg-[#111827] border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:text-[#2E86EB] dark:hover:text-[#2E86EB] flex items-center justify-center shadow-2xs active:scale-95 transition-colors cursor-pointer shrink-0"
             title={isPaused ? (isArabic ? 'تشغيل الحركة' : 'Play') : (isArabic ? 'إيقاف الحركة' : 'Pause')}
           >
             {isPaused ? <Play className="w-3.5 h-3.5 fill-current" /> : <Pause className="w-3.5 h-3.5 fill-current" />}
@@ -162,7 +162,7 @@ export const AccreditationsSection: React.FC = () => {
               <div
                 key={`${item.id}-${index}`}
                 onClick={() => handleBadgeClick(item)}
-                className="flex items-center gap-2.5 sm:gap-3 shrink-0 group transition-all duration-200 opacity-85 hover:opacity-100 cursor-pointer active:scale-95"
+                className="flex items-center gap-2.5 sm:gap-3 shrink-0 group transition-opacity duration-200 opacity-85 hover:opacity-100 cursor-pointer active:scale-95"
                 title={isArabic ? `${item.nameAr} - انقر للتفاصيل` : `${item.nameEn} - Click for details`}
               >
                 {/* Certification Name / Label */}
@@ -171,7 +171,7 @@ export const AccreditationsSection: React.FC = () => {
                 </span>
 
                 {/* Rounded Squircle Badge with Code (e.g. [ ISO ], [ BA ], [ QA ]) */}
-                <div className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl sm:rounded-2xl border border-slate-300 dark:border-slate-500/50 bg-slate-100 dark:bg-[#0E1E34]/80 text-slate-800 dark:text-slate-200 font-extrabold text-xs sm:text-sm tracking-widest shadow-xs group-hover:border-amber-400/80 group-hover:text-amber-500 dark:group-hover:text-amber-300 group-hover:scale-105 transition-all shrink-0">
+                <div className="px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl sm:rounded-2xl border border-slate-300 dark:border-slate-500/50 bg-slate-100 dark:bg-[#0E1E34]/80 text-slate-800 dark:text-slate-200 font-extrabold text-xs sm:text-sm tracking-widest shadow-xs group-hover:border-amber-400/80 group-hover:text-amber-500 dark:group-hover:text-amber-300 group-hover:scale-105 transition-transform shrink-0">
                   {item.code}
                 </div>
               </div>
@@ -195,7 +195,7 @@ export const AccreditationsSection: React.FC = () => {
             {/* Top Close Button */}
             <button
               onClick={() => setSelectedItem(null)}
-              className="absolute top-4 start-auto end-4 sm:end-6 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center cursor-pointer transition-colors"
+              className="absolute top-4 start-auto end-4 sm:end-6 w-9 h-9 min-w-[36px] min-h-[36px] rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center justify-center cursor-pointer transition-colors"
               aria-label="إغلاق"
             >
               <X className="w-4 h-4" />
@@ -220,41 +220,41 @@ export const AccreditationsSection: React.FC = () => {
             {/* Modal Body */}
             <div className="py-4 space-y-3">
               <div>
-                <h5 className="text-xs font-bold text-slate-400">
+                <h5 className="text-xs font-bold text-slate-600 dark:text-slate-300">
                   {isArabic ? 'جهة الاعتماد والمجال:' : 'Issuing Body:'}
                 </h5>
-                <p className="text-xs sm:text-sm font-semibold text-slate-200 mt-0.5">
+                <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
                   {(selectedItem as any).issuer || (isArabic ? selectedItem.issuerAr : selectedItem.issuerEn)}
                 </p>
               </div>
 
               <div>
-                <h5 className="text-xs font-bold text-slate-400">
+                <h5 className="text-xs font-bold text-slate-600 dark:text-slate-300">
                   {isArabic ? 'أهمية الاعتماد والامتثال الإكلينيكي:' : 'Clinical Value:'}
                 </h5>
-                <p className="text-xs text-slate-300 leading-relaxed mt-0.5">
+                <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed mt-0.5">
                   {(selectedItem as any).desc || (isArabic ? selectedItem.descriptionAr : selectedItem.descriptionEn)}
                 </p>
               </div>
 
               {/* Certificate Details */}
-              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 text-xs flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-2 text-slate-300">
-                  <FileCheck className="w-4 h-4 text-emerald-400" />
+              <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                  <FileCheck className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
                   <span>{isArabic ? 'رقم التحقق:' : 'Verification ID:'}</span>
-                  <span className="font-mono font-bold text-white">
+                  <span className="font-mono font-bold text-slate-900 dark:text-white">
                     {selectedItem.certificateNumber || 'RABA-VERIFIED'}
                   </span>
                 </div>
-                <span className="text-[11px] text-emerald-400 font-bold">
+                <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">
                   {selectedItem.validUntil ? (isArabic ? `ساري حتى ${selectedItem.validUntil}` : `Valid thru ${selectedItem.validUntil}`) : (isArabic ? 'معتمد ومجدد سنوياً' : 'Renewed Annually')}
                 </span>
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="pt-3 border-t border-white/10 flex items-center justify-between">
-              <span className="text-[11px] text-slate-400">
+            <div className="pt-3 border-t border-slate-200 dark:border-white/10 flex items-center justify-between">
+              <span className="text-[11px] text-slate-600 dark:text-slate-300">
                 {isArabic ? 'مركز رابا للتأهيل وتحليل السلوك التطبيقي' : 'Raba Center for ABA Therapy'}
               </span>
               <button

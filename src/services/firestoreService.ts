@@ -1,19 +1,14 @@
-import { 
-  collection, 
-  doc, 
-  setDoc, 
-  updateDoc,
-  deleteDoc,
-  getDoc,
-  getDocs, 
-  onSnapshot, 
-  query, 
-  orderBy, 
-  limit,
-  Unsubscribe
-} from 'firebase/firestore';
-import { db, auth } from '../lib/firebase';
+import type { Unsubscribe } from 'firebase/firestore';
+import { auth, getLazyDb } from '../lib/firebase';
 import { Appointment, ParentReview, Specialist, BlogPost, AdminUser } from '../types';
+
+async function loadFirestoreCtx() {
+  const [fs, db] = await Promise.all([
+    import('firebase/firestore'),
+    getLazyDb()
+  ]);
+  return { fs, db };
+}
 
 export enum OperationType {
   CREATE = 'create',
@@ -67,7 +62,7 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
       emailVerified: auth?.currentUser?.emailVerified || null,
       isAnonymous: auth?.currentUser?.isAnonymous || null,
       tenantId: auth?.currentUser?.tenantId || null,
-      providerInfo: auth?.currentUser?.providerData?.map(provider => ({
+      providerInfo: auth?.currentUser?.providerData?.map((provider: any) => ({
         providerId: provider.providerId,
         email: provider.email,
       })) || []
@@ -117,18 +112,15 @@ export function sanitizeFirestoreData<T>(obj: T): T {
 // 1. DYNAMIC SITE SETTINGS (Synchronized with Admin Dashboard & Visitor UI)
 // ============================================================================
 
-/**
- * Saves or updates a site setting in the 'site_settings' collection
- */
 export async function saveSiteSettingToFirestore(key: string, data: any): Promise<void> {
   const path = `site_settings/${key}`;
-  // Direct client-side write requires an authenticated Firebase session as enforced by firestore.rules
   if (!auth.currentUser) {
     return;
   }
   try {
-    const docRef = doc(db, 'site_settings', key);
-    await setDoc(docRef, sanitizeFirestoreData({
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'site_settings', key);
+    await fs.setDoc(docRef, sanitizeFirestoreData({
       key,
       data,
       updatedAt: new Date().toISOString()
@@ -139,31 +131,27 @@ export async function saveSiteSettingToFirestore(key: string, data: any): Promis
   }
 }
 
-/**
- * Deletes a site setting from the 'site_settings' collection
- */
 export async function deleteSiteSettingFromFirestore(key: string): Promise<void> {
   const path = `site_settings/${key}`;
   if (!auth.currentUser) {
     return;
   }
   try {
-    const docRef = doc(db, 'site_settings', key);
-    await deleteDoc(docRef);
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'site_settings', key);
+    await fs.deleteDoc(docRef);
     console.log(`[Firestore] Successfully deleted site setting: ${key}`);
   } catch (error) {
     handleFirestoreError(error, OperationType.DELETE, path, false);
   }
 }
 
-/**
- * Fetches a single site setting from Firestore with strict 3000ms timeout
- */
 export async function getSiteSettingFromFirestore(key: string): Promise<any | null> {
   const path = `site_settings/${key}`;
   try {
-    const docRef = doc(db, 'site_settings', key);
-    const snap = await withTimeout(getDoc(docRef), 3000);
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'site_settings', key);
+    const snap = await withTimeout(fs.getDoc(docRef), 3000);
     if (!snap.exists()) {
       return null;
     }
@@ -175,14 +163,12 @@ export async function getSiteSettingFromFirestore(key: string): Promise<any | nu
   }
 }
 
-/**
- * Fetches all site settings from Firestore with strict 3000ms timeout and safe fallback
- */
 export async function getAllSiteSettingsFromFirestore(): Promise<Record<string, any>> {
   const path = 'site_settings';
   try {
-    const colRef = collection(db, 'site_settings');
-    const snap = await withTimeout(getDocs(colRef), 3000);
+    const { fs, db } = await loadFirestoreCtx();
+    const colRef = fs.collection(db, 'site_settings');
+    const snap = await withTimeout(fs.getDocs(colRef), 3000);
     const result: Record<string, any> = {};
     snap.forEach((d) => {
       const docData = d.data();
@@ -195,31 +181,43 @@ export async function getAllSiteSettingsFromFirestore(): Promise<Record<string, 
   }
 }
 
-/**
- * Real-time listener for site_settings changes (Instant Visitor Reflection)
- */
 export function subscribeSiteSettings(
   onUpdate: (settings: Record<string, any>) => void,
   onError?: (err: any) => void
 ): Unsubscribe {
   const path = 'site_settings';
-  const colRef = collection(db, 'site_settings');
-  return onSnapshot(
-    colRef,
-    (snapshot) => {
-      const data: Record<string, any> = {};
-      snapshot.forEach((d) => {
-        const docData = d.data();
-        data[d.id] = docData?.data !== undefined ? docData.data : docData;
-      });
-      onUpdate(data);
-    },
-    (error) => {
-      console.warn('[Firestore Realtime Notice] site_settings listener info:', error?.message || error);
-      if (onError) onError(error);
-      handleFirestoreError(error, OperationType.LIST, path, false);
-    }
-  );
+  let cancelled = false;
+  let realUnsub: Unsubscribe | null = null;
+
+  loadFirestoreCtx()
+    .then(({ fs, db }) => {
+      if (cancelled) return;
+      const colRef = fs.collection(db, 'site_settings');
+      realUnsub = fs.onSnapshot(
+        colRef,
+        (snapshot) => {
+          const data: Record<string, any> = {};
+          snapshot.forEach((d) => {
+            const docData = d.data();
+            data[d.id] = docData?.data !== undefined ? docData.data : docData;
+          });
+          onUpdate(data);
+        },
+        (error) => {
+          console.warn('[Firestore Realtime Notice] site_settings listener info:', error?.message || error);
+          if (onError) onError(error);
+          handleFirestoreError(error, OperationType.LIST, path, false);
+        }
+      );
+    })
+    .catch((err) => {
+      if (onError) onError(err);
+    });
+
+  return () => {
+    cancelled = true;
+    if (realUnsub) realUnsub();
+  };
 }
 
 // ============================================================================
@@ -233,8 +231,9 @@ export async function saveSpecialistToFirestore(specialist: Specialist): Promise
     return;
   }
   try {
-    const docRef = doc(db, 'specialists', docId);
-    await setDoc(docRef, sanitizeFirestoreData(specialist), { merge: true });
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'specialists', docId);
+    await fs.setDoc(docRef, sanitizeFirestoreData(specialist), { merge: true });
     console.log(`[Firestore] Successfully saved specialist: ${specialist.name} (${docId})`);
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, path);
@@ -247,8 +246,9 @@ export async function deleteSpecialistFromFirestore(specialistId: string): Promi
     return;
   }
   try {
-    const docRef = doc(db, 'specialists', specialistId);
-    await deleteDoc(docRef);
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'specialists', specialistId);
+    await fs.deleteDoc(docRef);
     console.log(`[Firestore] Successfully deleted specialist: ${specialistId}`);
   } catch (error) {
     handleFirestoreError(error, OperationType.DELETE, path);
@@ -258,8 +258,9 @@ export async function deleteSpecialistFromFirestore(specialistId: string): Promi
 export async function getSpecialistsFromFirestore(): Promise<Specialist[]> {
   const path = 'specialists';
   try {
-    const colRef = collection(db, 'specialists');
-    const snap = await withTimeout(getDocs(colRef), 3000);
+    const { fs, db } = await loadFirestoreCtx();
+    const colRef = fs.collection(db, 'specialists');
+    const snap = await withTimeout(fs.getDocs(colRef), 3000);
     const list: Specialist[] = [];
     snap.forEach((d) => {
       list.push(d.data() as Specialist);
@@ -276,22 +277,37 @@ export function subscribeSpecialists(
   onError?: (err: any) => void
 ): Unsubscribe {
   const path = 'specialists';
-  const colRef = collection(db, 'specialists');
-  return onSnapshot(
-    colRef,
-    (snapshot) => {
-      const list: Specialist[] = [];
-      snapshot.forEach((d) => {
-        list.push(d.data() as Specialist);
-      });
-      onUpdate(list);
-    },
-    (error) => {
-      console.error('[Firestore Realtime Error] specialists listener error:', error);
-      if (onError) onError(error);
-      handleFirestoreError(error, OperationType.LIST, path);
-    }
-  );
+  let cancelled = false;
+  let realUnsub: Unsubscribe | null = null;
+
+  loadFirestoreCtx()
+    .then(({ fs, db }) => {
+      if (cancelled) return;
+      const colRef = fs.collection(db, 'specialists');
+      realUnsub = fs.onSnapshot(
+        colRef,
+        (snapshot) => {
+          const list: Specialist[] = [];
+          snapshot.forEach((d) => {
+            list.push(d.data() as Specialist);
+          });
+          onUpdate(list);
+        },
+        (error) => {
+          console.error('[Firestore Realtime Error] specialists listener error:', error);
+          if (onError) onError(error);
+          handleFirestoreError(error, OperationType.LIST, path);
+        }
+      );
+    })
+    .catch((err) => {
+      if (onError) onError(err);
+    });
+
+  return () => {
+    cancelled = true;
+    if (realUnsub) realUnsub();
+  };
 }
 
 // ============================================================================
@@ -302,9 +318,9 @@ export async function saveAppointmentToFirestore(appointment: Appointment): Prom
   const docId = appointment.id || `apt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
   const path = `appointments/${docId}`;
   try {
-    const docRef = doc(db, 'appointments', docId);
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'appointments', docId);
 
-    // Normalize status to strictly allowed values in firestore.rules
     let normalizedStatus = appointment.status || 'pending';
     if (!['new', 'pending', 'confirmed', 'completed', 'cancelled'].includes(normalizedStatus)) {
       normalizedStatus = 'pending';
@@ -334,10 +350,9 @@ export async function saveAppointmentToFirestore(appointment: Appointment): Prom
       createdAt: appointment.createdAt || new Date().toISOString()
     });
 
-    await setDoc(docRef, payload, { merge: true });
+    await fs.setDoc(docRef, payload, { merge: true });
     console.log(`[Firestore] Successfully created appointment in Firestore: ${docId}`);
 
-    // Asynchronously replicate to backend API for dual persistence (Cloud SQL + local disk sync)
     try {
       fetch('/api/db/appointments', {
         method: 'POST',
@@ -358,20 +373,18 @@ export async function saveAppointmentToFirestore(appointment: Appointment): Prom
   }
 }
 
-/**
- * Saves a customer inquiry or quick consultation request to the 'customer_requests' collection
- */
 export async function saveCustomerRequestToFirestore(request: Appointment): Promise<boolean> {
   const docId = request.id || `req-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
   const path = `customer_requests/${docId}`;
   try {
-    const docRef = doc(db, 'customer_requests', docId);
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'customer_requests', docId);
     const payload = sanitizeFirestoreData({
       ...request,
       id: docId,
       createdAt: request.createdAt || new Date().toISOString()
     });
-    await setDoc(docRef, payload, { merge: true });
+    await fs.setDoc(docRef, payload, { merge: true });
     console.log(`[Firestore] Successfully created customer request: ${docId}`);
     return true;
   } catch (error) {
@@ -384,8 +397,9 @@ export async function saveCustomerRequestToFirestore(request: Appointment): Prom
 export async function updateAppointmentStatusInFirestore(appointmentId: string, status: string): Promise<void> {
   const path = `appointments/${appointmentId}`;
   try {
-    const docRef = doc(db, 'appointments', appointmentId);
-    await updateDoc(docRef, { status, updatedAt: new Date().toISOString() });
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'appointments', appointmentId);
+    await fs.updateDoc(docRef, { status, updatedAt: new Date().toISOString() });
     console.log(`[Firestore] Successfully updated appointment status: ${appointmentId} -> ${status}`);
   } catch (error) {
     handleFirestoreError(error, OperationType.UPDATE, path);
@@ -395,8 +409,9 @@ export async function updateAppointmentStatusInFirestore(appointmentId: string, 
 export async function deleteAppointmentFromFirestore(appointmentId: string): Promise<void> {
   const path = `appointments/${appointmentId}`;
   try {
-    const docRef = doc(db, 'appointments', appointmentId);
-    await deleteDoc(docRef);
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'appointments', appointmentId);
+    await fs.deleteDoc(docRef);
     console.log(`[Firestore] Successfully deleted appointment: ${appointmentId}`);
   } catch (error) {
     handleFirestoreError(error, OperationType.DELETE, path);
@@ -406,8 +421,9 @@ export async function deleteAppointmentFromFirestore(appointmentId: string): Pro
 export async function getAppointmentsFromFirestore(): Promise<Appointment[]> {
   const path = 'appointments';
   try {
-    const colRef = collection(db, 'appointments');
-    const snap = await getDocs(colRef);
+    const { fs, db } = await loadFirestoreCtx();
+    const colRef = fs.collection(db, 'appointments');
+    const snap = await fs.getDocs(colRef);
     const list: Appointment[] = [];
     snap.forEach((d) => {
       const data = d.data();
@@ -447,45 +463,60 @@ export function subscribeAppointments(
   onError?: (err: any) => void
 ): Unsubscribe {
   const path = 'appointments';
-  const colRef = collection(db, 'appointments');
-  return onSnapshot(
-    colRef,
-    (snapshot) => {
-      const list: Appointment[] = [];
-      snapshot.forEach((d) => {
-        const data = d.data();
-        const docIdStr = String(d.id || '');
-        list.push({
-          id: d.id,
-          referenceNumber: data.referenceNumber || (docIdStr ? `RABA-${docIdStr.slice(-6)}` : 'RABA-000000'),
-          childName: data.patientName || data.childName || '',
-          childAge: typeof data.childAge === 'number' ? data.childAge : 5,
-          guardianName: data.parentName || data.guardianName || '',
-          guardianPhone: data.phone || data.guardianPhone || '',
-          guardianEmail: data.guardianEmail || '',
-          serviceId: data.serviceId || '',
-          serviceTitle: data.serviceName || data.serviceTitle || '',
-          specialistId: data.specialistId || '',
-          specialistName: data.specialistName || '',
-          date: data.date || '',
-          timeSlot: data.time || data.timeSlot || '',
-          status: data.status || 'pending',
-          paymentStatus: data.paymentStatus || 'unpaid',
-          paymentMethod: data.paymentMethod || 'mada',
-          amount: typeof data.amount === 'number' ? data.amount : 0,
-          reminderSettings: data.reminderSettings || { whatsapp: true, sms: false, email: false },
-          notes: data.notes || '',
-          createdAt: data.createdAt || new Date().toISOString()
-        });
-      });
-      onUpdate(list);
-    },
-    (error) => {
-      console.error('[Firestore Realtime Error] appointments listener error:', error);
-      if (onError) onError(error);
-      handleFirestoreError(error, OperationType.LIST, path);
-    }
-  );
+  let cancelled = false;
+  let realUnsub: Unsubscribe | null = null;
+
+  loadFirestoreCtx()
+    .then(({ fs, db }) => {
+      if (cancelled) return;
+      const colRef = fs.collection(db, 'appointments');
+      realUnsub = fs.onSnapshot(
+        colRef,
+        (snapshot) => {
+          const list: Appointment[] = [];
+          snapshot.forEach((d) => {
+            const data = d.data();
+            const docIdStr = String(d.id || '');
+            list.push({
+              id: d.id,
+              referenceNumber: data.referenceNumber || (docIdStr ? `RABA-${docIdStr.slice(-6)}` : 'RABA-000000'),
+              childName: data.patientName || data.childName || '',
+              childAge: typeof data.childAge === 'number' ? data.childAge : 5,
+              guardianName: data.parentName || data.guardianName || '',
+              guardianPhone: data.phone || data.guardianPhone || '',
+              guardianEmail: data.guardianEmail || '',
+              serviceId: data.serviceId || '',
+              serviceTitle: data.serviceName || data.serviceTitle || '',
+              specialistId: data.specialistId || '',
+              specialistName: data.specialistName || '',
+              date: data.date || '',
+              timeSlot: data.time || data.timeSlot || '',
+              status: data.status || 'pending',
+              paymentStatus: data.paymentStatus || 'unpaid',
+              paymentMethod: data.paymentMethod || 'mada',
+              amount: typeof data.amount === 'number' ? data.amount : 0,
+              reminderSettings: data.reminderSettings || { whatsapp: true, sms: false, email: false },
+              notes: data.notes || '',
+              createdAt: data.createdAt || new Date().toISOString()
+            });
+          });
+          onUpdate(list);
+        },
+        (error) => {
+          console.error('[Firestore Realtime Error] appointments listener error:', error);
+          if (onError) onError(error);
+          handleFirestoreError(error, OperationType.LIST, path);
+        }
+      );
+    })
+    .catch((err) => {
+      if (onError) onError(err);
+    });
+
+  return () => {
+    cancelled = true;
+    if (realUnsub) realUnsub();
+  };
 }
 
 // ============================================================================
@@ -496,7 +527,8 @@ export async function saveTestimonialToFirestore(review: ParentReview): Promise<
   const docId = review.id || `rev-${Date.now()}`;
   const path = `testimonials/${docId}`;
   try {
-    const docRef = doc(db, 'testimonials', docId);
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'testimonials', docId);
 
     const payload = sanitizeFirestoreData({
       id: docId,
@@ -512,7 +544,7 @@ export async function saveTestimonialToFirestore(review: ParentReview): Promise<
       avatar: review.avatar || ''
     });
 
-    await setDoc(docRef, payload, { merge: true });
+    await fs.setDoc(docRef, payload, { merge: true });
     console.log(`[Firestore] Successfully saved review: ${docId}`);
     return true;
   } catch (error) {
@@ -525,8 +557,9 @@ export async function saveTestimonialToFirestore(review: ParentReview): Promise<
 export async function deleteTestimonialFromFirestore(reviewId: string): Promise<void> {
   const path = `testimonials/${reviewId}`;
   try {
-    const docRef = doc(db, 'testimonials', reviewId);
-    await deleteDoc(docRef);
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'testimonials', reviewId);
+    await fs.deleteDoc(docRef);
     console.log(`[Firestore] Successfully deleted testimonial: ${reviewId}`);
   } catch (error) {
     handleFirestoreError(error, OperationType.DELETE, path);
@@ -536,8 +569,9 @@ export async function deleteTestimonialFromFirestore(reviewId: string): Promise<
 export async function getTestimonialsFromFirestore(): Promise<ParentReview[]> {
   const path = 'testimonials';
   try {
-    const colRef = collection(db, 'testimonials');
-    const snap = await getDocs(colRef);
+    const { fs, db } = await loadFirestoreCtx();
+    const colRef = fs.collection(db, 'testimonials');
+    const snap = await fs.getDocs(colRef);
     const list: ParentReview[] = [];
     snap.forEach((d) => {
       list.push(d.data() as ParentReview);
@@ -554,22 +588,37 @@ export function subscribeTestimonials(
   onError?: (err: any) => void
 ): Unsubscribe {
   const path = 'testimonials';
-  const colRef = collection(db, 'testimonials');
-  return onSnapshot(
-    colRef,
-    (snapshot) => {
-      const list: ParentReview[] = [];
-      snapshot.forEach((d) => {
-        list.push(d.data() as ParentReview);
-      });
-      onUpdate(list);
-    },
-    (error) => {
-      console.error('[Firestore Realtime Error] testimonials listener error:', error);
-      if (onError) onError(error);
-      handleFirestoreError(error, OperationType.LIST, path);
-    }
-  );
+  let cancelled = false;
+  let realUnsub: Unsubscribe | null = null;
+
+  loadFirestoreCtx()
+    .then(({ fs, db }) => {
+      if (cancelled) return;
+      const colRef = fs.collection(db, 'testimonials');
+      realUnsub = fs.onSnapshot(
+        colRef,
+        (snapshot) => {
+          const list: ParentReview[] = [];
+          snapshot.forEach((d) => {
+            list.push(d.data() as ParentReview);
+          });
+          onUpdate(list);
+        },
+        (error) => {
+          console.error('[Firestore Realtime Error] testimonials listener error:', error);
+          if (onError) onError(error);
+          handleFirestoreError(error, OperationType.LIST, path);
+        }
+      );
+    })
+    .catch((err) => {
+      if (onError) onError(err);
+    });
+
+  return () => {
+    cancelled = true;
+    if (realUnsub) realUnsub();
+  };
 }
 
 // ============================================================================
@@ -583,8 +632,9 @@ export async function saveBlogPostToFirestore(post: BlogPost): Promise<void> {
     return;
   }
   try {
-    const docRef = doc(db, 'blog_posts', docId);
-    await setDoc(docRef, sanitizeFirestoreData({ ...post, id: docId }), { merge: true });
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'blog_posts', docId);
+    await fs.setDoc(docRef, sanitizeFirestoreData({ ...post, id: docId }), { merge: true });
     console.log(`[Firestore] Successfully saved blog post: ${docId}`);
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, path);
@@ -597,8 +647,9 @@ export async function deleteBlogPostFromFirestore(postId: string): Promise<void>
     return;
   }
   try {
-    const docRef = doc(db, 'blog_posts', postId);
-    await deleteDoc(docRef);
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'blog_posts', postId);
+    await fs.deleteDoc(docRef);
     console.log(`[Firestore] Successfully deleted blog post: ${postId}`);
   } catch (error) {
     handleFirestoreError(error, OperationType.DELETE, path);
@@ -616,10 +667,10 @@ export async function saveAdminUserToFirestore(user: AdminUser): Promise<boolean
     return false;
   }
   try {
-    const docRef = doc(db, 'admins', docId);
-    // Exclude plaintext password from Firestore
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'admins', docId);
     const { password: _, ...cleanUser } = user;
-    await setDoc(docRef, sanitizeFirestoreData({
+    await fs.setDoc(docRef, sanitizeFirestoreData({
       ...cleanUser,
       updatedAt: new Date().toISOString()
     }), { merge: true });
@@ -638,8 +689,9 @@ export async function deleteAdminUserFromFirestore(userId: string): Promise<bool
     return false;
   }
   try {
-    const docRef = doc(db, 'admins', userId);
-    await deleteDoc(docRef);
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'admins', userId);
+    await fs.deleteDoc(docRef);
     console.log(`[Firestore] Successfully deleted admin user: ${userId}`);
     return true;
   } catch (error) {
@@ -651,8 +703,9 @@ export async function deleteAdminUserFromFirestore(userId: string): Promise<bool
 export async function getAdminUsersFromFirestore(): Promise<AdminUser[]> {
   const path = 'admins';
   try {
-    const colRef = collection(db, 'admins');
-    const snap = await withTimeout(getDocs(colRef), 3000);
+    const { fs, db } = await loadFirestoreCtx();
+    const colRef = fs.collection(db, 'admins');
+    const snap = await withTimeout(fs.getDocs(colRef), 3000);
     const list: AdminUser[] = [];
     snap.forEach((d) => {
       list.push(d.data() as AdminUser);

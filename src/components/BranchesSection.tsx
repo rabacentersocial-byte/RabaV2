@@ -81,6 +81,9 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
   };
 
   const rafIdRef = useRef<number | null>(null);
+  const maxScrollRef = useRef(0);
+  const slideWidthRef = useRef(370);
+  const containerOffsetLeftRef = useRef(0);
 
   const updateScrollState = useCallback(() => {
     if (rafIdRef.current !== null) return;
@@ -89,15 +92,15 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
       const el = sliderRef.current;
       if (!el) return;
 
-      const maxScroll = el.scrollWidth - el.clientWidth;
+      const maxScroll = maxScrollRef.current;
       const current = Math.abs(el.scrollLeft);
 
       setCanScrollPrev(current > 15);
       setCanScrollNext(current < maxScroll - 15);
 
-      const slideWidth = getSlideWidth();
+      const slideWidth = slideWidthRef.current;
       const index = Math.round(current / slideWidth);
-      setCurrentIndex(Math.min(Math.max(0, index), filteredBranches.length - 1));
+      setCurrentIndex(Math.min(Math.max(0, index), Math.max(0, filteredBranches.length - 1)));
     });
   }, [filteredBranches.length]);
 
@@ -105,23 +108,36 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
     const el = sliderRef.current;
     if (!el) return;
 
+    const measure = () => {
+      maxScrollRef.current = Math.max(0, el.scrollWidth - el.clientWidth);
+      containerOffsetLeftRef.current = el.offsetLeft;
+      slideWidthRef.current = getSlideWidth();
+      updateScrollState();
+    };
+
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
+    if (ro) {
+      ro.observe(el);
+    } else {
+      window.addEventListener('resize', measure, { passive: true });
+    }
     el.addEventListener('scroll', updateScrollState, { passive: true });
-    window.addEventListener('resize', updateScrollState, { passive: true });
 
     return () => {
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
         rafIdRef.current = null;
       }
+      ro?.disconnect();
+      window.removeEventListener('resize', measure);
       el.removeEventListener('scroll', updateScrollState);
-      window.removeEventListener('resize', updateScrollState);
     };
-  }, [filteredBranches, updateScrollState]);
+  }, [filteredBranches, viewMode, updateScrollState]);
 
   const handleScroll = (direction: 'prev' | 'next') => {
     const el = sliderRef.current;
     if (!el) return;
-    const scrollAmount = getSlideWidth();
+    const scrollAmount = slideWidthRef.current;
 
     let delta = scrollAmount;
     if (direction === 'prev') {
@@ -137,18 +153,19 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
   const scrollToIndex = (index: number) => {
     const el = sliderRef.current;
     if (!el) return;
-    const slideWidth = getSlideWidth();
+    const slideWidth = slideWidthRef.current;
     let target = index * slideWidth;
     if (isArabic) target = -target;
     el.scrollTo({ left: target, behavior: 'smooth' });
   };
 
-  // Drag handlers for desktop smooth dragging
+  // Drag handlers for desktop smooth dragging (cached offsetLeft avoids forced reflows)
   const handleMouseDown = (e: React.MouseEvent) => {
     const el = sliderRef.current;
     if (!el) return;
     setIsDragging(true);
-    startXRef.current = e.pageX - el.offsetLeft;
+    containerOffsetLeftRef.current = el.offsetLeft;
+    startXRef.current = e.pageX - containerOffsetLeftRef.current;
     scrollLeftRef.current = el.scrollLeft;
     movedDistanceRef.current = 0;
   };
@@ -156,7 +173,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !sliderRef.current) return;
     e.preventDefault();
-    const x = e.pageX - sliderRef.current.offsetLeft;
+    const x = e.pageX - containerOffsetLeftRef.current;
     const walk = (x - startXRef.current) * 1.5;
     movedDistanceRef.current += Math.abs(walk);
     sliderRef.current.scrollLeft = scrollLeftRef.current - walk;
@@ -212,7 +229,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
               <div className="pt-3">
                 <button
                   onClick={onOpenBranchesPage}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-bold liquid-glass-btn text-[#2E86EB] transition-all cursor-pointer shadow-xs active:scale-95"
+                  className="inline-flex items-center gap-2 px-4 py-2 min-h-[38px] rounded-full text-xs sm:text-sm font-bold liquid-glass-btn text-[#2E86EB] transition-colors cursor-pointer shadow-xs active:scale-95"
                 >
                   <MapPin className="w-4 h-4 text-[#2E86EB]" />
                   <span>{isArabic ? 'عرض صفحة الفروع المخصصة مع خيارات العرض المتقدمة ←' : 'Explore Dedicated Branches Directory Page →'}</span>
@@ -228,7 +245,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
             <div className="liquid-glass-pill p-1.5 flex items-center gap-1 shadow-xs overflow-x-auto no-scrollbar">
               <button
                 onClick={() => setSelectedCity('all')}
-                className={`px-3.5 py-2 rounded-full text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-3.5 py-2 min-h-[36px] rounded-full text-xs sm:text-sm font-black transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   selectedCity === 'all'
                     ? 'bg-[#2E86EB] text-white shadow-md shadow-blue-500/25 border-t border-white/40'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
@@ -244,7 +261,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
 
               <button
                 onClick={() => setSelectedCity('riyadh')}
-                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-3.5 py-2 min-h-[36px] rounded-xl text-xs sm:text-sm font-black transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   selectedCity === 'riyadh'
                     ? 'bg-[#0D6D54] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
@@ -260,7 +277,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
 
               <button
                 onClick={() => setSelectedCity('jeddah')}
-                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-3.5 py-2 min-h-[36px] rounded-xl text-xs sm:text-sm font-black transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   selectedCity === 'jeddah'
                     ? 'bg-[#0D6D54] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
@@ -276,7 +293,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
 
               <button
                 onClick={() => setSelectedCity('khobar')}
-                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-3.5 py-2 min-h-[36px] rounded-xl text-xs sm:text-sm font-black transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   selectedCity === 'khobar'
                     ? 'bg-[#0D6D54] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
@@ -292,7 +309,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
 
               <button
                 onClick={() => setSelectedCity('ahsa')}
-                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-3.5 py-2 min-h-[36px] rounded-xl text-xs sm:text-sm font-black transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   selectedCity === 'ahsa'
                     ? 'bg-[#0D6D54] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
@@ -308,7 +325,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
 
               <button
                 onClick={() => setSelectedCity('kharj')}
-                className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-3.5 py-2 min-h-[36px] rounded-xl text-xs sm:text-sm font-black transition-colors cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   selectedCity === 'kharj'
                     ? 'bg-[#0D6D54] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs'
                     : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
@@ -329,23 +346,25 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
               <div className="bg-white dark:bg-slate-800/90 p-1 rounded-2xl border border-slate-200 dark:border-white/10 flex items-center shadow-xs">
                 <button
                   onClick={() => setViewMode('slider')}
-                  className={`p-2 rounded-xl transition-all cursor-pointer ${
+                  className={`w-9 h-9 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-xl transition-colors cursor-pointer ${
                     viewMode === 'slider' 
                       ? 'bg-[#0D6D54] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs' 
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                   }`}
                   title={isArabic ? 'عرض سلايدر تفاعلي' : 'Slider View'}
+                  aria-label={isArabic ? 'عرض سلايدر تفاعلي' : 'Slider View'}
                 >
                   <SlidersHorizontal className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-xl transition-all cursor-pointer ${
+                  className={`w-9 h-9 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-xl transition-colors cursor-pointer ${
                     viewMode === 'grid' 
                       ? 'bg-[#0D6D54] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-xs' 
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                   }`}
                   title={isArabic ? 'عرض شبكي' : 'Grid View'}
+                  aria-label={isArabic ? 'عرض شبكي' : 'Grid View'}
                 >
                   <LayoutGrid className="w-4 h-4" />
                 </button>
@@ -358,7 +377,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                     onClick={() => handleScroll('prev')}
                     disabled={!canScrollPrev}
                     aria-label={isArabic ? 'الفرع السابق' : 'Previous branch'}
-                    className={`w-10 h-10 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs transition-all cursor-pointer ${
+                    className={`w-11 h-11 min-w-[44px] min-h-[44px] rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs transition-transform duration-200 cursor-pointer ${
                       canScrollPrev 
                         ? 'hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white active:scale-95' 
                         : 'opacity-40 cursor-not-allowed'
@@ -371,7 +390,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                     onClick={() => handleScroll('next')}
                     disabled={!canScrollNext}
                     aria-label={isArabic ? 'الفرع التالي' : 'Next branch'}
-                    className={`w-10 h-10 rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs transition-all cursor-pointer ${
+                    className={`w-11 h-11 min-w-[44px] min-h-[44px] rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs transition-transform duration-200 cursor-pointer ${
                       canScrollNext 
                         ? 'hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white active:scale-95' 
                         : 'opacity-40 cursor-not-allowed'
@@ -403,14 +422,14 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
               {filteredBranches.map((branch) => (
                 <div
                   key={branch.id}
-                  className="w-[76vw] min-w-[260px] max-w-[310px] sm:w-[350px] sm:max-w-none md:w-[365px] shrink-0 snap-start liquid-glass-card rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-lg hover:border-blue-500/50 dark:hover:border-[#2E86EB]/50 transition-all duration-300 flex flex-col justify-between group relative"
+                  className="w-[76vw] min-w-[260px] max-w-[310px] sm:w-[350px] sm:max-w-none md:w-[365px] shrink-0 snap-start liquid-glass-card rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-lg hover:border-blue-500/50 dark:hover:border-[#2E86EB]/50 transition-colors duration-300 flex flex-col justify-between group relative"
                 >
                   {/* Top: 3D Map Pin Graphic */}
                   <div className="relative h-36 sm:h-56 md:h-60 overflow-hidden bg-slate-100 dark:bg-[#0E1526]">
                     <BranchMapPinGraphic branchName={branch.name} />
 
                     {/* City Tag Indicator Overlay */}
-                    <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 bg-slate-900/80 backdrop-blur-md px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold text-slate-300 border border-white/10 flex items-center gap-1 sm:gap-1.5">
+                    <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 bg-slate-900/80 backdrop-blur-md px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold text-slate-200 border border-white/10 flex items-center gap-1 sm:gap-1.5">
                       <MapPin className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-[#2E86EB]" />
                       <span>{isArabic ? branch.cityNameAr : branch.cityNameEn}</span>
                     </div>
@@ -426,7 +445,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                           {isArabic ? branch.regionBadgeAr : branch.regionBadgeEn}
                         </span>
 
-                        <span className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 font-semibold flex items-center gap-1">
+                        <span className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 font-semibold flex items-center gap-1">
                           <Clock className="w-3 h-3 text-[#2E86EB] dark:text-[#2E86EB]" />
                           <span>{isArabic ? branch.hoursAr : branch.hoursEn}</span>
                         </span>
@@ -455,7 +474,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                         href={branch.googleMapsUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="py-2.5 sm:py-3 px-2 sm:px-3 bg-[#0F2438] hover:bg-[#15324d] text-white text-xs font-bold rounded-xl border border-white/15 hover:border-blue-500/40 transition-all flex items-center justify-center gap-1 sm:gap-1.5 text-center shadow-xs active:scale-95 cursor-pointer"
+                        className="py-2.5 sm:py-3 px-2 sm:px-3 bg-[#0F2438] hover:bg-[#15324d] text-white text-xs font-bold rounded-xl border border-white/15 hover:border-blue-500/40 transition-colors flex items-center justify-center gap-1 sm:gap-1.5 text-center shadow-xs active:scale-95 cursor-pointer"
                         title={isArabic ? `عرض موقع ${branch.name} على خرائط Google` : 'View on Google Maps'}
                       >
                         <Navigation className="w-3.5 h-3.5 text-blue-400 shrink-0" />
@@ -467,7 +486,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                         href={branch.whatsappUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="py-2.5 sm:py-3 px-2 sm:px-3 bg-[#2E86EB] hover:bg-[#2575d0] text-white text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1 sm:gap-1.5 text-center shadow-lg shadow-blue-500/20 active:scale-95 cursor-pointer"
+                        className="py-2.5 sm:py-3 px-2 sm:px-3 bg-[#2E86EB] hover:bg-[#2575d0] text-white text-xs font-black rounded-xl transition-colors flex items-center justify-center gap-1 sm:gap-1.5 text-center shadow-lg shadow-blue-500/20 active:scale-95 cursor-pointer"
                         title={isArabic ? `تواصل واتساب مع ${branch.name}` : 'Chat on WhatsApp'}
                       >
                         <MessageCircle className="w-3.5 h-3.5 fill-white shrink-0" />
@@ -489,13 +508,13 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                   type="button"
                   onClick={() => scrollToIndex(idx)}
                   aria-label={`الانتقال للفرع ${idx + 1}`}
-                  className="p-2 min-w-[32px] min-h-[32px] flex items-center justify-center cursor-pointer bg-transparent border-0 focus:outline-none"
+                  className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer p-0 m-0 bg-transparent border-0 focus:outline-none"
                 >
                   <span
-                    className={`block h-2 rounded-full transition-[width,background-color] duration-300 ${
+                    className={`block h-2 rounded-full transition-colors duration-200 ${
                       currentIndex === idx 
                         ? 'w-8 bg-[#2E86EB]' 
-                        : 'w-2 bg-white/20 hover:bg-white/40'
+                        : 'w-2 bg-slate-300 dark:bg-white/25 hover:bg-slate-400 dark:hover:bg-white/40'
                     }`}
                   />
                 </button>
@@ -508,11 +527,11 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
             {filteredBranches.map((branch) => (
               <div
                 key={branch.id}
-                className="bg-white dark:bg-[#111827] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-lg hover:border-blue-500/50 dark:hover:border-[#2E86EB]/50 transition-all duration-300 flex flex-col justify-between group relative"
+                className="bg-white dark:bg-[#111827] rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200/90 dark:border-white/10 shadow-lg hover:border-blue-500/50 dark:hover:border-[#2E86EB]/50 transition-colors duration-300 flex flex-col justify-between group relative"
               >
                 <div className="relative h-36 sm:h-56 overflow-hidden bg-slate-100 dark:bg-[#0E1526]">
                   <BranchMapPinGraphic branchName={branch.name} />
-                  <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 bg-slate-900/80 backdrop-blur-md px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-slate-300 border border-white/10 flex items-center gap-1">
+                  <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 bg-slate-900/80 backdrop-blur-md px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-slate-200 border border-white/10 flex items-center gap-1">
                     <MapPin className="w-3 h-3 text-[#2E86EB]" />
                     <span>{isArabic ? branch.cityNameAr : branch.cityNameEn}</span>
                   </div>
@@ -526,7 +545,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                         {isArabic ? branch.regionBadgeAr : branch.regionBadgeEn}
                       </span>
 
-                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold flex items-center gap-1">
+                      <span className="text-[10px] text-slate-600 dark:text-slate-300 font-semibold flex items-center gap-1">
                         <Clock className="w-3 h-3 text-[#2E86EB] dark:text-[#2E86EB]" />
                         <span>{isArabic ? branch.hoursAr : branch.hoursEn}</span>
                       </span>
@@ -550,7 +569,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                       href={branch.googleMapsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="py-2 sm:py-2.5 px-2 bg-[#0F2438] hover:bg-[#15324d] text-white text-xs font-bold rounded-xl border border-white/15 transition-all flex items-center justify-center gap-1 text-center cursor-pointer"
+                      className="py-2 sm:py-2.5 px-2 bg-[#0F2438] hover:bg-[#15324d] text-white text-xs font-bold rounded-xl border border-white/15 transition-colors flex items-center justify-center gap-1 text-center cursor-pointer"
                     >
                       <Navigation className="w-3.5 h-3.5 text-blue-400" />
                       <span>{isArabic ? 'خرائط Google' : 'Maps'}</span>
@@ -560,7 +579,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                       href={branch.whatsappUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="py-2 sm:py-2.5 px-2 bg-[#2E86EB] hover:bg-[#2575d0] text-white text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1 text-center cursor-pointer shadow-md shadow-blue-500/20"
+                      className="py-2 sm:py-2.5 px-2 bg-[#2E86EB] hover:bg-[#2575d0] text-white text-xs font-black rounded-xl transition-colors flex items-center justify-center gap-1 text-center cursor-pointer shadow-md shadow-blue-500/20"
                     >
                       <MessageCircle className="w-3.5 h-3.5 fill-white" />
                       <span>{isArabic ? 'واتساب' : 'WhatsApp'}</span>
@@ -583,7 +602,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
             {/* Phone Info Block (Clickable tap-to-call) */}
             <a 
               href="tel:0575100100"
-              className="flex items-center justify-between sm:justify-start gap-3 p-2 sm:p-0 rounded-xl hover:bg-white/5 active:bg-white/10 transition-all group cursor-pointer"
+              className="flex items-center justify-between sm:justify-start gap-3 p-2 sm:p-0 rounded-xl hover:bg-white/5 active:bg-white/10 transition-colors group cursor-pointer"
               title={isArabic ? 'اتصال مباشر بالرقم الموحد' : 'Call unified hotline'}
             >
               <div className="flex items-center gap-3">
@@ -615,7 +634,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                 href="https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20الاستفسار%20عن%20أقرب%20فرع%20لمركز%20رابا%20في%20المملكة"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3.5 bg-gradient-to-r from-[#2E86EB] to-[#1B4B8A] hover:from-[#3b93f7] hover:to-[#23589e] text-white font-black rounded-xl sm:rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 sm:gap-2.5 transition-all shadow-md shadow-blue-950/30 active:scale-95 cursor-pointer"
+                className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3.5 bg-gradient-to-r from-[#2E86EB] to-[#1B4B8A] hover:from-[#3b93f7] hover:to-[#23589e] text-white font-black rounded-xl sm:rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 sm:gap-2.5 transition-[transform,background-color] shadow-md shadow-blue-950/30 active:scale-95 cursor-pointer"
               >
                 <MessageCircle className="w-4 h-4 fill-white text-white shrink-0" />
                 <span className="font-black tracking-tight">{isArabic ? 'استشرنا لتحديد أقرب فرع لطفلك' : 'Find Closest Branch'}</span>

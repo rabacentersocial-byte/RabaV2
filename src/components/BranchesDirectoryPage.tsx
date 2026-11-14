@@ -145,6 +145,9 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
   };
 
   const rafIdRef = useRef<number | null>(null);
+  const maxScrollRef = useRef(0);
+  const slideWidthRef = useRef(370);
+  const containerOffsetLeftRef = useRef(0);
 
   const updateScrollState = useCallback(() => {
     if (rafIdRef.current !== null) return;
@@ -153,15 +156,15 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
       const el = sliderRef.current;
       if (!el) return;
 
-      const maxScroll = el.scrollWidth - el.clientWidth;
+      const maxScroll = maxScrollRef.current;
       const current = Math.abs(el.scrollLeft);
 
       setCanScrollPrev(current > 15);
       setCanScrollNext(current < maxScroll - 15);
 
-      const slideWidth = getSlideWidth();
+      const slideWidth = slideWidthRef.current;
       const index = Math.round(current / slideWidth);
-      setCurrentIndex(Math.min(Math.max(0, index), filteredBranches.length - 1));
+      setCurrentIndex(Math.min(Math.max(0, index), Math.max(0, filteredBranches.length - 1)));
     });
   }, [filteredBranches.length]);
 
@@ -169,24 +172,36 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
     const el = sliderRef.current;
     if (!el) return;
 
-    updateScrollState();
+    const measure = () => {
+      maxScrollRef.current = Math.max(0, el.scrollWidth - el.clientWidth);
+      containerOffsetLeftRef.current = el.offsetLeft;
+      slideWidthRef.current = getSlideWidth();
+      updateScrollState();
+    };
+
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
+    if (ro) {
+      ro.observe(el);
+    } else {
+      window.addEventListener('resize', measure, { passive: true });
+    }
     el.addEventListener('scroll', updateScrollState, { passive: true });
-    window.addEventListener('resize', updateScrollState, { passive: true });
 
     return () => {
       if (rafIdRef.current !== null) {
         cancelAnimationFrame(rafIdRef.current);
         rafIdRef.current = null;
       }
+      ro?.disconnect();
+      window.removeEventListener('resize', measure);
       el.removeEventListener('scroll', updateScrollState);
-      window.removeEventListener('resize', updateScrollState);
     };
   }, [filteredBranches, updateScrollState, viewMode]);
 
   const handleScroll = (direction: 'prev' | 'next') => {
     const el = sliderRef.current;
     if (!el) return;
-    const scrollAmount = getSlideWidth();
+    const scrollAmount = slideWidthRef.current;
 
     let delta = scrollAmount;
     if (direction === 'prev') {
@@ -202,7 +217,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
   const scrollToIndex = (index: number) => {
     const el = sliderRef.current;
     if (!el) return;
-    const slideWidth = getSlideWidth();
+    const slideWidth = slideWidthRef.current;
     let target = index * slideWidth;
     if (isArabic) {
       target = -target;
@@ -214,7 +229,8 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
     const el = sliderRef.current;
     if (!el) return;
     setIsDragging(true);
-    startXRef.current = e.pageX - el.offsetLeft;
+    containerOffsetLeftRef.current = el.offsetLeft;
+    startXRef.current = e.pageX - containerOffsetLeftRef.current;
     scrollLeftRef.current = el.scrollLeft;
     movedDistanceRef.current = 0;
   };
@@ -222,7 +238,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !sliderRef.current) return;
     e.preventDefault();
-    const x = e.pageX - sliderRef.current.offsetLeft;
+    const x = e.pageX - containerOffsetLeftRef.current;
     const walk = (x - startXRef.current) * 1.5;
     movedDistanceRef.current += Math.abs(walk);
     sliderRef.current.scrollLeft = scrollLeftRef.current - walk;
