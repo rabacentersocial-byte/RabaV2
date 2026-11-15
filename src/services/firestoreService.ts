@@ -10,6 +10,15 @@ async function loadFirestoreCtx() {
   return { fs, db };
 }
 
+async function ensureFirebaseUser() {
+  const { getLazyAuth } = await import('../lib/firebase');
+  const authInstance = await getLazyAuth();
+  if (typeof (authInstance as any).authStateReady === 'function') {
+    await (authInstance as any).authStateReady();
+  }
+  return authInstance.currentUser;
+}
+
 export enum OperationType {
   CREATE = 'create',
   UPDATE = 'update',
@@ -36,7 +45,7 @@ export interface FirestoreErrorInfo {
   };
 }
 
-export function withTimeout<T>(promise: Promise<T>, timeoutMs = 3000, fallback?: T): Promise<T> {
+export function withTimeout<T>(promise: Promise<T>, timeoutMs = 10000, fallback?: T): Promise<T> {
   return Promise.race([
     promise,
     new Promise<T>((resolve, reject) => {
@@ -152,7 +161,7 @@ export async function getSiteSettingFromFirestore(key: string): Promise<any | nu
   try {
     const { fs, db } = await loadFirestoreCtx();
     const docRef = fs.doc(db, 'site_settings', key);
-    const snap = await withTimeout(fs.getDoc(docRef), 3000);
+    const snap = await withTimeout(fs.getDoc(docRef), 10000);
     if (!snap.exists()) {
       return null;
     }
@@ -169,7 +178,7 @@ export async function getAllSiteSettingsFromFirestore(): Promise<Record<string, 
   try {
     const { fs, db } = await loadFirestoreCtx();
     const colRef = fs.collection(db, 'site_settings');
-    const snap = await withTimeout(fs.getDocs(colRef), 3000);
+    const snap = await withTimeout(fs.getDocs(colRef), 10000);
     const result: Record<string, any> = {};
     snap.forEach((d) => {
       const docData = d.data();
@@ -533,6 +542,10 @@ export async function updateAppointmentFieldsInFirestore(
   fields: Partial<Appointment>
 ): Promise<void> {
   const path = `appointments/${appointmentId}`;
+  const currentUser = await ensureFirebaseUser();
+  if (!currentUser) {
+    return;
+  }
   try {
     const { fs, db } = await loadFirestoreCtx();
     const docRef = fs.doc(db, 'appointments', appointmentId);
@@ -557,6 +570,10 @@ export async function updateAppointmentStatusInFirestore(appointmentId: string, 
 
 export async function deleteAppointmentFromFirestore(appointmentId: string): Promise<void> {
   const path = `appointments/${appointmentId}`;
+  const currentUser = await ensureFirebaseUser();
+  if (!currentUser) {
+    return;
+  }
   try {
     const { fs, db } = await loadFirestoreCtx();
     const docRef = fs.doc(db, 'appointments', appointmentId);
@@ -570,6 +587,10 @@ export async function deleteAppointmentFromFirestore(appointmentId: string): Pro
 
 export async function getAppointmentsFromFirestore(): Promise<Appointment[]> {
   const path = 'appointments';
+  const currentUser = await ensureFirebaseUser();
+  if (!currentUser) {
+    return [];
+  }
   try {
     const { fs, db } = await loadFirestoreCtx();
     const colRef = fs.collection(db, 'appointments');
@@ -641,8 +662,9 @@ export function subscribeAppointments(
     );
   };
 
-  loadFirestoreCtx()
-    .then(({ fs, db }) => {
+  Promise.all([ensureFirebaseUser(), loadFirestoreCtx()])
+    .then(([currentUser, { fs, db }]) => {
+      if (cancelled || !currentUser) return;
       attachListener(fs, db, true);
     })
     .catch((err) => {
@@ -838,6 +860,10 @@ export async function deleteAdminUserFromFirestore(userId: string): Promise<bool
 
 export async function getAdminUsersFromFirestore(): Promise<AdminUser[]> {
   const path = 'admins';
+  const currentUser = await ensureFirebaseUser();
+  if (!currentUser) {
+    return [];
+  }
   try {
     const { fs, db } = await loadFirestoreCtx();
     const colRef = fs.collection(db, 'admins');

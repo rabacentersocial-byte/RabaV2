@@ -129,7 +129,12 @@ async function restoreUploadsFromCloudSql() {
 }
 
 restoreUploadsFromManifest();
-restoreUploadsFromCloudSql().catch(() => {});
+setTimeout(() => {
+  if (process.env.SQL_HOST) {
+    getAllDbSettings().catch(() => {});
+  }
+  restoreUploadsFromCloudSql().catch(() => {});
+}, 1500);
 
 // Map of storage keys to data filenames (supporting current and legacy keys)
 const STORAGE_FILE_MAP: Record<string, string> = {
@@ -930,8 +935,8 @@ async function startServer() {
       // 3. Optional Cloud SQL overlay if configured
       if (process.env.SQL_HOST) {
         try {
-          const dbPromise = getAllDbSettings();
-          const timeoutPromise = new Promise<Record<string, any>>((resolve) => setTimeout(() => resolve({}), 1500));
+          const dbPromise = getAllDbSettings().catch(() => ({} as Record<string, any>));
+          const timeoutPromise = new Promise<Record<string, any>>((resolve) => setTimeout(() => resolve({}), 2500));
           const dbSettings = await Promise.race([dbPromise, timeoutPromise]);
 
           for (const [key, val] of Object.entries(dbSettings)) {
@@ -944,7 +949,7 @@ async function startServer() {
             }
           }
         } catch (dbErr: any) {
-          console.warn('[Server Sync] Cloud SQL query notice:', dbErr.message);
+          console.warn('[Server Sync] Cloud SQL query notice:', dbErr?.message || dbErr);
         }
       }
 

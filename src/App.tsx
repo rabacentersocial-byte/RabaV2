@@ -457,9 +457,65 @@ export default function App() {
     setAppointmentsSyncLoading(true);
     setAppointmentsSyncError(null);
     try {
-      const { getAppointmentsFromFirestore } = await import('./services/firestoreService');
-      const cloudList = await getAppointmentsFromFirestore();
-      setAppointments(cloudList);
+      const { getLazyAuth } = await import('./lib/firebase');
+      const authInstance = await getLazyAuth();
+      if (typeof (authInstance as any).authStateReady === 'function') {
+        await (authInstance as any).authStateReady();
+      }
+
+      if (authInstance.currentUser) {
+        const { getAppointmentsFromFirestore } = await import('./services/firestoreService');
+        const cloudList = await getAppointmentsFromFirestore();
+        setAppointments(cloudList);
+        return;
+      }
+
+      // Local admin session without Firebase Auth: gracefully sync from Cloud SQL API without triggering unauthenticated Firestore LIST
+      try {
+        const [{ getAdminHeaders }, { sortAppointmentsNewestFirst }] = await Promise.all([
+          import('./utils/persistentSync'),
+          import('./services/firestoreService')
+        ]);
+        const resp = await fetch('/api/db/appointments', { headers: getAdminHeaders() });
+        if (resp.ok) {
+          const data = await resp.json();
+          if (data?.success && Array.isArray(data.appointments) && data.appointments.length > 0) {
+            const dbMapped: Appointment[] = data.appointments.map((row: any) => ({
+              id: String(row.id || `apt-db-${Date.now()}`),
+              referenceNumber: `RB-${String(row.id || '000000').slice(-6).toUpperCase()}`,
+              childName: row.patientName || row.patient_name || '',
+              childAge: 0,
+              guardianName: row.patientName || row.patient_name || '',
+              guardianPhone: row.phone || '',
+              serviceId: 'general',
+              serviceTitle: row.service || 'جلسة تأهيلية',
+              specialistId: 'general',
+              specialistName: row.specialist || 'أخصائي المركز',
+              date: row.date || '',
+              timeSlot: row.time || '',
+              status: (row.status as Appointment['status']) || 'pending',
+              paymentStatus: 'unpaid',
+              paymentMethod: 'mada',
+              amount: 0,
+              reminderSettings: { whatsapp: true, sms: false, email: false },
+              notes: row.notes || '',
+              createdAt: row.createdAt || new Date().toISOString()
+            }));
+            setAppointments((prev) => {
+              const existingIds = new Set(prev.map((a) => a.id));
+              const merged = [...prev];
+              for (const item of dbMapped) {
+                if (!existingIds.has(item.id)) {
+                  merged.push(item);
+                }
+              }
+              return sortAppointmentsNewestFirst(merged);
+            });
+          }
+        }
+      } catch {
+        // Non-blocking fallback when static preview has no Express backend
+      }
     } catch (err: any) {
       console.error('[App] Failed to fetch appointments from Firestore:', err);
       setAppointmentsSyncError(err?.message || String(err));
@@ -562,6 +618,13 @@ export default function App() {
     let unsubAppointments: (() => void) | undefined;
 
     fetchCloudAppointments();
+
+    // Only attach Firestore real-time listener once Firebase Auth is authenticated
+    if (!firebaseAdminUid) {
+      return () => {
+        cancelled = true;
+      };
+    }
 
     import('./services/firestoreService')
       .then(({ subscribeAppointments }) => {

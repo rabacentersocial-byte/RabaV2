@@ -98,7 +98,7 @@ export async function getLazyDb(): Promise<Firestore> {
 
       try {
         _cachedDb = initializeFirestore(app, {
-          experimentalAutoDetectLongPolling: true,
+          experimentalForceLongPolling: true,
         }, dbId);
       } catch {
         _cachedDb = dbId ? getFirestore(app, dbId) : getFirestore(app);
@@ -110,7 +110,7 @@ export async function getLazyDb(): Promise<Firestore> {
         getDocFromServer(doc(dbRef, 'test', 'connection')).catch((error: any) => {
           const msg = error?.message || '';
           if (msg.includes('the client is offline')) {
-            console.error('[Firebase] Firestore client appears offline — verify Firebase config, network, or CSP headers.');
+            console.warn('[Firebase] Firestore client operating offline until connection recovers.');
           }
         });
       }
