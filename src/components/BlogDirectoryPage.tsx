@@ -969,6 +969,12 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                 <img
                   src={readingPost.image}
                   alt={readingPost.title}
+                  width={800}
+                  height={450}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  style={{ aspectRatio: '16 / 9' }}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -1056,6 +1062,11 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                     <img
                       src={readingPost.author.avatar}
                       alt={readingPost.author.name}
+                      width={56}
+                      height={56}
+                      loading="lazy"
+                      decoding="async"
+                      style={{ aspectRatio: '1 / 1' }}
                       className="w-14 h-14 rounded-2xl object-cover shrink-0 border border-[#2B95FF]/30"
                     />
                   ) : (

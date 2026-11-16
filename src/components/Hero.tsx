@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import Image from 'next/image';
 import { 
   Play, 
   CheckCircle2, 
@@ -25,6 +26,12 @@ interface HeroProps {
   onBookSpecialist?: (specialist: Specialist) => void;
   onViewCv?: (specialist: Specialist) => void;
 }
+
+const HERO_IMAGE_INTRINSIC_WIDTH = 480;
+const HERO_IMAGE_INTRINSIC_HEIGHT = 480;
+const HERO_IMAGE_ASPECT_RATIO = `${HERO_IMAGE_INTRINSIC_WIDTH} / ${HERO_IMAGE_INTRINSIC_HEIGHT}` as const;
+const HERO_IMAGE_SIZES =
+  '(max-width: 479px) 280px, (max-width: 639px) 320px, (max-width: 1023px) 380px, (max-width: 1279px) 440px, 460px';
 
 export const Hero: React.FC<HeroProps> = ({ 
   onOpenBooking, 
@@ -328,48 +335,53 @@ export const Hero: React.FC<HeroProps> = ({
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
               className="relative w-[280px] h-[280px] xs:w-[320px] xs:h-[320px] sm:w-[380px] sm:h-[380px] lg:w-[440px] lg:h-[440px] xl:w-[460px] xl:h-[460px] rounded-full p-2 sm:p-2.5 bg-gradient-to-tr from-[#2B95FF] via-[#8B5CF6] to-[#10B981] shadow-[0_24px_55px_-15px_rgba(43,149,255,0.28)] group select-none transition-transform duration-300 shrink-0 aspect-square"
-              style={{ aspectRatio: '1 / 1' }}
+              style={{ aspectRatio: HERO_IMAGE_ASPECT_RATIO }}
             >
               {/* Luminous Warm Aura Behind Circle */}
               <div className="absolute -inset-4 sm:-inset-6 bg-gradient-to-tr from-[#2B95FF]/28 via-[#10B981]/20 to-[#8B5CF6]/24 rounded-full blur-2xl -z-10 pointer-events-none transition-opacity duration-700 opacity-80 group-hover:opacity-100" />
 
               {/* Inner Circular Stage Window */}
-              <div className="absolute inset-2 sm:inset-2.5 rounded-full overflow-hidden bg-[#E8F3FF] dark:bg-[#141821] border border-white/70 dark:border-white/15 shadow-inner">
+              <div
+                className="absolute inset-2 sm:inset-2.5 rounded-full overflow-hidden bg-[#E8F3FF] dark:bg-[#141821] border border-white/70 dark:border-white/15 shadow-inner aspect-square"
+                style={{ aspectRatio: HERO_IMAGE_ASPECT_RATIO }}
+              >
                 
                 {/* Background Soft Spotlight Radial Glow */}
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(43,149,255,0.22)_0%,rgba(16,185,129,0.12)_50%,transparent_75%)] pointer-events-none z-0" />
 
                 {/* Specialist Image Directly Rendered Inside Circular Stage */}
-                <div className="absolute inset-0 w-full h-full rounded-full overflow-hidden z-10">
+                <div
+                  className="absolute inset-0 w-full h-full rounded-full overflow-hidden z-10 aspect-square"
+                  style={{ aspectRatio: HERO_IMAGE_ASPECT_RATIO }}
+                >
                   {slides.map((s, idx) => {
                     const isActive = idx === currentSlideIndex;
                     if (!isActive) return null;
-
-                    const isLcpCandidate = idx === 0;
 
                     return (
                       <div
                         key={s.id || idx}
                         data-slide-active={isActive ? "true" : "false"}
-                        className={`absolute inset-0 w-full h-full rounded-full overflow-hidden ${
+                        className={`absolute inset-0 w-full h-full rounded-full overflow-hidden aspect-square ${
                           isActive ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
                         }`}
                         style={{
+                          aspectRatio: HERO_IMAGE_ASPECT_RATIO,
                           opacity: 1,
                           visibility: 'visible'
                         }}
                       >
-                        <img
+                        <Image
                           src={getSlideDisplayImage(s)}
                           alt={s.alt || 'مركز رابا للعلاج بتحليل السلوك التطبيقي ABA'}
-                          width={460}
-                          height={460}
-                          sizes="(max-width: 479px) 280px, (max-width: 639px) 320px, (max-width: 1023px) 380px, (max-width: 1279px) 440px, 460px"
-                          loading={isLcpCandidate ? undefined : 'lazy'}
-                          fetchPriority={isLcpCandidate ? 'high' : 'auto'}
+                          width={HERO_IMAGE_INTRINSIC_WIDTH}
+                          height={HERO_IMAGE_INTRINSIC_HEIGHT}
+                          sizes={HERO_IMAGE_SIZES}
+                          priority={true}
+                          loading="eager"
                           decoding="async"
                           onError={(e) => handleImageErrorWithStore(e, s.src, '/images/hero/card_1_journey.webp')}
-                          className={`w-full h-full object-cover rounded-full ${
+                          className={`w-full h-full object-cover rounded-full aspect-square ${
                             s.objectPosition === 'center'
                               ? 'object-center'
                               : s.objectPosition === 'bottom'
@@ -377,7 +389,7 @@ export const Hero: React.FC<HeroProps> = ({
                               : 'object-[center_12%]'
                           }`}
                           style={{
-                            aspectRatio: '1 / 1',
+                            aspectRatio: HERO_IMAGE_ASPECT_RATIO,
                             transform: `scale(${(s.zoomLevel || 100) / 100})`
                           }}
                         />

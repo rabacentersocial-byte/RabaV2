@@ -51,6 +51,9 @@ const ServicesDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(()
 const BranchesDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BranchesDirectoryPage')).then((m: any) => ({ default: m.default || m.BranchesDirectoryPage || (() => null) })));
 const OffersDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/OffersDirectoryPage')).then((m: any) => ({ default: m.default || m.OffersDirectoryPage || (() => null) })));
 const BlogDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BlogDirectoryPage')).then((m: any) => ({ default: m.default || m.BlogDirectoryPage || (() => null) })));
+const ShadowTeacherDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/ShadowTeacherDirectoryPage')).then((m: any) => ({ default: m.default || m.ShadowTeacherDirectoryPage || (() => null) })));
+const PartnersDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/PartnersDirectoryPage')).then((m: any) => ({ default: m.default || m.PartnersDirectoryPage || (() => null) })));
+const TestimonialsDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/TestimonialsDirectoryPage')).then((m: any) => ({ default: m.default || m.TestimonialsDirectoryPage || (() => null) })));
 const SpecialistCvModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/SpecialistCvModal')).then((m: any) => ({ default: m.default || m.SpecialistCvModal || (() => null) })));
 const BookingModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BookingModal')).then((m: any) => ({ default: m.default || m.BookingModal || (() => null) })));
 const NotificationCenterModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/NotificationCenterModal')).then((m: any) => ({ default: m.default || m.NotificationCenterModal || (() => null) })));
@@ -117,6 +120,7 @@ export default function App() {
         return true;
       }
       const hash = window.location.hash.toLowerCase();
+      const pathname = window.location.pathname.toLowerCase();
       return (
         hash.startsWith('#admin') ||
         hash.includes('blog') ||
@@ -124,6 +128,19 @@ export default function App() {
         hash.includes('branch') ||
         hash.includes('offer') ||
         hash.includes('service') ||
+        hash.includes('shadow-teacher') ||
+        hash.includes('sewar') ||
+        hash.includes('partner') ||
+        hash.includes('testimonial') ||
+        hash.includes('review') ||
+        pathname === '/shadow-teacher' ||
+        pathname === '/shadow-teacher-directory' ||
+        pathname === '/sewar' ||
+        pathname === '/partners' ||
+        pathname === '/partners-directory' ||
+        pathname === '/testimonials' ||
+        pathname === '/testimonials-directory' ||
+        pathname === '/reviews' ||
         Boolean(localStorage.getItem('raba_admin_session_auth'))
       );
     }
@@ -469,6 +486,9 @@ export default function App() {
   const [isBranchesPageOpen, setIsBranchesPageOpen] = useState(false);
   const [isOffersPageOpen, setIsOffersPageOpen] = useState(false);
   const [isBlogPageOpen, setIsBlogPageOpen] = useState(false);
+  const [isShadowTeacherPageOpen, setIsShadowTeacherPageOpen] = useState(false);
+  const [isPartnersPageOpen, setIsPartnersPageOpen] = useState(false);
+  const [isTestimonialsPageOpen, setIsTestimonialsPageOpen] = useState(false);
   const [activeBlogSlug, setActiveBlogSlug] = useState<string | null>(null);
   const [adminSession, setAdminSession] = useState<AdminUser | null>(() => readInitialAdminSession());
   const [firebaseAdminUid, setFirebaseAdminUid] = useState<string | null>(null);
@@ -679,7 +699,7 @@ export default function App() {
   // Check initial route / hash
   useEffect(() => {
     const initialHash = window.location.hash.toLowerCase();
-    const initialPath = window.location.pathname.toLowerCase();
+    const initialPath = window.location.pathname.toLowerCase().replace(/\/+$/, '') || '/';
     
     // Dedicated Blog Route Check
     if (
@@ -695,6 +715,46 @@ export default function App() {
       if (initialHash.startsWith('#blog/')) {
         setActiveBlogSlug(window.location.hash.replace('#blog/', ''));
       }
+      return;
+    }
+
+    // Dedicated Sewar (Shadow Teacher) Route Check
+    if (
+      initialHash === '#shadow-teacher-directory' ||
+      initialHash === '#shadow-teacher-page' ||
+      initialHash === '#sewar' ||
+      initialPath === '/shadow-teacher' ||
+      initialPath === '/shadow-teacher-directory' ||
+      initialPath === '/sewar'
+    ) {
+      setIsReadyToHydrate(true);
+      setIsShadowTeacherPageOpen(true);
+      return;
+    }
+
+    // Dedicated Success Partners Route Check
+    if (
+      initialHash === '#partners-directory' ||
+      initialHash === '#partners-page' ||
+      initialPath === '/partners' ||
+      initialPath === '/partners-directory'
+    ) {
+      setIsReadyToHydrate(true);
+      setIsPartnersPageOpen(true);
+      return;
+    }
+
+    // Dedicated Client Testimonials Route Check
+    if (
+      initialHash === '#testimonials-directory' ||
+      initialHash === '#testimonials-page' ||
+      initialHash === '#reviews-directory' ||
+      initialPath === '/testimonials' ||
+      initialPath === '/testimonials-directory' ||
+      initialPath === '/reviews'
+    ) {
+      setIsReadyToHydrate(true);
+      setIsTestimonialsPageOpen(true);
       return;
     }
 
@@ -716,6 +776,9 @@ export default function App() {
       setIsBranchesPageOpen(false);
       setIsOffersPageOpen(false);
       setIsBlogPageOpen(false);
+      setIsShadowTeacherPageOpen(false);
+      setIsPartnersPageOpen(false);
+      setIsTestimonialsPageOpen(false);
     }
   }, []);
 
@@ -724,52 +787,72 @@ export default function App() {
     setIsCourseRegistrationOpen(true);
   };
 
-  const handleOpenSpecialistsPage = () => {
-    setIsSpecialistsPageOpen(true);
+  const resetAllDirectoryPages = () => {
+    setIsSpecialistsPageOpen(false);
     setIsServicesPageOpen(false);
     setIsBranchesPageOpen(false);
     setIsOffersPageOpen(false);
     setIsBlogPageOpen(false);
+    setIsShadowTeacherPageOpen(false);
+    setIsPartnersPageOpen(false);
+    setIsTestimonialsPageOpen(false);
+  };
+
+  const handleOpenSpecialistsPage = () => {
+    resetAllDirectoryPages();
+    setIsSpecialistsPageOpen(true);
     window.location.hash = '#specialists-directory';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleOpenServicesPage = () => {
+    resetAllDirectoryPages();
     setIsServicesPageOpen(true);
-    setIsSpecialistsPageOpen(false);
-    setIsBranchesPageOpen(false);
-    setIsOffersPageOpen(false);
-    setIsBlogPageOpen(false);
     window.location.hash = '#services-directory';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleOpenBranchesPage = () => {
+    resetAllDirectoryPages();
     setIsBranchesPageOpen(true);
-    setIsSpecialistsPageOpen(false);
-    setIsServicesPageOpen(false);
-    setIsOffersPageOpen(false);
-    setIsBlogPageOpen(false);
     window.location.hash = '#branches-directory';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleOpenOffersPage = () => {
+    resetAllDirectoryPages();
     setIsOffersPageOpen(true);
-    setIsSpecialistsPageOpen(false);
-    setIsServicesPageOpen(false);
-    setIsBranchesPageOpen(false);
-    setIsBlogPageOpen(false);
     window.location.hash = '#offers-directory';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleOpenShadowTeacherPage = () => {
+    setIsReadyToHydrate(true);
+    resetAllDirectoryPages();
+    setIsShadowTeacherPageOpen(true);
+    window.location.hash = '#shadow-teacher-directory';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenPartnersPage = () => {
+    setIsReadyToHydrate(true);
+    resetAllDirectoryPages();
+    setIsPartnersPageOpen(true);
+    window.location.hash = '#partners-directory';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenTestimonialsPage = () => {
+    setIsReadyToHydrate(true);
+    resetAllDirectoryPages();
+    setIsTestimonialsPageOpen(true);
+    window.location.hash = '#testimonials-directory';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleOpenBlogPage = (postSlug?: string) => {
+    resetAllDirectoryPages();
     setIsBlogPageOpen(true);
-    setIsSpecialistsPageOpen(false);
-    setIsServicesPageOpen(false);
-    setIsBranchesPageOpen(false);
-    setIsOffersPageOpen(false);
     if (postSlug) {
       setActiveBlogSlug(postSlug);
       window.location.hash = `#blog/${postSlug}`;
@@ -781,13 +864,22 @@ export default function App() {
   };
 
   const handleBackToHome = () => {
-    setIsSpecialistsPageOpen(false);
-    setIsServicesPageOpen(false);
-    setIsBranchesPageOpen(false);
-    setIsOffersPageOpen(false);
-    setIsBlogPageOpen(false);
+    resetAllDirectoryPages();
     setActiveBlogSlug(null);
+    const currentPath = window.location.pathname.toLowerCase().replace(/\/+$/, '') || '/';
+    const cleanTargetPath =
+      currentPath === '/shadow-teacher' ||
+      currentPath === '/shadow-teacher-directory' ||
+      currentPath === '/sewar' ||
+      currentPath === '/partners' ||
+      currentPath === '/partners-directory' ||
+      currentPath === '/testimonials' ||
+      currentPath === '/testimonials-directory' ||
+      currentPath === '/reviews'
+        ? '/'
+        : window.location.pathname;
     if (
+      cleanTargetPath !== window.location.pathname ||
       window.location.hash === '#specialists-directory' || 
       window.location.hash === '#specialists-page' ||
       window.location.hash === '#services-directory' ||
@@ -798,13 +890,21 @@ export default function App() {
       window.location.hash === '#offers-page' ||
       window.location.hash === '#offers' ||
       window.location.hash === '#activities' ||
+      window.location.hash === '#shadow-teacher-directory' ||
+      window.location.hash === '#shadow-teacher-page' ||
+      window.location.hash === '#sewar' ||
+      window.location.hash === '#partners-directory' ||
+      window.location.hash === '#partners-page' ||
+      window.location.hash === '#testimonials-directory' ||
+      window.location.hash === '#testimonials-page' ||
+      window.location.hash === '#reviews-directory' ||
       window.location.hash === '#blog-directory' ||
       window.location.hash === '#blog-page' ||
       window.location.hash === '#articles' ||
       window.location.hash.startsWith('#blog/') ||
       (window.location.hash.startsWith('#blog-') && window.location.hash !== '#blog')
     ) {
-      window.history.pushState('', document.title, window.location.pathname + window.location.search);
+      window.history.pushState('', document.title, cleanTargetPath + window.location.search);
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -812,27 +912,41 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       setIsReadyToHydrate(true);
-      setIsAdminOpen(window.location.hash.startsWith('#admin'));
+      const hash = window.location.hash.toLowerCase();
+      setIsAdminOpen(hash.startsWith('#admin'));
       setIsSpecialistsPageOpen(
-        window.location.hash === '#specialists-directory' || 
-        window.location.hash === '#specialists-page'
+        hash === '#specialists-directory' || 
+        hash === '#specialists-page'
       );
       setIsServicesPageOpen(
-        window.location.hash === '#services-directory' || 
-        window.location.hash === '#services-page'
+        hash === '#services-directory' || 
+        hash === '#services-page'
       );
       setIsBranchesPageOpen(
-        window.location.hash === '#branches-directory' || 
-        window.location.hash === '#branches-page'
+        hash === '#branches-directory' || 
+        hash === '#branches-page'
       );
       setIsOffersPageOpen(
-        window.location.hash === '#offers-directory' || 
-        window.location.hash === '#offers-page' ||
-        window.location.hash === '#offers' ||
-        window.location.hash === '#activities'
+        hash === '#offers-directory' || 
+        hash === '#offers-page' ||
+        hash === '#offers' ||
+        hash === '#activities'
+      );
+      setIsShadowTeacherPageOpen(
+        hash === '#shadow-teacher-directory' ||
+        hash === '#shadow-teacher-page' ||
+        hash === '#sewar'
+      );
+      setIsPartnersPageOpen(
+        hash === '#partners-directory' ||
+        hash === '#partners-page'
+      );
+      setIsTestimonialsPageOpen(
+        hash === '#testimonials-directory' ||
+        hash === '#testimonials-page' ||
+        hash === '#reviews-directory'
       );
       
-      const hash = window.location.hash.toLowerCase();
       const isBlog = 
         hash === '#blog-directory' ||
         hash === '#blog-page' ||
@@ -1068,12 +1182,18 @@ export default function App() {
         onOpenBranchesPage={handleOpenBranchesPage}
         onOpenOffersPage={handleOpenOffersPage}
         onOpenBlogPage={handleOpenBlogPage}
+        onOpenShadowTeacherPage={handleOpenShadowTeacherPage}
+        onOpenPartnersPage={handleOpenPartnersPage}
+        onOpenTestimonialsPage={handleOpenTestimonialsPage}
         onGoHome={handleBackToHome}
         isSpecialistsPageOpen={isSpecialistsPageOpen}
         isServicesPageOpen={isServicesPageOpen}
         isBranchesPageOpen={isBranchesPageOpen}
         isOffersPageOpen={isOffersPageOpen}
         isBlogPageOpen={isBlogPageOpen}
+        isShadowTeacherPageOpen={isShadowTeacherPageOpen}
+        isPartnersPageOpen={isPartnersPageOpen}
+        isTestimonialsPageOpen={isTestimonialsPageOpen}
         unreadCount={unreadCount}
         cartCount={cartCount}
       />
@@ -1140,6 +1260,33 @@ export default function App() {
               }}
               onBookSpecialist={handleSelectSpecialistForBooking}
               initialPostSlug={activeBlogSlug}
+            />
+          </Suspense>
+        ) : isShadowTeacherPageOpen ? (
+          /* Dedicated Sewar (Shadow Teacher) Service Page */
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-[#1263D6] dark:text-[#60AFFF] font-bold">جاري تحميل صفحة خدمة سِوار (معلم الظل)...</div>}>
+            <ShadowTeacherDirectoryPage
+              onBackToHome={handleBackToHome}
+              onSubmitRequest={handleConfirmBooking}
+              onOpenBooking={handleOpenBooking}
+            />
+          </Suspense>
+        ) : isPartnersPageOpen ? (
+          /* Dedicated Success Partners Directory Page */
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-[#1263D6] dark:text-[#60AFFF] font-bold">جاري تحميل صفحة شركاء النجاح...</div>}>
+            <PartnersDirectoryPage
+              onBackToHome={handleBackToHome}
+              onOpenBooking={handleOpenBooking}
+            />
+          </Suspense>
+        ) : isTestimonialsPageOpen ? (
+          /* Dedicated Client Reviews & Testimonials Page */
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-[#1263D6] dark:text-[#60AFFF] font-bold">جاري تحميل صفحة آراء العملاء...</div>}>
+            <TestimonialsDirectoryPage
+              testimonials={testimonials}
+              onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
+              onBackToHome={handleBackToHome}
+              onOpenBooking={handleOpenBooking}
             />
           </Suspense>
         ) : (

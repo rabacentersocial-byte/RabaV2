@@ -40,12 +40,18 @@ interface NavbarProps {
   onOpenBranchesPage?: () => void;
   onOpenOffersPage?: () => void;
   onOpenBlogPage?: () => void;
+  onOpenShadowTeacherPage?: () => void;
+  onOpenPartnersPage?: () => void;
+  onOpenTestimonialsPage?: () => void;
   onGoHome?: () => void;
   isSpecialistsPageOpen?: boolean;
   isServicesPageOpen?: boolean;
   isBranchesPageOpen?: boolean;
   isOffersPageOpen?: boolean;
   isBlogPageOpen?: boolean;
+  isShadowTeacherPageOpen?: boolean;
+  isPartnersPageOpen?: boolean;
+  isTestimonialsPageOpen?: boolean;
   unreadCount?: number;
   cartCount?: number;
 }
@@ -60,12 +66,18 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenBranchesPage,
   onOpenOffersPage,
   onOpenBlogPage,
+  onOpenShadowTeacherPage,
+  onOpenPartnersPage,
+  onOpenTestimonialsPage,
   onGoHome,
   isSpecialistsPageOpen = false,
   isServicesPageOpen = false,
   isBranchesPageOpen = false,
   isOffersPageOpen = false,
   isBlogPageOpen = false,
+  isShadowTeacherPageOpen = false,
+  isPartnersPageOpen = false,
+  isTestimonialsPageOpen = false,
   unreadCount
 }) => {
   const { theme, toggleTheme } = useTheme();
@@ -305,19 +317,32 @@ export const Navbar: React.FC<NavbarProps> = ({
               id="header-logo-link"
               aria-label="الصفحة الرئيسية لمركز رابا"
             >
-              <RabaLogo variant="compact" size="md" />
+              <RabaLogo variant="compact" size="md" loading="eager" />
             </a>
 
             {/* 2. Primary Navigation (Desktop - Clean Unboxed Links) */}
             <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1.5 min-w-0" aria-label="القائمة الرئيسية">
               {navLinks.map((link) => {
+                const anySubPageOpen =
+                  isServicesPageOpen ||
+                  isSpecialistsPageOpen ||
+                  isBranchesPageOpen ||
+                  isOffersPageOpen ||
+                  isBlogPageOpen ||
+                  isShadowTeacherPageOpen ||
+                  isPartnersPageOpen ||
+                  isTestimonialsPageOpen;
+
                 const isLinkActive = 
                   (link.href === '#blog' && isBlogPageOpen) ||
                   (link.href === '#offers' && isOffersPageOpen) ||
                   (link.href === '#services' && isServicesPageOpen) || 
                   (link.href === '#specialists' && isSpecialistsPageOpen) ||
                   (link.href === '#branches' && isBranchesPageOpen) ||
-                  (link.href === '#hero' && !isServicesPageOpen && !isSpecialistsPageOpen && !isBranchesPageOpen && !isOffersPageOpen && !isBlogPageOpen);
+                  (link.href === '#shadow-teacher' && isShadowTeacherPageOpen) ||
+                  (link.href === '#partners' && isPartnersPageOpen) ||
+                  (link.href === '#testimonials' && isTestimonialsPageOpen) ||
+                  (link.href === '#hero' && !anySubPageOpen);
 
                 return (
                   <a
@@ -339,10 +364,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                       } else if (link.href === '#branches' && onOpenBranchesPage) {
                         e.preventDefault();
                         onOpenBranchesPage();
+                      } else if (link.href === '#shadow-teacher' && onOpenShadowTeacherPage) {
+                        e.preventDefault();
+                        onOpenShadowTeacherPage();
+                      } else if (link.href === '#partners' && onOpenPartnersPage) {
+                        e.preventDefault();
+                        onOpenPartnersPage();
+                      } else if (link.href === '#testimonials' && onOpenTestimonialsPage) {
+                        e.preventDefault();
+                        onOpenTestimonialsPage();
                       } else if (link.href === '#hero' && onGoHome) {
                         e.preventDefault();
                         onGoHome();
-                      } else if (onGoHome && (isSpecialistsPageOpen || isServicesPageOpen || isBranchesPageOpen || isOffersPageOpen || isBlogPageOpen)) {
+                      } else if (onGoHome && anySubPageOpen) {
                         onGoHome();
                       }
                     }}
@@ -467,7 +501,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Drawer Header: Brand, Status Beacon & Close Button */}
             <div className="p-4 sm:p-5 border-b border-[#161B26]/[0.08] dark:border-white/[0.08] flex items-center justify-between shrink-0 bg-gradient-to-l from-[#2B95FF]/10 to-transparent">
               <div className="flex items-center gap-2.5 min-w-0">
-                <RabaLogo variant="compact" size="sm" />
+                <RabaLogo variant="compact" size="sm" loading="eager" />
                 <div className="min-w-0">
                   <h3 className="text-xs sm:text-sm font-black text-[#161B26] dark:text-[#F8FAFC] truncate">
                     {isArabic ? 'مركز رابا الطبي' : 'Raba Medical Center'}
@@ -536,12 +570,26 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div className="space-y-1">
                       {section.items.map((item) => {
                         const ItemIcon = item.icon;
+                        const anyMobileSubPageOpen =
+                          isServicesPageOpen ||
+                          isSpecialistsPageOpen ||
+                          isBranchesPageOpen ||
+                          isOffersPageOpen ||
+                          isBlogPageOpen ||
+                          isShadowTeacherPageOpen ||
+                          isPartnersPageOpen ||
+                          isTestimonialsPageOpen;
+
                         const isLinkActive = 
+                          (item.href === '#blog' && isBlogPageOpen) ||
                           (item.href === '#offers' && isOffersPageOpen) ||
                           (item.href === '#services' && isServicesPageOpen) || 
                           (item.href === '#specialists' && isSpecialistsPageOpen) ||
                           (item.href === '#branches' && isBranchesPageOpen) ||
-                          (item.href === '#hero' && !isServicesPageOpen && !isSpecialistsPageOpen && !isBranchesPageOpen && !isOffersPageOpen);
+                          (item.href === '#shadow-teacher' && isShadowTeacherPageOpen) ||
+                          (item.href === '#partners' && isPartnersPageOpen) ||
+                          (item.href === '#testimonials' && isTestimonialsPageOpen) ||
+                          (item.href === '#hero' && !anyMobileSubPageOpen);
 
                         return (
                           <a
@@ -564,10 +612,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                               } else if (item.href === '#branches' && onOpenBranchesPage) {
                                 e.preventDefault();
                                 onOpenBranchesPage();
+                              } else if (item.href === '#shadow-teacher' && onOpenShadowTeacherPage) {
+                                e.preventDefault();
+                                onOpenShadowTeacherPage();
+                              } else if (item.href === '#partners' && onOpenPartnersPage) {
+                                e.preventDefault();
+                                onOpenPartnersPage();
+                              } else if (item.href === '#testimonials' && onOpenTestimonialsPage) {
+                                e.preventDefault();
+                                onOpenTestimonialsPage();
                               } else if (item.href === '#hero' && onGoHome) {
                                 e.preventDefault();
                                 onGoHome();
-                              } else if (onGoHome && (isSpecialistsPageOpen || isServicesPageOpen || isBranchesPageOpen || isOffersPageOpen || isBlogPageOpen)) {
+                              } else if (onGoHome && anyMobileSubPageOpen) {
                                 onGoHome();
                               }
                             }}

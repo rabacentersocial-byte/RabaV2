@@ -114,6 +114,11 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
                 <img 
                   src="/logo/raba_puzzle_brain.png" 
                   alt="Raba Logo" 
+                  width={28}
+                  height={28}
+                  loading="lazy"
+                  decoding="async"
+                  style={{ aspectRatio: '1 / 1' }}
                   className="w-7 h-7 object-contain"
                   onError={(e) => {
                     (e.target as HTMLElement).style.display = 'none';

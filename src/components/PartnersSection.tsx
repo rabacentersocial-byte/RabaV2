@@ -487,7 +487,13 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
   );
 };
 
-export const PartnersSection: React.FC = () => {
+interface PartnersSectionProps {
+  defaultViewMode?: 'slider' | 'grid';
+}
+
+export const PartnersSection: React.FC<PartnersSectionProps> = ({
+  defaultViewMode = 'slider',
+}) => {
   const { isArabic } = useLanguage();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
@@ -503,7 +509,7 @@ export const PartnersSection: React.FC = () => {
   const [settings, setSettings] = useState<PartnersSliderSettings>(() => getStoredPartnersSettings());
   const [selectedSector, setSelectedSector] = useState<'all' | 'government' | 'academic' | 'health' | 'corporate'>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState<'slider' | 'grid'>('slider');
+  const [viewMode, setViewMode] = useState<'slider' | 'grid'>(defaultViewMode);
   const [activePartnerModal, setActivePartnerModal] = useState<PartnerItem | null>(null);
 
   const [isMobileViewport, setIsMobileViewport] = useState<boolean>(() =>

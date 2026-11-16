@@ -168,7 +168,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
           
           {/* Col 1: About, Logo & Social Media Icons */}
           <div className="space-y-4">
-            <RabaLogo showSubtitle={true} size="md" />
+            <RabaLogo showSubtitle={true} size="md" loading="lazy" />
 
             <p className="text-xs text-[#4B5563] dark:text-[#94A3B8] leading-relaxed pt-2 font-medium">
               {isArabic ? (footer.aboutTextAr || t.footer.aboutText) : (footer.aboutTextEn || t.footer.aboutText)}

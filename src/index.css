@@ -80,7 +80,8 @@
   --color-raba-lime: #EDE9E0;
 }
 
-:root {
+:root,
+.light {
   font-family: 'Almarai', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Tahoma, Arial, sans-serif;
   --raba-primary: #2B95FF;
   --raba-primary-light: #60AFFF;
@@ -157,14 +158,14 @@
 
 html.dark,
 html.dark body {
-  background-color: #0B0F17;
-  color: #F8FAFC;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
 }
 
 html.light,
 html.light body {
-  background-color: #F5F2EC;
-  color: #161B26;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
 }
 
 html {

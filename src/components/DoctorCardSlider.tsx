@@ -2930,6 +2930,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
             }}
             className={`w-full h-full ${fitClass} ${posClass} hover:scale-105 transition-transform duration-500`}
             style={{
+              aspectRatio: '375 / 224',
               transform: zoomScale !== 1 ? `scale(${zoomScale})` : undefined
             }}
             referrerPolicy="no-referrer"

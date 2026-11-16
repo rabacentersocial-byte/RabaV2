@@ -20,6 +20,9 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "next/image": [
+        "./src/shims/nextImage.tsx"
       ]
     },
     "allowImportingTsExtensions": true,

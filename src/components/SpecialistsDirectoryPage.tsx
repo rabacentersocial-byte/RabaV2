@@ -650,6 +650,7 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
                       }}
                       className={`w-full h-full ${fitClass} ${posClass} group-hover:scale-105 transition-transform duration-500`}
                       style={{
+                        aspectRatio: '300 / 224',
                         transform: zoomScale !== 1 ? `scale(${zoomScale})` : undefined
                       }}
                       loading="lazy"

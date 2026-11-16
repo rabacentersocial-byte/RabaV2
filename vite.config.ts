@@ -161,6 +161,7 @@ export default defineConfig(() => {
     resolve: {
       alias: {
         '@': path.resolve(import.meta.dirname || '.', '.'),
+        'next/image': path.resolve(import.meta.dirname || '.', 'src/shims/nextImage.tsx'),
       },
     },
     esbuild: {

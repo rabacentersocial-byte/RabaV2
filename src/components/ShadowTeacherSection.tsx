@@ -255,6 +255,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
               alt={isArabic ? 'أخصائية معلم الظل مع طفلة في بيئة تعليمية' : 'Shadow teacher with child in classroom'}
               width={640}
               height={280}
+              style={{ aspectRatio: '640 / 280' }}
               className="w-full h-[160px] sm:h-[260px] md:h-[320px] object-cover object-center group-hover:scale-[1.01] transition-transform duration-700"
               loading="lazy"
               decoding="async"

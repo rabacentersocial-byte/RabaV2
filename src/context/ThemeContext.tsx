@@ -15,7 +15,14 @@ const THEME_STORAGE_KEY = 'raba_theme_v2';
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
     try {
-      const saved = localStorage.getItem(THEME_STORAGE_KEY) || localStorage.getItem('raba_theme');
+      const preHydrated = typeof window !== 'undefined' ? (window as { __rabaInitialTheme?: string }).__rabaInitialTheme : undefined;
+      if (preHydrated === 'light' || preHydrated === 'dark') {
+        return preHydrated;
+      }
+      const saved =
+        localStorage.getItem(THEME_STORAGE_KEY) ||
+        localStorage.getItem('raba_theme') ||
+        localStorage.getItem('theme');
       if (saved === 'light' || saved === 'dark') {
         return saved;
       }
@@ -29,28 +36,32 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     const root = document.documentElement;
     const body = document.body;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-      root.classList.remove('light');
-      root.style.colorScheme = 'dark';
-      root.style.backgroundColor = '#0B0F17';
-      if (body) {
-        body.style.backgroundColor = '#0B0F17';
-        body.style.color = '#F8FAFC';
-      }
-    } else {
-      root.classList.remove('dark');
-      root.classList.add('light');
-      root.style.colorScheme = 'light';
-      root.style.backgroundColor = '#F5F2EC';
-      if (body) {
-        body.style.backgroundColor = '#F5F2EC';
-        body.style.color = '#161B26';
-      }
+    const isDark = theme === 'dark';
+    const bgCanvas = isDark ? '#0B0F17' : '#F5F2EC';
+    const bgSecondary = isDark ? '#101522' : '#EDE9E0';
+    const textPrimary = isDark ? '#F8FAFC' : '#161B26';
+    const textBody = isDark ? '#94A3B8' : '#4B5563';
+
+    root.classList.toggle('dark', isDark);
+    root.classList.toggle('light', !isDark);
+    root.setAttribute('data-theme', theme);
+    root.style.colorScheme = theme;
+    root.style.setProperty('--bg-canvas', bgCanvas);
+    root.style.setProperty('--bg-secondary', bgSecondary);
+    root.style.setProperty('--text-primary', textPrimary);
+    root.style.setProperty('--text-body', textBody);
+    root.style.backgroundColor = bgCanvas;
+    root.style.color = textPrimary;
+
+    if (body) {
+      body.style.backgroundColor = bgCanvas;
+      body.style.color = textPrimary;
     }
+
     try {
       localStorage.setItem(THEME_STORAGE_KEY, theme);
       localStorage.setItem('raba_theme', theme);
+      localStorage.setItem('theme', theme);
     } catch (e) {
       console.error(e);
     }

@@ -17,6 +17,7 @@ export interface RabaLogoProps {
   showText?: boolean;
   overrideSettings?: Partial<SiteLogoSettings>;
   forceLanguage?: 'ar' | 'en';
+  loading?: 'eager' | 'lazy';
 }
 
 export const RabaLogo: React.FC<RabaLogoProps> = ({ 
@@ -27,7 +28,8 @@ export const RabaLogo: React.FC<RabaLogoProps> = ({
   showSubtitle = true,
   showText: propShowText,
   overrideSettings,
-  forceLanguage
+  forceLanguage,
+  loading = 'eager'
 }) => {
   // 1. Language Context
   let isArabic = true;
@@ -300,8 +302,10 @@ export const RabaLogo: React.FC<RabaLogoProps> = ({
           alt={isArabic ? currentSettings.titleAr : currentSettings.titleEn}
           width={iconPx}
           height={iconPx}
+          loading={loading}
+          fetchPriority={loading === 'eager' ? 'high' : 'auto'}
           decoding="async"
-          style={{ maxHeight: `${iconPx}px`, width: 'auto', height: 'auto' }}
+          style={{ width: `${iconPx}px`, height: `${iconPx}px`, maxHeight: `${iconPx}px`, aspectRatio: '1 / 1' }}
           className={`max-h-full max-w-full object-${currentSettings.iconObjectFit || 'contain'}`}
           onError={async (e) => {
             try {

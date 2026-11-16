@@ -19,11 +19,13 @@ import { useLanguage } from '../context/LanguageContext';
 interface TestimonialsSectionProps {
   testimonials?: ParentReview[];
   onAddTestimonial?: (review: ParentReview) => void;
+  defaultLayout?: 'slider' | 'grid';
 }
 
 export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
   testimonials: propTestimonials,
-  onAddTestimonial: propOnAdd
+  onAddTestimonial: propOnAdd,
+  defaultLayout = 'slider'
 }) => {
   const { isArabic, direction } = useLanguage();
 
@@ -31,6 +33,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
     propTestimonials || PARENT_REVIEWS
   );
   const [filterTopic, setFilterTopic] = useState<string>('all');
+  const [layoutMode, setLayoutMode] = useState<'slider' | 'grid'>(defaultLayout);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   // Form states for adding new review
@@ -281,23 +284,27 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
               <span>{isArabic ? 'شاركنا رأيك' : 'Add review'}</span>
             </button>
 
-            {/* Prev Arrow */}
-            <button
-              onClick={() => handleScroll('prev')}
-              aria-label={isArabic ? 'التقييم السابق' : 'Previous review'}
-              className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn text-[#161B26] dark:text-[#F8FAFC] flex items-center justify-center shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer"
-            >
-              {isArabic ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-            </button>
+            {layoutMode === 'slider' && (
+              <>
+                {/* Prev Arrow */}
+                <button
+                  onClick={() => handleScroll('prev')}
+                  aria-label={isArabic ? 'التقييم السابق' : 'Previous review'}
+                  className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn text-[#161B26] dark:text-[#F8FAFC] flex items-center justify-center shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer"
+                >
+                  {isArabic ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+                </button>
 
-            {/* Next Arrow */}
-            <button
-              onClick={() => handleScroll('next')}
-              aria-label={isArabic ? 'التقييم التالي' : 'Next review'}
-              className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn text-[#161B26] dark:text-[#F8FAFC] flex items-center justify-center shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer"
-            >
-              {isArabic ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
-            </button>
+                {/* Next Arrow */}
+                <button
+                  onClick={() => handleScroll('next')}
+                  aria-label={isArabic ? 'التقييم التالي' : 'Next review'}
+                  className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn text-[#161B26] dark:text-[#F8FAFC] flex items-center justify-center shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer"
+                >
+                  {isArabic ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+                </button>
+              </>
+            )}
 
           </div>
 
@@ -323,17 +330,21 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
           })}
         </div>
 
-        {/* TESTIMONIALS SLIDER CARDS TRACK */}
+        {/* TESTIMONIALS CARDS TRACK OR GRID */}
         <div
           ref={sliderRef}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
-          onMouseLeave={handleMouseUp}
-          className={`flex gap-4 sm:gap-5 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-2 ${
-            isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
-          }`}
-          style={{ WebkitOverflowScrolling: 'touch' }}
+          onMouseDown={layoutMode === 'slider' ? handleMouseDown : undefined}
+          onMouseMove={layoutMode === 'slider' ? handleMouseMove : undefined}
+          onMouseUp={layoutMode === 'slider' ? handleMouseUp : undefined}
+          onMouseLeave={layoutMode === 'slider' ? handleMouseUp : undefined}
+          className={
+            layoutMode === 'grid'
+              ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 py-2'
+              : `flex gap-4 sm:gap-5 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-2 ${
+                  isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
+                }`
+          }
+          style={layoutMode === 'slider' ? { WebkitOverflowScrolling: 'touch' } : undefined}
         >
           {filteredReviews.map((rev) => {
             const displayName = !isArabic && rev.parentNameEn ? rev.parentNameEn : rev.parentName;
@@ -346,7 +357,11 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
             return (
               <div
                 key={rev.id}
-                className="w-[82vw] max-w-[325px] sm:w-[320px] md:w-[330px] shrink-0 snap-start liquid-glass-card rounded-[28px] p-4 sm:p-5 transition-shadow duration-300 flex flex-col justify-between"
+                className={`${
+                  layoutMode === 'grid'
+                    ? 'w-full'
+                    : 'w-[82vw] max-w-[325px] sm:w-[320px] md:w-[330px] shrink-0 snap-start'
+                } liquid-glass-card rounded-[28px] p-4 sm:p-5 transition-shadow duration-300 flex flex-col justify-between`}
               >
                 <div>
                   
@@ -715,7 +730,16 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                           : 'border-transparent opacity-75 hover:opacity-100'
                       }`}
                     >
-                      <img src={preset.url} alt={preset.label} className="w-8 h-8 rounded-full object-cover" />
+                      <img
+                        src={preset.url}
+                        alt={preset.label}
+                        width={32}
+                        height={32}
+                        loading="lazy"
+                        decoding="async"
+                        style={{ aspectRatio: '1 / 1' }}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
                     </button>
                   ))}
                 </div>
