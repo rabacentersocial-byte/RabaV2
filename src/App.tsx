@@ -3,6 +3,7 @@ import { Navbar } from './components/Navbar';
 import { AnimatedBackground } from './components/AnimatedBackground';
 import { Hero } from './components/Hero';
 import { MobileBottomBar } from './components/MobileBottomBar';
+import { LazyViewportWrapper, SectionSkeleton } from './components/LazyViewportWrapper';
 import { CourseItem } from './data/coursesData';
 import { DISPATCH_REQUEST_EVENT } from './data/customerRequests';
 
@@ -111,6 +112,10 @@ export default function App() {
   // Safe, Smooth Background Hydration: Instant Hero paint, followed by quiet idle mounting
   const [isReadyToHydrate, setIsReadyToHydrate] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
+      const ua = typeof navigator !== 'undefined' ? (navigator.userAgent || '') : '';
+      if (/(bot|crawl|spider|googlebot|bingbot|yandex|baiduspider|applebot|slurp|duckduckbot|lighthouse|headlesschrome)/i.test(ua)) {
+        return true;
+      }
       const hash = window.location.hash.toLowerCase();
       return (
         hash.startsWith('#admin') ||
@@ -166,15 +171,13 @@ export default function App() {
       });
     };
 
-    // Defer tracking pixels & external analytics until first user interaction (zero background timer during audit)
+    // Defer tracking pixels & external analytics until first interaction + browser idle (protects INP < 200ms)
     const scheduleDeferredPixels = () => {
       let executed = false;
-      const run = () => {
-        if (executed) return;
-        executed = true;
-        ['scroll', 'mousemove', 'touchstart', 'pointerdown', 'wheel'].forEach(evt => {
-          window.removeEventListener(evt, run);
-        });
+      let pixelIdleId: number | any;
+      let pixelTimerId: any;
+
+      const loadPixels = () => {
         import('./utils/trackingPixels')
           .then(({ getStoredTrackingPixels, applyTrackingPixels }) => {
             applyTrackingPixels(getStoredTrackingPixels());
@@ -189,11 +192,30 @@ export default function App() {
           .catch(() => {});
       };
 
+      const run = () => {
+        if (executed) return;
+        executed = true;
+        ['scroll', 'mousemove', 'touchstart', 'pointerdown', 'wheel'].forEach(evt => {
+          window.removeEventListener(evt, run);
+        });
+        if ('requestIdleCallback' in window) {
+          pixelIdleId = (window as any).requestIdleCallback(loadPixels, { timeout: 2500 });
+        } else {
+          pixelTimerId = setTimeout(loadPixels, 1500);
+        }
+      };
+
       ['scroll', 'mousemove', 'touchstart', 'pointerdown', 'wheel'].forEach(evt => {
         window.addEventListener(evt, run, { passive: true, once: true });
       });
 
       return () => {
+        if (pixelIdleId && 'cancelIdleCallback' in window) {
+          (window as any).cancelIdleCallback(pixelIdleId);
+        }
+        if (pixelTimerId) {
+          clearTimeout(pixelTimerId);
+        }
         ['scroll', 'mousemove', 'touchstart', 'pointerdown', 'wheel'].forEach(evt => {
           window.removeEventListener(evt, run);
         });
@@ -1133,86 +1155,114 @@ export default function App() {
               />
             )}
 
-            {/* Safe, Smooth Background Hydration: Instant FCP/LCP for Hero, then quiet idle mounting */}
+            {/* Safe, Smooth Sequential Hydration: Instant Hero paint, idle primary services, viewport-gated heavy sections */}
             {!isReadyToHydrate ? (
-              <div className="min-h-[1200px]" style={{ minHeight: '1200px' }} aria-hidden="true" />
+              <SectionSkeleton minHeight={720} />
             ) : (
-              <Suspense fallback={<div className="min-h-[1200px]" style={{ minHeight: '1200px' }} aria-hidden="true" />}>
+              <>
                 {/* 5. Center Achievements & Statistics Bar */}
-                {modules.stats && <StatsBar />}
+                {modules.stats && (
+                  <Suspense fallback={<SectionSkeleton minHeight={180} />}>
+                    <StatsBar />
+                  </Suspense>
+                )}
 
                 {/* 8. Occupational & ABA Therapy Programs */}
                 {modules.services && (
                   <>
-                    <ServicesSection
-                      onSelectService={handleSelectServiceForBooking}
-                    />
-                    {modules.courses && (
-                      <CoursesSliderSection
-                        onRegisterCourse={handleOpenCourseRegistration}
+                    <Suspense fallback={<SectionSkeleton minHeight={680} />}>
+                      <ServicesSection
+                        onSelectService={handleSelectServiceForBooking}
                       />
+                    </Suspense>
+                    {modules.courses && (
+                      <LazyViewportWrapper sectionId="courses" minHeight={640}>
+                        <CoursesSliderSection
+                          onRegisterCourse={handleOpenCourseRegistration}
+                        />
+                      </LazyViewportWrapper>
                     )}
-                    <ShadowTeacherSection 
-                      onSubmitRequest={handleConfirmBooking}
-                    />
-                    <PackagesSection
-                      onSelectPackage={handleSelectPackageForBooking}
-                    />
+                    <LazyViewportWrapper sectionId="shadow-teacher" minHeight={680}>
+                      <ShadowTeacherSection 
+                        onSubmitRequest={handleConfirmBooking}
+                      />
+                    </LazyViewportWrapper>
+                    <LazyViewportWrapper sectionId="packages" minHeight={680}>
+                      <PackagesSection
+                        onSelectPackage={handleSelectPackageForBooking}
+                      />
+                    </LazyViewportWrapper>
                   </>
                 )}
 
                 {/* 10. Medical Specialists & CV Exploration */}
                 {modules.specialists && (
-                  <SpecialistsSection
-                    specialists={specialists}
-                    onViewCv={handleViewCv}
-                    onBookSpecialist={handleSelectSpecialistForBooking}
-                    onOpenSpecialistsPage={handleOpenSpecialistsPage}
-                  />
+                  <LazyViewportWrapper sectionId="specialists" minHeight={640}>
+                    <SpecialistsSection
+                      specialists={specialists}
+                      onViewCv={handleViewCv}
+                      onBookSpecialist={handleSelectSpecialistForBooking}
+                      onOpenSpecialistsPage={handleOpenSpecialistsPage}
+                    />
+                  </LazyViewportWrapper>
                 )}
 
                 {/* 11.4. Branches Network Slider (فروع الرياض والخرج) */}
                 {modules.branches && (
-                  <BranchesSection onOpenBranchesPage={handleOpenBranchesPage} />
+                  <LazyViewportWrapper sectionId="branches" minHeight={600}>
+                    <BranchesSection onOpenBranchesPage={handleOpenBranchesPage} />
+                  </LazyViewportWrapper>
                 )}
 
                 {/* 11.45. Partners Horizontal Slider (شركاء النجاح والرعايات) */}
-                {modules.partners !== false && <PartnersSection />}
+                {modules.partners !== false && (
+                  <LazyViewportWrapper sectionId="partners" minHeight={560}>
+                    <PartnersSection />
+                  </LazyViewportWrapper>
+                )}
 
                 {/* 11.5. Accreditations & Certifications Section (معترف بنا من) */}
-                {modules.accreditations && <AccreditationsSection />}
+                {modules.accreditations && (
+                  <LazyViewportWrapper sectionId="accreditations-section" minHeight={220}>
+                    <AccreditationsSection />
+                  </LazyViewportWrapper>
+                )}
 
                 {/* 12. Client Testimonials & Success Stories */}
                 {modules.reviews && (
-                  <TestimonialsSection
-                    testimonials={testimonials}
-                    onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
-                  />
+                  <LazyViewportWrapper sectionId="testimonials" minHeight={620}>
+                    <TestimonialsSection
+                      testimonials={testimonials}
+                      onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
+                    />
+                  </LazyViewportWrapper>
                 )}
 
                 {/* 13. Clinical Blog & Articles Slider */}
                 {modules.blog && (
-                  <BlogSliderSection
-                    onOpenBooking={handleOpenBooking}
-                    onBookSpecialist={handleSelectSpecialistForBooking}
-                    onOpenBlogPage={handleOpenBlogPage}
-                  />
+                  <LazyViewportWrapper sectionId="blog" minHeight={660}>
+                    <BlogSliderSection
+                      onOpenBooking={handleOpenBooking}
+                      onBookSpecialist={handleSelectSpecialistForBooking}
+                      onOpenBlogPage={handleOpenBlogPage}
+                    />
+                  </LazyViewportWrapper>
                 )}
-              </Suspense>
+              </>
             )}
           </>
         )}
 
       </main>
 
-      {/* Footer (Safe Background Hydration, single Suspense, never unmounts) */}
+      {/* Footer (Viewport-gated Hydration with CLS-safe Skeleton) */}
       {isReadyToHydrate && modules.footer && (
-        <Suspense fallback={null}>
+        <LazyViewportWrapper sectionId="footer" minHeight={420}>
           <Footer 
             onOpenAdmin={() => setIsAdminOpen(true)} 
             onOpenBlogPage={handleOpenBlogPage}
           />
-        </Suspense>
+        </LazyViewportWrapper>
       )}
 
       {/* Floating Actions & Mobile Bottom Bar rendered immediately to avoid hydration pop-in */}

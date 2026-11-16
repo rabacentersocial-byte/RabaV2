@@ -352,7 +352,7 @@ async function startServer() {
   app.use(express.json({ limit: '25mb', inflate: false }));
   app.use(express.urlencoded({ extended: true, limit: '25mb', inflate: false }));
 
-  // Explicit SEO routes for robots.txt and sitemap.xml (fixes PageSpeed "robots.txt is not valid" 158 errors)
+  // Explicit SEO routes for robots.txt and dynamic sitemap.xml (1-hour revalidation)
   app.get('/robots.txt', (_req: Request, res: Response) => {
     const robotsPath = path.join(process.cwd(), 'public', 'robots.txt');
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
@@ -360,17 +360,66 @@ async function startServer() {
     if (fs.existsSync(robotsPath)) {
       return res.sendFile(robotsPath);
     }
-    return res.send(`User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: https://rabacenters.com/sitemap.xml\n`);
+    return res.send(
+      `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /dashboard/\nDisallow: /api/\nDisallow: /data/admin_users.json\n\nSitemap: https://rabacenters.com/sitemap.xml\n`
+    );
   });
 
   app.get('/sitemap.xml', (_req: Request, res: Response) => {
-    const sitemapPath = path.join(process.cwd(), 'public', 'sitemap.xml');
     res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-    res.setHeader('Cache-Control', 'public, max-age=86400');
-    if (fs.existsSync(sitemapPath)) {
-      return res.sendFile(sitemapPath);
+    res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
+
+    try {
+      const baseUrl = 'https://rabacenters.com';
+      const today = new Date().toISOString().split('T')[0];
+
+      const staticEntries = [
+        { loc: `${baseUrl}/`, lastmod: today, changefreq: 'daily', priority: '1.0', hasHreflang: true },
+        { loc: `${baseUrl}/blog`, lastmod: today, changefreq: 'daily', priority: '0.9' },
+        { loc: `${baseUrl}/articles`, lastmod: today, changefreq: 'daily', priority: '0.8' },
+        { loc: `${baseUrl}/#services`, lastmod: today, changefreq: 'weekly', priority: '0.9' },
+        { loc: `${baseUrl}/#specialists`, lastmod: today, changefreq: 'weekly', priority: '0.8' },
+        { loc: `${baseUrl}/#courses`, lastmod: today, changefreq: 'weekly', priority: '0.8' },
+        { loc: `${baseUrl}/#branches`, lastmod: today, changefreq: 'monthly', priority: '0.7' },
+        { loc: `${baseUrl}/#about`, lastmod: today, changefreq: 'monthly', priority: '0.7' },
+        { loc: `${baseUrl}/#booking`, lastmod: today, changefreq: 'daily', priority: '0.9' },
+        { loc: `${baseUrl}/#offers-directory`, lastmod: today, changefreq: 'weekly', priority: '0.8' }
+      ];
+
+      const blogPosts = readJsonFile('blog_posts.json', []);
+      const dynamicBlogEntries = Array.isArray(blogPosts)
+        ? blogPosts
+            .filter((post: any) => post && typeof post.slug === 'string' && post.slug.trim().length > 0 && post.active !== false)
+            .map((post: any) => {
+              const safeSlug = encodeURIComponent(post.slug.trim());
+              return {
+                loc: `${baseUrl}/#blog/${safeSlug}`,
+                lastmod: today,
+                changefreq: 'weekly',
+                priority: '0.7'
+              };
+            })
+        : [];
+
+      const allEntries = [...staticEntries, ...dynamicBlogEntries];
+      const xmlItems = allEntries
+        .map((entry: any) => {
+          const hreflangTag = entry.hasHreflang
+            ? `\n    <xhtml:link rel="alternate" hreflang="ar" href="${entry.loc}" />`
+            : '';
+          return `  <url>\n    <loc>${entry.loc}</loc>\n    <lastmod>${entry.lastmod}</lastmod>\n    <changefreq>${entry.changefreq}</changefreq>\n    <priority>${entry.priority}</priority>${hreflangTag}\n  </url>`;
+        })
+        .join('\n');
+
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n        xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${xmlItems}\n</urlset>\n`;
+      return res.status(200).send(xml);
+    } catch {
+      const sitemapPath = path.join(process.cwd(), 'public', 'sitemap.xml');
+      if (fs.existsSync(sitemapPath)) {
+        return res.sendFile(sitemapPath);
+      }
+      return res.status(404).send('Not Found');
     }
-    return res.status(404).send('Not Found');
   });
 
   // Explicit Agentic Browsing routes (llms.txt & .well-known/ard.json)

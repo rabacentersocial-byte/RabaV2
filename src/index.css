@@ -906,4 +906,30 @@ body {
   box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.55);
 }
 
+/* ==========================================================================
+   CORE WEB VITALS: BELOW-THE-FOLD RENDERING ISOLATION (ZERO VISUAL CHANGE)
+   ========================================================================== */
+.raba-lazy-section-shell,
+#stats-bar,
+#services,
+#courses,
+#shadow-teacher,
+#packages,
+#specialists,
+#branches,
+#partners,
+#accreditations-section,
+#testimonials,
+#blog,
+footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 640px;
+}
 
+#stats-bar {
+  contain-intrinsic-size: auto 180px;
+}
+
+#accreditations-section {
+  contain-intrinsic-size: auto 220px;
+}

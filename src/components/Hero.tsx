@@ -364,8 +364,9 @@ export const Hero: React.FC<HeroProps> = ({
                           alt={s.alt || 'مركز رابا للعلاج بتحليل السلوك التطبيقي ABA'}
                           width={460}
                           height={460}
-                          loading={isLcpCandidate ? "eager" : "lazy"}
-                          fetchPriority={isLcpCandidate ? "high" : "auto"}
+                          sizes="(max-width: 479px) 280px, (max-width: 639px) 320px, (max-width: 1023px) 380px, (max-width: 1279px) 440px, 460px"
+                          loading={isLcpCandidate ? undefined : 'lazy'}
+                          fetchPriority={isLcpCandidate ? 'high' : 'auto'}
                           decoding="async"
                           onError={(e) => handleImageErrorWithStore(e, s.src, '/images/hero/card_1_journey.webp')}
                           className={`w-full h-full object-cover rounded-full ${
