@@ -400,7 +400,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
         {/* Autoplay Switch */}
         <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-white/5">
           <div className="flex items-center gap-2.5">
-            <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${config.autoplay ? 'bg-[#00E5BE]/20 text-[#00E5BE]' : 'bg-slate-200 dark:bg-slate-700 text-slate-400'}`}>
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${config.autoplay ? 'bg-[#00E5BE]/20 text-[#0F766E] dark:text-[#00E5BE]' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400'}`}>
               {config.autoplay ? <Play className="w-4 h-4 fill-current" /> : <Pause className="w-4 h-4" />}
             </div>
             <div>
@@ -424,7 +424,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
         {/* Transition Speed Interval */}
         <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-white/5">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-teal-500/15 text-[#00E5BE] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-teal-500/15 text-[#0F766E] dark:text-[#00E5BE] flex items-center justify-center">
               <Clock className="w-4 h-4" />
             </div>
             <div>
@@ -458,7 +458,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
         {/* Outer Badges Visibility Switch */}
         <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-white/5">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-amber-400/20 text-amber-500 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-amber-400/20 text-amber-700 dark:text-amber-400 flex items-center justify-center">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
@@ -502,7 +502,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
           {config.showBadges && (
             <div className="flex items-center justify-between gap-2 w-full max-w-[240px] xs:max-w-[280px] sm:max-w-[320px] mb-3 z-20">
               <div 
-                className="bg-emerald-600/90 text-white px-2.5 py-1.5 rounded-full shadow-md flex items-center gap-1.5 border border-emerald-300/40 text-[11px] font-black"
+                className="bg-emerald-700/95 text-white px-2.5 py-1.5 rounded-full shadow-md flex items-center gap-1.5 border border-emerald-300/40 text-[11px] font-black"
               >
                 <span className="min-w-4 h-4 px-1 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center text-[9px] font-bold">
                   +{dailyChildrenCount}
@@ -552,7 +552,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
                 <button
                   type="button"
                   onClick={() => setPreviewIndex((prev) => (prev - 1 + activeSlides.length) % activeSlides.length)}
-                  className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white text-slate-900 border border-slate-200 shadow-md flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                  className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-white/15 shadow-md flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer"
                   title="السابق"
                 >
                   <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -560,7 +560,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
                 <button
                   type="button"
                   onClick={() => setPreviewIndex((prev) => (prev + 1) % activeSlides.length)}
-                  className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white text-slate-900 border border-slate-200 shadow-md flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                  className="absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-white/15 shadow-md flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer"
                   title="التالي"
                 >
                   <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -627,7 +627,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
           <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-white/10 shadow-2xs space-y-1">
-            <span className="text-[10px] font-black uppercase text-teal-600 dark:text-[#00E5BE] block">
+            <span className="text-[10px] font-black uppercase text-teal-700 dark:text-[#00E5BE] block">
               {isArabic ? '1. المقاس والتناسب' : '1. Canvas & Ratio'}
             </span>
             <div className="text-sm font-black font-mono text-slate-900 dark:text-white">1000 × 1000 px</div>
@@ -637,7 +637,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
           </div>
 
           <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-white/10 shadow-2xs space-y-1">
-            <span className="text-[10px] font-black uppercase text-blue-600 dark:text-blue-400 block">
+            <span className="text-[10px] font-black uppercase text-blue-700 dark:text-blue-400 block">
               {isArabic ? '2. مقاس العرض التفاعلي' : '2. Viewport Display'}
             </span>
             <div className="text-sm font-black font-mono text-slate-900 dark:text-white">460px / 320px</div>
@@ -647,7 +647,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
           </div>
 
           <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-white/10 shadow-2xs space-y-1">
-            <span className="text-[10px] font-black uppercase text-amber-600 dark:text-amber-400 block">
+            <span className="text-[10px] font-black uppercase text-amber-700 dark:text-amber-400 block">
               {isArabic ? '3. منطقة الأمان (Safe Zone)' : '3. Circular Safe Zone'}
             </span>
             <div className="text-sm font-black text-slate-900 dark:text-white">85% من مركز الدائرة</div>
@@ -657,7 +657,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
           </div>
 
           <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-white/10 shadow-2xs space-y-1">
-            <span className="text-[10px] font-black uppercase text-purple-600 dark:text-purple-400 block">
+            <span className="text-[10px] font-black uppercase text-purple-700 dark:text-purple-400 block">
               {isArabic ? '4. الصيغ والحجم' : '4. File Formats & Weight'}
             </span>
             <div className="text-sm font-black text-slate-900 dark:text-white">PNG / JPG / WebP</div>
@@ -672,11 +672,11 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-            <Layers className="w-4 h-4 text-[#00E5BE]" />
+            <Layers className="w-4 h-4 text-[#0F766E] dark:text-[#00E5BE]" />
             <span>{isArabic ? 'قائمة شرائح الخدمات والعروض الإعلانية (الترتيب وحالة الظهور)' : 'Service & Promo Slides List'}</span>
-            <span className="text-xs font-bold text-slate-400">({slides.length})</span>
+            <span className="text-xs font-bold text-slate-600 dark:text-slate-400">({slides.length})</span>
           </h3>
-          <span className="text-xs text-slate-500">
+          <span className="text-xs text-slate-600 dark:text-slate-400">
             {isArabic ? 'استخدم أزرار الأسهم لتقديم أو تأخير الشريحة' : 'Use arrows to re-order slides'}
           </span>
         </div>
@@ -745,9 +745,9 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
                       </p>
                     )}
                     {slide.ctaUrl && (
-                      <div className="flex items-center gap-1 text-[10px] text-slate-400 mt-0.5">
-                        <LinkIcon className="w-2.5 h-2.5 text-teal-500" />
-                        <span>{slide.ctaTextAr || 'رابط الإجراء'}: <span className="font-mono text-teal-600 dark:text-teal-400">{slide.ctaUrl}</span></span>
+                      <div className="flex items-center gap-1 text-[10px] text-slate-600 dark:text-slate-400 mt-0.5">
+                        <LinkIcon className="w-2.5 h-2.5 text-teal-600 dark:text-teal-400" />
+                        <span>{slide.ctaTextAr || 'رابط الإجراء'}: <span className="font-mono text-teal-700 dark:text-teal-400">{slide.ctaUrl}</span></span>
                       </div>
                     )}
                   </div>
@@ -785,8 +785,8 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
                     onClick={() => handleToggleActive(slide.id)}
                     className={`p-2 rounded-xl transition-all cursor-pointer ${
                       slide.active 
-                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20' 
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600'
+                        ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20' 
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                     }`}
                     title={slide.active ? (isArabic ? 'إخفاء الشريحة مؤقتاً' : 'Hide slide') : (isArabic ? 'إظهار الشريحة' : 'Show slide')}
                   >
@@ -807,7 +807,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
                   <button
                     type="button"
                     onClick={() => handleDeleteSlide(slide.id)}
-                    className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white transition-all cursor-pointer"
+                    className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-700 dark:text-rose-400 hover:text-white transition-all cursor-pointer"
                     title={isArabic ? 'حذف الشريحة' : 'Delete'}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -828,8 +828,8 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-[#00E5BE]/20 text-[#00E5BE]">
-                  {formSlideType === 'offer' ? <Tag className="w-5 h-5 text-amber-500" /> : <ImageIcon className="w-5 h-5" />}
+                <div className="p-2 rounded-xl bg-[#00E5BE]/20 text-[#0F766E] dark:text-[#00E5BE]">
+                  {formSlideType === 'offer' ? <Tag className="w-5 h-5 text-amber-600 dark:text-amber-400" /> : <ImageIcon className="w-5 h-5" />}
                 </div>
                 <div>
                   <h3 className="text-base font-black text-slate-900 dark:text-white">
@@ -846,7 +846,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 cursor-pointer"
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -855,7 +855,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
             {/* Modal Circular Preview Box with Aspect & Dimension Badges */}
             <div className="flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-white/5 relative">
               <div className="flex items-center justify-between w-full mb-2 px-1">
-                <span className="text-[11px] font-bold text-slate-400">
+                <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400">
                   {isArabic ? 'المعاينة الحية داخل الإطار الدائري:' : 'Live circular preview:'}
                 </span>
                 <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-[#00E5BE] border border-emerald-500/20">
@@ -889,7 +889,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
             <div className="p-3.5 rounded-2xl bg-gradient-to-r from-teal-500/10 via-emerald-500/10 to-teal-500/5 border border-teal-500/30 text-slate-800 dark:text-slate-200 space-y-2.5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5 font-black text-xs text-teal-800 dark:text-[#00E5BE]">
-                  <Sparkles className="w-4 h-4 text-[#00E5BE]" />
+                  <Sparkles className="w-4 h-4 text-[#0F766E] dark:text-[#00E5BE]" />
                   <span>{isArabic ? 'دليل أبعاد ومواصفات الصورة للمصمم (Image Dimensions)' : 'Designer Dimensions & Specs'}</span>
                 </div>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-800 dark:text-teal-200 font-bold border border-teal-500/30">
@@ -899,27 +899,27 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
                 <div className="bg-white/80 dark:bg-slate-900/80 p-2 rounded-xl border border-teal-500/20 shadow-2xs">
-                  <div className="text-[10px] text-slate-400 font-bold">{isArabic ? 'المقاس الموصى به' : 'Recommended'}</div>
+                  <div className="text-[10px] text-slate-600 dark:text-slate-400 font-bold">{isArabic ? 'المقاس الموصى به' : 'Recommended'}</div>
                   <div className="font-black text-teal-700 dark:text-[#00E5BE] font-mono mt-0.5 text-xs sm:text-sm">1000 × 1000 px</div>
-                  <div className="text-[9px] text-slate-400">الحد الأدنى 800×800</div>
+                  <div className="text-[9px] text-slate-600 dark:text-slate-400">الحد الأدنى 800×800</div>
                 </div>
 
                 <div className="bg-white/80 dark:bg-slate-900/80 p-2 rounded-xl border border-teal-500/20 shadow-2xs">
-                  <div className="text-[10px] text-slate-400 font-bold">{isArabic ? 'العرض بالموقع' : 'Display Size'}</div>
+                  <div className="text-[10px] text-slate-600 dark:text-slate-400 font-bold">{isArabic ? 'العرض بالموقع' : 'Display Size'}</div>
                   <div className="font-black text-slate-800 dark:text-white font-mono mt-0.5 text-xs sm:text-sm">460px / 320px</div>
-                  <div className="text-[9px] text-slate-400">كمبيوتر / جوال</div>
+                  <div className="text-[9px] text-slate-600 dark:text-slate-400">كمبيوتر / جوال</div>
                 </div>
 
                 <div className="bg-white/80 dark:bg-slate-900/80 p-2 rounded-xl border border-teal-500/20 shadow-2xs">
-                  <div className="text-[10px] text-slate-400 font-bold">{isArabic ? 'منطقة الأمان' : 'Safe Zone'}</div>
-                  <div className="font-black text-amber-600 dark:text-amber-400 font-mono mt-0.5 text-xs sm:text-sm">85% من المركز</div>
-                  <div className="text-[9px] text-slate-400">هامش 15% بالحواف</div>
+                  <div className="text-[10px] text-slate-600 dark:text-slate-400 font-bold">{isArabic ? 'منطقة الأمان' : 'Safe Zone'}</div>
+                  <div className="font-black text-amber-700 dark:text-amber-400 font-mono mt-0.5 text-xs sm:text-sm">85% من المركز</div>
+                  <div className="text-[9px] text-slate-600 dark:text-slate-400">هامش 15% بالحواف</div>
                 </div>
 
                 <div className="bg-white/80 dark:bg-slate-900/80 p-2 rounded-xl border border-teal-500/20 shadow-2xs">
-                  <div className="text-[10px] text-slate-400 font-bold">{isArabic ? 'الصيغ والحجم' : 'Formats & Size'}</div>
+                  <div className="text-[10px] text-slate-600 dark:text-slate-400 font-bold">{isArabic ? 'الصيغ والحجم' : 'Formats & Size'}</div>
                   <div className="font-black text-slate-800 dark:text-white mt-0.5 text-xs">PNG, JPG, WebP</div>
-                  <div className="text-[9px] text-slate-400">أقل من 3MB (ضغط آلي)</div>
+                  <div className="text-[9px] text-slate-600 dark:text-slate-400">أقل من 3MB (ضغط آلي)</div>
                 </div>
               </div>
 
@@ -1003,7 +1003,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
                     <span>{isCompressing ? (isArabic ? 'جاري الضغط...' : 'Compressing...') : (isArabic ? 'رفع صورة' : 'Upload')}</span>
                   </button>
                 </div>
-                <p className="text-[10px] text-slate-400">
+                <p className="text-[10px] text-slate-600 dark:text-slate-400">
                   {isArabic ? 'يُفضل استخدام صور واضحة وذات ألوان متناسقة للجلسات أو تصميم العرض الإعلاني' : 'High quality square or circular composition recommended'}
                 </p>
               </div>
@@ -1039,10 +1039,10 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-black text-slate-700 dark:text-slate-300 flex items-center gap-1">
-                    <ZoomIn className="w-3.5 h-3.5 text-[#00E5BE]" />
+                    <ZoomIn className="w-3.5 h-3.5 text-[#0F766E] dark:text-[#00E5BE]" />
                     {isArabic ? 'نسبة التقريب / التكبير (Zoom):' : 'Scale / Zoom Level:'}
                   </span>
-                  <span className="font-mono font-bold text-teal-600 dark:text-[#00E5BE]">
+                  <span className="font-mono font-bold text-teal-700 dark:text-[#00E5BE]">
                     {formZoomLevel}%
                   </span>
                 </div>
@@ -1087,7 +1087,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
 
                 {/* Quick Preset Tag Pills */}
                 <div className="flex items-center gap-1.5 flex-wrap pt-1">
-                  <span className="text-[10px] text-slate-400">{isArabic ? 'اقتراحات سريعة:' : 'Quick tags:'}</span>
+                  <span className="text-[10px] text-slate-600 dark:text-slate-400">{isArabic ? 'اقتراحات سريعة:' : 'Quick tags:'}</span>
                   {PRESET_TAGS.map((tag) => (
                     <button
                       key={tag.labelAr}
@@ -1155,7 +1155,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
 
                 {/* Quick Link Presets */}
                 <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                  <span className="text-[10px] text-slate-400">{isArabic ? 'روابط شائعة:' : 'Quick links:'}</span>
+                  <span className="text-[10px] text-slate-600 dark:text-slate-400">{isArabic ? 'روابط شائعة:' : 'Quick links:'}</span>
                   {PRESET_LINKS.map((preset) => (
                     <button
                       key={preset.url}
@@ -1204,7 +1204,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#0B3B36] to-[#00E5BE] hover:opacity-95 text-white text-xs font-black shadow-md cursor-pointer transition-all active:scale-95"
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#0B3B36] to-[#0F766E] hover:opacity-95 text-white text-xs font-black shadow-md cursor-pointer transition-all active:scale-95"
                 >
                   {isArabic ? 'حفظ الشريحة الخدمية / الإعلانية' : 'Save Slide'}
                 </button>

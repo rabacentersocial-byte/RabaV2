@@ -32,7 +32,7 @@ export const BRANCHES_DATA: BranchItem[] = [
     cityNameEn: 'Riyadh',
     regionBadgeAr: 'الرياض - المغرزات',
     regionBadgeEn: 'Riyadh - Al-Mugharrazat',
-    badgeColorClass: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
+    badgeColorClass: 'bg-cyan-500/15 text-[#0E7490] dark:text-cyan-300 border-cyan-500/30',
     address: 'شارع ابي سفيان ابن حرب - داخل مدارس رواد الخليج العالمية - بوابة ٩',
     addressEn: 'Abi Sufyan Ibn Harb St - inside Rowad Al-Khaleej International Schools - Gate 9',
     googleMapsUrl: 'https://maps.google.com/?q=مدارس+رواد+الخليج+العالمية+حي+المغرزات+بوابة+9+الرياض',
@@ -53,7 +53,7 @@ export const BRANCHES_DATA: BranchItem[] = [
     cityNameEn: 'Riyadh',
     regionBadgeAr: 'الرياض - الصحافة',
     regionBadgeEn: 'Riyadh - Al-Sahafah',
-    badgeColorClass: 'bg-teal-500/20 text-teal-400 border-teal-500/30',
+    badgeColorClass: 'bg-teal-500/15 text-[#0F766E] dark:text-teal-300 border-teal-500/30',
     address: 'شارع الأمير عبد الله بن سعود - داخل مدارس رواد الخليج العالمية',
     addressEn: 'Prince Abdullah Bin Saud St - inside Rowad Al-Khaleej International Schools',
     googleMapsUrl: 'https://maps.app.goo.gl/F6CpqLohJJTzqrRq6?g_st=iw',
@@ -74,7 +74,7 @@ export const BRANCHES_DATA: BranchItem[] = [
     cityNameEn: 'Riyadh',
     regionBadgeAr: 'الرياض - حطين',
     regionBadgeEn: 'Riyadh - Hittin',
-    badgeColorClass: 'bg-violet-500/20 text-violet-400 border-violet-500/30',
+    badgeColorClass: 'bg-violet-500/15 text-[#6D28D9] dark:text-violet-300 border-violet-500/30',
     address: 'شارع الأمير يزيد ابن عبد الله - داخل مدارس رواد الخليج العالمية',
     addressEn: 'Prince Yazid Ibn Abdullah St - inside Rowad Al-Khaleej International Schools',
     googleMapsUrl: 'https://maps.google.com/?q=مدارس+رواد+الخليج+العالمية+شارع+الأمير+يزيد+ابن+عبدالله+حي+حطين+الرياض',
@@ -95,7 +95,7 @@ export const BRANCHES_DATA: BranchItem[] = [
     cityNameEn: 'Jeddah',
     regionBadgeAr: 'جدة - أبحر الشمالية',
     regionBadgeEn: 'Jeddah - North Obhur',
-    badgeColorClass: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+    badgeColorClass: 'bg-amber-500/15 text-[#B45309] dark:text-amber-300 border-amber-500/30',
     address: 'حي الشراع - ابحر الشمالية - داخل مدارس رواد الخليج العالمية - بوابة ٢',
     addressEn: 'Al-Sheraa Dist - North Obhur - inside Rowad Al-Khaleej International Schools - Gate 2',
     googleMapsUrl: 'https://maps.google.com/?q=مدارس+رواد+الخليج+العالمية+حي+الشراع+أبحر+الشمالية+جدة',
@@ -116,7 +116,7 @@ export const BRANCHES_DATA: BranchItem[] = [
     cityNameEn: 'Jeddah',
     regionBadgeAr: 'جدة - الحمدانية',
     regionBadgeEn: 'Jeddah - Al-Hamadaniyah',
-    badgeColorClass: 'bg-rose-500/20 text-rose-400 border-rose-500/30',
+    badgeColorClass: 'bg-rose-500/15 text-[#BE123C] dark:text-rose-300 border-rose-500/30',
     address: 'حي الحمدانية - خلف مدارس الفيصلية الأهلية بنين',
     addressEn: 'Al-Hamadaniyah Dist - behind Al-Faisaliah Private Schools (Boys)',
     googleMapsUrl: 'https://maps.google.com/?q=حي+الحمدانية+خلف+مدارس+الفيصلية+الأهلية+بنين+جدة',
@@ -137,7 +137,7 @@ export const BRANCHES_DATA: BranchItem[] = [
     cityNameEn: 'Al-Ahsa',
     regionBadgeAr: 'الأحساء - المبرز',
     regionBadgeEn: 'Al-Ahsa - Al-Mubarraz',
-    badgeColorClass: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30',
+    badgeColorClass: 'bg-indigo-500/15 text-[#4338CA] dark:text-indigo-300 border-indigo-500/30',
     address: 'حي اليرموك - المبرز - شارع أبي حبيب الأنصاري - تقاطع شارع عبد الله بن أبي حدرد - داخل مدارس رواد الخليج العالمية - بوابة ٧',
     addressEn: 'Al-Yarmouk Dist - Al-Mubarraz - Abi Habib Al-Ansari St x Abdullah Bin Abi Hadrad St - inside Rowad Al-Khaleej International Schools - Gate 7',
     googleMapsUrl: 'https://maps.google.com/?q=25.426332,49.565449',
@@ -158,7 +158,7 @@ export const BRANCHES_DATA: BranchItem[] = [
     cityNameEn: 'Al-Khobar',
     regionBadgeAr: 'الخبر - الراكة الجنوبية',
     regionBadgeEn: 'Al-Khobar - South Rakah',
-    badgeColorClass: 'bg-sky-500/20 text-sky-400 border-sky-500/30',
+    badgeColorClass: 'bg-sky-500/15 text-[#0369A1] dark:text-sky-300 border-sky-500/30',
     address: 'حي الراكة الجنوبية - طريق الملك فيصل داخل مدارس رواد الخليج العالمية',
     addressEn: 'South Rakah Dist - King Faisal Rd, inside Rowad Al-Khaleej International Schools',
     googleMapsUrl: 'https://maps.app.goo.gl/iPsvY46UotNMBcc27?g_st=aw',
@@ -179,7 +179,7 @@ export const BRANCHES_DATA: BranchItem[] = [
     cityNameEn: 'Al-Kharj',
     regionBadgeAr: 'الخرج - اليمامة',
     regionBadgeEn: 'Al-Kharj - Al-Yamamah',
-    badgeColorClass: 'bg-emerald-500/25 text-emerald-300 border-emerald-500/40',
+    badgeColorClass: 'bg-emerald-500/15 text-[#047857] dark:text-emerald-300 border-emerald-500/30',
     address: 'حي اليمامة - داخل مقر جمعية التنمية الاجتماعية',
     addressEn: 'Al-Yamamah Dist - inside Social Development Association headquarters',
     googleMapsUrl: 'https://maps.google.com/?q=مركز+رابا+الخرج+حي+اليمامة+جمعية+التنمية+الاجتماعية',
@@ -200,7 +200,7 @@ export const BRANCHES_DATA: BranchItem[] = [
     cityNameEn: 'Riyadh',
     regionBadgeAr: 'الرياض - النرجس',
     regionBadgeEn: 'Riyadh - Al-Narjis',
-    badgeColorClass: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+    badgeColorClass: 'bg-emerald-500/15 text-[#047857] dark:text-emerald-300 border-emerald-500/30',
     address: 'طريق أنس ابن مالك',
     addressEn: 'Anas Ibn Malik Rd',
     googleMapsUrl: 'https://maps.google.com/?q=مركز+رابا+فرع+النرجس+طريق+أنس+بن+مالك+الرياض',
@@ -221,7 +221,7 @@ export const BRANCHES_DATA: BranchItem[] = [
     cityNameEn: 'Riyadh',
     regionBadgeAr: 'الرياض - الربوة',
     regionBadgeEn: 'Riyadh - Al-Rabwah',
-    badgeColorClass: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+    badgeColorClass: 'bg-blue-500/15 text-[#1D4ED8] dark:text-blue-300 border-blue-500/30',
     address: 'شارع الأمير فواز بن عبد العزيز',
     addressEn: 'Prince Fawaz Ibn Abdulaziz St',
     googleMapsUrl: 'https://maps.google.com/?q=مركز+رابا+فرع+الربوة+شارع+الأمير+فواز+بن+عبدالعزيز+الرياض',
@@ -237,13 +237,39 @@ export const BRANCHES_DATA: BranchItem[] = [
 
 export const STORAGE_BRANCHES_KEY = 'raba_branches_data_v3';
 
+function normalizeBranchBadgeClass(badgeColorClass?: string): string {
+  if (!badgeColorClass) return 'bg-blue-500/15 text-[#1D4ED8] dark:text-blue-300 border-blue-500/30';
+  if (badgeColorClass.includes('dark:text-')) return badgeColorClass;
+  const map: Array<[RegExp, string]> = [
+    [/text-cyan-(300|400)/, 'text-[#0E7490] dark:text-cyan-300'],
+    [/text-teal-(300|400)/, 'text-[#0F766E] dark:text-teal-300'],
+    [/text-violet-(300|400)/, 'text-[#6D28D9] dark:text-violet-300'],
+    [/text-amber-(300|400)/, 'text-[#B45309] dark:text-amber-300'],
+    [/text-rose-(300|400)/, 'text-[#BE123C] dark:text-rose-300'],
+    [/text-indigo-(300|400)/, 'text-[#4338CA] dark:text-indigo-300'],
+    [/text-sky-(300|400)/, 'text-[#0369A1] dark:text-sky-300'],
+    [/text-emerald-(300|400)/, 'text-[#047857] dark:text-emerald-300'],
+    [/text-blue-(300|400)/, 'text-[#1D4ED8] dark:text-blue-300'],
+  ];
+  let updated = badgeColorClass;
+  for (const [pattern, replacement] of map) {
+    updated = updated.replace(pattern, replacement);
+  }
+  return updated;
+}
+
 export function getStoredBranchesData(): BranchItem[] {
   try {
     const raw = localStorage.getItem(STORAGE_BRANCHES_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length >= 8) {
-        return parsed.sort((a, b) => (a.order || 0) - (b.order || 0));
+        return parsed
+          .map((item: BranchItem) => ({
+            ...item,
+            badgeColorClass: normalizeBranchBadgeClass(item.badgeColorClass),
+          }))
+          .sort((a, b) => (a.order || 0) - (b.order || 0));
       }
     }
     return [...BRANCHES_DATA];

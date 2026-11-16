@@ -100,7 +100,7 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
             dir={direction}
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] dark:from-[#161E2E] dark:to-[#161E2E] p-4 text-white dark:text-[#F8FAFC] flex items-center justify-between border-b border-white/20 dark:border-white/10 relative overflow-hidden">
+            <div className="bg-gradient-to-r from-[#1668DC] to-[#1152B8] dark:from-[#161E2E] dark:to-[#161E2E] p-4 text-white dark:text-[#F8FAFC] flex items-center justify-between border-b border-white/20 dark:border-white/10 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 dark:bg-[#2B95FF]/20 rounded-full blur-2xl pointer-events-none" />
 
               <div className="flex items-center gap-3 relative z-10">
@@ -165,7 +165,7 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
             <div className="p-3 border-t border-[#161B26]/[0.08] dark:border-white/10">
               <button
                 onClick={() => handleSendWhatsApp()}
-                className="w-full py-2.5 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white font-black rounded-full text-xs flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all duration-200 active:scale-98"
+                className="w-full py-2.5 bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 text-white font-black rounded-full text-xs flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all duration-200 active:scale-98"
               >
                 <MessageCircle className="w-4 h-4 text-white" />
                 <span>{isArabic ? 'بدء المحادثة المباشرة في واتساب' : 'Start WhatsApp Conversation'}</span>
@@ -180,7 +180,7 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
           id="floating-whatsapp-btn"
           aria-label={isArabic ? 'محادثة واتساب' : 'WhatsApp Chat'}
           title={isArabic ? 'تواصل معنا مباشرة عبر واتساب' : 'Chat via WhatsApp'}
-          className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-[#128C7E] via-[#25D366] to-[#20ba59] hover:from-[#0d6b60] hover:to-[#25D366] text-white flex items-center justify-center shadow-xl shadow-emerald-500/35 hover:shadow-2xl hover:shadow-emerald-500/55 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer relative border-2 border-white/80 dark:border-white/30"
+          className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-[#0F766E] via-[#047857] to-[#065F46] hover:from-[#0d6b60] hover:to-[#047857] text-white flex items-center justify-center shadow-xl shadow-emerald-500/35 hover:shadow-2xl hover:shadow-emerald-500/55 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer relative border-2 border-white/80 dark:border-white/30"
         >
           {/* Subtle Outer Ping Ring */}
           <span className="absolute -inset-1 rounded-full bg-[#25D366] opacity-30 group-hover:opacity-75 animate-ping -z-10" />

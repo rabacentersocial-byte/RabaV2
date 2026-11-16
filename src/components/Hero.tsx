@@ -186,7 +186,7 @@ export const Hero: React.FC<HeroProps> = ({
                   <span className="inline-block mt-2">
                     السلوك التطبيقي{' '}
                     <span className="relative inline-block mx-1">
-                      <span className="relative z-10 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] text-white font-black px-4 py-0.5 sm:px-6 sm:py-1 rounded-2xl shadow-lg border border-white/30 transform -rotate-1 inline-block text-2xl sm:text-4xl lg:text-[44px]">
+                      <span className="relative z-10 bg-gradient-to-r from-[#1668DC] to-[#1152B8] text-white font-black px-4 py-0.5 sm:px-6 sm:py-1 rounded-2xl shadow-lg border border-white/30 transform -rotate-1 inline-block text-2xl sm:text-4xl lg:text-[44px]">
                         ABA
                       </span>
                       <span className="absolute -inset-1 bg-[#2B95FF]/30 blur-md rounded-2xl" />
@@ -199,7 +199,7 @@ export const Hero: React.FC<HeroProps> = ({
                   <span className="inline-block mt-2">
                     Behavior Analysis{' '}
                     <span className="relative inline-block mx-1">
-                      <span className="relative z-10 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] text-white font-black px-4 py-0.5 sm:px-6 sm:py-1 rounded-2xl shadow-lg border border-white/30 transform -rotate-1 inline-block text-2xl sm:text-4xl lg:text-[44px]">
+                      <span className="relative z-10 bg-gradient-to-r from-[#1668DC] to-[#1152B8] text-white font-black px-4 py-0.5 sm:px-6 sm:py-1 rounded-2xl shadow-lg border border-white/30 transform -rotate-1 inline-block text-2xl sm:text-4xl lg:text-[44px]">
                         ABA
                       </span>
                       <span className="absolute -inset-1 bg-[#2B95FF]/30 blur-md rounded-2xl" />
@@ -259,7 +259,7 @@ export const Hero: React.FC<HeroProps> = ({
                 id="hero-register-btn"
                 onClick={onOpenBooking}
                 aria-label={isArabic ? 'سجل الآن في برامج التأهيل والتطوير بمركز رابا' : 'Register now for rehabilitation programs at Raba Center'}
-                className="relative group overflow-hidden bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white font-black px-7 sm:px-9 py-3.5 min-h-[48px] rounded-full border border-white/25 dark:border-[#60AFFF]/30 shadow-[0_14px_32px_-10px_rgba(43,149,255,0.42)] hover:shadow-xl active:scale-95 transition-all duration-200 text-sm sm:text-base text-center justify-center flex items-center cursor-pointer"
+                className="relative group overflow-hidden bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 text-white font-black px-7 sm:px-9 py-3.5 min-h-[48px] rounded-full border border-white/25 dark:border-[#60AFFF]/30 shadow-[0_14px_32px_-10px_rgba(22,104,220,0.42)] hover:shadow-xl active:scale-95 transition-all duration-200 text-sm sm:text-base text-center justify-center flex items-center cursor-pointer"
               >
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
                 <span className="relative z-10">{isArabic ? 'سجل الآن' : 'Register Now'}</span>
@@ -296,7 +296,7 @@ export const Hero: React.FC<HeroProps> = ({
                   className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full liquid-glass-pill text-[#161B26] dark:bg-[#161E2E] dark:text-[#F8FAFC] text-[11px] sm:text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition-transform duration-200 cursor-pointer border border-[#161B26]/10 dark:border-white/15"
                   title={isArabic ? `+${dailyChildrenCount} أطفال جدد اليوم (إجمالي المستفيدين: ${formattedTotal}+)` : `+${dailyChildrenCount} Enrolled Today`}
                 >
-                  <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-[#2B95FF] to-[#1A73E8] text-white flex items-center justify-center text-[9px] sm:text-[10px] font-black shrink-0 shadow-xs">
+                  <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-[#1668DC] to-[#1152B8] text-white flex items-center justify-center text-[9px] sm:text-[10px] font-black shrink-0 shadow-xs">
                     +{dailyChildrenCount}
                   </span>
                   <span className="whitespace-nowrap font-black">

@@ -114,7 +114,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
                 onClick={() => onNavigateTab('appointments')}
                 className="px-4 py-2.5 rounded-full bg-white text-[#0D1B2A] hover:bg-blue-50 font-black text-xs flex items-center gap-2 shadow-md transition-all cursor-pointer whitespace-nowrap"
               >
-                <Calendar className="w-3.5 h-3.5 text-[#2E86EB]" />
+                <Calendar className="w-3.5 h-3.5 text-[#1463D6]" />
                 <span>{isArabic ? 'إدارة واستخراج تقارير الحجوزات' : 'Bookings & Reports'}</span>
               </button>
             )}
@@ -128,17 +128,17 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
         {/* Metric 1: Total Bookings */}
         <div className="liquid-glass-card p-5 rounded-[24px] relative overflow-hidden">
           <div className="flex items-center justify-between gap-2 mb-3">
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+            <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
               {isArabic ? 'إجمالي الحجوزات المسجلة' : 'Total Bookings'}
             </span>
-            <div className="w-10 h-10 rounded-full bg-[#2E86EB]/12 text-[#2E86EB] dark:text-[#4A9CFF] flex items-center justify-center font-bold shrink-0">
+            <div className="w-10 h-10 rounded-full bg-[#2E86EB]/12 text-[#1463D6] dark:text-[#60AFFF] flex items-center justify-center font-bold shrink-0">
               <Calendar className="w-4.5 h-4.5" />
             </div>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tabular-nums">
             {safeAppointments.length}
           </div>
-          <div className="flex items-center gap-1 text-[11px] font-bold text-[#2E86EB] dark:text-[#4A9CFF] mt-2">
+          <div className="flex items-center gap-1 text-[11px] font-bold text-[#1463D6] dark:text-[#60AFFF] mt-2">
             <TrendingUp className="w-3.5 h-3.5" />
             <span>{isArabic ? `${pendingCount} طلب بانتظار التأكيد` : `${pendingCount} pending confirmation`}</span>
           </div>
@@ -147,10 +147,10 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
         {/* Metric 2: Confirmed Appointments */}
         <div className="liquid-glass-card p-5 rounded-[24px] relative overflow-hidden">
           <div className="flex items-center justify-between gap-2 mb-3">
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+            <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
               {isArabic ? 'الحجوزات المؤكدة' : 'Confirmed Bookings'}
             </span>
-            <div className="w-10 h-10 rounded-full bg-emerald-500/12 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold shrink-0">
+            <div className="w-10 h-10 rounded-full bg-emerald-500/12 text-emerald-700 dark:text-emerald-400 flex items-center justify-center font-bold shrink-0">
               <CheckCircle2 className="w-4.5 h-4.5" />
             </div>
           </div>
@@ -297,7 +297,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
 
             <div className="divide-y divide-slate-200/70 dark:divide-white/10">
               {safeUsers.length === 0 ? (
-                <div className="p-4 text-center rounded-2xl bg-slate-50/70 dark:bg-white/5 text-xs text-slate-400">
+                <div className="p-4 text-center rounded-2xl bg-slate-50/70 dark:bg-white/5 text-xs text-slate-600 dark:text-slate-300">
                   {isArabic ? 'لا يوجد مستخدمين' : 'No staff members'}
                 </div>
               ) : (

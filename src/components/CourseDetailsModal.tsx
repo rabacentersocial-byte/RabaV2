@@ -219,7 +219,7 @@ export const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-center">
                   <Clock className="w-4 h-4 text-[#0d5c52] dark:text-[#2dd4bf] mx-auto mb-1" />
                   <div className="text-xs font-bold text-slate-900 dark:text-white">{hoursBadge}</div>
-                  <div className="text-[10px] text-slate-500">
+                  <div className="text-[10px] text-slate-600 dark:text-slate-400">
                     {(course.hoursCount || 0) > 0
                       ? (isArabic ? 'ساعات معتمدة' : 'Accredited Hours')
                       : (isArabic ? 'تدريب تطبيقي' : 'Practical Track')}
@@ -228,17 +228,17 @@ export const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-center">
                   <PlayCircle className="w-4 h-4 text-[#0d5c52] dark:text-[#2dd4bf] mx-auto mb-1" />
                   <div className="text-xs font-bold text-slate-900 dark:text-white">{course.lessonsCount || 24} {isArabic ? 'درساً تفاعلياً' : 'Lessons'}</div>
-                  <div className="text-[10px] text-slate-500">{isArabic ? 'محتوى مسجل ومباشر' : 'Live & Recorded'}</div>
+                  <div className="text-[10px] text-slate-600 dark:text-slate-400">{isArabic ? 'محتوى مسجل ومباشر' : 'Live & Recorded'}</div>
                 </div>
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-center">
                   <Award className="w-4 h-4 text-[#0d5c52] dark:text-[#2dd4bf] mx-auto mb-1" />
                   <div className="text-xs font-bold text-slate-900 dark:text-white">{isArabic ? 'شهادة معتمدة' : 'Accredited'}</div>
-                  <div className="text-[10px] text-slate-500">{isArabic ? 'بورد دولي' : 'Global Board'}</div>
+                  <div className="text-[10px] text-slate-600 dark:text-slate-400">{isArabic ? 'بورد دولي' : 'Global Board'}</div>
                 </div>
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-center">
                   <Users className="w-4 h-4 text-[#0d5c52] dark:text-[#2dd4bf] mx-auto mb-1" />
                   <div className="text-xs font-bold text-slate-900 dark:text-white">{isArabic ? 'إشراف مباشر' : 'Mentorship'}</div>
-                  <div className="text-[10px] text-slate-500">{isArabic ? 'نخبة من الاستشاريين' : 'Clinical Faculty'}</div>
+                  <div className="text-[10px] text-slate-600 dark:text-slate-400">{isArabic ? 'نخبة من الاستشاريين' : 'Clinical Faculty'}</div>
                 </div>
               </div>
 
@@ -274,7 +274,7 @@ export const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
                       <div className="text-xs font-bold text-slate-800 dark:text-slate-200">
                         {feat}
                       </div>
-                      <div className="text-[11px] text-slate-500 mt-0.5">
+                      <div className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
                         {isArabic ? 'تطبيقات عملية، تحليل دراسات حالة، ونماذج تدريبية محاكية للميدان الإكلينيكي.' : 'Practical applications and clinical case simulations.'}
                       </div>
                     </div>
@@ -341,7 +341,7 @@ export const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
                 {isArabic ? (course.priceDisplayAr || 'تواصل للاستفسار عن السعر') : (course.priceDisplayEn || 'Contact for Pricing')}
               </span>
             )}
-            <span className="text-[10px] text-emerald-600 font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40">
+            <span className="text-[10px] text-[#047857] dark:text-emerald-300 font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40">
               {isArabic ? 'شامل الحقيبة التدريبية' : 'Full Access'}
             </span>
           </div>

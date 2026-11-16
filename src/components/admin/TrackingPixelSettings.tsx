@@ -262,28 +262,28 @@ export const TrackingPixelSettings: React.FC<TrackingPixelSettingsProps> = () =>
                       ...pixels,
                       meta: { ...pixels.meta, id: e.target.value }
                     })}
-                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                   />
                   {pixels.meta.id && (
                     <button
                       type="button"
                       onClick={() => handleCopy(pixels.meta.id, 'meta')}
-                      className="absolute end-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white"
+                      className="absolute end-2 top-1/2 -translate-y-1/2 p-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                       title={isArabic ? 'نسخ' : 'Copy'}
                     >
-                      {copiedId === 'meta' ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copiedId === 'meta' ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
                   )}
                 </div>
                 <div className="mt-1.5 flex items-center justify-between text-[10px]">
-                  <span className={pixels.meta.is_active ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-400'}>
+                  <span className={pixels.meta.is_active ? 'text-blue-700 dark:text-blue-400 font-bold' : 'text-slate-600 dark:text-slate-400'}>
                     {pixels.meta.is_active ? (isArabic ? '● نشط ويتم التتبع' : '● Active & tracking') : (isArabic ? '○ معطل مؤقتاً' : '○ Paused')}
                   </span>
                   <a 
                     href="https://adsmanager.facebook.com" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-slate-400 hover:text-blue-500 flex items-center gap-0.5"
+                    className="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-0.5"
                   >
                     <span>Ads Manager</span>
                     <ExternalLink className="w-2.5 h-2.5" />
@@ -343,28 +343,28 @@ export const TrackingPixelSettings: React.FC<TrackingPixelSettingsProps> = () =>
                       ...pixels,
                       tiktok: { ...pixels.tiktok, id: e.target.value }
                     })}
-                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500/40"
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500/40"
                   />
                   {pixels.tiktok.id && (
                     <button
                       type="button"
                       onClick={() => handleCopy(pixels.tiktok.id, 'tiktok')}
-                      className="absolute end-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white"
+                      className="absolute end-2 top-1/2 -translate-y-1/2 p-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                       title={isArabic ? 'نسخ' : 'Copy'}
                     >
-                      {copiedId === 'tiktok' ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copiedId === 'tiktok' ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
                   )}
                 </div>
                 <div className="mt-1.5 flex items-center justify-between text-[10px]">
-                  <span className={pixels.tiktok.is_active ? 'text-[#FE2C55] font-bold' : 'text-slate-400'}>
+                  <span className={pixels.tiktok.is_active ? 'text-[#D4113B] dark:text-[#FF5C7C] font-bold' : 'text-slate-600 dark:text-slate-400'}>
                     {pixels.tiktok.is_active ? (isArabic ? '● نشط ويتم التتبع' : '● Active & tracking') : (isArabic ? '○ معطل مؤقتاً' : '○ Paused')}
                   </span>
                   <a 
                     href="https://ads.tiktok.com" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-slate-400 hover:text-pink-500 flex items-center gap-0.5"
+                    className="text-slate-600 dark:text-slate-400 hover:text-pink-600 dark:hover:text-pink-400 flex items-center gap-0.5"
                   >
                     <span>TikTok Ads</span>
                     <ExternalLink className="w-2.5 h-2.5" />
@@ -423,28 +423,28 @@ export const TrackingPixelSettings: React.FC<TrackingPixelSettingsProps> = () =>
                       ...pixels,
                       snapchat: { ...pixels.snapchat, id: e.target.value }
                     })}
-                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400/40"
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400/40"
                   />
                   {pixels.snapchat.id && (
                     <button
                       type="button"
                       onClick={() => handleCopy(pixels.snapchat.id, 'snapchat')}
-                      className="absolute end-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white"
+                      className="absolute end-2 top-1/2 -translate-y-1/2 p-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                       title={isArabic ? 'نسخ' : 'Copy'}
                     >
-                      {copiedId === 'snapchat' ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copiedId === 'snapchat' ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
                   )}
                 </div>
                 <div className="mt-1.5 flex items-center justify-between text-[10px]">
-                  <span className={pixels.snapchat.is_active ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-slate-400'}>
+                  <span className={pixels.snapchat.is_active ? 'text-amber-700 dark:text-amber-400 font-bold' : 'text-slate-600 dark:text-slate-400'}>
                     {pixels.snapchat.is_active ? (isArabic ? '● نشط ويتم التتبع' : '● Active & tracking') : (isArabic ? '○ معطل مؤقتاً' : '○ Paused')}
                   </span>
                   <a 
                     href="https://ads.snapchat.com" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-slate-400 hover:text-amber-500 flex items-center gap-0.5"
+                    className="text-slate-600 dark:text-slate-400 hover:text-amber-700 dark:hover:text-amber-400 flex items-center gap-0.5"
                   >
                     <span>Snap Ads</span>
                     <ExternalLink className="w-2.5 h-2.5" />
@@ -503,28 +503,28 @@ export const TrackingPixelSettings: React.FC<TrackingPixelSettingsProps> = () =>
                       ...pixels,
                       gtm: { ...pixels.gtm, id: e.target.value }
                     })}
-                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
                   />
                   {pixels.gtm.id && (
                     <button
                       type="button"
                       onClick={() => handleCopy(pixels.gtm.id, 'gtm')}
-                      className="absolute end-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white"
+                      className="absolute end-2 top-1/2 -translate-y-1/2 p-1 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                       title={isArabic ? 'نسخ' : 'Copy'}
                     >
-                      {copiedId === 'gtm' ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copiedId === 'gtm' ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
                   )}
                 </div>
                 <div className="mt-1.5 flex items-center justify-between text-[10px]">
-                  <span className={pixels.gtm.is_active ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-400'}>
+                  <span className={pixels.gtm.is_active ? 'text-emerald-700 dark:text-emerald-400 font-bold' : 'text-slate-600 dark:text-slate-400'}>
                     {pixels.gtm.is_active ? (isArabic ? '● نشط ويتم التتبع' : '● Active & tracking') : (isArabic ? '○ معطل مؤقتاً' : '○ Paused')}
                   </span>
                   <a 
                     href="https://tagmanager.google.com" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-slate-400 hover:text-emerald-500 flex items-center gap-0.5"
+                    className="text-slate-600 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-emerald-400 flex items-center gap-0.5"
                   >
                     <span>Tag Manager</span>
                     <ExternalLink className="w-2.5 h-2.5" />

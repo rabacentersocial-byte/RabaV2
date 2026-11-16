@@ -112,7 +112,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
           iconBoxBg: 'bg-[#8B5CF6]/10 dark:bg-[#8B5CF6]/15 text-[#6D28D9] dark:text-[#A78BFA] border-[#8B5CF6]/25 shadow-[#8B5CF6]/10',
           headerBg: 'bg-gradient-to-br from-[#8B5CF6]/10 via-[#2B95FF]/[0.04] to-transparent dark:from-[#8B5CF6]/15 dark:via-transparent',
           headerBorder: 'border-b border-[#8B5CF6]/15 dark:border-white/5',
-          badgeBg: 'bg-[#8B5CF6] text-white',
+          badgeBg: 'bg-[#6D28D9] text-white',
         };
       case 'autism':
         return {
@@ -120,7 +120,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
           iconBoxBg: 'bg-[#2B95FF]/10 dark:bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF] border-[#2B95FF]/25 shadow-[#2B95FF]/10',
           headerBg: 'bg-gradient-to-br from-[#2B95FF]/10 via-[#2B95FF]/[0.03] to-transparent dark:from-[#2B95FF]/15 dark:via-transparent',
           headerBorder: 'border-b border-[#2B95FF]/15 dark:border-white/5',
-          badgeBg: 'bg-[#2B95FF] text-white',
+          badgeBg: 'bg-[#1463D6] text-white',
         };
       case 'aba':
         return {
@@ -128,7 +128,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
           iconBoxBg: 'bg-[#10B981]/10 dark:bg-[#10B981]/15 text-[#047857] dark:text-[#34D399] border-[#10B981]/25 shadow-[#10B981]/10',
           headerBg: 'bg-gradient-to-br from-[#10B981]/10 via-[#10B981]/[0.03] to-transparent dark:from-[#10B981]/15 dark:via-transparent',
           headerBorder: 'border-b border-[#10B981]/15 dark:border-white/5',
-          badgeBg: 'bg-[#10B981] text-white',
+          badgeBg: 'bg-[#047857] text-white',
         };
       case 'occupational':
         return {
@@ -136,7 +136,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
           iconBoxBg: 'bg-[#F59E0B]/10 dark:bg-[#F59E0B]/15 text-[#B45309] dark:text-[#FBBF24] border-[#F59E0B]/25 shadow-[#F59E0B]/10',
           headerBg: 'bg-gradient-to-br from-[#F59E0B]/10 via-[#F59E0B]/[0.03] to-transparent dark:from-[#F59E0B]/15 dark:via-transparent',
           headerBorder: 'border-b border-[#F59E0B]/15 dark:border-white/5',
-          badgeBg: 'bg-[#D97706] text-white',
+          badgeBg: 'bg-[#B45309] text-white',
         };
       case 'speech':
         return {
@@ -144,7 +144,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
           iconBoxBg: 'bg-[#8B5CF6]/10 dark:bg-[#8B5CF6]/15 text-[#6D28D9] dark:text-[#A78BFA] border-[#8B5CF6]/25 shadow-[#8B5CF6]/10',
           headerBg: 'bg-gradient-to-br from-[#8B5CF6]/10 via-[#8B5CF6]/[0.03] to-transparent dark:from-[#8B5CF6]/15 dark:via-transparent',
           headerBorder: 'border-b border-[#8B5CF6]/15 dark:border-white/5',
-          badgeBg: 'bg-[#7C3AED] text-white',
+          badgeBg: 'bg-[#6D28D9] text-white',
         };
       case 'family_guidance':
         return {
@@ -160,7 +160,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
           iconBoxBg: 'bg-[#2B95FF]/10 dark:bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF] border-[#2B95FF]/25 shadow-[#2B95FF]/10',
           headerBg: 'bg-gradient-to-br from-[#2B95FF]/10 via-[#2B95FF]/[0.03] to-transparent dark:from-[#2B95FF]/15 dark:via-transparent',
           headerBorder: 'border-b border-[#2B95FF]/15 dark:border-white/5',
-          badgeBg: 'bg-[#2B95FF] text-white',
+          badgeBg: 'bg-[#1463D6] text-white',
         };
     }
   };
@@ -429,7 +429,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
               <Home className="w-3.5 h-3.5" />
               <span>{isArabic ? 'الرئيسية' : 'Home'}</span>
             </button>
-            <span className="text-[#8B95A5] dark:text-[#64748B]">/</span>
+            <span className="text-[#64748B] dark:text-[#94A3B8]">/</span>
             <span className="text-[#1263D6] dark:text-[#60AFFF] font-black truncate">
               {isArabic ? 'المدونة الطبية والدليل المعرفي' : 'Clinical Blog & Knowledge Guide'}
             </span>
@@ -448,7 +448,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
             {onOpenBooking && (
               <button
                 onClick={() => onOpenBooking('حجز استشارة مباشرة من صفحة المدونة')}
-                className="hidden sm:inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white text-xs font-black shadow-sm shadow-[#2B95FF]/20 transition-all cursor-pointer"
+                className="hidden sm:inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 text-white text-xs font-black shadow-sm shadow-[#2B95FF]/20 transition-all cursor-pointer"
               >
                 <CalendarCheck className="w-3.5 h-3.5" />
                 <span>{isArabic ? 'طلب استشارة إكلينيكية' : 'Book Clinical Consultation'}</span>
@@ -531,18 +531,18 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
             {/* Search Input */}
             <div className="relative flex-1">
-              <Search className="w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 text-[#8B95A5] dark:text-[#64748B] pointer-events-none" />
+              <Search className="w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 text-[#64748B] dark:text-[#94A3B8] pointer-events-none" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={isArabic ? 'ابحث عن موضوع، استراتيجية سلوكية، أو اسم أخصائي...' : 'Search topics, behavioral strategies, or specialist name...'}
-                className="w-full pr-12 pl-10 py-3 rounded-full warm-pill-input text-[#161B26] dark:text-[#F8FAFC] placeholder:text-[#8B95A5] dark:placeholder:text-[#64748B] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#2B95FF]/50 transition-all"
+                className="w-full pr-12 pl-10 py-3 rounded-full warm-pill-input text-[#161B26] dark:text-[#F8FAFC] placeholder:text-[#64748B] dark:placeholder:text-[#94A3B8] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#2B95FF]/50 transition-all"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 p-1 text-[#8B95A5] hover:text-[#161B26] dark:hover:text-white cursor-pointer"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 p-1 text-[#525B6B] dark:text-[#94A3B8] hover:text-[#161B26] dark:hover:text-white cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -562,7 +562,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                   {sortBy === 'likes' && (isArabic ? 'الأعلى تفاعلاً' : 'Most Liked')}
                   {sortBy === 'reading_time' && (isArabic ? 'وقت القراءة (الأقصر)' : 'Shortest Read')}
                 </span>
-                <ChevronDown className="w-3.5 h-3.5 text-[#8B95A5]" />
+                <ChevronDown className="w-3.5 h-3.5 text-[#525B6B] dark:text-[#94A3B8]" />
               </button>
 
               {isSortOpen && (
@@ -639,7 +639,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
         {/* Articles Grid (Exact layout and visual design matching the screenshot) */}
         {filteredPosts.length === 0 ? (
           <div className="liquid-glass-card rounded-[28px] p-12 text-center my-8">
-            <BookOpen className="w-12 h-12 text-[#8B95A5] dark:text-[#64748B] mx-auto mb-3" />
+            <BookOpen className="w-12 h-12 text-[#64748B] dark:text-[#94A3B8] mx-auto mb-3" />
             <h3 className="text-base sm:text-lg font-bold text-[#161B26] dark:text-[#F8FAFC] mb-1">
               {isArabic ? 'لم يتم العثور على مقالات مطابقة' : 'No articles match your search'}
             </h3>
@@ -650,7 +650,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
             </p>
             <button
               onClick={() => { setSelectedCategory('all'); setSearchQuery(''); }}
-              className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] text-white text-xs font-bold cursor-pointer hover:brightness-110 transition-all shadow-sm shadow-[#2B95FF]/20"
+              className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#1668DC] to-[#1152B8] text-white text-xs font-bold cursor-pointer hover:brightness-110 transition-all shadow-sm shadow-[#2B95FF]/20"
             >
               {isArabic ? 'عرض جميع المقالات' : 'Show All Articles'}
             </button>
@@ -692,7 +692,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                       </span>
 
                       <span className="flex items-center gap-1.5">
-                        <Eye className="w-3.5 h-3.5 text-[#8B95A5] shrink-0" />
+                        <Eye className="w-3.5 h-3.5 text-[#525B6B] dark:text-[#94A3B8] shrink-0" />
                         <span>{post.viewsCount || 100} {isArabic ? 'مشاهدة' : 'views'}</span>
                       </span>
 
@@ -767,7 +767,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                         >
                           <Share2 className="w-4 h-4" />
                           {shareFeedback === post.id && (
-                            <span className="absolute -top-7 right-0 text-[10px] bg-[#2B95FF] dark:bg-[#1E293B] text-white dark:text-[#F8FAFC] dark:border dark:border-white/15 px-2.5 py-0.5 rounded-full shadow whitespace-nowrap z-20">
+                            <span className="absolute -top-7 right-0 text-[10px] bg-[#1463D6] dark:bg-[#1E293B] text-white dark:text-[#F8FAFC] dark:border dark:border-white/15 px-2.5 py-0.5 rounded-full shadow whitespace-nowrap z-20">
                               {isArabic ? 'تم نسخ الرابط' : 'Link copied'}
                             </span>
                           )}
@@ -810,11 +810,11 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                 type="email"
                 required
                 placeholder={isArabic ? 'أدخل بريدك الإلكتروني أو رقم الواتساب...' : 'Enter your email or WhatsApp number...'}
-                className="flex-1 px-5 py-3 rounded-full bg-white/90 dark:bg-white/10 border border-[#161B26]/12 dark:border-white/20 text-[#161B26] dark:text-white placeholder:text-[#8B95A5] dark:placeholder:text-[#94A3B8] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#2B95FF]"
+                className="flex-1 px-5 py-3 rounded-full bg-white/90 dark:bg-white/10 border border-[#161B26]/12 dark:border-white/20 text-[#161B26] dark:text-white placeholder:text-[#525B6B] dark:placeholder:text-[#94A3B8] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#2B95FF]"
               />
               <button
                 type="submit"
-                className="px-6 py-3 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white font-black text-xs sm:text-sm transition-all cursor-pointer shadow-md shadow-[#2B95FF]/25 shrink-0"
+                className="px-6 py-3 rounded-full bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 text-white font-black text-xs sm:text-sm transition-all cursor-pointer shadow-md shadow-[#2B95FF]/25 shrink-0"
               >
                 {isArabic ? 'اشتراك مجاني' : 'Subscribe Free'}
               </button>
@@ -844,7 +844,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
             onClick={() => {
               if (onOpenBooking) onOpenBooking('طلب موعد تقييم شامل بعد تصفح المدونة');
             }}
-            className="w-full md:w-auto px-7 py-3.5 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 active:scale-95 text-white font-black text-xs sm:text-sm shadow-md shadow-[#2B95FF]/20 transition-all cursor-pointer shrink-0 text-center"
+            className="w-full md:w-auto px-7 py-3.5 rounded-full bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 active:scale-95 text-white font-black text-xs sm:text-sm shadow-md shadow-[#2B95FF]/20 transition-all cursor-pointer shrink-0 text-center"
           >
             {isArabic ? 'احجز تقييم طفلك الآن' : 'Book Child Assessment'}
           </button>
@@ -875,7 +875,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
             <div className="px-5 sm:px-8 py-3.5 border-b border-[#161B26]/[0.06] dark:border-white/[0.08] flex items-center justify-between gap-3 shrink-0 liquid-glass-panel">
               
               <div className="flex items-center gap-2 truncate">
-                <span className="text-[10px] font-black uppercase px-3 py-1 rounded-full bg-[#2B95FF] dark:bg-[#1E293B] text-white dark:text-[#F8FAFC] dark:border dark:border-white/15">
+                <span className="text-[10px] font-black uppercase px-3 py-1 rounded-full bg-[#1463D6] dark:bg-[#1E293B] text-white dark:text-[#F8FAFC] dark:border dark:border-white/15">
                   {isArabic ? readingPost.categoryTitle : (readingPost.categoryTitleEn || readingPost.categoryTitle)}
                 </span>
                 <span className="text-xs font-bold text-[#4B5563] dark:text-[#94A3B8] truncate hidden sm:inline">
@@ -1036,7 +1036,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
               {/* Tags Cloud */}
               {readingPost.tags && readingPost.tags.length > 0 && (
                 <div className="pt-4 border-t border-[#161B26]/[0.06] dark:border-white/[0.08]">
-                  <div className="text-xs font-bold text-[#8B95A5] dark:text-[#64748B] mb-2">
+                  <div className="text-xs font-bold text-[#64748B] dark:text-[#94A3B8] mb-2">
                     {isArabic ? 'الوسوم ومحاور المقال:' : 'Article Tags:'}
                   </div>
                   <div className="flex flex-wrap gap-1.5">
@@ -1059,7 +1059,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                       className="w-14 h-14 rounded-2xl object-cover shrink-0 border border-[#2B95FF]/30"
                     />
                   ) : (
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#2B95FF] to-[#1A73E8] text-white font-black text-xl flex items-center justify-center shrink-0">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#1668DC] to-[#1152B8] text-white font-black text-xl flex items-center justify-center shrink-0">
                       {readingPost.author?.name ? readingPost.author.name.slice(0, 1) : 'ر'}
                     </div>
                   )}
@@ -1079,7 +1079,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
 
                 <button
                   onClick={() => handleBookWithAuthor(readingPost.author?.id)}
-                  className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white text-xs font-bold transition-all shadow-sm shadow-[#2B95FF]/20 shrink-0 cursor-pointer text-center"
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 text-white text-xs font-bold transition-all shadow-sm shadow-[#2B95FF]/20 shrink-0 cursor-pointer text-center"
                 >
                   {isArabic ? 'حجز موعد مع هذا الأخصائي' : 'Book with Specialist'}
                 </button>
@@ -1132,7 +1132,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                 onClick={() => {
                   if (onOpenBooking) onOpenBooking(`استفسار بناء على مقال: ${readingPost.title}`);
                 }}
-                className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white font-black text-xs transition-all shadow-sm shadow-[#2B95FF]/20 cursor-pointer"
+                className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 text-white font-black text-xs transition-all shadow-sm shadow-[#2B95FF]/20 cursor-pointer"
               >
                 {isArabic ? 'حجز تقييم لحالة طفلي' : 'Book Child Assessment'}
               </button>

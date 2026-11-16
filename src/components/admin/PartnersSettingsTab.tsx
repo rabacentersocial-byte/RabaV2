@@ -42,6 +42,7 @@ import {
   saveStoredPartnersSettings
 } from '../../data/partnersData';
 import { PartnerLogoRenderer } from '../PartnerLogos';
+import { getAccessibleAccentColor } from '../../utils/colorContrast';
 
 interface PartnersSettingsTabProps {
   onClose?: () => void;
@@ -458,7 +459,7 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
 
       {/* Floating Save Feedback */}
       {saveSuccess && (
-        <div className="fixed bottom-6 end-6 z-50 flex items-center gap-2 bg-emerald-600 text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-xl border border-emerald-400/40 animate-in fade-in slide-in-from-bottom-3 duration-300">
+        <div className="fixed bottom-6 end-6 z-50 flex items-center gap-2 bg-emerald-700 text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-xl border border-emerald-400/40 animate-in fade-in slide-in-from-bottom-3 duration-300">
           <CheckCircle2 className="w-5 h-5 shrink-0" />
           <span>{feedbackMessage}</span>
         </div>
@@ -688,7 +689,7 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
                     className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
                       partner.isActive !== false
                         ? 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
-                        : 'text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
                     }`}
                     title={partner.isActive !== false ? (isArabic ? 'إخفاء من السلايدر' : 'Hide') : (isArabic ? 'إظهار بالسلايدر' : 'Show')}
                   >
@@ -746,7 +747,7 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                className="p-1.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -853,7 +854,7 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
 
                     {/* Range Slider */}
                     <div className="flex items-center gap-3">
-                      <span className="text-[10px] text-slate-400 font-bold">70%</span>
+                      <span className="text-[10px] text-slate-600 dark:text-slate-400 font-bold">70%</span>
                       <input
                         type="range"
                         min="70"
@@ -863,7 +864,7 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
                         onChange={(e) => setFormData(prev => ({ ...prev, logoScale: parseInt(e.target.value, 10) }))}
                         className="w-full accent-emerald-600 cursor-pointer h-2 bg-slate-200 dark:bg-slate-700 rounded-lg"
                       />
-                      <span className="text-[10px] text-slate-400 font-bold">220%</span>
+                      <span className="text-[10px] text-slate-600 dark:text-slate-400 font-bold">220%</span>
                     </div>
 
                     {/* Quick Scale Presets */}
@@ -884,7 +885,7 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
                           onClick={() => setFormData(prev => ({ ...prev, logoScale: preset.val }))}
                           className={`px-2 py-0.5 rounded-md text-[10px] font-bold transition-all cursor-pointer ${
                             (formData.logoScale || 100) === preset.val
-                              ? 'bg-emerald-600 text-white shadow-2xs'
+                              ? 'bg-emerald-700 text-white shadow-2xs'
                               : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                           }`}
                         >
@@ -930,7 +931,7 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
                         }`}
                       >
                         <span>{isArabic ? 'توسيع إلى حواف البطاقة بدون حدود' : 'Expand edge-to-edge (Borderless)'}</span>
-                        <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${formData.expandImageToEdges ? 'bg-emerald-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400'}`}>
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${formData.expandImageToEdges ? 'bg-emerald-700 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400'}`}>
                           {formData.expandImageToEdges ? (isArabic ? 'مفعّل' : 'ON') : (isArabic ? 'معطل' : 'OFF')}
                         </span>
                       </button>
@@ -1011,7 +1012,7 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
                           className="w-7 h-7 rounded-lg border-0 cursor-pointer overflow-hidden p-0"
                           title={isArabic ? 'تخصيص لون حر' : 'Custom Color'}
                         />
-                        <span className="text-[10px] text-slate-400 font-mono">{formData.imageBgColor || '#ffffff'}</span>
+                        <span className="text-[10px] text-slate-600 dark:text-slate-400 font-mono">{formData.imageBgColor || '#ffffff'}</span>
                       </div>
                     </div>
                   </div>
@@ -1167,7 +1168,7 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
 
                 {/* Accent Color Presets */}
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="text-[10px] text-slate-400 font-bold">{isArabic ? 'ألوان سريعة:' : 'Quick Palettes:'}</span>
+                  <span className="text-[10px] text-slate-600 dark:text-slate-400 font-bold">{isArabic ? 'ألوان سريعة:' : 'Quick Palettes:'}</span>
                   {ACCENT_COLOR_PRESETS.map((colorItem) => (
                     <button
                       key={colorItem.hex}
@@ -1230,7 +1231,7 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
                       type="button"
                       onClick={() => setPreviewTheme('light')}
                       className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
-                        previewTheme === 'light' ? 'bg-amber-100 text-amber-900 shadow-2xs' : 'text-slate-400'
+                        previewTheme === 'light' ? 'bg-amber-100 text-amber-900 shadow-2xs' : 'text-slate-600 dark:text-slate-400'
                       }`}
                       title={isArabic ? 'معاينة بالوضع النهاري' : 'Light Preview'}
                     >
@@ -1240,7 +1241,7 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
                       type="button"
                       onClick={() => setPreviewTheme('dark')}
                       className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
-                        previewTheme === 'dark' ? 'bg-slate-800 text-slate-100 shadow-2xs' : 'text-slate-400'
+                        previewTheme === 'dark' ? 'bg-slate-800 text-slate-100 shadow-2xs' : 'text-slate-600 dark:text-slate-400'
                       }`}
                       title={isArabic ? 'معاينة بالوضع الليلي' : 'Dark Preview'}
                     >
@@ -1277,7 +1278,7 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
                         className="inline-flex items-center justify-center gap-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full truncate max-w-[90%] text-center"
                         style={{
                           backgroundColor: formData.accentColor ? `${formData.accentColor}18` : undefined,
-                          color: formData.accentColor || undefined,
+                          color: getAccessibleAccentColor(formData.accentColor || '#2B95FF', previewTheme === 'dark'),
                           border: `1px solid ${formData.accentColor ? `${formData.accentColor}30` : 'transparent'}`
                         }}
                       >
@@ -1304,7 +1305,9 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
                       } rounded-xl ${
                         formData.expandImageToEdges 
                           ? 'border-0 p-0 shadow-none' 
-                          : 'border border-slate-200/80 dark:border-white/20 shadow-2xs'
+                          : previewTheme === 'dark'
+                            ? 'border border-white/20 shadow-2xs'
+                            : 'border border-slate-200/80 shadow-2xs'
                       } flex items-center justify-center overflow-hidden my-auto relative z-10 transition-all`}
                       style={{
                         backgroundColor: formData.imageBgColor || '#ffffff'
@@ -1328,7 +1331,7 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
                       <h4 className="text-xs font-black truncate">
                         {isArabic ? (formData.name || 'اسم الشريك') : (formData.nameEn || formData.name || 'Partner Name')}
                       </h4>
-                      <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate mt-0.5 font-medium">
+                      <p className={`text-[10px] truncate mt-0.5 font-medium ${previewTheme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
                         {isArabic ? (formData.category || 'التصنيف والشراكة') : (formData.categoryEn || 'Partnership Role')}
                       </p>
                     </div>

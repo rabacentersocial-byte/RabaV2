@@ -85,7 +85,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
       name: isArabic ? 'منصة إكس' : 'X (Twitter)',
       href: social.x || 'https://x.com/rabacenter',
       icon: XIcon,
-      hoverClass: 'hover:bg-[#2B95FF] hover:text-white hover:border-[#2B95FF] border-slate-300 dark:border-white/15',
+      hoverClass: 'hover:bg-[#1463D6] hover:text-white hover:border-[#1463D6] border-slate-300 dark:border-white/15',
       badge: '@rabacenter'
     },
     {
@@ -101,7 +101,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
       name: isArabic ? 'تيك توك' : 'TikTok',
       href: social.tiktok || 'https://tiktok.com/@rabacenter',
       icon: TikTokIcon,
-      hoverClass: 'hover:bg-[#2B95FF] hover:text-white hover:border-[#2B95FF] border-slate-300 dark:border-white/15',
+      hoverClass: 'hover:bg-[#1463D6] hover:text-white hover:border-[#1463D6] border-slate-300 dark:border-white/15',
       badge: '@rabacenter'
     },
     {
@@ -125,7 +125,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
       name: isArabic ? 'واتساب' : 'WhatsApp',
       href: social.whatsapp || 'https://wa.me/966575100100',
       icon: MessageCircle,
-      hoverClass: 'hover:bg-[#25D366] hover:text-white hover:border-transparent border-slate-300 dark:border-white/15',
+      hoverClass: 'hover:bg-[#0F766E] hover:text-white hover:border-transparent border-slate-300 dark:border-white/15',
       badge: social.phone || '0575100100'
     },
     {
@@ -216,7 +216,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
               <div className="p-3.5 rounded-[28px] liquid-glass-card transition-colors duration-300">
                 <div className="flex items-center justify-between gap-3 mb-2.5">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#2B95FF] to-[#1A73E8] flex items-center justify-center text-white font-black shadow-xs shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#1668DC] to-[#1152B8] flex items-center justify-center text-white font-black shadow-xs shrink-0">
                       <Download className="w-4 h-4" />
                     </div>
                     <div>
@@ -235,7 +235,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
                       setPwaModalTab(isIOS ? 'ios' : 'android');
                       setIsPwaModalOpen(true);
                     }}
-                    className="px-3.5 py-2 min-h-[36px] rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white text-xs font-black transition-all duration-200 cursor-pointer shadow-xs active:scale-95 flex items-center gap-1 shrink-0 group"
+                    className="px-3.5 py-2 min-h-[36px] rounded-full bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 text-white text-xs font-black transition-all duration-200 cursor-pointer shadow-xs active:scale-95 flex items-center gap-1 shrink-0 group"
                     title={isArabic ? 'تثبيت التطبيق' : 'Install App'}
                   >
                     <span>{isArabic ? 'تحميل' : 'Install'}</span>
@@ -389,15 +389,15 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
               <a href="/about" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
                 {isArabic ? 'من نحن' : 'About Us'}
               </a>
-              <span className="text-[#8B95A5] select-none">•</span>
+              <span className="text-[#525B6B] dark:text-[#94A3B8] select-none">•</span>
               <a href="/contact" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
                 {isArabic ? 'اتصل بنا' : 'Contact Us'}
               </a>
-              <span className="text-[#8B95A5] select-none">•</span>
+              <span className="text-[#525B6B] dark:text-[#94A3B8] select-none">•</span>
               <a href="/terms" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
                 {isArabic ? 'الشروط والأحكام' : 'Terms of Service'}
               </a>
-              <span className="text-[#8B95A5] select-none">•</span>
+              <span className="text-[#525B6B] dark:text-[#94A3B8] select-none">•</span>
               <a href="/privacy" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
                 {isArabic ? 'سياسة الخصوصية' : 'Privacy Policy'}
               </a>

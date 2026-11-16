@@ -192,7 +192,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
     switch (id) {
       case 'srv-aba':
         return {
-          colorClass: 'bg-[#F59E0B]',
+          colorClass: 'bg-[#B45309]',
           colorClassHover: 'hover:border-[#F59E0B]',
           accentBorder: 'border-[#F59E0B]/30',
           lightBg: 'bg-amber-500/10 dark:bg-amber-500/15',
@@ -203,7 +203,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
         };
       case 'srv-speech':
         return {
-          colorClass: 'bg-[#10B981]',
+          colorClass: 'bg-[#047857]',
           colorClassHover: 'hover:border-[#10B981]',
           accentBorder: 'border-[#10B981]/30',
           lightBg: 'bg-emerald-500/10 dark:bg-emerald-500/15',
@@ -221,7 +221,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
         };
       case 'srv-occupational':
         return {
-          colorClass: 'bg-[#0284C7]',
+          colorClass: 'bg-[#0369A1]',
           colorClassHover: 'hover:border-[#0284C7]',
           accentBorder: 'border-[#0284C7]/30',
           lightBg: 'bg-sky-500/10 dark:bg-sky-500/15',
@@ -232,7 +232,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
         };
       case 'srv-sensory':
         return {
-          colorClass: 'bg-[#84CC16]',
+          colorClass: 'bg-[#4D7C0F]',
           colorClassHover: 'hover:border-[#84CC16]',
           accentBorder: 'border-[#84CC16]/30',
           lightBg: 'bg-lime-500/10 dark:bg-lime-500/15',
@@ -262,7 +262,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
         };
       case 'srv-psychological':
         return {
-          colorClass: 'bg-[#DB2777]',
+          colorClass: 'bg-[#BE185D]',
           colorClassHover: 'hover:border-[#DB2777]',
           accentBorder: 'border-[#DB2777]/30',
           lightBg: 'bg-pink-500/10 dark:bg-pink-500/15',
@@ -278,7 +278,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
         };
       default:
         return {
-          colorClass: 'bg-[#2B95FF]',
+          colorClass: 'bg-[#1463D6]',
           colorClassHover: 'hover:border-[#2B95FF]',
           accentBorder: 'border-[#2B95FF]/30',
           lightBg: 'bg-[#2B95FF]/10 dark:bg-[#2B95FF]/15',
@@ -528,11 +528,11 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                   isArabic ? 'pr-8 pl-7 sm:pr-10 sm:pl-10' : 'pl-8 pr-7 sm:pl-10 sm:pr-10'
                 }`}
               />
-              <Search className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#8B95A5] dark:text-[#64748B] absolute top-1/2 -translate-y-1/2 ${isArabic ? 'right-3 sm:right-4' : 'left-3 sm:left-4'}`} />
+              <Search className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#64748B] dark:text-[#94A3B8] absolute top-1/2 -translate-y-1/2 ${isArabic ? 'right-3 sm:right-4' : 'left-3 sm:left-4'}`} />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className={`absolute top-1/2 -translate-y-1/2 ${isArabic ? 'left-2 sm:left-3' : 'right-2 sm:right-3'} p-1 rounded-full hover:bg-[#161B26]/5 dark:hover:bg-white/10 text-[#8B95A5] dark:text-[#64748B] transition-colors cursor-pointer`}
+                  className={`absolute top-1/2 -translate-y-1/2 ${isArabic ? 'left-2 sm:left-3' : 'right-2 sm:right-3'} p-1 rounded-full hover:bg-[#161B26]/5 dark:hover:bg-white/10 text-[#64748B] dark:text-[#94A3B8] transition-colors cursor-pointer`}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -553,7 +553,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                     {sortBy === 'recommended' && (isArabic ? 'الترتيب: الموصى به' : 'Sort: Recommended')}
                     {sortBy === 'name' && (isArabic ? 'أبجدياً (أ-ي)' : 'Alphabetical')}
                   </span>
-                  <ChevronDown className="w-3 h-3 text-[#8B95A5] dark:text-[#64748B] shrink-0" />
+                  <ChevronDown className="w-3 h-3 text-[#64748B] dark:text-[#94A3B8] shrink-0" />
                 </button>
 
                 {isSortOpen && (
@@ -621,7 +621,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                       : 'liquid-glass-pill text-[#4B5563] dark:text-[#94A3B8] hover:text-[#161B26] dark:hover:text-[#F8FAFC]'
                   }`}
                 >
-                  <TabIcon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-[#8B95A5] dark:text-[#64748B]'}`} />
+                  <TabIcon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-[#64748B] dark:text-[#94A3B8]'}`} />
                   <span>{isArabic ? tab.labelAr : tab.labelEn}</span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
                     isActive ? 'bg-white/20 text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
@@ -647,7 +647,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
             <span>{isArabic ? 'عنصر في الدليل' : 'items'}</span>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#8B95A5] dark:text-[#64748B]">
+          <div className="flex items-center gap-2 text-xs font-semibold text-[#64748B] dark:text-[#94A3B8]">
             <span>{isArabic ? 'العرض الافتراضي للجوال: سلايدر · للكمبيوتر: شبكة' : 'Mobile Default: Slider · Desktop: Grid'}</span>
           </div>
         </div>
@@ -884,7 +884,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
 
                           {/* Key Outcomes */}
                           <div className="space-y-1.5 sm:space-y-2 pt-0.5">
-                            <span className="text-[10px] sm:text-[11px] font-black text-[#8B95A5] dark:text-[#64748B] block uppercase tracking-wider">
+                            <span className="text-[10px] sm:text-[11px] font-black text-[#64748B] dark:text-[#94A3B8] block uppercase tracking-wider">
                               {isArabic ? 'أبرز مخرجات البرنامج:' : 'Key Outcomes:'}
                             </span>
                             {((isArabic ? service.benefits : (service.benefitsEn || service.benefits)) || []).slice(0, 3).map((benefit, bIdx) => (
@@ -943,7 +943,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
 
             {/* Slider visual hint on mobile when in slider mode */}
             {programsViewMode === 'slider' && filteredServices.length > 1 && (
-              <div className="mt-3 flex items-center justify-center gap-1.5 text-[11px] font-bold text-[#8B95A5] dark:text-[#64748B] sm:hidden">
+              <div className="mt-3 flex items-center justify-center gap-1.5 text-[11px] font-bold text-[#64748B] dark:text-[#94A3B8] sm:hidden">
                 <span>{isArabic ? 'اسحب لليمين واليسار للتنقل بين البرامج' : 'Swipe left/right to view programs'}</span>
               </div>
             )}
@@ -1074,7 +1074,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                 </p>
                 <button
                   onClick={() => setCoursesFilter('all')}
-                  className="px-5 py-2 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] text-white font-bold text-xs shadow-sm shadow-[#2B95FF]/20 transition-all cursor-pointer"
+                  className="px-5 py-2 rounded-full bg-gradient-to-r from-[#1668DC] to-[#1152B8] text-white font-bold text-xs shadow-sm shadow-[#2B95FF]/20 transition-all cursor-pointer"
                 >
                   {isArabic ? 'إظهار كافة الكورسات' : 'Show All Courses'}
                 </button>
@@ -1113,7 +1113,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                       {/* Header */}
                       <div className="p-2.5 sm:p-4 pb-2 sm:pb-3 bg-[#2B95FF]/5 border-b border-[#161B26]/[0.06] dark:border-white/[0.08] relative">
                         <div className="flex items-center justify-between gap-1 mb-1.5 sm:mb-2.5">
-                          <span className="inline-block px-2.5 py-0.5 rounded-full text-[9.5px] sm:text-xs font-black bg-[#2B95FF] dark:bg-[#1E293B] text-white dark:text-[#F8FAFC] dark:border dark:border-white/15 shadow-2xs truncate max-w-[170px]">
+                          <span className="inline-block px-2.5 py-0.5 rounded-full text-[9.5px] sm:text-xs font-black bg-[#1463D6] dark:bg-[#1E293B] text-white dark:text-[#F8FAFC] dark:border dark:border-white/15 shadow-2xs truncate max-w-[170px]">
                             {ribbon}
                           </span>
 
@@ -1127,7 +1127,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                         </div>
 
                         <div className="flex items-center gap-2 sm:gap-3">
-                          <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-[#2B95FF] to-[#1A73E8] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform shrink-0">
+                          <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-[#1668DC] to-[#1152B8] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform shrink-0">
                             <CourseCustomIcon iconName={course.iconName || 'award'} className="w-4.5 h-4.5 sm:w-6 sm:h-6" />
                           </div>
 
@@ -1154,7 +1154,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
 
                           {/* Syllabus */}
                           <div className="space-y-1 pt-0.5">
-                            <span className="text-[9px] sm:text-[10px] font-black text-[#8B95A5] dark:text-[#64748B] block uppercase tracking-wider">
+                            <span className="text-[9px] sm:text-[10px] font-black text-[#64748B] dark:text-[#94A3B8] block uppercase tracking-wider">
                               {isArabic ? 'محاور الدورة:' : 'Key Syllabus:'}
                             </span>
                             {((isArabic ? course.featuresAr : course.featuresEn) || []).slice(0, 2).map((feat, fIdx) => (
@@ -1178,7 +1178,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                         {/* Pricing & Registration */}
                         <div className="pt-2 sm:pt-2.5 border-t border-[#161B26]/[0.06] dark:border-white/[0.08] space-y-1.5 sm:space-y-2">
                           <div className="flex items-center justify-between">
-                            <span className="text-[9.5px] sm:text-xs font-bold text-[#8B95A5] dark:text-[#64748B]">{isArabic ? 'رسوم الدورة:' : 'Tuition:'}</span>
+                            <span className="text-[9.5px] sm:text-xs font-bold text-[#64748B] dark:text-[#94A3B8]">{isArabic ? 'رسوم الدورة:' : 'Tuition:'}</span>
                             <span className="text-xs sm:text-sm font-black text-[#1263D6] dark:text-[#60AFFF]">{price}</span>
                           </div>
 
@@ -1193,7 +1193,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
 
                             <button
                               onClick={() => onRegisterCourse(course)}
-                              className="py-1.5 px-2 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white text-[10px] sm:text-xs font-black flex items-center justify-center gap-1 transition-all shadow-sm shadow-[#2B95FF]/20 cursor-pointer active:scale-95"
+                              className="py-1.5 px-2 rounded-full bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 text-white text-[10px] sm:text-xs font-black flex items-center justify-center gap-1 transition-all shadow-sm shadow-[#2B95FF]/20 cursor-pointer active:scale-95"
                             >
                               <GraduationCap className="w-3 h-3" />
                               <span>{isArabic ? 'سجل الآن' : 'Register'}</span>
@@ -1210,7 +1210,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
 
             {/* Slider visual hint on mobile */}
             {coursesViewMode === 'slider' && filteredCourses.length > 1 && (
-              <div className="mt-2.5 flex items-center justify-center gap-1.5 text-[10.5px] font-bold text-[#8B95A5] dark:text-[#64748B] sm:hidden">
+              <div className="mt-2.5 flex items-center justify-center gap-1.5 text-[10.5px] font-bold text-[#64748B] dark:text-[#94A3B8] sm:hidden">
                 <span>{isArabic ? 'اسحب لليمين واليسار للتنقل بين الكورسات' : 'Swipe left/right to view courses'}</span>
               </div>
             )}
@@ -1320,7 +1320,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                       className={`shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                         isActive
                           ? isSummerTab
-                            ? 'bg-gradient-to-r from-[#F59E0B] to-[#D97706] text-white font-black shadow-sm shadow-[#F59E0B]/25'
+                            ? 'bg-gradient-to-r from-[#B45309] to-[#92400E] text-white font-black shadow-sm shadow-[#F59E0B]/25'
                             : 'warm-pill-cta font-black shadow-xs'
                           : isSummerTab
                             ? 'liquid-glass-pill text-[#B45309] dark:text-[#FBBF24] border-[#F59E0B]/30'
@@ -1347,7 +1347,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                 </p>
                 <button
                   onClick={() => setPackagesFilter('all')}
-                  className="px-5 py-2 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] text-white font-bold text-xs shadow-sm shadow-[#2B95FF]/20 transition-all cursor-pointer"
+                  className="px-5 py-2 rounded-full bg-gradient-to-r from-[#1668DC] to-[#1152B8] text-white font-bold text-xs shadow-sm shadow-[#2B95FF]/20 transition-all cursor-pointer"
                 >
                   {isArabic ? 'إظهار كافة الباقات' : 'Show All Packages'}
                 </button>
@@ -1390,13 +1390,13 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                         <div className="flex items-center justify-between gap-1.5 mb-1.5 sm:mb-3">
                           <div className="flex items-center gap-1 flex-wrap">
                             {isSummer && (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#F59E0B] to-[#D97706] text-white text-[9.5px] sm:text-[10.5px] font-black shadow-2xs">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-[#B45309] to-[#92400E] text-white text-[9.5px] sm:text-[10.5px] font-black shadow-2xs">
                                 <Sun className="w-3 h-3 text-white" />
                                 <span>{isArabic ? 'باقة الصيف' : 'Summer'}</span>
                               </span>
                             )}
                             {pkg.popular && (
-                              <span className="px-2.5 py-0.5 rounded-full bg-[#2B95FF] dark:bg-[#1E293B] text-white dark:text-[#F8FAFC] dark:border dark:border-white/15 text-[9px] sm:text-[10px] font-black tracking-wider uppercase">
+                              <span className="px-2.5 py-0.5 rounded-full bg-[#1463D6] dark:bg-[#1E293B] text-white dark:text-[#F8FAFC] dark:border dark:border-white/15 text-[9px] sm:text-[10px] font-black tracking-wider uppercase">
                                 {isArabic ? 'الأكثر طلباً' : 'POPULAR'}
                               </span>
                             )}
@@ -1462,7 +1462,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                           </div>
 
                           {/* Installment Logos */}
-                          <div className="pt-0.5 flex items-center gap-1.5 flex-wrap text-[#8B95A5] dark:text-[#64748B] text-[9.5px] sm:text-xs">
+                          <div className="pt-0.5 flex items-center gap-1.5 flex-wrap text-[#64748B] dark:text-[#94A3B8] text-[9.5px] sm:text-xs">
                             <span className="text-[9.5px] sm:text-[10px] font-bold text-[#4B5563] dark:text-[#94A3B8] shrink-0">{isArabic ? 'تقسيط:' : 'Installments:'}</span>
                             <TamaraLogo height={18} className="h-4.5 sm:h-5" />
                             <EmkanLogo height={18} className="h-4.5 sm:h-5" />
@@ -1475,7 +1475,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                             <div>
                               {pkg.originalPrice && pkg.originalPrice > pkg.price && (
                                 <div className="flex items-center gap-1 mb-0.5">
-                                  <span className="text-[9.5px] sm:text-[11px] text-[#8B95A5] dark:text-[#64748B] line-through font-bold">
+                                  <span className="text-[9.5px] sm:text-[11px] text-[#64748B] dark:text-[#94A3B8] line-through font-bold">
                                     {pkg.originalPrice} {isArabic ? 'ر.س' : 'SAR'}
                                   </span>
                                   <span className="text-[8.5px] sm:text-[9.5px] font-black px-1.5 py-0.2 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400">
@@ -1493,8 +1493,8 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                               onClick={() => onSelectPackage(pkg)}
                               className={`py-2 sm:py-2.5 px-3.5 sm:px-5 rounded-full hover:brightness-110 active:scale-95 text-white text-[10.5px] sm:text-xs font-black flex items-center gap-1 transition-all cursor-pointer shrink-0 shadow-sm ${
                                 isSummer
-                                  ? 'bg-gradient-to-r from-[#F59E0B] to-[#D97706] shadow-[#F59E0B]/20'
-                                  : 'bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] shadow-[#2B95FF]/20'
+                                  ? 'bg-gradient-to-r from-[#B45309] to-[#92400E] shadow-[#F59E0B]/20'
+                                  : 'bg-gradient-to-r from-[#1668DC] to-[#1152B8] shadow-[#2B95FF]/20'
                               }`}
                             >
                               {isSummer && <Sun className="w-3 h-3 text-white shrink-0" />}
@@ -1513,7 +1513,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
 
             {/* Slider visual hint on mobile */}
             {packagesViewMode === 'slider' && filteredPackages.length > 1 && (
-              <div className="mt-2.5 flex items-center justify-center gap-1.5 text-[10.5px] font-bold text-[#8B95A5] dark:text-[#64748B] sm:hidden">
+              <div className="mt-2.5 flex items-center justify-center gap-1.5 text-[10.5px] font-bold text-[#64748B] dark:text-[#94A3B8] sm:hidden">
                 <span>{isArabic ? 'اسحب لليمين واليسار للتنقل بين الباقات' : 'Swipe left/right to view packages'}</span>
               </div>
             )}
@@ -1543,7 +1543,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                 const msg = encodeURIComponent('السلام عليكم، أود استشارة توجيهية لاختيار البرنامج أو الباقة الأنسب لطفلي');
                 window.open(`https://wa.me/966575100100?text=${msg}`, '_blank', 'noopener,noreferrer');
               }}
-              className="px-6 py-3.5 rounded-full bg-gradient-to-r from-[#10B981] to-[#059669] hover:brightness-110 text-white font-black text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-[#10B981]/25 transition-all cursor-pointer active:scale-95"
+              className="px-6 py-3.5 rounded-full bg-gradient-to-r from-[#047857] to-[#065F46] hover:brightness-110 text-white font-black text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-[#10B981]/25 transition-all cursor-pointer active:scale-95"
             >
               <MessageCircle className="w-4 h-4" />
               <span>{isArabic ? 'محادثة عبر واتساب' : 'WhatsApp Consultation'}</span>

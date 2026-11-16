@@ -1029,7 +1029,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen relative flex flex-col font-sans text-[#161B26] dark:text-[#F8FAFC] selection:bg-[#2B95FF] selection:text-white md:transition-colors md:duration-300 overflow-x-clip w-full max-w-[100vw] pb-16 md:pb-0" dir="rtl">
+    <div className="min-h-screen relative flex flex-col font-sans text-[#161B26] dark:text-[#F8FAFC] selection:bg-[#1463D6] selection:text-white md:transition-colors md:duration-300 overflow-x-clip w-full max-w-[100vw] pb-16 md:pb-0" dir="rtl">
       
       {/* 1. Gentle Animated Background with floating pediatric shapes */}
       <AnimatedBackground />

@@ -238,13 +238,13 @@ export const PersistentSyncTab: React.FC<PersistentSyncTabProps> = ({ onFeedback
             <div className="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 min-w-[130px] text-center">
               <div className="text-xs text-slate-400 mb-1">{isArabic ? 'ملفات التخصيص' : 'Config Files'}</div>
               <div className="text-xl font-black text-[#00E5BE]">{status?.dataFilesCount || 18}</div>
-              <div className="text-[10px] text-slate-500 mt-1">/data/*.json</div>
+              <div className="text-[10px] text-slate-400 mt-1">/data/*.json</div>
             </div>
 
             <div className="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 min-w-[130px] text-center">
               <div className="text-xs text-slate-400 mb-1">{isArabic ? 'المرفقات والصور' : 'Attachments'}</div>
               <div className="text-xl font-black text-amber-400">{status?.uploadFilesCount || 0}</div>
-              <div className="text-[10px] text-slate-500 mt-1">/public/uploads/</div>
+              <div className="text-[10px] text-slate-400 mt-1">/public/uploads/</div>
             </div>
 
             <div className="bg-slate-800/80 border border-slate-700/60 rounded-2xl p-4 min-w-[140px] text-center">
@@ -365,9 +365,9 @@ export const PersistentSyncTab: React.FC<PersistentSyncTabProps> = ({ onFeedback
                   </p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[10px] text-slate-400 font-mono">
+                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[10px] text-slate-600 dark:text-slate-400 font-mono">
                   <span>{m.file}</span>
-                  <span className="text-emerald-500 font-bold">200 OK</span>
+                  <span className="text-emerald-700 dark:text-emerald-400 font-bold">200 OK</span>
                 </div>
               </div>
             );

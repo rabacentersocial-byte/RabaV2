@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 import { compressImage } from '../../utils/imageCompressor';
+import { getAccessibleAccentColor } from '../../utils/colorContrast';
 import { 
   CourseItem, 
   CoursesSectionSettings, 
@@ -391,7 +392,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
 
       {/* Floating Save Feedback */}
       {saveSuccess && (
-        <div className="fixed bottom-6 end-6 z-50 flex items-center gap-2 bg-emerald-600 text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-xl border border-emerald-400/40 animate-in fade-in slide-in-from-bottom-3 duration-300">
+        <div className="fixed bottom-6 end-6 z-50 flex items-center gap-2 bg-emerald-700 text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-xl border border-emerald-400/40 animate-in fade-in slide-in-from-bottom-3 duration-300">
           <CheckCircle2 className="w-5 h-5 shrink-0" />
           <span>{feedbackMessage}</span>
         </div>
@@ -410,7 +411,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
           </div>
           <button
             onClick={handleSaveSettings}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-teal-600 hover:bg-teal-700 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-teal-700 hover:bg-teal-800 transition-colors cursor-pointer"
           >
             <Save className="w-3.5 h-3.5" />
             <span>{isArabic ? 'حفظ إعدادات القسم' : 'Save Section Settings'}</span>
@@ -603,7 +604,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
                     className={`p-2 rounded-lg transition-colors cursor-pointer ${
                       course.isActive !== false
                         ? 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
-                        : 'text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
                     }`}
                     title={course.isActive !== false ? (isArabic ? 'إخفاء من السلايدر' : 'Hide') : (isArabic ? 'إظهار بالسلايدر' : 'Show')}
                   >
@@ -662,7 +663,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                className="p-1.5 rounded-xl text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -830,7 +831,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
 
                       {/* Swatches */}
                       <div className="flex flex-wrap items-center gap-1.5 mt-2">
-                        <span className="text-[10px] text-slate-400 font-bold">{isArabic ? 'ألوان جاهزة:' : 'Presets:'}</span>
+                        <span className="text-[10px] text-slate-600 dark:text-slate-400 font-bold">{isArabic ? 'ألوان جاهزة:' : 'Presets:'}</span>
                         {ACCENT_COLOR_PRESETS.map((colorItem) => (
                           <button
                             key={colorItem.hex}
@@ -1056,7 +1057,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
                       type="button"
                       onClick={() => setPreviewTheme('light')}
                       className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
-                        previewTheme === 'light' ? 'bg-amber-100 text-amber-900 shadow-2xs' : 'text-slate-400'
+                        previewTheme === 'light' ? 'bg-amber-100 text-amber-900 shadow-2xs' : 'text-slate-600 dark:text-slate-400'
                       }`}
                       title={isArabic ? 'معاينة بالوضع النهاري' : 'Light Preview'}
                     >
@@ -1066,7 +1067,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
                       type="button"
                       onClick={() => setPreviewTheme('dark')}
                       className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
-                        previewTheme === 'dark' ? 'bg-slate-800 text-slate-100 shadow-2xs' : 'text-slate-400'
+                        previewTheme === 'dark' ? 'bg-slate-800 text-slate-100 shadow-2xs' : 'text-slate-600 dark:text-slate-400'
                       }`}
                       title={isArabic ? 'معاينة بالوضع الليلي' : 'Dark Preview'}
                     >
@@ -1078,52 +1079,73 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
                 {/* THE ACTUAL LIVE COURSE CARD */}
                 {(() => {
                   const previewLogoTheme = getCourseLogoTheme(formData);
+                  const isDarkPreview = previewTheme === 'dark';
+                  const previewAccent = getAccessibleAccentColor(previewLogoTheme.accentHex, isDarkPreview);
                   return (
-                    <div className={`w-full max-w-[360px] p-2 rounded-3xl transition-colors duration-300 ${previewTheme === 'dark' ? 'bg-slate-950' : 'bg-slate-100'}`}>
+                    <div className={`w-full max-w-[360px] p-2 rounded-3xl transition-colors duration-300 ${isDarkPreview ? 'bg-slate-950' : 'bg-slate-100'}`}>
                       <div
                         className={`rounded-[32px] overflow-hidden border transition-all duration-300 flex flex-col justify-between shadow-xl relative ${
-                          previewTheme === 'dark' 
+                          isDarkPreview 
                             ? 'bg-[#121c24] border-slate-800 text-white' 
                             : 'bg-white border-[#dceee8] text-slate-900'
                         }`}
                       >
                         {/* Top Header Section: Distinct Logo Color Container */}
-                        <div className={`p-5 pt-6 pb-5 rounded-t-[32px] border-b relative ${previewLogoTheme.headerBg} ${previewLogoTheme.headerBorder}`}>
+                        <div
+                          className={`p-5 pt-6 pb-5 rounded-t-[32px] border-b relative ${
+                            isDarkPreview ? 'bg-white/[0.04] border-white/10' : 'border-[#161B26]/[0.06]'
+                          }`}
+                          style={!isDarkPreview ? { backgroundColor: `${previewLogoTheme.accentHex}14` } : undefined}
+                        >
                           {/* Top Row: Floating Pill Badge & Icon Button */}
                           <div className="flex items-center justify-between gap-2">
-                            <span className={`${previewLogoTheme.pillBg} text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-xs`}>
+                            <span
+                              className={`text-[11px] font-bold px-3 py-1 rounded-full shadow-xs ${
+                                isDarkPreview
+                                  ? 'bg-[#1E293B] text-[#F8FAFC] border border-white/15'
+                                  : 'bg-[#1463D6] text-white'
+                              }`}
+                            >
                               {formData.floatingBadgeAr || 'الأكثر طلباً'}
                             </span>
 
-                            <div className={`w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border ${previewLogoTheme.iconBoxBorder} shadow-xs flex items-center justify-center ${previewLogoTheme.iconColor}`}>
+                            <div
+                              className={`w-9 h-9 rounded-xl border shadow-xs flex items-center justify-center ${
+                                isDarkPreview ? 'bg-slate-900 border-white/15' : 'bg-white border-[#161B26]/10'
+                              }`}
+                              style={{ color: previewAccent }}
+                            >
                               <CourseCustomIcon course={formData} className="w-4 h-4" />
                             </div>
                           </div>
 
                           {/* Category Kicker */}
-                          <div className={`${previewLogoTheme.kickerColor} text-[11px] font-extrabold tracking-wide mt-3 mb-1`}>
+                          <div
+                            className="text-[11px] font-extrabold tracking-wide mt-3 mb-1"
+                            style={{ color: previewAccent }}
+                          >
                             {formData.categoryAr || 'التقييم والتشخيص النمائي'}
                           </div>
 
                           {/* Title */}
-                          <h3 className="text-xl font-black text-slate-900 dark:text-white leading-[1.3] tracking-tight">
+                          <h3 className={`text-xl font-black leading-[1.3] tracking-tight ${isDarkPreview ? 'text-white' : 'text-slate-900'}`}>
                             {formData.titleAr || 'عنوان الكورس التدريبي'}
                           </h3>
                         </div>
 
-                        {/* Lower Section: Pure White Body */}
+                        {/* Lower Section */}
                         <div className="p-5 pt-4 rounded-b-[32px] flex-1 flex flex-col justify-between space-y-3.5">
                           <div className="space-y-3">
                             {/* Price Row */}
                             <div className="flex items-baseline gap-1.5 pt-0.5">
-                              <span className={`text-3xl font-black ${previewLogoTheme.priceColor} leading-none`}>
+                              <span className={`text-3xl font-black leading-none ${isDarkPreview ? 'text-[#F8FAFC]' : 'text-[#161B26]'}`}>
                                 {formData.currentPrice || formData.priceDisplayAr || '650'}
                               </span>
-                              <span className={`text-base font-bold ${previewLogoTheme.priceSub}`}>
+                              <span className={`text-base font-bold ${isDarkPreview ? 'text-[#94A3B8]' : 'text-[#4B5563]'}`}>
                                 {isArabic ? 'ريال' : 'SAR'}
                               </span>
                               {formData.originalPrice && (
-                                <span className="text-xs font-semibold text-slate-400 line-through mr-1">
+                                <span className={`text-xs font-semibold line-through mr-1 ${isDarkPreview ? 'text-slate-400' : 'text-slate-600'}`}>
                                   {formData.originalPrice} {isArabic ? 'ريال' : 'SAR'}
                                 </span>
                               )}
@@ -1131,28 +1153,35 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
 
                             {/* Hours Badge */}
                             <div>
-                              <div className={`inline-flex items-center gap-1.5 py-1 px-3 rounded-xl border ${previewLogoTheme.hoursBg} text-xs font-bold`}>
-                                <Clock className={`w-3.5 h-3.5 ${previewLogoTheme.hoursIconColor}`} />
+                              <div className={`inline-flex items-center gap-1.5 py-1 px-3 rounded-xl border text-xs font-bold ${
+                                isDarkPreview
+                                  ? 'bg-white/[0.06] border-white/10 text-[#F8FAFC]'
+                                  : 'bg-slate-50 border-[#161B26]/10 text-[#161B26]'
+                              }`}>
+                                <Clock className="w-3.5 h-3.5" style={{ color: previewAccent }} />
                                 <span>{formData.hoursBadgeAr || '40 ساعة تدريبية معتمدة'}</span>
                               </div>
                             </div>
 
                             {/* Sub-note */}
-                            <div className="flex items-center gap-1.5 text-[11px] text-amber-800 dark:text-amber-300 font-semibold">
+                            <div className={`flex items-center gap-1.5 text-[11px] font-semibold ${isDarkPreview ? 'text-amber-300' : 'text-amber-800'}`}>
                               <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                               <span className="truncate">{formData.tagHighlightAr || 'شهادة معتمدة دولياً ومسار مهني'}</span>
                             </div>
 
                             {/* Description */}
-                            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2">
+                            <p className={`text-xs leading-relaxed line-clamp-2 ${isDarkPreview ? 'text-slate-300' : 'text-slate-600'}`}>
                               {formData.descriptionAr || 'وصف ونبذة تعريفية عن الكورس ومخرجاته التدريبية المعتمدة...'}
                             </p>
 
                             {/* Features list */}
-                            <div className="space-y-2 pt-2.5 border-t border-slate-100 dark:border-slate-800">
+                            <div className={`space-y-2 pt-2.5 border-t ${isDarkPreview ? 'border-slate-800' : 'border-slate-100'}`}>
                               {(formData.featuresAr || []).filter(f => f.trim().length > 0).slice(0, 4).map((feat, idx) => (
-                                <div key={idx} className="flex items-start gap-2 text-xs text-slate-700 dark:text-slate-200 font-medium">
-                                  <span className={`w-3.5 h-3.5 rounded-full ${previewLogoTheme.checkBg} flex items-center justify-center shrink-0 mt-0.5`}>
+                                <div key={idx} className={`flex items-start gap-2 text-xs font-medium ${isDarkPreview ? 'text-slate-200' : 'text-slate-700'}`}>
+                                  <span
+                                    className={`w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${isDarkPreview ? 'bg-white/10' : 'bg-[#161B26]/8'}`}
+                                    style={{ color: previewAccent }}
+                                  >
                                     <Check className="w-2 h-2 stroke-[3]" />
                                   </span>
                                   <span className="leading-snug">{feat}</span>
@@ -1161,7 +1190,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
                             </div>
 
                             {/* Instructor & Accreditation Note */}
-                            <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400 pt-1 flex items-center gap-1.5 flex-wrap">
+                            <div className={`text-[11px] font-medium pt-1 flex items-center gap-1.5 flex-wrap ${isDarkPreview ? 'text-slate-300' : 'text-slate-600'}`}>
                               <span>{isArabic ? 'بإشراف نخبة من الأخصائيين المعتمدين' : 'Supervised by Certified Specialists'}</span>
                               <span>·</span>
                               <span>{formData.accreditationBadgeAr || 'اعتماد دولي'}</span>
@@ -1172,7 +1201,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
                           <div className="pt-2">
                             <button
                               type="button"
-                              className={`w-full ${previewLogoTheme.buttonBg} text-white text-xs font-bold py-3 px-4 rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer`}
+                              className="w-full bg-[#1463D6] hover:bg-[#1152B8] text-white text-xs font-bold py-3 px-4 rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                             >
                               <span>{isArabic ? 'حجز الكورس' : 'Book Course'}</span>
                             </button>

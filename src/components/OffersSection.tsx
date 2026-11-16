@@ -21,6 +21,7 @@ import { useTheme } from '../context/ThemeContext';
 import { SaudiNationalDayBadge, SaudiFalconGraphic } from './NationalDayVisuals';
 import { OfferData } from '../types';
 import { getStoredOffers } from '../data/offersData';
+import { getAccessibleAccentColor, getContrastTextForBg } from '../utils/colorContrast';
 
 interface OffersSectionProps {
   onClaimOffer: (offerTitle: string, discountedPrice?: number) => void;
@@ -243,7 +244,8 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
             const isPercentage = offer.discountType === 'percentage';
 
             const styling = offer.styling || {};
-            const darkBgGradient = styling.bgGradientFrom 
+            const hasLightCustomBg = styling.bgGradientFrom && getContrastTextForBg(styling.bgGradientFrom) === '#0F172A';
+            const darkBgGradient = styling.bgGradientFrom && !hasLightCustomBg
               ? `linear-gradient(135deg, ${styling.bgGradientFrom} 0%, ${styling.bgGradientVia || styling.bgGradientFrom} 50%, ${styling.bgGradientTo || styling.bgGradientFrom} 100%)`
               : undefined;
             const lightCardGradient = offer.theme === 'emerald' || styling.themePreset === 'emerald'
@@ -255,20 +257,23 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
             const borderColor = isLight
               ? (offer.theme === 'emerald' ? 'rgba(16,185,129,0.28)' : offer.theme === 'teal' ? 'rgba(13,148,136,0.28)' : 'rgba(43,149,255,0.28)')
               : (styling.borderColor || 'rgba(43,149,255,0.35)');
-            const darkAccentColor = styling.accentColor || '#2B95FF';
+            const rawDarkAccent = styling.accentColor || '#60AFFF';
             const lightAccentColor = offer.theme === 'emerald' || styling.themePreset === 'emerald'
-              ? '#059669'
+              ? '#047857'
               : offer.theme === 'teal' || styling.themePreset === 'teal'
-                ? '#0D9488'
-                : '#1A73E8';
-            const accentColor = isLight ? lightAccentColor : darkAccentColor;
+                ? '#0F766E'
+                : '#1463D6';
+            const accentColor = getAccessibleAccentColor(isLight ? lightAccentColor : rawDarkAccent, !isLight);
+            const ctaBg = isLight ? lightAccentColor : (styling.accentColor || '#1463D6');
+            const ctaTextColor = getContrastTextForBg(ctaBg);
             const glowColor = isLight
               ? (offer.theme === 'emerald' ? 'rgba(16,185,129,0.12)' : offer.theme === 'teal' ? 'rgba(20,184,166,0.12)' : 'rgba(43,149,255,0.12)')
               : (styling.glowColor || 'rgba(43,149,255,0.18)');
-            const subcardBg = isLight ? 'rgba(255, 255, 255, 0.86)' : (styling.subcardBg || '#161C2A');
+            const hasLightSubcardBg = styling.subcardBg && getContrastTextForBg(styling.subcardBg) === '#0F172A';
+            const subcardBg = isLight ? 'rgba(255, 255, 255, 0.86)' : (styling.subcardBg && !hasLightSubcardBg ? styling.subcardBg : '#161C2A');
             const subcardBorder = isLight ? 'rgba(22, 27, 38, 0.08)' : (styling.subcardBorder || 'rgba(43,149,255,0.28)');
-            const ribbonBg = isLight ? lightAccentColor : (styling.ribbonBgColor || '#2B95FF');
-            const ribbonText = isLight ? '#FFFFFF' : (styling.ribbonTextColor || '#FFFFFF');
+            const ribbonBg = isLight ? lightAccentColor : (styling.ribbonBgColor || '#1463D6');
+            const ribbonText = getContrastTextForBg(ribbonBg);
             const ribbonLabel = isArabic 
               ? (offer.ribbonAr || (isFreeDay ? 'لجميع عملائنا' : 'للعملاء الجدد'))
               : (offer.ribbonEn || (isFreeDay ? 'All Clients' : 'New Clients'));
@@ -489,7 +494,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                     <div className="mb-2.5 sm:mb-3">
                       <span 
                         className="text-[8px] sm:text-[9px] font-black tracking-widest uppercase block mb-1"
-                        style={{ color: isLight ? accentColor : `${accentColor}cc` }}
+                        style={{ color: accentColor }}
                       >
                         {isArabic ? 'المتبقي حتى الموعد المحدد' : 'COUNTDOWN'}
                       </span>
@@ -502,7 +507,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                           <span className="text-xs sm:text-base md:text-lg font-black text-[#161B26] dark:text-white leading-none font-mono block">
                             {fmt(cd.days)}
                           </span>
-                          <span className="text-[7px] sm:text-[8px] font-bold text-[#4B5563] dark:text-emerald-300/70 uppercase mt-0.5 block">
+                          <span className="text-[7px] sm:text-[8px] font-bold text-[#4B5563] dark:text-emerald-200 uppercase mt-0.5 block">
                             {isArabic ? 'يوم' : 'Days'}
                           </span>
                         </div>
@@ -514,7 +519,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                           <span className="text-xs sm:text-base md:text-lg font-black text-[#161B26] dark:text-white leading-none font-mono block">
                             {fmt(cd.hours)}
                           </span>
-                          <span className="text-[7px] sm:text-[8px] font-bold text-[#4B5563] dark:text-emerald-300/70 uppercase mt-0.5 block">
+                          <span className="text-[7px] sm:text-[8px] font-bold text-[#4B5563] dark:text-emerald-200 uppercase mt-0.5 block">
                             {isArabic ? 'ساعة' : 'Hours'}
                           </span>
                         </div>
@@ -526,7 +531,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                           <span className="text-xs sm:text-base md:text-lg font-black text-[#161B26] dark:text-white leading-none font-mono block">
                             {fmt(cd.minutes)}
                           </span>
-                          <span className="text-[7px] sm:text-[8px] font-bold text-[#4B5563] dark:text-emerald-300/70 uppercase mt-0.5 block">
+                          <span className="text-[7px] sm:text-[8px] font-bold text-[#4B5563] dark:text-emerald-200 uppercase mt-0.5 block">
                             {isArabic ? 'دقيقة' : 'Mins'}
                           </span>
                         </div>
@@ -541,7 +546,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                           >
                             {fmt(cd.seconds)}
                           </span>
-                          <span className="text-[7px] sm:text-[8px] font-bold text-[#4B5563] dark:text-emerald-300/70 uppercase mt-0.5 block">
+                          <span className="text-[7px] sm:text-[8px] font-bold text-[#4B5563] dark:text-emerald-200 uppercase mt-0.5 block">
                             {isArabic ? 'ثانية' : 'Secs'}
                           </span>
                         </div>
@@ -574,7 +579,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                         </>
                       ) : (
                         <>
-                          <Copy className="w-2.5 h-2.5 sm:w-3 sm:h-3" style={{ color: isLight ? accentColor : `${accentColor}cc` }} />
+                          <Copy className="w-2.5 h-2.5 sm:w-3 sm:h-3" style={{ color: accentColor }} />
                           <span className="text-[9.5px] sm:text-[11px]">{offer.couponCode}</span>
                         </>
                       )}
@@ -585,8 +590,8 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                       onClick={() => onClaimOffer(isArabic ? offer.titleAr : offer.titleEn, offer.discountValue)}
                       className="flex-1 font-black text-[10px] sm:text-xs sm:text-sm py-1.5 sm:py-2.5 px-2 sm:px-3 rounded-lg sm:rounded-xl shadow-md transition-all active:scale-98 text-center cursor-pointer flex items-center justify-center gap-1 hover:brightness-110"
                       style={{
-                        backgroundColor: accentColor,
-                        color: isLight ? '#FFFFFF' : (styling.badgeTextColor || '#022c22')
+                        backgroundColor: ctaBg,
+                        color: ctaTextColor
                       }}
                     >
                       <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" style={{ fill: 'currentColor' }} />
@@ -598,7 +603,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
 
                   {/* Contact Phone & Info Bar */}
                   <div 
-                    className="flex items-center justify-between text-[8px] sm:text-[10px] text-[#4B5563] dark:text-emerald-200/70 pt-0.5 border-t"
+                    className="flex items-center justify-between text-[8px] sm:text-[10px] text-[#4B5563] dark:text-emerald-200 pt-0.5 border-t"
                     style={{ borderColor: isLight ? 'rgba(22, 27, 38, 0.06)' : `${borderColor}20` }}
                   >
                     <a href={`tel:${contactPhone}`} className="flex items-center gap-1 hover:text-[#161B26] dark:hover:text-white font-mono font-bold">

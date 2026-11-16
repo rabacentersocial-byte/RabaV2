@@ -445,7 +445,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                 type="button"
                 onClick={handleActivateCloudSync}
                 disabled={isActivatingCloudAuth}
-                className="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black flex items-center gap-1.5 shadow-sm cursor-pointer disabled:opacity-60"
+                className="px-3.5 py-2 rounded-xl bg-amber-700 hover:bg-amber-800 text-white text-xs font-black flex items-center gap-1.5 shadow-sm cursor-pointer disabled:opacity-60"
               >
                 <Cloud className="w-3.5 h-3.5" />
                 <span>
@@ -492,7 +492,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
       
       {/* New Leads Notification Banner */}
       {countNewLeads > 0 && (
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-700 to-[#0B3B36] text-white flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md animate-in slide-in-from-top-2">
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-700 via-teal-800 to-[#0B3B36] text-white flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md animate-in slide-in-from-top-2">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-white shrink-0">
               <Sparkles className="w-5 h-5 text-emerald-300 animate-pulse" />
@@ -597,7 +597,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
           onClick={() => setTypeFilter('quick_consultation')}
           className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
             typeFilter === 'quick_consultation'
-              ? 'bg-amber-600 text-white shadow-sm'
+              ? 'bg-amber-700 text-white shadow-sm'
               : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
           }`}
         >
@@ -610,7 +610,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
           onClick={() => setTypeFilter('course')}
           className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
             typeFilter === 'course'
-              ? 'bg-pink-600 text-white shadow-sm'
+              ? 'bg-pink-700 text-white shadow-sm'
               : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
           }`}
         >
@@ -623,7 +623,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
           onClick={() => setTypeFilter('store_order')}
           className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
             typeFilter === 'store_order'
-              ? 'bg-sky-600 text-white shadow-sm'
+              ? 'bg-sky-700 text-white shadow-sm'
               : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
           }`}
         >
@@ -644,9 +644,9 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={isArabic ? 'بحث بالاسم، الجوال، المرجع، أو الملاحظات...' : 'Search by name, phone, ref, or notes...'}
-            className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+            className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-slate-800 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
           />
-          <Search className={`w-4 h-4 text-slate-400 absolute ${isArabic ? 'left-3' : 'right-3'} top-3`} />
+          <Search className={`w-4 h-4 text-slate-500 dark:text-slate-400 absolute ${isArabic ? 'left-3' : 'right-3'} top-3`} />
         </div>
 
         {/* Filters and Add button */}
@@ -682,7 +682,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
           {/* Export Report with Filter Button */}
           <button
             onClick={() => setIsReportModalOpen(true)}
-            className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm cursor-pointer shrink-0 transition-all"
+            className="px-3.5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm cursor-pointer shrink-0 transition-all"
             title={isArabic ? 'استخراج وتصدير تقرير الحجوزات مع الفلترة' : 'Export & Filter Bookings Report'}
           >
             <FileSpreadsheet className="w-3.5 h-3.5" />
@@ -721,7 +721,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
             <tbody className="divide-y divide-slate-100 dark:divide-white/5 text-slate-800 dark:text-slate-200">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="p-10 text-center text-slate-400 text-xs">
+                  <td colSpan={8} className="p-10 text-center text-slate-500 dark:text-slate-400 text-xs">
                     {isArabic ? 'لا توجد طلبات أو حجوزات مطابقة للفلتر المحدد' : 'No requests or bookings match current filter'}
                   </td>
                 </tr>
@@ -757,7 +757,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                           {app.childName}
                         </div>
                         {app.childAge > 0 && (
-                          <div className="text-[11px] text-slate-500 mt-0.5">
+                          <div className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">
                             {app.childAge} {isArabic ? 'سنوات' : 'years'} {app.childBirthDate ? `(${app.childBirthDate})` : ''}
                           </div>
                         )}
@@ -768,7 +768,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                         <div className="font-semibold text-slate-800 dark:text-slate-200">
                           {app.guardianName}
                         </div>
-                        <div className="text-[11px] text-slate-500 font-mono mt-0.5 flex items-center gap-1">
+                        <div className="text-[11px] text-slate-600 dark:text-slate-400 font-mono mt-0.5 flex items-center gap-1">
                           <span dir="ltr">{app.guardianPhone}</span>
                         </div>
                       </td>
@@ -793,7 +793,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                       {/* Date & Time */}
                       <td className="p-4">
                         <div className="font-bold">{app.date}</div>
-                        <div className="text-[11px] text-slate-500 mt-0.5">{app.timeSlot}</div>
+                        <div className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">{app.timeSlot}</div>
                       </td>
 
                       {/* Amount */}
@@ -801,7 +801,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                         {app.amount > 0 ? (
                           <span>{app.amount} {isArabic ? 'ر.س' : 'SAR'}</span>
                         ) : (
-                          <span className="text-emerald-600 dark:text-emerald-400 text-[11px] font-bold">
+                          <span className="text-emerald-700 dark:text-emerald-400 text-[11px] font-bold">
                             {isArabic ? 'استشارة مجانية' : 'Free Lead'}
                           </span>
                         )}
@@ -859,7 +859,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                           {canSendWhatsapp && (
                             <button
                               onClick={() => handleSendWhatsApp(app)}
-                              className="p-1.5 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366] text-[#25D366] hover:text-white transition-colors cursor-pointer"
+                              className="p-1.5 rounded-xl bg-[#10B981]/15 hover:bg-[#047857] text-[#047857] dark:text-[#34D399] hover:text-white transition-colors cursor-pointer"
                               title={isArabic ? 'تواصل فوري عبر الواتساب' : 'WhatsApp Client'}
                             >
                               <MessageSquare className="w-3.5 h-3.5" />
@@ -870,7 +870,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                           {canManage && (
                             <button
                               onClick={() => handleDeleteRequest(app)}
-                              className="p-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white transition-colors cursor-pointer"
+                              className="p-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-700 dark:text-rose-400 hover:text-white transition-colors cursor-pointer"
                               title={isArabic ? 'حذف الطلب' : 'Delete Request'}
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -912,7 +912,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                       ({selectedRequest.referenceNumber})
                     </span>
                   </h3>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
                     {isArabic ? `تاريخ ووقت الورود: ${selectedRequest.createdAt}` : `Received: ${selectedRequest.createdAt}`}
                   </p>
                 </div>
@@ -922,7 +922,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                 {renderTypeBadge(selectedRequest.requestType)}
                 <button
                   onClick={() => setSelectedRequest(null)}
-                  className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-500 cursor-pointer"
+                  className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -940,24 +940,24 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                 </span>
                 <div className="space-y-1 pt-1">
                   <div className="flex justify-between">
-                    <span className="text-slate-500">{isArabic ? 'الاسم:' : 'Name:'}</span>
+                    <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'الاسم:' : 'Name:'}</span>
                     <span className="font-bold text-slate-800 dark:text-white">{selectedRequest.guardianName}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-500">{isArabic ? 'رقم الجوال:' : 'Phone:'}</span>
-                    <a href={`tel:${selectedRequest.guardianPhone}`} className="font-mono font-bold text-emerald-700 hover:underline" dir="ltr">
+                    <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'رقم الجوال:' : 'Phone:'}</span>
+                    <a href={`tel:${selectedRequest.guardianPhone}`} className="font-mono font-bold text-emerald-700 dark:text-emerald-400 hover:underline" dir="ltr">
                       {selectedRequest.guardianPhone}
                     </a>
                   </div>
                   {selectedRequest.guardianEmail && (
                     <div className="flex justify-between">
-                      <span className="text-slate-500">{isArabic ? 'البريد الإلكتروني:' : 'Email:'}</span>
+                      <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'البريد الإلكتروني:' : 'Email:'}</span>
                       <span className="font-mono text-slate-700 dark:text-slate-300">{selectedRequest.guardianEmail}</span>
                     </div>
                   )}
                   {selectedRequest.shippingAddress && (
                     <div className="flex justify-between">
-                      <span className="text-slate-500">{isArabic ? 'عنوان التوصيل:' : 'Address:'}</span>
+                      <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'عنوان التوصيل:' : 'Address:'}</span>
                       <span className="font-medium text-slate-800 dark:text-slate-200">{selectedRequest.shippingAddress}</span>
                     </div>
                   )}
@@ -972,28 +972,28 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                 </span>
                 <div className="space-y-1 pt-1">
                   <div className="flex justify-between">
-                    <span className="text-slate-500">{isArabic ? 'اسم الطفل / المستفيد:' : 'Child Name:'}</span>
+                    <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'اسم الطفل / المستفيد:' : 'Child Name:'}</span>
                     <span className="font-bold text-slate-800 dark:text-white">{selectedRequest.childName}</span>
                   </div>
                   {selectedRequest.childAge > 0 && (
                     <div className="flex justify-between">
-                      <span className="text-slate-500">{isArabic ? 'العمر:' : 'Age:'}</span>
+                      <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'العمر:' : 'Age:'}</span>
                       <span className="font-medium">{selectedRequest.childAge} {isArabic ? 'سنوات' : 'years'}</span>
                     </div>
                   )}
                   {selectedRequest.childBirthDate && (
                     <div className="flex justify-between">
-                      <span className="text-slate-500">{isArabic ? 'تاريخ الميلاد:' : 'Birthdate:'}</span>
+                      <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'تاريخ الميلاد:' : 'Birthdate:'}</span>
                       <span className="font-mono font-medium">{selectedRequest.childBirthDate}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
-                    <span className="text-slate-500">{isArabic ? 'الخدمة / البرنامج:' : 'Service:'}</span>
+                    <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'الخدمة / البرنامج:' : 'Service:'}</span>
                     <span className="font-bold text-emerald-700 dark:text-emerald-400">{selectedRequest.serviceTitle}</span>
                   </div>
                   {selectedRequest.specialistName && (
                     <div className="flex justify-between">
-                      <span className="text-slate-500">{isArabic ? 'الأخصائي المعني:' : 'Specialist:'}</span>
+                      <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'الأخصائي المعني:' : 'Specialist:'}</span>
                       <span className="font-medium">{selectedRequest.specialistName}</span>
                     </div>
                   )}
@@ -1013,7 +1013,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                   {selectedRequest.orderItems.map((item, idx) => (
                     <div key={idx} className="pt-1.5 flex items-center justify-between">
                       <span className="font-bold text-slate-800 dark:text-slate-200">
-                        {item.name} <span className="text-slate-400">× {item.quantity}</span>
+                        {item.name} <span className="text-slate-600 dark:text-slate-400">× {item.quantity}</span>
                       </span>
                       <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400">
                         {item.price * item.quantity} {isArabic ? 'ر.س' : 'SAR'}
@@ -1049,7 +1049,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
             <div className="space-y-2 text-xs">
               <label className="font-black text-slate-900 dark:text-white flex items-center justify-between">
                 <span>{isArabic ? 'ملاحظات الاستقبال والمتابعة الداخلية (خاصة بالموظفين):' : 'Internal Staff Notes:'}</span>
-                <span className="text-[10px] text-slate-400 font-normal">{isArabic ? 'مرئية للإدارة فقط' : 'Staff only'}</span>
+                <span className="text-[10px] text-slate-600 dark:text-slate-400 font-normal">{isArabic ? 'مرئية للإدارة فقط' : 'Staff only'}</span>
               </label>
               <div className="flex gap-2">
                 <textarea
@@ -1062,7 +1062,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                 <button
                   type="button"
                   onClick={() => handleSaveAdminNote(selectedRequest.id)}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl self-end cursor-pointer shadow-sm transition-all"
+                  className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl self-end cursor-pointer shadow-sm transition-all"
                 >
                   {isArabic ? 'حفظ' : 'Save'}
                 </button>
@@ -1073,7 +1073,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
             <div className="pt-3 border-t border-slate-100 dark:border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
               
               <div className="flex items-center gap-2">
-                <span className="text-slate-500 font-bold">{isArabic ? 'تحديث الحالة:' : 'Status:'}</span>
+                <span className="text-slate-600 dark:text-slate-400 font-bold">{isArabic ? 'تحديث الحالة:' : 'Status:'}</span>
                 <select
                   value={selectedRequest.status}
                   onChange={(e) => handleUpdateStatus(selectedRequest.id, e.target.value as Appointment['status'])}
@@ -1091,7 +1091,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
               <div className="flex items-center gap-2">
                 <a
                   href={`tel:${selectedRequest.guardianPhone}`}
-                  className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-white rounded-xl font-bold flex items-center gap-1.5 transition-colors"
+                  className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white rounded-xl font-bold flex items-center gap-1.5 transition-colors"
                 >
                   <Phone className="w-3.5 h-3.5" />
                   <span>{isArabic ? 'اتصال بالعميل' : 'Call'}</span>
@@ -1099,7 +1099,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
 
                 <button
                   onClick={() => handleSendWhatsApp(selectedRequest)}
-                  className="px-4 py-2 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-xl font-bold flex items-center gap-1.5 shadow-sm cursor-pointer transition-all"
+                  className="px-4 py-2 bg-[#047857] hover:bg-[#065F46] text-white rounded-xl font-bold flex items-center gap-1.5 shadow-sm cursor-pointer transition-all"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
                   <span>{isArabic ? 'واتساب مخصص' : 'WhatsApp'}</span>

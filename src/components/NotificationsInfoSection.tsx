@@ -67,7 +67,7 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
             </div>
 
             <div className="liquid-glass-card p-5 rounded-[28px] border-[#2B95FF]/45 ring-1 ring-[#2B95FF]/25 flex items-start gap-4 transition-all">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#2B95FF] to-[#1A73E8] text-white flex items-center justify-center font-black text-sm shrink-0 shadow-sm shadow-[#2B95FF]/25">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#1668DC] to-[#1152B8] text-white flex items-center justify-center font-black text-sm shrink-0 shadow-sm shadow-[#1668DC]/25">
                 02
               </div>
               <div className="space-y-1">
@@ -111,7 +111,7 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
             <div className="pt-2 flex flex-wrap items-center gap-3">
               <button
                 onClick={onOpenNotifications}
-                className="px-6 py-3.5 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] text-white text-xs sm:text-sm font-black rounded-full flex items-center gap-2 cursor-pointer shadow-lg shadow-[#2B95FF]/25 hover:brightness-110 active:scale-95 transition-all"
+                className="px-6 py-3.5 bg-gradient-to-r from-[#1668DC] to-[#1152B8] text-white text-xs sm:text-sm font-black rounded-full flex items-center gap-2 cursor-pointer shadow-lg shadow-[#1668DC]/25 hover:brightness-110 active:scale-95 transition-all"
               >
                 <BellRing className="w-4 h-4" />
                 <span>{t.notifications.openCenterBtn}</span>
@@ -147,7 +147,7 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
                   onClick={() => setActivePreview('whatsapp')}
                   className={`flex-1 py-2 rounded-full transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     activePreview === 'whatsapp'
-                      ? 'bg-[#10B981] text-white shadow-md'
+                      ? 'bg-[#047857] text-white shadow-md'
                       : 'text-[#4B5563] dark:text-slate-300 hover:text-[#161B26] dark:hover:text-white'
                   }`}
                 >
@@ -159,7 +159,7 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
                   onClick={() => setActivePreview('sms')}
                   className={`flex-1 py-2 rounded-full transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     activePreview === 'sms'
-                      ? 'bg-[#2B95FF] text-white font-black shadow-md'
+                      ? 'bg-[#1463D6] text-white font-black shadow-md'
                       : 'text-[#4B5563] dark:text-slate-300 hover:text-[#161B26] dark:hover:text-white'
                   }`}
                 >
@@ -173,7 +173,7 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
                 {activePreview === 'whatsapp' ? (
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 pb-2 border-b border-[#161B26]/10 dark:border-white/10 text-[#4B5563] dark:text-slate-300">
-                      <div className="w-8 h-8 rounded-full bg-[#10B981] text-white flex items-center justify-center text-xs font-black shadow-xs">
+                      <div className="w-8 h-8 rounded-full bg-[#047857] text-white flex items-center justify-center text-xs font-black shadow-xs">
                         {isArabic ? 'ر' : 'R'}
                       </div>
                       <div>
@@ -197,19 +197,19 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
                         <div>👩‍⚕️ {isArabic ? 'الأخصائية: د. نورة العتيبي (BCBA)' : 'Clinician: Dr. Noura Al-Otaibi (BCBA)'}</div>
                         <div>📍 {isArabic ? 'العيادة: قاعة التدخل السلوكي (1)' : 'Clinic: Behavioral Gym (1)'}</div>
                       </div>
-                      <p className="text-[10px] text-[#8B95A5] dark:text-slate-400">
+                      <p className="text-[10px] text-[#525B6B] dark:text-slate-400">
                         {isArabic ? 'للتأكيد التلقائي أو الاعتذار، يرجى الرد على هذه الرسالة.' : 'To auto-confirm or reschedule, simply reply to this message.'}
                       </p>
-                      <span className={`text-[9px] text-[#8B95A5] dark:text-slate-400 block ${isArabic ? 'text-left' : 'text-right'}`}>10:00 {isArabic ? 'ص' : 'AM'} ✓✓</span>
+                      <span className={`text-[9px] text-[#525B6B] dark:text-slate-400 block ${isArabic ? 'text-left' : 'text-right'}`}>10:00 {isArabic ? 'ص' : 'AM'} ✓✓</span>
                     </div>
 
-                    <div className="bg-[#10B981] dark:bg-[#10B981]/90 text-white p-2.5 rounded-xl text-[10px] text-center font-black shadow-sm border border-[#34D399]/30">
+                    <div className="bg-[#047857] dark:bg-[#047857] text-white p-2.5 rounded-xl text-[10px] text-center font-black shadow-sm border border-[#34D399]/30">
                       {isArabic ? 'تم تأكيد الحضور بنجاح، بانتظاركم بكل حب 💚' : 'Session confirmed, we look forward to seeing you 💚'}
                     </div>
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <div className="text-center text-[10px] text-[#8B95A5] dark:text-slate-400 pb-1">
+                    <div className="text-center text-[10px] text-[#525B6B] dark:text-slate-400 pb-1">
                       {isArabic ? 'الرسائل النصية SMS • رابا سنتر RABA' : 'SMS Messages • RABA Center'}
                     </div>
 
@@ -225,7 +225,7 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
                       <p className="text-[#4B5563] dark:text-slate-400 text-[10px]">
                         {isArabic ? 'رابط الموقع والتفاصيل: raba.sa/ref84291' : 'Location map & details: raba.sa/ref84291'}
                       </p>
-                      <span className={`text-[9px] text-[#8B95A5] dark:text-slate-400 block ${isArabic ? 'text-left' : 'text-right'}`}>{isArabic ? 'أمس 04:30م' : 'Yesterday 4:30 PM'}</span>
+                      <span className={`text-[9px] text-[#525B6B] dark:text-slate-400 block ${isArabic ? 'text-left' : 'text-right'}`}>{isArabic ? 'أمس 04:30م' : 'Yesterday 4:30 PM'}</span>
                     </div>
                   </div>
                 )}

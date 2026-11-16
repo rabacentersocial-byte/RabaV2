@@ -94,7 +94,7 @@ export const NotificationCenterModal: React.FC<NotificationCenterModalProps> = (
                   {isArabic ? 'نظام تنبيهات الجلسات الآلي' : 'Automated Session Alerts'}
                 </h3>
                 {unreadCount > 0 && (
-                  <span className="bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                  <span className="bg-rose-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
                     {unreadCount} {isArabic ? 'جديد' : 'new'}
                   </span>
                 )}

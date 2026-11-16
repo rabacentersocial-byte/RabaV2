@@ -348,7 +348,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                     {/* Badges Container */}
                     <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap justify-end">
                       {isSummer && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-gradient-to-r from-[#F59E0B] to-[#D97706] text-white shadow-2xs text-[9.5px] sm:text-xs font-black tracking-wide border border-white/30 select-none">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-gradient-to-r from-[#B45309] to-[#92400E] text-white shadow-2xs text-[9.5px] sm:text-xs font-black tracking-wide border border-white/30 select-none">
                           <Sun className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white shrink-0" />
                           <span>{isArabic ? 'باقات الصيف' : 'Summer Packages'}</span>
                         </span>
@@ -361,7 +361,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                       )}
 
                       {pkg.popular && !isSummer && (
-                        <span className="bg-[#2B95FF] text-white text-[9px] sm:text-[10px] font-black tracking-wider px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-2xs uppercase">
+                        <span className="bg-[#1463D6] text-white text-[9px] sm:text-[10px] font-black tracking-wider px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-2xs uppercase">
                           {isArabic ? 'الأكثر طلباً' : 'MOST POPULAR'}
                         </span>
                       )}
@@ -397,7 +397,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                       </span>
                       {pkg.originalPrice && (
                         <div className="flex items-center gap-1 ms-1">
-                          <span className="text-[11px] sm:text-sm line-through text-[#8B95A5] dark:text-[#64748B] font-semibold">
+                          <span className="text-[11px] sm:text-sm line-through text-[#525B6B] dark:text-[#94A3B8] font-semibold">
                             {pkg.originalPrice.toLocaleString()} {isArabic ? 'ريال' : 'SAR'}
                           </span>
                           {savings > 0 && (
@@ -490,7 +490,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                       onClick={() => onSelectPackage(pkg)}
                       className={`w-full py-2.5 sm:py-3.5 rounded-full font-black text-xs sm:text-sm transition-[transform,background-color,box-shadow] duration-200 shadow-sm active:scale-98 cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 ${
                         isSummer
-                          ? 'bg-gradient-to-r from-[#F59E0B] to-[#D97706] hover:brightness-110 text-white shadow-md'
+                          ? 'bg-gradient-to-r from-[#B45309] to-[#92400E] hover:brightness-110 text-white shadow-md'
                           : theme.btnBg
                       }`}
                     >

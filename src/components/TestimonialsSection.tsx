@@ -357,7 +357,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                         {Array.from({ length: 5 }).map((_, i) => (
                           <Star 
                             key={i} 
-                            className={`w-3.5 h-3.5 ${i < Math.floor(rev.rating || 5) ? 'fill-[#F59E0B] text-[#F59E0B]' : 'text-slate-300 dark:text-slate-700'}`} 
+                            className={`w-3.5 h-3.5 ${i < Math.floor(rev.rating || 5) ? 'fill-[#F59E0B] text-[#F59E0B]' : 'text-slate-300 dark:text-slate-500'}`} 
                           />
                         ))}
                       </div>
@@ -397,7 +397,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                     {/* Left: Avatar + Name with Verified Check + Location */}
                     <div className="flex items-center gap-2 min-w-0">
                       {/* Anonymous User Silhouette Avatar */}
-                      <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full liquid-glass-panel text-[#8B95A5] dark:text-[#94A3B8] flex items-center justify-center shrink-0 shadow-2xs overflow-hidden">
+                      <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full liquid-glass-panel text-[#525B6B] dark:text-[#94A3B8] flex items-center justify-center shrink-0 shadow-2xs overflow-hidden">
                         <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                           <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
                         </svg>
@@ -421,7 +421,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                       <span className="text-[11px] font-bold text-[#1263D6] dark:text-[#60AFFF] block max-w-[100px] truncate">
                         {displayCategory}
                       </span>
-                      <span className="text-[10px] text-[#8B95A5] dark:text-[#64748B] block mt-0.5">
+                      <span className="text-[10px] text-[#525B6B] dark:text-[#94A3B8] block mt-0.5">
                         {displayDate}
                       </span>
                     </div>
@@ -539,7 +539,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                   <span className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#6D28D9] dark:text-[#A78BFA] tracking-tight leading-none">
                     4.8
                   </span>
-                  <span className="text-[10px] sm:text-xs font-bold text-[#8B95A5] dark:text-[#64748B]">
+                  <span className="text-[10px] sm:text-xs font-bold text-[#525B6B] dark:text-[#94A3B8]">
                     / 5.0
                   </span>
                 </div>
@@ -615,7 +615,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                         className={`w-6 h-6 ${
                           star <= rating
                             ? 'text-[#F59E0B] fill-[#F59E0B]'
-                            : 'text-slate-300 dark:text-slate-600'
+                            : 'text-slate-400 dark:text-slate-500'
                         }`}
                       />
                     </button>
@@ -775,7 +775,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
 
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white font-bold rounded-full text-xs flex items-center gap-1.5 cursor-pointer shadow-md shadow-[#2B95FF]/25"
+                  className="px-6 py-2.5 bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 text-white font-bold rounded-full text-xs flex items-center gap-1.5 cursor-pointer shadow-md shadow-[#1668DC]/25"
                 >
                   <Send className={`w-3.5 h-3.5 ${isArabic ? 'rotate-180' : ''}`} />
                   <span>{isArabic ? 'نشر التقييم' : 'Publish Review'}</span>

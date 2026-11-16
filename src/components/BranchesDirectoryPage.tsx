@@ -29,7 +29,7 @@ import { useLanguage } from '../context/LanguageContext';
 
 const LedClubBadge: React.FC = () => (
   <span 
-    className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-[11px] font-black text-white dark:text-[#FBBF24] bg-gradient-to-r from-[#F59E0B] to-[#D97706] dark:bg-none dark:bg-[#141821]/95 border-2 border-[#FDE68A] dark:border-[#F59E0B] shadow-[0_0_12px_rgba(245,158,11,0.45)] ring-2 ring-[#F59E0B]/35 whitespace-nowrap select-none shrink-0 tracking-wide"
+    className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-[11px] font-black text-white dark:text-[#FBBF24] bg-gradient-to-r from-[#B45309] to-[#92400E] dark:bg-none dark:bg-[#141821]/95 border-2 border-[#FDE68A] dark:border-[#F59E0B] shadow-[0_0_12px_rgba(245,158,11,0.45)] ring-2 ring-[#F59E0B]/35 whitespace-nowrap select-none shrink-0 tracking-wide"
   >
     + نادي رابا
   </span>
@@ -291,7 +291,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
               <Home className="w-3.5 h-3.5" />
               <span>{isArabic ? 'الرئيسية' : 'Home'}</span>
             </button>
-            <span className="text-[#8B95A5] dark:text-[#64748B]">/</span>
+            <span className="text-[#525B6B] dark:text-[#94A3B8]">/</span>
             <span className="text-[#161B26] dark:text-[#F8FAFC] font-bold flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-[#2B95FF]" />
               <span>{isArabic ? 'دليل فروع مركز رابا' : 'Branches Directory'}</span>
@@ -365,7 +365,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
           
           {/* Search Input Box */}
           <div className="relative flex-1 max-w-xl">
-            <Search className="w-4 h-4 absolute top-1/2 -translate-y-1/2 right-4 rtl:right-4 rtl:left-auto ltr:left-4 ltr:right-auto text-[#8B95A5] dark:text-[#64748B]" />
+            <Search className="w-4 h-4 absolute top-1/2 -translate-y-1/2 right-4 rtl:right-4 rtl:left-auto ltr:left-4 ltr:right-auto text-[#525B6B] dark:text-[#94A3B8]" />
             <input
               type="text"
               value={searchQuery}
@@ -376,7 +376,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute top-1/2 -translate-y-1/2 left-3 rtl:left-3 rtl:right-auto ltr:right-3 ltr:left-auto text-[#8B95A5] dark:text-[#64748B] hover:text-[#161B26] dark:hover:text-[#F8FAFC] p-1"
+                className="absolute top-1/2 -translate-y-1/2 left-3 rtl:left-3 rtl:right-auto ltr:right-3 ltr:left-auto text-[#525B6B] dark:text-[#94A3B8] hover:text-[#161B26] dark:hover:text-[#F8FAFC] p-1"
                 aria-label="مسح البحث"
               >
                 <X className="w-4 h-4" />
@@ -599,7 +599,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
         {filteredBranches.length === 0 ? (
           /* Empty State */
           <div className="liquid-glass-card text-center py-16 rounded-[28px] my-6">
-            <MapPin className="w-12 h-12 text-[#8B95A5] dark:text-[#64748B] mx-auto mb-3" />
+            <MapPin className="w-12 h-12 text-[#525B6B] dark:text-[#94A3B8] mx-auto mb-3" />
             <h3 className="text-lg font-bold text-[#161B26] dark:text-[#F8FAFC] mb-1">
               {isArabic ? 'لم يتم العثور على فروع مطابقة' : 'No matching branches found'}
             </h3>
@@ -677,7 +677,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
               href="https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20المساعدة%20في%20اختيار%20أقرب%20فرع%20لمركز%20رابا%20لطفلي"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#10B981] to-[#059669] hover:brightness-110 text-white text-xs font-black shadow-lg shadow-[#10B981]/25 transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#047857] to-[#065F46] hover:brightness-110 text-white text-xs font-black shadow-lg shadow-[#10B981]/25 transition-all cursor-pointer"
             >
               <MessageCircle className="w-4 h-4" />
               <span>{isArabic ? 'تواصل مع الدعم عبر واتساب' : 'Chat with Support on WhatsApp'}</span>
@@ -764,7 +764,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
                   title={isArabic ? 'نسخ العنوان' : 'Copy address'}
                   className={`p-1.5 rounded-full border text-xs font-bold transition-all shrink-0 cursor-pointer ${
                     isCopied 
-                      ? 'bg-[#10B981] text-white border-[#059669]' 
+                      ? 'bg-[#047857] text-white border-[#065F46]' 
                       : 'liquid-glass-btn text-[#4B5563] dark:text-[#94A3B8] hover:text-[#161B26] dark:hover:text-[#F8FAFC]'
                   }`}
                 >
@@ -786,7 +786,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
             {/* Direct Book / Inquire at Branch */}
             <button
               onClick={() => handleBranchBooking(branch)}
-              className="w-full py-2 sm:py-2.5 px-3 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white text-xs font-black rounded-full transition-all flex items-center justify-center gap-1.5 shadow-md shadow-[#2B95FF]/20 active:scale-95 cursor-pointer"
+              className="w-full py-2 sm:py-2.5 px-3 bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 text-white text-xs font-black rounded-full transition-all flex items-center justify-center gap-1.5 shadow-md shadow-[#1668DC]/20 active:scale-95 cursor-pointer"
             >
               <CalendarCheck className="w-3.5 h-3.5" />
               <span>{isArabic ? 'احجز موعد أو استشارة في هذا الفرع' : 'Book at this Branch'}</span>
@@ -812,7 +812,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
                 href={branch.whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="py-2 sm:py-2.5 px-2 bg-[#10B981] hover:bg-[#059669] text-white text-xs font-black rounded-full transition-all flex items-center justify-center gap-1.5 text-center shadow-md shadow-[#10B981]/20 active:scale-95 cursor-pointer"
+                className="py-2 sm:py-2.5 px-2 bg-[#047857] hover:bg-[#065F46] text-white text-xs font-black rounded-full transition-all flex items-center justify-center gap-1.5 text-center shadow-md shadow-[#10B981]/20 active:scale-95 cursor-pointer"
                 title={isArabic ? `تواصل واتساب مع ${branch.name}` : 'Chat on WhatsApp'}
               >
                 <MessageCircle className="w-3.5 h-3.5 shrink-0" />

@@ -531,7 +531,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
                     <h3 className="text-base font-black text-slate-900 dark:text-white leading-tight">
                       {pkg.name}
                     </h3>
-                    <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
                       {pkg.tagline}
                     </p>
 
@@ -626,7 +626,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
                       <div className="p-3.5 rounded-2xl bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-950/30 dark:to-emerald-950/20 border border-teal-200/80 dark:border-teal-800/40 space-y-2">
                         <div className="flex items-baseline justify-between">
                           <div>
-                            <span className="text-[10px] text-slate-500 font-bold block">{isArabic ? 'السعر الحالي المعتمد' : 'Current Price'}</span>
+                            <span className="text-[10px] text-slate-600 dark:text-slate-400 font-bold block">{isArabic ? 'السعر الحالي المعتمد' : 'Current Price'}</span>
                             <div className="flex items-baseline gap-1.5">
                               <span className="text-2xl font-black text-[#0B3B36] dark:text-[#00E5BE]">
                                 {pkg.price}
@@ -639,10 +639,10 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
 
                           {originalPrice > pkg.price && (
                             <div className="text-left">
-                              <span className="text-[10px] text-slate-400 line-through block">
+                              <span className="text-[10px] text-slate-600 dark:text-slate-400 line-through block">
                                 {originalPrice} {currencySymbol}
                               </span>
-                              <span className="text-xs font-black text-emerald-600 dark:text-emerald-400">
+                              <span className="text-xs font-black text-emerald-700 dark:text-emerald-400">
                                 {isArabic ? `توفير ${savings} ${currencySymbol} (${savingsPercent}%)` : `Save ${savingsPercent}%`}
                               </span>
                             </div>
@@ -664,7 +664,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
                   {/* Footer actions */}
                   {!isEditing && (
                     <div className="pt-4 mt-4 border-t border-slate-100 dark:border-white/10 flex items-center justify-between">
-                      <span className="text-[11px] text-slate-400">
+                      <span className="text-[11px] text-slate-600 dark:text-slate-400">
                         {pkg.installmentText || (isArabic ? 'متاح التقسيط الميسر' : 'Installments available')}
                       </span>
                       <button
@@ -718,7 +718,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
                       <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
                         {srv.categoryAr}
                       </span>
-                      <span className="text-xs text-slate-500 flex items-center gap-1">
+                      <span className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" />
                         <span>{srv.durationMinutes} {isArabic ? 'دقيقة' : 'min'}</span>
                       </span>
@@ -727,7 +727,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
                     <h3 className="text-base font-black text-slate-900 dark:text-white">
                       {srv.title}
                     </h3>
-                    <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
                       {srv.description}
                     </p>
 
@@ -793,13 +793,13 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
                     ) : (
                       <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-white/5 space-y-2 text-xs">
                         <div className="flex items-center justify-between">
-                          <span className="text-slate-500 font-bold">{isArabic ? 'سعر الجلسة العلاجية:' : 'Session Fee:'}</span>
+                          <span className="text-slate-600 dark:text-slate-400 font-bold">{isArabic ? 'سعر الجلسة العلاجية:' : 'Session Fee:'}</span>
                           <span className="font-black text-base text-[#0B3B36] dark:text-[#00E5BE]">
                             {sessionPrice} {currencySymbol}
                           </span>
                         </div>
                         <div className="flex items-center justify-between pt-1.5 border-t border-slate-200/50 dark:border-white/5">
-                          <span className="text-slate-500 font-bold">{isArabic ? 'التقييم والتشخيص الأولي:' : 'Initial Evaluation:'}</span>
+                          <span className="text-slate-600 dark:text-slate-400 font-bold">{isArabic ? 'التقييم والتشخيص الأولي:' : 'Initial Evaluation:'}</span>
                           <span className="font-bold text-slate-800 dark:text-slate-200">
                             {assessmentPrice} {currencySymbol}
                           </span>
@@ -812,7 +812,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
                     <div className="pt-4 mt-4 border-t border-slate-100 dark:border-white/10 flex justify-end">
                       <button
                         onClick={() => handleStartEditService(srv)}
-                        className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-amber-500 hover:text-white text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                        className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-amber-700 hover:text-white text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
                         <span>{isArabic ? 'تعديل السعر' : 'Edit Fee'}</span>
@@ -933,15 +933,15 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
                     ) : (
                       <div className="p-3 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/30 flex items-center justify-between">
                         <div>
-                          <span className="text-[10px] text-slate-500 block">{isArabic ? 'سعر التسجيل' : 'Fee'}</span>
+                          <span className="text-[10px] text-slate-600 dark:text-slate-400 block">{isArabic ? 'سعر التسجيل' : 'Fee'}</span>
                           <span className="text-xl font-black text-[#0B3B36] dark:text-[#00E5BE]">
                             {curPrice} {currencySymbol}
                           </span>
                         </div>
                         {origPrice > curPrice && (
                           <div className="text-left">
-                            <span className="text-xs text-slate-400 line-through block">{origPrice} {currencySymbol}</span>
-                            <span className="text-[11px] font-black text-emerald-600 dark:text-emerald-400">{isArabic ? 'خصم متاح' : 'Discount'}</span>
+                            <span className="text-xs text-slate-600 dark:text-slate-400 line-through block">{origPrice} {currencySymbol}</span>
+                            <span className="text-[11px] font-black text-emerald-700 dark:text-emerald-400">{isArabic ? 'خصم متاح' : 'Discount'}</span>
                           </div>
                         )}
                       </div>
@@ -952,7 +952,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
                     <div className="pt-4 mt-4 border-t border-slate-100 dark:border-white/10 flex justify-end">
                       <button
                         onClick={() => handleStartEditCourse(course)}
-                        className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-600 hover:text-white text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                        className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-700 hover:text-white text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
                         <span>{isArabic ? 'تعديل السعر' : 'Edit Fee'}</span>
@@ -1009,7 +1009,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
                         <h4 className="text-sm font-black text-slate-900 dark:text-white truncate">
                           {spec.name}
                         </h4>
-                        <p className="text-xs text-slate-500 truncate">
+                        <p className="text-xs text-slate-600 dark:text-slate-400 truncate">
                           {spec.title}
                         </p>
                       </div>
@@ -1061,7 +1061,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
                     <div className="pt-3 mt-3 border-t border-slate-100 dark:border-white/10 flex justify-end">
                       <button
                         onClick={() => handleStartEditSpecialist(spec)}
-                        className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-sky-600 hover:text-white text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                        className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-sky-700 hover:text-white text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
                         <span>{isArabic ? 'تعديل السعر' : 'Edit Rate'}</span>
@@ -1084,7 +1084,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
             <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
               {isArabic ? 'إعدادات العملة وضريبة القيمة المضافة ونظام التقسيط' : 'Currency, Tax & Installment Settings'}
             </h3>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
               {isArabic ? 'تخصيص الرمز المعتمد لعرض الأسعار وسياسة ضريبة القيمة المضافة وخيارات تمارا وتابي' : 'Configure currency display, VAT disclaimer, and installment options.'}
             </p>
           </div>
@@ -1107,7 +1107,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
                   }`}
                 >
                   <span className="text-base block">ر.س</span>
-                  <span className="text-[10px] font-normal text-slate-400 mt-0.5">ريال سعودي (باللغة العربية)</span>
+                  <span className={`text-[10px] font-normal mt-0.5 block ${currencySymbol === 'ر.س' ? 'text-slate-200' : 'text-slate-600 dark:text-slate-400'}`}>ريال سعودي (باللغة العربية)</span>
                 </button>
 
                 <button
@@ -1120,7 +1120,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
                   }`}
                 >
                   <span className="text-base block">SAR</span>
-                  <span className="text-[10px] font-normal text-slate-400 mt-0.5">Saudi Riyal (International)</span>
+                  <span className={`text-[10px] font-normal mt-0.5 block ${currencySymbol === 'SAR' ? 'text-slate-200' : 'text-slate-600 dark:text-slate-400'}`}>Saudi Riyal (International)</span>
                 </button>
               </div>
             </div>
@@ -1131,7 +1131,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
                 <span className="font-bold text-slate-800 dark:text-slate-200 block">
                   {isArabic ? 'الأسعار شاملة ضريبة القيمة المضافة (15%):' : 'VAT Inclusive (15%):'}
                 </span>
-                <span className="text-[11px] text-slate-500">
+                <span className="text-[11px] text-slate-600 dark:text-slate-400">
                   {isArabic ? 'إظهار عبارة (شامل الضريبة) أسفل كروت الباقات والخدمات' : 'Display VAT inclusive note on price cards'}
                 </span>
               </div>
@@ -1164,7 +1164,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
               <div className="flex items-center gap-3 pt-1">
                 <TamaraLogo className="h-6 w-auto" />
                 <EmkanLogo className="h-6 w-auto" />
-                <span className="text-[11px] text-slate-500 font-bold">
+                <span className="text-[11px] text-slate-600 dark:text-slate-400 font-bold">
                   {isArabic ? 'تمارا · تابي · إمكان · مدى' : 'Tamara · Tabby · Emkan · Mada'}
                 </span>
               </div>
@@ -1197,7 +1197,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
                 <h3 className="text-base font-black text-slate-900 dark:text-white">
                   {isArabic ? 'تطبيق خصم جماعي على الباقات' : 'Apply Bulk Discount'}
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-600 dark:text-slate-400">
                   {isArabic ? 'تطبيق نسبة خصم فورية على جميع باقات التأهيل' : 'Apply percentage discount across all packages'}
                 </p>
               </div>

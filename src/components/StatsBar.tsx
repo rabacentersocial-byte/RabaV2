@@ -104,7 +104,7 @@ export const StatsBar: React.FC = () => {
 
             <div className="relative shrink-0">
               <div className="absolute inset-0 bg-[#2B95FF]/20 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-[#2B95FF] to-[#8B5CF6] border border-white/30 flex items-center justify-center text-white shadow-xs group-hover:scale-105 group-hover:shadow-md transition-all duration-300">
+              <div className="relative w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-[#1668DC] to-[#6D28D9] border border-white/30 flex items-center justify-center text-white shadow-xs group-hover:scale-105 group-hover:shadow-md transition-all duration-300">
                 <UserCheck className="w-5 h-5 sm:w-7 sm:h-7 stroke-[2.2]" />
               </div>
             </div>

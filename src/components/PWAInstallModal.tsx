@@ -126,11 +126,11 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
                 <h3 className="font-extrabold text-base sm:text-lg text-slate-900 dark:text-white leading-tight">
                   {isArabic ? 'تثبيت تطبيق مركز رابا' : 'Install Raba Center Web App'}
                 </h3>
-                <span className="text-[10px] px-2 py-0.5 rounded-full font-black bg-emerald-500/15 text-emerald-600 dark:text-[#00E5BE] border border-emerald-500/30">
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-black bg-emerald-500/15 text-emerald-700 dark:text-[#00E5BE] border border-emerald-500/30">
                   PWA Web App
                 </span>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-600 dark:text-slate-400">
                 {isArabic ? 'أضف المنصة لشاشتك الرئيسية كأي تطبيق رسمي' : 'Add to Home Screen for fast native experience'}
               </p>
             </div>
@@ -165,10 +165,10 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
             <div className="p-4 rounded-2xl bg-gradient-to-r from-teal-500/15 via-[#00E5BE]/10 to-transparent border border-[#00E5BE]/40 shadow-xs space-y-2.5">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5 text-xs sm:text-sm">
-                  <Zap className="w-4 h-4 text-[#00E5BE]" />
+                  <Zap className="w-4 h-4 text-[#0F766E] dark:text-[#00E5BE]" />
                   {isArabic ? 'التثبيت المباشر متاح بنقرة واحدة!' : 'Direct 1-Click Install is Ready!'}
                 </span>
-                <span className="text-[10px] bg-[#00E5BE]/20 text-[#00a386] dark:text-[#00E5BE] px-2 py-0.5 rounded-md font-semibold">
+                <span className="text-[10px] bg-[#00E5BE]/20 text-[#0F766E] dark:text-[#00E5BE] px-2 py-0.5 rounded-md font-semibold">
                   {isArabic ? 'تثبيت فوري' : 'Instant'}
                 </span>
               </div>
@@ -194,7 +194,7 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
 
           {/* Platform Tabs: Apple iOS vs Android */}
           <div className="space-y-3">
-            <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
+            <div className="text-[11px] font-bold text-slate-600 dark:text-slate-400">
               {isArabic ? 'اختر نوع جهازك لعرض طريقة التثبيت خطوة بخطوة:' : 'Select your device type for step-by-step instructions:'}
             </div>
 
@@ -243,7 +243,7 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
 
               {/* Step 1 */}
               <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10 flex items-start gap-3">
-                <div className="w-7 h-7 rounded-xl bg-[#00E5BE]/20 text-[#00897B] dark:text-[#00E5BE] font-black flex items-center justify-center shrink-0 text-xs">
+                <div className="w-7 h-7 rounded-xl bg-[#00E5BE]/20 text-[#0F766E] dark:text-[#00E5BE] font-black flex items-center justify-center shrink-0 text-xs">
                   1
                 </div>
                 <div className="space-y-1 flex-1">
@@ -251,7 +251,7 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
                     <Share2 className="w-3.5 h-3.5 text-sky-500" />
                     <span>{isArabic ? 'اضغط على زر المشاركة (Share)' : 'Tap the Share Button'}</span>
                   </div>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
                     {isArabic 
                       ? 'في أسفل شاشة متصفح Safari، اضغط على أيقونة المربع مع السهم للأعلى [ ⎋ ].' 
                       : 'At the bottom bar of Safari, tap the Share icon [ ⎋ ] (square with arrow pointing up).'}
@@ -261,15 +261,15 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
 
               {/* Step 2 */}
               <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10 flex items-start gap-3">
-                <div className="w-7 h-7 rounded-xl bg-[#00E5BE]/20 text-[#00897B] dark:text-[#00E5BE] font-black flex items-center justify-center shrink-0 text-xs">
+                <div className="w-7 h-7 rounded-xl bg-[#00E5BE]/20 text-[#0F766E] dark:text-[#00E5BE] font-black flex items-center justify-center shrink-0 text-xs">
                   2
                 </div>
                 <div className="space-y-1 flex-1">
                   <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5 text-xs sm:text-sm">
-                    <PlusSquare className="w-3.5 h-3.5 text-[#00E5BE]" />
+                    <PlusSquare className="w-3.5 h-3.5 text-[#0F766E] dark:text-[#00E5BE]" />
                     <span>{isArabic ? 'اختر "إضافة إلى الشاشة الرئيسية"' : 'Select "Add to Home Screen"'}</span>
                   </div>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
                     {isArabic 
                       ? 'مرر قائمة الخيارات لأسفل قليلاً واضغط على خيار: "إضافة إلى الصفحة الرئيسية" (Add to Home Screen).' 
                       : 'Scroll down the menu list and tap "Add to Home Screen" (with a square icon).'}
@@ -279,7 +279,7 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
 
               {/* Step 3 */}
               <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10 flex items-start gap-3">
-                <div className="w-7 h-7 rounded-xl bg-[#00E5BE]/20 text-[#00897B] dark:text-[#00E5BE] font-black flex items-center justify-center shrink-0 text-xs">
+                <div className="w-7 h-7 rounded-xl bg-[#00E5BE]/20 text-[#0F766E] dark:text-[#00E5BE] font-black flex items-center justify-center shrink-0 text-xs">
                   3
                 </div>
                 <div className="space-y-1 flex-1">
@@ -287,7 +287,7 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                     <span>{isArabic ? 'اضغط "إضافة" (Add) في الزاوية العلوية' : 'Tap "Add" in Top Right'}</span>
                   </div>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
                     {isArabic 
                       ? 'اضغط زر "إضافة" في أعلى يمين الشاشة، وستظهر أيقونة تطبيق مركز رابا فوراً على شاشة جوالك!' 
                       : 'Tap "Add" in the top-right corner. The Raba Center icon will appear right on your home screen!'}
@@ -302,14 +302,14 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
             <div className="space-y-3 animate-in fade-in duration-150">
               {/* Direct button fallback for Android */}
               <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10 flex items-start gap-3">
-                <div className="w-7 h-7 rounded-xl bg-[#00E5BE]/20 text-[#00897B] dark:text-[#00E5BE] font-black flex items-center justify-center shrink-0 text-xs">
+                <div className="w-7 h-7 rounded-xl bg-[#00E5BE]/20 text-[#0F766E] dark:text-[#00E5BE] font-black flex items-center justify-center shrink-0 text-xs">
                   1
                 </div>
                 <div className="space-y-1 flex-1">
                   <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5 text-xs sm:text-sm">
                     <span>{isArabic ? 'اضغط قائمة المتصفح (⋮) الثلاث نقاط' : 'Tap Browser Menu (⋮)'}</span>
                   </div>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
                     {isArabic 
                       ? 'في أعلى يمين أو يسار شاشة متصفح Google Chrome أو Samsung Internet، اضغط على النقاط الثلاث (⋮).' 
                       : 'In Chrome or Samsung Internet, tap the three dots menu icon (⋮) at the top or bottom.'}
@@ -319,15 +319,15 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
 
               {/* Step 2 */}
               <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10 flex items-start gap-3">
-                <div className="w-7 h-7 rounded-xl bg-[#00E5BE]/20 text-[#00897B] dark:text-[#00E5BE] font-black flex items-center justify-center shrink-0 text-xs">
+                <div className="w-7 h-7 rounded-xl bg-[#00E5BE]/20 text-[#0F766E] dark:text-[#00E5BE] font-black flex items-center justify-center shrink-0 text-xs">
                   2
                 </div>
                 <div className="space-y-1 flex-1">
                   <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5 text-xs sm:text-sm">
-                    <Download className="w-3.5 h-3.5 text-[#00E5BE]" />
+                    <Download className="w-3.5 h-3.5 text-[#0F766E] dark:text-[#00E5BE]" />
                     <span>{isArabic ? 'اختر "تثبيت التطبيق" أو "إضافة للشاشة الرئيسية"' : 'Select "Install App" or "Add to Home Screen"'}</span>
                   </div>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
                     {isArabic 
                       ? 'اختر خيار "تثبيت التطبيق" (Install App) أو "إضافة إلى الشاشة الرئيسية" (Add to Home screen).' 
                       : 'Tap "Install App" or "Add to Home screen" from the menu options.'}
@@ -337,7 +337,7 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
 
               {/* Step 3 */}
               <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10 flex items-start gap-3">
-                <div className="w-7 h-7 rounded-xl bg-[#00E5BE]/20 text-[#00897B] dark:text-[#00E5BE] font-black flex items-center justify-center shrink-0 text-xs">
+                <div className="w-7 h-7 rounded-xl bg-[#00E5BE]/20 text-[#0F766E] dark:text-[#00E5BE] font-black flex items-center justify-center shrink-0 text-xs">
                   3
                 </div>
                 <div className="space-y-1 flex-1">
@@ -345,7 +345,7 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                     <span>{isArabic ? 'تأكيد التثبيت' : 'Confirm Installation'}</span>
                   </div>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
                     {isArabic 
                       ? 'اضغط "تثبيت" (Install)، وستتم إضافة التطبيق لدرج التطبيقات وشاشتك الرئيسية ليعمل بشكل مستقل وسريع.' 
                       : 'Confirm with "Install". The web app will appear on your app drawer and home screen.'}
@@ -362,19 +362,19 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
             </div>
             <div className="grid grid-cols-2 gap-2 text-[10px] sm:text-[11px]">
               <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
-                <Check className="w-3 h-3 text-[#00E5BE] shrink-0" />
+                <Check className="w-3 h-3 text-[#0F766E] dark:text-[#00E5BE] shrink-0" />
                 <span>{isArabic ? 'خفيف جداً وبدون استهلاك للذاكرة' : 'Lightweight & zero storage waste'}</span>
               </div>
               <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
-                <Check className="w-3 h-3 text-[#00E5BE] shrink-0" />
+                <Check className="w-3 h-3 text-[#0F766E] dark:text-[#00E5BE] shrink-0" />
                 <span>{isArabic ? 'يعمل بكامل الشاشة مثل التطبيق' : 'Full-screen app-like experience'}</span>
               </div>
               <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
-                <Check className="w-3 h-3 text-[#00E5BE] shrink-0" />
+                <Check className="w-3 h-3 text-[#0F766E] dark:text-[#00E5BE] shrink-0" />
                 <span>{isArabic ? 'وصول فوري لحجز الجلسات والعروض' : 'Instant access to bookings & offers'}</span>
               </div>
               <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
-                <Check className="w-3 h-3 text-[#00E5BE] shrink-0" />
+                <Check className="w-3 h-3 text-[#0F766E] dark:text-[#00E5BE] shrink-0" />
                 <span>{isArabic ? 'تحديثات لحظية ومجانية بالكامل' : 'Always up-to-date automatically'}</span>
               </div>
             </div>

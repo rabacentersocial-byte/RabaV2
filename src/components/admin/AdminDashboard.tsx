@@ -371,7 +371,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* Quick Persistent Sync Floating Toast */}
       {quickSyncFeedback && (
-        <div className="fixed top-20 start-1/2 -translate-x-1/2 z-50 bg-[#2E86EB] text-white font-black text-xs px-5 py-2.5 rounded-full shadow-[0_14px_32px_-8px_rgba(46,134,235,0.6)] flex items-center gap-2 border border-white/25 animate-bounce">
+        <div className="fixed top-20 start-1/2 -translate-x-1/2 z-50 bg-[#1463D6] text-white font-black text-xs px-5 py-2.5 rounded-full shadow-[0_14px_32px_-8px_rgba(46,134,235,0.6)] flex items-center gap-2 border border-white/25 animate-bounce">
           <RefreshCw className="w-4 h-4 shrink-0" />
           <span>{quickSyncFeedback}</span>
         </div>
@@ -397,13 +397,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div className="shrink-0 hidden xs:block sm:block">
                 <RabaLogo size="sm" showSubtitle={false} showText={false} />
               </div>
-              <div className="w-8 h-8 rounded-2xl bg-[#2E86EB] flex sm:hidden items-center justify-center text-white font-black text-xs shadow-md shrink-0">
+              <div className="w-8 h-8 rounded-2xl bg-[#1463D6] flex sm:hidden items-center justify-center text-white font-black text-xs shadow-md shrink-0">
                 رابا
               </div>
               <div className="hidden sm:block h-6 w-px bg-slate-200 dark:bg-white/10 shrink-0" aria-hidden="true" />
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] sm:text-xs font-extrabold tracking-wide text-[#2E86EB] dark:text-[#4A9CFF] truncate">
+                  <span className="text-[11px] sm:text-xs font-extrabold tracking-wide text-[#1463D6] dark:text-[#60AFFF] truncate">
                     {isArabic ? 'لوحة التحكم' : 'Admin Panel'}
                   </span>
                   <span className="sm:hidden text-[10px] text-slate-500 dark:text-slate-400 font-bold truncate max-w-[110px]">
@@ -430,7 +430,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 {currentUser?.avatar ? (
                   <img src={currentUser.avatar} alt={currentUser.name || ''} className="w-7 h-7 rounded-full object-cover shrink-0 ring-2 ring-[#2E86EB]/25" />
                 ) : (
-                  <div className="w-7 h-7 rounded-full bg-[#2E86EB] text-white font-bold flex items-center justify-center text-[11px] shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-[#1463D6] text-white font-bold flex items-center justify-center text-[11px] shrink-0">
                     {(currentUser?.name || currentUser?.username || 'أ').slice(0, 1)}
                   </div>
                 )}
@@ -438,11 +438,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <div className="font-bold text-slate-800 dark:text-slate-100 text-xs leading-none">
                     {currentUser?.name || 'المدير'}
                   </div>
-                  <div className="text-[10px] text-[#2E86EB] dark:text-[#4A9CFF] font-semibold mt-0.5">
+                  <div className="text-[10px] text-[#1463D6] dark:text-[#60AFFF] font-semibold mt-0.5">
                     {currentUser?.roleTitleAr || 'إدارة'}
                   </div>
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
+                <ChevronDown className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 hidden sm:block" />
               </button>
 
               {/* Dropdown Menu */}
@@ -476,7 +476,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           )}
                           <div className="truncate">
                             <div className="truncate font-bold">{u?.name || u?.username || 'مستخدم'}</div>
-                            <div className="text-[10px] text-slate-400">{u?.roleTitleAr || ''}</div>
+                            <div className="text-[10px] text-slate-600 dark:text-slate-400">{u?.roleTitleAr || ''}</div>
                           </div>
                         </div>
 
@@ -506,7 +506,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <button
               onClick={handleQuickSyncAll}
               disabled={isQuickSyncing}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#2E86EB]/10 hover:bg-[#2E86EB]/15 border border-[#2E86EB]/25 text-[#2E86EB] dark:text-[#4A9CFF] text-xs font-bold transition-colors cursor-pointer disabled:opacity-50 whitespace-nowrap shrink-0"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#2E86EB]/10 hover:bg-[#2E86EB]/15 border border-[#2E86EB]/25 text-[#1463D6] dark:text-[#60AFFF] text-xs font-bold transition-colors cursor-pointer disabled:opacity-50 whitespace-nowrap shrink-0"
               title={isArabic ? 'مزامنة وحفظ فوري لجميع البيانات والبطاقات في قواعد بيانات Cloud SQL والخادم' : 'Sync all data and images to Cloud SQL database & server'}
             >
               <Database className="w-3.5 h-3.5" />
@@ -538,7 +538,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             {/* Exit / Return to Website */}
             <button
               onClick={onClose}
-              className="h-9 px-3.5 sm:px-4 rounded-full bg-[#2E86EB] hover:bg-[#1D6FD6] text-white text-xs font-black flex items-center gap-1.5 shadow-[0_8px_20px_-6px_rgba(46,134,235,0.55)] transition-all cursor-pointer active:scale-95 whitespace-nowrap shrink-0"
+              className="h-9 px-3.5 sm:px-4 rounded-full bg-[#1463D6] hover:bg-[#1152B8] text-white text-xs font-black flex items-center gap-1.5 shadow-[0_8px_20px_-6px_rgba(46,134,235,0.55)] transition-all cursor-pointer active:scale-95 whitespace-nowrap shrink-0"
               title={isArabic ? 'معاينة التغييرات على الموقع المباشر' : 'Preview changes on live website'}
             >
               <ExternalLink className="w-3.5 h-3.5 shrink-0" />
@@ -619,14 +619,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           : 'w-11 h-11 mx-auto rounded-2xl justify-center'
                       } ${
                         isActive
-                          ? 'bg-[#2E86EB] text-white shadow-[0_10px_24px_-6px_rgba(46,134,235,0.55)]'
-                          : 'text-slate-600 dark:text-slate-400 hover:bg-[#2E86EB]/10 hover:text-[#2E86EB] dark:hover:text-[#4A9CFF]'
+                          ? 'bg-[#1463D6] text-white shadow-[0_10px_24px_-6px_rgba(46,134,235,0.55)]'
+                          : 'text-slate-600 dark:text-slate-400 hover:bg-[#2E86EB]/10 hover:text-[#1463D6] dark:hover:text-[#60AFFF]'
                       }`}
                     >
                       <div className={`flex items-center min-w-0 ${isSidebarExpanded ? 'gap-2.5' : 'justify-center'}`}>
                         <Icon
                           className={`w-[18px] h-[18px] shrink-0 transition-transform duration-200 group-hover:scale-105 ${
-                            isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400 group-hover:text-[#2E86EB] dark:group-hover:text-[#4A9CFF]'
+                            isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400 group-hover:text-[#1463D6] dark:group-hover:text-[#60AFFF]'
                           }`}
                         />
                         {isSidebarExpanded && (
@@ -636,7 +636,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                       {/* Collapsed corner indicator for restricted or highlighted items */}
                       {!isSidebarExpanded && locked && (
-                        <span className="absolute -top-0.5 -end-0.5 w-4 h-4 rounded-full bg-amber-500 text-white flex items-center justify-center shadow-xs">
+                        <span className="absolute -top-0.5 -end-0.5 w-4 h-4 rounded-full bg-amber-700 text-white flex items-center justify-center shadow-xs">
                           <Lock className="w-2.5 h-2.5" />
                         </span>
                       )}
@@ -708,7 +708,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 className="group relative liquid-glass-panel rounded-[22px] p-2.5 flex items-center justify-center cursor-pointer"
                 aria-label={isArabic ? 'عرض تفاصيل صلاحيات حسابك' : 'Show account permissions'}
               >
-                <div className="w-11 h-11 rounded-2xl bg-[#2E86EB]/12 text-[#2E86EB] dark:text-[#4A9CFF] flex items-center justify-center group-hover:bg-[#2E86EB] group-hover:text-white transition-colors">
+                <div className="w-11 h-11 rounded-2xl bg-[#2E86EB]/12 text-[#1463D6] dark:text-[#60AFFF] flex items-center justify-center group-hover:bg-[#1463D6] group-hover:text-white transition-colors">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <span
@@ -767,7 +767,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         }}
                         className={`w-full p-2.5 rounded-2xl text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
                           isActive 
-                            ? 'bg-[#2E86EB] text-white shadow-[0_8px_20px_-6px_rgba(46,134,235,0.55)]' 
+                            ? 'bg-[#1463D6] text-white shadow-[0_8px_20px_-6px_rgba(46,134,235,0.55)]' 
                             : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5'
                         }`}
                       >

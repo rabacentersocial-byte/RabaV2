@@ -19,7 +19,7 @@ import { useLanguage } from '../context/LanguageContext';
 
 const LedClubBadge: React.FC = () => (
   <span 
-    className="inline-flex items-center justify-center px-3 py-0.5 rounded-full text-xs font-black text-white dark:text-[#FBBF24] bg-gradient-to-r from-[#F59E0B] to-[#D97706] dark:bg-none dark:bg-[#141821]/95 border border-[#FDE68A] dark:border-[#F59E0B]/60 shadow-[0_0_12px_rgba(245,158,11,0.35)] ring-1 ring-[#F59E0B]/30 whitespace-nowrap select-none shrink-0 tracking-wide"
+    className="inline-flex items-center justify-center px-3 py-0.5 rounded-full text-xs font-black text-white dark:text-[#FBBF24] bg-gradient-to-r from-[#B45309] to-[#92400E] dark:bg-none dark:bg-[#141821]/95 border border-[#FDE68A] dark:border-[#F59E0B]/60 shadow-[0_0_12px_rgba(245,158,11,0.35)] ring-1 ring-[#F59E0B]/30 whitespace-nowrap select-none shrink-0 tracking-wide"
   >
     + نادي
   </span>
@@ -486,7 +486,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                         href={branch.whatsappUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="py-2.5 sm:py-3 px-2 sm:px-3 bg-gradient-to-r from-[#10B981] to-[#059669] hover:opacity-95 text-white text-xs font-black rounded-full transition-opacity flex items-center justify-center gap-1 sm:gap-1.5 text-center shadow-lg shadow-[#10B981]/20 active:scale-95 cursor-pointer"
+                        className="py-2.5 sm:py-3 px-2 sm:px-3 bg-gradient-to-r from-[#047857] to-[#065F46] hover:opacity-95 text-white text-xs font-black rounded-full transition-opacity flex items-center justify-center gap-1 sm:gap-1.5 text-center shadow-lg shadow-[#10B981]/20 active:scale-95 cursor-pointer"
                         title={isArabic ? `تواصل واتساب مع ${branch.name}` : 'Chat on WhatsApp'}
                       >
                         <MessageCircle className="w-3.5 h-3.5 fill-white shrink-0" />
@@ -579,7 +579,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                       href={branch.whatsappUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="py-2 sm:py-2.5 px-2 bg-gradient-to-r from-[#10B981] to-[#059669] hover:opacity-95 text-white text-xs font-black rounded-full transition-opacity flex items-center justify-center gap-1 text-center cursor-pointer shadow-md shadow-[#10B981]/20"
+                      className="py-2 sm:py-2.5 px-2 bg-gradient-to-r from-[#047857] to-[#065F46] hover:opacity-95 text-white text-xs font-black rounded-full transition-opacity flex items-center justify-center gap-1 text-center cursor-pointer shadow-md shadow-[#10B981]/20"
                     >
                       <MessageCircle className="w-3.5 h-3.5 fill-white" />
                       <span>{isArabic ? 'واتساب' : 'WhatsApp'}</span>
@@ -623,7 +623,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
               </div>
 
               {/* Instant Call indicator pill on mobile */}
-              <span className="sm:hidden text-[10.5px] font-black px-2.5 py-1 rounded-full bg-white/90 dark:bg-white/10 text-[#161B26] dark:text-white border border-[#161B26]/10 dark:border-white/15 group-hover:bg-[#2B95FF] group-hover:text-white transition-colors">
+              <span className="sm:hidden text-[10.5px] font-black px-2.5 py-1 rounded-full bg-white/90 dark:bg-white/10 text-[#161B26] dark:text-white border border-[#161B26]/10 dark:border-white/15 group-hover:bg-[#1463D6] group-hover:text-white transition-colors">
                 {isArabic ? 'اتصال فوري' : 'Call'}
               </span>
             </a>
@@ -634,7 +634,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                 href="https://wa.me/966575100100?text=السلام%20عليكم،%20أود%20الاستفسار%20عن%20أقرب%20فرع%20لمركز%20رابا%20في%20المملكة"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3.5 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:opacity-95 text-white font-black rounded-full text-xs sm:text-sm flex items-center justify-center gap-2 sm:gap-2.5 transition-[transform,opacity] shadow-md shadow-[#2B95FF]/30 active:scale-95 cursor-pointer"
+                className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3.5 bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:opacity-95 text-white font-black rounded-full text-xs sm:text-sm flex items-center justify-center gap-2 sm:gap-2.5 transition-[transform,opacity] shadow-md shadow-[#1668DC]/30 active:scale-95 cursor-pointer"
               >
                 <MessageCircle className="w-4 h-4 fill-white text-white shrink-0" />
                 <span className="font-black tracking-tight">{isArabic ? 'استشرنا لتحديد أقرب فرع لطفلك' : 'Find Closest Branch'}</span>

@@ -193,7 +193,7 @@ export const DEFAULT_PROGRAM_PILLARS: ProgramPillarItem[] = [
     descAr: 'قيادة طبية سعودية مرخصة تضع معايير الجودة الدولية في الرعاية النهارية والتأهيل المتخصص.',
     descEn: 'Licensed Saudi clinical leadership setting international standards.',
     iconName: 'UserCheck',
-    color: 'text-[#2E86EB]',
+    color: 'text-[#1263D6] dark:text-[#60AFFF]',
     bgColor: 'bg-[#2E86EB]/15',
     borderColor: 'border-[#2E86EB]/30',
     active: true,
@@ -206,7 +206,7 @@ export const DEFAULT_PROGRAM_PILLARS: ProgramPillarItem[] = [
     descAr: 'تطبيق أحدث الأدوات والتقنيات المقننة في التقييم والتدخل السلوكي والحسي لدعم التطور النمائي.',
     descEn: 'Employing modern standardized tools and evidence-based methods.',
     iconName: 'Lightbulb',
-    color: 'text-[#FFD23F]',
+    color: 'text-[#B45309] dark:text-[#FFD23F]',
     bgColor: 'bg-[#FFD23F]/15',
     borderColor: 'border-[#FFD23F]/30',
     active: true,
@@ -219,7 +219,7 @@ export const DEFAULT_PROGRAM_PILLARS: ProgramPillarItem[] = [
     descAr: 'بيئة علاجية آمنة ومحبة تحترم خصوصية الطفل وتوفر إرشاداً نفسياً وأسرياً دائماً للوالدين.',
     descEn: 'A caring therapeutic setting respecting privacy and empowering families.',
     iconName: 'Heart',
-    color: 'text-[#FF2D9B]',
+    color: 'text-[#BE123C] dark:text-[#FF5CB4]',
     bgColor: 'bg-[#FF2D9B]/15',
     borderColor: 'border-[#FF2D9B]/30',
     active: true,
@@ -232,7 +232,7 @@ export const DEFAULT_PROGRAM_PILLARS: ProgramPillarItem[] = [
     descAr: 'خطط تعديل سلوك فردية بإشراف مشرفين معتمدين دولياً لرفع الاستقلالية والمهارات الاجتماعية.',
     descEn: 'Individual behavior modification plans under international board supervision.',
     iconName: 'Star',
-    color: 'text-[#22C55E]',
+    color: 'text-[#047857] dark:text-[#34D399]',
     bgColor: 'bg-[#22C55E]/15',
     borderColor: 'border-[#22C55E]/30',
     active: true,
@@ -245,7 +245,7 @@ export const DEFAULT_PROGRAM_PILLARS: ProgramPillarItem[] = [
     descAr: 'تهيئة الطفل للدمج المدرسي والمجتمعي الفعال وتوفير معلم الظل المتخصص لتحقيق أقصى إمكاناته.',
     descEn: 'Preparing children for school inclusion and real-world independence.',
     iconName: 'Globe',
-    color: 'text-[#D9F14A]',
+    color: 'text-[#4D7C0F] dark:text-[#D9F14A]',
     bgColor: 'bg-[#D9F14A]/15',
     borderColor: 'border-[#D9F14A]/30',
     active: true,
@@ -477,6 +477,19 @@ export function saveStoredSocialSettings(settings: SocialLinksSettings): void {
   window.dispatchEvent(new CustomEvent('raba_social_updated', { detail: settings }));
 }
 
+function normalizePillarColor(color?: string): string {
+  if (!color) return 'text-[#1263D6] dark:text-[#60AFFF]';
+  if (color.includes('dark:text-')) return color;
+  const legacyMap: Record<string, string> = {
+    'text-[#2E86EB]': 'text-[#1263D6] dark:text-[#60AFFF]',
+    'text-[#FFD23F]': 'text-[#B45309] dark:text-[#FFD23F]',
+    'text-[#FF2D9B]': 'text-[#BE123C] dark:text-[#FF5CB4]',
+    'text-[#22C55E]': 'text-[#047857] dark:text-[#34D399]',
+    'text-[#D9F14A]': 'text-[#4D7C0F] dark:text-[#D9F14A]',
+  };
+  return legacyMap[color.trim()] || color;
+}
+
 // Pillars Load / Save
 export function getStoredPillars(): ProgramPillarItem[] {
   try {
@@ -484,7 +497,9 @@ export function getStoredPillars(): ProgramPillarItem[] {
     if (!raw) return [...DEFAULT_PROGRAM_PILLARS];
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed.sort((a, b) => (a.order || 0) - (b.order || 0));
+      return parsed
+        .map((p: ProgramPillarItem) => ({ ...p, color: normalizePillarColor(p.color) }))
+        .sort((a, b) => (a.order || 0) - (b.order || 0));
     }
     return [...DEFAULT_PROGRAM_PILLARS];
   } catch {

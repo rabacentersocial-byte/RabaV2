@@ -255,7 +255,7 @@ export const SpecialistImageCustomizerModal: React.FC<SpecialistImageCustomizerM
                     : 'or drag and drop your image file here'}
                 </p>
 
-                <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 dark:text-slate-500">
+                <div className="flex items-center gap-2 text-[11px] font-bold text-slate-600 dark:text-slate-300">
                   <span className="px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-700/60">JPG</span>
                   <span className="px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-700/60">PNG</span>
                   <span className="px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-700/60">WEBP</span>
@@ -404,7 +404,7 @@ export const SpecialistImageCustomizerModal: React.FC<SpecialistImageCustomizerM
           {/* Live Card Preview Column (5 cols) */}
           <div className="lg:col-span-5 bg-slate-50 dark:bg-slate-950 p-4 sm:p-5 rounded-3xl border border-slate-200 dark:border-white/10 flex flex-col items-center">
             
-            <div className="w-full flex items-center justify-between mb-3 text-xs font-black uppercase tracking-wider text-slate-500">
+            <div className="w-full flex items-center justify-between mb-3 text-xs font-black uppercase tracking-wider text-slate-600 dark:text-slate-300">
               <span className="flex items-center gap-1.5">
                 <Eye className="w-3.5 h-3.5 text-[#00E5BE]" />
                 {isArabic ? 'معاينة حية لشكل البطاقة بالسلايدر' : 'Live Slider Card Preview'}
@@ -471,7 +471,7 @@ export const SpecialistImageCustomizerModal: React.FC<SpecialistImageCustomizerM
                       <span className="text-base font-black text-slate-900 dark:text-white block font-sans">
                         {specialist.experienceYears}
                       </span>
-                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                      <span className="text-[9px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider block">
                         {isArabic ? 'خبرة' : 'EXP.'}
                       </span>
                     </div>
@@ -480,17 +480,17 @@ export const SpecialistImageCustomizerModal: React.FC<SpecialistImageCustomizerM
                       <span className="text-base font-black text-slate-900 dark:text-white block font-sans">
                         {specialist.reviewsCount}
                       </span>
-                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                      <span className="text-[9px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider block">
                         {isArabic ? 'تقييم' : 'REVIEWS'}
                       </span>
                     </div>
 
                     <div className="px-1">
-                      <span className="text-base font-black text-amber-500 dark:text-amber-400 flex items-center justify-center gap-1 font-sans">
+                      <span className="text-base font-black text-amber-600 dark:text-amber-400 flex items-center justify-center gap-1 font-sans">
                         <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                         <span>{specialist.rating || 5.0}</span>
                       </span>
-                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                      <span className="text-[9px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider block">
                         {isArabic ? 'التقييم' : 'RATING'}
                       </span>
                     </div>
@@ -510,7 +510,7 @@ export const SpecialistImageCustomizerModal: React.FC<SpecialistImageCustomizerM
 
             </div>
 
-            <p className="text-[11px] text-slate-400 dark:text-slate-500 text-center mt-3 leading-relaxed">
+            <p className="text-[11px] text-slate-600 dark:text-slate-300 text-center mt-3 leading-relaxed">
               {isArabic 
                 ? 'أي صورة يتم حفظها هنا تظهر فوراً للزوار على الموقع والسلايدر وتثبت بشكل دائم.' 
                 : 'Any uploaded photo saved here will immediately show across the live site.'}

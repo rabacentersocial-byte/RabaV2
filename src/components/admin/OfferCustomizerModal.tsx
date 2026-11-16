@@ -979,7 +979,7 @@ export const OfferCustomizerModal: React.FC<OfferCustomizerModalProps> = ({
                         <button
                           type="button"
                           onClick={() => handleRemoveTerm(idx)}
-                          className="text-slate-500 hover:text-rose-400 p-1 rounded-lg cursor-pointer transition-colors"
+                          className="text-slate-400 hover:text-rose-400 p-1 rounded-lg cursor-pointer transition-colors"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -1038,7 +1038,7 @@ export const OfferCustomizerModal: React.FC<OfferCustomizerModalProps> = ({
                           }`}
                         />
                       </button>
-                      <span className={`text-xs font-bold ${active ? 'text-emerald-400' : 'text-slate-500'}`}>
+                      <span className={`text-xs font-bold ${active ? 'text-emerald-400' : 'text-slate-400'}`}>
                         {active ? (isArabic ? 'نشط في السلايدر' : 'Live in Slider') : (isArabic ? 'معطل ومخفي' : 'Hidden')}
                       </span>
                     </div>

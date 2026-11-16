@@ -240,7 +240,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 <button
                   type="submit"
                   disabled={isProcessing}
-                  className="w-full py-3.5 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white font-extrabold rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
+                  className="w-full py-3.5 bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 text-white font-extrabold rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
                 >
                   <Smartphone className="w-4 h-4" />
                   <span>
@@ -300,7 +300,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                       className="w-full text-xs sm:text-sm bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-white/20 rounded-xl p-2.5 pl-10 font-mono tracking-wider text-slate-900 dark:text-white focus:ring-2 focus:ring-sky-500 dark:focus:ring-[#00E5BE]/30 outline-none text-left"
                       dir="ltr"
                     />
-                    <CreditCard className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                    <CreditCard className="w-4 h-4 text-slate-500 dark:text-slate-400 absolute left-3 top-3" />
                   </div>
                 </div>
 
@@ -501,7 +501,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                     : `Session appointment confirmed at Raba Center for ${appointment.childName} with ${appointment.specialistName} on ${appointment.date} - ${appointment.timeSlot}. Booking Ref: ${appointment.referenceNumber}`;
                   window.open(`https://wa.me/966575100100?text=${encodeURIComponent(text)}`, '_blank');
                 }}
-                className="py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                className="py-2.5 px-3 bg-[#047857] hover:bg-[#065F46] text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
               >
                 <Share2 className="w-3.5 h-3.5" />
                 <span>{isArabic ? 'مشاركة عبر واتساب' : 'Share on WhatsApp'}</span>

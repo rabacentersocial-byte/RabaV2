@@ -345,12 +345,12 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-white/10 pb-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-[#00E5BE] text-xs font-black">
+            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-[#00E5BE] text-xs font-black">
               {isArabic ? 'المحتوى الإكلينيكي والمعرفي' : 'Clinical Knowledge'}
             </span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-            <BookOpen className="w-6 h-6 text-[#00E5BE]" />
+            <BookOpen className="w-6 h-6 text-[#0F766E] dark:text-[#00E5BE]" />
             <span>{isArabic ? 'إدارة المدونات والمقالات وسلايدر المعرفة' : 'Blog & Articles Management'}</span>
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -396,20 +396,20 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
       {/* 2. Stats Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-xs">
-          <span className="text-[11px] font-bold text-slate-400 block">{isArabic ? 'إجمالي المقالات' : 'Total Articles'}</span>
+          <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 block">{isArabic ? 'إجمالي المقالات' : 'Total Articles'}</span>
           <span className="text-xl font-black text-slate-900 dark:text-white">{posts.length}</span>
         </div>
         <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-xs">
-          <span className="text-[11px] font-bold text-slate-400 block">{isArabic ? 'المقالات المنشورة' : 'Published'}</span>
-          <span className="text-xl font-black text-emerald-600 dark:text-[#00E5BE]">{publishedCount}</span>
+          <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 block">{isArabic ? 'المقالات المنشورة' : 'Published'}</span>
+          <span className="text-xl font-black text-emerald-700 dark:text-[#00E5BE]">{publishedCount}</span>
         </div>
         <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-xs">
-          <span className="text-[11px] font-bold text-slate-400 block">{isArabic ? 'في سلايدر الواجهة' : 'In Hero Slider'}</span>
-          <span className="text-xl font-black text-sky-600">{sliderCount}</span>
+          <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 block">{isArabic ? 'في سلايدر الواجهة' : 'In Hero Slider'}</span>
+          <span className="text-xl font-black text-sky-700 dark:text-sky-400">{sliderCount}</span>
         </div>
         <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-xs">
-          <span className="text-[11px] font-bold text-slate-400 block">{isArabic ? 'المسودات' : 'Drafts'}</span>
-          <span className="text-xl font-black text-amber-500">{posts.length - publishedCount}</span>
+          <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 block">{isArabic ? 'المسودات' : 'Drafts'}</span>
+          <span className="text-xl font-black text-amber-700 dark:text-amber-400">{posts.length - publishedCount}</span>
         </div>
       </div>
 
@@ -474,8 +474,8 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
 
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
                     post.status === 'published' 
-                      ? 'bg-emerald-500/10 text-emerald-600' 
-                      : 'bg-amber-500/10 text-amber-600'
+                      ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300' 
+                      : 'bg-amber-500/10 text-amber-700 dark:text-amber-300'
                   }`}>
                     {post.status === 'published' ? (isArabic ? 'منشور' : 'Published') : (isArabic ? 'مسودة' : 'Draft')}
                   </span>
@@ -504,7 +504,7 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
                 />
                 <span className="truncate max-w-[120px] font-bold text-slate-700 dark:text-slate-200">{post.author.name}</span>
                 <span>•</span>
-                <Clock className="w-3 h-3 text-slate-400" />
+                <Clock className="w-3 h-3 text-slate-500 dark:text-slate-400" />
                 <span>{post.readTimeMinutes} {isArabic ? 'د' : 'min'}</span>
               </div>
 
@@ -535,8 +535,8 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
                   onClick={() => handleToggleSlider(post.id)}
                   className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
                     post.isSliderFeatured !== false 
-                      ? 'bg-sky-500/10 text-sky-600 hover:bg-sky-500/20' 
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                      ? 'bg-sky-500/10 text-sky-700 dark:text-sky-400 hover:bg-sky-500/20' 
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                   }`}
                   title={isArabic ? 'إظهار/إخفاء من سلايدر المدونات' : 'Toggle Slider'}
                 >
@@ -549,8 +549,8 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
                   onClick={() => handleToggleStatus(post.id)}
                   className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
                     post.status === 'published' 
-                      ? 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20' 
-                      : 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20'
+                      ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20' 
+                      : 'bg-amber-500/10 text-amber-700 dark:text-amber-400 hover:bg-amber-500/20'
                   }`}
                   title={post.status === 'published' ? (isArabic ? 'تحويل لمسودة' : 'Unpublish') : (isArabic ? 'نشر المقال' : 'Publish')}
                 >
@@ -571,7 +571,7 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
                 <button
                   type="button"
                   onClick={() => handleDeletePost(post)}
-                  className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white transition-all cursor-pointer"
+                  className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-600 text-rose-700 dark:text-rose-400 hover:text-white transition-all cursor-pointer"
                   title={isArabic ? 'حذف المقال' : 'Delete'}
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -590,7 +590,7 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-[#00E5BE]">
+                <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-700 dark:text-[#00E5BE]">
                   <BookOpen className="w-5 h-5" />
                 </div>
                 <div>
@@ -606,7 +606,7 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-500 cursor-pointer"
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -701,7 +701,7 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
                     className={`w-full p-2.5 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                       formIsSliderFeatured
                         ? 'bg-sky-500/15 text-sky-700 dark:text-sky-300 border border-sky-400/30'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                     }`}
                   >
                     <Sparkles className="w-3.5 h-3.5" />
@@ -789,7 +789,7 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
               <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-white/10 space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-white/10 pb-2">
                   <div className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-[#00E5BE]" />
+                    <User className="w-4 h-4 text-[#0F766E] dark:text-[#00E5BE]" />
                     <h5 className="text-xs font-black text-slate-900 dark:text-white">
                       {isArabic ? 'تخصيص كاتب المقال والصورة الشخصية' : 'Author Profile & Avatar Customization'}
                     </h5>
@@ -834,12 +834,12 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
                       <button
                         type="button"
                         onClick={() => avatarInputRef.current?.click()}
-                        className="py-1.5 px-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-[#00E5BE] hover:text-[#00E5BE] flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+                        className="py-1.5 px-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-700 dark:text-slate-200 hover:border-[#00E5BE] hover:text-[#0F766E] dark:hover:text-[#00E5BE] flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
                       >
                         <Upload className="w-3.5 h-3.5" />
                         <span>{isArabic ? 'رفع صورة الكاتب من الجهاز' : 'Upload photo from device'}</span>
                       </button>
-                      <span className="text-[11px] text-slate-400">{isArabic ? 'أو أدخل رابط الصورة مباشرة:' : 'Or enter direct URL:'}</span>
+                      <span className="text-[11px] text-slate-600 dark:text-slate-400">{isArabic ? 'أو أدخل رابط الصورة مباشرة:' : 'Or enter direct URL:'}</span>
                     </div>
 
                     <input
@@ -858,7 +858,7 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
                     <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300">
                       {isArabic ? 'أو اختر صورة الكاتب من أخصائيي رابا:' : 'Or choose from Raba Center Specialists:'}
                     </span>
-                    <span className="text-[10px] text-[#00E5BE] font-medium">
+                    <span className="text-[10px] text-[#0F766E] dark:text-[#00E5BE] font-medium">
                       {isArabic ? 'نقرة واحدة لتعيين الصورة والاسم' : '1-click set photo & name'}
                     </span>
                   </div>
@@ -1063,7 +1063,7 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
               <button
                 type="button"
                 onClick={handleConfirmReset}
-                className="flex-1 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black shadow-md cursor-pointer transition-all"
+                className="flex-1 py-2.5 rounded-xl bg-amber-700 hover:bg-amber-800 text-white text-xs font-black shadow-md cursor-pointer transition-all"
               >
                 {isArabic ? 'تأكيد الاستعادة' : 'Confirm Reset'}
               </button>

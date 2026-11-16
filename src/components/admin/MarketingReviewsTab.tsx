@@ -155,7 +155,7 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
             onClick={() => setActiveSubTab('reviews')}
             className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
               activeSubTab === 'reviews'
-                ? 'bg-emerald-600 text-white shadow-sm'
+                ? 'bg-emerald-700 text-white shadow-sm'
                 : 'bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
             }`}
           >
@@ -166,7 +166,7 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
             onClick={() => setActiveSubTab('offers')}
             className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
               activeSubTab === 'offers'
-                ? 'bg-emerald-600 text-white shadow-sm'
+                ? 'bg-emerald-700 text-white shadow-sm'
                 : 'bg-slate-100 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
             }`}
           >
@@ -204,12 +204,12 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
                     <h4 className="font-bold text-slate-900 dark:text-white text-sm">
                       {isArabic ? rev.parentName : (rev.parentNameEn || rev.parentName)}
                     </h4>
-                    <p className="text-xs text-slate-500 mt-0.5">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
                       {rev.childIssue || 'تأهيل سلوكي ونمائي'} • {rev.location || 'الرياض'}
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/40 px-2 py-0.5 rounded-lg text-amber-600 dark:text-amber-400 text-xs font-bold shrink-0">
+                  <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/40 px-2 py-0.5 rounded-lg text-amber-700 dark:text-amber-400 text-xs font-bold shrink-0">
                     <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                     <span>{rev.rating}</span>
                   </div>
@@ -222,7 +222,7 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
 
               <div className="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 dark:border-white/5 text-xs">
                 <div className="flex items-center gap-2">
-                  <span className={`inline-flex items-center gap-1 font-bold ${rev.isVerifiedParent || rev.verifiedBeneficiary ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>
+                  <span className={`inline-flex items-center gap-1 font-bold ${rev.isVerifiedParent || rev.verifiedBeneficiary ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-400'}`}>
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     <span>{isArabic ? 'مستفيد موثّق' : 'Verified Beneficiary'}</span>
                   </span>
@@ -233,7 +233,7 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
                     <button
                       onClick={() => handleToggleVerified(rev.id)}
                       title={isArabic ? 'تبديل حالة التوثيق' : 'Toggle verified status'}
-                      className="p-1 text-slate-500 hover:text-emerald-600 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg cursor-pointer"
+                      className="p-1 text-slate-600 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg cursor-pointer"
                     >
                       {rev.isVerifiedParent ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                     </button>
@@ -260,11 +260,11 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
               <div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                   <span>{isArabic ? 'إدارة وتخصيص بطاقات العروض الحصرية' : 'Exclusive Offer Cards Management'}</span>
-                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#00E5BE]/10 text-[#00E5BE] border border-[#00E5BE]/30">
+                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-[#00E5BE]/10 text-[#0F766E] dark:text-[#00E5BE] border border-[#00E5BE]/30">
                     {isArabic ? 'ألوان وتفاصيل كاملة' : 'Colors & Details Customizer'}
                   </span>
                 </h3>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                   {isArabic 
                     ? 'يمكنك تخصيص لون كل بطاقة، التدرجات اللونية، النصوص، الشارات، نسب الخصم والشروط مع ظهور التغييرات فوراً في سلايدر الصفحة الرئيسية.'
                     : 'Customize each card background, colors, gradients, labels, badges, discount calculation & terms with live sync to homepage.'}
@@ -332,7 +332,7 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
                               {offer.isNationalDay ? '🇸🇦 اليوم الوطني 96' : 'عرض خاص'}
                             </span>
 
-                            <span className={`text-xs font-bold ${offer.active ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`}>
+                            <span className={`text-xs font-bold ${offer.active ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-400'}`}>
                               {offer.active ? (isArabic ? '• نشط في السلايدر' : '• Live') : (isArabic ? '• معطل' : '• Disabled')}
                             </span>
                           </div>
@@ -341,7 +341,7 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
                             {isArabic ? offer.titleAr : offer.titleEn}
                           </h4>
 
-                          <p className="text-xs text-slate-500 line-clamp-1">
+                          <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-1">
                             {isArabic ? offer.subtitleAr : offer.subtitleEn}
                           </p>
                         </div>
@@ -379,7 +379,7 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
                         </div>
 
                         {offer.terms && (
-                          <div className="flex items-center gap-1 text-[11px] text-slate-400">
+                          <div className="flex items-center gap-1 text-[11px] text-slate-600 dark:text-slate-400">
                             <span>•</span>
                             <span>{offer.terms.length} {isArabic ? 'شروط مسجلة' : 'terms'}</span>
                           </div>
@@ -406,7 +406,7 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
                               setEditingOffer(offer);
                               setIsCustomizerOpen(true);
                             }}
-                            className="text-xs font-black px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition-all cursor-pointer flex items-center gap-1.5 shadow-sm active:scale-95"
+                            className="text-xs font-black px-3.5 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white transition-all cursor-pointer flex items-center gap-1.5 shadow-sm active:scale-95"
                           >
                             <Palette className="w-3.5 h-3.5" />
                             <span>{isArabic ? 'تخصيص البطاقة والألوان' : 'Customize Colors & Details'}</span>
@@ -416,7 +416,7 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
                           <button
                             onClick={() => handleDuplicateOffer(offer)}
                             title={isArabic ? 'تكرار هذا العرض' : 'Duplicate offer'}
-                            className="p-1.5 text-slate-500 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition-all cursor-pointer"
+                            className="p-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 rounded-xl transition-all cursor-pointer"
                           >
                             <CopyPlus className="w-4 h-4" />
                           </button>

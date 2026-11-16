@@ -269,7 +269,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                 <ShieldCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#10B981]" />
                 {isArabic ? 'إشراف سريري مباشر' : 'Direct Clinical Supervision'}
               </span>
-              <span className="bg-[#2B95FF] text-white px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-black shadow-xs flex items-center gap-1 sm:gap-1.5">
+              <span className="bg-[#1463D6] text-white px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-black shadow-xs flex items-center gap-1 sm:gap-1.5">
                 <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
                 {isArabic ? 'معايير BACB الدولية' : 'BACB Global Standards'}
               </span>
@@ -408,7 +408,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                     <div className="flex flex-col gap-1.5 sm:gap-2 pt-1">
                       <button
                         onClick={handleWhatsAppDirect}
-                        className="w-full bg-[#10B981] hover:bg-[#059669] text-white font-bold py-2 sm:py-2.5 px-3 rounded-full flex items-center justify-center gap-1.5 text-xs shadow-md transition-all active:scale-98 cursor-pointer"
+                        className="w-full bg-[#047857] hover:bg-[#065F46] text-white font-bold py-2 sm:py-2.5 px-3 rounded-full flex items-center justify-center gap-1.5 text-xs shadow-md transition-all active:scale-98 cursor-pointer"
                       >
                         <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         <span>{isArabic ? 'متابعة فورية عبر واتساب' : 'Direct Follow-up on WhatsApp'}</span>
@@ -448,9 +448,9 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             placeholder={isArabic ? 'اسم الطفل أو ولي الأمر' : 'Child or Parent Name'}
-                            className={`w-full bg-white/90 dark:bg-white/10 text-[#161B26] dark:text-white placeholder-[#8B95A5] dark:placeholder-[#94A3B8] rounded-full px-3.5 sm:px-4 py-2 sm:py-2.5 ${isArabic ? 'pl-9 sm:pl-10' : 'pr-9 sm:pr-10'} text-xs sm:text-sm shadow-sm border border-[#161B26]/12 dark:border-white/15 focus:border-[#2B95FF] focus:ring-2 focus:ring-[#2B95FF]/30 outline-none transition-all h-9.5 sm:h-11`}
+                            className={`w-full bg-white/90 dark:bg-white/10 text-[#161B26] dark:text-white placeholder-[#525B6B] dark:placeholder-[#94A3B8] rounded-full px-3.5 sm:px-4 py-2 sm:py-2.5 ${isArabic ? 'pl-9 sm:pl-10' : 'pr-9 sm:pr-10'} text-xs sm:text-sm shadow-sm border border-[#161B26]/12 dark:border-white/15 focus:border-[#2B95FF] focus:ring-2 focus:ring-[#2B95FF]/30 outline-none transition-all h-9.5 sm:h-11`}
                           />
-                          <User className={`w-3.5 h-3.5 text-[#8B95A5] dark:text-[#94A3B8] absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3.5 sm:left-4' : 'right-3.5 sm:right-4'}`} />
+                          <User className={`w-3.5 h-3.5 text-[#525B6B] dark:text-[#94A3B8] absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3.5 sm:left-4' : 'right-3.5 sm:right-4'}`} />
                         </div>
                       </div>
 
@@ -481,7 +481,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                                 </option>
                               ))}
                             </select>
-                            <MapPin className={`w-3.5 h-3.5 text-[#8B95A5] dark:text-[#94A3B8] absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3.5 sm:left-4' : 'right-3.5 sm:right-4'}`} />
+                            <MapPin className={`w-3.5 h-3.5 text-[#525B6B] dark:text-[#94A3B8] absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3.5 sm:left-4' : 'right-3.5 sm:right-4'}`} />
                           </div>
                         </div>
 
@@ -498,9 +498,9 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                               value={formData.phone}
                               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                               placeholder="+966 5X XXX XXXX"
-                              className="w-full bg-white/90 dark:bg-white/10 text-[#161B26] dark:text-white placeholder-[#8B95A5] dark:placeholder-[#94A3B8] rounded-full px-3.5 sm:px-4 py-2 sm:py-2.5 pr-9 sm:pr-10 text-xs sm:text-sm shadow-sm border border-[#161B26]/12 dark:border-white/15 focus:border-[#2B95FF] focus:ring-2 focus:ring-[#2B95FF]/30 outline-none transition-all font-mono text-left h-9.5 sm:h-11"
+                              className="w-full bg-white/90 dark:bg-white/10 text-[#161B26] dark:text-white placeholder-[#525B6B] dark:placeholder-[#94A3B8] rounded-full px-3.5 sm:px-4 py-2 sm:py-2.5 pr-9 sm:pr-10 text-xs sm:text-sm shadow-sm border border-[#161B26]/12 dark:border-white/15 focus:border-[#2B95FF] focus:ring-2 focus:ring-[#2B95FF]/30 outline-none transition-all font-mono text-left h-9.5 sm:h-11"
                             />
-                            <PhoneIcon className="w-3.5 h-3.5 text-[#8B95A5] dark:text-[#94A3B8] absolute right-3.5 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <PhoneIcon className="w-3.5 h-3.5 text-[#525B6B] dark:text-[#94A3B8] absolute right-3.5 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                           </div>
                         </div>
 
@@ -512,7 +512,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                           type="submit"
                           aria-label={isArabic ? 'إرسال طلب حجز خدمة سوار معلم الظل' : 'Submit Sewar shadow teacher booking request'}
                           disabled={isSubmitting}
-                          className="w-full bg-[#2B95FF] hover:bg-[#1E7EE0] active:scale-[0.98] text-white font-black min-h-[48px] px-4 sm:px-5 rounded-full shadow-[0_8px_20px_rgba(43,149,255,0.35)] transition-all duration-200 flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm cursor-pointer disabled:opacity-60"
+                          className="w-full bg-[#1463D6] hover:bg-[#1152B8] active:scale-[0.98] text-white font-black min-h-[48px] px-4 sm:px-5 rounded-full shadow-[0_8px_20px_rgba(20,99,214,0.35)] transition-all duration-200 flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm cursor-pointer disabled:opacity-60"
                         >
                           {isSubmitting ? (
                             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

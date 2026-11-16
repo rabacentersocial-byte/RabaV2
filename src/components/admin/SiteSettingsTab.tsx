@@ -298,7 +298,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
             </span>
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-            <Sliders className="w-6 h-6 text-[#00E5BE]" />
+            <Sliders className="w-6 h-6 text-[#0F766E] dark:text-[#00E5BE]" />
             <span>{isArabic ? 'تخصيص الثيم والمحاور والفوتر ومديولات الموقع' : 'Theme, Pillars, Footer & Modules'}</span>
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -341,7 +341,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
               onClick={() => setSubTab(tab.id as any)}
               className={`px-4 py-2 rounded-2xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
                 subTab === tab.id
-                  ? 'bg-[#2E86EB] text-white shadow-md scale-102'
+                  ? 'bg-[#1463D6] text-white shadow-md scale-102'
                   : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
@@ -368,7 +368,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-5 shadow-xs space-y-4">
             <div>
               <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <Palette className="w-5 h-5 text-[#00E5BE]" />
+                <Palette className="w-5 h-5 text-[#0F766E] dark:text-[#00E5BE]" />
                 <span>{isArabic ? 'اختيار باقة ألوان الموقع الجاهزة (Presets)' : 'Ready-made Brand Themes'}</span>
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -395,7 +395,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
                         {isArabic ? preset.nameAr : preset.nameEn}
                       </span>
                       {themeSettings.id === preset.id && (
-                        <span className="w-5 h-5 rounded-full bg-[#2E86EB] text-white flex items-center justify-center text-[11px] font-black">
+                        <span className="w-5 h-5 rounded-full bg-[#1463D6] text-white flex items-center justify-center text-[11px] font-black">
                           ✓
                         </span>
                       )}
@@ -418,7 +418,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
           {/* Custom Hex Color Pickers Form */}
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-5 shadow-xs space-y-4">
             <h3 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#2E86EB]" />
+              <Sparkles className="w-4 h-4 text-[#1463D6] dark:text-[#60AFFF]" />
               <span>{isArabic ? 'تخصيص لوحة الألوان الـ 5 المعتمدة (5-Color Palette Editor)' : '5-Color Palette Editor'}</span>
             </h3>
 
@@ -536,7 +536,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
               <div className="flex justify-end pt-2">
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:opacity-95 text-white font-black text-xs shadow-md transition-all cursor-pointer flex items-center gap-2"
+                  className="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-[#1668DC] via-[#1463D6] to-[#047857] hover:opacity-95 text-white font-black text-xs shadow-md transition-all cursor-pointer flex items-center gap-2"
                 >
                   <Save className="w-4 h-4" />
                   <span>{isArabic ? 'حفظ وتطبيق ألوان الباقة' : 'Save & Apply Palette'}</span>
@@ -572,9 +572,9 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <Layers className="w-5 h-5 text-[#00E5BE]" />
+                <Layers className="w-5 h-5 text-[#0F766E] dark:text-[#00E5BE]" />
                 <span>{isArabic ? 'قائمة محاور برنامجنا التأهيلي' : 'Program Pillars'}</span>
-                <span className="text-xs font-bold text-slate-400">({pillars.length})</span>
+                <span className="text-xs font-bold text-slate-600 dark:text-slate-400">({pillars.length})</span>
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 {isArabic ? 'تعديل نصوص المحاور، الأيقونات، الألوان، وترتيب ظهورها في الصفحة الرئيسية' : 'Edit titles, descriptions, icons, colors, and order'}
@@ -616,8 +616,8 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
                     #{idx + 1}
                   </span>
 
-                  <div className={`w-12 h-12 rounded-xl ${pillar?.bgColor || 'bg-slate-100'} border ${pillar?.borderColor || 'border-slate-200'} flex items-center justify-center shrink-0`}>
-                    <span className={`text-xs font-black ${pillar?.color || 'text-slate-700'}`}>{(pillar?.iconName || 'PIL').slice(0, 3)}</span>
+                  <div className={`w-12 h-12 rounded-xl ${pillar?.bgColor || 'bg-slate-100 dark:bg-slate-800'} border ${pillar?.borderColor || 'border-slate-200 dark:border-white/15'} flex items-center justify-center shrink-0`}>
+                    <span className={`text-xs font-black ${pillar?.color || 'text-slate-700 dark:text-slate-200'}`}>{(pillar?.iconName || 'PIL').slice(0, 3)}</span>
                   </div>
 
                   <div className="min-w-0 flex-1">
@@ -626,10 +626,10 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
                         {pillar.titleAr}
                       </h4>
                       {pillar.titleEn && (
-                        <span className="text-[11px] text-slate-400 font-mono">({pillar.titleEn})</span>
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">({pillar.titleEn})</span>
                       )}
                       <span className={`px-2 py-0.2 rounded-full text-[10px] font-black ${
-                        pillar.active !== false ? 'bg-emerald-500/10 text-emerald-600' : 'bg-slate-200 text-slate-500'
+                        pillar.active !== false ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' : 'bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
                       }`}>
                         {pillar.active !== false ? (isArabic ? 'مفعل' : 'Active') : (isArabic ? 'معطل' : 'Disabled')}
                       </span>
@@ -683,7 +683,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
                   <button
                     type="button"
                     onClick={() => handleDeletePillar(pillar.id)}
-                    className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white transition-all cursor-pointer"
+                    className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-700 dark:text-rose-400 hover:text-white transition-all cursor-pointer"
                     title={isArabic ? 'حذف' : 'Delete'}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -704,7 +704,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
                   <button
                     type="button"
                     onClick={() => setIsPillarModalOpen(false)}
-                    className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-500 cursor-pointer"
+                    className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 cursor-pointer"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -803,7 +803,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-4">
             <div>
               <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <Share2 className="w-5 h-5 text-[#00E5BE]" />
+                <Share2 className="w-5 h-5 text-[#0F766E] dark:text-[#00E5BE]" />
                 <span>{isArabic ? 'تخصيص روابط شبكات التواصل الاجتماعي في الفوتر' : 'Social Media Links Customization'}</span>
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -958,7 +958,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-4">
             <div>
               <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <Footprints className="w-5 h-5 text-[#00E5BE]" />
+                <Footprints className="w-5 h-5 text-[#0F766E] dark:text-[#00E5BE]" />
                 <span>{isArabic ? 'تخصيص وتعديل أجزاء ومحتوى الفوتر' : 'Footer Content Customization'}</span>
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -1109,7 +1109,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
           <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-4">
             <div>
               <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <Layout className="w-5 h-5 text-[#00E5BE]" />
+                <Layout className="w-5 h-5 text-[#0F766E] dark:text-[#00E5BE]" />
                 <span>{isArabic ? 'التحكم في ظهور مديولات وأقسام الموقع الرئيسية' : 'Site Modules Visibility Control'}</span>
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">

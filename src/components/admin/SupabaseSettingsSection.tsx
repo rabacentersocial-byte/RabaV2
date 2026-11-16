@@ -138,14 +138,14 @@ export const SupabaseSettingsSection: React.FC<SupabaseSettingsSectionProps> = (
               <Globe className="w-3.5 h-3.5 text-[#3ECF8E]" />
               {isArabic ? 'رابط المشروع (Project URL)' : 'Project URL'}
             </span>
-            <span className="text-[10px] text-slate-500 font-mono">https://xyz.supabase.co</span>
+            <span className="text-[10px] text-slate-400 font-mono">https://xyz.supabase.co</span>
           </label>
           <input
             type="text"
             value={config.url}
             onChange={(e) => setConfig({ ...config, url: e.target.value })}
             placeholder="https://your-project-id.supabase.co"
-            className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-[#3ECF8E] focus:ring-1 focus:ring-[#3ECF8E] text-slate-100 placeholder-slate-500 text-xs font-mono transition-all"
+            className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-[#3ECF8E] focus:ring-1 focus:ring-[#3ECF8E] text-slate-100 placeholder-slate-400 text-xs font-mono transition-all"
             dir="ltr"
           />
         </div>
@@ -157,14 +157,14 @@ export const SupabaseSettingsSection: React.FC<SupabaseSettingsSectionProps> = (
               <Key className="w-3.5 h-3.5 text-amber-400" />
               {isArabic ? 'مفتاح الوصول العام (Anon Key)' : 'Public Anon Key'}
             </span>
-            <span className="text-[10px] text-slate-500 font-mono">eyJh...</span>
+            <span className="text-[10px] text-slate-400 font-mono">eyJh...</span>
           </label>
           <input
             type="password"
             value={config.anonKey}
             onChange={(e) => setConfig({ ...config, anonKey: e.target.value })}
             placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-            className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-[#3ECF8E] focus:ring-1 focus:ring-[#3ECF8E] text-slate-100 placeholder-slate-500 text-xs font-mono transition-all"
+            className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 focus:border-[#3ECF8E] focus:ring-1 focus:ring-[#3ECF8E] text-slate-100 placeholder-slate-400 text-xs font-mono transition-all"
             dir="ltr"
           />
         </div>
@@ -237,7 +237,7 @@ export const SupabaseSettingsSection: React.FC<SupabaseSettingsSectionProps> = (
           <pre className="text-[11px] text-slate-300 font-mono overflow-x-auto max-h-56 p-2 bg-slate-900/50 rounded-xl" dir="ltr">
             {SUPABASE_SQL_SCHEMA}
           </pre>
-          <p className="text-[10px] text-slate-500 mt-2">
+          <p className="text-[10px] text-slate-400 mt-2">
             {isArabic 
               ? 'انسخ السكربت أعلاه، ثم توجه إلى لوحة Supabase وافتح SQL Editor واضغط Run لإنشاء الجداول وصلاحيات الأمان تلقائياً.' 
               : 'Copy the SQL above and run it in the Supabase SQL Editor to initialize tables.'}

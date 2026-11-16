@@ -243,7 +243,7 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
                   {isArabic ? 'ريال' : 'SAR'}
                 </span>
                 {Number(course.originalPrice) > 0 && (
-                  <span className="text-xs sm:text-sm font-semibold text-[#8B95A5] dark:text-[#64748B] line-through mr-1">
+                  <span className="text-xs sm:text-sm font-semibold text-[#525B6B] dark:text-[#94A3B8] line-through mr-1">
                     {course.originalPrice} {isArabic ? 'ريال' : 'SAR'}
                   </span>
                 )}

@@ -387,7 +387,7 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
               <Home className="w-3.5 h-3.5" />
               <span>{isArabic ? 'الرئيسية' : 'Home'}</span>
             </button>
-            <span className="text-[#8B95A5] dark:text-[#64748B]">/</span>
+            <span className="text-[#525B6B] dark:text-[#94A3B8]">/</span>
             <span className="text-[#161B26] dark:text-[#F8FAFC] font-bold">
               {isArabic ? 'دليل الأخصائيين والخبراء' : 'Specialists Directory'}
             </span>
@@ -464,11 +464,11 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
                 placeholder={isArabic ? 'ابحث بالاسم، التخصص، الكفاءة السريرية، أو الكلمات المفتاحية...' : 'Search by name, specialty, bio, or credentials...'}
                 className="warm-pill-input w-full rounded-full pl-8 pr-9 sm:pl-10 sm:pr-12 py-2 sm:py-3 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#2B95FF] transition-all"
               />
-              <Search className={`w-4 h-4 sm:w-5 sm:h-5 text-[#8B95A5] dark:text-[#64748B] absolute top-1/2 -translate-y-1/2 ${isArabic ? 'right-3 sm:right-4' : 'left-3 sm:left-4'}`} />
+              <Search className={`w-4 h-4 sm:w-5 sm:h-5 text-[#525B6B] dark:text-[#94A3B8] absolute top-1/2 -translate-y-1/2 ${isArabic ? 'right-3 sm:right-4' : 'left-3 sm:left-4'}`} />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className={`absolute top-1/2 -translate-y-1/2 ${isArabic ? 'left-2 sm:left-3' : 'right-2 sm:right-3'} p-1 rounded-full hover:bg-[#161B26]/5 dark:hover:bg-white/10 text-[#8B95A5] dark:text-[#64748B] transition-colors cursor-pointer`}
+                  className={`absolute top-1/2 -translate-y-1/2 ${isArabic ? 'left-2 sm:left-3' : 'right-2 sm:right-3'} p-1 rounded-full hover:bg-[#161B26]/5 dark:hover:bg-white/10 text-[#525B6B] dark:text-[#94A3B8] transition-colors cursor-pointer`}
                 >
                   <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </button>
@@ -501,7 +501,7 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
                   {sortBy === 'experience' && (isArabic ? 'الأكثر خبرة' : 'Experience')}
                   {sortBy === 'name' && (isArabic ? 'أبجدياً' : 'A-Z')}
                 </span>
-                <ChevronDown className="w-3.5 h-3.5 text-[#8B95A5] dark:text-[#64748B] shrink-0" />
+                <ChevronDown className="w-3.5 h-3.5 text-[#525B6B] dark:text-[#94A3B8] shrink-0" />
               </button>
 
               {isSortOpen && (
@@ -659,7 +659,7 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
                     {/* Top Left Badge: TOP RATED */}
                     {isTop && (
                       <div className="absolute top-2 sm:top-2.5 left-2 sm:left-2.5 z-10">
-                        <span className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] dark:bg-none dark:bg-[#1E293B]/95 backdrop-blur-xs text-white dark:text-[#F8FAFC] dark:border dark:border-white/15 text-[8.5px] sm:text-[9px] font-black tracking-wider px-2.5 py-0.5 rounded-full shadow-md uppercase">
+                        <span className="bg-gradient-to-r from-[#B45309] to-[#92400E] dark:bg-none dark:bg-[#1E293B]/95 backdrop-blur-xs text-white dark:text-[#F8FAFC] dark:border dark:border-white/15 text-[8.5px] sm:text-[9px] font-black tracking-wider px-2.5 py-0.5 rounded-full shadow-md uppercase">
                           {isArabic ? 'الأعلى تقييماً' : 'TOP RATED'}
                         </span>
                       </div>
@@ -709,7 +709,7 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
                           <span className={`text-sm sm:text-base font-black block font-sans ${theme.expMetricColor}`}>
                             {doctor.experienceYears}
                           </span>
-                          <span className="text-[7.5px] sm:text-[8px] font-bold text-[#8B95A5] dark:text-[#64748B] uppercase tracking-wider block mt-0.5">
+                          <span className="text-[7.5px] sm:text-[8px] font-bold text-[#525B6B] dark:text-[#94A3B8] uppercase tracking-wider block mt-0.5">
                             {isArabic ? 'سنوات خبرة' : 'EXP'}
                           </span>
                         </div>
@@ -718,7 +718,7 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
                           <span className="text-sm sm:text-base font-black text-[#161B26] dark:text-[#F8FAFC] block font-sans">
                             {displayReviewCount}
                           </span>
-                          <span className="text-[7.5px] sm:text-[8px] font-bold text-[#8B95A5] dark:text-[#64748B] uppercase tracking-wider block mt-0.5">
+                          <span className="text-[7.5px] sm:text-[8px] font-bold text-[#525B6B] dark:text-[#94A3B8] uppercase tracking-wider block mt-0.5">
                             {isArabic ? 'تقييم' : 'REVIEWS'}
                           </span>
                         </div>
@@ -728,7 +728,7 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
                             <Star className="w-3 h-3 fill-[#F59E0B] text-[#F59E0B]" />
                             <span>{(displayRating || 4.9).toFixed(1)}</span>
                           </span>
-                          <span className="text-[7.5px] sm:text-[8px] font-bold text-[#8B95A5] dark:text-[#64748B] uppercase tracking-wider block mt-0.5">
+                          <span className="text-[7.5px] sm:text-[8px] font-bold text-[#525B6B] dark:text-[#94A3B8] uppercase tracking-wider block mt-0.5">
                             {isArabic ? 'تقييم' : 'RATING'}
                           </span>
                         </div>
@@ -780,7 +780,7 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
         {/* 5. BOTTOM CONSULTATION HOOK BANNER */}
         <div className="obsidian-anchor-card mt-14 p-6 sm:p-8 rounded-[28px] shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
           <div className="flex items-center gap-4 relative z-10">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#2B95FF] to-[#1A73E8] text-white flex items-center justify-center shrink-0 shadow-md">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#1668DC] to-[#1152B8] text-white flex items-center justify-center shrink-0 shadow-md">
               <HeartHandshake className="w-7 h-7 text-white" />
             </div>
             <div>
@@ -801,7 +801,7 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
                 handleBookClick(filteredDoctors[0]);
               }
             }}
-            className="w-full md:w-auto shrink-0 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 active:scale-95 text-white font-black px-6 sm:px-8 py-3.5 rounded-full shadow-lg shadow-[#2B95FF]/25 transition-all text-sm cursor-pointer text-center relative z-10"
+            className="w-full md:w-auto shrink-0 bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 active:scale-95 text-white font-black px-6 sm:px-8 py-3.5 rounded-full shadow-lg shadow-[#1668DC]/25 transition-all text-sm cursor-pointer text-center relative z-10"
           >
             {isArabic ? 'طلب استشارة توجيهية فورية' : 'Request Triage Consultation'}
           </button>

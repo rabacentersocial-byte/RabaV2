@@ -121,7 +121,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
     switch (id) {
       case 'srv-aba':
         return {
-          colorClass: 'bg-[#2B95FF]',
+          colorClass: 'bg-[#1463D6]',
           colorClassHover: 'hover:border-[#2B95FF]/50',
           accentBorder: 'border-[#2B95FF]/20',
           lightBg: 'bg-[#2B95FF]/10 dark:bg-[#2B95FF]/15',
@@ -131,7 +131,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         };
       case 'srv-speech':
         return {
-          colorClass: 'bg-[#10B981]',
+          colorClass: 'bg-[#047857]',
           colorClassHover: 'hover:border-[#10B981]/50',
           accentBorder: 'border-[#10B981]/20',
           lightBg: 'bg-[#10B981]/10 dark:bg-[#10B981]/15',
@@ -141,7 +141,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         };
       case 'srv-occupational':
         return {
-          colorClass: 'bg-[#8B5CF6]',
+          colorClass: 'bg-[#6D28D9]',
           colorClassHover: 'hover:border-[#8B5CF6]/50',
           accentBorder: 'border-[#8B5CF6]/20',
           lightBg: 'bg-[#8B5CF6]/10 dark:bg-[#8B5CF6]/15',
@@ -151,7 +151,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         };
       case 'srv-sensory':
         return {
-          colorClass: 'bg-[#D97706]',
+          colorClass: 'bg-[#B45309]',
           colorClassHover: 'hover:border-[#F59E0B]/50',
           accentBorder: 'border-[#F59E0B]/25',
           lightBg: 'bg-[#F59E0B]/12 dark:bg-[#F59E0B]/15',
@@ -161,7 +161,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         };
       case 'srv-learning-difficulties':
         return {
-          colorClass: 'bg-[#2B95FF] text-white',
+          colorClass: 'bg-[#1463D6] text-white',
           colorClassHover: 'hover:border-[#2B95FF]/50',
           accentBorder: 'border-[#2B95FF]/20 dark:border-white/15',
           lightBg: 'bg-[#2B95FF]/10 dark:bg-white/[0.06]',
@@ -171,7 +171,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         };
       case 'srv-psychological':
         return {
-          colorClass: 'bg-[#1A73E8]',
+          colorClass: 'bg-[#1463D6]',
           colorClassHover: 'hover:border-[#2B95FF]/50',
           accentBorder: 'border-[#2B95FF]/20',
           lightBg: 'bg-[#2B95FF]/10 dark:bg-[#2B95FF]/15',
@@ -181,7 +181,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         };
       default:
         return {
-          colorClass: 'bg-[#2B95FF] text-white',
+          colorClass: 'bg-[#1463D6] text-white',
           colorClassHover: 'hover:border-[#2B95FF]/50',
           accentBorder: 'border-[#2B95FF]/20 dark:border-white/15',
           lightBg: 'bg-[#2B95FF]/10 dark:bg-white/[0.06]',
@@ -317,7 +317,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
 
             {/* Main Headline from flyer: "خدمات.. متكاملة لدعم رحلة طفلك" */}
             <div className="flex flex-wrap items-center gap-2 mb-3">
-              <span className="inline-block px-4 py-1.5 rounded-2xl bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] text-white text-2xl sm:text-3xl lg:text-4xl font-black shadow-md border-t border-white/40">
+              <span className="inline-block px-4 py-1.5 rounded-2xl bg-gradient-to-r from-[#1668DC] to-[#1152B8] text-white text-2xl sm:text-3xl lg:text-4xl font-black shadow-md border-t border-white/40">
                 {isArabic ? 'خدمات.. متكاملة' : 'Integrated Services'}
               </span>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#161B26] dark:text-[#F8FAFC] tracking-tight leading-tight">
@@ -352,7 +352,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 className={`w-11 h-11 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn flex items-center justify-center shadow-xs transition-transform duration-200 cursor-pointer ${
                   canScrollPrev
                     ? 'hover:scale-105 active:scale-95 text-[#161B26] dark:text-[#F8FAFC]'
-                    : 'opacity-40 cursor-not-allowed text-[#8B95A5]'
+                    : 'opacity-40 cursor-not-allowed text-[#525B6B] dark:text-[#94A3B8]'
                 }`}
               >
                 {isArabic ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
@@ -365,7 +365,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 className={`w-11 h-11 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn flex items-center justify-center shadow-xs transition-transform duration-200 cursor-pointer ${
                   canScrollNext
                     ? 'hover:scale-105 active:scale-95 text-[#161B26] dark:text-[#F8FAFC]'
-                    : 'opacity-40 cursor-not-allowed text-[#8B95A5]'
+                    : 'opacity-40 cursor-not-allowed text-[#525B6B] dark:text-[#94A3B8]'
                 }`}
               >
                 {isArabic ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
@@ -581,7 +581,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
 
               <button
                 onClick={() => onSelectService(services[0])}
-                className="px-6 py-3 rounded-full bg-[#2B95FF] hover:bg-[#1E7EE0] text-white text-xs sm:text-sm font-black flex items-center gap-2 shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+                className="px-6 py-3 rounded-full bg-[#1463D6] hover:bg-[#1152B8] text-white text-xs sm:text-sm font-black flex items-center gap-2 shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
               >
                 <Calendar className="w-4 h-4" />
                 <span>{isArabic ? 'احجز تقييم طفلك الآن' : 'Book Child Assessment'}</span>

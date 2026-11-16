@@ -429,7 +429,7 @@ const ConcaveArcBlogSlider: React.FC<ConcaveArcBlogSliderProps> = ({
             </span>
 
             <span className="flex items-center gap-1 shrink-0">
-              <Eye className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#8B95A5] dark:text-[#64748B] shrink-0" />
+              <Eye className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#64748B] dark:text-[#94A3B8] shrink-0" />
               <span>{post.viewsCount}</span>
             </span>
 
@@ -485,7 +485,7 @@ const ConcaveArcBlogSlider: React.FC<ConcaveArcBlogSliderProps> = ({
                 className={`p-1.5 rounded-full flex items-center gap-1 text-[10.5px] md:text-xs font-bold transition-all cursor-pointer ${
                   isLiked
                     ? 'text-rose-600 bg-rose-500/10'
-                    : 'text-[#8B95A5] dark:text-[#94A3B8] hover:text-rose-500 hover:bg-[#161B26]/5 dark:hover:bg-white/5'
+                    : 'text-[#525B6B] dark:text-[#94A3B8] hover:text-rose-500 hover:bg-[#161B26]/5 dark:hover:bg-white/5'
                 }`}
               >
                 <Heart className={`w-3.5 h-3.5 md:w-4 md:h-4 ${isLiked ? 'fill-rose-500 text-rose-500' : ''}`} />
@@ -497,11 +497,11 @@ const ConcaveArcBlogSlider: React.FC<ConcaveArcBlogSliderProps> = ({
                 type="button"
                 onClick={(e) => onShare(e, post)}
                 aria-label="Share post"
-                className="p-1.5 rounded-full text-[#8B95A5] dark:text-[#94A3B8] hover:text-[#2B95FF] hover:bg-[#161B26]/5 dark:hover:bg-white/5 transition-colors relative cursor-pointer"
+                className="p-1.5 rounded-full text-[#525B6B] dark:text-[#94A3B8] hover:text-[#2B95FF] hover:bg-[#161B26]/5 dark:hover:bg-white/5 transition-colors relative cursor-pointer"
               >
                 <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 {shareFeedback === post.id && (
-                  <span className="absolute -top-7 right-0 text-[10px] bg-[#2B95FF] dark:bg-[#1E293B] text-white dark:border dark:border-white/15 px-2 py-0.5 rounded-full shadow whitespace-nowrap z-20">
+                  <span className="absolute -top-7 right-0 text-[10px] bg-[#1463D6] dark:bg-[#1E293B] text-white dark:border dark:border-white/15 px-2 py-0.5 rounded-full shadow whitespace-nowrap z-20">
                     {isArabic ? 'تم نسخ الرابط' : 'Link copied'}
                   </span>
                 )}
@@ -694,7 +694,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
           iconBoxBg: 'bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF] border-[#2B95FF]/30 shadow-[#2B95FF]/10',
           headerBg: 'bg-gradient-to-br from-[#2B95FF]/12 via-[#2B95FF]/[0.03] to-transparent',
           headerBorder: 'border-b border-[#161B26]/[0.06] dark:border-white/5',
-          badgeBg: 'bg-[#2B95FF] text-white',
+          badgeBg: 'bg-[#1463D6] text-white',
         };
       case 'autism':
         return {
@@ -702,7 +702,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
           iconBoxBg: 'bg-[#F59E0B]/15 text-[#B45309] dark:text-[#FBBF24] border-[#F59E0B]/30 shadow-[#F59E0B]/10',
           headerBg: 'bg-gradient-to-br from-[#F59E0B]/10 via-[#F59E0B]/[0.03] to-transparent',
           headerBorder: 'border-b border-[#161B26]/[0.06] dark:border-white/5',
-          badgeBg: 'bg-[#F59E0B] text-white',
+          badgeBg: 'bg-[#B45309] text-white',
         };
       case 'aba':
         return {
@@ -710,7 +710,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
           iconBoxBg: 'bg-[#8B5CF6]/15 text-[#6D28D9] dark:text-[#A78BFA] border-[#8B5CF6]/30 shadow-[#8B5CF6]/10',
           headerBg: 'bg-gradient-to-br from-[#8B5CF6]/12 via-[#8B5CF6]/[0.03] to-transparent',
           headerBorder: 'border-b border-[#161B26]/[0.06] dark:border-white/5',
-          badgeBg: 'bg-gradient-to-r from-[#8B5CF6] to-[#6D28D9] text-white',
+          badgeBg: 'bg-gradient-to-r from-[#6D28D9] to-[#5B21B6] text-white',
         };
       case 'occupational':
         return {
@@ -718,7 +718,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
           iconBoxBg: 'bg-[#10B981]/15 text-[#047857] dark:text-[#34D399] border-[#10B981]/30 shadow-[#10B981]/10',
           headerBg: 'bg-gradient-to-br from-[#10B981]/10 via-[#10B981]/[0.03] to-transparent',
           headerBorder: 'border-b border-[#161B26]/[0.06] dark:border-white/5',
-          badgeBg: 'bg-[#10B981] text-white',
+          badgeBg: 'bg-[#047857] text-white',
         };
       case 'speech':
         return {
@@ -726,7 +726,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
           iconBoxBg: 'bg-sky-500/15 text-[#0369A1] dark:text-[#38BDF8] border-sky-500/30 shadow-sky-500/10',
           headerBg: 'bg-gradient-to-br from-sky-500/10 via-sky-500/[0.03] to-transparent',
           headerBorder: 'border-b border-[#161B26]/[0.06] dark:border-white/5',
-          badgeBg: 'bg-[#0284C7] text-white',
+          badgeBg: 'bg-[#0369A1] text-white',
         };
       case 'family_guidance':
         return {
@@ -734,7 +734,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
           iconBoxBg: 'bg-rose-500/15 text-[#BE123C] dark:text-[#FB7185] border-rose-500/30 shadow-rose-500/10',
           headerBg: 'bg-gradient-to-br from-rose-500/10 via-rose-500/[0.03] to-transparent',
           headerBorder: 'border-b border-[#161B26]/[0.06] dark:border-white/5',
-          badgeBg: 'bg-[#E11D48] text-white',
+          badgeBg: 'bg-[#BE123C] text-white',
         };
       default:
         return {
@@ -742,7 +742,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
           iconBoxBg: 'bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF] border-[#2B95FF]/30 shadow-[#2B95FF]/10',
           headerBg: 'bg-gradient-to-br from-[#2B95FF]/12 via-transparent to-transparent',
           headerBorder: 'border-b border-[#161B26]/[0.06] dark:border-white/5',
-          badgeBg: 'bg-[#2B95FF] text-white',
+          badgeBg: 'bg-[#1463D6] text-white',
         };
     }
   };
@@ -929,7 +929,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
         {/* Bottom Banner with Consultation Hook Aligned with Brand Palette */}
         <div className="mt-10 sm:mt-14 p-6 sm:p-8 rounded-[28px] obsidian-anchor-card flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#2B95FF] to-[#1A73E8] text-white flex items-center justify-center shrink-0 shadow-md shadow-[#2B95FF]/25">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#1668DC] to-[#1152B8] text-white flex items-center justify-center shrink-0 shadow-md shadow-[#2B95FF]/25">
               <Sparkles className="w-7 h-7 text-white" />
             </div>
             <div>
@@ -946,7 +946,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
 
           <button
             onClick={onOpenBooking}
-            className="w-full md:w-auto shrink-0 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 active:scale-95 text-white font-black px-6 sm:px-8 py-3.5 rounded-full shadow-lg shadow-[#2B95FF]/25 transition-all text-sm sm:text-base cursor-pointer text-center"
+            className="w-full md:w-auto shrink-0 bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 active:scale-95 text-white font-black px-6 sm:px-8 py-3.5 rounded-full shadow-lg shadow-[#2B95FF]/25 transition-all text-sm sm:text-base cursor-pointer text-center"
           >
             {isArabic ? 'احجز موعد تقييم فوري' : 'Book Evaluation Now'}
           </button>
@@ -990,7 +990,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
                 >
                   <Share2 className="w-4 h-4" />
                   {shareFeedback === selectedPost.id && (
-                    <span className="absolute -bottom-8 right-0 text-[10px] bg-[#2B95FF] dark:bg-[#1E293B] text-white dark:border dark:border-white/15 px-2 py-0.5 rounded-full shadow whitespace-nowrap z-30">
+                    <span className="absolute -bottom-8 right-0 text-[10px] bg-[#1463D6] dark:bg-[#1E293B] text-white dark:border dark:border-white/15 px-2 py-0.5 rounded-full shadow whitespace-nowrap z-30">
                       {isArabic ? 'تم نسخ الرابط' : 'Link copied'}
                     </span>
                   )}
@@ -1187,7 +1187,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
                     }
                     if (onOpenBooking) onOpenBooking();
                   }}
-                  className="w-full sm:w-auto shrink-0 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] text-white font-black px-6 py-3 rounded-full hover:brightness-110 transition-all text-xs sm:text-sm cursor-pointer shadow-md shadow-[#2B95FF]/25"
+                  className="w-full sm:w-auto shrink-0 bg-gradient-to-r from-[#1668DC] to-[#1152B8] text-white font-black px-6 py-3 rounded-full hover:brightness-110 transition-all text-xs sm:text-sm cursor-pointer shadow-md shadow-[#2B95FF]/25"
                 >
                   {isArabic ? 'احجز استشارة مع الأخصائي' : 'Book Consultation'}
                 </button>

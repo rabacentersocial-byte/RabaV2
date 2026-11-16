@@ -61,7 +61,7 @@ export const SPECIALIST_LOGO_THEMES: SpecialistLogoTheme[] = [
     photoBg: 'bg-[#F5F2EC]/80 dark:bg-[#161C2A]',
     specialtyBadge: 'bg-[#F59E0B]/10 dark:bg-[#F59E0B]/15 text-[#B45309] dark:text-[#FBBF24] border border-[#F59E0B]/25 dark:border-[#FBBF24]/25',
     expMetricColor: 'text-[#B45309] dark:text-[#FBBF24]',
-    bookButton: 'bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:opacity-95 text-white font-black shadow-xs hover:shadow-md active:scale-95',
+    bookButton: 'bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:opacity-95 text-white font-black shadow-xs hover:shadow-md active:scale-95',
     cvButton: 'border-[#161B26]/10 dark:border-white/15 bg-white/60 dark:bg-white/[0.06] text-[#161B26] dark:text-[#F8FAFC] hover:text-[#B45309] hover:border-[#F59E0B] dark:hover:text-[#FBBF24] dark:hover:border-[#FBBF24]',
     availableDot: 'bg-[#F59E0B]',
     availableText: 'text-[#B45309] dark:text-[#FBBF24]'
@@ -95,7 +95,7 @@ export const SPECIALIST_LOGO_THEMES: SpecialistLogoTheme[] = [
     photoBg: 'bg-[#F5F2EC]/80 dark:bg-[#161C2A]',
     specialtyBadge: 'bg-rose-500/10 dark:bg-rose-500/15 text-[#BE123C] dark:text-[#FB7185] border border-rose-500/25 dark:border-rose-500/30',
     expMetricColor: 'text-[#BE123C] dark:text-[#FB7185]',
-    bookButton: 'bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:opacity-95 text-white shadow-xs hover:shadow-md active:scale-95',
+    bookButton: 'bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:opacity-95 text-white shadow-xs hover:shadow-md active:scale-95',
     cvButton: 'border-[#161B26]/10 dark:border-white/15 bg-white/60 dark:bg-white/[0.06] text-[#161B26] dark:text-[#F8FAFC] hover:text-[#BE123C] hover:border-rose-500 dark:hover:text-[#FB7185] dark:hover:border-[#FB7185]',
     availableDot: 'bg-[#E11D48]',
     availableText: 'text-[#BE123C] dark:text-[#FB7185]'
@@ -146,7 +146,7 @@ export const SPECIALIST_LOGO_THEMES: SpecialistLogoTheme[] = [
     photoBg: 'bg-[#F5F2EC]/80 dark:bg-[#161C2A]',
     specialtyBadge: 'bg-teal-500/12 dark:bg-teal-500/15 text-[#0F766E] dark:text-[#2DD4BF] border border-teal-500/30 dark:border-teal-400/35',
     expMetricColor: 'text-[#0F766E] dark:text-[#2DD4BF]',
-    bookButton: 'bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:opacity-95 text-white shadow-xs hover:shadow-md active:scale-95',
+    bookButton: 'bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:opacity-95 text-white shadow-xs hover:shadow-md active:scale-95',
     cvButton: 'border-[#161B26]/10 dark:border-white/15 bg-white/60 dark:bg-white/[0.06] text-[#161B26] dark:text-[#F8FAFC] hover:text-[#0F766E] hover:border-teal-500 dark:hover:text-[#2DD4BF] dark:hover:border-[#2DD4BF]',
     availableDot: 'bg-teal-500',
     availableText: 'text-[#0F766E] dark:text-[#2DD4BF]'

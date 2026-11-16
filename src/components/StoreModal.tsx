@@ -285,7 +285,7 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
             {view === 'catalog' && totalItemsCount > 0 && (
               <button
                 onClick={() => setView('checkout')}
-                className="px-3 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm cursor-pointer hover:brightness-110 transition-all"
+                className="px-3 py-1.5 bg-gradient-to-r from-emerald-700 to-teal-800 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm cursor-pointer hover:brightness-110 transition-all"
               >
                 <span>{isArabic ? 'سلة الطلب' : 'Cart'}</span>
                 <span className="bg-white/20 px-1.5 py-0.2 rounded-md font-mono">{totalItemsCount}</span>
@@ -342,8 +342,8 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
 
                     <div className="flex items-center justify-between pt-3 border-t border-slate-200 dark:border-white/10">
                       <div className="flex items-center gap-1.5 text-xs">
-                        <span className="text-base font-black text-sky-600 dark:text-[#00E5BE]">{prod.price}</span>
-                        <span className="text-[11px] text-slate-500 dark:text-slate-400">{isArabic ? 'ريال' : 'SAR'}</span>
+                        <span className="text-base font-black text-sky-700 dark:text-[#00E5BE]">{prod.price}</span>
+                        <span className="text-[11px] text-slate-600 dark:text-slate-400">{isArabic ? 'ريال' : 'SAR'}</span>
                       </div>
 
                       {qty > 0 ? (
@@ -359,7 +359,7 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
                           <button
                             type="button"
                             onClick={() => handleUpdateQty(prod.id, 1)}
-                            className="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shadow-xs hover:bg-emerald-700 cursor-pointer"
+                            className="w-6 h-6 rounded-lg bg-emerald-700 text-white flex items-center justify-center font-bold text-xs shadow-xs hover:bg-emerald-800 cursor-pointer"
                           >
                             <Plus className="w-3 h-3" />
                           </button>
@@ -388,13 +388,13 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
               <button
                 type="button"
                 onClick={() => setView('catalog')}
-                className="text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-emerald-600 flex items-center gap-1 cursor-pointer"
+                className="text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-emerald-400 flex items-center gap-1 cursor-pointer"
               >
                 {isArabic ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
                 <span>{isArabic ? 'العودة لتصفح المنتجات' : 'Back to Store Catalog'}</span>
               </button>
 
-              <span className="text-xs font-bold text-slate-500">
+              <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
                 {isArabic ? 'إتمام الطلب وإرساله للوحة التحكم' : 'Submit Order to Dispatch'}
               </span>
             </div>
@@ -421,7 +421,7 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
                       />
                       <div>
                         <span className="font-bold text-slate-900 dark:text-white line-clamp-1">{item.product.name}</span>
-                        <span className="text-[11px] text-slate-500">{item.product.price} ر.س × {item.quantity}</span>
+                        <span className="text-[11px] text-slate-600 dark:text-slate-400">{item.product.price} ر.س × {item.quantity}</span>
                       </div>
                     </div>
 
@@ -431,7 +431,7 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
                       </span>
                       <button
                         onClick={() => handleRemoveItem(item.product.id)}
-                        className="text-slate-400 hover:text-rose-600 p-1 cursor-pointer"
+                        className="text-slate-600 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 p-1 cursor-pointer"
                         title={isArabic ? 'حذف' : 'Remove'}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -471,7 +471,7 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
                       placeholder={isArabic ? 'مثال: فيصل الخالدي' : 'e.g. John Doe'}
                       className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 pr-9 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500/40"
                     />
-                    <User className={`w-4 h-4 text-slate-400 absolute ${isArabic ? 'right-3' : 'left-3'} top-3`} />
+                    <User className={`w-4 h-4 text-slate-500 dark:text-slate-400 absolute ${isArabic ? 'right-3' : 'left-3'} top-3`} />
                   </div>
                 </div>
 
@@ -489,7 +489,7 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
                       dir="ltr"
                       className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 pr-9 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500/40 font-mono text-left"
                     />
-                    <Phone className={`w-4 h-4 text-slate-400 absolute ${isArabic ? 'right-3' : 'left-3'} top-3`} />
+                    <Phone className={`w-4 h-4 text-slate-500 dark:text-slate-400 absolute ${isArabic ? 'right-3' : 'left-3'} top-3`} />
                   </div>
                 </div>
               </div>
@@ -507,7 +507,7 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
                     placeholder={isArabic ? 'مثال: الرياض - حي الملقا - شارع وادي حنيفة' : 'e.g. Riyadh, Al-Malqa, St. 12'}
                     className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 pr-9 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500/40"
                   />
-                  <MapPin className={`w-4 h-4 text-slate-400 absolute ${isArabic ? 'right-3' : 'left-3'} top-3`} />
+                  <MapPin className={`w-4 h-4 text-slate-500 dark:text-slate-400 absolute ${isArabic ? 'right-3' : 'left-3'} top-3`} />
                 </div>
               </div>
 
@@ -591,7 +591,7 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:brightness-110 text-white font-bold rounded-xl flex items-center gap-2 shadow-md cursor-pointer transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="px-6 py-2.5 bg-gradient-to-r from-emerald-700 to-teal-800 hover:brightness-110 text-white font-bold rounded-xl flex items-center gap-2 shadow-md cursor-pointer transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <Send className={`w-3.5 h-3.5 ${isArabic ? 'rotate-180' : ''}`} />
                   <span>{isSubmitting ? (isArabic ? 'جاري حفظ وإرسال الطلب...' : 'Submitting order...') : (isArabic ? 'إرسال طلب الشراء إلى الإدارة' : 'Submit Order to Admin')}</span>
@@ -622,25 +622,25 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
             {/* Order Card Summary */}
             <div className="bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-white/10 rounded-2xl p-4 text-xs text-right space-y-2 max-w-md mx-auto">
               <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 pb-2">
-                <span className="text-slate-500">{isArabic ? 'رقم الطلب المرجعي:' : 'Order Ref:'}</span>
+                <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'رقم الطلب المرجعي:' : 'Order Ref:'}</span>
                 <span className="font-mono font-black text-emerald-700 dark:text-emerald-400 text-sm">
                   {submittedOrder.referenceNumber}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-500">{isArabic ? 'اسم المستلم:' : 'Recipient:'}</span>
+                <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'اسم المستلم:' : 'Recipient:'}</span>
                 <span className="font-bold text-slate-900 dark:text-white">{submittedOrder.guardianName}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-500">{isArabic ? 'رقم الجوال:' : 'Phone:'}</span>
+                <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'رقم الجوال:' : 'Phone:'}</span>
                 <span className="font-mono font-bold" dir="ltr">{submittedOrder.guardianPhone}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-500">{isArabic ? 'عنوان التوصيل:' : 'Delivery Address:'}</span>
+                <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'عنوان التوصيل:' : 'Delivery Address:'}</span>
                 <span className="font-medium text-slate-800 dark:text-slate-200">{submittedOrder.shippingAddress}</span>
               </div>
               <div className="flex items-center justify-between border-t border-slate-200 dark:border-white/10 pt-2 font-bold">
-                <span className="text-slate-500">{isArabic ? 'المبلغ الإجمالي:' : 'Total Amount:'}</span>
+                <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'المبلغ الإجمالي:' : 'Total Amount:'}</span>
                 <span className="font-mono text-emerald-700 dark:text-emerald-400 text-sm">
                   {submittedOrder.amount} {isArabic ? 'ر.س' : 'SAR'}
                 </span>
@@ -653,7 +653,7 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
                 href={getCustomerWhatsAppMessage(submittedOrder, isArabic)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+                className="flex-1 py-3 px-4 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
               >
                 <MessageCircle className="w-4 h-4 shrink-0" />
                 <span>{isArabic ? 'متابعة الطلب عبر الواتساب' : 'Track on WhatsApp'}</span>
@@ -685,7 +685,7 @@ export const StoreModal: React.FC<StoreModalProps> = ({ isOpen, onClose, onAddTo
             {totalItemsCount > 0 ? (
               <button
                 onClick={() => setView('checkout')}
-                className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-700 text-white font-black rounded-xl text-xs flex items-center justify-center gap-2 shadow-md hover:brightness-110 cursor-pointer transition-all"
+                className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-emerald-700 to-teal-800 text-white font-black rounded-xl text-xs flex items-center justify-center gap-2 shadow-md hover:brightness-110 cursor-pointer transition-all"
               >
                 <ShoppingBag className="w-4 h-4" />
                 <span>{isArabic ? `متابعة الطلب (${subtotal} ر.س)` : `Checkout (${subtotal} SAR)`}</span>

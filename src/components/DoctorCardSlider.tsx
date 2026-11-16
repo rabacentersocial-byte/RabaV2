@@ -2938,7 +2938,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
           {/* Top Left Badge: TOP RATED */}
           {isTop && (
             <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-10">
-              <span className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] dark:bg-none dark:bg-[#1E293B]/95 backdrop-blur-xs text-white dark:text-[#F8FAFC] dark:border dark:border-white/15 text-[8px] sm:text-[10px] font-black tracking-wider px-2 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-md uppercase">
+              <span className="bg-gradient-to-r from-[#B45309] to-[#92400E] dark:bg-none dark:bg-[#1E293B]/95 backdrop-blur-xs text-white dark:text-[#F8FAFC] dark:border dark:border-white/15 text-[8px] sm:text-[10px] font-black tracking-wider px-2 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-md uppercase">
                 {isArabic ? 'الأعلى تقييماً' : 'TOP RATED'}
               </span>
             </div>
@@ -3048,7 +3048,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
                         className={`w-2.5 h-2.5 sm:w-4 sm:h-4 transition-colors ${
                           isFilled
                             ? 'fill-[#F59E0B] text-[#F59E0B] drop-shadow-2xs'
-                            : 'text-[#8B95A5] dark:text-[#64748B] hover:text-[#F59E0B]'
+                            : 'text-[#525B6B] dark:text-[#94A3B8] hover:text-[#F59E0B]'
                         }`}
                       />
                     </button>
@@ -3137,13 +3137,13 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={isArabic ? 'ابحث باسم الأخصائي أو التخصص أو المؤهل...' : 'Search by name, specialty, or bio...'}
-              className="w-full pl-10 pr-4 rtl:pr-10 rtl:pl-4 py-2.5 sm:py-3 warm-pill-input rounded-full text-xs sm:text-sm text-[#161B26] dark:text-[#F8FAFC] placeholder-[#8B95A5] dark:placeholder-[#64748B] focus:outline-none transition-all shadow-xs"
+              className="w-full pl-10 pr-4 rtl:pr-10 rtl:pl-4 py-2.5 sm:py-3 warm-pill-input rounded-full text-xs sm:text-sm text-[#161B26] dark:text-[#F8FAFC] placeholder-[#64748B] dark:placeholder-[#94A3B8] focus:outline-none transition-all shadow-xs"
             />
-            <Search className={`w-4 h-4 text-[#8B95A5] absolute top-1/2 -translate-y-1/2 ${isArabic ? 'right-3.5' : 'left-3.5'}`} />
+            <Search className={`w-4 h-4 text-[#525B6B] dark:text-[#94A3B8] absolute top-1/2 -translate-y-1/2 ${isArabic ? 'right-3.5' : 'left-3.5'}`} />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className={`text-xs text-[#8B95A5] hover:text-[#161B26] dark:hover:text-white absolute top-1/2 -translate-y-1/2 ${isArabic ? 'left-3' : 'right-3'}`}
+                className={`text-xs text-[#525B6B] dark:text-[#94A3B8] hover:text-[#161B26] dark:hover:text-white absolute top-1/2 -translate-y-1/2 ${isArabic ? 'left-3' : 'right-3'}`}
               >
                 ✕
               </button>
@@ -3202,7 +3202,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
                 {sortBy === 'rating' && (isArabic ? 'الترتيب: الأعلى تقييماً' : 'Sort: Highest Rated')}
                 {sortBy === 'experience' && (isArabic ? 'الترتيب: الأكثر خبرة' : 'Sort: Most Experienced')}
               </span>
-              <ChevronDown className="w-3.5 h-3.5 text-[#8B95A5]" />
+              <ChevronDown className="w-3.5 h-3.5 text-[#525B6B] dark:text-[#94A3B8]" />
             </button>
 
             {isSortOpen && (
@@ -3309,7 +3309,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
 
           <button
             onClick={onOpenSpecialistsPage}
-            className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:opacity-95 text-white font-black rounded-full text-xs sm:text-sm shadow-md transition-opacity cursor-pointer group"
+            className="w-full sm:w-auto shrink-0 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:opacity-95 text-white font-black rounded-full text-xs sm:text-sm shadow-md transition-opacity cursor-pointer group"
           >
             <span>{isArabic ? 'عرض المزيد من الأخصائيين' : 'View More Specialists'}</span>
             {isArabic ? <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> : <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}

@@ -155,7 +155,7 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
             <div>
               <h3 className="text-sm sm:text-base font-black text-slate-900 dark:text-white flex items-center gap-1.5">
                 <span>{isArabic ? 'استشارة هاتفية مجانية' : 'Free Phone Consultation'}</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-[#22C55E] font-bold">
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-[#047857] dark:text-[#34D399] font-bold">
                   {isArabic ? 'مجاناً 100%' : '100% Free'}
                 </span>
               </h3>
@@ -193,16 +193,16 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
 
             <div className="bg-slate-50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 rounded-2xl p-3.5 text-xs text-right space-y-1.5">
               <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-white/10 pb-1.5">
-                <span className="text-slate-500">{isArabic ? 'الرقم المرجعي:' : 'Reference:'}</span>
-                <span className="font-mono font-bold text-emerald-700 dark:text-[#00E5BE]">{submittedRequest.referenceNumber}</span>
+                <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'الرقم المرجعي:' : 'Reference:'}</span>
+                <span className="font-mono font-bold text-[#047857] dark:text-[#00E5BE]">{submittedRequest.referenceNumber}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-500">{isArabic ? 'الاسم:' : 'Name:'}</span>
+                <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'الاسم:' : 'Name:'}</span>
                 <span className="font-bold">{submittedRequest.guardianName}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-500">{isArabic ? 'الموضوع:' : 'Topic:'}</span>
-                <span className="font-bold text-emerald-700 dark:text-[#00E5BE]">{submittedRequest.serviceTitle}</span>
+                <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'الموضوع:' : 'Topic:'}</span>
+                <span className="font-bold text-[#047857] dark:text-[#00E5BE]">{submittedRequest.serviceTitle}</span>
               </div>
             </div>
 
@@ -211,7 +211,7 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
                 href={getCustomerWhatsAppMessage(submittedRequest, isArabic)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+                className="w-full py-3 px-4 rounded-xl bg-[#047857] hover:bg-[#065F46] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
               >
                 <MessageCircle className="w-4 h-4 shrink-0" />
                 <span>{isArabic ? 'تأكيد الطلب بالواتساب الآن' : 'Confirm via WhatsApp'}</span>
@@ -248,9 +248,9 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
                   value={parentName}
                   onChange={(e) => setParentName(e.target.value)}
                   placeholder={isArabic ? 'اكتب اسمك الثلاثي' : 'Enter your name'}
-                  className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/15 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-[#00E5BE] outline-none"
+                  className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/15 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:ring-2 focus:ring-[#00E5BE] outline-none"
                 />
-                <User className={`w-4 h-4 text-slate-400 absolute ${isArabic ? 'left-3' : 'right-3'} top-3`} />
+                <User className={`w-4 h-4 text-slate-500 dark:text-slate-400 absolute ${isArabic ? 'left-3' : 'right-3'} top-3`} />
               </div>
             </div>
 
@@ -268,9 +268,9 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="05XXXXXXXX"
                   dir="ltr"
-                  className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/15 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white font-mono placeholder:text-slate-400 focus:ring-2 focus:ring-[#00E5BE] outline-none text-left"
+                  className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/15 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-900 dark:text-white font-mono placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:ring-2 focus:ring-[#00E5BE] outline-none text-left"
                 />
-                <Phone className={`w-4 h-4 text-slate-400 absolute ${isArabic ? 'left-3' : 'right-3'} top-3`} />
+                <Phone className={`w-4 h-4 text-slate-500 dark:text-slate-400 absolute ${isArabic ? 'left-3' : 'right-3'} top-3`} />
               </div>
             </div>
 
@@ -309,7 +309,7 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
                 <div className="mt-2.5 p-3 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/70 dark:border-white/10 space-y-2.5 animate-in fade-in duration-150">
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label htmlFor="quick-child-age" className="text-[10px] text-slate-500 block mb-1">{isArabic ? 'عمر الطفل (اختياري)' : 'Child Age'}</label>
+                      <label htmlFor="quick-child-age" className="text-[10px] text-slate-600 dark:text-slate-400 block mb-1">{isArabic ? 'عمر الطفل (اختياري)' : 'Child Age'}</label>
                       <input
                         id="quick-child-age"
                         type="number"
@@ -322,7 +322,7 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
                       />
                     </div>
                     <div>
-                      <label htmlFor="quick-preferred-time" className="text-[10px] text-slate-500 block mb-1">{isArabic ? 'فترة الاتصال' : 'Call Window'}</label>
+                      <label htmlFor="quick-preferred-time" className="text-[10px] text-slate-600 dark:text-slate-400 block mb-1">{isArabic ? 'فترة الاتصال' : 'Call Window'}</label>
                       <select
                         id="quick-preferred-time"
                         aria-label={isArabic ? 'فترة الاتصال' : 'Call Window'}
@@ -358,7 +358,7 @@ export const QuickConsultationModal: React.FC<QuickConsultationModalProps> = ({
                 type="submit"
                 disabled={isSubmitting}
                 aria-label={isArabic ? 'إرسال طلب الاستشارة الفورية' : 'Submit Quick Consultation Request'}
-                className="w-full min-h-[48px] py-3 px-4 bg-gradient-to-r from-[#0E2A54] via-[#1B4B8A] to-[#2E86EB] hover:opacity-95 active:scale-98 text-white font-black rounded-xl text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-60"
+                className="w-full min-h-[48px] py-3 px-4 bg-gradient-to-r from-[#0E2A54] via-[#1B4B8A] to-[#1463D6] hover:opacity-95 active:scale-98 text-white font-black rounded-xl text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-60"
               >
                 <Send className={`w-3.5 h-3.5 ${isArabic ? 'rotate-180' : ''}`} />
                 <span>{isSubmitting ? (isArabic ? 'جاري الإرسال وحفظ الطلب...' : 'Submitting...') : (isArabic ? 'إرسال طلب الاستشارة فوراً' : 'Submit Consultation Request')}</span>

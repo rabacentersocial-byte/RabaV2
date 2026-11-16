@@ -243,7 +243,7 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
                 className={`px-2.5 py-1 rounded-lg flex items-center gap-1.5 cursor-pointer transition-all ${
                   previewTheme === 'light' 
                     ? 'bg-amber-100 text-amber-900 shadow-xs' 
-                    : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <Sun className="w-3.5 h-3.5 text-amber-500" />
@@ -255,7 +255,7 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
                 className={`px-2.5 py-1 rounded-lg flex items-center gap-1.5 cursor-pointer transition-all ${
                   previewTheme === 'dark' 
                     ? 'bg-slate-900 text-white shadow-xs' 
-                    : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <Moon className="w-3.5 h-3.5 text-sky-400" />
@@ -269,8 +269,8 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
                 onClick={() => setPreviewLang('ar')}
                 className={`px-2.5 py-1 rounded-lg cursor-pointer transition-all ${
                   previewLang === 'ar' 
-                    ? 'bg-teal-500/20 text-teal-700 dark:text-[#00E5BE]' 
-                    : 'text-slate-500'
+                    ? 'bg-teal-500/20 text-teal-800 dark:text-[#00E5BE]' 
+                    : 'text-slate-600 dark:text-slate-300'
                 }`}
               >
                 عربي
@@ -280,8 +280,8 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
                 onClick={() => setPreviewLang('en')}
                 className={`px-2.5 py-1 rounded-lg cursor-pointer transition-all ${
                   previewLang === 'en' 
-                    ? 'bg-teal-500/20 text-teal-700 dark:text-[#00E5BE]' 
-                    : 'text-slate-500'
+                    ? 'bg-teal-500/20 text-teal-800 dark:text-[#00E5BE]' 
+                    : 'text-slate-600 dark:text-slate-300'
                 }`}
               >
                 EN
@@ -309,11 +309,17 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
           </div>
 
           {/* Dummy Nav items to give real context */}
-          <div className="hidden sm:flex items-center gap-3 text-xs opacity-60 pointer-events-none select-none">
+          <div className={`hidden sm:flex items-center gap-3 text-xs pointer-events-none select-none ${
+            previewTheme === 'dark' ? 'text-slate-300' : 'text-slate-600'
+          }`}>
             <span>{isArabic ? 'الرئيسية' : 'Home'}</span>
             <span>{isArabic ? 'الخدمات' : 'Services'}</span>
             <span>{isArabic ? 'الباقات' : 'Packages'}</span>
-            <span className="px-3 py-1.5 rounded-lg bg-teal-500/20 text-teal-700 dark:text-[#00E5BE] font-bold">
+            <span className={`px-3 py-1.5 rounded-lg font-bold ${
+              previewTheme === 'dark'
+                ? 'bg-teal-500/20 text-[#00E5BE]'
+                : 'bg-teal-500/15 text-teal-800'
+            }`}>
               {isArabic ? 'احجز الآن' : 'Book'}
             </span>
           </div>
@@ -321,14 +327,14 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
 
         {/* Preview Status Banner */}
         <div className="flex items-center justify-between text-xs px-1">
-          <span className="text-slate-500 dark:text-slate-400">
+          <span className="text-slate-600 dark:text-slate-300">
             {settings.showText ? (
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+              <span className="text-emerald-700 dark:text-emerald-300 font-bold flex items-center gap-1">
                 <Check className="w-3.5 h-3.5" />
                 {isArabic ? 'الجزء النصي مفعّل ومعروض بجوار الشعار' : 'Text beside logo is active'}
               </span>
             ) : (
-              <span className="text-slate-500 dark:text-slate-400 font-medium">
+              <span className="text-slate-600 dark:text-slate-300 font-medium">
                 {isArabic 
                   ? '✓ الجزء النصي مخفي حالياً — يظهر الشعار منفرداً بنقاء وعصرية' 
                   : '✓ Text beside logo is hidden — logo stands clean and modern'}
@@ -336,7 +342,7 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
             )}
           </span>
 
-          <span className="font-mono text-[11px] text-slate-500">
+          <span className="font-mono text-[11px] text-slate-600 dark:text-slate-300">
             {isArabic ? 'الحجم:' : 'Size:'} {settings.iconSizePx}px
           </span>
         </div>
@@ -492,7 +498,7 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isCompressing || isRemovingBg}
-                  className="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
+                  className="px-3 py-1.5 rounded-lg bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
                 >
                   <Upload className="w-3.5 h-3.5" />
                   <span>
@@ -547,7 +553,7 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
               <span className="text-slate-700 dark:text-slate-300">
                 {isArabic ? 'حجم الشعار في شريط التنقل:' : 'Logo Size in Navbar:'}
               </span>
-              <span className="font-mono text-teal-600 dark:text-[#00E5BE]">
+              <span className="font-mono text-teal-700 dark:text-[#00E5BE]">
                 {settings.iconSizePx}px
               </span>
             </div>
@@ -594,7 +600,7 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-white/10 pb-3">
             <div className="flex items-center gap-2">
-              <Type className="w-4 h-4 text-teal-600 dark:text-[#00E5BE]" />
+              <Type className="w-4 h-4 text-teal-700 dark:text-[#00E5BE]" />
               <h4 className="text-sm font-black text-slate-900 dark:text-white">
                 {isArabic ? '٢. الجزء النصي بجوار الشعار' : '2. Text Beside Logo'}
               </h4>
@@ -615,14 +621,14 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
           {/* When Text is Hidden (Default state requested by user) */}
           {!settings.showText ? (
             <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-white/5 space-y-3 text-center">
-              <div className="inline-flex p-2.5 rounded-full bg-teal-500/10 text-teal-600 dark:text-[#00E5BE] mx-auto">
+              <div className="inline-flex p-2.5 rounded-full bg-teal-500/10 text-teal-700 dark:text-[#00E5BE] mx-auto">
                 <CheckCircle2 className="w-5 h-5" />
               </div>
               <div>
                 <h5 className="text-xs font-bold text-slate-900 dark:text-white">
                   {isArabic ? 'الجزء النصي مخفي حالياً (مظهر عصري ونظيف)' : 'Text beside logo is hidden (Clean Modern Look)'}
                 </h5>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
                   {isArabic 
                     ? 'تم إخفاء هذا الجزء بجوار اللوجو بطلبكم لمنح الموقع طابعاً عصرياً وأنيقاً. يمكنك تفعيله وتخصيص كافة النصوص بلمسة زر واحدة في أي وقت.'
                     : 'The text beside the logo is removed as requested for an elegant modern look. You can enable and customize all texts anytime.'}
@@ -632,7 +638,7 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
               <button
                 type="button"
                 onClick={() => setSettings(prev => ({ ...prev, showText: true }))}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold transition-all cursor-pointer shadow-xs"
               >
                 <Type className="w-3.5 h-3.5" />
                 <span>{isArabic ? 'تفعيل وتخصيص الجزء النصي' : 'Enable & Customize Text'}</span>
@@ -641,7 +647,7 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
           ) : (
             /* When Text is Enabled: Customizable Fields */
             <div className="space-y-3.5 animate-in fade-in">
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-600 dark:text-slate-400">
                 {isArabic 
                   ? 'يمكنك هنا تخصيص اسم المركز والسطر الإضافي باللغتين العربية والإنجليزية:' 
                   : 'Customize the center title and subtitle descriptor in Arabic and English:'}
@@ -747,7 +753,7 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
                       onChange={(e) => setSettings(prev => ({ ...prev, titleFontSizePx: Number(e.target.value) }))}
                       className="w-full accent-teal-500 cursor-pointer"
                     />
-                    <span className="font-mono text-xs text-slate-500 w-8 text-center">{settings.titleFontSizePx}px</span>
+                    <span className="font-mono text-xs text-slate-600 dark:text-slate-400 w-8 text-center">{settings.titleFontSizePx}px</span>
                   </div>
                 </div>
 
@@ -764,7 +770,7 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
                       onChange={(e) => setSettings(prev => ({ ...prev, spacingPx: Number(e.target.value) }))}
                       className="w-full accent-teal-500 cursor-pointer"
                     />
-                    <span className="font-mono text-xs text-slate-500 w-8 text-center">{settings.spacingPx}px</span>
+                    <span className="font-mono text-xs text-slate-600 dark:text-slate-400 w-8 text-center">{settings.spacingPx}px</span>
                   </div>
                 </div>
               </div>

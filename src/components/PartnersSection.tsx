@@ -22,6 +22,8 @@ import {
   Award
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useTheme } from '../context/ThemeContext';
+import { getAccessibleAccentColor } from '../utils/colorContrast';
 import { 
   PartnerItem, 
   PartnersSliderSettings, 
@@ -40,6 +42,7 @@ interface ConcaveArcSliderHandle {
 interface ConcaveArcPartnerSliderProps {
   items: PartnerItem[];
   isArabic: boolean;
+  isDark: boolean;
   isMobile: boolean;
   speedSeconds: number;
   isPausedManually: boolean;
@@ -101,6 +104,7 @@ function computeConcaveArcCoords(
 const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
   items,
   isArabic,
+  isDark,
   isMobile,
   speedSeconds,
   isPausedManually,
@@ -455,7 +459,7 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
 
             {/* Subtle Corner Action Indicator matching card affordance */}
             <span
-              className="w-6 h-6 md:w-7 md:h-7 rounded-full bg-[#161B26]/8 text-[#161B26] group-hover:bg-[#2B95FF] group-hover:text-white flex items-center justify-center absolute bottom-1.5 left-1.5 md:bottom-2 md:left-2 rtl:left-auto rtl:right-1.5 md:rtl:right-2 transition-colors pointer-events-none"
+              className="w-6 h-6 md:w-7 md:h-7 rounded-full bg-[#161B26]/8 text-[#161B26] group-hover:bg-[#1463D6] group-hover:text-white flex items-center justify-center absolute bottom-1.5 left-1.5 md:bottom-2 md:left-2 rtl:left-auto rtl:right-1.5 md:rtl:right-2 transition-colors pointer-events-none"
               aria-hidden="true"
             >
               <ArrowUpRight className="w-3 h-3 md:w-3.5 md:h-3.5 rtl:-scale-x-100" />
@@ -466,7 +470,7 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
           <div className="w-full pt-1.5 md:pt-2.5 px-0.5 md:px-1 text-center shrink-0">
             <span
               className="text-[9.5px] md:text-[11px] font-bold block truncate"
-              style={{ color: partner.accentColor || '#2B95FF' }}
+              style={{ color: getAccessibleAccentColor(partner.accentColor || '#2B95FF', isDark) }}
             >
               {partner.badge || (isArabic ? 'شريك وطني' : 'Partner')}
             </span>
@@ -485,6 +489,8 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
 
 export const PartnersSection: React.FC = () => {
   const { isArabic } = useLanguage();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
   const sectionRef = useRef<HTMLElement>(null);
   const arcControlsRef = useRef<ConcaveArcSliderHandle | null>(null);
 
@@ -729,19 +735,19 @@ export const PartnersSection: React.FC = () => {
           
           {/* Quick Search Input */}
           <div className="relative flex-1 max-w-xs">
-            <Search className="w-3.5 h-3.5 absolute top-1/2 -translate-y-1/2 left-3.5 rtl:left-auto rtl:right-3.5 text-[#8B95A5]" />
+            <Search className="w-3.5 h-3.5 absolute top-1/2 -translate-y-1/2 left-3.5 rtl:left-auto rtl:right-3.5 text-[#525B6B] dark:text-[#94A3B8]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={isArabic ? 'ابحث عن جهة أو شريك...' : 'Search partners...'}
-              className="w-full pl-9 pr-3 rtl:pl-3 rtl:pr-9 py-2 rounded-full warm-pill-input text-xs text-[#161B26] dark:text-[#F8FAFC] placeholder-[#8B95A5] dark:placeholder-[#64748B] focus:outline-none transition-colors"
+              className="w-full pl-9 pr-3 rtl:pl-3 rtl:pr-9 py-2 rounded-full warm-pill-input text-xs text-[#161B26] dark:text-[#F8FAFC] placeholder-[#4B5563] dark:placeholder-[#94A3B8] focus:outline-none transition-colors"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
                 aria-label={isArabic ? 'مسح البحث' : 'Clear search'}
-                className="absolute top-1/2 -translate-y-1/2 right-1.5 rtl:right-auto rtl:left-1.5 w-8 h-8 flex items-center justify-center text-[#8B95A5] hover:text-[#161B26] dark:hover:text-white cursor-pointer"
+                className="absolute top-1/2 -translate-y-1/2 right-1.5 rtl:right-auto rtl:left-1.5 w-8 h-8 flex items-center justify-center text-[#525B6B] dark:text-[#94A3B8] hover:text-[#161B26] dark:hover:text-white cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -854,6 +860,7 @@ export const PartnersSection: React.FC = () => {
                 <ConcaveArcPartnerSlider
                   items={activeSliderPartners}
                   isArabic={isArabic}
+                  isDark={isDark}
                   isMobile={isMobileViewport}
                   speedSeconds={settings.speedSeconds}
                   isPausedManually={isPausedManually}
@@ -905,7 +912,7 @@ export const PartnersSection: React.FC = () => {
                     className="inline-flex items-center justify-center gap-1.5 text-xs sm:text-[12px] font-bold px-3 py-0.5 rounded-full truncate max-w-[90%] text-center"
                     style={{
                       backgroundColor: partner.accentColor ? `${partner.accentColor}18` : 'rgba(43, 149, 255, 0.12)',
-                      color: partner.accentColor || '#2B95FF',
+                      color: getAccessibleAccentColor(partner.accentColor || '#2B95FF', isDark),
                       border: `1px solid ${partner.accentColor ? `${partner.accentColor}30` : 'rgba(43, 149, 255, 0.30)'}`
                     }}
                   >
@@ -951,7 +958,7 @@ export const PartnersSection: React.FC = () => {
         {/* Empty state when search matches nothing */}
         {filteredPartners.length === 0 && (
           <div className="py-12 text-center">
-            <Building2 className="w-10 h-10 text-[#8B95A5] mx-auto mb-3" />
+            <Building2 className="w-10 h-10 text-[#525B6B] dark:text-[#94A3B8] mx-auto mb-3" />
             <p className="text-sm font-bold text-[#4B5563] dark:text-[#94A3B8]">
               {isArabic ? 'لم نتمكن من العثور على شركاء يطابقون بحثك' : 'No partners found matching your search'}
             </p>
@@ -974,7 +981,7 @@ export const PartnersSection: React.FC = () => {
             <div className="flex items-center gap-3">
               <span className="font-sans font-black text-sm text-[#161B26] dark:text-[#F8FAFC] tabular-nums">
                 {String(activeSlideIndex + 1).padStart(2, '0')}
-                <span className="text-xs font-bold text-[#8B95A5] dark:text-[#64748B]"> / {filteredPartners.length}</span>
+                <span className="text-xs font-bold text-[#4B5563] dark:text-[#94A3B8]"> / {filteredPartners.length}</span>
               </span>
               <span className="text-[#4B5563] dark:text-[#94A3B8]">
                 {isPausedManually
@@ -1183,7 +1190,7 @@ export const PartnersSection: React.FC = () => {
                   style={{
                     backgroundColor: activePartnerModal.accentColor ? `${activePartnerModal.accentColor}15` : undefined,
                     borderColor: activePartnerModal.accentColor ? `${activePartnerModal.accentColor}30` : undefined,
-                    color: activePartnerModal.accentColor || undefined
+                    color: getAccessibleAccentColor(activePartnerModal.accentColor || '#2B95FF', isDark)
                   }}
                 >
                   <ShieldCheck className="w-3.5 h-3.5" />

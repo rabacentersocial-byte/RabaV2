@@ -404,9 +404,9 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
     }
 
     return (
-      <div className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 gap-0.5 p-1 text-center">
+      <div className="flex flex-col items-center justify-center text-slate-600 dark:text-slate-300 gap-0.5 p-1 text-center">
         <UploadCloud className="w-5 h-5 text-emerald-600 dark:text-[#00E5BE]" />
-        <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 leading-tight">
+        <span className="text-[9px] font-bold text-slate-600 dark:text-slate-300 leading-tight">
           {isArabic ? 'رفع شعار' : 'Upload'}
         </span>
       </div>
@@ -448,7 +448,7 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
               onClick={() => onModuleToggle('accreditations', !isModuleEnabled)}
               className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
                 isModuleEnabled
-                  ? 'bg-emerald-500 text-white shadow-xs'
+                  ? 'bg-emerald-700 text-white shadow-xs'
                   : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
               }`}
             >
@@ -590,7 +590,7 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
 
             {sectionSettings.showAccentBar && (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500">{isArabic ? 'لون الخط:' : 'Color:'}</span>
+                <span className="text-xs text-slate-600 dark:text-slate-400">{isArabic ? 'لون الخط:' : 'Color:'}</span>
                 {[
                   { name: 'Amber (الأصلي)', class: 'bg-amber-500' },
                   { name: 'Emerald', class: 'bg-emerald-500' },
@@ -648,7 +648,7 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
             <button
               type="button"
               onClick={handleOpenAddModal}
-              className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-md"
+              className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-700 to-teal-700 hover:from-emerald-800 hover:to-teal-800 text-white text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-md"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>{isArabic ? 'إضافة جهة اعتماد جديدة' : 'Add Accreditation'}</span>
@@ -743,7 +743,7 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
                           e.stopPropagation();
                           handleRemoveCardLogo(item.id);
                         }}
-                        className="text-[10px] font-bold text-rose-500 hover:text-rose-700 dark:text-rose-400 hover:underline flex items-center gap-0.5 cursor-pointer shrink-0"
+                        className="text-[10px] font-bold text-rose-600 hover:text-rose-700 dark:text-rose-400 hover:underline flex items-center gap-0.5 cursor-pointer shrink-0"
                         title={isArabic ? 'حذف صورة الشعار' : 'Remove uploaded logo'}
                       >
                         <Trash2 className="w-2.5 h-2.5" />
@@ -761,7 +761,7 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
                   type="button"
                   onClick={() => handleTriggerCardFileUpload(item)}
                   disabled={isCompressing}
-                  className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
+                  className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-700 to-teal-700 hover:from-emerald-800 hover:to-teal-800 text-white text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
                   title={isArabic ? 'رفع صورة أو ملف الشعار من جهازك' : 'Upload logo image or file from device'}
                 >
                   <UploadCloud className="w-3.5 h-3.5" />
@@ -775,7 +775,7 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
                   className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                     item.active
                       ? 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30'
-                      : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
+                      : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
                   }`}
                   title={item.active ? (isArabic ? 'إخفاء من الموقع' : 'Hide from site') : (isArabic ? 'إظهار في الموقع' : 'Show on site')}
                 >
@@ -834,7 +834,7 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
             {/* Close Button */}
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 left-4 sm:left-6 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center cursor-pointer transition-colors"
+              className="absolute top-4 left-4 sm:left-6 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center justify-center cursor-pointer transition-colors"
             >
               <X className="w-4 h-4" />
             </button>

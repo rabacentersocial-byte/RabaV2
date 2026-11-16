@@ -150,7 +150,7 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
         <button
           onClick={onOpenBooking}
           id="mobile-bottom-book-btn"
-          className="flex flex-col items-center justify-center -mt-4 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white shadow-lg border-2 border-[#F5F2EC] dark:border-[#0B0F17] active:scale-95 transition-all cursor-pointer min-h-[48px] group"
+          className="flex flex-col items-center justify-center -mt-4 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 text-white shadow-lg border-2 border-[#F5F2EC] dark:border-[#0B0F17] active:scale-95 transition-all cursor-pointer min-h-[48px] group"
         >
           <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center mb-0.5">
             <CalendarCheck className="w-4 h-4 text-white transition-colors" />

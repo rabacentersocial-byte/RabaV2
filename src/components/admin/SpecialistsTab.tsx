@@ -348,7 +348,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
       {/* 2. Executive KPI Cards Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-3.5 shadow-xs">
-          <span className="text-[11px] font-bold text-slate-400 block mb-1">
+          <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 block mb-1">
             {isArabic ? 'إجمالي الكادر الطبي' : 'Total Specialists'}
           </span>
           <span className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
@@ -357,7 +357,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
         </div>
 
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-3.5 shadow-xs">
-          <span className="text-[11px] font-bold text-slate-400 block mb-1">
+          <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 block mb-1">
             {isArabic ? 'تحليل السلوك ABA' : 'ABA Specialists'}
           </span>
           <span className="text-xl sm:text-2xl font-black text-[#0B3B36] dark:text-[#00E5BE]">
@@ -366,28 +366,28 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
         </div>
 
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-3.5 shadow-xs">
-          <span className="text-[11px] font-bold text-slate-400 block mb-1">
+          <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 block mb-1">
             {isArabic ? 'العلاج الوظيفي والتكامل' : 'Occupational & SI'}
           </span>
-          <span className="text-xl sm:text-2xl font-black text-teal-600 dark:text-teal-400">
+          <span className="text-xl sm:text-2xl font-black text-teal-700 dark:text-teal-400">
             {stats.otCount}
           </span>
         </div>
 
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-3.5 shadow-xs">
-          <span className="text-[11px] font-bold text-slate-400 block mb-1">
+          <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 block mb-1">
             {isArabic ? 'النطق والتخاطب' : 'Speech & SLP'}
           </span>
-          <span className="text-xl sm:text-2xl font-black text-blue-600 dark:text-blue-400">
+          <span className="text-xl sm:text-2xl font-black text-blue-700 dark:text-blue-400">
             {stats.speechCount}
           </span>
         </div>
 
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl p-3.5 shadow-xs col-span-2 sm:col-span-1">
-          <span className="text-[11px] font-bold text-slate-400 block mb-1">
+          <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 block mb-1">
             {isArabic ? 'الأعلى تقييماً' : 'Top Rated'}
           </span>
-          <span className="text-xl sm:text-2xl font-black text-amber-500 flex items-center gap-1">
+          <span className="text-xl sm:text-2xl font-black text-amber-700 dark:text-amber-400 flex items-center gap-1">
             <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
             {stats.topRatedCount}
           </span>
@@ -410,7 +410,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rtl:right-auto rtl:left-3 text-slate-400 hover:text-slate-600 text-xs font-bold"
+              className="absolute right-3 top-1/2 -translate-y-1/2 rtl:right-auto rtl:left-3 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-xs font-bold"
             >
               ✕
             </button>
@@ -463,7 +463,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
             onClick={() => setSelectedDept('topRated')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
               selectedDept === 'topRated'
-                ? 'bg-amber-500 text-white shadow-xs'
+                ? 'bg-amber-700 text-white shadow-xs'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
             }`}
           >
@@ -539,7 +539,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-1 bg-amber-400/10 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-full text-xs font-black shrink-0">
+                    <div className="flex items-center gap-1 bg-amber-400/10 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-full text-xs font-black shrink-0">
                       <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
                       <span>{spec.rating}</span>
                     </div>
@@ -548,16 +548,16 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
                   {/* Quick Metrics (WITHOUT SESSION PRICE AND WITHOUT LICENSE) */}
                   <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl space-y-1 text-xs text-slate-600 dark:text-slate-300 mb-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400 text-[11px]">{isArabic ? 'سنوات الخبرة السريرية:' : 'Experience:'}</span>
+                      <span className="text-slate-600 dark:text-slate-400 text-[11px]">{isArabic ? 'سنوات الخبرة السريرية:' : 'Experience:'}</span>
                       <span className="font-bold text-[11px] text-slate-900 dark:text-white">{spec.experienceYears} {isArabic ? 'سنوات' : 'years'}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400 text-[11px]">{isArabic ? 'عدد التقييمات:' : 'Reviews:'}</span>
+                      <span className="text-slate-600 dark:text-slate-400 text-[11px]">{isArabic ? 'عدد التقييمات:' : 'Reviews:'}</span>
                       <span className="font-bold text-[11px] text-slate-900 dark:text-white">{spec.reviewsCount} {isArabic ? 'تقييم معتمد' : 'reviews'}</span>
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
                     {spec.bio}
                   </p>
                 </div>
@@ -572,7 +572,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
                   className={`px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer ${
                     isTop
                       ? 'bg-amber-400/15 text-amber-700 dark:text-amber-300 border border-amber-300/30'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
                   }`}
                   title={isArabic ? 'تبديل شارة الأعلى تقييماً' : 'Toggle Top Rated'}
                 >
@@ -634,7 +634,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
               </h3>
               <button
                 onClick={() => setEditingSpecialist(null)}
-                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-slate-200 cursor-pointer"
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -700,7 +700,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
                 <button
                   type="button"
                   onClick={() => setEditingSpecialist(null)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
                 >
                   {isArabic ? 'إلغاء' : 'Cancel'}
                 </button>
@@ -727,7 +727,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
               </h3>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:bg-slate-200 cursor-pointer"
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -890,7 +890,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
                 >
                   {isArabic ? 'إلغاء' : 'Cancel'}
                 </button>

@@ -238,7 +238,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             <div>
               <h3 className="text-xs sm:text-base font-black text-slate-900 dark:text-white flex items-center gap-1.5">
                 <span>{isArabic ? 'حجز موعد سريع' : 'Quick Booking'}</span>
-                <span className="text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full bg-[#22C55E]/15 text-emerald-600 dark:text-[#22C55E] font-bold">
+                <span className="text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full bg-[#22C55E]/15 text-[#047857] dark:text-[#34D399] font-bold">
                   {isArabic ? 'تأكيد مباشر' : 'Instant'}
                 </span>
               </h3>
@@ -278,19 +278,19 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             {/* Quick summary box */}
             <div className="bg-slate-50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 rounded-2xl p-3 sm:p-3.5 text-xs text-right space-y-2">
               <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-white/10 pb-2">
-                <span className="text-slate-500">{isArabic ? 'رقم الحجز المرجعي:' : 'Reference:'}</span>
-                <span className="font-mono font-black text-[#2E86EB] dark:text-[#3B92F5]">{confirmedApp.referenceNumber}</span>
+                <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'رقم الحجز المرجعي:' : 'Reference:'}</span>
+                <span className="font-mono font-black text-[#1263D6] dark:text-[#60AFFF]">{confirmedApp.referenceNumber}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-500">{isArabic ? 'الاسم:' : 'Name:'}</span>
+                <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'الاسم:' : 'Name:'}</span>
                 <span className="font-bold">{confirmedApp.guardianName}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-500">{isArabic ? 'الخدمة:' : 'Service:'}</span>
-                <span className="font-bold text-[#2E86EB] dark:text-[#3B92F5]">{confirmedApp.serviceTitle}</span>
+                <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'الخدمة:' : 'Service:'}</span>
+                <span className="font-bold text-[#1263D6] dark:text-[#60AFFF]">{confirmedApp.serviceTitle}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-500">{isArabic ? 'الموعد:' : 'Date & Time:'}</span>
+                <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'الموعد:' : 'Date & Time:'}</span>
                 <span className="font-bold">{confirmedApp.date} ({confirmedApp.timeSlot})</span>
               </div>
             </div>
@@ -301,7 +301,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 href={getWhatsAppLink(confirmedApp)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full h-11 sm:h-12 py-2.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20ba59] active:scale-[0.98] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+                className="w-full h-11 sm:h-12 py-2.5 px-4 rounded-xl bg-[#047857] hover:bg-[#065F46] active:scale-[0.98] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
               >
                 <MessageCircle className="w-4 h-4 shrink-0" />
                 <span>{isArabic ? 'تأكيد الحجز فوراً عبر الواتساب' : 'Confirm via WhatsApp'}</span>
@@ -349,9 +349,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder={isArabic ? 'اكتب اسمك الثلاثي' : 'Enter your full name'}
-                  className={`w-full h-11 bg-slate-50 dark:bg-white/5 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2.5 ${isArabic ? 'pl-10' : 'pr-10'} text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none transition-all`}
+                  className={`w-full h-11 bg-slate-50 dark:bg-white/5 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2.5 ${isArabic ? 'pl-10' : 'pr-10'} text-sm text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none transition-all`}
                 />
-                <User className={`w-4 h-4 text-slate-400 absolute ${isArabic ? 'left-3.5' : 'right-3.5'} top-1/2 -translate-y-1/2 pointer-events-none`} />
+                <User className={`w-4 h-4 text-slate-500 dark:text-slate-400 absolute ${isArabic ? 'left-3.5' : 'right-3.5'} top-1/2 -translate-y-1/2 pointer-events-none`} />
               </div>
             </div>
 
@@ -369,9 +369,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   onChange={(e) => setMobilePhone(e.target.value)}
                   placeholder="05XXXXXXXX"
                   dir="ltr"
-                  className="w-full h-11 bg-slate-50 dark:bg-white/5 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2.5 pr-10 text-sm text-slate-900 dark:text-white font-mono placeholder:text-slate-400 focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none text-left transition-all"
+                  className="w-full h-11 bg-slate-50 dark:bg-white/5 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2.5 pr-10 text-sm text-slate-900 dark:text-white font-mono placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none text-left transition-all"
                 />
-                <Phone className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <Phone className="w-4 h-4 text-slate-500 dark:text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
             </div>
 
@@ -390,7 +390,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   onClick={() => setBookingType('service')}
                   className={`h-8 sm:h-9 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     bookingType === 'service'
-                      ? 'bg-white dark:bg-[#2E86EB] text-[#2E86EB] dark:text-white shadow-xs font-black'
+                      ? 'bg-white dark:bg-[#1463D6] text-[#1463D6] dark:text-white shadow-xs font-black'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
@@ -401,7 +401,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   onClick={() => setBookingType('package')}
                   className={`h-8 sm:h-9 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     bookingType === 'package'
-                      ? 'bg-white dark:bg-[#2E86EB] text-[#2E86EB] dark:text-white shadow-xs font-black'
+                      ? 'bg-white dark:bg-[#1463D6] text-[#1463D6] dark:text-white shadow-xs font-black'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
@@ -544,7 +544,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 id="submit-booking-btn"
                 disabled={isSubmitting}
                 aria-label={isArabic ? 'تأكيد طلب حجز الموعد' : 'Confirm appointment booking request'}
-                className="w-full min-h-[48px] py-3 px-4 bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:opacity-95 active:scale-[0.98] text-white font-black rounded-xl text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-60"
+                className="w-full min-h-[48px] py-3 px-4 bg-gradient-to-r from-[#1668DC] via-[#1255B8] to-[#047857] hover:opacity-95 active:scale-[0.98] text-white font-black rounded-xl text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-60"
               >
                 <FileCheck2 className="w-4 h-4 shrink-0" />
                 <span>{isSubmitting ? (isArabic ? 'جاري تأكيد وحفظ الحجز...' : 'Saving booking...') : (isArabic ? 'تأكيد طلب الحجز فوراً' : 'Confirm Booking Request')}</span>

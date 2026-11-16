@@ -51,7 +51,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={() => window.location.reload()}
-                className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] text-white text-xs font-black shadow-lg cursor-pointer hover:brightness-110 active:scale-95 transition-all"
+                className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#1668DC] to-[#1152B8] text-white text-xs font-black shadow-lg cursor-pointer hover:brightness-110 active:scale-95 transition-all"
               >
                 تحديث الصفحة ↻
               </button>

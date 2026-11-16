@@ -63,7 +63,7 @@ export const FinancesSettingsTab: React.FC<FinancesSettingsTabProps> = ({
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
                 {isArabic ? 'إعدادات الدفع والحجوزات المباشرة' : 'Bookings & Payment Status'}
               </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
                 {isArabic ? 'حالة بوابات الدفع الإلكتروني ونظام الحجوزات المباشر' : 'Online payment gateways status'}
               </p>
             </div>
@@ -88,9 +88,9 @@ export const FinancesSettingsTab: React.FC<FinancesSettingsTabProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-white/5">
-              <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+              <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 mb-1">
                 <span>{isArabic ? 'إجمالي الحجوزات المسجلة' : 'Total Bookings'}</span>
-                <span className="font-bold text-emerald-600">{appointments.length}</span>
+                <span className="font-bold text-emerald-700 dark:text-emerald-400">{appointments.length}</span>
               </div>
               <div className="text-xl font-black text-slate-900 dark:text-white">
                 {appointments.filter(a => a.status === 'confirmed').length} {isArabic ? 'مؤكدة' : 'Confirmed'}
@@ -98,19 +98,19 @@ export const FinancesSettingsTab: React.FC<FinancesSettingsTabProps> = ({
             </div>
 
             <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-white/5">
-              <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+              <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 mb-1">
                 <span>{isArabic ? 'حجوزات بانتظار التأكيد' : 'Pending Confirmation'}</span>
-                <span className="font-bold text-amber-600">{appointments.filter(a => a.status === 'pending').length}</span>
+                <span className="font-bold text-amber-700 dark:text-amber-400">{appointments.filter(a => a.status === 'pending').length}</span>
               </div>
-              <div className="text-xl font-black text-amber-600 dark:text-amber-400">
+              <div className="text-xl font-black text-amber-700 dark:text-amber-400">
                 {appointments.filter(a => a.status === 'pending').length} {isArabic ? 'طلب جديد' : 'Pending'}
               </div>
             </div>
 
             <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-white/5">
-              <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+              <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 mb-1">
                 <span>{isArabic ? 'آلية التحصيل' : 'Billing Method'}</span>
-                <span className="font-bold text-emerald-600">POS / Cash</span>
+                <span className="font-bold text-emerald-700 dark:text-emerald-400">POS / Cash</span>
               </div>
               <div className="text-sm font-bold text-slate-700 dark:text-slate-300 mt-1">
                 {isArabic ? 'عند الزيارة بالمركز' : 'Upon Clinic Visit'}
@@ -126,7 +126,7 @@ export const FinancesSettingsTab: React.FC<FinancesSettingsTabProps> = ({
           <h3 className="text-base font-bold text-slate-900 dark:text-white">
             {isArabic ? 'إعدادات المنظومة وهوية المركز' : 'Clinic Information & Settings'}
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
             {isArabic ? 'تحديث قنوات التواصل وأوقات العمل الرسمية' : 'Update contact channels, working hours, and clinic branding'}
           </p>
         </div>
@@ -223,7 +223,7 @@ export const FinancesSettingsTab: React.FC<FinancesSettingsTabProps> = ({
 
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-[#0B3B36] hover:bg-[#082925] text-white font-bold rounded-xl cursor-pointer shadow-sm transition-all"
+                className="px-6 py-2.5 bg-[#0B3B36] hover:bg-[#082925] dark:bg-[#047857] dark:hover:bg-[#065F46] text-white font-bold rounded-xl cursor-pointer shadow-sm transition-all"
               >
                 {isArabic ? 'حفظ إعدادات المنظومة' : 'Save Settings'}
               </button>

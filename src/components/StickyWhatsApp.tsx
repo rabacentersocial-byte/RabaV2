@@ -29,7 +29,7 @@ export const StickyWhatsApp: React.FC = () => {
           className="mb-3 w-80 sm:w-96 glass-modal-dialog rounded-[28px] shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200 card-3d"
         >
           {/* Header */}
-          <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 p-4 text-white flex items-center justify-between">
+          <div className="bg-gradient-to-r from-emerald-700 to-emerald-800 p-4 text-white flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center font-black text-white text-lg shadow-xs">
@@ -58,7 +58,7 @@ export const StickyWhatsApp: React.FC = () => {
             <div className="liquid-glass-panel p-3.5 rounded-2xl rounded-tr-none text-xs text-[#161B26] dark:text-[#F8FAFC] leading-relaxed">
               <p className="font-bold text-[#047857] dark:text-[#34D399] mb-1">أهلاً بك في مركز خُطوة لرعاية وتأهيل الطفل 👋</p>
               <p className="text-[#4B5563] dark:text-[#94A3B8]">يسعدنا تقديم الاستشارة المجانية والإجابة على أي استفسار حول جلسات العلاج الوظيفي، النطق والتخاطب، وباقات التأهيل للأطفال.</p>
-              <span className="text-[10px] text-[#8B95A5] block text-left mt-1">الآن</span>
+              <span className="text-[10px] text-[#525B6B] dark:text-[#94A3B8] block text-left mt-1">الآن</span>
             </div>
 
             {/* Quick Questions Chips */}
@@ -71,7 +71,7 @@ export const StickyWhatsApp: React.FC = () => {
                   className="w-full text-right text-xs liquid-glass-panel hover:border-emerald-500/40 text-[#161B26] dark:text-[#F8FAFC] p-2.5 rounded-2xl transition-all flex items-center justify-between group cursor-pointer"
                 >
                   <span className="line-clamp-1">{topic}</span>
-                  <Send className="w-3.5 h-3.5 text-[#8B95A5] group-hover:text-emerald-600 group-hover:-translate-x-0.5 transition-transform" />
+                  <Send className="w-3.5 h-3.5 text-[#525B6B] dark:text-[#94A3B8] group-hover:text-emerald-700 dark:group-hover:text-emerald-400 group-hover:-translate-x-0.5 transition-transform" />
                 </button>
               ))}
             </div>
@@ -89,7 +89,7 @@ export const StickyWhatsApp: React.FC = () => {
             />
             <button
               onClick={() => handleSend()}
-              className="p-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full transition-all shadow-md cursor-pointer"
+              className="p-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-full transition-all shadow-md cursor-pointer"
               title="إرسال عبر واتساب"
               aria-label="إرسال عبر واتساب"
             >
@@ -103,7 +103,7 @@ export const StickyWhatsApp: React.FC = () => {
       <button
         id="sticky-whatsapp-btn"
         onClick={() => setIsOpen(!isOpen)}
-        className="group relative flex items-center gap-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-4 py-3.5 rounded-2xl shadow-xl hover:shadow-2xl active:translate-y-1 transition-all cursor-pointer border-b-4 border-emerald-700"
+        className="group relative flex items-center gap-2.5 bg-gradient-to-r from-emerald-700 to-emerald-800 text-white px-4 py-3.5 rounded-2xl shadow-xl hover:shadow-2xl active:translate-y-1 transition-all cursor-pointer border-b-4 border-emerald-900"
         aria-label="تواصل معنا عبر واتساب"
       >
         {/* Animated Pulse Ring */}

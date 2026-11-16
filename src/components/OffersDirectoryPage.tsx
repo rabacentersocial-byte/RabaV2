@@ -36,6 +36,7 @@ import { useTheme } from '../context/ThemeContext';
 import { SaudiNationalDayBadge, SaudiFalconGraphic } from './NationalDayVisuals';
 import { OfferData } from '../types';
 import { getStoredOffers } from '../data/offersData';
+import { getAccessibleAccentColor, getContrastTextForBg } from '../utils/colorContrast';
 
 interface Countdown {
   days: number;
@@ -360,7 +361,7 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
               <Home className="w-4 h-4" />
               <span>{isArabic ? 'الرئيسية' : 'Home'}</span>
             </button>
-            <span className="text-[#8B95A5] dark:text-[#64748B]">/</span>
+            <span className="text-[#525B6B] dark:text-[#94A3B8]">/</span>
             <span className="text-[#1263D6] dark:text-[#60AFFF] font-black">
               {isArabic ? 'العروض والأنشطة' : 'Offers & Activities'}
             </span>
@@ -463,11 +464,11 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                 placeholder={isArabic ? 'ابحث في العروض، الأنشطة، الكوبونات، أو الفعاليات...' : 'Search offers, activities, coupons, or events...'}
                 className="warm-pill-input w-full rounded-full pl-8 pr-9 sm:pl-10 sm:pr-12 py-2 sm:py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#2B95FF] transition-all"
               />
-              <Search className={`w-4 h-4 sm:w-5 sm:h-5 text-[#8B95A5] dark:text-[#64748B] absolute top-1/2 -translate-y-1/2 ${isArabic ? 'right-3 sm:right-4' : 'left-3 sm:left-4'}`} />
+              <Search className={`w-4 h-4 sm:w-5 sm:h-5 text-[#525B6B] dark:text-[#94A3B8] absolute top-1/2 -translate-y-1/2 ${isArabic ? 'right-3 sm:right-4' : 'left-3 sm:left-4'}`} />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className={`absolute top-1/2 -translate-y-1/2 ${isArabic ? 'left-2 sm:left-3' : 'right-2 sm:right-3'} p-1 rounded-full hover:bg-[#161B26]/5 dark:hover:bg-white/10 text-[#8B95A5] dark:text-[#64748B] transition-colors cursor-pointer`}
+                  className={`absolute top-1/2 -translate-y-1/2 ${isArabic ? 'left-2 sm:left-3' : 'right-2 sm:right-3'} p-1 rounded-full hover:bg-[#161B26]/5 dark:hover:bg-white/10 text-[#525B6B] dark:text-[#94A3B8] transition-colors cursor-pointer`}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -595,7 +596,8 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                 const cd = countdowns[offer.id] || { days: 0, hours: 0, minutes: 0, seconds: 0 };
                 const isFreeDay = offer.discountType === 'free_day';
                 const styling = offer.styling || {};
-                const darkBgGradient = styling.bgGradientFrom 
+                const hasLightCustomBg = styling.bgGradientFrom && getContrastTextForBg(styling.bgGradientFrom) === '#0F172A';
+                const darkBgGradient = styling.bgGradientFrom && !hasLightCustomBg
                   ? `linear-gradient(135deg, ${styling.bgGradientFrom} 0%, ${styling.bgGradientVia || styling.bgGradientFrom} 50%, ${styling.bgGradientTo || styling.bgGradientFrom} 100%)`
                   : 'linear-gradient(135deg, #141821 0%, #161C2A 50%, #0B0F17 100%)';
                 const lightBgGradient = offer.theme === 'emerald' || styling.themePreset === 'emerald'
@@ -608,12 +610,17 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                   ? (offer.theme === 'emerald' ? 'rgba(16,185,129,0.28)' : offer.theme === 'teal' ? 'rgba(13,148,136,0.28)' : 'rgba(43,149,255,0.28)')
                   : (styling.borderColor || 'rgba(43,149,255,0.28)');
                 const lightAccentColor = offer.theme === 'emerald' || styling.themePreset === 'emerald'
-                  ? '#059669'
+                  ? '#047857'
                   : offer.theme === 'teal' || styling.themePreset === 'teal'
-                    ? '#0D9488'
-                    : '#1A73E8';
-                const accentColor = isLight ? lightAccentColor : (styling.accentColor || '#2B95FF');
-                const subcardBg = isLight ? 'rgba(255, 255, 255, 0.86)' : (styling.subcardBg || 'rgba(255, 255, 255, 0.05)');
+                    ? '#0F766E'
+                    : '#1463D6';
+                const accentColor = getAccessibleAccentColor(isLight ? lightAccentColor : (styling.accentColor || '#60AFFF'), !isLight);
+                const badgeBg = isLight ? lightAccentColor : (styling.badgeBgColor || styling.accentColor || '#1463D6');
+                const badgeFg = getContrastTextForBg(badgeBg);
+                const ctaBg = isLight ? lightAccentColor : (styling.accentColor || '#1463D6');
+                const ctaFg = getContrastTextForBg(ctaBg);
+                const hasLightSubcardBg = styling.subcardBg && getContrastTextForBg(styling.subcardBg) === '#0F172A';
+                const subcardBg = isLight ? 'rgba(255, 255, 255, 0.86)' : (styling.subcardBg && !hasLightSubcardBg ? styling.subcardBg : 'rgba(255, 255, 255, 0.05)');
                 const subcardBorder = isLight ? 'rgba(22, 27, 38, 0.08)' : (styling.subcardBorder || 'rgba(255,255,255,0.12)');
 
                 return (
@@ -635,8 +642,8 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                         <span 
                           className="px-3 py-1 rounded-full text-xs font-black self-start uppercase tracking-wider shadow-sm"
                           style={{
-                            backgroundColor: isLight ? lightAccentColor : (styling.badgeBgColor || accentColor),
-                            color: isLight ? '#FFFFFF' : (styling.badgeTextColor || '#022c22'),
+                            backgroundColor: badgeBg,
+                            color: badgeFg,
                           }}
                         >
                           {isArabic ? offer.badgeAr : offer.badgeEn}
@@ -756,8 +763,8 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                         }}
                         className="w-full py-3 px-4 rounded-full font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98 hover:brightness-110"
                         style={{
-                          backgroundColor: accentColor,
-                          color: isLight ? '#FFFFFF' : (styling.accentColor ? '#141821' : '#FFFFFF')
+                          backgroundColor: ctaBg,
+                          color: ctaFg
                         }}
                       >
                         <Sparkles className="w-4 h-4" />
@@ -845,7 +852,7 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                           onOpenBooking(`تسجيل في فعالية: ${act.titleAr} (${act.dateAr})`);
                         }
                       }}
-                      className="flex-1 py-2.5 sm:py-3 px-4 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] text-white hover:brightness-110 font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-[#2B95FF]/20 active:scale-95"
+                      className="flex-1 py-2.5 sm:py-3 px-4 rounded-full bg-gradient-to-r from-[#1668DC] to-[#1152B8] text-white hover:brightness-110 font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-[#1463D6]/20 active:scale-95"
                     >
                       <CalendarCheck className="w-4 h-4" />
                       <span>{isArabic ? 'تسجيل مقعد بالنشاط' : 'Register for Activity'}</span>
@@ -902,7 +909,7 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
         {/* SECTION D: BOTTOM CONSULTATION HOOK BANNER */}
         <div className="obsidian-anchor-card p-6 sm:p-8 rounded-[28px] shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#2B95FF] to-[#1A73E8] text-white flex items-center justify-center shrink-0 shadow-md">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#1668DC] to-[#1152B8] text-white flex items-center justify-center shrink-0 shadow-md">
               <HeartHandshake className="w-7 h-7 text-white" />
             </div>
             <div>
@@ -932,7 +939,7 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                   onOpenBooking('استفسار عام عن باقات العروض والأنشطة');
                 }
               }}
-              className="flex-1 md:flex-initial px-5 py-2.5 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] text-white font-black text-xs sm:text-sm shadow-md shadow-[#2B95FF]/25 transition-all cursor-pointer hover:brightness-110 active:scale-95 text-center"
+              className="flex-1 md:flex-initial px-5 py-2.5 rounded-full bg-gradient-to-r from-[#1668DC] to-[#1152B8] text-white font-black text-xs sm:text-sm shadow-md shadow-[#1463D6]/25 transition-all cursor-pointer hover:brightness-110 active:scale-95 text-center"
             >
               {isArabic ? 'طلب استشارة فورية' : 'Request Consultation'}
             </button>

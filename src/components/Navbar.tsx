@@ -403,7 +403,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={onOpenBooking}
                 id="header-quick-book-btn"
-                className="relative group overflow-hidden flex items-center gap-2 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white active:scale-95 text-xs sm:text-sm font-black px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all duration-200 shadow-[0_12px_28px_-10px_rgba(43,149,255,0.4)] border border-white/25 cursor-pointer"
+                className="relative group overflow-hidden flex items-center gap-2 bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 text-white active:scale-95 text-xs sm:text-sm font-black px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all duration-200 shadow-[0_12px_28px_-10px_rgba(22,104,220,0.45)] border border-white/25 cursor-pointer"
               >
                 {/* Shimmer light sweep animation */}
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
@@ -516,7 +516,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       setMobileMenuOpen(false);
                       onOpenBooking();
                     }}
-                    className="px-3.5 py-2 rounded-full bg-[#2B95FF] hover:bg-[#1E7EE0] text-white text-xs font-black shadow-xs cursor-pointer active:scale-95 transition-all duration-200 flex items-center gap-1 shrink-0"
+                    className="px-3.5 py-2 rounded-full bg-[#1463D6] hover:bg-[#1152B8] text-white text-xs font-black shadow-xs cursor-pointer active:scale-95 transition-all duration-200 flex items-center gap-1 shrink-0"
                   >
                     <span>{t('nav.bookNow')}</span>
                     {isArabic ? <ChevronLeft className="w-3.5 h-3.5 stroke-[3]" /> : <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />}
@@ -573,7 +573,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                             }}
                             className={`group p-2.5 rounded-2xl transition-colors duration-200 flex items-center justify-between border cursor-pointer ${
                               isLinkActive
-                                ? 'bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] text-white shadow-sm border-transparent'
+                                ? 'bg-gradient-to-r from-[#1668DC] to-[#1152B8] text-white shadow-sm border-transparent'
                                 : item.badgeHighlight
                                   ? 'bg-[#2B95FF]/10 hover:bg-[#2B95FF]/15 text-[#161B26] dark:text-[#F8FAFC] border-[#2B95FF]/30'
                                   : isDark 
@@ -600,7 +600,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                                       isLinkActive
                                         ? 'bg-white/20 text-white'
                                         : item.badgeHighlight
-                                          ? 'bg-[#2B95FF] text-white font-black'
+                                          ? 'bg-[#1463D6] text-white font-black'
                                           : 'bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF]'
                                     }`}>
                                       {item.badge}
@@ -619,7 +619,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                             <div className={`shrink-0 ms-1.5 transition-transform group-hover:-translate-x-0.5 ${
                               isLinkActive
                                 ? 'text-white'
-                                : 'text-[#8B95A5] group-hover:text-[#2B95FF]'
+                                : 'text-[#525B6B] dark:text-[#94A3B8] group-hover:text-[#1263D6] dark:group-hover:text-[#60AFFF]'
                             }`}>
                               {isArabic ? <ChevronLeft className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
                             </div>

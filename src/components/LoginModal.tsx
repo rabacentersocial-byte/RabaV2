@@ -76,7 +76,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSucce
             onClick={() => setRole('parent')}
             className={`py-2 text-[11px] font-bold rounded-xl transition-all cursor-pointer ${
               role === 'parent' 
-                ? 'bg-sky-600 text-white dark:bg-[#00E5BE] dark:text-slate-950 font-black shadow-md' 
+                ? 'bg-sky-700 text-white dark:bg-[#00E5BE] dark:text-slate-950 font-black shadow-md' 
                 : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -87,7 +87,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSucce
             onClick={() => setRole('specialist')}
             className={`py-2 text-[11px] font-bold rounded-xl transition-all cursor-pointer ${
               role === 'specialist' 
-                ? 'bg-sky-600 text-white dark:bg-[#00E5BE] dark:text-slate-950 font-black shadow-md' 
+                ? 'bg-sky-700 text-white dark:bg-[#00E5BE] dark:text-slate-950 font-black shadow-md' 
                 : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -153,9 +153,9 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSucce
                       ? (isArabic ? 'البريد أو الكود الوظيفي' : 'staff@raba.sa or Staff ID')
                       : 'admin@raba.sa'
                   }
-                  className={`w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-white/20 rounded-2xl py-3 ${isArabic ? 'pr-10 pl-4 text-right' : 'pl-10 pr-4 text-left'} text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-sky-500 dark:focus:border-[#00E5BE] focus:ring-2 focus:ring-sky-500/20 dark:focus:ring-[#00E5BE]/30`}
+                  className={`w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-white/20 rounded-2xl py-3 ${isArabic ? 'pr-10 pl-4 text-right' : 'pl-10 pr-4 text-left'} text-sm text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:outline-none focus:border-sky-500 dark:focus:border-[#00E5BE] focus:ring-2 focus:ring-sky-500/20 dark:focus:ring-[#00E5BE]/30`}
                 />
-                <User className={`w-5 h-5 text-slate-400 absolute ${isArabic ? 'right-3' : 'left-3'} top-3.5`} />
+                <User className={`w-5 h-5 text-slate-500 dark:text-slate-400 absolute ${isArabic ? 'right-3' : 'left-3'} top-3.5`} />
               </div>
             </div>
 
@@ -164,7 +164,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSucce
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-200">
                   {isArabic ? 'كلمة المرور' : 'Password'}
                 </label>
-                <button type="button" className="text-[11px] text-sky-600 dark:text-[#00E5BE] hover:underline cursor-pointer">
+                <button type="button" className="text-[11px] text-sky-700 dark:text-[#00E5BE] hover:underline cursor-pointer">
                   {isArabic ? 'نسيت كلمة المرور؟' : 'Forgot password?'}
                 </button>
               </div>
@@ -175,9 +175,9 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSucce
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className={`w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-white/20 rounded-2xl py-3 ${isArabic ? 'pr-10 pl-4 text-right' : 'pl-10 pr-4 text-left'} text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-sky-500 dark:focus:border-[#00E5BE] focus:ring-2 focus:ring-sky-500/20 dark:focus:ring-[#00E5BE]/30`}
+                  className={`w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-white/20 rounded-2xl py-3 ${isArabic ? 'pr-10 pl-4 text-right' : 'pl-10 pr-4 text-left'} text-sm text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:outline-none focus:border-sky-500 dark:focus:border-[#00E5BE] focus:ring-2 focus:ring-sky-500/20 dark:focus:ring-[#00E5BE]/30`}
                 />
-                <Lock className={`w-5 h-5 text-slate-400 absolute ${isArabic ? 'right-3' : 'left-3'} top-3.5`} />
+                <Lock className={`w-5 h-5 text-slate-500 dark:text-slate-400 absolute ${isArabic ? 'right-3' : 'left-3'} top-3.5`} />
               </div>
             </div>
 
