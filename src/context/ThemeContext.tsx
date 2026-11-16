@@ -15,7 +15,7 @@ const THEME_STORAGE_KEY = 'raba_theme_v2';
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
     try {
-      const saved = localStorage.getItem(THEME_STORAGE_KEY);
+      const saved = localStorage.getItem(THEME_STORAGE_KEY) || localStorage.getItem('raba_theme');
       if (saved === 'light' || saved === 'dark') {
         return saved;
       }

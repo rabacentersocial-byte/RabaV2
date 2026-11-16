@@ -26,13 +26,13 @@
         var errText = (err && (err.message || err.toString())) || 'خطأ غير متوقع';
         if (root && !window.__rabaReactMounted) {
           root.innerHTML = `
-            <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background-color: #0B1320; font-family: system-ui, -apple-system, sans-serif; direction: rtl; text-align: center; padding: 24px;">
-              <div style="max-width: 440px; width: 90%; background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 20px; padding: 28px 20px; text-align: center; color: #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
+            <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background-color: #0B0F17; font-family: system-ui, -apple-system, sans-serif; direction: rtl; text-align: center; padding: 24px;">
+              <div style="max-width: 440px; width: 90%; background: rgba(22, 28, 42, 0.95); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 20px; padding: 28px 20px; text-align: center; color: #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
                 <div style="width: 56px; height: 56px; border-radius: 16px; background: rgba(239, 68, 68, 0.15); display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; color: #f87171; font-size: 26px;">⚠️</div>
                 <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">مركز رابا للتأهيل ورعاية التوحد</h3>
                 <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 20px; line-height: 1.6;">جارٍ تحديث المنصة، يرجى النقر على الزر أدناه لتحديث الصفحة ومتابعة التصفح.</p>
                 <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                  <button onclick="window.location.reload(true)" style="background: #00E5BE; color: #022c22; font-weight: 700; font-size: 13px; padding: 10px 22px; border: none; border-radius: 9999px; cursor: pointer;">تحديث الصفحة ↻</button>
+                  <button onclick="window.location.reload(true)" style="background: linear-gradient(to right, #1668DC, #1152B8); color: #ffffff; font-weight: 700; font-size: 13px; padding: 10px 22px; border: none; border-radius: 9999px; cursor: pointer;">تحديث الصفحة ↻</button>
                   <button onclick="localStorage.clear(); window.location.reload(true)" style="background: rgba(255,255,255,0.1); color: #fff; font-weight: 600; font-size: 13px; padding: 10px 18px; border: 1px solid rgba(255,255,255,0.2); border-radius: 9999px; cursor: pointer;">إعادة تعيين الذاكرة</button>
                 </div>
               </div>
@@ -210,15 +210,17 @@
       }
       html.dark .raba-pre-shell {
         color: #F8FAFC;
-        background: radial-gradient(circle at 80% 10%, rgba(43, 149, 255, 0.16) 0%, rgba(43, 149, 255, 0) 60%),
-                    radial-gradient(circle at 15% 45%, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0) 65%),
-                    #0B0F17;
+        background:
+          radial-gradient(120% 90% at 50% -10%, rgba(43, 149, 255, 0.14) 0%, rgba(16, 185, 129, 0.06) 45%, transparent 80%),
+          radial-gradient(circle at 85% 8%, rgba(43, 149, 255, 0.16) 0%, rgba(43, 149, 255, 0) 60%),
+          #0B0F17;
       }
       html.light .raba-pre-shell {
         color: #161B26;
-        background: radial-gradient(circle at 80% 10%, rgba(43, 149, 255, 0.18) 0%, rgba(43, 149, 255, 0) 60%),
-                    radial-gradient(circle at 15% 45%, rgba(237, 233, 224, 0.65) 0%, rgba(237, 233, 224, 0) 65%),
-                    #F5F2EC;
+        background:
+          radial-gradient(120% 90% at 50% -10%, rgba(255, 255, 255, 0.72) 0%, rgba(43, 149, 255, 0.09) 42%, rgba(237, 233, 224, 0.35) 68%, transparent 85%),
+          radial-gradient(circle at 85% 8%, rgba(43, 149, 255, 0.18) 0%, rgba(43, 149, 255, 0) 60%),
+          #F5F2EC;
       }
       .raba-pre-container {
         width: 100%;
@@ -253,16 +255,23 @@
         .raba-pre-header { height: 5rem; }
       }
       html.dark .raba-pre-header {
-        background: rgba(22, 28, 42, 0.72);
-        backdrop-filter: blur(18px) saturate(150%);
-        -webkit-backdrop-filter: blur(18px) saturate(150%);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(22, 28, 42, 0.68);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       }
       html.light .raba-pre-header {
-        background: rgba(255, 255, 255, 0.68);
-        backdrop-filter: blur(18px) saturate(150%);
-        -webkit-backdrop-filter: blur(18px) saturate(150%);
-        border-bottom: 1px solid rgba(22, 27, 38, 0.08);
+        background: rgba(255, 255, 255, 0.62);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border-bottom: 1px solid rgba(22, 27, 38, 0.06);
+      }
+      @media screen and (max-width: 768px) {
+        html.dark .raba-pre-header,
+        html.light .raba-pre-header {
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+        }
       }
       .raba-pre-nav-row {
         display: flex;
@@ -278,36 +287,37 @@
         .raba-pre-desktop-nav {
           display: flex;
           align-items: center;
-          gap: 0.25rem;
-          padding: 0.25rem;
-          border-radius: 9999px;
+          gap: 0.125rem;
+          min-width: 0;
         }
-        html.dark .raba-pre-desktop-nav {
-          background: rgba(255, 255, 255, 0.06);
-          border: 1px solid rgba(255, 255, 255, 0.10);
-        }
-        html.light .raba-pre-desktop-nav {
-          background: rgba(255, 255, 255, 0.78);
-          border: 1px solid rgba(22, 27, 38, 0.08);
+      }
+      @media (min-width: 1280px) {
+        .raba-pre-desktop-nav {
+          gap: 0.375rem;
         }
       }
       .raba-pre-nav-link {
-        padding: 0.375rem 0.75rem;
-        font-size: 0.75rem;
+        padding: 0.375rem 0.375rem;
+        font-size: 11px;
         font-weight: 700;
         border-radius: 9999px;
         text-decoration: none;
         white-space: nowrap;
+        flex-shrink: 0;
       }
       @media (min-width: 1280px) {
-        .raba-pre-nav-link { font-size: 0.875rem; }
+        .raba-pre-nav-link {
+          padding: 0.375rem 0.625rem;
+          font-size: 13px;
+        }
       }
       html.dark .raba-pre-nav-link { color: #94A3B8; }
       html.light .raba-pre-nav-link { color: #4B5563; }
       .raba-pre-nav-link.is-active {
         background: rgba(43, 149, 255, 0.12);
-        color: #2B95FF !important;
       }
+      html.light .raba-pre-nav-link.is-active { color: #1263D6 !important; }
+      html.dark .raba-pre-nav-link.is-active { color: #60AFFF !important; }
       .raba-pre-actions {
         display: flex;
         align-items: center;
@@ -332,7 +342,7 @@
         color: #F8FAFC;
       }
       html.light .raba-pre-glass-btn {
-        background: rgba(255, 255, 255, 0.72);
+        background: rgba(255, 255, 255, 0.75);
         border: 1px solid rgba(22, 27, 38, 0.08);
         color: #161B26;
       }
@@ -342,20 +352,16 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        background: #141821;
+        background: linear-gradient(to right, #1668DC, #1152B8);
         color: #ffffff;
         font-size: 0.75rem;
         font-weight: 900;
-        padding: 0.5rem 0.75rem;
+        padding: 0.5rem 0.875rem;
         border-radius: 9999px;
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.25);
         text-decoration: none;
         white-space: nowrap;
-        box-shadow: 0 10px 24px -8px rgba(20, 24, 33, 0.35);
-      }
-      html.dark .raba-pre-header-cta {
-        background: #F5F2EC;
-        color: #141821;
+        box-shadow: 0 12px 28px -10px rgba(22, 104, 220, 0.45);
       }
       @media (min-width: 640px) {
         .raba-pre-header-cta {
@@ -368,16 +374,18 @@
         align-items: center;
         justify-content: center;
         padding: 0.5rem;
-        border-radius: 0.75rem;
+        border-radius: 9999px;
         box-sizing: border-box;
       }
       html.dark .raba-pre-menu-btn {
-        color: #e2e8f0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.06);
+        color: #F8FAFC;
+        border: 1px solid rgba(255, 255, 255, 0.10);
       }
       html.light .raba-pre-menu-btn {
-        color: #334155;
-        border: 1px solid #e2e8f0;
+        background: rgba(255, 255, 255, 0.75);
+        color: #161B26;
+        border: 1px solid rgba(22, 27, 38, 0.08);
       }
       @media (min-width: 1024px) {
         .raba-pre-menu-btn { display: none; }
@@ -394,8 +402,8 @@
           padding-bottom: 7rem;
         }
       }
-      html.dark .raba-pre-hero { border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-      html.light .raba-pre-hero { border-bottom: 1px solid rgba(226, 232, 240, 0.8); }
+      html.dark .raba-pre-hero { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+      html.light .raba-pre-hero { border-bottom: 1px solid rgba(22, 27, 38, 0.08); }
       .raba-pre-hero-grid {
         display: grid;
         grid-template-columns: 1fr;
@@ -425,15 +433,15 @@
       }
       .raba-pre-aba {
         display: inline-block;
-        background: linear-gradient(to right, #2B95FF, #1A73E8);
+        background: linear-gradient(to right, #1668DC, #1152B8);
         color: #ffffff;
         font-weight: 900;
         padding: 0.125rem 1rem;
-        border-radius: 0.75rem;
+        border-radius: 1rem;
         border: 1px solid rgba(255, 255, 255, 0.3);
         transform: rotate(-1deg);
         font-size: 1.5rem;
-        box-shadow: 0 10px 15px -3px rgba(43, 149, 255, 0.25);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
         margin: 0 0.25rem;
       }
       @media (min-width: 640px) {
@@ -472,12 +480,51 @@
         background: rgba(22, 28, 42, 0.72);
         border: 1px solid rgba(255, 255, 255, 0.08);
         color: #F8FAFC;
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.55);
       }
       html.light .raba-pre-card {
         background: rgba(255, 255, 255, 0.68);
         border: 1px solid rgba(22, 27, 38, 0.08);
         color: #161B26;
+        box-shadow: 0 20px 40px -15px rgba(22, 27, 38, 0.08);
       }
+      @media screen and (max-width: 768px) {
+        html.dark .raba-pre-card {
+          background: rgba(22, 28, 42, 0.94);
+          border-color: rgba(255, 255, 255, 0.08);
+        }
+        html.light .raba-pre-card {
+          background: rgba(255, 255, 255, 0.92);
+          border-color: rgba(22, 27, 38, 0.08);
+        }
+      }
+      .raba-pre-check-icon {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .raba-pre-check-blue {
+        background: rgba(43, 149, 255, 0.15);
+        border: 1px solid rgba(43, 149, 255, 0.30);
+        color: #1263D6;
+      }
+      html.dark .raba-pre-check-blue { color: #60AFFF; }
+      .raba-pre-check-emerald {
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.30);
+        color: #047857;
+      }
+      html.dark .raba-pre-check-emerald { color: #34D399; }
+      .raba-pre-check-violet {
+        background: rgba(139, 92, 246, 0.15);
+        border: 1px solid rgba(139, 92, 246, 0.30);
+        color: #6D28D9;
+      }
+      html.dark .raba-pre-check-violet { color: #A78BFA; }
       .raba-pre-cta-row {
         display: flex;
         flex-direction: column;
@@ -497,23 +544,22 @@
         align-items: center;
         justify-content: center;
         min-height: 48px;
-        padding: 0.875rem 1.5rem;
+        padding: 0.875rem 1.75rem;
         border-radius: 9999px;
         font-weight: 900;
         font-size: 0.875rem;
         color: #ffffff;
         text-decoration: none;
-        background: #141821;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        box-shadow: 0 20px 40px -15px rgba(20, 24, 33, 0.35);
+        background: linear-gradient(to right, #1668DC, #1152B8);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        box-shadow: 0 14px 32px -10px rgba(22, 104, 220, 0.42);
       }
       html.dark .raba-pre-btn-primary {
-        background: #F5F2EC;
-        color: #141821;
+        border-color: rgba(96, 175, 255, 0.30);
       }
       @media (min-width: 640px) {
         .raba-pre-btn-primary {
-          padding: 0.875rem 2rem;
+          padding: 0.875rem 2.25rem;
           font-size: 1rem;
         }
       }
@@ -530,13 +576,40 @@
       }
       html.dark .raba-pre-video-link { color: #F8FAFC; }
       html.light .raba-pre-video-link { color: #161B26; }
+      .raba-pre-children-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.375rem 0.625rem;
+        border-radius: 9999px;
+        font-size: 11px;
+        font-weight: 700;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      }
+      html.light .raba-pre-children-pill {
+        background: rgba(255, 255, 255, 0.72);
+        color: #161B26;
+        border: 1px solid rgba(22, 27, 38, 0.10);
+      }
+      html.dark .raba-pre-children-pill {
+        background: #161E2E;
+        color: #F8FAFC;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+      @media (min-width: 640px) {
+        .raba-pre-children-pill {
+          gap: 0.5rem;
+          padding: 0.5rem 0.75rem;
+          font-size: 0.75rem;
+        }
+      }
       .raba-pre-stage-wrap {
         width: 280px;
         height: 280px;
         border-radius: 9999px;
         padding: 0.5rem;
-        background: linear-gradient(135deg, #2B95FF 0%, #8B5CF6 55%, #141821 100%);
-        box-shadow: 0 20px 50px rgba(43, 149, 255, 0.24), 0 0 30px rgba(16, 185, 129, 0.20);
+        background: linear-gradient(to top right, #2B95FF, #8B5CF6, #10B981);
+        box-shadow: 0 24px 55px -15px rgba(43, 149, 255, 0.28);
         box-sizing: border-box;
       }
       @media (min-width: 640px) {
@@ -547,6 +620,21 @@
       }
       @media (min-width: 1280px) {
         .raba-pre-stage-wrap { width: 460px; height: 460px; }
+      }
+      .raba-pre-stage-inner {
+        width: 100%;
+        height: 100%;
+        border-radius: 9999px;
+        overflow: hidden;
+        box-sizing: border-box;
+      }
+      html.light .raba-pre-stage-inner {
+        background: #E8F3FF;
+        border: 1px solid rgba(255, 255, 255, 0.70);
+      }
+      html.dark .raba-pre-stage-inner {
+        background: #141821;
+        border: 1px solid rgba(255, 255, 255, 0.15);
       }
       .raba-pre-badges-row {
         display: flex;
@@ -587,12 +675,12 @@
         justify-content: space-around;
       }
       html.dark .raba-pre-bottom-inner {
-        background: rgba(22, 28, 42, 0.92);
+        background: rgba(22, 28, 42, 0.85);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.55);
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.60);
       }
       html.light .raba-pre-bottom-inner {
-        background: rgba(255, 255, 255, 0.88);
+        background: rgba(255, 255, 255, 0.80);
         border: 1px solid rgba(22, 27, 38, 0.08);
         box-shadow: 0 20px 40px -15px rgba(22, 27, 38, 0.14);
       }
@@ -611,9 +699,10 @@
       html.dark .raba-pre-bottom-tab { color: #94A3B8; }
       html.light .raba-pre-bottom-tab { color: #4B5563; }
       .raba-pre-bottom-tab.is-active {
-        color: #2B95FF !important;
         font-weight: 900;
       }
+      html.light .raba-pre-bottom-tab.is-active { color: #1263D6 !important; }
+      html.dark .raba-pre-bottom-tab.is-active { color: #60AFFF !important; }
       .raba-pre-bottom-cta {
         display: flex;
         flex-direction: column;
@@ -622,13 +711,13 @@
         margin-top: -1rem;
         padding: 0.375rem 0.875rem;
         border-radius: 9999px;
-        background: #141821;
+        background: linear-gradient(to right, #1668DC, #1152B8);
         color: #ffffff;
         text-decoration: none;
         min-height: 48px;
-        box-shadow: 0 12px 28px -8px rgba(20, 24, 33, 0.40);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
       }
-      html.dark .raba-pre-bottom-cta { border: 2px solid #0B0F17; background: #F5F2EC; color: #141821; }
+      html.dark .raba-pre-bottom-cta { border: 2px solid #0B0F17; }
       html.light .raba-pre-bottom-cta { border: 2px solid #F5F2EC; }
     </style>
 
@@ -906,7 +995,7 @@
 
                 <a href="#booking" class="raba-pre-header-cta">
                   <span style="width: 8px; height: 8px; border-radius: 9999px; background: #10B981; display: inline-block; flex-shrink: 0;"></span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2B95FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
                   <span style="font-weight: 900;">احجز الآن</span>
                 </a>
 
@@ -937,21 +1026,21 @@
 
                   <div style="display: flex; flex-direction: column; gap: 0.75rem; padding-top: 0.5rem;">
                     <div class="raba-pre-card">
-                      <span style="width: 1.75rem; height: 1.75rem; border-radius: 0.75rem; background: rgba(43, 149, 255, 0.15); color: #2B95FF; border: 1px solid rgba(43, 149, 255, 0.3); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                      <span class="raba-pre-check-icon raba-pre-check-blue">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                       </span>
                       <span>تشخيص وتقييم مبني على أساس علمي بشكل فردي لكل مستفيد</span>
                     </div>
 
                     <div class="raba-pre-card">
-                      <span style="width: 1.75rem; height: 1.75rem; border-radius: 0.75rem; background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                      <span class="raba-pre-check-icon raba-pre-check-emerald">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                       </span>
                       <span>برامج تدخل مبني على تحليل السلوك التطبيقي (ABA)</span>
                     </div>
 
                     <div class="raba-pre-card">
-                      <span style="width: 1.75rem; height: 1.75rem; border-radius: 0.75rem; background: rgba(139, 92, 246, 0.15); color: #8B5CF6; border: 1px solid rgba(139, 92, 246, 0.35); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                      <span class="raba-pre-check-icon raba-pre-check-violet">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                       </span>
                       <span>دعم نفسي وإرشاد أسري مستمر لتمكين أولياء الأمور</span>
@@ -972,9 +1061,9 @@
                 <!-- Hero Showcase Column -->
                 <div class="raba-pre-hero-col" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 380px;">
                   <div class="raba-pre-badges-row">
-                    <div style="display: inline-flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.625rem; border-radius: 9999px; background: #141821; color: #ffffff; font-size: 11px; font-weight: 900; border: 1px solid rgba(255, 255, 255, 0.15);">
-                      <span style="width: 1.25rem; height: 1.25rem; border-radius: 9999px; background: #2B95FF; color: #ffffff; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900;">+10</span>
-                      <span style="white-space: nowrap;">+10 أطفال جدد</span>
+                    <div class="raba-pre-children-pill">
+                      <span style="width: 1.25rem; height: 1.25rem; border-radius: 9999px; background: linear-gradient(to bottom right, #1668DC, #1152B8); color: #ffffff; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; flex-shrink: 0;">+10</span>
+                      <span style="white-space: nowrap; font-weight: 900;">+10 أطفال جدد</span>
                     </div>
                     <div class="raba-pre-glass-btn" style="padding: 0.375rem 0.75rem; gap: 0.375rem; font-size: 11px; font-weight: 700;">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2B95FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -984,7 +1073,7 @@
                   </div>
 
                   <div id="hero-services-slider" class="raba-pre-stage-wrap" style="position: relative;">
-                    <div style="width: 100%; height: 100%; border-radius: 9999px; overflow: hidden; background: #141821; border: 1px solid rgba(255, 255, 255, 0.15);">
+                    <div class="raba-pre-stage-inner">
                       <img
                         src="/images/hero/card_1_journey.webp"
                         alt="رحلة التطور تبدأ هنا - مركز رابا للعلاج بتحليل السلوك التطبيقي ABA"
@@ -1020,7 +1109,7 @@
               <span>الخدمات</span>
             </a>
             <a href="#booking" class="raba-pre-bottom-cta">
-              <span style="width: 2rem; height: 2rem; border-radius: 0.75rem; background: rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 2px;">
+              <span style="width: 2rem; height: 2rem; border-radius: 9999px; background: rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 2px;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
               </span>
               <span style="font-size: 11px; font-weight: 900;">احجز الآن</span>
@@ -1030,7 +1119,7 @@
               <span>الأخصائيين</span>
             </a>
             <a href="#branches" class="raba-pre-bottom-tab">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 2px;"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 2px;"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
               <span>فروعنا</span>
             </a>
           </div>
