@@ -572,12 +572,12 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
             {/* Modal Header */}
             <div className="obsidian-anchor-card p-6 flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-black text-white dark:text-[#161B26]">{isArabic ? 'إضافة تقييم وتجربة جديدة' : 'Submit Review & Experience'}</h3>
-                <p className="text-xs text-[#94A3B8] dark:text-[#4B5563] font-medium mt-1">{isArabic ? 'يسعدنا سماع تجربتك ورأيك في خدمات وأخصائيي المركز' : 'We value your experience and journey with our clinic'}</p>
+                <h3 className="text-lg font-black text-[#161B26] dark:text-white">{isArabic ? 'إضافة تقييم وتجربة جديدة' : 'Submit Review & Experience'}</h3>
+                <p className="text-xs text-[#4B5563] dark:text-[#94A3B8] font-medium mt-1">{isArabic ? 'يسعدنا سماع تجربتك ورأيك في خدمات وأخصائيي المركز' : 'We value your experience and journey with our clinic'}</p>
               </div>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="w-9 h-9 min-w-[36px] min-h-[36px] rounded-full bg-white/10 dark:bg-black/10 hover:bg-white/20 dark:hover:bg-black/20 text-white dark:text-[#161B26] transition-colors cursor-pointer flex items-center justify-center"
+                className="w-9 h-9 min-w-[36px] min-h-[36px] rounded-full bg-[#161B26]/5 hover:bg-[#161B26]/10 dark:bg-white/10 dark:hover:bg-white/20 text-[#161B26] dark:text-white transition-colors cursor-pointer flex items-center justify-center"
                 aria-label={isArabic ? 'إغلاق' : 'Close'}
               >
                 <X className="w-5 h-5" />

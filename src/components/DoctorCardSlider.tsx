@@ -2938,7 +2938,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
           {/* Top Left Badge: TOP RATED */}
           {isTop && (
             <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-10">
-              <span className="bg-[#141821]/90 dark:bg-[#F5F2EC]/95 backdrop-blur-xs text-white dark:text-[#161B26] text-[8px] sm:text-[10px] font-black tracking-wider px-2 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-md uppercase">
+              <span className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] dark:bg-none dark:bg-[#1E293B]/95 backdrop-blur-xs text-white dark:text-[#F8FAFC] dark:border dark:border-white/15 text-[8px] sm:text-[10px] font-black tracking-wider px-2 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-md uppercase">
                 {isArabic ? 'الأعلى تقييماً' : 'TOP RATED'}
               </span>
             </div>
@@ -3172,7 +3172,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
                 <span
                   className={`text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full font-bold tabular-nums ${
                     isSelected
-                      ? 'bg-[#2B95FF] text-white'
+                      ? 'bg-white/20 text-white'
                       : 'bg-[#161B26]/[0.08] dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
                   }`}
                 >
@@ -3298,10 +3298,10 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
               <Stethoscope className="w-5 h-5 stroke-[2.2]" />
             </div>
             <div>
-              <h4 className="text-sm font-black text-white dark:text-[#161B26]">
+              <h4 className="text-sm font-black text-[#161B26] dark:text-white">
                 {isArabic ? 'هل ترغب في تصفح جميع الكفاءات الطبية بقائمة مفصلة؟' : 'Want to browse all specialists in a full list view?'}
               </h4>
-              <p className="text-xs text-[#94A3B8] dark:text-[#4B5563] mt-0.5">
+              <p className="text-xs text-[#4B5563] dark:text-[#94A3B8] mt-0.5">
                 {isArabic ? 'تصفح صفحة الأخصائيين المخصصة مع فلاتر شاملة للسنوات والتخصصات وحجز المواعيد مباشرة.' : 'Visit our dedicated directory page with specialty filtering and direct booking.'}
               </p>
             </div>

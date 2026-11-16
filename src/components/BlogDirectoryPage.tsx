@@ -767,7 +767,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                         >
                           <Share2 className="w-4 h-4" />
                           {shareFeedback === post.id && (
-                            <span className="absolute -top-7 right-0 text-[10px] bg-[#141821] dark:bg-[#F5F2EC] text-white dark:text-[#161B26] px-2.5 py-0.5 rounded-full shadow whitespace-nowrap z-20">
+                            <span className="absolute -top-7 right-0 text-[10px] bg-[#2B95FF] dark:bg-[#1E293B] text-white dark:text-[#F8FAFC] dark:border dark:border-white/15 px-2.5 py-0.5 rounded-full shadow whitespace-nowrap z-20">
                               {isArabic ? 'تم نسخ الرابط' : 'Link copied'}
                             </span>
                           )}
@@ -787,13 +787,13 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
           <div className="absolute top-0 left-0 w-80 h-80 rounded-full blur-3xl pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(43, 149, 255, 0.25) 0%, rgba(43, 149, 255, 0) 70%)' }} />
           
           <div className="relative z-10 max-w-2xl">
-            <span className="text-[#60AFFF] dark:text-[#1263D6] text-xs font-bold uppercase tracking-wider block mb-1">
+            <span className="text-[#1263D6] dark:text-[#60AFFF] text-xs font-bold uppercase tracking-wider block mb-1">
               {isArabic ? 'النشرة المعرفية والتأهيلية الأسبوعية' : 'Weekly Clinical Rehabilitation Newsletter'}
             </span>
-            <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white dark:text-[#161B26] mb-2">
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-[#161B26] dark:text-white mb-2">
               {isArabic ? 'هل تود استلام أحدث الإرشادات السلوكية والنطقية؟' : 'Get the latest behavioral & speech guides'}
             </h3>
-            <p className="text-[#94A3B8] dark:text-[#4B5563] text-xs sm:text-sm leading-relaxed mb-6">
+            <p className="text-[#4B5563] dark:text-[#94A3B8] text-xs sm:text-sm leading-relaxed mb-6">
               {isArabic 
                 ? 'انضم لأكثر من 3,500 أسرة تستلم أسبوعياً نصائح مقننة من أخصائيي واستشاريي مركز رابا في التعامل مع التحديات السلوكية والتكامل الحسي في المنزل.'
                 : 'Join over 3,500 families receiving weekly evidence-based tips directly from Raba Center clinical team.'}
@@ -810,7 +810,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                 type="email"
                 required
                 placeholder={isArabic ? 'أدخل بريدك الإلكتروني أو رقم الواتساب...' : 'Enter your email or WhatsApp number...'}
-                className="flex-1 px-5 py-3 rounded-full bg-white/10 dark:bg-[#161B26]/5 border border-white/20 dark:border-[#161B26]/15 text-white dark:text-[#161B26] placeholder:text-[#94A3B8] dark:placeholder:text-[#4B5563] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#2B95FF]"
+                className="flex-1 px-5 py-3 rounded-full bg-white/90 dark:bg-white/10 border border-[#161B26]/12 dark:border-white/20 text-[#161B26] dark:text-white placeholder:text-[#8B95A5] dark:placeholder:text-[#94A3B8] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#2B95FF]"
               />
               <button
                 type="submit"
@@ -875,7 +875,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
             <div className="px-5 sm:px-8 py-3.5 border-b border-[#161B26]/[0.06] dark:border-white/[0.08] flex items-center justify-between gap-3 shrink-0 liquid-glass-panel">
               
               <div className="flex items-center gap-2 truncate">
-                <span className="text-[10px] font-black uppercase px-3 py-1 rounded-full bg-[#141821] dark:bg-[#F5F2EC] text-white dark:text-[#161B26]">
+                <span className="text-[10px] font-black uppercase px-3 py-1 rounded-full bg-[#2B95FF] dark:bg-[#1E293B] text-white dark:text-[#F8FAFC] dark:border dark:border-white/15">
                   {isArabic ? readingPost.categoryTitle : (readingPost.categoryTitleEn || readingPost.categoryTitle)}
                 </span>
                 <span className="text-xs font-bold text-[#4B5563] dark:text-[#94A3B8] truncate hidden sm:inline">

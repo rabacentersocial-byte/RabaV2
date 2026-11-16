@@ -439,8 +439,7 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
         >
           {/* Logo Showcase Window (Pure white background in both light & dark themes) */}
           <div
-            className="w-full flex-1 rounded-[14px] md:rounded-[18px] border border-[#161B26]/[0.06] dark:border-white/10 bg-white flex items-center justify-center p-1.5 md:p-3 overflow-hidden relative shadow-2xs"
-            style={{ backgroundColor: '#ffffff' }}
+            className="w-full flex-1 rounded-[14px] md:rounded-[18px] border border-[#161B26]/[0.06] dark:border-white/15 bg-white dark:bg-slate-200/85 flex items-center justify-center p-1.5 md:p-3 overflow-hidden relative shadow-2xs"
           >
             <PartnerLogoRenderer
               partnerId={partner.id}
@@ -711,10 +710,10 @@ export const PartnersSection: React.FC = () => {
                       : 'liquid-glass-pill text-[#4B5563] dark:text-[#94A3B8] hover:text-[#1263D6] dark:hover:text-[#60AFFF]'
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5 text-[#2B95FF]" />
+                  <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-white' : 'text-[#2B95FF]'}`} />
                   <span>{isArabic ? sec.labelAr : sec.labelEn}</span>
                   <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-sans ${
-                    isSelected ? 'bg-[#2B95FF] text-white' : 'bg-[#161B26]/8 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                    isSelected ? 'bg-white/20 text-white' : 'bg-[#161B26]/8 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
                   }`}>
                     {sec.count}
                   </span>
@@ -837,7 +836,7 @@ export const PartnersSection: React.FC = () => {
                       <span
                         className={`px-1.5 py-0.2 rounded-full text-[11px] font-sans font-bold ${
                           isSelected
-                            ? 'bg-[#2B95FF] text-white'
+                            ? 'bg-white/20 text-white'
                             : 'bg-[#161B26]/8 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
                         }`}
                       >
@@ -920,10 +919,7 @@ export const PartnersSection: React.FC = () => {
 
                 {/* Center Framed Canvas for Logo - Pure white in both light & dark mode */}
                 <div 
-                  className="w-full h-32 sm:h-36 rounded-2xl border border-[#161B26]/[0.06] dark:border-white/10 bg-white dark:bg-white flex items-center justify-center overflow-hidden relative z-10 p-2 sm:p-2.5 shadow-xs"
-                  style={{
-                    backgroundColor: '#ffffff'
-                  }}
+                  className="w-full h-32 sm:h-36 rounded-2xl border border-[#161B26]/[0.06] dark:border-white/15 bg-white dark:bg-slate-200/85 flex items-center justify-center overflow-hidden relative z-10 p-2 sm:p-2.5 shadow-xs"
                 >
                   <PartnerLogoRenderer
                     partnerId={partner.id}
@@ -1157,10 +1153,7 @@ export const PartnersSection: React.FC = () => {
 
             {/* Logo in Header */}
             <div 
-              className="w-36 h-24 sm:w-44 sm:h-28 mx-auto mb-4 rounded-2xl border border-[#161B26]/10 dark:border-white/20 p-2 sm:p-3 shadow-xs flex items-center justify-center relative z-10 overflow-hidden bg-white dark:bg-white"
-              style={{
-                backgroundColor: '#ffffff'
-              }}
+              className="w-36 h-24 sm:w-44 sm:h-28 mx-auto mb-4 rounded-2xl border border-[#161B26]/10 dark:border-white/15 p-2 sm:p-3 shadow-xs flex items-center justify-center relative z-10 overflow-hidden bg-white dark:bg-slate-200/85"
             >
               <PartnerLogoRenderer
                 partnerId={activePartnerModal.id}

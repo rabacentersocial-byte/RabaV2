@@ -409,23 +409,23 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
         <div className="max-w-7xl mx-auto relative z-10">
           
           {/* Breadcrumb Navigation Bar */}
-          <div className="flex items-center justify-between gap-4 mb-6 text-xs font-bold text-[#94A3B8] dark:text-[#4B5563]">
+          <div className="flex items-center justify-between gap-4 mb-6 text-xs font-bold text-[#4B5563] dark:text-[#94A3B8]">
             <div className="flex items-center gap-2">
               <button
                 onClick={onBackToHome}
-                className="flex items-center gap-1.5 hover:text-[#60AFFF] dark:hover:text-[#1263D6] transition-colors cursor-pointer group"
+                className="flex items-center gap-1.5 hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors cursor-pointer group"
               >
                 <Home className="w-4 h-4 group-hover:scale-110 transition-transform" />
                 <span>{isArabic ? 'الرئيسية' : 'Home'}</span>
               </button>
               <span className="opacity-50">/</span>
-              <span className="text-[#60AFFF] dark:text-[#1263D6] font-black">{isArabic ? 'دليل الخدمات الشامل' : 'Services Directory'}</span>
+              <span className="text-[#1263D6] dark:text-[#60AFFF] font-black">{isArabic ? 'دليل الخدمات الشامل' : 'Services Directory'}</span>
             </div>
 
             {/* Back to Home Button */}
             <button
               onClick={onBackToHome}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 dark:bg-[#161B26]/5 hover:bg-white/20 dark:hover:bg-[#161B26]/10 text-white dark:text-[#161B26] text-xs font-black transition-all cursor-pointer backdrop-blur-md border border-white/15 dark:border-[#161B26]/15"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-white dark:bg-white/10 dark:hover:bg-white/20 text-[#161B26] dark:text-white text-xs font-black transition-all cursor-pointer backdrop-blur-md border border-[#161B26]/10 dark:border-white/15 shadow-xs"
             >
               {isArabic ? <ArrowRight className="w-3.5 h-3.5 text-[#2B95FF]" /> : <ArrowLeft className="w-3.5 h-3.5 text-[#2B95FF]" />}
               <span>{isArabic ? 'العودة للرئيسية' : 'Back to Home'}</span>
@@ -434,24 +434,24 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
 
           {/* Hero Title & Description */}
           <div className="max-w-3xl mb-8">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#2B95FF]/15 border border-[#2B95FF]/30 text-[#60AFFF] dark:text-[#1263D6] text-xs font-black mb-3.5 backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#2B95FF]/12 dark:bg-[#2B95FF]/15 border border-[#2B95FF]/30 text-[#1263D6] dark:text-[#60AFFF] text-xs font-black mb-3.5 backdrop-blur-md">
               <Sparkles className="w-3.5 h-3.5" />
               <span>{isArabic ? 'الدليل المعتمد للبرامج والكورسات والباقات' : 'Certified Directory & Care Packages'}</span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white dark:text-[#161B26] tracking-tight leading-tight mb-4">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#161B26] dark:text-white tracking-tight leading-tight mb-4">
               {isArabic ? (
                 <>
-                  خدمات مركز رابا <span className="bg-gradient-to-r from-[#60AFFF] to-[#2B95FF] dark:from-[#2B95FF] dark:to-[#1A73E8] bg-clip-text text-transparent">التأهيلية والتدريبية</span>
+                  خدمات مركز رابا <span className="bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] dark:from-[#60AFFF] dark:to-[#2B95FF] bg-clip-text text-transparent">التأهيلية والتدريبية</span>
                 </>
               ) : (
                 <>
-                  Raba Center <span className="bg-gradient-to-r from-[#60AFFF] to-[#2B95FF] dark:from-[#2B95FF] dark:to-[#1A73E8] bg-clip-text text-transparent">Services & Programs</span>
+                  Raba Center <span className="bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] dark:from-[#60AFFF] dark:to-[#2B95FF] bg-clip-text text-transparent">Services & Programs</span>
                 </>
               )}
             </h1>
 
-            <p className="text-sm sm:text-base text-[#94A3B8] dark:text-[#4B5563] leading-relaxed font-medium">
+            <p className="text-sm sm:text-base text-[#4B5563] dark:text-[#94A3B8] leading-relaxed font-medium">
               {isArabic 
                 ? 'استكشف كافة برامج التأهيل المتخصصة (ABA، التخاطب، الوظيفي، الحسي، صعوبات التعلم)، والدورات التدريبية المعتمدة دولياً، وباقات الرعاية الشاملة مع خيارات تقسيط ميسرة.'
                 : 'Explore all specialized rehabilitation programs, internationally certified training courses, and all-inclusive care packages with transparent pricing.'}
@@ -460,43 +460,43 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
 
           {/* Quick Metrics Strip */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-            <div className="bg-white/10 dark:bg-[#161B26]/5 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-white/10 dark:border-[#161B26]/10 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#2B95FF]/20 text-[#60AFFF] dark:text-[#1263D6] flex items-center justify-center shrink-0">
+            <div className="bg-white/85 dark:bg-white/10 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-[#161B26]/10 dark:border-white/10 flex items-center gap-3 shadow-xs">
+              <div className="w-10 h-10 rounded-xl bg-[#2B95FF]/15 dark:bg-[#2B95FF]/20 text-[#1263D6] dark:text-[#60AFFF] flex items-center justify-center shrink-0">
                 <Puzzle className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xl sm:text-2xl font-black text-white dark:text-[#161B26]">{services.length}+</div>
-                <div className="text-[11px] font-bold text-[#94A3B8] dark:text-[#4B5563]">{isArabic ? 'برامج تأهيل تخصصية' : 'Rehab Programs'}</div>
+                <div className="text-xl sm:text-2xl font-black text-[#161B26] dark:text-white">{services.length}+</div>
+                <div className="text-[11px] font-bold text-[#4B5563] dark:text-[#94A3B8]">{isArabic ? 'برامج تأهيل تخصصية' : 'Rehab Programs'}</div>
               </div>
             </div>
 
-            <div className="bg-white/10 dark:bg-[#161B26]/5 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-white/10 dark:border-[#161B26]/10 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#8B5CF6]/20 text-[#A78BFA] dark:text-[#6D28D9] flex items-center justify-center shrink-0">
+            <div className="bg-white/85 dark:bg-white/10 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-[#161B26]/10 dark:border-white/10 flex items-center gap-3 shadow-xs">
+              <div className="w-10 h-10 rounded-xl bg-[#8B5CF6]/15 dark:bg-[#8B5CF6]/20 text-[#6D28D9] dark:text-[#A78BFA] flex items-center justify-center shrink-0">
                 <Award className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xl sm:text-2xl font-black text-white dark:text-[#161B26]">{activeCourses.length}</div>
-                <div className="text-[11px] font-bold text-[#94A3B8] dark:text-[#4B5563]">{isArabic ? 'كورسات وبوردات دولية' : 'Certified Courses'}</div>
+                <div className="text-xl sm:text-2xl font-black text-[#161B26] dark:text-white">{activeCourses.length}</div>
+                <div className="text-[11px] font-bold text-[#4B5563] dark:text-[#94A3B8]">{isArabic ? 'كورسات وبوردات دولية' : 'Certified Courses'}</div>
               </div>
             </div>
 
-            <div className="bg-white/10 dark:bg-[#161B26]/5 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-white/10 dark:border-[#161B26]/10 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/20 text-[#FBBF24] dark:text-[#B45309] flex items-center justify-center shrink-0">
+            <div className="bg-white/85 dark:bg-white/10 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-[#161B26]/10 dark:border-white/10 flex items-center gap-3 shadow-xs">
+              <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/15 dark:bg-[#F59E0B]/20 text-[#B45309] dark:text-[#FBBF24] flex items-center justify-center shrink-0">
                 <Package className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xl sm:text-2xl font-black text-white dark:text-[#161B26]">{packages.length}</div>
-                <div className="text-[11px] font-bold text-[#94A3B8] dark:text-[#4B5563]">{isArabic ? 'باقات رعاية وأسعار' : 'Care Packages'}</div>
+                <div className="text-xl sm:text-2xl font-black text-[#161B26] dark:text-white">{packages.length}</div>
+                <div className="text-[11px] font-bold text-[#4B5563] dark:text-[#94A3B8]">{isArabic ? 'باقات رعاية وأسعار' : 'Care Packages'}</div>
               </div>
             </div>
 
-            <div className="bg-white/10 dark:bg-[#161B26]/5 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-white/10 dark:border-[#161B26]/10 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#10B981]/20 text-[#34D399] dark:text-[#047857] flex items-center justify-center shrink-0">
+            <div className="bg-white/85 dark:bg-white/10 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-[#161B26]/10 dark:border-white/10 flex items-center gap-3 shadow-xs">
+              <div className="w-10 h-10 rounded-xl bg-[#10B981]/15 dark:bg-[#10B981]/20 text-[#047857] dark:text-[#34D399] flex items-center justify-center shrink-0">
                 <ShieldCheck className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xl sm:text-2xl font-black text-white dark:text-[#161B26]">100%</div>
-                <div className="text-[11px] font-bold text-[#94A3B8] dark:text-[#4B5563]">{isArabic ? 'معتمدة وترخيص رسمي' : 'Accredited Care'}</div>
+                <div className="text-xl sm:text-2xl font-black text-[#161B26] dark:text-white">100%</div>
+                <div className="text-[11px] font-bold text-[#4B5563] dark:text-[#94A3B8]">{isArabic ? 'معتمدة وترخيص رسمي' : 'Accredited Care'}</div>
               </div>
             </div>
           </div>
@@ -621,10 +621,10 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                       : 'liquid-glass-pill text-[#4B5563] dark:text-[#94A3B8] hover:text-[#161B26] dark:hover:text-[#F8FAFC]'
                   }`}
                 >
-                  <TabIcon className={`w-4 h-4 ${isActive ? 'text-[#2B95FF]' : 'text-[#8B95A5] dark:text-[#64748B]'}`} />
+                  <TabIcon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-[#8B95A5] dark:text-[#64748B]'}`} />
                   <span>{isArabic ? tab.labelAr : tab.labelEn}</span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-                    isActive ? 'bg-[#2B95FF] text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                    isActive ? 'bg-white/20 text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
                   }`}>
                     {tab.count}
                   </span>
@@ -786,7 +786,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                     >
                       <span>{isArabic ? f.labelAr : f.labelEn}</span>
                       <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
-                        isActive ? 'bg-[#2B95FF] text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                        isActive ? 'bg-white/20 text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
                       }`}>
                         {f.count}
                       </span>
@@ -1056,7 +1056,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                     >
                       <span>{isArabic ? f.labelAr : f.labelEn}</span>
                       <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
-                        isActive ? 'bg-[#2B95FF] text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                        isActive ? 'bg-white/20 text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
                       }`}>
                         {f.count}
                       </span>
@@ -1113,7 +1113,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                       {/* Header */}
                       <div className="p-2.5 sm:p-4 pb-2 sm:pb-3 bg-[#2B95FF]/5 border-b border-[#161B26]/[0.06] dark:border-white/[0.08] relative">
                         <div className="flex items-center justify-between gap-1 mb-1.5 sm:mb-2.5">
-                          <span className="inline-block px-2.5 py-0.5 rounded-full text-[9.5px] sm:text-xs font-black bg-[#141821] dark:bg-[#F5F2EC] text-white dark:text-[#161B26] shadow-2xs truncate max-w-[170px]">
+                          <span className="inline-block px-2.5 py-0.5 rounded-full text-[9.5px] sm:text-xs font-black bg-[#2B95FF] dark:bg-[#1E293B] text-white dark:text-[#F8FAFC] dark:border dark:border-white/15 shadow-2xs truncate max-w-[170px]">
                             {ribbon}
                           </span>
 
@@ -1329,7 +1329,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                     >
                       <span>{isArabic ? f.labelAr : f.labelEn}</span>
                       <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
-                        isActive ? (isSummerTab ? 'bg-white/25 text-white' : 'bg-[#2B95FF] text-white') : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                        isActive ? (isSummerTab ? 'bg-white/25 text-white' : 'bg-white/20 text-white') : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
                       }`}>
                         {f.count}
                       </span>
@@ -1383,7 +1383,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                       }`}
                     >
                       {/* Top Slim Strip */}
-                      <div className={`h-1 sm:h-1.5 w-full ${isSummer ? 'bg-gradient-to-r from-[#F59E0B] via-[#D97706] to-[#F59E0B]' : 'bg-gradient-to-r from-[#141821] to-[#2B95FF]'}`} />
+                      <div className={`h-1 sm:h-1.5 w-full ${isSummer ? 'bg-gradient-to-r from-[#F59E0B] via-[#D97706] to-[#F59E0B]' : 'bg-gradient-to-r from-[#2B95FF] to-[#1A73E8]'}`} />
 
                       {/* Header */}
                       <div className={`p-2.5 sm:p-5 pb-2 sm:pb-3.5 ${isSummer ? 'bg-[#F59E0B]/6' : 'bg-[#161B26]/[0.02] dark:bg-white/[0.02]'} border-b border-[#161B26]/[0.06] dark:border-white/[0.08] relative`}>
@@ -1396,7 +1396,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                               </span>
                             )}
                             {pkg.popular && (
-                              <span className="px-2.5 py-0.5 rounded-full bg-[#141821] dark:bg-[#F5F2EC] text-white dark:text-[#161B26] text-[9px] sm:text-[10px] font-black tracking-wider uppercase">
+                              <span className="px-2.5 py-0.5 rounded-full bg-[#2B95FF] dark:bg-[#1E293B] text-white dark:text-[#F8FAFC] dark:border dark:border-white/15 text-[9px] sm:text-[10px] font-black tracking-wider uppercase">
                                 {isArabic ? 'الأكثر طلباً' : 'POPULAR'}
                               </span>
                             )}
@@ -1524,13 +1524,13 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
         {/* 4. BOTTOM GUIDANCE & TRIAGE BANNER */}
         <div className="mt-16 obsidian-anchor-card rounded-[28px] p-8 sm:p-10 shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="relative z-10 max-w-xl text-center md:text-right">
-            <span className="text-[#60AFFF] dark:text-[#1263D6] text-xs font-black tracking-widest uppercase block mb-1">
+            <span className="text-[#1263D6] dark:text-[#60AFFF] text-xs font-black tracking-widest uppercase block mb-1">
               {isArabic ? 'استشارة إرشادية متخصصة' : 'Need Expert Guidance?'}
             </span>
-            <h3 className="text-2xl sm:text-3xl font-black text-white dark:text-[#161B26] mb-2">
+            <h3 className="text-2xl sm:text-3xl font-black text-[#161B26] dark:text-white mb-2">
               {isArabic ? 'هل تحتاج مساعدة في اختيار البرنامج أو الباقة المناسبة؟' : 'Not sure which program or package fits best?'}
             </h3>
-            <p className="text-xs sm:text-sm text-[#94A3B8] dark:text-[#4B5563] leading-relaxed font-medium">
+            <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] leading-relaxed font-medium">
               {isArabic 
                 ? 'فريقنا الاستشاري متواجد للإجابة على كافة تساؤلاتكم ومساعدتكم في اختيار المسار التأهيلي الأنسب لاحتياجات طفلكم.'
                 : 'Our clinical triage specialists are available to answer your questions and recommend the ideal care path.'}
@@ -1558,7 +1558,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
               }}
-              className="px-6 py-3.5 rounded-full bg-white/10 dark:bg-[#161B26]/5 hover:bg-white/20 dark:hover:bg-[#161B26]/10 text-white dark:text-[#161B26] font-black text-xs sm:text-sm flex items-center gap-2 border border-white/15 dark:border-[#161B26]/15 transition-all cursor-pointer active:scale-95"
+              className="px-6 py-3.5 rounded-full bg-white/90 hover:bg-white dark:bg-white/10 dark:hover:bg-white/20 text-[#161B26] dark:text-white font-black text-xs sm:text-sm flex items-center gap-2 border border-[#161B26]/10 dark:border-white/15 shadow-xs transition-all cursor-pointer active:scale-95"
             >
               <span>{isArabic ? 'استكشاف الأخصائيين' : 'Explore Specialists'}</span>
               {isArabic ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}

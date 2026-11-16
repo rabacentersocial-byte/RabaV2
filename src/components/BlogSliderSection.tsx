@@ -501,7 +501,7 @@ const ConcaveArcBlogSlider: React.FC<ConcaveArcBlogSliderProps> = ({
               >
                 <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 {shareFeedback === post.id && (
-                  <span className="absolute -top-7 right-0 text-[10px] bg-[#141821] text-white px-2 py-0.5 rounded-full shadow whitespace-nowrap z-20">
+                  <span className="absolute -top-7 right-0 text-[10px] bg-[#2B95FF] dark:bg-[#1E293B] text-white dark:border dark:border-white/15 px-2 py-0.5 rounded-full shadow whitespace-nowrap z-20">
                     {isArabic ? 'تم نسخ الرابط' : 'Link copied'}
                   </span>
                 )}
@@ -933,10 +933,10 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
               <Sparkles className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-black text-white dark:text-[#161B26]">
+              <h3 className="text-base sm:text-lg font-black text-[#161B26] dark:text-white">
                 {isArabic ? 'هل ترغب في استشارة إكلينيكية متخصصة لحالة طفلك؟' : 'Need a specialized clinical consultation for your child?'}
               </h3>
-              <p className="text-xs sm:text-sm text-[#94A3B8] dark:text-[#4B5563] mt-1">
+              <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] mt-1">
                 {isArabic 
                   ? 'فريقنا الاستشاري المرخص من الهيئة السعودية للتخصصات الصحية جاهز لإجراء تقييم شامل ووضع خطة علاجية مخصصة.'
                   : 'Our licensed team is ready to conduct a standardized evaluation and build a personalized rehabilitation program.'}
@@ -990,7 +990,7 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
                 >
                   <Share2 className="w-4 h-4" />
                   {shareFeedback === selectedPost.id && (
-                    <span className="absolute -bottom-8 right-0 text-[10px] bg-[#141821] text-white px-2 py-0.5 rounded-full shadow whitespace-nowrap z-30">
+                    <span className="absolute -bottom-8 right-0 text-[10px] bg-[#2B95FF] dark:bg-[#1E293B] text-white dark:border dark:border-white/15 px-2 py-0.5 rounded-full shadow whitespace-nowrap z-30">
                       {isArabic ? 'تم نسخ الرابط' : 'Link copied'}
                     </span>
                   )}
@@ -1165,10 +1165,10 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
               {/* Call to Action Inside Modal */}
               <div className="p-5 sm:p-6 obsidian-anchor-card rounded-[24px] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
                 <div>
-                  <h4 className="font-black text-base text-white dark:text-[#161B26]">
+                  <h4 className="font-black text-base text-[#161B26] dark:text-white">
                     {isArabic ? 'هل تود استشارة الكاتب حول طفلك؟' : 'Want to consult the author about your child?'}
                   </h4>
-                  <p className="text-xs text-[#94A3B8] dark:text-[#4B5563] mt-0.5">
+                  <p className="text-xs text-[#4B5563] dark:text-[#94A3B8] mt-0.5">
                     {isArabic 
                       ? 'يمكنك حجز جلسة تقييم مباشرة مع الأخصائي أو الفريق الإكلينيكي المعالج.' 
                       : 'You can book a direct diagnostic or rehabilitation session.'}

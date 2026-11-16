@@ -259,7 +259,7 @@ export const Hero: React.FC<HeroProps> = ({
                 id="hero-register-btn"
                 onClick={onOpenBooking}
                 aria-label={isArabic ? 'سجل الآن في برامج التأهيل والتطوير بمركز رابا' : 'Register now for rehabilitation programs at Raba Center'}
-                className="relative group overflow-hidden bg-[#141821] hover:bg-[#2B95FF] text-white dark:bg-[#F5F2EC] dark:hover:bg-[#2B95FF] dark:text-[#141821] dark:hover:text-white font-black px-7 sm:px-9 py-3.5 min-h-[48px] rounded-full border border-white/15 dark:border-white/50 shadow-[0_20px_40px_-15px_rgba(20,24,33,0.35)] hover:shadow-xl active:scale-95 transition-all duration-200 text-sm sm:text-base text-center justify-center flex items-center cursor-pointer"
+                className="relative group overflow-hidden bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white font-black px-7 sm:px-9 py-3.5 min-h-[48px] rounded-full border border-white/25 dark:border-[#60AFFF]/30 shadow-[0_14px_32px_-10px_rgba(43,149,255,0.42)] hover:shadow-xl active:scale-95 transition-all duration-200 text-sm sm:text-base text-center justify-center flex items-center cursor-pointer"
               >
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
                 <span className="relative z-10">{isArabic ? 'سجل الآن' : 'Register Now'}</span>
@@ -293,7 +293,7 @@ export const Hero: React.FC<HeroProps> = ({
                 {/* Live Daily Children Counter Pill */}
                 <a 
                   href="#stats-bar"
-                  className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full bg-[#141821] text-white dark:bg-[#F5F2EC] dark:text-[#141821] text-[11px] sm:text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition-transform duration-200 cursor-pointer border border-white/15"
+                  className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full liquid-glass-pill text-[#161B26] dark:bg-[#161E2E] dark:text-[#F8FAFC] text-[11px] sm:text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition-transform duration-200 cursor-pointer border border-[#161B26]/10 dark:border-white/15"
                   title={isArabic ? `+${dailyChildrenCount} أطفال جدد اليوم (إجمالي المستفيدين: ${formattedTotal}+)` : `+${dailyChildrenCount} Enrolled Today`}
                 >
                   <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-br from-[#2B95FF] to-[#1A73E8] text-white flex items-center justify-center text-[9px] sm:text-[10px] font-black shrink-0 shadow-xs">
@@ -327,14 +327,14 @@ export const Hero: React.FC<HeroProps> = ({
               onMouseLeave={() => setIsPaused(false)}
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
-              className="relative w-[280px] h-[280px] xs:w-[320px] xs:h-[320px] sm:w-[380px] sm:h-[380px] lg:w-[440px] lg:h-[440px] xl:w-[460px] xl:h-[460px] rounded-full p-2 sm:p-2.5 bg-gradient-to-tr from-[#2B95FF] via-[#8B5CF6] to-[#141821] dark:to-[#10B981] shadow-[0_24px_55px_-15px_rgba(43,149,255,0.28)] group select-none transition-transform duration-300 shrink-0 aspect-square"
+              className="relative w-[280px] h-[280px] xs:w-[320px] xs:h-[320px] sm:w-[380px] sm:h-[380px] lg:w-[440px] lg:h-[440px] xl:w-[460px] xl:h-[460px] rounded-full p-2 sm:p-2.5 bg-gradient-to-tr from-[#2B95FF] via-[#8B5CF6] to-[#10B981] shadow-[0_24px_55px_-15px_rgba(43,149,255,0.28)] group select-none transition-transform duration-300 shrink-0 aspect-square"
               style={{ aspectRatio: '1 / 1' }}
             >
               {/* Luminous Warm Aura Behind Circle */}
               <div className="absolute -inset-4 sm:-inset-6 bg-gradient-to-tr from-[#2B95FF]/28 via-[#10B981]/20 to-[#8B5CF6]/24 rounded-full blur-2xl -z-10 pointer-events-none transition-opacity duration-700 opacity-80 group-hover:opacity-100" />
 
               {/* Inner Circular Stage Window */}
-              <div className="absolute inset-2 sm:inset-2.5 rounded-full overflow-hidden bg-[#141821] border border-white/70 dark:border-white/15 shadow-inner">
+              <div className="absolute inset-2 sm:inset-2.5 rounded-full overflow-hidden bg-[#E8F3FF] dark:bg-[#141821] border border-white/70 dark:border-white/15 shadow-inner">
                 
                 {/* Background Soft Spotlight Radial Glow */}
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(43,149,255,0.22)_0%,rgba(16,185,129,0.12)_50%,transparent_75%)] pointer-events-none z-0" />
@@ -388,7 +388,7 @@ export const Hero: React.FC<HeroProps> = ({
                 {/* Minimal Elegant Slide Pagination Dots */}
                 {slides.length > 1 && (
                   <div className="absolute bottom-3.5 sm:bottom-4 inset-x-0 z-20 flex justify-center items-center pointer-events-auto">
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#141821]/70 backdrop-blur-md border border-white/20 shadow-lg">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/85 dark:bg-[#141821]/75 backdrop-blur-md border border-[#161B26]/10 dark:border-white/20 shadow-lg">
                       {slides.map((s, idx) => (
                         <button
                           key={s.id || idx}
@@ -400,7 +400,7 @@ export const Hero: React.FC<HeroProps> = ({
                             className={`block rounded-full transition-colors duration-200 ${
                               idx === currentSlideIndex
                                 ? 'w-6 h-2.5 bg-gradient-to-r from-[#2B95FF] to-[#8B5CF6] shadow-xs'
-                                : 'w-2.5 h-2.5 bg-white/40 hover:bg-white/80'
+                                : 'w-2.5 h-2.5 bg-[#161B26]/25 hover:bg-[#161B26]/55 dark:bg-white/40 dark:hover:bg-white/80'
                             }`}
                           />
                         </button>

@@ -240,7 +240,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 <button
                   type="submit"
                   disabled={isProcessing}
-                  className="w-full py-3.5 bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-extrabold rounded-xl transition-colors flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
+                  className="w-full py-3.5 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white font-extrabold rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md cursor-pointer"
                 >
                   <Smartphone className="w-4 h-4" />
                   <span>

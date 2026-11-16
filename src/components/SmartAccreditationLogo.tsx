@@ -133,7 +133,7 @@ export const SmartAccreditationLogo: React.FC<SmartAccreditationLogoProps> = ({
   // In dark mode: encapsulate in a clean, high-contrast white pod with rounded corners
   if (tone === 'light') {
     return (
-      <div className="w-full h-full flex items-center justify-center p-2 rounded-2xl bg-white/95 dark:bg-white border border-white/80 dark:border-white/20 shadow-2xs group-hover:shadow-md transition-all duration-300">
+      <div className="w-full h-full flex items-center justify-center p-2 rounded-2xl bg-white/95 dark:bg-slate-200/85 border border-white/80 dark:border-white/15 shadow-2xs group-hover:shadow-md transition-all duration-300">
         <img
           src={effectiveSrc}
           alt={alt}

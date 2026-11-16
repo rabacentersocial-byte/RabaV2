@@ -403,7 +403,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={onOpenBooking}
                 id="header-quick-book-btn"
-                className="relative group overflow-hidden flex items-center gap-2 bg-[#141821] hover:bg-[#2B95FF] text-white dark:bg-[#F5F2EC] dark:hover:bg-[#2B95FF] dark:text-[#141821] dark:hover:text-white active:scale-95 text-xs sm:text-sm font-black px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all duration-200 shadow-[0_12px_28px_-10px_rgba(20,24,33,0.35)] border border-white/15 dark:border-white/50 cursor-pointer"
+                className="relative group overflow-hidden flex items-center gap-2 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white active:scale-95 text-xs sm:text-sm font-black px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full transition-all duration-200 shadow-[0_12px_28px_-10px_rgba(43,149,255,0.4)] border border-white/25 cursor-pointer"
               >
                 {/* Shimmer light sweep animation */}
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out pointer-events-none" />
@@ -414,7 +414,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-[#10B981]" />
                 </span>
 
-                <CalendarCheck className="w-4 h-4 text-[#2B95FF] group-hover:text-white transition-colors duration-200 group-hover:scale-110 shrink-0" />
+                <CalendarCheck className="w-4 h-4 text-white transition-colors duration-200 group-hover:scale-110 shrink-0" />
                 <span className="tracking-tight font-black whitespace-nowrap">{t('nav.bookNow')}</span>
               </button>
 
@@ -573,7 +573,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                             }}
                             className={`group p-2.5 rounded-2xl transition-colors duration-200 flex items-center justify-between border cursor-pointer ${
                               isLinkActive
-                                ? 'bg-[#141821] text-white dark:bg-[#F5F2EC] dark:text-[#141821] shadow-sm border-transparent'
+                                ? 'bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] text-white shadow-sm border-transparent'
                                 : item.badgeHighlight
                                   ? 'bg-[#2B95FF]/10 hover:bg-[#2B95FF]/15 text-[#161B26] dark:text-[#F8FAFC] border-[#2B95FF]/30'
                                   : isDark 
@@ -591,14 +591,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                               <div className="min-w-0">
                                 <div className="flex items-center gap-1.5">
                                   <span className={`text-xs font-black truncate ${
-                                    isLinkActive ? 'text-white dark:text-[#141821]' : isDark ? 'text-[#F8FAFC]' : 'text-[#161B26]'
+                                    isLinkActive ? 'text-white' : isDark ? 'text-[#F8FAFC]' : 'text-[#161B26]'
                                   }`}>
                                     {item.label}
                                   </span>
                                   {item.badge && (
                                     <span className={`text-[8.5px] font-black px-1.5 py-0.2 rounded-full ${
                                       isLinkActive
-                                        ? 'bg-[#2B95FF] text-white'
+                                        ? 'bg-white/20 text-white'
                                         : item.badgeHighlight
                                           ? 'bg-[#2B95FF] text-white font-black'
                                           : 'bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF]'
@@ -618,7 +618,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                             {/* Chevron Arrow */}
                             <div className={`shrink-0 ms-1.5 transition-transform group-hover:-translate-x-0.5 ${
                               isLinkActive
-                                ? 'text-[#2B95FF]'
+                                ? 'text-white'
                                 : 'text-[#8B95A5] group-hover:text-[#2B95FF]'
                             }`}>
                               {isArabic ? <ChevronLeft className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}

@@ -550,7 +550,7 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
                 >
                   <span>{isArabic ? cat.labelAr : cat.labelEn}</span>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-                    isSelected ? 'bg-[#2B95FF] text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                    isSelected ? 'bg-white/20 text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
                   }`}>
                     {count}
                   </span>
@@ -659,7 +659,7 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
                     {/* Top Left Badge: TOP RATED */}
                     {isTop && (
                       <div className="absolute top-2 sm:top-2.5 left-2 sm:left-2.5 z-10">
-                        <span className="bg-[#141821]/90 dark:bg-[#F5F2EC]/95 backdrop-blur-xs text-white dark:text-[#161B26] text-[8.5px] sm:text-[9px] font-black tracking-wider px-2.5 py-0.5 rounded-full shadow-md uppercase">
+                        <span className="bg-gradient-to-r from-[#F59E0B] to-[#D97706] dark:bg-none dark:bg-[#1E293B]/95 backdrop-blur-xs text-white dark:text-[#F8FAFC] dark:border dark:border-white/15 text-[8.5px] sm:text-[9px] font-black tracking-wider px-2.5 py-0.5 rounded-full shadow-md uppercase">
                           {isArabic ? 'الأعلى تقييماً' : 'TOP RATED'}
                         </span>
                       </div>
@@ -784,10 +784,10 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
               <HeartHandshake className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-black text-white dark:text-[#161B26]">
+              <h3 className="text-base sm:text-lg font-black text-[#161B26] dark:text-white">
                 {isArabic ? 'هل تحتاج لمساعدة في اختيار الأخصائي الأنسب لحالة طفلك؟' : 'Need help selecting the best specialist for your child?'}
               </h3>
-              <p className="text-xs sm:text-sm text-[#94A3B8] dark:text-[#4B5563] mt-1">
+              <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] mt-1">
                 {isArabic 
                   ? 'فريق الاستشارات التوجيهية في مركز رابا متاح لمراجعة التقارير السابقة وإرشادك إلى الطبيب أو الأخصائي الأفضل مجاناً.'
                   : 'Our clinical intake team can review your previous reports and guide you to the ideal specialist free of charge.'}

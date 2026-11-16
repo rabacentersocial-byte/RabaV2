@@ -82,7 +82,7 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
         <div 
           className={`hidden lg:flex items-center gap-2 absolute ${
             isArabic ? 'left-full ml-3' : 'right-full mr-3'
-          } px-3.5 py-1.5 rounded-full bg-[#141821] dark:bg-[#F5F2EC] text-white dark:text-[#161B26] text-xs font-black shadow-xl border border-white/10 opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-300 translate-y-0 whitespace-nowrap z-50`}
+          } px-3.5 py-1.5 rounded-full bg-white/95 dark:bg-[#161E2E] text-[#161B26] dark:text-[#F8FAFC] text-xs font-black shadow-xl border border-[#161B26]/10 dark:border-white/15 opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-300 translate-y-0 whitespace-nowrap z-50`}
         >
           <span className="w-2 h-2 rounded-full bg-[#25D366] inline-block animate-ping" />
           <span>{isArabic ? 'تواصل فوري عبر واتساب' : 'Chat via WhatsApp'}</span>
@@ -100,28 +100,28 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
             dir={direction}
           >
             {/* Header */}
-            <div className="bg-[#141821] dark:bg-[#F5F2EC] p-4 text-white dark:text-[#161B26] flex items-center justify-between border-b border-white/15 dark:border-black/10 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#2B95FF]/20 rounded-full blur-2xl pointer-events-none" />
+            <div className="bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] dark:from-[#161E2E] dark:to-[#161E2E] p-4 text-white dark:text-[#F8FAFC] flex items-center justify-between border-b border-white/20 dark:border-white/10 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 dark:bg-[#2B95FF]/20 rounded-full blur-2xl pointer-events-none" />
 
               <div className="flex items-center gap-3 relative z-10">
                 <div className="relative">
                   <RabaLogo variant="icon-only" size="sm" />
-                  <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[#10B981] border-2 border-[#141821] dark:border-[#F5F2EC] rounded-full shadow-xs" />
+                  <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[#10B981] border-2 border-[#1A73E8] dark:border-[#161E2E] rounded-full shadow-xs" />
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
                     <h4 className="font-black text-sm">{isArabic ? 'مركز رابا - الدعم المباشر' : 'RABA Center - Direct Support'}</h4>
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#2B95FF]" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-white dark:text-[#2B95FF]" />
                   </div>
-                  <p className="text-[11px] opacity-80 flex items-center gap-1 font-semibold mt-0.5">
-                    <Clock className="w-3 h-3 text-[#2B95FF]" /> {isArabic ? 'أخصائيو السلوك متاحون للرد السريع' : 'Available for rapid response'}
+                  <p className="text-[11px] opacity-90 flex items-center gap-1 font-semibold mt-0.5">
+                    <Clock className="w-3 h-3 text-white dark:text-[#2B95FF]" /> {isArabic ? 'أخصائيو السلوك متاحون للرد السريع' : 'Available for rapid response'}
                   </p>
                 </div>
               </div>
 
               <button 
                 onClick={() => setIsWhatsAppOpen(false)}
-                className="p-1.5 hover:bg-white/20 dark:hover:bg-black/10 rounded-full transition-colors cursor-pointer relative z-10"
+                className="p-1.5 hover:bg-white/20 rounded-full transition-colors cursor-pointer relative z-10"
                 aria-label={isArabic ? 'إغلاق' : 'Close'}
               >
                 <X className="w-4 h-4" />
@@ -165,9 +165,9 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({
             <div className="p-3 border-t border-[#161B26]/[0.08] dark:border-white/10">
               <button
                 onClick={() => handleSendWhatsApp()}
-                className="w-full py-2.5 bg-[#141821] hover:bg-[#1C2436] text-white dark:bg-[#F5F2EC] dark:hover:bg-white dark:text-[#161B26] font-black rounded-full text-xs flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all duration-200 active:scale-98"
+                className="w-full py-2.5 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white font-black rounded-full text-xs flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all duration-200 active:scale-98"
               >
-                <MessageCircle className="w-4 h-4 text-[#25D366]" />
+                <MessageCircle className="w-4 h-4 text-white" />
                 <span>{isArabic ? 'بدء المحادثة المباشرة في واتساب' : 'Start WhatsApp Conversation'}</span>
               </button>
             </div>

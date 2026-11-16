@@ -29,7 +29,7 @@ import { useLanguage } from '../context/LanguageContext';
 
 const LedClubBadge: React.FC = () => (
   <span 
-    className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-[11px] font-black text-[#FBBF24] bg-[#141821]/95 border-2 border-[#F59E0B] shadow-[0_0_12px_#f59e0b,inset_0_0_7px_rgba(245,158,11,0.45)] ring-2 ring-[#F59E0B]/35 whitespace-nowrap select-none shrink-0 tracking-wide"
+    className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-[11px] font-black text-white dark:text-[#FBBF24] bg-gradient-to-r from-[#F59E0B] to-[#D97706] dark:bg-none dark:bg-[#141821]/95 border-2 border-[#FDE68A] dark:border-[#F59E0B] shadow-[0_0_12px_rgba(245,158,11,0.45)] ring-2 ring-[#F59E0B]/35 whitespace-nowrap select-none shrink-0 tracking-wide"
   >
     + نادي رابا
   </span>
@@ -467,7 +467,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
             >
               <span>{isArabic ? 'جميع الفروع' : 'All Branches'}</span>
               <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-bold ${
-                selectedCity === 'all' ? 'bg-[#2B95FF] text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                selectedCity === 'all' ? 'bg-white/20 text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
               }`}>
                 {totalCount}
               </span>
@@ -484,7 +484,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
             >
               <span>{isArabic ? 'الرياض' : 'Riyadh'}</span>
               <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-bold ${
-                selectedCity === 'riyadh' ? 'bg-[#2B95FF] text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                selectedCity === 'riyadh' ? 'bg-white/20 text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
               }`}>
                 {riyadhCount}
               </span>
@@ -501,7 +501,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
             >
               <span>{isArabic ? 'جدة' : 'Jeddah'}</span>
               <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-bold ${
-                selectedCity === 'jeddah' ? 'bg-[#2B95FF] text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                selectedCity === 'jeddah' ? 'bg-white/20 text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
               }`}>
                 {jeddahCount}
               </span>
@@ -518,7 +518,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
             >
               <span>{isArabic ? 'الخبر' : 'Khobar'}</span>
               <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-bold ${
-                selectedCity === 'khobar' ? 'bg-[#2B95FF] text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                selectedCity === 'khobar' ? 'bg-white/20 text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
               }`}>
                 {khobarCount}
               </span>
@@ -535,7 +535,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
             >
               <span>{isArabic ? 'الأحساء' : 'Al-Ahsa'}</span>
               <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-bold ${
-                selectedCity === 'ahsa' ? 'bg-[#2B95FF] text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                selectedCity === 'ahsa' ? 'bg-white/20 text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
               }`}>
                 {ahsaCount}
               </span>
@@ -552,7 +552,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
             >
               <span>{isArabic ? 'الخرج' : 'Al-Kharj'}</span>
               <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-bold ${
-                selectedCity === 'kharj' ? 'bg-[#2B95FF] text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                selectedCity === 'kharj' ? 'bg-white/20 text-white' : 'bg-[#161B26]/5 dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
               }`}>
                 {kharjCount}
               </span>
@@ -664,10 +664,10 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
       {/* 5. BOTTOM TRUST & CONTACT STRIP */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pb-12">
         <div className="obsidian-anchor-card rounded-[28px] py-10 px-6 sm:px-10 text-center space-y-4">
-          <h3 className="text-xl sm:text-2xl font-black text-white dark:text-[#161B26]">
+          <h3 className="text-xl sm:text-2xl font-black text-[#161B26] dark:text-white">
             {isArabic ? 'هل تحتاج مساعدة في اختيار الفرع الأنسب لطفلك؟' : 'Need help selecting the closest branch?'}
           </h3>
-          <p className="text-xs sm:text-sm text-[#94A3B8] dark:text-[#4B5563] leading-relaxed max-w-2xl mx-auto">
+          <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] leading-relaxed max-w-2xl mx-auto">
             {isArabic 
               ? 'فريق خدمة المستفيدين متاح لمساعدتكم في اختيار الفرع الأقرب، حجز مواعيد التقييم الأولي، والإجابة عن كافة استفساراتكم.'
               : 'Our customer support team is available to help you choose the best branch, schedule intake evaluations, and answer your questions.'}
@@ -684,7 +684,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
             </a>
             <a
               href="tel:0575100100"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 dark:bg-[#161B26]/5 hover:bg-white/20 dark:hover:bg-[#161B26]/10 text-white dark:text-[#161B26] text-xs font-bold border border-white/15 dark:border-[#161B26]/15 transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/90 hover:bg-white dark:bg-white/10 dark:hover:bg-white/20 text-[#161B26] dark:text-white text-xs font-bold border border-[#161B26]/10 dark:border-white/15 shadow-xs transition-all cursor-pointer"
             >
               <Phone className="w-4 h-4 text-[#2B95FF]" />
               <span>{isArabic ? 'اتصال مباشر: 0575100100' : 'Call Directly: 0575100100'}</span>
@@ -708,11 +708,11 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
         }`}
       >
         {/* Top: 3D Map Pin Graphic with Ambient Lighting */}
-        <div className="relative h-36 sm:h-56 md:h-60 overflow-hidden bg-[#141821]">
+        <div className="relative h-36 sm:h-56 md:h-60 overflow-hidden bg-[#E0F2FE] dark:bg-[#141821]">
           <BranchMapPinGraphic branchName={branch.name} />
 
           {/* City Tag Indicator Overlay */}
-          <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 bg-[#141821]/85 backdrop-blur-md px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold text-[#F8FAFC] border border-white/10 flex items-center gap-1 sm:gap-1.5 shadow-md">
+          <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 bg-white/90 dark:bg-[#141821]/85 backdrop-blur-md px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold text-[#161B26] dark:text-[#F8FAFC] border border-[#161B26]/10 dark:border-white/10 flex items-center gap-1 sm:gap-1.5 shadow-md">
             <MapPin className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-[#2B95FF]" />
             <span>{isArabic ? branch.cityNameAr : branch.cityNameEn}</span>
           </div>
@@ -803,7 +803,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
                 className="warm-pill-cta py-2 sm:py-2.5 px-2 text-xs font-bold rounded-full transition-all flex items-center justify-center gap-1.5 text-center shadow-xs active:scale-95 cursor-pointer"
                 title={isArabic ? `عرض موقع ${branch.name} على خرائط Google` : 'View on Google Maps'}
               >
-                <Navigation className="w-3.5 h-3.5 text-[#2B95FF] shrink-0" />
+                <Navigation className="w-3.5 h-3.5 text-white shrink-0" />
                 <span>{isArabic ? 'خرائط Google' : 'Google Maps'}</span>
               </a>
 

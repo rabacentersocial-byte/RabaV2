@@ -490,11 +490,11 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                       onClick={() => onSelectPackage(pkg)}
                       className={`w-full py-2.5 sm:py-3.5 rounded-full font-black text-xs sm:text-sm transition-[transform,background-color,box-shadow] duration-200 shadow-sm active:scale-98 cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 ${
                         isSummer
-                          ? 'bg-[#141821] hover:bg-[#2B95FF] text-white dark:bg-[#F5F2EC] dark:hover:bg-[#2B95FF] dark:text-[#141821] dark:hover:text-white shadow-md'
+                          ? 'bg-gradient-to-r from-[#F59E0B] to-[#D97706] hover:brightness-110 text-white shadow-md'
                           : theme.btnBg
                       }`}
                     >
-                      {isSummer && <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#F59E0B] shrink-0" />}
+                      {isSummer && <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white shrink-0" />}
                       <span>{isArabic ? (isSummer ? 'حجز باقة الصيف' : 'حجز الباقة') : (isSummer ? 'Book Summer Package' : 'Book package')}</span>
                     </button>
 

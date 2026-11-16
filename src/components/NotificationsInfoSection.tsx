@@ -121,7 +121,7 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
                 onClick={onOpenBooking}
                 className="px-6 py-3.5 warm-pill-cta text-xs sm:text-sm font-bold rounded-full shadow-xs transition-all flex items-center gap-2 cursor-pointer"
               >
-                <CalendarCheck className="w-4 h-4 text-[#2B95FF]" />
+                <CalendarCheck className="w-4 h-4 text-white" />
                 <span>{isArabic ? 'حجز جلسة وتفعيل التنبيهات' : 'Book Session & Activate Alerts'}</span>
               </button>
             </div>
@@ -131,7 +131,7 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
           {/* Left: Glassy Interactive Phone Mockup Preview */}
           <div className="lg:col-span-5 flex justify-center perspective-1000">
             <div 
-              className="w-full max-w-sm bg-[#141821]/95 rounded-[2.8rem] p-4 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.45)] border border-white/15 relative backdrop-blur-xl"
+              className="w-full max-w-sm bg-white/95 dark:bg-[#141821]/95 rounded-[2.8rem] p-4 shadow-[0_25px_50px_-12px_rgba(43,149,255,0.18)] dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.45)] border border-[#161B26]/12 dark:border-white/15 relative backdrop-blur-xl"
               style={{
                 transform: 'rotateY(-6deg) rotateX(4deg)',
                 transformStyle: 'preserve-3d',
@@ -139,16 +139,16 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
             >
               
               {/* Phone Speaker Notch */}
-              <div className="w-28 h-4 bg-white/15 backdrop-blur-md rounded-full mx-auto mb-4 border border-white/10" />
+              <div className="w-28 h-4 bg-[#161B26]/10 dark:bg-white/15 backdrop-blur-md rounded-full mx-auto mb-4 border border-[#161B26]/10 dark:border-white/10" />
 
               {/* Toggle WhatsApp vs SMS */}
-              <div className="flex bg-white/[0.06] p-1.5 rounded-full mb-4 text-xs font-bold border border-white/10 backdrop-blur-md">
+              <div className="flex bg-[#161B26]/[0.05] dark:bg-white/[0.06] p-1.5 rounded-full mb-4 text-xs font-bold border border-[#161B26]/[0.08] dark:border-white/10 backdrop-blur-md">
                 <button
                   onClick={() => setActivePreview('whatsapp')}
                   className={`flex-1 py-2 rounded-full transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     activePreview === 'whatsapp'
                       ? 'bg-[#10B981] text-white shadow-md'
-                      : 'text-slate-300 hover:text-white'
+                      : 'text-[#4B5563] dark:text-slate-300 hover:text-[#161B26] dark:hover:text-white'
                   }`}
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
@@ -160,7 +160,7 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
                   className={`flex-1 py-2 rounded-full transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     activePreview === 'sms'
                       ? 'bg-[#2B95FF] text-white font-black shadow-md'
-                      : 'text-slate-300 hover:text-white'
+                      : 'text-[#4B5563] dark:text-slate-300 hover:text-[#161B26] dark:hover:text-white'
                   }`}
                 >
                   <Smartphone className="w-3.5 h-3.5" />
@@ -169,21 +169,21 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
               </div>
 
               {/* Screen Content */}
-              <div className={`bg-[#0B0F17]/90 backdrop-blur-md border border-white/10 rounded-[22px] p-4 min-h-[380px] ${isArabic ? 'text-right' : 'text-left'} text-xs space-y-3 font-sans shadow-inner text-white`} dir={direction}>
+              <div className={`bg-[#F5F8FC]/95 dark:bg-[#0B0F17]/90 backdrop-blur-md border border-[#161B26]/10 dark:border-white/10 rounded-[22px] p-4 min-h-[380px] ${isArabic ? 'text-right' : 'text-left'} text-xs space-y-3 font-sans shadow-inner text-[#161B26] dark:text-white`} dir={direction}>
                 {activePreview === 'whatsapp' ? (
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2 pb-2 border-b border-white/10 text-slate-300">
+                    <div className="flex items-center gap-2 pb-2 border-b border-[#161B26]/10 dark:border-white/10 text-[#4B5563] dark:text-slate-300">
                       <div className="w-8 h-8 rounded-full bg-[#10B981] text-white flex items-center justify-center text-xs font-black shadow-xs">
                         {isArabic ? 'ر' : 'R'}
                       </div>
                       <div>
-                        <span className="font-black text-xs block text-white">{isArabic ? 'مركز رابا للعلاج بتحليل السلوك ABA' : 'Raba Center - ABA Therapy'}</span>
-                        <span className="text-[10px] text-[#34D399] font-bold">{isArabic ? 'حساب أعمال موثق معتمد ✓' : 'Verified Business Account ✓'}</span>
+                        <span className="font-black text-xs block text-[#161B26] dark:text-white">{isArabic ? 'مركز رابا للعلاج بتحليل السلوك ABA' : 'Raba Center - ABA Therapy'}</span>
+                        <span className="text-[10px] text-[#059669] dark:text-[#34D399] font-bold">{isArabic ? 'حساب أعمال موثق معتمد ✓' : 'Verified Business Account ✓'}</span>
                       </div>
                     </div>
 
-                    <div className="bg-white/[0.08] backdrop-blur-md p-3.5 rounded-2xl rounded-tr-none shadow-md border border-white/15 text-slate-200 space-y-2">
-                      <p className="font-black text-[#60AFFF] text-xs">
+                    <div className="bg-white dark:bg-white/[0.08] backdrop-blur-md p-3.5 rounded-2xl rounded-tr-none shadow-sm dark:shadow-md border border-[#161B26]/[0.08] dark:border-white/15 text-[#4B5563] dark:text-slate-200 space-y-2">
+                      <p className="font-black text-[#1263D6] dark:text-[#60AFFF] text-xs">
                         {isArabic ? 'تذكير بموعد جلسة طفلك القادمة 🔔' : 'Upcoming Session Reminder 🔔'}
                       </p>
                       <p className="text-[11px] leading-relaxed">
@@ -191,30 +191,30 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
                           ? 'عزيزي ولي الأمر، نود تذكيركم بموعد جلسة تحليل السلوك التطبيقي (ABA) لطفلكم غداً.'
                           : 'Dear parent, this is a friendly reminder for your child\'s ABA session scheduled for tomorrow.'}
                       </p>
-                      <div className="bg-white/[0.05] p-2.5 rounded-xl text-[10px] text-slate-300 space-y-1 font-mono border border-white/10">
+                      <div className="bg-[#F5F2EC] dark:bg-white/[0.05] p-2.5 rounded-xl text-[10px] text-[#161B26] dark:text-slate-300 space-y-1 font-mono border border-[#161B26]/[0.08] dark:border-white/10">
                         <div>📅 {isArabic ? 'التاريخ: الأحد القادم' : 'Date: Next Sunday'}</div>
                         <div>⏰ {isArabic ? 'الوقت: 10:00 صباحاً' : 'Time: 10:00 AM'}</div>
                         <div>👩‍⚕️ {isArabic ? 'الأخصائية: د. نورة العتيبي (BCBA)' : 'Clinician: Dr. Noura Al-Otaibi (BCBA)'}</div>
                         <div>📍 {isArabic ? 'العيادة: قاعة التدخل السلوكي (1)' : 'Clinic: Behavioral Gym (1)'}</div>
                       </div>
-                      <p className="text-[10px] text-slate-400">
+                      <p className="text-[10px] text-[#8B95A5] dark:text-slate-400">
                         {isArabic ? 'للتأكيد التلقائي أو الاعتذار، يرجى الرد على هذه الرسالة.' : 'To auto-confirm or reschedule, simply reply to this message.'}
                       </p>
-                      <span className={`text-[9px] text-slate-400 block ${isArabic ? 'text-left' : 'text-right'}`}>10:00 {isArabic ? 'ص' : 'AM'} ✓✓</span>
+                      <span className={`text-[9px] text-[#8B95A5] dark:text-slate-400 block ${isArabic ? 'text-left' : 'text-right'}`}>10:00 {isArabic ? 'ص' : 'AM'} ✓✓</span>
                     </div>
 
-                    <div className="bg-[#10B981]/90 text-white p-2.5 rounded-xl text-[10px] text-center font-black shadow-sm border border-[#34D399]/30">
+                    <div className="bg-[#10B981] dark:bg-[#10B981]/90 text-white p-2.5 rounded-xl text-[10px] text-center font-black shadow-sm border border-[#34D399]/30">
                       {isArabic ? 'تم تأكيد الحضور بنجاح، بانتظاركم بكل حب 💚' : 'Session confirmed, we look forward to seeing you 💚'}
                     </div>
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <div className="text-center text-[10px] text-slate-400 pb-1">
+                    <div className="text-center text-[10px] text-[#8B95A5] dark:text-slate-400 pb-1">
                       {isArabic ? 'الرسائل النصية SMS • رابا سنتر RABA' : 'SMS Messages • RABA Center'}
                     </div>
 
-                    <div className="bg-white/[0.08] backdrop-blur-md p-3.5 rounded-2xl rounded-tr-none shadow-md border border-white/15 text-slate-200 space-y-2 text-[11px] leading-relaxed">
-                      <p className="font-black text-[#60AFFF]">
+                    <div className="bg-white dark:bg-white/[0.08] backdrop-blur-md p-3.5 rounded-2xl rounded-tr-none shadow-sm dark:shadow-md border border-[#161B26]/[0.08] dark:border-white/15 text-[#161B26] dark:text-slate-200 space-y-2 text-[11px] leading-relaxed">
+                      <p className="font-black text-[#1263D6] dark:text-[#60AFFF]">
                         {isArabic ? 'تم تأكيد الحجز - مركز رابا ABA:' : 'Booking Confirmed - Raba ABA:'}
                       </p>
                       <p>
@@ -222,17 +222,17 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
                           ? 'تم تأكيد موعد جلسة التقييم الشامل للطفل (سلطان) يوم الأحد 10:00ص. رقم الحجز: REF-84291.'
                           : 'Appointment confirmed for Sultan on Sunday at 10:00 AM. Ref: REF-84291.'}
                       </p>
-                      <p className="text-slate-400 text-[10px]">
+                      <p className="text-[#4B5563] dark:text-slate-400 text-[10px]">
                         {isArabic ? 'رابط الموقع والتفاصيل: raba.sa/ref84291' : 'Location map & details: raba.sa/ref84291'}
                       </p>
-                      <span className={`text-[9px] text-slate-400 block ${isArabic ? 'text-left' : 'text-right'}`}>{isArabic ? 'أمس 04:30م' : 'Yesterday 4:30 PM'}</span>
+                      <span className={`text-[9px] text-[#8B95A5] dark:text-slate-400 block ${isArabic ? 'text-left' : 'text-right'}`}>{isArabic ? 'أمس 04:30م' : 'Yesterday 4:30 PM'}</span>
                     </div>
                   </div>
                 )}
               </div>
 
               {/* Bottom Phone Indicator */}
-              <div className="w-32 h-1 bg-white/20 rounded-full mx-auto mt-4" />
+              <div className="w-32 h-1 bg-[#161B26]/15 dark:bg-white/20 rounded-full mx-auto mt-4" />
             </div>
           </div>
 

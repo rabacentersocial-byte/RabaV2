@@ -19,7 +19,7 @@ import { useLanguage } from '../context/LanguageContext';
 
 const LedClubBadge: React.FC = () => (
   <span 
-    className="inline-flex items-center justify-center px-3 py-0.5 rounded-full text-xs font-black text-[#FBBF24] bg-[#141821] border border-[#F59E0B]/60 shadow-[0_0_12px_rgba(245,158,11,0.35)] ring-1 ring-[#F59E0B]/30 whitespace-nowrap select-none shrink-0 tracking-wide"
+    className="inline-flex items-center justify-center px-3 py-0.5 rounded-full text-xs font-black text-white dark:text-[#FBBF24] bg-gradient-to-r from-[#F59E0B] to-[#D97706] dark:bg-none dark:bg-[#141821]/95 border border-[#FDE68A] dark:border-[#F59E0B]/60 shadow-[0_0_12px_rgba(245,158,11,0.35)] ring-1 ring-[#F59E0B]/30 whitespace-nowrap select-none shrink-0 tracking-wide"
   >
     + نادي
   </span>
@@ -253,7 +253,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
               >
                 <span>{isArabic ? 'كافة الفروع' : 'All Branches'}</span>
                 <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-bold ${
-                  selectedCity === 'all' ? 'bg-[#2B95FF] text-white' : 'bg-[#161B26]/[0.08] dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                  selectedCity === 'all' ? 'bg-white/20 text-white' : 'bg-[#161B26]/[0.08] dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
                 }`}>
                   {branches.length}
                 </span>
@@ -269,7 +269,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
               >
                 <span>{isArabic ? 'الرياض' : 'Riyadh'}</span>
                 <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-bold ${
-                  selectedCity === 'riyadh' ? 'bg-[#2B95FF] text-white' : 'bg-[#161B26]/[0.08] dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                  selectedCity === 'riyadh' ? 'bg-white/20 text-white' : 'bg-[#161B26]/[0.08] dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
                 }`}>
                   {riyadhCount}
                 </span>
@@ -285,7 +285,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
               >
                 <span>{isArabic ? 'جدة' : 'Jeddah'}</span>
                 <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-bold ${
-                  selectedCity === 'jeddah' ? 'bg-[#2B95FF] text-white' : 'bg-[#161B26]/[0.08] dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                  selectedCity === 'jeddah' ? 'bg-white/20 text-white' : 'bg-[#161B26]/[0.08] dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
                 }`}>
                   {jeddahCount}
                 </span>
@@ -301,7 +301,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
               >
                 <span>{isArabic ? 'الخبر' : 'Al-Khobar'}</span>
                 <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-bold ${
-                  selectedCity === 'khobar' ? 'bg-[#2B95FF] text-white' : 'bg-[#161B26]/[0.08] dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                  selectedCity === 'khobar' ? 'bg-white/20 text-white' : 'bg-[#161B26]/[0.08] dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
                 }`}>
                   {khobarCount}
                 </span>
@@ -317,7 +317,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
               >
                 <span>{isArabic ? 'الأحساء' : 'Al-Ahsa'}</span>
                 <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-bold ${
-                  selectedCity === 'ahsa' ? 'bg-[#2B95FF] text-white' : 'bg-[#161B26]/[0.08] dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                  selectedCity === 'ahsa' ? 'bg-white/20 text-white' : 'bg-[#161B26]/[0.08] dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
                 }`}>
                   {ahsaCount}
                 </span>
@@ -333,7 +333,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
               >
                 <span>{isArabic ? 'الخرج' : 'Al-Kharj'}</span>
                 <span className={`text-[11px] px-1.5 py-0.2 rounded-full font-bold ${
-                  selectedCity === 'kharj' ? 'bg-[#2B95FF] text-white' : 'bg-[#161B26]/[0.08] dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
+                  selectedCity === 'kharj' ? 'bg-white/20 text-white' : 'bg-[#161B26]/[0.08] dark:bg-white/10 text-[#4B5563] dark:text-[#94A3B8]'
                 }`}>
                   {kharjCount}
                 </span>
@@ -429,7 +429,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                     <BranchMapPinGraphic branchName={branch.name} />
 
                     {/* City Tag Indicator Overlay */}
-                    <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 bg-[#141821]/85 backdrop-blur-md px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold text-[#F8FAFC] border border-white/15 flex items-center gap-1 sm:gap-1.5">
+                    <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 bg-white/90 dark:bg-[#141821]/85 backdrop-blur-md px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold text-[#161B26] dark:text-[#F8FAFC] border border-[#161B26]/10 dark:border-white/15 flex items-center gap-1 sm:gap-1.5 shadow-xs">
                       <MapPin className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-[#2B95FF]" />
                       <span>{isArabic ? branch.cityNameAr : branch.cityNameEn}</span>
                     </div>
@@ -477,7 +477,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                         className="py-2.5 sm:py-3 px-2 sm:px-3 warm-pill-cta text-xs font-bold rounded-full transition-colors flex items-center justify-center gap-1 sm:gap-1.5 text-center shadow-xs active:scale-95 cursor-pointer"
                         title={isArabic ? `عرض موقع ${branch.name} على خرائط Google` : 'View on Google Maps'}
                       >
-                        <Navigation className="w-3.5 h-3.5 text-[#2B95FF] shrink-0" />
+                        <Navigation className="w-3.5 h-3.5 text-white shrink-0" />
                         <span>{isArabic ? 'خرائط Google' : 'Google Maps'}</span>
                       </a>
 
@@ -531,7 +531,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
               >
                 <div className="relative h-36 sm:h-56 overflow-hidden bg-[#EDE9E0] dark:bg-[#161C2A]">
                   <BranchMapPinGraphic branchName={branch.name} />
-                  <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 bg-[#141821]/85 backdrop-blur-md px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-[#F8FAFC] border border-white/15 flex items-center gap-1">
+                  <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 bg-white/90 dark:bg-[#141821]/85 backdrop-blur-md px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-[#161B26] dark:text-[#F8FAFC] border border-[#161B26]/10 dark:border-white/15 flex items-center gap-1 shadow-xs">
                     <MapPin className="w-3 h-3 text-[#2B95FF]" />
                     <span>{isArabic ? branch.cityNameAr : branch.cityNameEn}</span>
                   </div>
@@ -571,7 +571,7 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
                       rel="noopener noreferrer"
                       className="py-2 sm:py-2.5 px-2 warm-pill-cta text-xs font-bold rounded-full transition-colors flex items-center justify-center gap-1 text-center cursor-pointer"
                     >
-                      <Navigation className="w-3.5 h-3.5 text-[#2B95FF]" />
+                      <Navigation className="w-3.5 h-3.5 text-white" />
                       <span>{isArabic ? 'خرائط Google' : 'Maps'}</span>
                     </a>
 
@@ -602,28 +602,28 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
             {/* Phone Info Block (Clickable tap-to-call) */}
             <a 
               href="tel:0575100100"
-              className="flex items-center justify-between sm:justify-start gap-3 p-2 sm:p-0 rounded-xl hover:bg-white/5 dark:hover:bg-black/5 active:bg-white/10 transition-colors group cursor-pointer"
+              className="flex items-center justify-between sm:justify-start gap-3 p-2 sm:p-0 rounded-xl hover:bg-[#161B26]/5 dark:hover:bg-white/5 active:bg-[#161B26]/10 dark:active:bg-white/10 transition-colors group cursor-pointer"
               title={isArabic ? 'اتصال مباشر بالرقم الموحد' : 'Call unified hotline'}
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#2B95FF]/15 group-hover:bg-[#2B95FF]/25 border border-[#2B95FF]/30 flex items-center justify-center text-[#2B95FF] shrink-0 shadow-xs backdrop-blur-xs transition-colors">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#2B95FF]/15 group-hover:bg-[#2B95FF]/25 border border-[#2B95FF]/30 flex items-center justify-center text-[#1263D6] dark:text-[#2B95FF] shrink-0 shadow-xs backdrop-blur-xs transition-colors">
                   <Phone className="w-4.5 h-4.5 sm:w-5 sm:h-5 transition-transform group-hover:scale-110" />
                 </div>
                 <div className="text-right">
                   <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-[11px] sm:text-xs text-[#94A3B8] dark:text-[#4B5563] font-bold">
+                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[11px] sm:text-xs text-[#4B5563] dark:text-[#94A3B8] font-bold">
                       {isArabic ? 'الرقم الموحد لكافة فروع المملكة:' : 'Unified Branch Call Center (KSA):'}
                     </span>
                   </div>
-                  <div className="text-base sm:text-xl font-black text-white dark:text-[#161B26] group-hover:text-[#2B95FF] transition-colors font-mono tracking-wider mt-0.5" dir="ltr">
+                  <div className="text-base sm:text-xl font-black text-[#161B26] dark:text-white group-hover:text-[#1263D6] dark:group-hover:text-[#60AFFF] transition-colors font-mono tracking-wider mt-0.5" dir="ltr">
                     0575100100
                   </div>
                 </div>
               </div>
 
               {/* Instant Call indicator pill on mobile */}
-              <span className="sm:hidden text-[10.5px] font-black px-2.5 py-1 rounded-full bg-white/10 dark:bg-black/10 text-white dark:text-[#161B26] border border-white/15 dark:border-black/10 group-hover:bg-[#2B95FF] group-hover:text-white transition-colors">
+              <span className="sm:hidden text-[10.5px] font-black px-2.5 py-1 rounded-full bg-white/90 dark:bg-white/10 text-[#161B26] dark:text-white border border-[#161B26]/10 dark:border-white/15 group-hover:bg-[#2B95FF] group-hover:text-white transition-colors">
                 {isArabic ? 'اتصال فوري' : 'Call'}
               </span>
             </a>

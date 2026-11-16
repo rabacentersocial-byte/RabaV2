@@ -125,9 +125,9 @@
   --surface-solid: #161C2A;
   --border-glass: rgba(255, 255, 255, 0.08);
   --shadow-glass: 0 20px 40px -15px rgba(0, 0, 0, 0.55);
-  --anchor-bg: #F5F2EC;
-  --anchor-text: #161B26;
-  --anchor-muted: #4B5563;
+  --anchor-bg: #141B29;
+  --anchor-text: #F8FAFC;
+  --anchor-muted: #94A3B8;
   --text-primary: #F8FAFC;
   --text-body: #94A3B8;
   --text-muted: #64748B;
@@ -451,17 +451,17 @@ body {
 }
 
 .light .obsidian-anchor-card {
-  background: #141821;
-  color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  box-shadow: 0 24px 48px -16px rgba(20, 24, 33, 0.35);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(232, 243, 255, 0.94) 100%);
+  color: #161B26;
+  border: 1px solid rgba(43, 149, 255, 0.22);
+  box-shadow: 0 20px 44px -14px rgba(43, 149, 255, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 .dark .obsidian-anchor-card {
-  background: #F5F2EC;
-  color: #161B26;
-  border: 1px solid rgba(22, 27, 38, 0.10);
-  box-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.65);
+  background: linear-gradient(135deg, #161E2E 0%, #101624 100%);
+  color: #F8FAFC;
+  border: 1px solid rgba(96, 175, 255, 0.18);
+  box-shadow: 0 24px 48px -16px rgba(0, 0, 0, 0.72), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 /* 2. Frosted Glass Panels */
@@ -583,22 +583,25 @@ body {
 }
 
 .light .warm-pill-cta {
-  background-color: #141821;
+  background: linear-gradient(135deg, #2B95FF 0%, #1A73E8 100%);
   color: #FFFFFF;
+  box-shadow: 0 8px 20px -6px rgba(43, 149, 255, 0.36);
 }
 
 .light .warm-pill-cta:hover {
-  background-color: #2B95FF;
+  background: linear-gradient(135deg, #3DA0FF 0%, #2563EB 100%);
   color: #FFFFFF;
+  box-shadow: 0 12px 24px -6px rgba(43, 149, 255, 0.46);
 }
 
 .dark .warm-pill-cta {
-  background-color: #F5F2EC;
-  color: #141821;
+  background: linear-gradient(135deg, #2B95FF 0%, #1A73E8 100%);
+  color: #FFFFFF;
+  box-shadow: 0 6px 18px -4px rgba(43, 149, 255, 0.35);
 }
 
 .dark .warm-pill-cta:hover {
-  background-color: #2B95FF;
+  background: linear-gradient(135deg, #3DA0FF 0%, #2B95FF 100%);
   color: #FFFFFF;
 }
 

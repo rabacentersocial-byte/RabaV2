@@ -161,11 +161,11 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         };
       case 'srv-learning-difficulties':
         return {
-          colorClass: 'bg-[#141821] dark:bg-[#F5F2EC] dark:!text-[#141821]',
+          colorClass: 'bg-[#2B95FF] text-white',
           colorClassHover: 'hover:border-[#2B95FF]/50',
-          accentBorder: 'border-[#161B26]/10 dark:border-white/15',
-          lightBg: 'bg-[#141821]/[0.04] dark:bg-white/[0.06]',
-          textAccent: 'text-[#161B26] dark:text-[#F8FAFC]',
+          accentBorder: 'border-[#2B95FF]/20 dark:border-white/15',
+          lightBg: 'bg-[#2B95FF]/10 dark:bg-white/[0.06]',
+          textAccent: 'text-[#1263D6] dark:text-[#60AFFF]',
           badgeText: isArabic ? 'صعوبات التعلم والواجبات' : 'Learning Support',
           flyerText: 'تنمية المهارات الأكاديمية ودعم الطفل في أداء واجباته باستقلالية',
         };
@@ -181,11 +181,11 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
         };
       default:
         return {
-          colorClass: 'bg-[#141821] dark:bg-[#F5F2EC] dark:!text-[#141821]',
+          colorClass: 'bg-[#2B95FF] text-white',
           colorClassHover: 'hover:border-[#2B95FF]/50',
-          accentBorder: 'border-[#161B26]/10 dark:border-white/15',
-          lightBg: 'bg-[#141821]/[0.04] dark:bg-white/[0.06]',
-          textAccent: 'text-[#161B26] dark:text-[#F8FAFC]',
+          accentBorder: 'border-[#2B95FF]/20 dark:border-white/15',
+          lightBg: 'bg-[#2B95FF]/10 dark:bg-white/[0.06]',
+          textAccent: 'text-[#1263D6] dark:text-[#60AFFF]',
           badgeText: '',
           flyerText: '',
         };
@@ -500,7 +500,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                         onClick={() => onSelectService(service)}
                         className="w-full py-2.5 sm:py-3.5 px-3 sm:px-4 warm-pill-cta rounded-full font-black text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-95 group/btn"
                       >
-                        <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2B95FF] group-hover/btn:text-white transition-colors" />
+                        <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white transition-colors" />
                         <span>{isArabic ? 'احجز تقييم البرنامج' : 'Book Evaluation Session'}</span>
                         {isArabic ? <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
                       </button>
@@ -543,17 +543,17 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
             <div className="space-y-3 text-center lg:text-right">
               
               {/* Distinctive Raba Brand Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#2B95FF]/15 text-[#60AFFF] dark:text-[#1263D6] text-xs font-black tracking-wide border border-[#2B95FF]/30">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#2B95FF]/12 dark:bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF] text-xs font-black tracking-wide border border-[#2B95FF]/30">
                 <span>رابا</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                 <span>{isArabic ? 'مسار رابا الإكلينيكي المخصص' : 'RABA Tailored Clinical Pathway'}</span>
               </div>
 
-              <h3 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white dark:text-[#141821]">
+              <h3 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-[#161B26] dark:text-white">
                 {isArabic ? 'نبدأ بالتقييم .. ونبني المسار وفق احتياج طفلك' : 'We start with assessment .. and build the pathway tailored to your child’s needs'}
               </h3>
               
-              <p className="text-xs sm:text-sm text-[#94A3B8] dark:text-[#4B5563] max-w-xl">
+              <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] max-w-xl">
                 {isArabic 
                   ? 'برامج تأهيلية متكاملة تحت إشراف نخبة من الأخصائيين المعتمدين محلياً ودولياً في تحليل السلوك التطبيقي، التخاطب، العلاج الوظيفي والتكامل الحسي.'
                   : 'Integrated rehabilitation programs supervised by accredited local and international specialists in ABA, Speech Therapy, Occupational Therapy, and Sensory Integration.'}
@@ -563,7 +563,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
             <div className="flex flex-wrap items-center gap-3 shrink-0">
               <a
                 href="tel:0575100100"
-                className="px-5 py-3 rounded-full bg-white/10 hover:bg-white/20 dark:bg-[#141821]/10 dark:hover:bg-[#141821]/15 text-white dark:text-[#141821] border border-white/15 dark:border-[#141821]/15 text-xs sm:text-sm font-black flex items-center gap-2 transition-colors duration-200 cursor-pointer backdrop-blur-md"
+                className="px-5 py-3 rounded-full bg-white/90 hover:bg-white dark:bg-white/10 dark:hover:bg-white/20 text-[#161B26] dark:text-white border border-[#161B26]/10 dark:border-white/15 text-xs sm:text-sm font-black flex items-center gap-2 transition-colors duration-200 cursor-pointer backdrop-blur-md shadow-xs"
               >
                 <Phone className="w-4 h-4 text-[#2B95FF]" />
                 <span dir="ltr">0575100100</span>
@@ -573,7 +573,7 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({ onSelectServic
                 href="https://wa.me/966575100100"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-3 rounded-full bg-white/15 hover:bg-white/25 dark:bg-[#141821]/10 dark:hover:bg-[#141821]/20 text-white dark:text-[#141821] text-xs sm:text-sm font-black flex items-center gap-2 transition-colors duration-200 shadow-md cursor-pointer"
+                className="px-4 py-3 rounded-full bg-white/90 hover:bg-white dark:bg-white/15 dark:hover:bg-white/25 text-[#161B26] dark:text-white border border-[#161B26]/10 dark:border-white/10 text-xs sm:text-sm font-black flex items-center gap-2 transition-colors duration-200 shadow-xs cursor-pointer"
               >
                 <MessageCircle className="w-4 h-4 text-[#10B981]" />
                 <span>{isArabic ? 'واتساب مباشر' : 'WhatsApp'}</span>

@@ -32,6 +32,7 @@ import {
   CalendarCheck
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useTheme } from '../context/ThemeContext';
 import { SaudiNationalDayBadge, SaudiFalconGraphic } from './NationalDayVisuals';
 import { OfferData } from '../types';
 import { getStoredOffers } from '../data/offersData';
@@ -159,6 +160,8 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
   onOpenBooking
 }) => {
   const { isArabic, direction } = useLanguage();
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
   const sliderRef = useRef<HTMLDivElement>(null);
   
   // Drag to scroll
@@ -378,7 +381,7 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
               onClick={onBackToHome}
               className="warm-pill-cta px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-95"
             >
-              {isArabic ? <ArrowRight className="w-4 h-4 text-[#2B95FF]" /> : <ArrowLeft className="w-4 h-4 text-[#2B95FF]" />}
+              {isArabic ? <ArrowRight className="w-4 h-4 text-white" /> : <ArrowLeft className="w-4 h-4 text-white" />}
               <span>{isArabic ? 'العودة للرئيسية' : 'Back to Home'}</span>
             </button>
           </div>
@@ -592,24 +595,37 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                 const cd = countdowns[offer.id] || { days: 0, hours: 0, minutes: 0, seconds: 0 };
                 const isFreeDay = offer.discountType === 'free_day';
                 const styling = offer.styling || {};
-                const bgGradient = styling.bgGradientFrom 
+                const darkBgGradient = styling.bgGradientFrom 
                   ? `linear-gradient(135deg, ${styling.bgGradientFrom} 0%, ${styling.bgGradientVia || styling.bgGradientFrom} 50%, ${styling.bgGradientTo || styling.bgGradientFrom} 100%)`
-                  : undefined;
-                const borderColor = styling.borderColor || 'rgba(43,149,255,0.28)';
-                const accentColor = styling.accentColor || '#2B95FF';
-                const subcardBg = styling.subcardBg || 'rgba(255, 255, 255, 0.05)';
-                const subcardBorder = styling.subcardBorder || 'rgba(255,255,255,0.12)';
+                  : 'linear-gradient(135deg, #141821 0%, #161C2A 50%, #0B0F17 100%)';
+                const lightBgGradient = offer.theme === 'emerald' || styling.themePreset === 'emerald'
+                  ? 'linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(236,253,245,0.96) 55%, rgba(209,250,229,0.92) 100%)'
+                  : offer.theme === 'teal' || styling.themePreset === 'teal'
+                    ? 'linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(240,253,250,0.96) 55%, rgba(204,251,241,0.92) 100%)'
+                    : 'linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(239,246,255,0.96) 55%, rgba(219,234,254,0.92) 100%)';
+                const bgGradient = isLight ? lightBgGradient : darkBgGradient;
+                const borderColor = isLight
+                  ? (offer.theme === 'emerald' ? 'rgba(16,185,129,0.28)' : offer.theme === 'teal' ? 'rgba(13,148,136,0.28)' : 'rgba(43,149,255,0.28)')
+                  : (styling.borderColor || 'rgba(43,149,255,0.28)');
+                const lightAccentColor = offer.theme === 'emerald' || styling.themePreset === 'emerald'
+                  ? '#059669'
+                  : offer.theme === 'teal' || styling.themePreset === 'teal'
+                    ? '#0D9488'
+                    : '#1A73E8';
+                const accentColor = isLight ? lightAccentColor : (styling.accentColor || '#2B95FF');
+                const subcardBg = isLight ? 'rgba(255, 255, 255, 0.86)' : (styling.subcardBg || 'rgba(255, 255, 255, 0.05)');
+                const subcardBorder = isLight ? 'rgba(22, 27, 38, 0.08)' : (styling.subcardBorder || 'rgba(255,255,255,0.12)');
 
                 return (
                   <div
                     key={offer.id}
-                    className={`relative rounded-[28px] p-5 sm:p-7 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-xl border text-white ${
+                    className={`relative rounded-[28px] p-5 sm:p-7 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-xl border text-[#161B26] dark:text-white ${
                       viewMode === 'slider'
                         ? 'shrink-0 w-[86vw] sm:w-[440px] md:w-[480px] snap-center'
                         : 'w-full'
                     }`}
                     style={{
-                      background: bgGradient || 'linear-gradient(135deg, #141821 0%, #161C2A 50%, #0B0F17 100%)',
+                      background: bgGradient,
                       borderColor: borderColor,
                     }}
                   >
@@ -619,21 +635,21 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                         <span 
                           className="px-3 py-1 rounded-full text-xs font-black self-start uppercase tracking-wider shadow-sm"
                           style={{
-                            backgroundColor: styling.badgeBgColor || accentColor,
-                            color: styling.badgeTextColor || '#022c22',
+                            backgroundColor: isLight ? lightAccentColor : (styling.badgeBgColor || accentColor),
+                            color: isLight ? '#FFFFFF' : (styling.badgeTextColor || '#022c22'),
                           }}
                         >
                           {isArabic ? offer.badgeAr : offer.badgeEn}
                         </span>
 
-                        <span className="text-[11px] font-bold text-emerald-200/90 flex items-center gap-1">
+                        <span className="text-[11px] font-bold text-[#047857] dark:text-emerald-200/90 flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
                           <span>{isArabic ? offer.dateLabelAr : offer.dateLabelEn}</span>
                         </span>
                       </div>
 
                       {offer.isNationalDay && (
-                        <div className="shrink-0 flex items-center gap-1.5 bg-black/40 border border-emerald-500/30 px-2 py-1 rounded-xl">
+                        <div className="shrink-0 flex items-center gap-1.5 bg-white/85 dark:bg-black/40 border border-emerald-500/30 px-2 py-1 rounded-xl shadow-2xs">
                           <SaudiNationalDayBadge className="h-8" />
                         </div>
                       )}
@@ -641,10 +657,10 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
 
                     {/* Middle Info */}
                     <div className="mb-6">
-                      <h3 className="text-xl sm:text-2xl font-black text-white mb-2 leading-tight">
+                      <h3 className="text-xl sm:text-2xl font-black text-[#161B26] dark:text-white mb-2 leading-tight">
                         {isArabic ? offer.titleAr : offer.titleEn}
                       </h3>
-                      <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed font-medium mb-4">
+                      <p className="text-xs sm:text-sm text-[#4B5563] dark:text-emerald-100/90 leading-relaxed font-medium mb-4">
                         {isArabic ? offer.descriptionAr : offer.descriptionEn}
                       </p>
 
@@ -657,12 +673,12 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                             border: `1px solid ${subcardBorder}`
                           }}
                         >
-                          <span className="text-[10px] font-black text-emerald-300 block mb-1">
+                          <span className="text-[10px] font-black text-[#047857] dark:text-emerald-300 block mb-1">
                             {isArabic ? 'شروط ومزايا العرض:' : 'Terms & Benefits:'}
                           </span>
                           {offer.terms.map((t, idx) => (
-                            <div key={idx} className="flex items-start gap-1.5 text-xs text-slate-200">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                            <div key={idx} className="flex items-start gap-1.5 text-xs text-[#4B5563] dark:text-slate-200">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981] dark:text-emerald-400 shrink-0 mt-0.5" />
                               <span className="text-[11px] sm:text-xs leading-relaxed">
                                 {isArabic ? t.textAr : t.textEn}
                               </span>
@@ -673,22 +689,22 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
 
                       {/* Coupon Code Pill */}
                       {offer.couponCode && (
-                        <div className="flex items-center justify-between gap-2 bg-black/40 border border-white/10 rounded-full px-3.5 py-2">
+                        <div className="flex items-center justify-between gap-2 bg-white/85 dark:bg-black/40 border border-[#161B26]/10 dark:border-white/10 rounded-full px-3.5 py-2 shadow-2xs">
                           <div className="flex items-center gap-2">
                             <Tag className="w-4 h-4 text-[#2B95FF]" />
-                            <span className="text-xs text-slate-300">{isArabic ? 'كود الكوبون:' : 'Coupon Code:'}</span>
-                            <span className="font-mono font-black text-sm text-[#60AFFF] tracking-wider">
+                            <span className="text-xs text-[#4B5563] dark:text-slate-300">{isArabic ? 'كود الكوبون:' : 'Coupon Code:'}</span>
+                            <span className="font-mono font-black text-sm text-[#1263D6] dark:text-[#60AFFF] tracking-wider">
                               {offer.couponCode}
                             </span>
                           </div>
                           <button
                             onClick={() => handleCopyCoupon(offer.couponCode!)}
-                            className="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1"
+                            className="px-2.5 py-1 rounded-full bg-[#161B26]/[0.06] hover:bg-[#161B26]/[0.12] dark:bg-white/10 dark:hover:bg-white/20 text-[#161B26] dark:text-white text-xs font-bold transition-colors cursor-pointer flex items-center gap-1"
                           >
                             {copiedCoupon === offer.couponCode ? (
                               <>
-                                <Check className="w-3 h-3 text-[#34D399]" />
-                                <span className="text-[#34D399] text-[10px]">{isArabic ? 'تم النسخ' : 'Copied'}</span>
+                                <Check className="w-3 h-3 text-[#059669] dark:text-[#34D399]" />
+                                <span className="text-[#059669] dark:text-[#34D399] text-[10px]">{isArabic ? 'تم النسخ' : 'Copied'}</span>
                               </>
                             ) : (
                               <>
@@ -702,11 +718,11 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                     </div>
 
                     {/* Bottom Countdown & Action CTA */}
-                    <div className="pt-4 border-t border-white/10">
+                    <div className="pt-4 border-t border-[#161B26]/[0.08] dark:border-white/10">
                       
                       {offer.showCountdown && (
                         <div className="mb-4">
-                          <span className="text-[10px] font-bold text-[#94A3B8] block mb-1.5">
+                          <span className="text-[10px] font-bold text-[#4B5563] dark:text-[#94A3B8] block mb-1.5">
                             {isArabic ? 'الوقت المتبقي حتى انتهاء العرض:' : 'Time Left:'}
                           </span>
                           <div className="grid grid-cols-4 gap-2 text-center" dir="ltr">
@@ -716,11 +732,11 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                               { label: isArabic ? 'دقيقة' : 'M', val: cd.minutes },
                               { label: isArabic ? 'ثانية' : 'S', val: cd.seconds },
                             ].map((unit, uIdx) => (
-                              <div key={uIdx} className="bg-black/35 rounded-2xl p-1.5 border border-white/10">
-                                <span className="font-mono text-base sm:text-lg font-black text-[#60AFFF] block leading-tight">
+                              <div key={uIdx} className="bg-white/90 dark:bg-black/35 rounded-2xl p-1.5 border border-[#161B26]/10 dark:border-white/10 shadow-2xs">
+                                <span className="font-mono text-base sm:text-lg font-black text-[#1263D6] dark:text-[#60AFFF] block leading-tight">
                                   {fmt(unit.val)}
                                 </span>
-                                <span className="text-[9px] text-slate-300 font-bold block">
+                                <span className="text-[9px] text-[#4B5563] dark:text-slate-300 font-bold block">
                                   {unit.label}
                                 </span>
                               </div>
@@ -740,8 +756,8 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                         }}
                         className="w-full py-3 px-4 rounded-full font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98 hover:brightness-110"
                         style={{
-                          backgroundColor: styling.accentColor || '#2B95FF',
-                          color: styling.accentColor ? '#141821' : '#FFFFFF'
+                          backgroundColor: accentColor,
+                          color: isLight ? '#FFFFFF' : (styling.accentColor ? '#141821' : '#FFFFFF')
                         }}
                       >
                         <Sparkles className="w-4 h-4" />
@@ -890,10 +906,10 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
               <HeartHandshake className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-black text-white dark:text-[#161B26]">
+              <h3 className="text-base sm:text-lg font-black text-[#161B26] dark:text-white">
                 {isArabic ? 'هل ترغب في باقة مخصصة أو لديك استفسار عن الأنشطة؟' : 'Need a custom package or inquiry about activities?'}
               </h3>
-              <p className="text-xs sm:text-sm text-[#94A3B8] dark:text-[#4B5563] mt-1">
+              <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] mt-1">
                 {isArabic 
                   ? 'فريق الاستشارات بمركز رابا جاهز لتقديم المشورة وتنسيق خطة تأهيلية تناسب احتياجات طفلك.'
                   : 'Raba Center intake team is ready to assist and tailor a rehabilitation package for your child.'}
@@ -904,7 +920,7 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
           <div className="flex items-center gap-2.5 w-full md:w-auto">
             <a
               href="tel:966575100100"
-              className="flex-1 md:flex-initial px-4 py-2.5 rounded-full border border-white/15 dark:border-[#161B26]/15 bg-white/10 dark:bg-[#161B26]/5 text-white dark:text-[#161B26] text-xs sm:text-sm font-bold hover:bg-white/20 dark:hover:bg-[#161B26]/10 transition-colors flex items-center justify-center gap-1.5 cursor-pointer text-center"
+              className="flex-1 md:flex-initial px-4 py-2.5 rounded-full border border-[#161B26]/10 dark:border-white/15 bg-white/90 dark:bg-white/10 text-[#161B26] dark:text-white text-xs sm:text-sm font-bold hover:bg-white dark:hover:bg-white/20 transition-colors flex items-center justify-center gap-1.5 cursor-pointer text-center shadow-xs"
             >
               <Phone className="w-4 h-4 text-[#2B95FF]" />
               <span>{isArabic ? 'اتصال مباشر' : 'Call'}</span>

@@ -88,7 +88,7 @@ export const PartnerLogoRenderer: React.FC<{
           maxHeight: normalizedScale > 1.25 ? `${Math.min(Math.round(normalizedScale * 100), 160)}%` : '100%',
           maxWidth: normalizedScale > 1.25 ? `${Math.min(Math.round(normalizedScale * 100), 160)}%` : '100%'
         }}
-        className={`${fitClass} mx-auto block transition-transform duration-300 group-hover:scale-105`}
+        className={`${fitClass} mx-auto block transition-transform duration-300 group-hover:scale-105 dark:mix-blend-multiply`}
         onError={() => {
           if (!hasError && bundledSrc && effectiveSrc !== bundledSrc) {
             setHasError(true);

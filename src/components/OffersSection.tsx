@@ -17,6 +17,7 @@ import {
   Award
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useTheme } from '../context/ThemeContext';
 import { SaudiNationalDayBadge, SaudiFalconGraphic } from './NationalDayVisuals';
 import { OfferData } from '../types';
 import { getStoredOffers } from '../data/offersData';
@@ -35,6 +36,8 @@ interface Countdown {
 
 export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offers: propOffers }) => {
   const { isArabic } = useLanguage();
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
   const sliderRef = useRef<HTMLDivElement>(null);
   const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
   
@@ -240,16 +243,32 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
             const isPercentage = offer.discountType === 'percentage';
 
             const styling = offer.styling || {};
-            const bgGradient = styling.bgGradientFrom 
+            const darkBgGradient = styling.bgGradientFrom 
               ? `linear-gradient(135deg, ${styling.bgGradientFrom} 0%, ${styling.bgGradientVia || styling.bgGradientFrom} 50%, ${styling.bgGradientTo || styling.bgGradientFrom} 100%)`
               : undefined;
-            const borderColor = styling.borderColor || 'rgba(43,149,255,0.35)';
-            const accentColor = styling.accentColor || '#2B95FF';
-            const glowColor = styling.glowColor || 'rgba(43,149,255,0.18)';
-            const subcardBg = styling.subcardBg || '#161C2A';
-            const subcardBorder = styling.subcardBorder || 'rgba(43,149,255,0.28)';
-            const ribbonBg = styling.ribbonBgColor || '#2B95FF';
-            const ribbonText = styling.ribbonTextColor || '#FFFFFF';
+            const lightCardGradient = offer.theme === 'emerald' || styling.themePreset === 'emerald'
+              ? 'linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(236,253,245,0.96) 55%, rgba(209,250,229,0.92) 100%)'
+              : offer.theme === 'teal' || styling.themePreset === 'teal'
+                ? 'linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(240,253,250,0.96) 55%, rgba(204,251,241,0.92) 100%)'
+                : 'linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(239,246,255,0.96) 55%, rgba(219,234,254,0.92) 100%)';
+            const bgGradient = isLight ? lightCardGradient : darkBgGradient;
+            const borderColor = isLight
+              ? (offer.theme === 'emerald' ? 'rgba(16,185,129,0.28)' : offer.theme === 'teal' ? 'rgba(13,148,136,0.28)' : 'rgba(43,149,255,0.28)')
+              : (styling.borderColor || 'rgba(43,149,255,0.35)');
+            const darkAccentColor = styling.accentColor || '#2B95FF';
+            const lightAccentColor = offer.theme === 'emerald' || styling.themePreset === 'emerald'
+              ? '#059669'
+              : offer.theme === 'teal' || styling.themePreset === 'teal'
+                ? '#0D9488'
+                : '#1A73E8';
+            const accentColor = isLight ? lightAccentColor : darkAccentColor;
+            const glowColor = isLight
+              ? (offer.theme === 'emerald' ? 'rgba(16,185,129,0.12)' : offer.theme === 'teal' ? 'rgba(20,184,166,0.12)' : 'rgba(43,149,255,0.12)')
+              : (styling.glowColor || 'rgba(43,149,255,0.18)');
+            const subcardBg = isLight ? 'rgba(255, 255, 255, 0.86)' : (styling.subcardBg || '#161C2A');
+            const subcardBorder = isLight ? 'rgba(22, 27, 38, 0.08)' : (styling.subcardBorder || 'rgba(43,149,255,0.28)');
+            const ribbonBg = isLight ? lightAccentColor : (styling.ribbonBgColor || '#2B95FF');
+            const ribbonText = isLight ? '#FFFFFF' : (styling.ribbonTextColor || '#FFFFFF');
             const ribbonLabel = isArabic 
               ? (offer.ribbonAr || (isFreeDay ? 'لجميع عملائنا' : 'للعملاء الجدد'))
               : (offer.ribbonEn || (isFreeDay ? 'All Clients' : 'New Clients'));
@@ -269,7 +288,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
               <div 
                 key={offer.id}
                 id={`offer-card-${offer.id}`}
-                className="w-[76vw] min-w-[260px] max-w-[310px] sm:min-w-0 sm:max-w-none sm:w-[380px] md:w-[410px] shrink-0 snap-start self-start rounded-[28px] p-3 sm:p-5 md:p-6 bg-gradient-to-br from-[#141821] via-[#161C2A] to-[#0B0F17] border relative overflow-hidden shadow-xl sm:shadow-2xl flex flex-col transition-all duration-300"
+                className="w-[76vw] min-w-[260px] max-w-[310px] sm:min-w-0 sm:max-w-none sm:w-[380px] md:w-[410px] shrink-0 snap-start self-start rounded-[28px] p-3 sm:p-5 md:p-6 bg-white/95 dark:bg-gradient-to-br dark:from-[#141821] dark:via-[#161C2A] dark:to-[#0B0F17] border relative overflow-hidden shadow-xl sm:shadow-2xl flex flex-col transition-all duration-300"
                 style={{
                   background: bgGradient,
                   borderColor: borderColor,
@@ -314,7 +333,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                           </svg>
                         </div>
                         <div className="flex flex-col text-right leading-tight">
-                          <span className="text-white font-black text-[10px] sm:text-xs tracking-wider">{headerTag}</span>
+                          <span className="text-[#161B26] dark:text-white font-black text-[10px] sm:text-xs tracking-wider">{headerTag}</span>
                           <span className="text-[7.5px] sm:text-[9px] font-bold uppercase" style={{ color: accentColor }}>{headerTagSub}</span>
                         </div>
                       </div>
@@ -350,7 +369,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                     <div className="space-y-0.5 sm:space-y-1.5 flex-1 min-w-0">
                       
                       {/* Big Title */}
-                      <h3 className="text-base sm:text-2xl md:text-3xl font-black text-white tracking-tight drop-shadow-md leading-tight line-clamp-1">
+                      <h3 className="text-base sm:text-2xl md:text-3xl font-black text-[#161B26] dark:text-white tracking-tight dark:drop-shadow-md leading-tight line-clamp-1">
                         {isArabic ? offer.titleAr : offer.titleEn}
                       </h3>
 
@@ -368,17 +387,17 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                       </div>
 
                       {/* Occasion / Subtitle text */}
-                      <p className="text-emerald-200/90 font-bold text-[10px] sm:text-xs sm:text-sm pt-0.5 truncate">
+                      <p className="text-[#047857] dark:text-emerald-200/90 font-bold text-[10px] sm:text-xs sm:text-sm pt-0.5 truncate">
                         {isArabic ? offer.subtitleAr : offer.subtitleEn}
                       </p>
 
                       {/* Display Value (96 or 35% or Fixed) */}
                       {isFreeDay ? (
                         <div className="flex items-baseline gap-1.5 pt-0.5">
-                          <span className="text-2xl sm:text-4xl md:text-5xl font-black bg-gradient-to-b from-amber-200 via-yellow-400 to-amber-500 bg-clip-text text-transparent font-sans tracking-tight">
+                          <span className="text-2xl sm:text-4xl md:text-5xl font-black bg-gradient-to-b from-[#D97706] via-[#F59E0B] to-[#B45309] dark:from-amber-200 dark:via-yellow-400 dark:to-amber-500 bg-clip-text text-transparent font-sans tracking-tight">
                             {offer.discountValue || 96}
                           </span>
-                          <span className="text-[8.5px] sm:text-xs font-black text-amber-300 uppercase tracking-widest">
+                          <span className="text-[8.5px] sm:text-xs font-black text-[#B45309] dark:text-amber-300 uppercase tracking-widest">
                             {isArabic ? 'عزّ وفخر' : 'GLORY & PRIDE'}
                           </span>
                         </div>
@@ -390,7 +409,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                           >
                             {offer.discountValue}%
                           </span>
-                          <span className="text-xs sm:text-base md:text-lg font-black text-white leading-tight">
+                          <span className="text-xs sm:text-base md:text-lg font-black text-[#161B26] dark:text-white leading-tight">
                             {isArabic ? 'خصـم' : 'OFF'}
                           </span>
                         </div>
@@ -432,7 +451,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
 
                   {/* Subcard with date & terms */}
                   <div 
-                    className="p-2 sm:p-3.5 rounded-xl sm:rounded-2xl border text-emerald-100 mb-2.5 sm:mb-3 shadow-inner space-y-1 sm:space-y-1.5"
+                    className="p-2 sm:p-3.5 rounded-xl sm:rounded-2xl border text-[#161B26] dark:text-emerald-100 mb-2.5 sm:mb-3 shadow-xs dark:shadow-inner space-y-1 sm:space-y-1.5"
                     style={{
                       backgroundColor: subcardBg,
                       borderColor: subcardBorder
@@ -440,16 +459,16 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                   >
                     
                     {/* Date line */}
-                    <div className="flex items-center gap-1 sm:gap-1.5 text-amber-300 font-black text-[10px] sm:text-xs">
-                      <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400 shrink-0" />
+                    <div className="flex items-center gap-1 sm:gap-1.5 text-[#B45309] dark:text-amber-300 font-black text-[10px] sm:text-xs">
+                      <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#D97706] dark:text-amber-400 shrink-0" />
                       <span className="truncate">{isArabic ? offer.dateLabelAr : offer.dateLabelEn}</span>
                     </div>
 
                     {/* Brief description or terms list */}
                     {offer.terms && offer.terms.length > 0 ? (
-                      <div className="space-y-1 text-[9.5px] sm:text-[11px] text-emerald-100/90 pt-0.5">
+                      <div className="space-y-1 text-[9.5px] sm:text-[11px] text-[#4B5563] dark:text-emerald-100/90 pt-0.5">
                         {offer.terms.slice(0, 2).map((term, i) => (
-                          <div key={i} className="flex items-start gap-1 bg-black/20 px-1.5 py-0.5 rounded-md sm:rounded-lg border border-white/5">
+                          <div key={i} className="flex items-start gap-1 bg-[#161B26]/[0.04] dark:bg-black/20 px-1.5 py-0.5 rounded-md sm:rounded-lg border border-[#161B26]/[0.06] dark:border-white/5">
                             <span className="font-bold shrink-0" style={{ color: accentColor }}>•</span>
                             <span className="leading-tight truncate">
                               {isArabic ? term.textAr : term.textEn}
@@ -458,7 +477,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                         ))}
                       </div>
                     ) : (
-                      <p className="text-[10px] sm:text-xs text-emerald-200/90 leading-relaxed line-clamp-2">
+                      <p className="text-[10px] sm:text-xs text-[#4B5563] dark:text-emerald-200/90 leading-relaxed line-clamp-2">
                         {isArabic ? offer.descriptionAr : offer.descriptionEn}
                       </p>
                     )}
@@ -470,51 +489,51 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                     <div className="mb-2.5 sm:mb-3">
                       <span 
                         className="text-[8px] sm:text-[9px] font-black tracking-widest uppercase block mb-1"
-                        style={{ color: `${accentColor}cc` }}
+                        style={{ color: isLight ? accentColor : `${accentColor}cc` }}
                       >
                         {isArabic ? 'المتبقي حتى الموعد المحدد' : 'COUNTDOWN'}
                       </span>
 
                       <div className="grid grid-cols-4 gap-1 sm:gap-1.5">
                         <div 
-                          className="bg-black/40 backdrop-blur-md rounded-lg sm:rounded-xl py-1 sm:py-1.5 px-0.5 sm:px-1 text-center border"
-                          style={{ borderColor: `${borderColor}30` }}
+                          className="bg-white/90 dark:bg-black/40 backdrop-blur-md rounded-lg sm:rounded-xl py-1 sm:py-1.5 px-0.5 sm:px-1 text-center border shadow-2xs"
+                          style={{ borderColor: isLight ? 'rgba(22, 27, 38, 0.10)' : `${borderColor}30` }}
                         >
-                          <span className="text-xs sm:text-base md:text-lg font-black text-white leading-none font-mono block">
+                          <span className="text-xs sm:text-base md:text-lg font-black text-[#161B26] dark:text-white leading-none font-mono block">
                             {fmt(cd.days)}
                           </span>
-                          <span className="text-[7px] sm:text-[8px] font-bold text-emerald-300/70 uppercase mt-0.5 block">
+                          <span className="text-[7px] sm:text-[8px] font-bold text-[#4B5563] dark:text-emerald-300/70 uppercase mt-0.5 block">
                             {isArabic ? 'يوم' : 'Days'}
                           </span>
                         </div>
 
                         <div 
-                          className="bg-black/40 backdrop-blur-md rounded-lg sm:rounded-xl py-1 sm:py-1.5 px-0.5 sm:px-1 text-center border"
-                          style={{ borderColor: `${borderColor}30` }}
+                          className="bg-white/90 dark:bg-black/40 backdrop-blur-md rounded-lg sm:rounded-xl py-1 sm:py-1.5 px-0.5 sm:px-1 text-center border shadow-2xs"
+                          style={{ borderColor: isLight ? 'rgba(22, 27, 38, 0.10)' : `${borderColor}30` }}
                         >
-                          <span className="text-xs sm:text-base md:text-lg font-black text-white leading-none font-mono block">
+                          <span className="text-xs sm:text-base md:text-lg font-black text-[#161B26] dark:text-white leading-none font-mono block">
                             {fmt(cd.hours)}
                           </span>
-                          <span className="text-[7px] sm:text-[8px] font-bold text-emerald-300/70 uppercase mt-0.5 block">
+                          <span className="text-[7px] sm:text-[8px] font-bold text-[#4B5563] dark:text-emerald-300/70 uppercase mt-0.5 block">
                             {isArabic ? 'ساعة' : 'Hours'}
                           </span>
                         </div>
 
                         <div 
-                          className="bg-black/40 backdrop-blur-md rounded-lg sm:rounded-xl py-1 sm:py-1.5 px-0.5 sm:px-1 text-center border"
-                          style={{ borderColor: `${borderColor}30` }}
+                          className="bg-white/90 dark:bg-black/40 backdrop-blur-md rounded-lg sm:rounded-xl py-1 sm:py-1.5 px-0.5 sm:px-1 text-center border shadow-2xs"
+                          style={{ borderColor: isLight ? 'rgba(22, 27, 38, 0.10)' : `${borderColor}30` }}
                         >
-                          <span className="text-xs sm:text-base md:text-lg font-black text-white leading-none font-mono block">
+                          <span className="text-xs sm:text-base md:text-lg font-black text-[#161B26] dark:text-white leading-none font-mono block">
                             {fmt(cd.minutes)}
                           </span>
-                          <span className="text-[7px] sm:text-[8px] font-bold text-emerald-300/70 uppercase mt-0.5 block">
+                          <span className="text-[7px] sm:text-[8px] font-bold text-[#4B5563] dark:text-emerald-300/70 uppercase mt-0.5 block">
                             {isArabic ? 'دقيقة' : 'Mins'}
                           </span>
                         </div>
 
                         <div 
-                          className="bg-black/40 backdrop-blur-md rounded-lg sm:rounded-xl py-1 sm:py-1.5 px-0.5 sm:px-1 text-center border"
-                          style={{ borderColor: `${borderColor}30` }}
+                          className="bg-white/90 dark:bg-black/40 backdrop-blur-md rounded-lg sm:rounded-xl py-1 sm:py-1.5 px-0.5 sm:px-1 text-center border shadow-2xs"
+                          style={{ borderColor: isLight ? 'rgba(22, 27, 38, 0.10)' : `${borderColor}30` }}
                         >
                           <span 
                             className="text-xs sm:text-base md:text-lg font-black leading-none font-mono block"
@@ -522,7 +541,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                           >
                             {fmt(cd.seconds)}
                           </span>
-                          <span className="text-[7px] sm:text-[8px] font-bold text-emerald-300/70 uppercase mt-0.5 block">
+                          <span className="text-[7px] sm:text-[8px] font-bold text-[#4B5563] dark:text-emerald-300/70 uppercase mt-0.5 block">
                             {isArabic ? 'ثانية' : 'Secs'}
                           </span>
                         </div>
@@ -535,7 +554,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                 {/* Bottom Actions Row: Coupon Copy + Booking CTA */}
                 <div 
                   className="relative z-10 pt-2 sm:pt-3 border-t space-y-2"
-                  style={{ borderColor: `${borderColor}30` }}
+                  style={{ borderColor: isLight ? 'rgba(22, 27, 38, 0.08)' : `${borderColor}30` }}
                 >
                   
                   <div className="flex items-center gap-1.5 sm:gap-2">
@@ -543,8 +562,8 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                     <button
                       onClick={() => handleCopyCoupon(offer.couponCode)}
                       title={isArabic ? 'انقر لنسخ كود الكوبون' : 'Click to copy coupon code'}
-                      className="border border-dashed bg-black/30 hover:bg-black/50 text-white rounded-lg sm:rounded-xl px-2 py-1.5 sm:px-2.5 sm:py-2.5 flex items-center justify-center gap-1 font-mono text-[10px] sm:text-xs font-black transition-all cursor-pointer shrink-0"
-                      style={{ borderColor: `${accentColor}80` }}
+                      className="border border-dashed bg-white/90 hover:bg-white dark:bg-black/30 dark:hover:bg-black/50 text-[#161B26] dark:text-white rounded-lg sm:rounded-xl px-2 py-1.5 sm:px-2.5 sm:py-2.5 flex items-center justify-center gap-1 font-mono text-[10px] sm:text-xs font-black transition-all cursor-pointer shrink-0 shadow-2xs"
+                      style={{ borderColor: isLight ? accentColor : `${accentColor}80` }}
                     >
                       {copiedCoupon === offer.couponCode ? (
                         <>
@@ -555,7 +574,7 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                         </>
                       ) : (
                         <>
-                          <Copy className="w-2.5 h-2.5 sm:w-3 sm:h-3" style={{ color: `${accentColor}cc` }} />
+                          <Copy className="w-2.5 h-2.5 sm:w-3 sm:h-3" style={{ color: isLight ? accentColor : `${accentColor}cc` }} />
                           <span className="text-[9.5px] sm:text-[11px]">{offer.couponCode}</span>
                         </>
                       )}
@@ -564,10 +583,10 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
                     {/* Primary CTA Button */}
                     <button
                       onClick={() => onClaimOffer(isArabic ? offer.titleAr : offer.titleEn, offer.discountValue)}
-                      className="flex-1 font-black text-[10px] sm:text-xs sm:text-sm py-1.5 sm:py-2.5 px-2 sm:px-3 rounded-lg sm:rounded-xl shadow-md transition-all active:scale-98 text-center cursor-pointer flex items-center justify-center gap-1"
+                      className="flex-1 font-black text-[10px] sm:text-xs sm:text-sm py-1.5 sm:py-2.5 px-2 sm:px-3 rounded-lg sm:rounded-xl shadow-md transition-all active:scale-98 text-center cursor-pointer flex items-center justify-center gap-1 hover:brightness-110"
                       style={{
                         backgroundColor: accentColor,
-                        color: styling.badgeTextColor || '#022c22'
+                        color: isLight ? '#FFFFFF' : (styling.badgeTextColor || '#022c22')
                       }}
                     >
                       <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" style={{ fill: 'currentColor' }} />
@@ -579,10 +598,10 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
 
                   {/* Contact Phone & Info Bar */}
                   <div 
-                    className="flex items-center justify-between text-[8px] sm:text-[10px] text-emerald-200/70 pt-0.5 border-t"
-                    style={{ borderColor: `${borderColor}20` }}
+                    className="flex items-center justify-between text-[8px] sm:text-[10px] text-[#4B5563] dark:text-emerald-200/70 pt-0.5 border-t"
+                    style={{ borderColor: isLight ? 'rgba(22, 27, 38, 0.06)' : `${borderColor}20` }}
                   >
-                    <a href={`tel:${contactPhone}`} className="flex items-center gap-1 hover:text-white font-mono font-bold">
+                    <a href={`tel:${contactPhone}`} className="flex items-center gap-1 hover:text-[#161B26] dark:hover:text-white font-mono font-bold">
                       <Phone className="w-2 h-2 sm:w-2.5 sm:h-2.5" style={{ color: accentColor }} />
                       <span>{contactPhone}</span>
                     </a>

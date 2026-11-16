@@ -40,7 +40,7 @@ export const COURSE_LOGO_THEMES: CourseLogoTheme[] = [
     hoursBg: 'bg-white/75 dark:bg-white/[0.06] border-[#161B26]/10 dark:border-white/10 text-[#161B26] dark:text-[#F8FAFC]',
     hoursIconColor: 'text-[#2B95FF]',
     checkBg: 'bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF]',
-    buttonBg: 'bg-[#141821] hover:bg-[#1E293B] dark:bg-[#F5F2EC] dark:hover:bg-white',
+    buttonBg: 'bg-[#2B95FF] hover:bg-[#1A73E8] text-white',
     cardBorderHover: 'hover:border-[#2B95FF]/50'
   },
 
@@ -52,7 +52,7 @@ export const COURSE_LOGO_THEMES: CourseLogoTheme[] = [
     accentHex: '#F59E0B',
     headerBg: 'bg-[#F59E0B]/[0.08] dark:bg-white/[0.04]',
     headerBorder: 'border-[#161B26]/[0.06] dark:border-white/10',
-    pillBg: 'bg-[#141821] dark:bg-[#F5F2EC] text-white dark:text-[#161B26] font-black',
+    pillBg: 'bg-[#D97706] dark:bg-[#1E293B] text-white dark:text-[#F8FAFC] dark:border dark:border-white/15 font-black',
     iconBoxBorder: 'border-[#161B26]/10 dark:border-white/15',
     iconColor: 'text-[#B45309] dark:text-[#FBBF24]',
     kickerColor: 'text-[#B45309] dark:text-[#FBBF24]',
@@ -62,7 +62,7 @@ export const COURSE_LOGO_THEMES: CourseLogoTheme[] = [
     hoursBg: 'bg-white/75 dark:bg-white/[0.06] border-[#161B26]/10 dark:border-white/10 text-[#161B26] dark:text-[#F8FAFC]',
     hoursIconColor: 'text-[#B45309] dark:text-[#FBBF24]',
     checkBg: 'bg-[#F59E0B]/15 text-[#B45309] dark:text-[#FBBF24]',
-    buttonBg: 'bg-[#141821] hover:bg-[#1E293B] dark:bg-[#F5F2EC] dark:hover:bg-white',
+    buttonBg: 'bg-[#2B95FF] hover:bg-[#1A73E8] text-white',
     cardBorderHover: 'hover:border-[#F59E0B]/50'
   },
 
@@ -84,7 +84,7 @@ export const COURSE_LOGO_THEMES: CourseLogoTheme[] = [
     hoursBg: 'bg-white/75 dark:bg-white/[0.06] border-[#161B26]/10 dark:border-white/10 text-[#161B26] dark:text-[#F8FAFC]',
     hoursIconColor: 'text-[#10B981]',
     checkBg: 'bg-[#10B981]/15 text-[#047857] dark:text-[#34D399]',
-    buttonBg: 'bg-[#141821] hover:bg-[#1E293B] dark:bg-[#F5F2EC] dark:hover:bg-white',
+    buttonBg: 'bg-[#2B95FF] hover:bg-[#1A73E8] text-white',
     cardBorderHover: 'hover:border-[#10B981]/50'
   },
 
@@ -106,7 +106,7 @@ export const COURSE_LOGO_THEMES: CourseLogoTheme[] = [
     hoursBg: 'bg-white/75 dark:bg-white/[0.06] border-[#161B26]/10 dark:border-white/10 text-[#161B26] dark:text-[#F8FAFC]',
     hoursIconColor: 'text-[#E11D48]',
     checkBg: 'bg-rose-500/15 text-[#BE123C] dark:text-[#FB7185]',
-    buttonBg: 'bg-[#141821] hover:bg-[#1E293B] dark:bg-[#F5F2EC] dark:hover:bg-white',
+    buttonBg: 'bg-[#2B95FF] hover:bg-[#1A73E8] text-white',
     cardBorderHover: 'hover:border-rose-500/50'
   },
 
@@ -128,7 +128,7 @@ export const COURSE_LOGO_THEMES: CourseLogoTheme[] = [
     hoursBg: 'bg-white/75 dark:bg-white/[0.06] border-[#161B26]/10 dark:border-white/10 text-[#161B26] dark:text-[#F8FAFC]',
     hoursIconColor: 'text-[#8B5CF6]',
     checkBg: 'bg-[#8B5CF6]/15 text-[#6D28D9] dark:text-[#A78BFA]',
-    buttonBg: 'bg-[#141821] hover:bg-[#1E293B] dark:bg-[#F5F2EC] dark:hover:bg-white',
+    buttonBg: 'bg-[#2B95FF] hover:bg-[#1A73E8] text-white',
     cardBorderHover: 'hover:border-[#8B5CF6]/50'
   },
 
@@ -140,7 +140,7 @@ export const COURSE_LOGO_THEMES: CourseLogoTheme[] = [
     accentHex: '#10B981',
     headerBg: 'bg-[#10B981]/[0.06] dark:bg-white/[0.04]',
     headerBorder: 'border-[#161B26]/[0.06] dark:border-white/10',
-    pillBg: 'bg-[#141821] dark:bg-[#F5F2EC] text-white dark:text-[#161B26]',
+    pillBg: 'bg-[#059669] dark:bg-[#1E293B] text-white dark:text-[#F8FAFC] dark:border dark:border-white/15',
     iconBoxBorder: 'border-[#161B26]/10 dark:border-white/15',
     iconColor: 'text-[#047857] dark:text-[#34D399]',
     kickerColor: 'text-[#047857] dark:text-[#34D399]',
@@ -150,7 +150,7 @@ export const COURSE_LOGO_THEMES: CourseLogoTheme[] = [
     hoursBg: 'bg-white/75 dark:bg-white/[0.06] border-[#161B26]/10 dark:border-white/10 text-[#161B26] dark:text-[#F8FAFC]',
     hoursIconColor: 'text-[#10B981]',
     checkBg: 'bg-[#10B981]/15 text-[#047857] dark:text-[#34D399]',
-    buttonBg: 'bg-[#141821] hover:bg-[#1E293B] dark:bg-[#F5F2EC] dark:hover:bg-white',
+    buttonBg: 'bg-[#2B95FF] hover:bg-[#1A73E8] text-white',
     cardBorderHover: 'hover:border-[#10B981]/50'
   },
 
@@ -172,7 +172,7 @@ export const COURSE_LOGO_THEMES: CourseLogoTheme[] = [
     hoursBg: 'bg-white/75 dark:bg-white/[0.06] border-[#161B26]/10 dark:border-white/10 text-[#161B26] dark:text-[#F8FAFC]',
     hoursIconColor: 'text-[#0284C7]',
     checkBg: 'bg-sky-500/15 text-[#0369A1] dark:text-[#38BDF8]',
-    buttonBg: 'bg-[#141821] hover:bg-[#1E293B] dark:bg-[#F5F2EC] dark:hover:bg-white',
+    buttonBg: 'bg-[#2B95FF] hover:bg-[#1A73E8] text-white',
     cardBorderHover: 'hover:border-[#2B95FF]/50'
   },
 
@@ -194,7 +194,7 @@ export const COURSE_LOGO_THEMES: CourseLogoTheme[] = [
     hoursBg: 'bg-white/75 dark:bg-white/[0.06] border-[#161B26]/10 dark:border-white/10 text-[#161B26] dark:text-[#F8FAFC]',
     hoursIconColor: 'text-[#6366F1]',
     checkBg: 'bg-indigo-500/15 text-[#4338CA] dark:text-[#818CF8]',
-    buttonBg: 'bg-[#141821] hover:bg-[#1E293B] dark:bg-[#F5F2EC] dark:hover:bg-white',
+    buttonBg: 'bg-[#2B95FF] hover:bg-[#1A73E8] text-white',
     cardBorderHover: 'hover:border-indigo-500/50'
   }
 ];

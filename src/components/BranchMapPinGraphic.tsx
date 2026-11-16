@@ -9,7 +9,7 @@ export const BranchMapPinGraphic: React.FC<BranchMapPinGraphicProps> = ({ branch
   return (
     <div className={`relative w-full h-full min-h-[120px] sm:min-h-[200px] flex items-center justify-center overflow-hidden select-none ${className}`}>
       {/* Background radial gradient & ambient bokeh lighting */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#1C2436] via-[#141821] to-[#0B0F17]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#DBEAFE] via-[#EFF6FF] to-[#E0F2FE] dark:from-[#1C2436] dark:via-[#141821] dark:to-[#0B0F17]" />
       
       {/* Subtle bokeh circles */}
       <div className="absolute top-4 left-6 w-16 h-16 rounded-full bg-[#2B95FF]/15 blur-xl pointer-events-none" />

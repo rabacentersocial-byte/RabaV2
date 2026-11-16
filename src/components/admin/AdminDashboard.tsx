@@ -669,16 +669,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       {!isSidebarExpanded && (
                         <span
                           role="tooltip"
-                          className="pointer-events-none opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-150 absolute top-1/2 -translate-y-1/2 start-[calc(100%+12px)] z-50 whitespace-nowrap px-3 py-1.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold shadow-xl flex items-center gap-2"
+                          className="pointer-events-none opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-150 absolute top-1/2 -translate-y-1/2 start-[calc(100%+12px)] z-50 whitespace-nowrap px-3 py-1.5 rounded-xl bg-white dark:bg-[#1E293B] text-[#161B26] dark:text-[#F8FAFC] border border-[#161B26]/10 dark:border-white/15 text-xs font-bold shadow-xl flex items-center gap-2"
                         >
                           <span>{label}</span>
                           {item.badge && !locked && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-white/15 dark:bg-slate-900/10 tabular-nums">
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-[#2B95FF]/12 text-[#1263D6] dark:bg-white/15 dark:text-white tabular-nums">
                               {item.badge}
                             </span>
                           )}
                           {locked && (
-                            <Lock className="w-3 h-3 text-amber-400 dark:text-amber-600" />
+                            <Lock className="w-3 h-3 text-amber-500 dark:text-amber-400" />
                           )}
                         </span>
                       )}
@@ -713,7 +713,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
                 <span
                   role="tooltip"
-                  className="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 absolute top-1/2 -translate-y-1/2 start-[calc(100%+12px)] z-50 whitespace-nowrap px-3 py-1.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold shadow-xl"
+                  className="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 absolute top-1/2 -translate-y-1/2 start-[calc(100%+12px)] z-50 whitespace-nowrap px-3 py-1.5 rounded-xl bg-white dark:bg-[#1E293B] text-[#161B26] dark:text-[#F8FAFC] border border-[#161B26]/10 dark:border-white/15 text-xs font-bold shadow-xl"
                 >
                   {isArabic ? `صلاحياتك: ${currentUser.roleTitleAr}` : currentUser.roleTitleEn}
                 </span>

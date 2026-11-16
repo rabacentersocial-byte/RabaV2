@@ -85,7 +85,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
       name: isArabic ? 'منصة إكس' : 'X (Twitter)',
       href: social.x || 'https://x.com/rabacenter',
       icon: XIcon,
-      hoverClass: 'hover:bg-slate-950 hover:text-white dark:hover:bg-white dark:hover:text-slate-950 border-slate-300 dark:border-white/15',
+      hoverClass: 'hover:bg-[#2B95FF] hover:text-white hover:border-[#2B95FF] border-slate-300 dark:border-white/15',
       badge: '@rabacenter'
     },
     {
@@ -101,7 +101,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
       name: isArabic ? 'تيك توك' : 'TikTok',
       href: social.tiktok || 'https://tiktok.com/@rabacenter',
       icon: TikTokIcon,
-      hoverClass: 'hover:bg-black hover:text-[#00F2FE] hover:border-slate-800 dark:hover:bg-slate-900 border-slate-300 dark:border-white/15',
+      hoverClass: 'hover:bg-[#2B95FF] hover:text-white hover:border-[#2B95FF] border-slate-300 dark:border-white/15',
       badge: '@rabacenter'
     },
     {
@@ -235,11 +235,11 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
                       setPwaModalTab(isIOS ? 'ios' : 'android');
                       setIsPwaModalOpen(true);
                     }}
-                    className="px-3.5 py-2 min-h-[36px] rounded-full bg-[#141821] hover:bg-[#2B95FF] text-white dark:bg-[#F5F2EC] dark:hover:bg-[#2B95FF] dark:text-[#141821] dark:hover:text-white text-xs font-black transition-all duration-200 cursor-pointer shadow-xs active:scale-95 flex items-center gap-1 shrink-0 group"
+                    className="px-3.5 py-2 min-h-[36px] rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white text-xs font-black transition-all duration-200 cursor-pointer shadow-xs active:scale-95 flex items-center gap-1 shrink-0 group"
                     title={isArabic ? 'تثبيت التطبيق' : 'Install App'}
                   >
                     <span>{isArabic ? 'تحميل' : 'Install'}</span>
-                    <Sparkles className="w-3 h-3 text-[#2B95FF] group-hover:text-white transition-colors" />
+                    <Sparkles className="w-3 h-3 text-white transition-colors" />
                   </button>
                 </div>
 
