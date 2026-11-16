@@ -59,7 +59,7 @@ export const SpecialistsSection: React.FC<SpecialistsSectionProps> = ({
   };
 
   return (
-    <section id="specialists" className="py-8 sm:py-12 md:py-20 relative overflow-hidden border-b border-slate-200/80 dark:border-white/10 bg-transparent transition-colors">
+    <section id="specialists" className="py-8 sm:py-12 md:py-20 relative overflow-hidden border-b border-[#161B26]/[0.08] dark:border-white/10 bg-transparent transition-colors">
       <DoctorCardSlider 
         specialists={specialists}
         onBookAppointment={handleBookFromDoctorSlider}

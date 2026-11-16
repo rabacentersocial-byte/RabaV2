@@ -26,10 +26,10 @@ export const StickyWhatsApp: React.FC = () => {
       {isOpen && (
         <div 
           id="whatsapp-chat-popup"
-          className="mb-3 w-80 sm:w-96 bg-white rounded-3xl shadow-2xl border border-emerald-100 overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200 card-3d"
+          className="mb-3 w-80 sm:w-96 glass-modal-dialog rounded-[28px] shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200 card-3d"
         >
           {/* Header */}
-          <div className="bg-gradient-to-r from-emerald-600 to-teal-700 p-4 text-white flex items-center justify-between">
+          <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 p-4 text-white flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center font-black text-white text-lg shadow-xs">
@@ -46,7 +46,7 @@ export const StickyWhatsApp: React.FC = () => {
             </div>
             <button 
               onClick={() => setIsOpen(false)}
-              className="p-1.5 hover:bg-white/15 rounded-xl text-emerald-100 hover:text-white transition-colors cursor-pointer"
+              className="p-1.5 hover:bg-white/15 rounded-full text-emerald-100 hover:text-white transition-colors cursor-pointer"
               aria-label="إغلاق المحادثة"
             >
               <X className="w-5 h-5" />
@@ -54,42 +54,42 @@ export const StickyWhatsApp: React.FC = () => {
           </div>
 
           {/* Body */}
-          <div className="p-4 bg-slate-50/80 space-y-3 max-h-80 overflow-y-auto text-right">
-            <div className="bg-white p-3.5 rounded-2xl rounded-tr-none shadow-sm border border-slate-200/70 text-xs text-slate-700 leading-relaxed">
-              <p className="font-bold text-emerald-800 mb-1">أهلاً بك في مركز خُطوة لرعاية وتأهيل الطفل 👋</p>
-              <p>يسعدنا تقديم الاستشارة المجانية والإجابة على أي استفسار حول جلسات العلاج الوظيفي، النطق والتخاطب، وباقات التأهيل للأطفال.</p>
-              <span className="text-[10px] text-slate-400 block text-left mt-1">الآن</span>
+          <div className="p-4 space-y-3 max-h-80 overflow-y-auto text-right">
+            <div className="liquid-glass-panel p-3.5 rounded-2xl rounded-tr-none text-xs text-[#161B26] dark:text-[#F8FAFC] leading-relaxed">
+              <p className="font-bold text-[#047857] dark:text-[#34D399] mb-1">أهلاً بك في مركز خُطوة لرعاية وتأهيل الطفل 👋</p>
+              <p className="text-[#4B5563] dark:text-[#94A3B8]">يسعدنا تقديم الاستشارة المجانية والإجابة على أي استفسار حول جلسات العلاج الوظيفي، النطق والتخاطب، وباقات التأهيل للأطفال.</p>
+              <span className="text-[10px] text-[#8B95A5] block text-left mt-1">الآن</span>
             </div>
 
             {/* Quick Questions Chips */}
             <div className="space-y-1.5 pt-1">
-              <span className="text-[11px] font-bold text-slate-500 block">اختر موضوع الاستفسار السريع:</span>
+              <span className="text-[11px] font-bold text-[#4B5563] dark:text-[#94A3B8] block">اختر موضوع الاستفسار السريع:</span>
               {quickTopics.map((topic, idx) => (
                 <button
                   key={idx}
                   onClick={() => handleSend(topic)}
-                  className="w-full text-right text-xs bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 p-2.5 rounded-xl border border-slate-200/80 hover:border-emerald-300 transition-all flex items-center justify-between group shadow-xs cursor-pointer"
+                  className="w-full text-right text-xs liquid-glass-panel hover:border-emerald-500/40 text-[#161B26] dark:text-[#F8FAFC] p-2.5 rounded-2xl transition-all flex items-center justify-between group cursor-pointer"
                 >
                   <span className="line-clamp-1">{topic}</span>
-                  <Send className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 group-hover:-translate-x-0.5 transition-transform" />
+                  <Send className="w-3.5 h-3.5 text-[#8B95A5] group-hover:text-emerald-600 group-hover:-translate-x-0.5 transition-transform" />
                 </button>
               ))}
             </div>
           </div>
 
           {/* Footer Input */}
-          <div className="p-3 bg-white border-t border-slate-100 flex items-center gap-2">
+          <div className="p-3 border-t border-[#161B26]/[0.08] dark:border-white/10 flex items-center gap-2">
             <input
               type="text"
               value={userMsg}
               onChange={(e) => setUserMsg(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               placeholder="اكتب استفسارك هنا..."
-              className="flex-1 text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 text-right"
+              className="flex-1 text-xs warm-pill-input rounded-full px-3.5 py-2.5 focus:outline-none text-right"
             />
             <button
               onClick={() => handleSend()}
-              className="p-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all shadow-md cursor-pointer"
+              className="p-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full transition-all shadow-md cursor-pointer"
               title="إرسال عبر واتساب"
               aria-label="إرسال عبر واتساب"
             >

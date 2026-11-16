@@ -380,14 +380,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Workspace Container matching elevated rounded dashboard shell */}
       <div className="flex-1 flex flex-col max-w-[1440px] w-full mx-auto p-3 sm:p-5 lg:p-6 gap-4 sm:gap-5 relative z-10">
         
-        {/* Top Navbar - Floating Rounded Capsule Header matching General Theme & Mockup */}
-        <header className="sticky top-3 z-40 liquid-glass-panel rounded-[24px] px-3.5 sm:px-5 py-2.5 sm:py-3 flex items-center justify-between gap-3">
+        {/* Top Navbar - Floating Rounded Capsule Header */}
+        <header className="sticky top-3 z-40 bg-white dark:bg-[#0F1E32] border border-slate-200/85 dark:border-white/10 shadow-[0_8px_24px_-8px_rgba(15,23,42,0.08)] dark:shadow-[0_12px_32px_-8px_rgba(0,0,0,0.45)] rounded-[24px] px-3.5 sm:px-5 py-2.5 sm:py-3 flex items-center justify-between gap-3">
           
           {/* Start Zone: Mobile Menu Toggle + Raba Logo & Dashboard Title */}
           <div className="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden w-10 h-10 rounded-full liquid-glass-btn flex items-center justify-center text-slate-600 dark:text-slate-300 shrink-0"
+              className="lg:hidden w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-white/10 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors cursor-pointer shrink-0"
               aria-label="Toggle admin navigation menu"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5 text-[#2E86EB]" /> : <Menu className="w-5 h-5" />}
@@ -424,7 +424,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <div className="relative">
               <button
                 onClick={() => setIsSwitchUserDropdownOpen(!isSwitchUserDropdownOpen)}
-                className="flex items-center gap-2 p-1 sm:ps-1.5 sm:pe-3 sm:py-1.5 rounded-full liquid-glass-pill text-xs cursor-pointer"
+                className="flex items-center gap-2 p-1 sm:ps-1.5 sm:pe-3 sm:py-1.5 rounded-full bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-white/10 transition-colors text-xs cursor-pointer"
                 title={isArabic ? 'تبديل المستخدم النشط لتجربة الصلاحيات' : 'Switch active user to test RBAC'}
               >
                 {currentUser?.avatar ? (
@@ -506,7 +506,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <button
               onClick={handleQuickSyncAll}
               disabled={isQuickSyncing}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full liquid-glass-pill text-[#2E86EB] dark:text-[#4A9CFF] text-xs font-bold cursor-pointer disabled:opacity-50 whitespace-nowrap shrink-0"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#2E86EB]/10 hover:bg-[#2E86EB]/15 border border-[#2E86EB]/25 text-[#2E86EB] dark:text-[#4A9CFF] text-xs font-bold transition-colors cursor-pointer disabled:opacity-50 whitespace-nowrap shrink-0"
               title={isArabic ? 'مزامنة وحفظ فوري لجميع البيانات والبطاقات في قواعد بيانات Cloud SQL والخادم' : 'Sync all data and images to Cloud SQL database & server'}
             >
               <Database className="w-3.5 h-3.5" />
@@ -517,7 +517,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="w-9 h-9 rounded-full liquid-glass-pill flex items-center justify-center text-slate-600 dark:text-slate-300 cursor-pointer shrink-0"
+              className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-white/10 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors cursor-pointer shrink-0"
               title={isDark ? 'الوضع المضيء' : 'الوضع الليلي'}
               aria-label="Toggle Dark/Light Mode"
             >
@@ -527,7 +527,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             {/* Language Toggle */}
             <button
               onClick={toggleLanguage}
-              className="h-9 px-3 rounded-full liquid-glass-pill text-slate-600 dark:text-slate-300 flex items-center gap-1.5 text-xs font-bold cursor-pointer shrink-0"
+              className="h-9 px-3 rounded-full bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-white/10 text-slate-600 dark:text-slate-300 flex items-center gap-1.5 text-xs font-bold transition-colors cursor-pointer shrink-0"
               title="تغيير اللغة"
               aria-label="Toggle Language"
             >

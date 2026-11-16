@@ -156,68 +156,68 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
     setIsDragging(false);
   };
 
-  // Color theme helper matching the user's reference screenshot
+  // Color theme helper harmonized with Raba Logo palette
   const getThemeStyles = (colorTheme: string, isPopular?: boolean) => {
     switch (colorTheme) {
       case 'rose':
         return {
-          headerBg: 'bg-[#E8F8F3] dark:bg-[#07241d]/70',
-          iconBg: 'bg-white/90 dark:bg-slate-800/90 text-[#0D6D54] dark:text-[#00E5BE]',
-          categoryText: 'text-[#0D6D54] dark:text-[#00E5BE]',
-          titleText: 'text-[#0B3B36] dark:text-emerald-100',
-          checkBg: 'bg-[#DEF3EC] dark:bg-emerald-950/60 text-[#0D6D54] dark:text-[#00E5BE]',
-          btnBg: 'bg-[#22C55E] hover:bg-[#16a34a] text-white',
-          icon: <Heart className="w-5 h-5 fill-emerald-500/20 stroke-[2.2]" />
+          headerBg: 'bg-[#8B5CF6]/[0.08] dark:bg-[#8B5CF6]/[0.08]',
+          iconBg: 'bg-white/85 dark:bg-white/10 text-[#6D28D9] dark:text-[#A78BFA]',
+          categoryText: 'text-[#6D28D9] dark:text-[#A78BFA]',
+          titleText: 'text-[#161B26] dark:text-[#F8FAFC]',
+          checkBg: 'bg-[#8B5CF6]/15 text-[#6D28D9] dark:text-[#A78BFA]',
+          btnBg: 'warm-pill-cta',
+          icon: <Heart className="w-5 h-5 fill-[#8B5CF6]/20 stroke-[2.2]" />
         };
       case 'purple':
         return {
-          headerBg: 'bg-blue-50/70 dark:bg-[#0c2340]',
-          iconBg: 'bg-white/90 dark:bg-slate-800/90 text-[#2E86EB]',
-          categoryText: 'text-[#2E86EB]',
-          titleText: 'text-[#1d74d8] dark:text-blue-200',
-          checkBg: 'bg-blue-50 dark:bg-blue-950/60 text-[#2E86EB]',
-          btnBg: 'bg-[#2E86EB] hover:bg-[#1d74d8] text-white',
-          icon: <Sparkles className="w-5 h-5 fill-blue-500/20 stroke-[2.2]" />
+          headerBg: 'bg-[#8B5CF6]/[0.06] dark:bg-white/[0.05]',
+          iconBg: 'bg-white/85 dark:bg-white/10 text-[#6D28D9] dark:text-[#A78BFA]',
+          categoryText: 'text-[#6D28D9] dark:text-[#A78BFA]',
+          titleText: 'text-[#161B26] dark:text-[#F8FAFC]',
+          checkBg: 'bg-[#8B5CF6]/15 text-[#6D28D9] dark:text-[#A78BFA]',
+          btnBg: 'warm-pill-cta',
+          icon: <Sparkles className="w-5 h-5 fill-[#8B5CF6]/20 stroke-[2.2]" />
         };
       case 'amber':
         return {
-          headerBg: 'bg-amber-50/70 dark:bg-[#2b1f06]',
-          iconBg: 'bg-white/90 dark:bg-slate-800/90 text-amber-700 dark:text-[#FFD23F]',
-          categoryText: 'text-amber-800 dark:text-[#FFD23F]',
-          titleText: 'text-amber-900 dark:text-amber-200',
-          checkBg: 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-[#FFD23F]',
-          btnBg: 'bg-[#FFD23F] hover:bg-[#f5c724] text-slate-950 font-black',
+          headerBg: 'bg-[#F59E0B]/[0.08] dark:bg-[#F59E0B]/[0.06]',
+          iconBg: 'bg-white/85 dark:bg-white/10 text-[#B45309] dark:text-[#FBBF24]',
+          categoryText: 'text-[#B45309] dark:text-[#FBBF24]',
+          titleText: 'text-[#161B26] dark:text-[#F8FAFC]',
+          checkBg: 'bg-[#F59E0B]/15 text-[#B45309] dark:text-[#FBBF24]',
+          btnBg: 'warm-pill-cta',
           icon: <Brain className="w-5 h-5 stroke-[2.2]" />
         };
       case 'sky':
         return {
-          headerBg: 'bg-blue-50/60 dark:bg-[#0b1f38]',
-          iconBg: 'bg-white/90 dark:bg-slate-800/90 text-[#2E86EB]',
-          categoryText: 'text-[#2E86EB]',
-          titleText: 'text-[#1d74d8] dark:text-sky-200',
-          checkBg: 'bg-blue-50 dark:bg-blue-950/60 text-[#2E86EB]',
-          btnBg: 'bg-[#2E86EB] hover:bg-[#1d74d8] text-white',
+          headerBg: 'bg-[#2B95FF]/[0.08] dark:bg-[#2B95FF]/[0.08]',
+          iconBg: 'bg-white/85 dark:bg-white/10 text-[#1263D6] dark:text-[#60AFFF]',
+          categoryText: 'text-[#1263D6] dark:text-[#60AFFF]',
+          titleText: 'text-[#161B26] dark:text-[#F8FAFC]',
+          checkBg: 'bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF]',
+          btnBg: 'warm-pill-cta',
           icon: <MessageSquare className="w-5 h-5 stroke-[2.2]" />
         };
       case 'teal':
         return {
-          headerBg: 'bg-emerald-50/70 dark:bg-[#082b16]',
-          iconBg: 'bg-white/90 dark:bg-slate-800/90 text-[#22C55E]',
-          categoryText: 'text-[#22C55E]',
-          titleText: 'text-[#16a34a] dark:text-emerald-200',
-          checkBg: 'bg-emerald-50 dark:bg-emerald-950/60 text-[#22C55E]',
-          btnBg: 'bg-[#22C55E] hover:bg-[#16a34a] text-white',
+          headerBg: 'bg-[#10B981]/[0.08] dark:bg-[#10B981]/[0.08]',
+          iconBg: 'bg-white/85 dark:bg-white/10 text-[#047857] dark:text-[#34D399]',
+          categoryText: 'text-[#047857] dark:text-[#34D399]',
+          titleText: 'text-[#161B26] dark:text-[#F8FAFC]',
+          checkBg: 'bg-[#10B981]/15 text-[#047857] dark:text-[#34D399]',
+          btnBg: 'warm-pill-cta',
           icon: <Activity className="w-5 h-5 stroke-[2.2]" />
         };
       case 'mint':
       default:
         return {
-          headerBg: 'bg-blue-50/70 dark:bg-[#0c2340]',
-          iconBg: 'bg-white/90 dark:bg-slate-800/90 text-[#2E86EB]',
-          categoryText: 'text-[#2E86EB]',
-          titleText: 'text-[#2E86EB] dark:text-white',
-          checkBg: 'bg-blue-50 dark:bg-blue-950/60 text-[#2E86EB]',
-          btnBg: 'bg-[#2E86EB] hover:bg-[#1d74d8] text-white',
+          headerBg: 'bg-[#10B981]/[0.08] dark:bg-[#10B981]/[0.06]',
+          iconBg: 'bg-white/85 dark:bg-white/10 text-[#047857] dark:text-[#34D399]',
+          categoryText: 'text-[#047857] dark:text-[#34D399]',
+          titleText: 'text-[#161B26] dark:text-[#F8FAFC]',
+          checkBg: 'bg-[#10B981]/15 text-[#047857] dark:text-[#34D399]',
+          btnBg: 'warm-pill-cta',
           icon: <ShieldCheck className="w-5 h-5 stroke-[2.2]" />
         };
     }
@@ -226,35 +226,35 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
   return (
     <section 
       id="packages" 
-      className="py-14 sm:py-20 relative overflow-hidden border-b border-slate-200/80 dark:border-white/10 bg-transparent transition-colors [content-visibility:auto] [contain-intrinsic-size:1px_600px]"
+      className="py-14 sm:py-20 relative overflow-hidden border-b border-[#161B26]/[0.06] dark:border-white/[0.08] bg-transparent transition-colors [content-visibility:auto] [contain-intrinsic-size:1px_600px]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* 1. Header Top Area: Eyebrow + Title & Subtitle on Left, Circular Arrows on Right */}
+        {/* 1. Header Top Area */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
           
           <div className={`max-w-2xl ${isArabic ? 'text-right' : 'text-left'}`}>
             
             {/* Small Uppercase Tracked Eyebrow */}
-            <span className="text-[#2E86EB] text-[11px] sm:text-xs font-black tracking-widest uppercase block mb-2">
+            <span className="text-[#1263D6] dark:text-[#60AFFF] text-[11px] sm:text-xs font-black tracking-widest uppercase block mb-2">
               {isArabic ? 'باقات مُصممة لاحتياجات طفلك' : 'TAILORED TO YOUR NEEDS'}
             </span>
 
             {/* Display Title with dot */}
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-none mb-3">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#161B26] dark:text-[#F8FAFC] tracking-tight leading-none mb-3">
               {isArabic ? (
                 <span>
-                  الباقات<span className="text-[#2E86EB]">.</span>
+                  الباقات<span className="text-[#2B95FF]">.</span>
                 </span>
               ) : (
                 <span>
-                  Packages<span className="text-[#2E86EB]">.</span>
+                  Packages<span className="text-[#2B95FF]">.</span>
                 </span>
               )}
             </h2>
 
             {/* Subtitle */}
-            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p className="text-sm sm:text-base text-[#4B5563] dark:text-[#94A3B8] leading-relaxed">
               {isArabic 
                 ? 'خطط رعاية وتأهيل متكاملة ومصممة بعناية — كل ما يحتاجه طفلك، بشفافية كاملة في الأسعار.'
                 : 'Bundled care plans designed for convenience — everything you need, priced transparently.'}
@@ -266,7 +266,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
             <button
               onClick={() => handleScroll('prev')}
               aria-label={isArabic ? 'الباقة السابقة' : 'Previous package'}
-              className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn flex items-center justify-center shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer text-slate-700 dark:text-slate-200"
+              className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn flex items-center justify-center shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer text-[#161B26] dark:text-[#F8FAFC]"
             >
               {isArabic ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
             </button>
@@ -274,7 +274,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
             <button
               onClick={() => handleScroll('next')}
               aria-label={isArabic ? 'الباقة التالية' : 'Next package'}
-              className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn flex items-center justify-center shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer text-slate-700 dark:text-slate-200"
+              className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn flex items-center justify-center shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer text-[#161B26] dark:text-[#F8FAFC]"
             >
               {isArabic ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
             </button>
@@ -292,7 +292,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-4 sm:px-5 py-2 sm:py-2.5 min-h-[38px] rounded-full text-xs sm:text-sm whitespace-nowrap transition-colors duration-200 font-bold cursor-pointer ${
                   isActive
-                    ? 'bg-[#2E86EB] text-white shadow-md shadow-blue-500/25 border-t border-white/50'
+                    ? 'warm-pill-cta shadow-md'
                     : 'liquid-glass-pill hover:scale-[1.02]'
                 }`}
               >
@@ -325,43 +325,43 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
             return (
               <div
                 key={pkg.id}
-                className={`w-[76vw] min-w-[255px] max-w-[295px] sm:w-[350px] md:w-[370px] lg:w-[385px] shrink-0 snap-start liquid-glass-card rounded-2xl sm:rounded-3xl overflow-hidden border shadow-xs hover:shadow-xl transition-shadow duration-300 flex flex-col justify-between relative group ${
+                className={`w-[76vw] min-w-[255px] max-w-[295px] sm:w-[350px] md:w-[370px] lg:w-[385px] shrink-0 snap-start liquid-glass-card rounded-[28px] overflow-hidden border shadow-xs hover:shadow-xl transition-shadow duration-300 flex flex-col justify-between relative group ${
                   isSummer 
-                    ? 'border-sky-400/60 dark:border-sky-500/40 ring-1 ring-sky-400/25' 
-                    : 'border-slate-200/90 dark:border-white/10'
+                    ? 'border-[#F59E0B]/55 ring-1 ring-[#F59E0B]/30' 
+                    : 'border-[#161B26]/[0.08] dark:border-white/[0.08]'
                 }`}
               >
                 {/* Decorative Slim Top Strip */}
-                <div className={`h-1 sm:h-1.5 w-full ${isSummer ? 'bg-gradient-to-r from-sky-500 via-cyan-500 to-blue-600' : 'bg-gradient-to-r from-[#0B3B36] to-[#0284C7]'}`} />
+                <div className={`h-1 sm:h-1.5 w-full ${isSummer ? 'bg-gradient-to-r from-[#F59E0B] to-[#D97706]' : 'bg-gradient-to-r from-[#2B95FF] via-[#10B981] to-[#8B5CF6]'}`} />
 
                 {/* Upper Header Section */}
-                <div className={`${isSummer ? 'bg-gradient-to-br from-sky-50/90 via-cyan-50/50 to-blue-50/30 dark:from-sky-950/40 dark:via-slate-900/90 dark:to-cyan-950/30' : theme.headerBg} p-3 sm:p-6 pb-2.5 sm:pb-4 transition-colors relative`}>
+                <div className={`${isSummer ? 'bg-[#F59E0B]/[0.10] dark:bg-[#F59E0B]/[0.08]' : theme.headerBg} p-3 sm:p-6 pb-2.5 sm:pb-4 transition-colors relative`}>
                   
                   {/* Top Row: Icon Container and Badges */}
                   <div className="flex items-center justify-between gap-2 mb-2 sm:mb-3">
                     
                     {/* Rounded Icon Box */}
-                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl ${isSummer ? 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-300/30' : theme.iconBg} shadow-2xs border border-white/60 dark:border-white/10 flex items-center justify-center shrink-0`}>
-                      {isSummer ? <Sun className="w-4 h-4 sm:w-5 sm:h-5 fill-sky-500/15 stroke-[2.2]" /> : theme.icon}
+                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl ${isSummer ? 'bg-[#F59E0B]/15 text-[#B45309] dark:text-[#FBBF24] border border-[#F59E0B]/30' : theme.iconBg} shadow-2xs border border-[#161B26]/[0.08] dark:border-white/10 flex items-center justify-center shrink-0`}>
+                      {isSummer ? <Sun className="w-4 h-4 sm:w-5 sm:h-5 fill-[#F59E0B]/15 stroke-[2.2]" /> : theme.icon}
                     </div>
 
                     {/* Badges Container */}
                     <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap justify-end">
                       {isSummer && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-gradient-to-r from-sky-600 via-cyan-600 to-blue-600 text-white shadow-2xs text-[9.5px] sm:text-xs font-black tracking-wide border border-white/30 select-none">
-                          <Sun className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-100 fill-sky-200/50 shrink-0" />
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-gradient-to-r from-[#F59E0B] to-[#D97706] text-white shadow-2xs text-[9.5px] sm:text-xs font-black tracking-wide border border-white/30 select-none">
+                          <Sun className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white shrink-0" />
                           <span>{isArabic ? 'باقات الصيف' : 'Summer Packages'}</span>
                         </span>
                       )}
 
                       {pkg.popular && isSummer && (
-                        <span className="bg-blue-600/15 text-blue-700 dark:text-blue-300 text-[9px] sm:text-[10px] font-black tracking-wider px-2 py-0.5 rounded-full shadow-2xs uppercase border border-blue-400/30">
+                        <span className="bg-[#F59E0B]/15 text-[#B45309] dark:text-[#FBBF24] text-[9px] sm:text-[10px] font-black tracking-wider px-2 py-0.5 rounded-full shadow-2xs uppercase border border-[#F59E0B]/30">
                           {isArabic ? 'عرض مميز' : 'SPECIAL OFFER'}
                         </span>
                       )}
 
                       {pkg.popular && !isSummer && (
-                        <span className="bg-[#2E86EB] text-white text-[9px] sm:text-[10px] font-black tracking-wider px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-2xs uppercase">
+                        <span className="bg-[#2B95FF] text-white text-[9px] sm:text-[10px] font-black tracking-wider px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-2xs uppercase">
                           {isArabic ? 'الأكثر طلباً' : 'MOST POPULAR'}
                         </span>
                       )}
@@ -370,38 +370,38 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                   </div>
 
                   {/* Category Tracked Label */}
-                  <span className={`${isSummer ? 'text-sky-700 dark:text-sky-400' : theme.categoryText} text-[9.5px] sm:text-[11px] font-black tracking-widest uppercase block mb-1 sm:mb-1.5`}>
+                  <span className={`${isSummer ? 'text-[#B45309] dark:text-[#FBBF24]' : theme.categoryText} text-[9.5px] sm:text-[11px] font-black tracking-widest uppercase block mb-1 sm:mb-1.5`}>
                     {isArabic 
                       ? (isSummer ? 'باقات الصيف المميزة' : (pkg.categoryCode || 'باقة علاجية متكاملة')) 
                       : (isSummer ? 'SUMMER SPECIAL' : (pkg.categoryCodeEn || 'PREVENTIVE CARE'))}
                   </span>
 
                   {/* Package Title */}
-                  <h3 className={`text-base sm:text-2xl font-black ${isSummer ? 'text-slate-900 dark:text-white' : theme.titleText} tracking-tight leading-snug min-h-[auto] sm:min-h-[54px] flex items-center`}>
+                  <h3 className={`text-base sm:text-2xl font-black ${isSummer ? 'text-[#161B26] dark:text-[#F8FAFC]' : theme.titleText} tracking-tight leading-snug min-h-[auto] sm:min-h-[54px] flex items-center`}>
                     {isArabic ? pkg.name : (pkg.nameEn || pkg.name)}
                   </h3>
 
                 </div>
 
                 {/* Lower Body Section */}
-                <div className="p-3 sm:p-6 pt-2.5 sm:pt-4 flex flex-col justify-between flex-1 bg-white dark:bg-[#111827] rounded-b-2xl sm:rounded-b-3xl">
+                <div className="p-3 sm:p-6 pt-2.5 sm:pt-4 flex flex-col justify-between flex-1 bg-transparent rounded-b-[28px]">
                   
                   <div>
                     {/* Price Row */}
                     <div className="flex items-baseline gap-1.5 sm:gap-2 mb-2 sm:mb-3 flex-wrap">
-                      <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                      <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#161B26] dark:text-[#F8FAFC] tracking-tight">
                         {pkg.price.toLocaleString()}
                       </span>
-                      <span className="text-xs sm:text-base font-black text-slate-700 dark:text-slate-300">
+                      <span className="text-xs sm:text-base font-black text-[#4B5563] dark:text-[#94A3B8]">
                         {isArabic ? 'ريال' : 'SAR'}
                       </span>
                       {pkg.originalPrice && (
                         <div className="flex items-center gap-1 ms-1">
-                          <span className="text-[11px] sm:text-sm line-through text-slate-600 dark:text-slate-300 font-semibold">
+                          <span className="text-[11px] sm:text-sm line-through text-[#8B95A5] dark:text-[#64748B] font-semibold">
                             {pkg.originalPrice.toLocaleString()} {isArabic ? 'ريال' : 'SAR'}
                           </span>
                           {savings > 0 && (
-                            <span className="text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
+                            <span className="text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded-full bg-[#10B981]/12 text-[#047857] dark:text-[#34D399] border border-[#10B981]/25">
                               {isArabic ? `وفر ${savings.toLocaleString()}` : `Save ${savings.toLocaleString()}`}
                             </span>
                           )}
@@ -409,30 +409,29 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                       )}
                     </div>
 
-                    {/* Duration / Offer Highlight: ٣ شهور + شهر مجاناً */}
+                    {/* Duration / Offer Highlight */}
                     <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
-                      <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 font-black text-[10.5px] sm:text-xs border border-emerald-500/30">
-                        <Gift className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full bg-[#2B95FF]/12 text-[#1263D6] dark:text-[#60AFFF] font-black text-[10.5px] sm:text-xs border border-[#2B95FF]/25">
+                        <Gift className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#2B95FF] shrink-0" />
                         <span>{isArabic ? (pkg.durationText || '٣ شهور + شهر مجاناً') : (pkg.durationTextEn || '3 Months + 1 Month Free')}</span>
                       </div>
 
-                      {/* If Card 3 or 4: مدة الجلسة ساعة / ساعتين */}
                       {pkg.sessionDurationText && (
-                        <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg sm:rounded-xl bg-sky-50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300 text-[10px] sm:text-xs font-bold border border-sky-200 dark:border-sky-800/40">
-                          <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-600 dark:text-sky-400 shrink-0" />
+                        <div className="inline-flex items-center gap-1 sm:gap-1.5 px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-full bg-white/75 dark:bg-white/[0.06] text-[#161B26] dark:text-[#F8FAFC] text-[10px] sm:text-xs font-bold border border-[#161B26]/[0.08] dark:border-white/10">
+                          <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#2B95FF] shrink-0" />
                           <span>{isArabic ? pkg.sessionDurationText : pkg.sessionDurationTextEn}</span>
                         </div>
                       )}
                     </div>
 
-                    {/* Disclaimer: الغياب غير معوض */}
-                    <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 font-medium mb-2 sm:mb-3">
-                      <AlertCircle className={`w-3 h-3 ${isSummer ? 'text-sky-600/80 dark:text-sky-400' : 'text-slate-500 dark:text-slate-400'} shrink-0`} />
+                    {/* Disclaimer */}
+                    <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-[#4B5563] dark:text-[#94A3B8] font-medium mb-2 sm:mb-3">
+                      <AlertCircle className={`w-3 h-3 text-[#F59E0B] shrink-0`} />
                       <span>{isArabic ? (pkg.disclaimerText || 'الغياب غير معوض') : (pkg.disclaimerTextEn || 'Absence is non-compensated')}</span>
                     </div>
 
                     {/* Short Description */}
-                    <p className="text-[11px] sm:text-xs md:text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-2.5 sm:mb-3.5 line-clamp-2">
+                    <p className="text-[11px] sm:text-xs md:text-sm text-[#4B5563] dark:text-[#94A3B8] leading-relaxed mb-2.5 sm:mb-3.5 line-clamp-2">
                       {isArabic ? pkg.tagline : (pkg.taglineEn || pkg.tagline)}
                     </p>
 
@@ -440,26 +439,26 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                     <div className="space-y-1 sm:space-y-2 mb-2.5 sm:mb-4">
                       {((isArabic ? pkg.features : (pkg.featuresEn || pkg.features)) || []).slice(0, 2).map((feat, idx) => (
                         <div key={idx} className="flex items-center gap-1.5 sm:gap-2">
-                          <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full ${isSummer ? 'bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-400' : theme.checkBg} flex items-center justify-center shrink-0`}>
+                          <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full ${theme.checkBg} flex items-center justify-center shrink-0`}>
                             <Check className="w-2.5 h-2.5 stroke-[3]" />
                           </div>
-                          <span className="text-[10.5px] sm:text-xs md:text-sm text-slate-700 dark:text-slate-200 font-medium leading-snug truncate">
+                          <span className="text-[10.5px] sm:text-xs md:text-sm text-[#161B26] dark:text-[#F8FAFC] font-medium leading-snug truncate">
                             {feat}
                           </span>
                         </div>
                       ))}
                       {((isArabic ? pkg.features : (pkg.featuresEn || pkg.features)) || []).slice(2, 4).map((feat, idx) => (
                         <div key={idx + 2} className="hidden sm:flex items-center gap-2">
-                          <div className={`w-4 h-4 rounded-full ${isSummer ? 'bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-400' : theme.checkBg} flex items-center justify-center shrink-0`}>
+                          <div className={`w-4 h-4 rounded-full ${theme.checkBg} flex items-center justify-center shrink-0`}>
                             <Check className="w-2.5 h-2.5 stroke-[3]" />
                           </div>
-                          <span className="text-xs md:text-sm text-slate-700 dark:text-slate-200 font-medium leading-snug truncate">
+                          <span className="text-xs md:text-sm text-[#161B26] dark:text-[#F8FAFC] font-medium leading-snug truncate">
                             {feat}
                           </span>
                         </div>
                       ))}
                       {(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).length > 2 && (
-                        <span className={`text-[9.5px] font-bold ${isSummer ? 'text-sky-700 dark:text-sky-400' : 'text-teal-700 dark:text-teal-400'} block sm:hidden`}>
+                        <span className={`text-[9.5px] font-bold text-[#1263D6] dark:text-[#60AFFF] block sm:hidden`}>
                           {isArabic 
                             ? `+ ${(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).length - 2} مميزات إضافية معتمدة`
                             : `+ ${(isArabic ? pkg.features : (pkg.featuresEn || pkg.features)).length - 2} more features`}
@@ -468,12 +467,12 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                     </div>
                   </div>
 
-                  {/* Bottom Area: Installments Notice with Tamara & Emkan Logos - ONLY for Summer Packages */}
+                  {/* Bottom Area: Installments Notice with Tamara & Emkan Logos */}
                   <div>
                     {isSummer && (
-                      <div className="pt-2 sm:pt-3 border-t border-slate-100 dark:border-white/10 mb-2.5 sm:mb-3.5 bg-slate-50/80 dark:bg-[#0E1526] p-2 sm:p-2.5 rounded-xl border border-slate-200/70 dark:border-white/10">
+                      <div className="pt-2 sm:pt-3 border-t border-[#161B26]/[0.06] dark:border-white/[0.08] mb-2.5 sm:mb-3.5 bg-white/75 dark:bg-white/[0.05] p-2 sm:p-2.5 rounded-2xl border border-[#161B26]/[0.06] dark:border-white/[0.08]">
                         <div className="flex items-center justify-between gap-2">
-                          <span className="text-[10px] sm:text-xs font-bold text-slate-700 dark:text-slate-200 leading-tight">
+                          <span className="text-[10px] sm:text-xs font-bold text-[#161B26] dark:text-[#F8FAFC] leading-tight">
                             {isArabic ? 'متاح التقسيط :' : 'Installments Available:'}
                           </span>
                           
@@ -489,13 +488,13 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
                     <button
                       id={`book-package-${pkg.id}`}
                       onClick={() => onSelectPackage(pkg)}
-                      className={`w-full py-2.5 sm:py-3.5 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm transition-[transform,background-color,box-shadow] duration-200 shadow-sm active:scale-98 cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 ${
+                      className={`w-full py-2.5 sm:py-3.5 rounded-full font-black text-xs sm:text-sm transition-[transform,background-color,box-shadow] duration-200 shadow-sm active:scale-98 cursor-pointer flex items-center justify-center gap-1.5 sm:gap-2 ${
                         isSummer
-                          ? 'bg-gradient-to-r from-sky-600 via-cyan-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white shadow-md shadow-sky-600/20'
+                          ? 'bg-[#141821] hover:bg-[#2B95FF] text-white dark:bg-[#F5F2EC] dark:hover:bg-[#2B95FF] dark:text-[#141821] dark:hover:text-white shadow-md'
                           : theme.btnBg
                       }`}
                     >
-                      {isSummer && <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-sky-100 shrink-0" />}
+                      {isSummer && <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#F59E0B] shrink-0" />}
                       <span>{isArabic ? (isSummer ? 'حجز باقة الصيف' : 'حجز الباقة') : (isSummer ? 'Book Summer Package' : 'Book package')}</span>
                     </button>
 
@@ -510,7 +509,7 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
 
         {/* Mobile Swipe Guidance Hint */}
         {filteredPackages.length > 1 && (
-          <div className="mt-2.5 flex items-center justify-center gap-1.5 text-[10.5px] font-bold text-slate-600 dark:text-slate-300 sm:hidden">
+          <div className="mt-2.5 flex items-center justify-center gap-1.5 text-[10.5px] font-bold text-[#4B5563] dark:text-[#94A3B8] sm:hidden">
             <span>{isArabic ? 'اسحب للتنقل بين الباقات المتوفرة' : 'Swipe to explore all packages'}</span>
           </div>
         )}

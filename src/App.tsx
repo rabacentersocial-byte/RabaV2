@@ -966,7 +966,7 @@ export default function App() {
   if (isAdminOpen) {
     if (!adminSession) {
       return (
-        <Suspense fallback={<div className="min-h-screen bg-[#0D1B2A] flex items-center justify-center text-[#2E86EB] font-bold">جاري تحميل تسجيل الدخول...</div>}>
+        <Suspense fallback={<div className="min-h-screen bg-[#F5F2EC] dark:bg-[#0B0F17] flex items-center justify-center text-[#1263D6] dark:text-[#60AFFF] font-bold">جاري تحميل تسجيل الدخول...</div>}>
           <AdminLoginPage
             onLoginSuccess={(user) => {
               setAdminSession(user);
@@ -983,7 +983,7 @@ export default function App() {
     }
 
     return (
-      <Suspense fallback={<div className="min-h-screen bg-[#0D1B2A] flex items-center justify-center text-[#2E86EB] font-bold">جاري تحميل لوحة التحكم...</div>}>
+      <Suspense fallback={<div className="min-h-screen bg-[#F5F2EC] dark:bg-[#0B0F17] flex items-center justify-center text-[#1263D6] dark:text-[#60AFFF] font-bold">جاري تحميل لوحة التحكم...</div>}>
         <AdminDashboard
           appointments={appointments}
           onUpdateAppointments={setAppointments}
@@ -1029,7 +1029,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen relative flex flex-col font-sans text-slate-900 dark:text-white selection:bg-[#00E5BE] selection:text-slate-950 md:transition-colors md:duration-300 overflow-x-clip w-full max-w-[100vw] pb-16 md:pb-0" dir="rtl">
+    <div className="min-h-screen relative flex flex-col font-sans text-[#161B26] dark:text-[#F8FAFC] selection:bg-[#2B95FF] selection:text-white md:transition-colors md:duration-300 overflow-x-clip w-full max-w-[100vw] pb-16 md:pb-0" dir="rtl">
       
       {/* 1. Gentle Animated Background with floating pediatric shapes */}
       <AnimatedBackground />
@@ -1061,7 +1061,7 @@ export default function App() {
         
         {isSpecialistsPageOpen ? (
           /* Dedicated Specialists Page with Specialty Filter and Grid Format Display */
-          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-teal-500 font-bold">جاري تحميل دليل الأخصائيين...</div>}>
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-[#1263D6] dark:text-[#60AFFF] font-bold">جاري تحميل دليل الأخصائيين...</div>}>
             <SpecialistsDirectoryPage
               specialists={specialists}
               onBackToHome={handleBackToHome}
@@ -1071,7 +1071,7 @@ export default function App() {
           </Suspense>
         ) : isServicesPageOpen ? (
           /* Dedicated Comprehensive Services Directory Page (Rehab Programs, Courses, Packages & Pricing in Grid) */
-          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-teal-500 font-bold">جاري تحميل دليل الخدمات الشامل...</div>}>
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-[#1263D6] dark:text-[#60AFFF] font-bold">جاري تحميل دليل الخدمات الشامل...</div>}>
             <ServicesDirectoryPage
               onBackToHome={handleBackToHome}
               onSelectService={handleSelectServiceForBooking}
@@ -1082,7 +1082,7 @@ export default function App() {
           </Suspense>
         ) : isBranchesPageOpen ? (
           /* Dedicated Branches Directory Page with Cities Filter and Slider/Grid Switcher */
-          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-teal-500 font-bold">جاري تحميل دليل فروع مركز رابا...</div>}>
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-[#1263D6] dark:text-[#60AFFF] font-bold">جاري تحميل دليل فروع مركز رابا...</div>}>
             <BranchesDirectoryPage
               onBackToHome={handleBackToHome}
               onSelectBranch={(branch) => {
@@ -1097,7 +1097,7 @@ export default function App() {
           </Suspense>
         ) : isOffersPageOpen ? (
           /* Dedicated Offers & Activities Page (Moved from Homepage to Separate Page) */
-          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-teal-500 font-bold">جاري تحميل صفحة العروض والأنشطة...</div>}>
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-[#1263D6] dark:text-[#60AFFF] font-bold">جاري تحميل صفحة العروض والأنشطة...</div>}>
             <OffersDirectoryPage
               onBackToHome={handleBackToHome}
               onClaimOffer={handleClaimOffer}
@@ -1109,7 +1109,7 @@ export default function App() {
           </Suspense>
         ) : isBlogPageOpen ? (
           /* Dedicated Articles & Clinical Blog Directory Page */
-          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-teal-500 font-bold">جاري تحميل المدونة الطبية والدليل المعرفي...</div>}>
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-[#1263D6] dark:text-[#60AFFF] font-bold">جاري تحميل المدونة الطبية والدليل المعرفي...</div>}>
             <BlogDirectoryPage
               onBackToHome={handleBackToHome}
               onOpenBooking={(notes) => {

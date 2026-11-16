@@ -13,124 +13,124 @@ export interface SpecialistLogoTheme {
 }
 
 export const SPECIALIST_LOGO_THEMES: SpecialistLogoTheme[] = [
-  // 1. Raba Classic Teal (اللون الأساسي لشعار رابا)
+  // 1. Primary Sky Blue
   {
     id: 'teal',
-    nameAr: 'تيل رابا الأساسي',
-    nameEn: 'Raba Teal',
-    accentHex: '#0a3530',
-    topRim: 'bg-[#0a3530]',
-    specialtyBadge: 'text-[#0a3530] dark:text-[#2dd4bf] bg-[#edf7f4] dark:bg-teal-950/60 border border-[#bce8dc] dark:border-teal-800/40',
-    statNumber: 'text-[#0a3530] dark:text-[#2dd4bf]',
-    buttonBg: 'bg-[#0a3530] hover:bg-[#062420]',
-    cvHover: 'hover:text-[#0a3530] hover:border-[#0a3530] dark:hover:text-[#2dd4bf] dark:hover:border-[#2dd4bf]',
-    cardHover: 'hover:border-[#0a3530]/40 hover:shadow-[0_16px_40px_rgba(10,53,48,0.14)]',
-    titleHover: 'hover:text-[#0a3530] dark:hover:text-[#2dd4bf]'
+    nameAr: 'برتقالي رابا الشمسي',
+    nameEn: 'Solar Orange',
+    accentHex: '#2B95FF',
+    topRim: 'bg-[#2B95FF]',
+    specialtyBadge: 'text-[#1263D6] dark:text-[#60AFFF] bg-[#2B95FF]/10 dark:bg-[#2B95FF]/15 border border-[#2B95FF]/25 dark:border-[#2B95FF]/30',
+    statNumber: 'text-[#1263D6] dark:text-[#60AFFF]',
+    buttonBg: 'bg-[#141821] hover:bg-[#1E293B] dark:bg-[#F5F2EC] dark:hover:bg-white dark:text-[#161B26]',
+    cvHover: 'hover:text-[#1263D6] hover:border-[#2B95FF] dark:hover:text-[#60AFFF] dark:hover:border-[#60AFFF]',
+    cardHover: 'hover:border-[#2B95FF]/45 hover:shadow-[0_20px_44px_rgba(43,149,255,0.16)]',
+    titleHover: 'hover:text-[#1263D6] dark:hover:text-[#60AFFF]'
   },
 
-  // 2. Logo Sky Blue (قطعة اللوجو الزرقاء السماوية #008CD3)
+  // 2. Matte Obsidian / Warm Alabaster
   {
     id: 'blue',
-    nameAr: 'أزرق سماوي',
-    nameEn: 'Sky Blue',
-    accentHex: '#0284c7',
-    topRim: 'bg-[#0284c7]',
-    specialtyBadge: 'text-[#0369a1] dark:text-[#38bdf8] bg-[#f0f7fc] dark:bg-sky-950/60 border border-[#bfe3fb] dark:border-sky-800/40',
-    statNumber: 'text-[#0284c7] dark:text-[#38bdf8]',
-    buttonBg: 'bg-[#0284c7] hover:bg-[#0369a1]',
-    cvHover: 'hover:text-[#0284c7] hover:border-[#0284c7] dark:hover:text-[#38bdf8] dark:hover:border-[#38bdf8]',
-    cardHover: 'hover:border-[#0284c7]/40 hover:shadow-[0_16px_40px_rgba(2,132,199,0.14)]',
-    titleHover: 'hover:text-[#0284c7] dark:hover:text-[#38bdf8]'
+    nameAr: 'أوبسيديان دافئ',
+    nameEn: 'Matte Obsidian',
+    accentHex: '#141821',
+    topRim: 'bg-[#141821] dark:bg-[#F5F2EC]',
+    specialtyBadge: 'text-[#161B26] dark:text-[#F8FAFC] bg-[#161B26]/8 dark:bg-white/10 border border-[#161B26]/12 dark:border-white/15',
+    statNumber: 'text-[#161B26] dark:text-[#60AFFF]',
+    buttonBg: 'bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:opacity-95',
+    cvHover: 'hover:text-[#1263D6] hover:border-[#2B95FF] dark:hover:text-[#60AFFF] dark:hover:border-[#60AFFF]',
+    cardHover: 'hover:border-[#2B95FF]/45 hover:shadow-[0_20px_44px_rgba(22,27,38,0.16)]',
+    titleHover: 'hover:text-[#1263D6] dark:hover:text-[#60AFFF]'
   },
 
-  // 3. Logo Warm Amber / Gold (قطعة اللوجو الذهبية العنبرية #F8A51D)
+  // 3. Warm Gold
   {
     id: 'amber',
     nameAr: 'عنبري ذهبي',
     nameEn: 'Warm Amber',
-    accentHex: '#b45309',
-    topRim: 'bg-[#d97706]',
-    specialtyBadge: 'text-[#b45309] dark:text-[#fbbf24] bg-[#fef9ee] dark:bg-amber-950/60 border border-[#fde1a6] dark:border-amber-800/40',
-    statNumber: 'text-[#b45309] dark:text-[#fbbf24]',
-    buttonBg: 'bg-[#b45309] hover:bg-[#92400e]',
-    cvHover: 'hover:text-[#b45309] hover:border-[#b45309] dark:hover:text-[#fbbf24] dark:hover:border-[#fbbf24]',
-    cardHover: 'hover:border-[#b45309]/40 hover:shadow-[0_16px_40px_rgba(180,83,9,0.14)]',
-    titleHover: 'hover:text-[#b45309] dark:hover:text-[#fbbf24]'
+    accentHex: '#F59E0B',
+    topRim: 'bg-[#F59E0B]',
+    specialtyBadge: 'text-[#B45309] dark:text-[#FBBF24] bg-[#F59E0B]/10 dark:bg-amber-950/60 border border-[#F59E0B]/25 dark:border-amber-800/40',
+    statNumber: 'text-[#B45309] dark:text-[#FBBF24]',
+    buttonBg: 'bg-[#141821] hover:bg-[#1E293B] dark:bg-[#F5F2EC] dark:hover:bg-white dark:text-[#161B26]',
+    cvHover: 'hover:text-[#B45309] hover:border-[#F59E0B] dark:hover:text-[#FBBF24] dark:hover:border-[#FBBF24]',
+    cardHover: 'hover:border-[#F59E0B]/45 hover:shadow-[0_20px_44px_rgba(245,158,11,0.14)]',
+    titleHover: 'hover:text-[#B45309] dark:hover:text-[#FBBF24]'
   },
 
-  // 4. Logo Rose Magenta (قطعة اللوجو الفوشيا #E5007D)
+  // 4. Clinical Rose
   {
     id: 'rose',
-    nameAr: 'وردي فوشيا',
-    nameEn: 'Rose Magenta',
-    accentHex: '#be185d',
-    topRim: 'bg-[#db2777]',
-    specialtyBadge: 'text-[#be185d] dark:text-[#f472b6] bg-[#fdf2f8] dark:bg-pink-950/60 border border-[#fbcfe8] dark:border-pink-800/40',
-    statNumber: 'text-[#be185d] dark:text-[#f472b6]',
-    buttonBg: 'bg-[#be185d] hover:bg-[#9d174d]',
-    cvHover: 'hover:text-[#be185d] hover:border-[#be185d] dark:hover:text-[#f472b6] dark:hover:border-[#f472b6]',
-    cardHover: 'hover:border-[#be185d]/40 hover:shadow-[0_16px_40px_rgba(190,24,93,0.14)]',
-    titleHover: 'hover:text-[#be185d] dark:hover:text-[#f472b6]'
+    nameAr: 'جمر دافئ',
+    nameEn: 'Deep Ember',
+    accentHex: '#E11D48',
+    topRim: 'bg-[#E11D48]',
+    specialtyBadge: 'text-[#BE123C] dark:text-[#FB7185] bg-rose-500/10 dark:bg-rose-500/15 border border-rose-500/25 dark:border-rose-500/30',
+    statNumber: 'text-[#BE123C] dark:text-[#FB7185]',
+    buttonBg: 'bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:opacity-95',
+    cvHover: 'hover:text-[#BE123C] hover:border-[#E11D48] dark:hover:text-[#FB7185] dark:hover:border-[#FB7185]',
+    cardHover: 'hover:border-rose-500/45 hover:shadow-[0_20px_44px_rgba(225,29,72,0.16)]',
+    titleHover: 'hover:text-[#BE123C] dark:hover:text-[#FB7185]'
   },
 
-  // 5. Royal Purple / Violet (ألوان التأهيل والتواصل اللغوي #8B5CF6)
+  // 5. Vibrant Violet
   {
     id: 'purple',
-    nameAr: 'بنفسجي ملكي',
-    nameEn: 'Royal Purple',
-    accentHex: '#6d28d9',
-    topRim: 'bg-[#7c3aed]',
-    specialtyBadge: 'text-[#6d28d9] dark:text-[#a78bfa] bg-[#f5f3ff] dark:bg-purple-950/60 border border-[#ddd6fe] dark:border-purple-800/40',
-    statNumber: 'text-[#6d28d9] dark:text-[#a78bfa]',
-    buttonBg: 'bg-[#6d28d9] hover:bg-[#5b21b6]',
-    cvHover: 'hover:text-[#6d28d9] hover:border-[#6d28d9] dark:hover:text-[#a78bfa] dark:hover:border-[#a78bfa]',
-    cardHover: 'hover:border-[#6d28d9]/40 hover:shadow-[0_16px_40px_rgba(109,40,217,0.14)]',
-    titleHover: 'hover:text-[#6d28d9] dark:hover:text-[#a78bfa]'
+    nameAr: 'برونز رملي',
+    nameEn: 'Warm Bronze',
+    accentHex: '#8B5CF6',
+    topRim: 'bg-[#8B5CF6]',
+    specialtyBadge: 'text-[#6D28D9] dark:text-[#A78BFA] bg-[#8B5CF6]/10 dark:bg-[#8B5CF6]/20 border border-[#8B5CF6]/25 dark:border-[#8B5CF6]/35',
+    statNumber: 'text-[#6D28D9] dark:text-[#A78BFA]',
+    buttonBg: 'bg-[#141821] hover:bg-[#1E293B] dark:bg-[#F5F2EC] dark:hover:bg-white dark:text-[#161B26]',
+    cvHover: 'hover:text-[#6D28D9] hover:border-[#8B5CF6] dark:hover:text-[#A78BFA] dark:hover:border-[#A78BFA]',
+    cardHover: 'hover:border-[#8B5CF6]/55 hover:shadow-[0_20px_44px_rgba(139,92,246,0.18)]',
+    titleHover: 'hover:text-[#6D28D9] dark:hover:text-[#A78BFA]'
   },
 
-  // 6. Logo Emerald Green (قطعة اللوجو الخضراء الزمردية #00B050)
+  // 6. Organic Emerald
   {
     id: 'emerald',
-    nameAr: 'أخضر زمردي',
-    nameEn: 'Emerald Green',
-    accentHex: '#15803d',
-    topRim: 'bg-[#16a34a]',
-    specialtyBadge: 'text-[#15803d] dark:text-[#4ade80] bg-[#f0fdf4] dark:bg-emerald-950/60 border border-[#bbf7d0] dark:border-emerald-800/40',
-    statNumber: 'text-[#15803d] dark:text-[#4ade80]',
-    buttonBg: 'bg-[#15803d] hover:bg-[#166534]',
-    cvHover: 'hover:text-[#15803d] hover:border-[#15803d] dark:hover:text-[#4ade80] dark:hover:border-[#4ade80]',
-    cardHover: 'hover:border-[#15803d]/40 hover:shadow-[0_16px_40px_rgba(21,128,61,0.14)]',
-    titleHover: 'hover:text-[#15803d] dark:hover:text-[#4ade80]'
+    nameAr: 'أخضر عضوي',
+    nameEn: 'Organic Emerald',
+    accentHex: '#10B981',
+    topRim: 'bg-[#10B981]',
+    specialtyBadge: 'text-[#047857] dark:text-[#34D399] bg-[#10B981]/10 dark:bg-emerald-950/60 border border-[#10B981]/25 dark:border-emerald-800/40',
+    statNumber: 'text-[#047857] dark:text-[#34D399]',
+    buttonBg: 'bg-[#141821] hover:bg-[#1E293B] dark:bg-[#F5F2EC] dark:hover:bg-white dark:text-[#161B26]',
+    cvHover: 'hover:text-[#047857] hover:border-[#10B981] dark:hover:text-[#34D399] dark:hover:border-[#34D399]',
+    cardHover: 'hover:border-[#10B981]/45 hover:shadow-[0_20px_44px_rgba(16,185,129,0.14)]',
+    titleHover: 'hover:text-[#047857] dark:hover:text-[#34D399]'
   },
 
-  // 7. Turquoise Cyan (فيروزي رابا المميز #00E5BE / #0F766E)
+  // 7. Azure Cyan
   {
     id: 'cyan',
-    nameAr: 'فيروزي رابا',
-    nameEn: 'Turquoise Cyan',
-    accentHex: '#0f766e',
-    topRim: 'bg-[#0d9488]',
-    specialtyBadge: 'text-[#0f766e] dark:text-[#2dd4bf] bg-[#ecfeff] dark:bg-teal-950/60 border border-[#99f6e4] dark:border-teal-800/40',
-    statNumber: 'text-[#0f766e] dark:text-[#2dd4bf]',
-    buttonBg: 'bg-[#0f766e] hover:bg-[#115e59]',
-    cvHover: 'hover:text-[#0f766e] hover:border-[#0f766e] dark:hover:text-[#2dd4bf] dark:hover:border-[#2dd4bf]',
-    cardHover: 'hover:border-[#0f766e]/40 hover:shadow-[0_16px_40px_rgba(15,118,110,0.14)]',
-    titleHover: 'hover:text-[#0f766e] dark:hover:text-[#2dd4bf]'
+    nameAr: 'مشمشي متوهج',
+    nameEn: 'Solar Apricot',
+    accentHex: '#0284C7',
+    topRim: 'bg-[#0284C7]',
+    specialtyBadge: 'text-[#0369A1] dark:text-[#38BDF8] bg-sky-500/10 dark:bg-sky-500/15 border border-sky-500/30 dark:border-sky-500/30',
+    statNumber: 'text-[#0369A1] dark:text-[#38BDF8]',
+    buttonBg: 'bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:opacity-95',
+    cvHover: 'hover:text-[#0369A1] hover:border-[#0284C7] dark:hover:text-[#38BDF8] dark:hover:border-[#38BDF8]',
+    cardHover: 'hover:border-sky-500/45 hover:shadow-[0_20px_44px_rgba(2,132,199,0.16)]',
+    titleHover: 'hover:text-[#0369A1] dark:hover:text-[#38BDF8]'
   },
 
-  // 8. Sunset Coral / Orange (برتقالي مرجاني دافئ #EA580C)
+  // 8. Royal Indigo
   {
     id: 'coral',
     nameAr: 'برتقالي مرجاني',
     nameEn: 'Sunset Coral',
-    accentHex: '#c2410c',
-    topRim: 'bg-[#ea580c]',
-    specialtyBadge: 'text-[#c2410c] dark:text-[#fb923c] bg-[#fff7ed] dark:bg-orange-950/60 border border-[#fed7aa] dark:border-orange-800/40',
-    statNumber: 'text-[#c2410c] dark:text-[#fb923c]',
-    buttonBg: 'bg-[#c2410c] hover:bg-[#9a3412]',
-    cvHover: 'hover:text-[#c2410c] hover:border-[#c2410c] dark:hover:text-[#fb923c] dark:hover:border-[#fb923c]',
-    cardHover: 'hover:border-[#c2410c]/40 hover:shadow-[0_16px_40px_rgba(194,65,12,0.14)]',
-    titleHover: 'hover:text-[#c2410c] dark:hover:text-[#fb923c]'
+    accentHex: '#6366F1',
+    topRim: 'bg-[#6366F1]',
+    specialtyBadge: 'text-[#4338CA] dark:text-[#818CF8] bg-indigo-500/10 dark:bg-indigo-950/60 border border-indigo-500/25 dark:border-indigo-800/40',
+    statNumber: 'text-[#4338CA] dark:text-[#818CF8]',
+    buttonBg: 'bg-[#141821] hover:bg-[#1E293B] dark:bg-[#F5F2EC] dark:hover:bg-white dark:text-[#161B26]',
+    cvHover: 'hover:text-[#4338CA] hover:border-[#6366F1] dark:hover:text-[#818CF8] dark:hover:border-[#818CF8]',
+    cardHover: 'hover:border-[#6366F1]/45 hover:shadow-[0_20px_44px_rgba(99,102,241,0.14)]',
+    titleHover: 'hover:text-[#4338CA] dark:hover:text-[#818CF8]'
   }
 ];
 

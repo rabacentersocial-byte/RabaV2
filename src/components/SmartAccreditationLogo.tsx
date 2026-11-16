@@ -110,7 +110,7 @@ export const SmartAccreditationLogo: React.FC<SmartAccreditationLogoProps> = ({
   // so the black background becomes an intentional, prestigious medallion rather than an ugly cutout
   if (tone === 'dark') {
     return (
-      <div className="w-full h-full flex items-center justify-center p-2 rounded-2xl bg-gradient-to-br from-[#09141D] via-[#0E1E2C] to-[#060D14] border border-slate-700/60 dark:border-white/15 shadow-sm group-hover:shadow-md group-hover:border-[#00E5BE]/40 transition-all duration-300 relative overflow-hidden">
+      <div className="w-full h-full flex items-center justify-center p-2 rounded-2xl bg-gradient-to-br from-[#161C2A] via-[#1C2436] to-[#0B0F17] border border-white/15 shadow-sm group-hover:shadow-md group-hover:border-[#2B95FF]/45 transition-all duration-300 relative overflow-hidden">
         <img
           src={effectiveSrc}
           alt={alt}
@@ -133,7 +133,7 @@ export const SmartAccreditationLogo: React.FC<SmartAccreditationLogoProps> = ({
   // In dark mode: encapsulate in a clean, high-contrast white pod with rounded corners
   if (tone === 'light') {
     return (
-      <div className="w-full h-full flex items-center justify-center p-2 rounded-2xl bg-white/95 dark:bg-white border border-slate-100 dark:border-white/20 shadow-2xs group-hover:shadow-md transition-all duration-300">
+      <div className="w-full h-full flex items-center justify-center p-2 rounded-2xl bg-white/95 dark:bg-white border border-white/80 dark:border-white/20 shadow-2xs group-hover:shadow-md transition-all duration-300">
         <img
           src={effectiveSrc}
           alt={alt}

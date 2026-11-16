@@ -33,140 +33,140 @@ export interface SpecialistLogoTheme {
 }
 
 export const SPECIALIST_LOGO_THEMES: SpecialistLogoTheme[] = [
-  // 1. Primary #2E86EB (Electric Medical Blue) - اللون الأساسي المعتمد
+  // 1. Primary Sky Blue (#2B95FF)
   {
     id: 'blue',
-    nameAr: 'أزرق رابا الأساسي',
-    nameEn: 'Primary Medical Blue',
-    accentHex: '#2E86EB',
-    cardBorderHover: 'border-blue-200 dark:border-blue-950/70 hover:border-[#2E86EB]/60 hover:shadow-[0_16px_36px_rgba(46,134,235,0.18)]',
-    topAccentBar: 'bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#60a5fa]',
-    photoBg: 'bg-blue-50/60 dark:bg-[#0c1f38]',
-    specialtyBadge: 'bg-blue-50 dark:bg-blue-950/60 text-[#2E86EB] dark:text-[#60a5fa] border border-blue-200 dark:border-blue-800/40',
-    expMetricColor: 'text-[#2E86EB] dark:text-[#60a5fa]',
-    bookButton: 'bg-[#2E86EB] hover:bg-[#1d74d8] text-white shadow-xs hover:shadow-md active:scale-95',
-    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-[#2E86EB] hover:border-[#2E86EB] dark:hover:text-[#60a5fa] dark:hover:border-[#60a5fa]',
-    availableDot: 'bg-[#2E86EB]',
-    availableText: 'text-[#2E86EB] dark:text-[#60a5fa]'
+    nameAr: 'برتقالي رابا الشمسي',
+    nameEn: 'Primary Solar Orange',
+    accentHex: '#2B95FF',
+    cardBorderHover: 'border-white/70 dark:border-white/10 hover:border-[#2B95FF]/55 hover:shadow-[0_20px_44px_-12px_rgba(43,149,255,0.22)]',
+    topAccentBar: 'bg-gradient-to-r from-[#60AFFF] via-[#2B95FF] to-[#1A73E8]',
+    photoBg: 'bg-[#F5F2EC]/80 dark:bg-[#161C2A]',
+    specialtyBadge: 'bg-[#2B95FF]/10 dark:bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF] border border-[#2B95FF]/25 dark:border-[#2B95FF]/30',
+    expMetricColor: 'text-[#1263D6] dark:text-[#60AFFF]',
+    bookButton: 'warm-pill-cta shadow-xs hover:shadow-md active:scale-95',
+    cvButton: 'border-[#161B26]/10 dark:border-white/15 bg-white/60 dark:bg-white/[0.06] text-[#161B26] dark:text-[#F8FAFC] hover:text-[#1263D6] hover:border-[#2B95FF] dark:hover:text-[#60AFFF] dark:hover:border-[#60AFFF]',
+    availableDot: 'bg-[#2B95FF]',
+    availableText: 'text-[#1263D6] dark:text-[#60AFFF]'
   },
 
-  // 2. Secondary #FFD23F (Warm Gold / Saffron) - اللون الثانوي
+  // 2. Warm Gold (#F59E0B)
   {
     id: 'amber',
     nameAr: 'ذهبي عنبري',
-    nameEn: 'Secondary Warm Gold',
-    accentHex: '#FFD23F',
-    cardBorderHover: 'border-amber-200 dark:border-amber-950/70 hover:border-[#FFD23F]/60 hover:shadow-[0_16px_36px_rgba(255,210,63,0.18)]',
-    topAccentBar: 'bg-gradient-to-r from-[#FFD23F] via-[#FBBF24] to-[#fde047]',
-    photoBg: 'bg-amber-50/60 dark:bg-[#2b1f06]',
-    specialtyBadge: 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-[#FFD23F] border border-amber-200 dark:border-amber-800/40',
-    expMetricColor: 'text-amber-700 dark:text-[#FFD23F]',
-    bookButton: 'bg-[#FFD23F] hover:bg-[#f5c724] text-slate-950 font-black shadow-xs hover:shadow-md active:scale-95',
-    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-amber-700 hover:border-[#FFD23F] dark:hover:text-[#FFD23F] dark:hover:border-[#FFD23F]',
-    availableDot: 'bg-[#FFD23F]',
-    availableText: 'text-amber-800 dark:text-[#FFD23F]'
+    nameEn: 'Secondary Warm Amber',
+    accentHex: '#F59E0B',
+    cardBorderHover: 'border-white/70 dark:border-white/10 hover:border-[#F59E0B]/50 hover:shadow-[0_20px_44px_-12px_rgba(245,158,11,0.20)]',
+    topAccentBar: 'bg-gradient-to-r from-[#FBBF24] via-[#F59E0B] to-[#D97706]',
+    photoBg: 'bg-[#F5F2EC]/80 dark:bg-[#161C2A]',
+    specialtyBadge: 'bg-[#F59E0B]/10 dark:bg-[#F59E0B]/15 text-[#B45309] dark:text-[#FBBF24] border border-[#F59E0B]/25 dark:border-[#FBBF24]/25',
+    expMetricColor: 'text-[#B45309] dark:text-[#FBBF24]',
+    bookButton: 'bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:opacity-95 text-white font-black shadow-xs hover:shadow-md active:scale-95',
+    cvButton: 'border-[#161B26]/10 dark:border-white/15 bg-white/60 dark:bg-white/[0.06] text-[#161B26] dark:text-[#F8FAFC] hover:text-[#B45309] hover:border-[#F59E0B] dark:hover:text-[#FBBF24] dark:hover:border-[#FBBF24]',
+    availableDot: 'bg-[#F59E0B]',
+    availableText: 'text-[#B45309] dark:text-[#FBBF24]'
   },
 
-  // 3. Tertiary #22C55E (Vivid Emerald Green) - لون النمو والتعافي الصحي
+  // 3. Organic Emerald (#10B981)
   {
     id: 'emerald',
-    nameAr: 'أخضر زمردي',
-    nameEn: 'Tertiary Emerald Green',
-    accentHex: '#22C55E',
-    cardBorderHover: 'border-emerald-200 dark:border-emerald-950/70 hover:border-[#22C55E]/60 hover:shadow-[0_16px_36px_rgba(34,197,94,0.18)]',
-    topAccentBar: 'bg-gradient-to-r from-[#22C55E] via-[#16a34a] to-[#4ade80]',
-    photoBg: 'bg-emerald-50/60 dark:bg-[#072412]',
-    specialtyBadge: 'bg-emerald-50 dark:bg-emerald-950/60 text-[#15803d] dark:text-[#4ade80] border border-emerald-200 dark:border-emerald-800/40',
-    expMetricColor: 'text-[#15803d] dark:text-[#4ade80]',
-    bookButton: 'bg-[#22C55E] hover:bg-[#16a34a] text-white shadow-xs hover:shadow-md active:scale-95',
-    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-[#22C55E] hover:border-[#22C55E] dark:hover:text-[#4ade80] dark:hover:border-[#4ade80]',
-    availableDot: 'bg-[#22C55E]',
-    availableText: 'text-[#15803d] dark:text-[#4ade80]'
+    nameAr: 'أخضر عضوي',
+    nameEn: 'Organic Emerald',
+    accentHex: '#10B981',
+    cardBorderHover: 'border-white/70 dark:border-white/10 hover:border-[#10B981]/50 hover:shadow-[0_20px_44px_-12px_rgba(16,185,129,0.18)]',
+    topAccentBar: 'bg-gradient-to-r from-[#34D399] via-[#10B981] to-[#059669]',
+    photoBg: 'bg-[#F5F2EC]/80 dark:bg-[#161C2A]',
+    specialtyBadge: 'bg-[#10B981]/10 dark:bg-[#10B981]/15 text-[#047857] dark:text-[#34D399] border border-[#10B981]/25 dark:border-[#34D399]/25',
+    expMetricColor: 'text-[#047857] dark:text-[#34D399]',
+    bookButton: 'warm-pill-cta shadow-xs hover:shadow-md active:scale-95',
+    cvButton: 'border-[#161B26]/10 dark:border-white/15 bg-white/60 dark:bg-white/[0.06] text-[#161B26] dark:text-[#F8FAFC] hover:text-[#047857] hover:border-[#10B981] dark:hover:text-[#34D399] dark:hover:border-[#34D399]',
+    availableDot: 'bg-[#10B981]',
+    availableText: 'text-[#047857] dark:text-[#34D399]'
   },
 
-  // 4. Accent #FF2D9B (Neon Magenta / Rose) - لون التميز والنشاط
+  // 4. Rose Clinical (#E11D48)
   {
     id: 'rose',
-    nameAr: 'وردي فوشيا',
-    nameEn: 'Accent Neon Magenta',
-    accentHex: '#FF2D9B',
-    cardBorderHover: 'border-pink-200 dark:border-pink-950/70 hover:border-[#FF2D9B]/60 hover:shadow-[0_16px_36px_rgba(255,45,155,0.18)]',
-    topAccentBar: 'bg-gradient-to-r from-[#FF2D9B] via-[#f43f5e] to-[#fb7185]',
-    photoBg: 'bg-pink-50/60 dark:bg-[#2b0c1e]',
-    specialtyBadge: 'bg-pink-50 dark:bg-pink-950/60 text-[#be185d] dark:text-[#f472b6] border border-pink-200 dark:border-pink-800/40',
-    expMetricColor: 'text-[#be185d] dark:text-[#f472b6]',
-    bookButton: 'bg-[#FF2D9B] hover:bg-[#e01980] text-white shadow-xs hover:shadow-md active:scale-95',
-    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-[#FF2D9B] hover:border-[#FF2D9B] dark:hover:text-[#f472b6] dark:hover:border-[#f472b6]',
-    availableDot: 'bg-[#FF2D9B]',
-    availableText: 'text-[#be185d] dark:text-[#f472b6]'
+    nameAr: 'مرجاني متوهج',
+    nameEn: 'Deep Ember Coral',
+    accentHex: '#E11D48',
+    cardBorderHover: 'border-white/70 dark:border-white/10 hover:border-rose-500/55 hover:shadow-[0_20px_44px_-12px_rgba(225,29,72,0.20)]',
+    topAccentBar: 'bg-gradient-to-r from-[#FB7185] via-[#E11D48] to-[#BE123C]',
+    photoBg: 'bg-[#F5F2EC]/80 dark:bg-[#161C2A]',
+    specialtyBadge: 'bg-rose-500/10 dark:bg-rose-500/15 text-[#BE123C] dark:text-[#FB7185] border border-rose-500/25 dark:border-rose-500/30',
+    expMetricColor: 'text-[#BE123C] dark:text-[#FB7185]',
+    bookButton: 'bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:opacity-95 text-white shadow-xs hover:shadow-md active:scale-95',
+    cvButton: 'border-[#161B26]/10 dark:border-white/15 bg-white/60 dark:bg-white/[0.06] text-[#161B26] dark:text-[#F8FAFC] hover:text-[#BE123C] hover:border-rose-500 dark:hover:text-[#FB7185] dark:hover:border-[#FB7185]',
+    availableDot: 'bg-[#E11D48]',
+    availableText: 'text-[#BE123C] dark:text-[#FB7185]'
   },
 
-  // 5. Neutral #D9F14A (Electric Chartreuse / Lime) - لون التباين العالي
+  // 5. Sky Cyan (#0284C7)
   {
     id: 'lime',
-    nameAr: 'ليموني مشرق',
-    nameEn: 'Neutral Electric Lime',
-    accentHex: '#D9F14A',
-    cardBorderHover: 'border-lime-200 dark:border-lime-950/70 hover:border-[#D9F14A]/60 hover:shadow-[0_16px_36px_rgba(217,241,74,0.18)]',
-    topAccentBar: 'bg-gradient-to-r from-[#D9F14A] via-[#bef264] to-[#a3e635]',
-    photoBg: 'bg-lime-50/60 dark:bg-[#1a2307]',
-    specialtyBadge: 'bg-lime-50 dark:bg-lime-950/60 text-[#4d7c0f] dark:text-[#D9F14A] border border-lime-200 dark:border-lime-800/40',
-    expMetricColor: 'text-[#4d7c0f] dark:text-[#D9F14A]',
-    bookButton: 'bg-[#D9F14A] hover:bg-[#c9e338] text-slate-950 font-black shadow-xs hover:shadow-md active:scale-95',
-    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-[#4d7c0f] hover:border-[#D9F14A] dark:hover:text-[#D9F14A] dark:hover:border-[#D9F14A]',
-    availableDot: 'bg-[#65a30d]',
-    availableText: 'text-[#4d7c0f] dark:text-[#D9F14A]'
+    nameAr: 'رملي دافئ',
+    nameEn: 'Warm Clay Sand',
+    accentHex: '#0284C7',
+    cardBorderHover: 'border-white/70 dark:border-white/10 hover:border-[#2B95FF]/50 hover:shadow-[0_20px_44px_-12px_rgba(2,132,199,0.20)]',
+    topAccentBar: 'bg-gradient-to-r from-[#38BDF8] via-[#0284C7] to-[#2B95FF]',
+    photoBg: 'bg-[#F5F2EC]/80 dark:bg-[#161C2A]',
+    specialtyBadge: 'bg-sky-500/12 dark:bg-sky-500/20 text-[#0369A1] dark:text-[#38BDF8] border border-sky-500/25 dark:border-sky-400/35',
+    expMetricColor: 'text-[#0369A1] dark:text-[#38BDF8]',
+    bookButton: 'warm-pill-cta font-black shadow-xs hover:shadow-md active:scale-95',
+    cvButton: 'border-[#161B26]/10 dark:border-white/15 bg-white/60 dark:bg-white/[0.06] text-[#161B26] dark:text-[#F8FAFC] hover:text-[#1263D6] hover:border-[#2B95FF] dark:hover:text-[#60AFFF] dark:hover:border-[#60AFFF]',
+    availableDot: 'bg-[#0284C7]',
+    availableText: 'text-[#0369A1] dark:text-[#38BDF8]'
   },
 
-  // 6. Royal Purple / Violet (#6d28d9) - بنفسجي التأهيل التخصصي
+  // 6. Vibrant Violet (#8B5CF6)
   {
     id: 'purple',
-    nameAr: 'بنفسجي ملكي',
-    nameEn: 'Royal Purple',
-    accentHex: '#6d28d9',
-    cardBorderHover: 'border-[#d1c5f8] dark:border-purple-950/70 hover:border-[#6d28d9]/60 hover:shadow-[0_16px_36px_rgba(109,40,217,0.15)]',
-    topAccentBar: 'bg-gradient-to-r from-[#6d28d9] via-[#7c3aed] to-[#a78bfa]',
-    photoBg: 'bg-[#f5f3ff] dark:bg-[#1c0e35]',
-    specialtyBadge: 'bg-[#f5f3ff] dark:bg-purple-950/60 text-[#5b21b6] dark:text-[#a78bfa] border border-[#d1c5f8] dark:border-purple-800/40',
-    expMetricColor: 'text-[#5b21b6] dark:text-[#a78bfa]',
-    bookButton: 'bg-[#6d28d9] hover:bg-[#5b21b6] text-white shadow-xs hover:shadow-md active:scale-95',
-    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-[#6d28d9] hover:border-[#6d28d9] dark:hover:text-[#a78bfa] dark:hover:border-[#a78bfa]',
-    availableDot: 'bg-[#7c3aed]',
-    availableText: 'text-[#6d28d9] dark:text-[#a78bfa]'
+    nameAr: 'أوبسيديان دافئ',
+    nameEn: 'Smoked Obsidian',
+    accentHex: '#8B5CF6',
+    cardBorderHover: 'border-white/70 dark:border-white/10 hover:border-[#8B5CF6]/50 hover:shadow-[0_20px_44px_-12px_rgba(139,92,246,0.20)]',
+    topAccentBar: 'bg-gradient-to-r from-[#A78BFA] via-[#8B5CF6] to-[#6D28D9]',
+    photoBg: 'bg-[#F5F2EC]/80 dark:bg-[#161C2A]',
+    specialtyBadge: 'bg-[#8B5CF6]/10 dark:bg-[#8B5CF6]/15 text-[#6D28D9] dark:text-[#A78BFA] border border-[#8B5CF6]/25 dark:border-[#8B5CF6]/30',
+    expMetricColor: 'text-[#6D28D9] dark:text-[#A78BFA]',
+    bookButton: 'warm-pill-cta shadow-xs hover:shadow-md active:scale-95',
+    cvButton: 'border-[#161B26]/10 dark:border-white/15 bg-white/60 dark:bg-white/[0.06] text-[#161B26] dark:text-[#F8FAFC] hover:text-[#6D28D9] hover:border-[#8B5CF6] dark:hover:text-[#A78BFA] dark:hover:border-[#A78BFA]',
+    availableDot: 'bg-[#8B5CF6]',
+    availableText: 'text-[#6D28D9] dark:text-[#A78BFA]'
   },
 
-  // 7. Turquoise / Vibrant Cyan (#0f766e / #00E5BE) - فيروزي رابا المتألق
+  // 7. Teal Emerald (#0D9488)
   {
     id: 'cyan',
-    nameAr: 'فيروزي رابا',
-    nameEn: 'Turquoise Cyan',
-    accentHex: '#0f766e',
-    cardBorderHover: 'border-[#a2edf3] dark:border-cyan-950/70 hover:border-[#0f766e]/60 hover:shadow-[0_16px_36px_rgba(15,118,110,0.15)]',
-    topAccentBar: 'bg-gradient-to-r from-[#0f766e] via-[#0d9488] to-[#00E5BE]',
-    photoBg: 'bg-[#ecfeff] dark:bg-[#062125]',
-    specialtyBadge: 'bg-[#ecfeff] dark:bg-cyan-950/60 text-[#115e59] dark:text-[#2dd4bf] border border-[#a2edf3] dark:border-cyan-800/40',
-    expMetricColor: 'text-[#115e59] dark:text-[#2dd4bf]',
-    bookButton: 'bg-[#0f766e] hover:bg-[#115e59] text-white shadow-xs hover:shadow-md active:scale-95',
-    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-[#0f766e] hover:border-[#0f766e] dark:hover:text-[#2dd4bf] dark:hover:border-[#2dd4bf]',
-    availableDot: 'bg-[#0d9488]',
-    availableText: 'text-[#0f766e] dark:text-[#2dd4bf]'
+    nameAr: 'مشمشي دافئ',
+    nameEn: 'Warm Apricot Glow',
+    accentHex: '#0D9488',
+    cardBorderHover: 'border-white/70 dark:border-white/10 hover:border-teal-500/60 hover:shadow-[0_20px_44px_-12px_rgba(13,148,136,0.20)]',
+    topAccentBar: 'bg-gradient-to-r from-[#2DD4BF] via-[#0D9488] to-[#10B981]',
+    photoBg: 'bg-[#F5F2EC]/80 dark:bg-[#161C2A]',
+    specialtyBadge: 'bg-teal-500/12 dark:bg-teal-500/15 text-[#0F766E] dark:text-[#2DD4BF] border border-teal-500/30 dark:border-teal-400/35',
+    expMetricColor: 'text-[#0F766E] dark:text-[#2DD4BF]',
+    bookButton: 'bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:opacity-95 text-white shadow-xs hover:shadow-md active:scale-95',
+    cvButton: 'border-[#161B26]/10 dark:border-white/15 bg-white/60 dark:bg-white/[0.06] text-[#161B26] dark:text-[#F8FAFC] hover:text-[#0F766E] hover:border-teal-500 dark:hover:text-[#2DD4BF] dark:hover:border-[#2DD4BF]',
+    availableDot: 'bg-teal-500',
+    availableText: 'text-[#0F766E] dark:text-[#2DD4BF]'
   },
 
-  // 8. Sunset Coral / Warm Orange (#c2410c) - برتقالي دافئ من درجات الهوية
+  // 8. Royal Indigo (#6366F1)
   {
     id: 'coral',
     nameAr: 'مرجاني دافئ',
     nameEn: 'Sunset Coral',
-    accentHex: '#c2410c',
-    cardBorderHover: 'border-[#fbc79d] dark:border-orange-950/70 hover:border-[#c2410c]/60 hover:shadow-[0_16px_36px_rgba(194,65,12,0.15)]',
-    topAccentBar: 'bg-gradient-to-r from-[#c2410c] via-[#ea580c] to-[#fb923c]',
-    photoBg: 'bg-[#fff7ed] dark:bg-[#2b1307]',
-    specialtyBadge: 'bg-[#fff7ed] dark:bg-orange-950/60 text-[#9a3412] dark:text-[#fb923c] border border-[#fbc79d] dark:border-orange-800/40',
-    expMetricColor: 'text-[#9a3412] dark:text-[#fb923c]',
-    bookButton: 'bg-[#c2410c] hover:bg-[#9a3412] text-white shadow-xs hover:shadow-md active:scale-95',
-    cvButton: 'border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:text-[#c2410c] hover:border-[#c2410c] dark:hover:text-[#fb923c] dark:hover:border-[#fb923c]',
-    availableDot: 'bg-[#ea580c]',
-    availableText: 'text-[#c2410c] dark:text-[#fb923c]'
+    accentHex: '#6366F1',
+    cardBorderHover: 'border-white/70 dark:border-white/10 hover:border-indigo-500/60 hover:shadow-[0_20px_44px_-12px_rgba(99,102,241,0.20)]',
+    topAccentBar: 'bg-gradient-to-r from-[#818CF8] via-[#6366F1] to-[#4F46E5]',
+    photoBg: 'bg-[#F5F2EC]/80 dark:bg-[#161C2A]',
+    specialtyBadge: 'bg-indigo-500/10 dark:bg-indigo-500/15 text-[#4338CA] dark:text-[#818CF8] border border-indigo-500/25 dark:border-indigo-500/30',
+    expMetricColor: 'text-[#4338CA] dark:text-[#818CF8]',
+    bookButton: 'warm-pill-cta shadow-xs hover:shadow-md active:scale-95',
+    cvButton: 'border-[#161B26]/10 dark:border-white/15 bg-white/60 dark:bg-white/[0.06] text-[#161B26] dark:text-[#F8FAFC] hover:text-[#4338CA] hover:border-indigo-500 dark:hover:text-[#818CF8] dark:hover:border-[#818CF8]',
+    availableDot: 'bg-[#6366F1]',
+    availableText: 'text-[#4338CA] dark:text-[#818CF8]'
   }
 ];
 

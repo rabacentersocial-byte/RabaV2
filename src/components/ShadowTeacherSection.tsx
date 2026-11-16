@@ -183,31 +183,31 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
   return (
     <section 
       id="shadow-teacher" 
-      className="py-10 sm:py-20 relative overflow-hidden transition-colors duration-300 border-b border-slate-200/80 dark:border-white/10 [content-visibility:auto] [contain-intrinsic-size:1px_600px]"
+      className="py-10 sm:py-20 relative overflow-hidden transition-colors duration-300 border-b border-[#161B26]/[0.06] dark:border-white/[0.08] [content-visibility:auto] [contain-intrinsic-size:1px_600px]"
     >
-      {/* Subtle decorative background glows using 5-color palette */}
-      <div className="absolute top-10 left-1/4 w-96 h-96 bg-[radial-gradient(circle_at_center,rgba(46,134,235,0.08)_0%,transparent_70%)] pointer-events-none transform-gpu" />
-      <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-[radial-gradient(circle_at_center,rgba(255,45,155,0.07)_0%,transparent_70%)] pointer-events-none transform-gpu" />
+      {/* Subtle decorative background glows */}
+      <div className="absolute top-10 left-1/4 w-96 h-96 bg-[radial-gradient(circle_at_center,rgba(43,149,255,0.12)_0%,transparent_70%)] pointer-events-none transform-gpu" />
+      <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-[radial-gradient(circle_at_center,rgba(139,92,246,0.12)_0%,transparent_70%)] pointer-events-none transform-gpu" />
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 relative z-10">
         
         {/* Section Pill Badge & Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-5 sm:mb-8">
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-[#2E86EB]/10 border border-[#2E86EB]/30 text-[#2E86EB] text-[11px] sm:text-sm font-bold shadow-xs mb-2 sm:mb-3">
-            <SiwarBraceletIcon className="w-3.5 h-3.5 text-[#2E86EB] animate-pulse" />
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full liquid-glass-pill text-[#6D28D9] dark:text-[#A78BFA] text-[11px] sm:text-sm font-bold shadow-xs mb-2 sm:mb-3">
+            <SiwarBraceletIcon className="w-3.5 h-3.5 text-[#8B5CF6] animate-pulse" />
             <span>{isArabic ? 'سِوار الأمان والدمج المدرسي' : 'Sewar Protective Inclusion'}</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
             <span>{isArabic ? 'خدمة سِوار المعتمدة' : 'Sewar Certified Program'}</span>
           </div>
 
           <div className="flex items-center justify-center gap-2 sm:gap-3">
-            <div className="hidden sm:flex w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#2E86EB]/15 border border-[#2E86EB]/30 items-center justify-center text-[#2E86EB] shadow-xs shrink-0">
+            <div className="hidden sm:flex w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#8B5CF6]/15 border border-[#8B5CF6]/30 items-center justify-center text-[#8B5CF6] shadow-xs shrink-0">
               <SiwarBraceletIcon className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-snug">
+            <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-black text-[#161B26] dark:text-[#F8FAFC] tracking-tight leading-snug">
               {isArabic ? 'خدمة سِوار — معلم الظل والدمج التعليمي والمدرسي' : 'Sewar Service — School Shadow Teacher & Inclusion'}
             </h2>
-            <div className="hidden sm:flex w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#2E86EB]/15 border border-[#2E86EB]/30 items-center justify-center text-[#2E86EB] shadow-xs shrink-0">
+            <div className="hidden sm:flex w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#2B95FF]/15 border border-[#2B95FF]/30 items-center justify-center text-[#2B95FF] shadow-xs shrink-0">
               <SiwarBraceletIcon className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
           </div>
@@ -216,40 +216,40 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
         {/* ========================================================================= */}
         {/* THE ENCIRCLING BRACELET FRAME (سِوار الأمان والاحتواء المحيط بالقسم) */}
         {/* ========================================================================= */}
-        <div className="relative rounded-2xl sm:rounded-[36px] md:rounded-[48px] p-3 sm:p-6 md:p-8 pb-9 sm:pb-10 bg-gradient-to-b from-[#2E86EB]/[0.05] via-transparent to-[#FF2D9B]/[0.04] border sm:border-2 border-dashed border-[#2E86EB]/40 dark:border-[#2E86EB]/35 shadow-[0_10px_40px_rgba(46,134,235,0.08)]">
+        <div className="relative rounded-[28px] sm:rounded-[36px] md:rounded-[48px] p-3 sm:p-6 md:p-8 pb-9 sm:pb-10 bg-gradient-to-b from-[#2B95FF]/[0.05] via-transparent to-[#8B5CF6]/[0.06] border sm:border-2 border-dashed border-[#2B95FF]/40 dark:border-[#2B95FF]/35 shadow-[0_20px_40px_-15px_rgba(22,27,38,0.10)]">
           
           {/* Top Bracelet Clasp Ornament (ميدالية وقفل سِوار الأمان) */}
-          <div className="absolute -top-3.5 sm:-top-4 left-1/2 -translate-x-1/2 px-3 sm:px-5 py-0.5 sm:py-1 rounded-full bg-white dark:bg-[#0D1B2A] border sm:border-2 border-[#2E86EB]/60 shadow-md flex items-center gap-1.5 sm:gap-2 z-20">
-            <SiwarBraceletIcon className="w-3.5 sm:w-5 h-3.5 sm:h-5 text-[#2E86EB] animate-pulse shrink-0" />
-            <span className="text-[10px] sm:text-xs font-black tracking-wider text-[#2E86EB] whitespace-nowrap">
+          <div className="absolute -top-3.5 sm:-top-4 left-1/2 -translate-x-1/2 px-3 sm:px-5 py-0.5 sm:py-1 rounded-full liquid-glass-pill border sm:border-2 border-[#2B95FF]/55 shadow-md flex items-center gap-1.5 sm:gap-2 z-20">
+            <SiwarBraceletIcon className="w-3.5 sm:w-5 h-3.5 sm:h-5 text-[#2B95FF] animate-pulse shrink-0" />
+            <span className="text-[10px] sm:text-xs font-black tracking-wider text-[#1263D6] dark:text-[#60AFFF] whitespace-nowrap">
               {isArabic ? 'سِوار الأمان والاحتواء المدرسي' : 'Sewar School Protection Bracelet'}
             </span>
           </div>
 
-          {/* Bracelet Decorative Pearl Beads at the 4 Corners (5 Palette Swatches) */}
+          {/* Bracelet Decorative Pearl Beads at the 4 Corners */}
           <div className="absolute top-2 sm:top-3 end-2 sm:end-3 flex items-center gap-1 sm:gap-1.5 pointer-events-none opacity-80">
-            <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#2E86EB] shadow-xs ring-2 ring-[#2E86EB]/30 animate-pulse" />
-            <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-[#FFD23F]" />
-            <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-[#22C55E]" />
+            <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#2B95FF] shadow-xs ring-2 ring-[#2B95FF]/30 animate-pulse" />
+            <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-[#10B981]" />
+            <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-[#F59E0B]" />
           </div>
           <div className="absolute top-2 sm:top-3 start-2 sm:start-3 flex items-center gap-1 sm:gap-1.5 pointer-events-none opacity-80">
-            <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-[#FF2D9B]" />
-            <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-[#D9F14A]" />
-            <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#2E86EB] shadow-xs ring-2 ring-[#2E86EB]/30 animate-pulse" />
+            <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-[#8B5CF6]" />
+            <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-[#F59E0B]" />
+            <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#2B95FF] shadow-xs ring-2 ring-[#2B95FF]/30 animate-pulse" />
           </div>
           <div className="absolute bottom-2 sm:bottom-3 end-2 sm:end-3 flex items-center gap-1 sm:gap-1.5 pointer-events-none opacity-80">
-            <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#22C55E] shadow-xs ring-2 ring-[#22C55E]/30" />
-            <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-[#FFD23F]" />
-            <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-[#2E86EB]" />
+            <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#10B981] shadow-xs ring-2 ring-[#10B981]/30" />
+            <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-[#2B95FF]" />
+            <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-[#141821] dark:bg-[#F5F2EC]" />
           </div>
           <div className="absolute bottom-2 sm:bottom-3 start-2 sm:start-3 flex items-center gap-1 sm:gap-1.5 pointer-events-none opacity-80">
-            <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-[#FF2D9B]" />
-            <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-[#D9F14A]" />
-            <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#2E86EB] shadow-xs ring-2 ring-[#2E86EB]/30" />
+            <span className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-[#8B5CF6]" />
+            <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-[#F59E0B]" />
+            <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#2B95FF] shadow-xs ring-2 ring-[#2B95FF]/30" />
           </div>
 
           {/* Featured Visual Image Banner */}
-          <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-md sm:shadow-xl border border-slate-200/80 dark:border-white/10 group bg-slate-100 dark:bg-slate-800 mb-3.5 sm:mb-8">
+          <div className="relative rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-md sm:shadow-xl border border-white/70 dark:border-white/10 group bg-[#F5F2EC] dark:bg-[#161C2A] mb-3.5 sm:mb-8">
             <img
               src="/images/shadow_teacher.webp"
               alt={isArabic ? 'أخصائية معلم الظل مع طفلة في بيئة تعليمية' : 'Shadow teacher with child in classroom'}
@@ -261,23 +261,23 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
             />
             
             {/* Subtle gradient vignette */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F17]/70 via-transparent to-transparent pointer-events-none" />
 
             {/* Overlay Badges */}
             <div className="absolute top-2.5 sm:top-4 start-2.5 sm:start-4 flex flex-wrap gap-1.5 sm:gap-2">
-              <span className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold text-slate-800 dark:text-white shadow-xs border border-slate-100 dark:border-white/10 flex items-center gap-1 sm:gap-1.5">
-                <ShieldCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#2E86EB]" />
+              <span className="bg-white/90 dark:bg-[#161C2A]/90 backdrop-blur-md px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold text-[#161B26] dark:text-[#F8FAFC] shadow-xs border border-[#161B26]/[0.08] dark:border-white/10 flex items-center gap-1 sm:gap-1.5">
+                <ShieldCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#10B981]" />
                 {isArabic ? 'إشراف سريري مباشر' : 'Direct Clinical Supervision'}
               </span>
-              <span className="bg-[#2E86EB] text-white px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-black shadow-xs flex items-center gap-1 sm:gap-1.5">
-                <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#FFD23F]" />
+              <span className="bg-[#2B95FF] text-white px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-black shadow-xs flex items-center gap-1 sm:gap-1.5">
+                <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
                 {isArabic ? 'معايير BACB الدولية' : 'BACB Global Standards'}
               </span>
             </div>
 
             <div className="absolute bottom-2.5 sm:bottom-4 end-2.5 sm:end-4">
-              <span className="bg-slate-900/85 backdrop-blur-md text-white px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-semibold flex items-center gap-1 sm:gap-1.5 border border-white/10">
-                <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#FFD23F]" />
+              <span className="bg-[#141821]/85 backdrop-blur-md text-white px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold flex items-center gap-1 sm:gap-1.5 border border-white/15">
+                <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#F59E0B]" />
                 {isArabic ? 'دوام مدرسي كامل / جزئي' : 'Full / Part-time Schooling'}
               </span>
             </div>
@@ -287,31 +287,31 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-6 lg:gap-8 items-stretch">
             
             {/* Column 1: Service Introductory Text & "Why Shadow Teacher?" (7 cols on lg) */}
-            <div className="lg:col-span-7 flex flex-col justify-between bg-white/80 dark:bg-slate-900/70 backdrop-blur-md rounded-2xl sm:rounded-3xl p-3.5 sm:p-7 border border-slate-200/80 dark:border-white/10 shadow-xs sm:shadow-sm">
+            <div className="lg:col-span-7 flex flex-col justify-between liquid-glass-card rounded-[28px] p-3.5 sm:p-7">
               
               {/* Core Narrative Text */}
               <div className="space-y-2.5 sm:space-y-4">
-                <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold text-[#2E86EB] bg-[#2E86EB]/10 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl border border-[#2E86EB]/25 shadow-2xs">
-                  <SiwarBraceletIcon className="w-3.5 h-3.5 text-[#2E86EB] animate-pulse" />
+                <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold text-[#1263D6] dark:text-[#60AFFF] bg-[#2B95FF]/12 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full border border-[#2B95FF]/25 shadow-2xs">
+                  <SiwarBraceletIcon className="w-3.5 h-3.5 text-[#2B95FF] animate-pulse" />
                   <span>{isArabic ? 'عن خدمة سِوار ورسالتنا' : 'About Sewar Service'}</span>
                 </div>
-                <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-base md:text-lg leading-relaxed font-medium">
+                <p className="text-[#4B5563] dark:text-[#94A3B8] text-xs sm:text-base md:text-lg leading-relaxed font-medium">
                   {isArabic ? (
                     <>
-                      لأن ابنك هو <span className="font-bold text-[#2E86EB]">محور اهتمامنا</span>، ولأننا نحرص على توفير كل ما يحتاجه لتحقيق أفضل تقدم ممكن، نقدم لكم <span className="font-bold text-slate-900 dark:text-white">خدمة سِوار</span> لتوفير معلم ظل متخصص (<span className="font-bold text-slate-900 dark:text-white">Shadow Teacher</span>)، يكون معه خطوة بخطوة لدعمه ومساعدته على تجاوز التحديات داخل الفصل الدراسي.
+                      لأن ابنك هو <span className="font-bold text-[#1263D6] dark:text-[#60AFFF]">محور اهتمامنا</span>، ولأننا نحرص على توفير كل ما يحتاجه لتحقيق أفضل تقدم ممكن، نقدم لكم <span className="font-bold text-[#161B26] dark:text-[#F8FAFC]">خدمة سِوار</span> لتوفير معلم ظل متخصص (<span className="font-bold text-[#161B26] dark:text-[#F8FAFC]">Shadow Teacher</span>)، يكون معه خطوة بخطوة لدعمه ومساعدته على تجاوز التحديات داخل الفصل الدراسي.
                     </>
                   ) : (
                     <>
-                      Because your child is at the core of our focus, and we are committed to providing everything they need to achieve their best progress, we present <span className="font-bold text-slate-900 dark:text-white">Sewar Service</span> to provide a dedicated <span className="font-bold text-slate-900 dark:text-white">Shadow Teacher</span>, walking with them step-by-step to support and empower them inside the classroom.
+                      Because your child is at the core of our focus, and we are committed to providing everything they need to achieve their best progress, we present <span className="font-bold text-[#161B26] dark:text-[#F8FAFC]">Sewar Service</span> to provide a dedicated <span className="font-bold text-[#161B26] dark:text-[#F8FAFC]">Shadow Teacher</span>, walking with them step-by-step to support and empower them inside the classroom.
                     </>
                   )}
                 </p>
               </div>
 
               {/* Subheading Question & Benefits */}
-              <div className="pt-3 sm:pt-5 mt-3 sm:mt-4 border-t border-slate-200/60 dark:border-white/10">
-                <h3 className="text-xs sm:text-base md:text-lg font-black text-slate-900 dark:text-white flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3.5">
-                  <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FFD23F]" />
+              <div className="pt-3 sm:pt-5 mt-3 sm:mt-4 border-t border-[#161B26]/[0.06] dark:border-white/[0.08]">
+                <h3 className="text-xs sm:text-base md:text-lg font-black text-[#161B26] dark:text-[#F8FAFC] flex items-center gap-1.5 sm:gap-2 mb-2 sm:mb-3.5">
+                  <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#8B5CF6]" />
                   <span>
                     {isArabic 
                       ? 'لماذا تحتاج إلى Shadow Teacher لطفلك ؟' 
@@ -324,16 +324,16 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                   {benefits.map((item, index) => (
                     <div 
                       key={index}
-                      className="flex items-start gap-2 p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-slate-50/90 dark:bg-slate-800/50 border border-slate-100 dark:border-white/5 hover:border-[#2E86EB]/30 transition-colors"
+                      className="flex items-start gap-2 p-2 sm:p-2.5 rounded-2xl bg-white/75 dark:bg-white/[0.04] border border-[#161B26]/[0.08] dark:border-white/[0.08] hover:border-[#2B95FF]/35 transition-colors"
                     >
-                      <div className="w-4 h-4 sm:w-5 sm:h-5 rounded sm:rounded-md bg-[#22C55E]/15 text-[#22C55E] flex items-center justify-center shrink-0 mt-0.5 text-[10px] sm:text-xs font-black">
+                      <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-md bg-[#10B981]/15 text-[#047857] dark:text-[#34D399] flex items-center justify-center shrink-0 mt-0.5 text-[10px] sm:text-xs font-black">
                         ✓
                       </div>
                       <div>
-                        <div className="text-[11px] sm:text-sm font-bold text-slate-900 dark:text-white leading-tight">
+                        <div className="text-[11px] sm:text-sm font-bold text-[#161B26] dark:text-[#F8FAFC] leading-tight">
                           {item.text}
                         </div>
-                        <div className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 mt-0.5 leading-snug">
+                        <div className="text-[10px] sm:text-[11px] text-[#4B5563] dark:text-[#94A3B8] mt-0.5 leading-snug">
                           {item.sub}
                         </div>
                       </div>
@@ -346,23 +346,23 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
 
             {/* Column 2: Compact Form Beside Introductory Text (5 cols on lg) */}
             <div className="lg:col-span-5 flex flex-col justify-center mb-3 sm:mb-0">
-              <div className="rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 shadow-xl transition-all relative overflow-hidden bg-gradient-to-br from-[#0D1B2A] via-[#102035] to-[#0A1422] border border-[#2E86EB]/30 text-white">
+              <div className="obsidian-anchor-card rounded-[28px] p-3.5 sm:p-6 shadow-xl transition-all relative overflow-hidden">
                 
                 {/* Decorative subtle brand glows */}
-                <div className="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-[#2E86EB]/20 rounded-full blur-2xl pointer-events-none" />
-                <div className="absolute bottom-0 left-0 -mb-8 -ml-8 w-32 h-32 bg-[#FF2D9B]/15 rounded-full blur-2xl pointer-events-none" />
+                <div className="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-[#2B95FF]/25 rounded-full blur-2xl pointer-events-none" />
+                <div className="absolute bottom-0 left-0 -mb-8 -ml-8 w-32 h-32 bg-[#10B981]/20 rounded-full blur-2xl pointer-events-none" />
 
                 {/* Form Title & Subtitle */}
                 <div className="text-center mb-3 sm:mb-4 relative z-10">
-                  <div className="inline-flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-[#2E86EB]/20 text-[#3B92F5] text-[10px] sm:text-[11px] font-bold mb-1 sm:mb-1.5 border border-[#2E86EB]/35 shadow-xs">
-                    <SiwarBraceletIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#2E86EB]" />
+                  <div className="inline-flex items-center justify-center gap-1.5 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-[#2B95FF]/15 text-[#60AFFF] dark:text-[#1263D6] text-[10px] sm:text-[11px] font-bold mb-1 sm:mb-1.5 border border-[#2B95FF]/35 shadow-xs">
+                    <SiwarBraceletIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#2B95FF]" />
                     <span>{isArabic ? 'سِوار الأمان — حجز مباشر' : 'Sewar Direct Booking'}</span>
                   </div>
-                  <h3 className="text-base sm:text-2xl font-black text-white tracking-tight flex items-center justify-center gap-1.5 sm:gap-2">
-                    <SiwarBraceletIcon className="w-4 h-4 sm:w-5 sm:h-5 text-[#FFD23F]" />
+                  <h3 className="text-base sm:text-2xl font-black text-white dark:text-[#141821] tracking-tight flex items-center justify-center gap-1.5 sm:gap-2">
+                    <SiwarBraceletIcon className="w-4 h-4 sm:w-5 sm:h-5 text-[#2B95FF]" />
                     <span>{isArabic ? 'احجز خدمة سِوار الآن' : 'Book Sewar Service Now'}</span>
                   </h3>
-                  <p className="text-[10px] sm:text-xs text-slate-300 mt-0.5 font-medium">
+                  <p className="text-[10px] sm:text-xs text-[#94A3B8] dark:text-[#4B5563] mt-0.5 font-medium">
                     {isArabic 
                       ? 'تقييم شامل ومطابقة معلم الظل الأنسب لبيئة طفلك المدرسية عبر خدمة سِوار' 
                       : 'Comprehensive assessment & matching the ideal shadow teacher via Sewar service'}
@@ -372,33 +372,33 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                 {/* Success State */}
                 {isSubmitted ? (
                   <div
-                    className="bg-white/95 dark:bg-[#0D1B2A]/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 text-center shadow-lg border border-white/20 space-y-2.5 sm:space-y-3 my-1 sm:my-2 text-slate-900 dark:text-white transition-all duration-300 animate-in fade-in zoom-in-95"
+                    className="bg-white/10 dark:bg-black/5 backdrop-blur-md rounded-2xl p-4 sm:p-5 text-center shadow-lg border border-white/15 dark:border-black/10 space-y-2.5 sm:space-y-3 my-1 sm:my-2 text-white dark:text-[#141821] transition-all duration-300 animate-in fade-in zoom-in-95"
                   >
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#22C55E]/15 border border-[#22C55E]/30 text-[#22C55E] rounded-full flex items-center justify-center mx-auto shadow-inner">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#10B981]/20 border border-[#10B981]/35 text-[#10B981] rounded-full flex items-center justify-center mx-auto shadow-inner">
                       <CheckCircle2 className="w-6 h-6 sm:w-7 sm:h-7" />
                     </div>
                     <div>
-                      <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+                      <h4 className="text-sm sm:text-base font-bold text-white dark:text-[#141821]">
                         {isArabic ? 'تم استلام طلبكم في خدمة سِوار بنجاح!' : 'Sewar Request Received Successfully!'}
                       </h4>
                       {submittedRequest && (
-                        <div className="my-2 p-2 sm:p-2.5 bg-slate-50 dark:bg-white/5 border border-[#2E86EB]/30 rounded-xl text-center space-y-1">
-                          <div className="flex items-center justify-between text-[11px] sm:text-xs px-1 text-slate-700 dark:text-slate-300">
-                            <span className="text-slate-600 dark:text-slate-300">{isArabic ? 'المدينة المحددة:' : 'Selected City:'}</span>
-                            <span className="font-bold text-[#2E86EB] flex items-center gap-1">
+                        <div className="my-2 p-2 sm:p-2.5 bg-white/5 dark:bg-black/5 border border-[#2B95FF]/30 rounded-xl text-center space-y-1">
+                          <div className="flex items-center justify-between text-[11px] sm:text-xs px-1 text-[#94A3B8] dark:text-[#4B5563]">
+                            <span>{isArabic ? 'المدينة المحددة:' : 'Selected City:'}</span>
+                            <span className="font-bold text-[#60AFFF] dark:text-[#1263D6] flex items-center gap-1">
                               <MapPin className="w-3 h-3" />
                               <span>{submittedRequest.city || 'الرياض'}</span>
                             </span>
                           </div>
-                          <div className="flex items-center justify-between text-[11px] sm:text-xs px-1 pt-1 border-t border-slate-200/60 dark:border-white/10">
-                            <span className="text-[10px] text-slate-600 dark:text-slate-300 block">{isArabic ? 'الرقم المرجعي للطلب:' : 'Reference Number:'}</span>
-                            <span className="font-mono font-black text-[#2E86EB] dark:text-[#3B92F5] text-xs sm:text-sm tracking-wider">
+                          <div className="flex items-center justify-between text-[11px] sm:text-xs px-1 pt-1 border-t border-white/10 dark:border-black/10">
+                            <span className="text-[10px] text-[#94A3B8] dark:text-[#4B5563] block">{isArabic ? 'الرقم المرجعي للطلب:' : 'Reference Number:'}</span>
+                            <span className="font-mono font-black text-[#60AFFF] dark:text-[#1263D6] text-xs sm:text-sm tracking-wider">
                               {submittedRequest.referenceNumber}
                             </span>
                           </div>
                         </div>
                       )}
-                      <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                      <p className="text-[11px] sm:text-xs text-[#94A3B8] dark:text-[#4B5563] mt-1 leading-relaxed">
                         {isArabic 
                           ? 'تم تسجيل طلبكم بنجاح في نظام مركز رابا، وسيتواصل معكم منسق خدمة سِوار (معلم الظل والدمج المدرسي) لترتيب التقييم والمطابقة.' 
                           : 'Our Sewar inclusion coordinator will contact you shortly to arrange the initial assessment.'}
@@ -408,7 +408,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                     <div className="flex flex-col gap-1.5 sm:gap-2 pt-1">
                       <button
                         onClick={handleWhatsAppDirect}
-                        className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white font-bold py-2 sm:py-2.5 px-3 rounded-lg sm:rounded-xl flex items-center justify-center gap-1.5 text-xs shadow-md transition-all active:scale-98 cursor-pointer"
+                        className="w-full bg-[#10B981] hover:bg-[#059669] text-white font-bold py-2 sm:py-2.5 px-3 rounded-full flex items-center justify-center gap-1.5 text-xs shadow-md transition-all active:scale-98 cursor-pointer"
                       >
                         <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         <span>{isArabic ? 'متابعة فورية عبر واتساب' : 'Direct Follow-up on WhatsApp'}</span>
@@ -419,7 +419,7 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                           setIsSubmitted(false);
                           setFormData({ name: '', city: 'الرياض', phone: '' });
                         }}
-                        className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium underline py-0.5 cursor-pointer"
+                        className="text-[10px] sm:text-[11px] text-[#94A3B8] dark:text-[#4B5563] hover:text-white dark:hover:text-[#141821] font-medium underline py-0.5 cursor-pointer"
                       >
                         {isArabic ? 'إرسال طلب إضافي' : 'Submit another request'}
                       </button>
@@ -430,14 +430,14 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                     <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-3 relative z-10">
                       
                       {errorMessage && (
-                        <div className="p-2 sm:p-2.5 bg-rose-500/20 text-rose-200 text-[11px] sm:text-xs font-bold rounded-lg sm:rounded-xl border border-rose-400/40 backdrop-blur-sm">
+                        <div className="p-2 sm:p-2.5 bg-rose-500/20 text-rose-200 dark:text-rose-700 text-[11px] sm:text-xs font-bold rounded-2xl border border-rose-400/40 backdrop-blur-sm">
                           {errorMessage}
                         </div>
                       )}
 
                       {/* Field 1: Name */}
                       <div>
-                        <label htmlFor="sewar-parent-name" className="block text-[11px] sm:text-xs font-bold text-slate-200 mb-0.5 sm:mb-1">
+                        <label htmlFor="sewar-parent-name" className="block text-[11px] sm:text-xs font-bold text-[#94A3B8] dark:text-[#4B5563] mb-0.5 sm:mb-1">
                           {isArabic ? 'الإسم' : 'Name'}
                         </label>
                         <div className="relative">
@@ -448,9 +448,9 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             placeholder={isArabic ? 'اسم الطفل أو ولي الأمر' : 'Child or Parent Name'}
-                            className={`w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white placeholder-slate-400 rounded-lg sm:rounded-xl px-3 sm:px-3.5 py-2 sm:py-2.5 ${isArabic ? 'pl-9 sm:pl-10' : 'pr-9 sm:pr-10'} text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#2E86EB] focus:ring-2 focus:ring-[#2E86EB]/30 outline-none transition-all h-9.5 sm:h-11`}
+                            className={`w-full bg-white/10 dark:bg-white/80 text-white dark:text-[#161B26] placeholder-[#94A3B8] dark:placeholder-[#64748B] rounded-full px-3.5 sm:px-4 py-2 sm:py-2.5 ${isArabic ? 'pl-9 sm:pl-10' : 'pr-9 sm:pr-10'} text-xs sm:text-sm shadow-sm border border-white/15 dark:border-[#161B26]/12 focus:border-[#2B95FF] focus:ring-2 focus:ring-[#2B95FF]/30 outline-none transition-all h-9.5 sm:h-11`}
                           />
-                          <User className={`w-3.5 h-3.5 text-slate-400 absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3 sm:left-3.5' : 'right-3 sm:right-3.5'}`} />
+                          <User className={`w-3.5 h-3.5 text-[#94A3B8] dark:text-[#64748B] absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3.5 sm:left-4' : 'right-3.5 sm:right-4'}`} />
                         </div>
                       </div>
 
@@ -459,8 +459,8 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                         
                         {/* Field 2: Branch / City Selection */}
                         <div>
-                          <label htmlFor="branch-select" className="block text-[11px] sm:text-xs font-bold text-slate-200 mb-0.5 sm:mb-1">
-                            {isArabic ? 'الفرع / المدينة' : 'Branch / City'} <span className="text-[#2E86EB]">*</span>
+                          <label htmlFor="branch-select" className="block text-[11px] sm:text-xs font-bold text-[#94A3B8] dark:text-[#4B5563] mb-0.5 sm:mb-1">
+                            {isArabic ? 'الفرع / المدينة' : 'Branch / City'} <span className="text-[#2B95FF]">*</span>
                           </label>
                           <div className="relative">
                             <select
@@ -469,25 +469,25 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                               required
                               value={formData.city}
                               onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                              className={`w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white rounded-lg sm:rounded-xl px-3 sm:px-3.5 py-2 sm:py-2.5 ${isArabic ? 'pl-9 sm:pl-10' : 'pr-9 sm:pr-10'} text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#2E86EB] focus:ring-2 focus:ring-[#2E86EB]/30 outline-none transition-all cursor-pointer h-9.5 sm:h-11`}
+                              className={`w-full bg-white/10 dark:bg-white/80 text-white dark:text-[#161B26] rounded-full px-3.5 sm:px-4 py-2 sm:py-2.5 ${isArabic ? 'pl-9 sm:pl-10' : 'pr-9 sm:pr-10'} text-xs sm:text-sm shadow-sm border border-white/15 dark:border-[#161B26]/12 focus:border-[#2B95FF] focus:ring-2 focus:ring-[#2B95FF]/30 outline-none transition-all cursor-pointer h-9.5 sm:h-11`}
                             >
                               {SEWAR_AVAILABLE_CITIES.map((c) => (
                                 <option 
                                   key={c.id} 
                                   value={c.nameAr}
-                                  className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-medium"
+                                  className="bg-[#141821] dark:bg-white text-white dark:text-[#161B26] font-medium"
                                 >
                                   {isArabic ? c.nameAr : c.nameEn}
                                 </option>
                               ))}
                             </select>
-                            <MapPin className={`w-3.5 h-3.5 text-slate-400 absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3 sm:left-3.5' : 'right-3 sm:right-3.5'}`} />
+                            <MapPin className={`w-3.5 h-3.5 text-[#94A3B8] dark:text-[#64748B] absolute top-1/2 -translate-y-1/2 pointer-events-none ${isArabic ? 'left-3.5 sm:left-4' : 'right-3.5 sm:right-4'}`} />
                           </div>
                         </div>
 
                         {/* Field 3: Phone */}
                         <div>
-                          <label htmlFor="sewar-phone" className="block text-[11px] sm:text-xs font-bold text-slate-200 mb-0.5 sm:mb-1">
+                          <label htmlFor="sewar-phone" className="block text-[11px] sm:text-xs font-bold text-[#94A3B8] dark:text-[#4B5563] mb-0.5 sm:mb-1">
                             {isArabic ? 'رقم الجوال' : 'Phone'}
                           </label>
                           <div className="relative" dir="ltr">
@@ -498,21 +498,21 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
                               value={formData.phone}
                               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                               placeholder="+966 5X XXX XXXX"
-                              className="w-full bg-white/95 dark:bg-slate-950/90 text-slate-900 dark:text-white placeholder-slate-400 rounded-lg sm:rounded-xl px-3 sm:px-3.5 py-2 sm:py-2.5 pr-9 sm:pr-10 text-xs sm:text-sm shadow-sm border border-white/20 focus:border-[#2E86EB] focus:ring-2 focus:ring-[#2E86EB]/30 outline-none transition-all font-mono text-left h-9.5 sm:h-11"
+                              className="w-full bg-white/10 dark:bg-white/80 text-white dark:text-[#161B26] placeholder-[#94A3B8] dark:placeholder-[#64748B] rounded-full px-3.5 sm:px-4 py-2 sm:py-2.5 pr-9 sm:pr-10 text-xs sm:text-sm shadow-sm border border-white/15 dark:border-[#161B26]/12 focus:border-[#2B95FF] focus:ring-2 focus:ring-[#2B95FF]/30 outline-none transition-all font-mono text-left h-9.5 sm:h-11"
                             />
-                            <PhoneIcon className="w-3.5 h-3.5 text-slate-400 absolute right-3 sm:right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <PhoneIcon className="w-3.5 h-3.5 text-[#94A3B8] dark:text-[#64748B] absolute right-3.5 sm:right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                           </div>
                         </div>
 
                       </div>
 
-                      {/* Compact Submit Button (5-color Palette Gradient) */}
+                      {/* Compact Submit Button */}
                       <div className="pt-1">
                         <button
                           type="submit"
                           aria-label={isArabic ? 'إرسال طلب حجز خدمة سوار معلم الظل' : 'Submit Sewar shadow teacher booking request'}
                           disabled={isSubmitting}
-                          className="w-full bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] hover:opacity-95 active:scale-[0.98] text-white font-black min-h-[48px] px-4 sm:px-5 rounded-lg sm:rounded-xl shadow-[0_8px_20px_rgba(46,134,235,0.35)] transition-all duration-200 flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm cursor-pointer disabled:opacity-60"
+                          className="w-full bg-[#2B95FF] hover:bg-[#1E7EE0] active:scale-[0.98] text-white font-black min-h-[48px] px-4 sm:px-5 rounded-full shadow-[0_8px_20px_rgba(43,149,255,0.35)] transition-all duration-200 flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm cursor-pointer disabled:opacity-60"
                         >
                           {isSubmitting ? (
                             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -532,9 +532,9 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
 
           </div>
 
-          {/* Bottom Bracelet Charm (ميدالية سِوار الاحتواء السفلية) */}
-          <div className="absolute -bottom-3.5 sm:-bottom-4 left-1/2 -translate-x-1/2 px-3 sm:px-4 py-1 rounded-full bg-white dark:bg-[#0D1B2A] border border-[#2E86EB]/50 shadow-md flex items-center justify-center gap-1.5 z-20 text-[9.5px] sm:text-xs font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap max-w-[95vw]">
-            <Heart className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#FF2D9B] fill-current shrink-0" />
+          {/* Bottom Bracelet Charm */}
+          <div className="absolute -bottom-3.5 sm:-bottom-4 left-1/2 -translate-x-1/2 px-3 sm:px-4 py-1 rounded-full liquid-glass-pill border border-[#2B95FF]/45 shadow-md flex items-center justify-center gap-1.5 z-20 text-[9.5px] sm:text-xs font-bold text-[#161B26] dark:text-[#F8FAFC] whitespace-nowrap max-w-[95vw]">
+            <Heart className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#8B5CF6] fill-current shrink-0" />
             <span className="whitespace-nowrap font-bold">
               {isArabic ? 'سِوار الأمان — خطوة بخطوة مع طفلك' : 'Sewar Bracelet — Step by Step with Your Child'}
             </span>

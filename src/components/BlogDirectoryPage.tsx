@@ -103,64 +103,64 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
     { id: 'family_guidance', labelAr: 'إرشادات أسرية وتعديل روتين', labelEn: 'Family Guidance', icon: HeartHandshake },
   ];
 
-  // Custom Category Icons and Card Theming (matching screenshot & BlogSliderSection)
+  // Custom Category Icons and Card Theming
   const getCategoryIconConfig = (cat?: string) => {
     switch (cat) {
       case 'psychology':
         return {
           icon: Brain,
-          iconBoxBg: 'bg-indigo-50 dark:bg-indigo-950/60 text-[#4F46E5] dark:text-[#818cf8] border-indigo-200/90 dark:border-indigo-800/50 shadow-indigo-500/10',
-          headerBg: 'bg-gradient-to-br from-indigo-500/10 via-sky-500/[0.04] to-transparent dark:from-indigo-950/40 dark:via-transparent',
-          headerBorder: 'border-b border-indigo-100 dark:border-white/5',
-          badgeBg: 'bg-[#0284C7] text-white',
+          iconBoxBg: 'bg-[#8B5CF6]/10 dark:bg-[#8B5CF6]/15 text-[#6D28D9] dark:text-[#A78BFA] border-[#8B5CF6]/25 shadow-[#8B5CF6]/10',
+          headerBg: 'bg-gradient-to-br from-[#8B5CF6]/10 via-[#2B95FF]/[0.04] to-transparent dark:from-[#8B5CF6]/15 dark:via-transparent',
+          headerBorder: 'border-b border-[#8B5CF6]/15 dark:border-white/5',
+          badgeBg: 'bg-[#8B5CF6] text-white',
         };
       case 'autism':
         return {
           icon: Brain,
-          iconBoxBg: 'bg-sky-50 dark:bg-sky-950/60 text-[#0284C7] dark:text-[#38bdf8] border-sky-200/90 dark:border-sky-800/50 shadow-sky-500/10',
-          headerBg: 'bg-gradient-to-br from-sky-500/10 via-sky-500/[0.03] to-transparent dark:from-sky-950/40 dark:via-transparent',
-          headerBorder: 'border-b border-sky-100 dark:border-white/5',
-          badgeBg: 'bg-[#008CD3] text-white',
+          iconBoxBg: 'bg-[#2B95FF]/10 dark:bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF] border-[#2B95FF]/25 shadow-[#2B95FF]/10',
+          headerBg: 'bg-gradient-to-br from-[#2B95FF]/10 via-[#2B95FF]/[0.03] to-transparent dark:from-[#2B95FF]/15 dark:via-transparent',
+          headerBorder: 'border-b border-[#2B95FF]/15 dark:border-white/5',
+          badgeBg: 'bg-[#2B95FF] text-white',
         };
       case 'aba':
         return {
           icon: Target,
-          iconBoxBg: 'bg-teal-50 dark:bg-teal-950/60 text-[#0d5c52] dark:text-[#2dd4bf] border-teal-200/90 dark:border-teal-800/50 shadow-teal-500/10',
-          headerBg: 'bg-gradient-to-br from-teal-500/10 via-[#0d5c52]/[0.03] to-transparent dark:from-teal-950/40 dark:via-transparent',
-          headerBorder: 'border-b border-teal-100 dark:border-white/5',
-          badgeBg: 'bg-[#0d5c52] text-white',
+          iconBoxBg: 'bg-[#10B981]/10 dark:bg-[#10B981]/15 text-[#047857] dark:text-[#34D399] border-[#10B981]/25 shadow-[#10B981]/10',
+          headerBg: 'bg-gradient-to-br from-[#10B981]/10 via-[#10B981]/[0.03] to-transparent dark:from-[#10B981]/15 dark:via-transparent',
+          headerBorder: 'border-b border-[#10B981]/15 dark:border-white/5',
+          badgeBg: 'bg-[#10B981] text-white',
         };
       case 'occupational':
         return {
           icon: Layers,
-          iconBoxBg: 'bg-amber-50 dark:bg-amber-950/60 text-[#D97706] dark:text-[#fbbf24] border-amber-200/90 dark:border-amber-800/50 shadow-amber-500/10',
-          headerBg: 'bg-gradient-to-br from-amber-500/10 via-amber-500/[0.03] to-transparent dark:from-amber-950/40 dark:via-transparent',
-          headerBorder: 'border-b border-amber-100 dark:border-white/5',
+          iconBoxBg: 'bg-[#F59E0B]/10 dark:bg-[#F59E0B]/15 text-[#B45309] dark:text-[#FBBF24] border-[#F59E0B]/25 shadow-[#F59E0B]/10',
+          headerBg: 'bg-gradient-to-br from-[#F59E0B]/10 via-[#F59E0B]/[0.03] to-transparent dark:from-[#F59E0B]/15 dark:via-transparent',
+          headerBorder: 'border-b border-[#F59E0B]/15 dark:border-white/5',
           badgeBg: 'bg-[#D97706] text-white',
         };
       case 'speech':
         return {
           icon: MessageSquare,
-          iconBoxBg: 'bg-purple-50 dark:bg-purple-950/60 text-[#7C3AED] dark:text-[#c084fc] border-purple-200/90 dark:border-purple-800/50 shadow-purple-500/10',
-          headerBg: 'bg-gradient-to-br from-purple-500/10 via-purple-500/[0.03] to-transparent dark:from-purple-950/40 dark:via-transparent',
-          headerBorder: 'border-b border-purple-100 dark:border-white/5',
+          iconBoxBg: 'bg-[#8B5CF6]/10 dark:bg-[#8B5CF6]/15 text-[#6D28D9] dark:text-[#A78BFA] border-[#8B5CF6]/25 shadow-[#8B5CF6]/10',
+          headerBg: 'bg-gradient-to-br from-[#8B5CF6]/10 via-[#8B5CF6]/[0.03] to-transparent dark:from-[#8B5CF6]/15 dark:via-transparent',
+          headerBorder: 'border-b border-[#8B5CF6]/15 dark:border-white/5',
           badgeBg: 'bg-[#7C3AED] text-white',
         };
       case 'family_guidance':
         return {
           icon: HeartHandshake,
-          iconBoxBg: 'bg-rose-50 dark:bg-rose-950/60 text-[#E11D48] dark:text-[#fb7185] border-rose-200/90 dark:border-rose-800/50 shadow-rose-500/10',
-          headerBg: 'bg-gradient-to-br from-rose-500/10 via-rose-500/[0.03] to-transparent dark:from-rose-950/40 dark:via-transparent',
-          headerBorder: 'border-b border-rose-100 dark:border-white/5',
-          badgeBg: 'bg-[#E11D48] text-white',
+          iconBoxBg: 'bg-rose-500/10 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/25 shadow-rose-500/10',
+          headerBg: 'bg-gradient-to-br from-rose-500/10 via-rose-500/[0.03] to-transparent dark:from-rose-500/15 dark:via-transparent',
+          headerBorder: 'border-b border-rose-500/15 dark:border-white/5',
+          badgeBg: 'bg-rose-600 text-white',
         };
       default:
         return {
           icon: BookOpen,
-          iconBoxBg: 'bg-teal-50 dark:bg-teal-950/60 text-[#0d5c52] dark:text-[#2dd4bf] border-teal-200/90 dark:border-teal-800/50 shadow-teal-500/10',
-          headerBg: 'bg-gradient-to-br from-teal-500/10 via-teal-500/[0.03] to-transparent dark:from-teal-950/40 dark:via-transparent',
-          headerBorder: 'border-b border-teal-100 dark:border-white/5',
-          badgeBg: 'bg-[#0d5c52] text-white',
+          iconBoxBg: 'bg-[#2B95FF]/10 dark:bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF] border-[#2B95FF]/25 shadow-[#2B95FF]/10',
+          headerBg: 'bg-gradient-to-br from-[#2B95FF]/10 via-[#2B95FF]/[0.03] to-transparent dark:from-[#2B95FF]/15 dark:via-transparent',
+          headerBorder: 'border-b border-[#2B95FF]/15 dark:border-white/5',
+          badgeBg: 'bg-[#2B95FF] text-white',
         };
     }
   };
@@ -404,7 +404,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
   }, [publishedPosts, isArabic]);
 
   return (
-    <div className="min-h-screen bg-slate-50/70 dark:bg-[#070D18] text-slate-900 dark:text-white transition-colors pb-24" dir={isArabic ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#0B0F17] text-[#161B26] dark:text-[#F8FAFC] transition-colors pb-24 relative overflow-x-clip" dir={isArabic ? 'rtl' : 'ltr'}>
       
       {/* JSON-LD Schema.org SEO Injection */}
       <script
@@ -413,24 +413,24 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
       />
 
       {/* Ambient Visual Backdrops */}
-      <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-teal-500/10 via-[#0d5c52]/5 to-transparent rounded-full blur-[140px] pointer-events-none -z-10" />
-      <div className="fixed bottom-0 left-0 w-[500px] h-[500px] bg-cyan-500/10 dark:bg-cyan-500/15 rounded-full blur-[140px] pointer-events-none -z-10" />
+      <div className="fixed top-0 right-0 w-[520px] h-[520px] rounded-full blur-[120px] pointer-events-none -z-10" style={{ background: 'radial-gradient(circle, rgba(43, 149, 255, 0.14) 0%, rgba(43, 149, 255, 0) 70%)' }} />
+      <div className="fixed bottom-0 left-0 w-[500px] h-[500px] rounded-full blur-[120px] pointer-events-none -z-10" style={{ background: 'radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, rgba(139, 92, 246, 0) 70%)' }} />
 
       {/* Top Breadcrumb & Navigation Bar */}
-      <div className="sticky top-0 z-30 bg-white/80 dark:bg-[#070D18]/80 backdrop-blur-md border-b border-slate-200/80 dark:border-white/10 transition-colors">
+      <div className="sticky top-0 z-30 liquid-glass-panel border-b border-[#161B26]/[0.06] dark:border-white/[0.08] transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
           
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-xs sm:text-sm" aria-label="Breadcrumb">
             <button
               onClick={onBackToHome}
-              className="text-slate-500 dark:text-slate-400 hover:text-teal-600 dark:hover:text-[#00E5BE] font-medium transition-colors flex items-center gap-1 cursor-pointer"
+              className="text-[#4B5563] dark:text-[#94A3B8] hover:text-[#1263D6] dark:hover:text-[#60AFFF] font-medium transition-colors flex items-center gap-1 cursor-pointer"
             >
               <Home className="w-3.5 h-3.5" />
               <span>{isArabic ? 'الرئيسية' : 'Home'}</span>
             </button>
-            <span className="text-slate-300 dark:text-slate-600">/</span>
-            <span className="text-teal-700 dark:text-[#00E5BE] font-black truncate">
+            <span className="text-[#8B95A5] dark:text-[#64748B]">/</span>
+            <span className="text-[#1263D6] dark:text-[#60AFFF] font-black truncate">
               {isArabic ? 'المدونة الطبية والدليل المعرفي' : 'Clinical Blog & Knowledge Guide'}
             </span>
           </nav>
@@ -439,7 +439,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={onBackToHome}
-              className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full liquid-glass-btn text-[#161B26] dark:text-[#F8FAFC] text-xs font-bold transition-all cursor-pointer"
             >
               {isArabic ? <ArrowRight className="w-3.5 h-3.5" /> : <ArrowLeft className="w-3.5 h-3.5" />}
               <span>{isArabic ? 'العودة للرئيسية' : 'Back to Home'}</span>
@@ -448,7 +448,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
             {onOpenBooking && (
               <button
                 onClick={() => onOpenBooking('حجز استشارة مباشرة من صفحة المدونة')}
-                className="hidden sm:inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#0d5c52] to-[#115e59] hover:brightness-110 text-white text-xs font-black shadow-sm transition-all cursor-pointer"
+                className="hidden sm:inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white text-xs font-black shadow-sm shadow-[#2B95FF]/20 transition-all cursor-pointer"
               >
                 <CalendarCheck className="w-3.5 h-3.5" />
                 <span>{isArabic ? 'طلب استشارة إكلينيكية' : 'Book Clinical Consultation'}</span>
@@ -464,61 +464,61 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
         
         {/* Page Hero Header */}
         <div className="mb-10 sm:mb-14 text-center max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#dff1ec] dark:bg-teal-950/60 border border-[#0d5c52]/20 dark:border-[#2dd4bf]/20 text-[#0d5c52] dark:text-[#2dd4bf] text-xs font-black shadow-xs mb-4">
-            <BookOpen className="w-4 h-4 text-[#0d5c52] dark:text-[#2dd4bf]" />
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full liquid-glass-pill text-[#1263D6] dark:text-[#60AFFF] text-xs font-black shadow-xs mb-4">
+            <BookOpen className="w-4 h-4 text-[#2B95FF]" />
             <span>{isArabic ? 'المكتبة الإكلينيكية ودليل الأسرة الشامل' : 'Clinical Library & Comprehensive Family Guide'}</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight mb-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#161B26] dark:text-[#F8FAFC] tracking-tight leading-tight mb-4">
             {isArabic ? (
               <>
                 مقالات إكلينيكية وتوجيهات أسرية{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0d5c52] via-[#0284C7] to-[#0d5c52] dark:from-[#2dd4bf] dark:via-sky-400 dark:to-[#2dd4bf]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2B95FF] to-[#1A73E8]">
                   لتطور واستقلالية طفلك
                 </span>
               </>
             ) : (
               <>
                 Evidence-Based Articles & Guides for{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0d5c52] via-[#0284C7] to-[#0d5c52] dark:from-[#2dd4bf] dark:via-sky-400 dark:to-[#2dd4bf]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#2B95FF] to-[#1A73E8]">
                   Child Growth & Independence
                 </span>
               </>
             )}
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+          <p className="text-sm sm:text-base text-[#4B5563] dark:text-[#94A3B8] leading-relaxed font-normal">
             {isArabic 
               ? 'محتوى تأهيلي علمي رصين كتبه استشاريو وأخصائيو مركز رابا، يقدم إرشادات عملية في تشخيص التوحد، تطبيق ABA الإيجابي، التكامل الحسي، وتنمية مهارات النطق والحياة اليومية.'
               : 'Rigorous therapeutic insights written by licensed clinicians at Raba Center, offering actionable guidance in autism diagnosis, positive ABA protocols, sensory integration, and speech milestones.'}
           </p>
 
           {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-8 pt-6 border-t border-slate-200/80 dark:border-white/10">
-            <div className="p-3 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200/60 dark:border-white/5 text-center shadow-xs">
-              <div className="text-xl sm:text-2xl font-black text-teal-700 dark:text-[#00E5BE]">{publishedPosts.length}+</div>
-              <div className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-8 pt-6 border-t border-[#161B26]/[0.06] dark:border-white/[0.08]">
+            <div className="p-3.5 rounded-[24px] liquid-glass-card text-center">
+              <div className="text-xl sm:text-2xl font-black text-[#1263D6] dark:text-[#60AFFF]">{publishedPosts.length}+</div>
+              <div className="text-[11px] sm:text-xs text-[#4B5563] dark:text-[#94A3B8] font-medium mt-0.5">
                 {isArabic ? 'مقال إكلينيكي منشور' : 'Published Articles'}
               </div>
             </div>
 
-            <div className="p-3 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200/60 dark:border-white/5 text-center shadow-xs">
-              <div className="text-xl sm:text-2xl font-black text-sky-600 dark:text-sky-400">100%</div>
-              <div className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+            <div className="p-3.5 rounded-[24px] liquid-glass-card text-center">
+              <div className="text-xl sm:text-2xl font-black text-[#047857] dark:text-[#34D399]">100%</div>
+              <div className="text-[11px] sm:text-xs text-[#4B5563] dark:text-[#94A3B8] font-medium mt-0.5">
                 {isArabic ? 'مبني على الأدلة العلمية' : 'Evidence-Based'}
               </div>
             </div>
 
-            <div className="p-3 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200/60 dark:border-white/5 text-center shadow-xs">
-              <div className="text-xl sm:text-2xl font-black text-indigo-600 dark:text-indigo-400">5+</div>
-              <div className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+            <div className="p-3.5 rounded-[24px] liquid-glass-card text-center">
+              <div className="text-xl sm:text-2xl font-black text-[#6D28D9] dark:text-[#A78BFA]">5+</div>
+              <div className="text-[11px] sm:text-xs text-[#4B5563] dark:text-[#94A3B8] font-medium mt-0.5">
                 {isArabic ? 'مسارات تأهيلية تخصصية' : 'Clinical Specialties'}
               </div>
             </div>
 
-            <div className="p-3 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200/60 dark:border-white/5 text-center shadow-xs">
-              <div className="text-xl sm:text-2xl font-black text-amber-600 dark:text-amber-400">مجاناً</div>
-              <div className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+            <div className="p-3.5 rounded-[24px] liquid-glass-card text-center">
+              <div className="text-xl sm:text-2xl font-black text-[#161B26] dark:text-[#F8FAFC]">مجاناً</div>
+              <div className="text-[11px] sm:text-xs text-[#4B5563] dark:text-[#94A3B8] font-medium mt-0.5">
                 {isArabic ? 'دليل إرشادي متاح للأسر' : 'Free Parent Guidance'}
               </div>
             </div>
@@ -526,23 +526,23 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
         </div>
 
         {/* Search & Filter Controls Bar */}
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-4 sm:p-6 border border-slate-200/80 dark:border-white/10 shadow-xs mb-8 space-y-4">
+        <div className="liquid-glass-card rounded-[28px] p-4 sm:p-6 mb-8 space-y-4">
           
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
             {/* Search Input */}
             <div className="relative flex-1">
-              <Search className="w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+              <Search className="w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 text-[#8B95A5] dark:text-[#64748B] pointer-events-none" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={isArabic ? 'ابحث عن موضوع، استراتيجية سلوكية، أو اسم أخصائي...' : 'Search topics, behavioral strategies, or specialist name...'}
-                className="w-full pr-12 pl-10 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/50 transition-all"
+                className="w-full pr-12 pl-10 py-3 rounded-full warm-pill-input text-[#161B26] dark:text-[#F8FAFC] placeholder:text-[#8B95A5] dark:placeholder:text-[#64748B] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#2B95FF]/50 transition-all"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 p-1 text-[#8B95A5] hover:text-[#161B26] dark:hover:text-white cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -553,41 +553,41 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
             <div className="relative shrink-0">
               <button
                 onClick={() => setIsSortOpen(!isSortOpen)}
-                className="w-full md:w-auto flex items-center justify-between gap-2 px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-all cursor-pointer"
+                className="w-full md:w-auto flex items-center justify-between gap-2 px-4 py-3 rounded-full liquid-glass-pill text-xs sm:text-sm font-bold text-[#161B26] dark:text-[#F8FAFC] transition-all cursor-pointer"
               >
-                <SlidersHorizontal className="w-4 h-4 text-teal-600 dark:text-[#00E5BE]" />
+                <SlidersHorizontal className="w-4 h-4 text-[#2B95FF]" />
                 <span>
                   {sortBy === 'latest' && (isArabic ? 'الأحدث نشراً' : 'Latest')}
                   {sortBy === 'popular' && (isArabic ? 'الأكثر قراءة' : 'Most Popular')}
                   {sortBy === 'likes' && (isArabic ? 'الأعلى تفاعلاً' : 'Most Liked')}
                   {sortBy === 'reading_time' && (isArabic ? 'وقت القراءة (الأقصر)' : 'Shortest Read')}
                 </span>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                <ChevronDown className="w-3.5 h-3.5 text-[#8B95A5]" />
               </button>
 
               {isSortOpen && (
-                <div className="absolute left-0 sm:right-0 mt-2 w-52 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-white/15 p-1.5 z-40 animate-in fade-in zoom-in-95">
+                <div className="absolute left-0 sm:right-0 mt-2 w-52 glass-modal-dialog rounded-2xl shadow-xl p-1.5 z-40 animate-in fade-in zoom-in-95">
                   <button
                     onClick={() => { setSortBy('latest'); setIsSortOpen(false); }}
-                    className={`w-full text-right px-3 py-2 rounded-xl text-xs font-bold transition-all ${sortBy === 'latest' ? 'bg-teal-500/10 text-teal-700 dark:text-[#00E5BE]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                    className={`w-full text-right px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${sortBy === 'latest' ? 'bg-[#2B95FF]/12 text-[#1263D6] dark:text-[#60AFFF]' : 'text-[#4B5563] dark:text-[#94A3B8] hover:bg-[#161B26]/5 dark:hover:bg-white/5'}`}
                   >
                     {isArabic ? 'الأحدث نشراً' : 'Latest'}
                   </button>
                   <button
                     onClick={() => { setSortBy('popular'); setIsSortOpen(false); }}
-                    className={`w-full text-right px-3 py-2 rounded-xl text-xs font-bold transition-all ${sortBy === 'popular' ? 'bg-teal-500/10 text-teal-700 dark:text-[#00E5BE]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                    className={`w-full text-right px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${sortBy === 'popular' ? 'bg-[#2B95FF]/12 text-[#1263D6] dark:text-[#60AFFF]' : 'text-[#4B5563] dark:text-[#94A3B8] hover:bg-[#161B26]/5 dark:hover:bg-white/5'}`}
                   >
                     {isArabic ? 'الأكثر قراءة' : 'Most Popular'}
                   </button>
                   <button
                     onClick={() => { setSortBy('likes'); setIsSortOpen(false); }}
-                    className={`w-full text-right px-3 py-2 rounded-xl text-xs font-bold transition-all ${sortBy === 'likes' ? 'bg-teal-500/10 text-teal-700 dark:text-[#00E5BE]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                    className={`w-full text-right px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${sortBy === 'likes' ? 'bg-[#2B95FF]/12 text-[#1263D6] dark:text-[#60AFFF]' : 'text-[#4B5563] dark:text-[#94A3B8] hover:bg-[#161B26]/5 dark:hover:bg-white/5'}`}
                   >
                     {isArabic ? 'الأعلى تفاعلاً' : 'Most Liked'}
                   </button>
                   <button
                     onClick={() => { setSortBy('reading_time'); setIsSortOpen(false); }}
-                    className={`w-full text-right px-3 py-2 rounded-xl text-xs font-bold transition-all ${sortBy === 'reading_time' ? 'bg-teal-500/10 text-teal-700 dark:text-[#00E5BE]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'}`}
+                    className={`w-full text-right px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${sortBy === 'reading_time' ? 'bg-[#2B95FF]/12 text-[#1263D6] dark:text-[#60AFFF]' : 'text-[#4B5563] dark:text-[#94A3B8] hover:bg-[#161B26]/5 dark:hover:bg-white/5'}`}
                   >
                     {isArabic ? 'وقت القراءة (الأقصر)' : 'Shortest Read'}
                   </button>
@@ -597,17 +597,17 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
           </div>
 
           {/* Categories Segmented Filter Bar */}
-          <div className="flex items-center gap-2.5 overflow-x-auto pb-4 mb-6 no-scrollbar scroll-smooth">
+          <div className="flex items-center gap-2.5 overflow-x-auto pb-2 no-scrollbar scroll-smooth">
             {categories.map((cat) => {
               const isActive = selectedCategory === cat.id;
               return (
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
+                  className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
                     isActive
-                      ? 'bg-gradient-to-r from-[#0d5c52] to-[#115e59] text-white font-black shadow-md shadow-teal-900/20 scale-[1.02] border border-[#0d5c52]'
-                      : 'bg-white/80 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 hover:border-[#0d5c52]/40 hover:text-[#0d5c52] dark:hover:text-[#2dd4bf]'
+                      ? 'warm-pill-cta font-black shadow-sm'
+                      : 'liquid-glass-pill text-[#4B5563] dark:text-[#94A3B8]'
                   }`}
                 >
                   {isArabic ? cat.labelAr : cat.labelEn}
@@ -619,7 +619,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
         </div>
 
         {/* Results Count & Active Filter Notice */}
-        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-6 px-1">
+        <div className="flex items-center justify-between text-xs text-[#4B5563] dark:text-[#94A3B8] mb-6 px-1">
           <div>
             {isArabic 
               ? `عرض ${filteredPosts.length} مقال ${selectedCategory !== 'all' ? `في تخصص (${categories.find(c => c.id === selectedCategory)?.labelAr})` : ''}`
@@ -629,7 +629,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
           {(selectedCategory !== 'all' || searchQuery) && (
             <button
               onClick={() => { setSelectedCategory('all'); setSearchQuery(''); }}
-              className="text-teal-600 dark:text-[#00E5BE] font-bold hover:underline cursor-pointer"
+              className="text-[#1263D6] dark:text-[#60AFFF] font-bold hover:underline cursor-pointer"
             >
               {isArabic ? 'إعادة ضبط التصفية' : 'Reset Filters'}
             </button>
@@ -638,19 +638,19 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
 
         {/* Articles Grid (Exact layout and visual design matching the screenshot) */}
         {filteredPosts.length === 0 ? (
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-12 text-center border border-slate-200/80 dark:border-white/10 my-8">
-            <BookOpen className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-1">
+          <div className="liquid-glass-card rounded-[28px] p-12 text-center my-8">
+            <BookOpen className="w-12 h-12 text-[#8B95A5] dark:text-[#64748B] mx-auto mb-3" />
+            <h3 className="text-base sm:text-lg font-bold text-[#161B26] dark:text-[#F8FAFC] mb-1">
               {isArabic ? 'لم يتم العثور على مقالات مطابقة' : 'No articles match your search'}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-4">
+            <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] max-w-md mx-auto mb-4">
               {isArabic 
                 ? 'جرب البحث بكلمات عامة مثل (توحد، نطق، سلوك، تدريب) أو قم بتغيير التصنيف المختار.' 
                 : 'Try broader search terms or clear selected categories.'}
             </p>
             <button
               onClick={() => { setSelectedCategory('all'); setSearchQuery(''); }}
-              className="px-5 py-2.5 rounded-xl bg-teal-600 text-white text-xs font-bold cursor-pointer hover:bg-teal-700 transition-colors"
+              className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] text-white text-xs font-bold cursor-pointer hover:brightness-110 transition-all shadow-sm shadow-[#2B95FF]/20"
             >
               {isArabic ? 'عرض جميع المقالات' : 'Show All Articles'}
             </button>
@@ -667,14 +667,14 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                 <article
                   key={post.id}
                   onClick={() => handleOpenReader(post)}
-                  className="liquid-glass-card rounded-3xl overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer border border-slate-200/80 dark:border-white/10 dark:bg-[#0c1524]"
+                  className="liquid-glass-card rounded-[28px] overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
                 >
                   {/* 1. Integrated Custom Header with Topic Icon (No Photos - exact match to screenshot) */}
                   <div className={`p-6 sm:p-7 pb-5 ${categoryConfig.headerBg} ${categoryConfig.headerBorder} relative transition-colors`}>
                     {/* Top Row: Category Badge & Custom Integrated Icon Box */}
                     <div className="flex items-center justify-between gap-3 mb-4">
                       {/* Category Badge matching Brand Color */}
-                      <span className={`${categoryConfig.badgeBg} text-[11px] font-black px-3.5 py-1.5 rounded-xl shadow-xs tracking-tight`}>
+                      <span className={`${categoryConfig.badgeBg} text-[11px] font-black px-3.5 py-1.5 rounded-full shadow-xs tracking-tight`}>
                         {isArabic ? post.categoryTitle : (post.categoryTitleEn || post.categoryTitle)}
                       </span>
 
@@ -685,19 +685,19 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                     </div>
 
                     {/* Integrated Metadata Strip: Reading Time, Views & Date */}
-                    <div className="flex items-center justify-between gap-2 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                    <div className="flex items-center justify-between gap-2 text-[11px] font-medium text-[#4B5563] dark:text-[#94A3B8]">
                       <span className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                        <Clock className="w-3.5 h-3.5 text-[#2B95FF] shrink-0" />
                         <span>{post.readTimeMinutes} {isArabic ? 'دقائق قراءة' : 'min read'}</span>
                       </span>
 
                       <span className="flex items-center gap-1.5">
-                        <Eye className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <Eye className="w-3.5 h-3.5 text-[#8B95A5] shrink-0" />
                         <span>{post.viewsCount || 100} {isArabic ? 'مشاهدة' : 'views'}</span>
                       </span>
 
                       <span className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-[#0d5c52] dark:text-[#2dd4bf] shrink-0" />
+                        <Calendar className="w-3.5 h-3.5 text-[#8B5CF6] shrink-0" />
                         <span>{isArabic ? post.publishDate : (post.publishDateEn || post.publishDate)}</span>
                       </span>
                     </div>
@@ -707,27 +707,27 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                   <div className="p-5 sm:p-6 flex flex-col justify-between flex-1">
                     <div>
                       {/* Publication Date */}
-                      <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400 mb-2.5">
-                        <Calendar className="w-3.5 h-3.5 text-[#0d5c52] dark:text-[#2dd4bf]" />
+                      <div className="flex items-center gap-2 text-[11px] text-[#4B5563] dark:text-[#94A3B8] mb-2.5">
+                        <Calendar className="w-3.5 h-3.5 text-[#2B95FF]" />
                         <span>{isArabic ? post.publishDate : (post.publishDateEn || post.publishDate)}</span>
                       </div>
 
                       {/* Title */}
-                      <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug group-hover:text-[#0d5c52] dark:group-hover:text-[#2dd4bf] transition-colors mb-2.5">
+                      <h3 className="text-base sm:text-lg font-black text-[#161B26] dark:text-[#F8FAFC] leading-snug group-hover:text-[#1263D6] dark:group-hover:text-[#60AFFF] transition-colors mb-2.5">
                         {isArabic ? post.title : (post.titleEn || post.title)}
                       </h3>
 
                       {/* Excerpt */}
-                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed mb-4">
+                      <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] line-clamp-2 leading-relaxed mb-4">
                         {isArabic ? post.excerpt : (post.excerptEn || post.excerpt)}
                       </p>
 
                       {/* Key Takeaway Snippet */}
                       {post.keyTakeaways && post.keyTakeaways.length > 0 && (
-                        <div className="bg-[#dff1ec]/40 dark:bg-teal-950/30 border border-[#0d5c52]/15 dark:border-[#2dd4bf]/20 rounded-xl p-3 mb-4 text-xs">
+                        <div className="bg-[#2B95FF]/8 border border-[#2B95FF]/15 rounded-2xl p-3 mb-4 text-xs">
                           <div className="flex items-start gap-2">
-                            <CheckCircle2 className="w-4 h-4 text-[#0d5c52] dark:text-[#2dd4bf] shrink-0 mt-0.5" />
-                            <span className="text-slate-700 dark:text-slate-200 line-clamp-2 leading-relaxed font-medium">
+                            <CheckCircle2 className="w-4 h-4 text-[#10B981] shrink-0 mt-0.5" />
+                            <span className="text-[#161B26] dark:text-[#F8FAFC] line-clamp-2 leading-relaxed font-medium">
                               {isArabic 
                                 ? post.keyTakeaways[0] 
                                 : (post.keyTakeawaysEn?.[0] || post.keyTakeaways[0])}
@@ -738,8 +738,8 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                     </div>
 
                     {/* Card Bottom Actions */}
-                    <div className="pt-3 border-t border-slate-100 dark:border-white/10 flex items-center justify-between">
-                      <span className="inline-flex items-center gap-1.5 text-xs font-black text-[#0d5c52] dark:text-[#2dd4bf] group-hover:gap-2.5 transition-all">
+                    <div className="pt-3 border-t border-[#161B26]/[0.06] dark:border-white/[0.08] flex items-center justify-between">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-black text-[#1263D6] dark:text-[#60AFFF] group-hover:gap-2.5 transition-all">
                         <span>{isArabic ? 'قراءة المقال بالكامل' : 'Read Article'}</span>
                         {isArabic ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
                       </span>
@@ -749,10 +749,10 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                         <button
                           onClick={(e) => toggleLike(e, post.id)}
                           aria-label="Like post"
-                          className={`p-2 rounded-xl flex items-center gap-1 text-xs font-bold transition-all cursor-pointer ${
+                          className={`p-2 rounded-full flex items-center gap-1 text-xs font-bold transition-all cursor-pointer ${
                             isLiked 
-                              ? 'text-rose-600 bg-rose-50 dark:bg-rose-500/15' 
-                              : 'text-slate-500 dark:text-slate-400 hover:text-rose-500 hover:bg-slate-100 dark:hover:bg-white/5'
+                              ? 'text-rose-600 bg-rose-500/10' 
+                              : 'text-[#4B5563] dark:text-[#94A3B8] hover:text-rose-500 hover:bg-[#161B26]/5 dark:hover:bg-white/5'
                           }`}
                         >
                           <Heart className={`w-4 h-4 ${isLiked ? 'fill-rose-500 text-rose-500' : ''}`} />
@@ -763,11 +763,11 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                         <button
                           onClick={(e) => handleShare(e, post)}
                           aria-label="Share post"
-                          className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-[#0d5c52] dark:hover:text-[#2dd4bf] hover:bg-slate-100 dark:hover:bg-white/5 transition-colors relative cursor-pointer"
+                          className="p-2 rounded-full text-[#4B5563] dark:text-[#94A3B8] hover:text-[#1263D6] dark:hover:text-[#60AFFF] hover:bg-[#161B26]/5 dark:hover:bg-white/5 transition-colors relative cursor-pointer"
                         >
                           <Share2 className="w-4 h-4" />
                           {shareFeedback === post.id && (
-                            <span className="absolute -top-7 right-0 text-[10px] bg-slate-900 text-white px-2 py-0.5 rounded shadow whitespace-nowrap z-20">
+                            <span className="absolute -top-7 right-0 text-[10px] bg-[#141821] dark:bg-[#F5F2EC] text-white dark:text-[#161B26] px-2.5 py-0.5 rounded-full shadow whitespace-nowrap z-20">
                               {isArabic ? 'تم نسخ الرابط' : 'Link copied'}
                             </span>
                           )}
@@ -783,17 +783,17 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
         )}
 
         {/* Specialized Clinical Newsletter & Parent Guide Box */}
-        <div className="mt-14 sm:mt-20 bg-gradient-to-r from-[#0B3B36] via-[#0E5246] to-[#0A2E2A] text-white rounded-3xl p-6 sm:p-10 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-80 h-80 bg-teal-400/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="mt-14 sm:mt-20 obsidian-anchor-card rounded-[28px] p-6 sm:p-10 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-80 h-80 rounded-full blur-3xl pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(43, 149, 255, 0.25) 0%, rgba(43, 149, 255, 0) 70%)' }} />
           
           <div className="relative z-10 max-w-2xl">
-            <span className="text-[#00E5BE] text-xs font-bold uppercase tracking-wider block mb-1">
+            <span className="text-[#60AFFF] dark:text-[#1263D6] text-xs font-bold uppercase tracking-wider block mb-1">
               {isArabic ? 'النشرة المعرفية والتأهيلية الأسبوعية' : 'Weekly Clinical Rehabilitation Newsletter'}
             </span>
-            <h3 className="text-xl sm:text-2xl lg:text-3xl font-black mb-2">
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white dark:text-[#161B26] mb-2">
               {isArabic ? 'هل تود استلام أحدث الإرشادات السلوكية والنطقية؟' : 'Get the latest behavioral & speech guides'}
             </h3>
-            <p className="text-emerald-100/80 text-xs sm:text-sm leading-relaxed mb-6">
+            <p className="text-[#94A3B8] dark:text-[#4B5563] text-xs sm:text-sm leading-relaxed mb-6">
               {isArabic 
                 ? 'انضم لأكثر من 3,500 أسرة تستلم أسبوعياً نصائح مقننة من أخصائيي واستشاريي مركز رابا في التعامل مع التحديات السلوكية والتكامل الحسي في المنزل.'
                 : 'Join over 3,500 families receiving weekly evidence-based tips directly from Raba Center clinical team.'}
@@ -810,11 +810,11 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                 type="email"
                 required
                 placeholder={isArabic ? 'أدخل بريدك الإلكتروني أو رقم الواتساب...' : 'Enter your email or WhatsApp number...'}
-                className="flex-1 px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-emerald-200/60 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#00E5BE]"
+                className="flex-1 px-5 py-3 rounded-full bg-white/10 dark:bg-[#161B26]/5 border border-white/20 dark:border-[#161B26]/15 text-white dark:text-[#161B26] placeholder:text-[#94A3B8] dark:placeholder:text-[#4B5563] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#2B95FF]"
               />
               <button
                 type="submit"
-                className="px-6 py-3 rounded-xl bg-[#00E5BE] hover:bg-[#00c9a7] text-slate-950 font-black text-xs sm:text-sm transition-all cursor-pointer shadow-md shrink-0"
+                className="px-6 py-3 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white font-black text-xs sm:text-sm transition-all cursor-pointer shadow-md shadow-[#2B95FF]/25 shrink-0"
               >
                 {isArabic ? 'اشتراك مجاني' : 'Subscribe Free'}
               </button>
@@ -823,16 +823,16 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
         </div>
 
         {/* Clinical Assessment Booking CTA */}
-        <div className="mt-10 sm:mt-12 bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200/80 dark:border-white/10 shadow-xs flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="mt-10 sm:mt-12 liquid-glass-card rounded-[28px] p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-teal-500/10 text-teal-600 dark:text-[#00E5BE] flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-[#2B95FF]/12 text-[#1263D6] dark:text-[#60AFFF] flex items-center justify-center shrink-0">
               <Stethoscope className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
+              <h4 className="text-base sm:text-lg font-black text-[#161B26] dark:text-[#F8FAFC]">
                 {isArabic ? 'هل يحتاج طفلك إلى خطة تدخل سلوكي أو تأهيلي عاجلة؟' : 'Does your child need urgent behavioral or therapy intake?'}
               </h4>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+              <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] mt-0.5">
                 {isArabic 
                   ? 'مراكزنا في الرياض وجدة والخبر مجهزة بأحدث مقاييس التشخيص المقننة لاستقبال طفلك فوراً.'
                   : 'Our branches in Riyadh, Jeddah, and Khobar are equipped with international standardized assessments.'}
@@ -844,7 +844,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
             onClick={() => {
               if (onOpenBooking) onOpenBooking('طلب موعد تقييم شامل بعد تصفح المدونة');
             }}
-            className="w-full md:w-auto px-7 py-3.5 rounded-2xl bg-gradient-to-r from-[#0d5c52] to-[#115e59] hover:brightness-110 active:scale-95 text-white font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer shrink-0 text-center"
+            className="w-full md:w-auto px-7 py-3.5 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 active:scale-95 text-white font-black text-xs sm:text-sm shadow-md shadow-[#2B95FF]/20 transition-all cursor-pointer shrink-0 text-center"
           >
             {isArabic ? 'احجز تقييم طفلك الآن' : 'Book Child Assessment'}
           </button>
@@ -855,30 +855,30 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
       {/* Full Article Reader Modal (Dedicated Deep-Read View) */}
       {readingPost && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 lg:p-6 bg-slate-950/80 backdrop-blur-md animate-fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 lg:p-6 bg-black/60 backdrop-blur-md animate-fade-in"
           onClick={handleCloseReader}
         >
           <div 
-            className="bg-white dark:bg-[#0c1322] rounded-3xl w-full max-w-4xl max-h-[92vh] overflow-hidden shadow-2xl border border-slate-200 dark:border-white/15 relative flex flex-col"
+            className="glass-modal-dialog rounded-[28px] w-full max-w-4xl max-h-[92vh] overflow-hidden shadow-2xl relative flex flex-col"
             onClick={(e) => e.stopPropagation()}
             dir={isArabic ? 'rtl' : 'ltr'}
           >
             {/* Sticky Reading Progress Bar */}
-            <div className="w-full bg-slate-100 dark:bg-slate-800 h-1">
+            <div className="w-full bg-[#161B26]/5 dark:bg-white/10 h-1.5">
               <div 
-                className="bg-gradient-to-r from-teal-500 to-[#00E5BE] h-full transition-all duration-150"
+                className="bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] h-full transition-all duration-150"
                 style={{ width: `${readingProgress}%` }}
               />
             </div>
 
             {/* Reader Header Bar */}
-            <div className="px-5 sm:px-8 py-3.5 border-b border-slate-100 dark:border-white/10 flex items-center justify-between gap-3 shrink-0 bg-white/90 dark:bg-[#0c1322]/90 backdrop-blur-md">
+            <div className="px-5 sm:px-8 py-3.5 border-b border-[#161B26]/[0.06] dark:border-white/[0.08] flex items-center justify-between gap-3 shrink-0 liquid-glass-panel">
               
               <div className="flex items-center gap-2 truncate">
-                <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-md bg-[#0d5c52] text-white">
+                <span className="text-[10px] font-black uppercase px-3 py-1 rounded-full bg-[#141821] dark:bg-[#F5F2EC] text-white dark:text-[#161B26]">
                   {isArabic ? readingPost.categoryTitle : (readingPost.categoryTitleEn || readingPost.categoryTitle)}
                 </span>
-                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 truncate hidden sm:inline">
+                <span className="text-xs font-bold text-[#4B5563] dark:text-[#94A3B8] truncate hidden sm:inline">
                   {isArabic ? readingPost.title : (readingPost.titleEn || readingPost.title)}
                 </span>
               </div>
@@ -887,24 +887,24 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
               <div className="flex items-center gap-2 shrink-0">
                 
                 {/* Font Size Adjuster */}
-                <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 text-xs">
+                <div className="flex items-center liquid-glass-pill rounded-full p-0.5 text-xs">
                   <button
                     onClick={() => setReaderFontSize('sm')}
-                    className={`px-2 py-1 rounded font-bold ${readerFontSize === 'sm' ? 'bg-white dark:bg-slate-700 text-teal-600 shadow-xs' : 'text-slate-500'}`}
+                    className={`px-2.5 py-1 rounded-full font-bold cursor-pointer transition-all ${readerFontSize === 'sm' ? 'warm-pill-cta shadow-xs' : 'text-[#4B5563] dark:text-[#94A3B8]'}`}
                     title="خط صغير"
                   >
                     A-
                   </button>
                   <button
                     onClick={() => setReaderFontSize('md')}
-                    className={`px-2 py-1 rounded font-bold ${readerFontSize === 'md' ? 'bg-white dark:bg-slate-700 text-teal-600 shadow-xs' : 'text-slate-500'}`}
+                    className={`px-2.5 py-1 rounded-full font-bold cursor-pointer transition-all ${readerFontSize === 'md' ? 'warm-pill-cta shadow-xs' : 'text-[#4B5563] dark:text-[#94A3B8]'}`}
                     title="خط قياسي"
                   >
                     A
                   </button>
                   <button
                     onClick={() => setReaderFontSize('lg')}
-                    className={`px-2 py-1 rounded font-bold ${readerFontSize === 'lg' ? 'bg-white dark:bg-slate-700 text-teal-600 shadow-xs' : 'text-slate-500'}`}
+                    className={`px-2.5 py-1 rounded-full font-bold cursor-pointer transition-all ${readerFontSize === 'lg' ? 'warm-pill-cta shadow-xs' : 'text-[#4B5563] dark:text-[#94A3B8]'}`}
                     title="خط كبير"
                   >
                     A+
@@ -914,16 +914,16 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                 {/* Copy Link */}
                 <button
                   onClick={handleCopyCurrentLink}
-                  className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-teal-600 transition-colors cursor-pointer relative"
+                  className="p-2 rounded-full liquid-glass-btn text-[#4B5563] dark:text-[#94A3B8] hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors cursor-pointer relative"
                   title="نسخ رابط المقال"
                 >
-                  {copyFeedback ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                  {copyFeedback ? <Check className="w-4 h-4 text-[#10B981]" /> : <Copy className="w-4 h-4" />}
                 </button>
 
                 {/* Close Button */}
                 <button
                   onClick={handleCloseReader}
-                  className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center transition-colors cursor-pointer"
+                  className="w-8 h-8 rounded-full liquid-glass-btn text-[#4B5563] dark:text-[#94A3B8] hover:text-[#161B26] dark:hover:text-white flex items-center justify-center transition-colors cursor-pointer"
                   title="إغلاق"
                 >
                   <X className="w-4 h-4" />
@@ -940,9 +940,9 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
             >
               
               {/* Post Headline & Unboxed Metadata */}
-              <div className="space-y-3 border-b border-slate-100 dark:border-white/10 pb-6">
-                <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
-                  <span className="font-bold text-slate-800 dark:text-slate-200">
+              <div className="space-y-3 border-b border-[#161B26]/[0.06] dark:border-white/[0.08] pb-6">
+                <div className="flex items-center gap-2 text-xs text-[#4B5563] dark:text-[#94A3B8] flex-wrap">
+                  <span className="font-bold text-[#161B26] dark:text-[#F8FAFC]">
                     {isArabic ? readingPost.author?.name : (readingPost.author?.nameEn || readingPost.author?.name)}
                   </span>
                   <span aria-hidden="true">·</span>
@@ -950,22 +950,22 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                   <span aria-hidden="true">·</span>
                   <span>{readingPost.readTimeMinutes} {isArabic ? 'دقائق قراءة موجهة' : 'min read'}</span>
                   <span aria-hidden="true">·</span>
-                  <span className="text-teal-600 dark:text-[#00E5BE] font-bold">
+                  <span className="text-[#047857] dark:text-[#34D399] font-bold">
                     {isArabic ? 'مراجعة إكلينيكية معتمدة' : 'Clinically Reviewed'}
                   </span>
                 </div>
 
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white leading-tight">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#161B26] dark:text-[#F8FAFC] leading-tight">
                   {isArabic ? readingPost.title : (readingPost.titleEn || readingPost.title)}
                 </h1>
 
-                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                <p className="text-sm sm:text-base text-[#4B5563] dark:text-[#94A3B8] leading-relaxed font-medium">
                   {isArabic ? readingPost.excerpt : (readingPost.excerptEn || readingPost.excerpt)}
                 </p>
               </div>
 
               {/* Cover Image */}
-              <div className="rounded-3xl overflow-hidden aspect-[16/9] max-h-[380px] bg-slate-100 dark:bg-slate-800 shadow-md">
+              <div className="rounded-[24px] overflow-hidden aspect-[16/9] max-h-[380px] bg-[#161B26]/5 dark:bg-white/5 shadow-md">
                 <img
                   src={readingPost.image}
                   alt={readingPost.title}
@@ -975,15 +975,15 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
 
               {/* Key Takeaways Box */}
               {readingPost.keyTakeaways && readingPost.keyTakeaways.length > 0 && (
-                <div className="p-5 sm:p-6 rounded-3xl bg-[#dff1ec]/70 dark:bg-teal-950/40 border border-teal-500/20 space-y-3">
-                  <div className="flex items-center gap-2 text-teal-800 dark:text-[#2dd4bf] font-black text-sm">
-                    <Sparkles className="w-4 h-4 text-teal-600 dark:text-[#2dd4bf]" />
+                <div className="p-5 sm:p-6 rounded-[24px] bg-[#2B95FF]/8 border border-[#2B95FF]/20 space-y-3">
+                  <div className="flex items-center gap-2 text-[#1263D6] dark:text-[#60AFFF] font-black text-sm">
+                    <Sparkles className="w-4 h-4 text-[#2B95FF]" />
                     <span>{isArabic ? 'أبرز المخرجات والنقاط الإكلينيكية المستفادة:' : 'Key Clinical Takeaways:'}</span>
                   </div>
                   <div className="space-y-2">
                     {readingPost.keyTakeaways.map((takeaway, idx) => (
-                      <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-800 dark:text-slate-200 font-medium">
-                        <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-[#2dd4bf] shrink-0 mt-0.5" />
+                      <div key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-[#161B26] dark:text-[#F8FAFC] font-medium">
+                        <CheckCircle2 className="w-4 h-4 text-[#10B981] shrink-0 mt-0.5" />
                         <span className="leading-relaxed">{takeaway}</span>
                       </div>
                     ))}
@@ -992,7 +992,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
               )}
 
               {/* Main Article Paragraphs */}
-              <div className={`space-y-4 text-slate-700 dark:text-slate-200 leading-relaxed ${
+              <div className={`space-y-4 text-[#4B5563] dark:text-[#94A3B8] leading-relaxed ${
                 readerFontSize === 'sm' ? 'text-xs sm:text-sm' : readerFontSize === 'lg' ? 'text-base sm:text-lg' : 'text-sm sm:text-base'
               }`}>
                 {(isArabic ? readingPost.content : (readingPost.contentEn || readingPost.content))?.map((block, pIdx) => {
@@ -1001,7 +1001,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                     return (
                       <h3
                         key={pIdx}
-                        className="text-lg sm:text-xl font-black text-[#0f2d29] dark:text-[#2dd4bf] pt-4 pb-1 border-b border-slate-200/80 dark:border-white/10"
+                        className="text-lg sm:text-xl font-black text-[#161B26] dark:text-[#F8FAFC] pt-4 pb-1 border-b border-[#161B26]/[0.06] dark:border-white/[0.08]"
                       >
                         {trimmed.slice(3)}
                       </h3>
@@ -1011,7 +1011,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                     return (
                       <h4
                         key={pIdx}
-                        className="text-base sm:text-lg font-extrabold text-[#0284C7] dark:text-sky-300 pt-2.5"
+                        className="text-base sm:text-lg font-extrabold text-[#1263D6] dark:text-[#60AFFF] pt-2.5"
                       >
                         {trimmed.slice(4)}
                       </h4>
@@ -1020,8 +1020,8 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                   if (trimmed.startsWith('• ')) {
                     return (
                       <div key={pIdx} className="flex items-start gap-2.5 pr-1 sm:pr-3">
-                        <span className="w-2 h-2 rounded-full bg-teal-600 dark:bg-[#2dd4bf] shrink-0 mt-2.5" />
-                        <span className="leading-relaxed font-normal">{trimmed.slice(2)}</span>
+                        <span className="w-2 h-2 rounded-full bg-[#2B95FF] shrink-0 mt-2.5" />
+                        <span className="leading-relaxed font-normal text-[#161B26] dark:text-[#F8FAFC]">{trimmed.slice(2)}</span>
                       </div>
                     );
                   }
@@ -1035,13 +1035,13 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
 
               {/* Tags Cloud */}
               {readingPost.tags && readingPost.tags.length > 0 && (
-                <div className="pt-4 border-t border-slate-100 dark:border-white/10">
-                  <div className="text-xs font-bold text-slate-400 mb-2">
+                <div className="pt-4 border-t border-[#161B26]/[0.06] dark:border-white/[0.08]">
+                  <div className="text-xs font-bold text-[#8B95A5] dark:text-[#64748B] mb-2">
                     {isArabic ? 'الوسوم ومحاور المقال:' : 'Article Tags:'}
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {readingPost.tags.map((tag, tIdx) => (
-                      <span key={tIdx} className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                      <span key={tIdx} className="text-xs font-semibold px-3 py-1 rounded-full liquid-glass-pill text-[#4B5563] dark:text-[#94A3B8]">
                         #{tag}
                       </span>
                     ))}
@@ -1050,28 +1050,28 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
               )}
 
               {/* Author Bio Card with Direct Booking Action */}
-              <div className="p-5 sm:p-6 rounded-3xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="p-5 sm:p-6 rounded-[24px] liquid-glass-panel flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-3.5">
                   {readingPost.author?.avatar ? (
                     <img
                       src={readingPost.author.avatar}
                       alt={readingPost.author.name}
-                      className="w-14 h-14 rounded-2xl object-cover shrink-0 border border-teal-500/30"
+                      className="w-14 h-14 rounded-2xl object-cover shrink-0 border border-[#2B95FF]/30"
                     />
                   ) : (
-                    <div className="w-14 h-14 rounded-2xl bg-teal-600 text-white font-black text-xl flex items-center justify-center shrink-0">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#2B95FF] to-[#1A73E8] text-white font-black text-xl flex items-center justify-center shrink-0">
                       {readingPost.author?.name ? readingPost.author.name.slice(0, 1) : 'ر'}
                     </div>
                   )}
 
                   <div>
-                    <span className="text-[10px] font-bold text-teal-600 dark:text-[#00E5BE] block">
+                    <span className="text-[10px] font-bold text-[#1263D6] dark:text-[#60AFFF] block">
                       {isArabic ? 'المؤلف والمشرف الإكلينيكي' : 'Author & Clinical Specialist'}
                     </span>
-                    <h4 className="text-base font-black text-slate-900 dark:text-white">
+                    <h4 className="text-base font-black text-[#161B26] dark:text-[#F8FAFC]">
                       {isArabic ? readingPost.author?.name : (readingPost.author?.nameEn || readingPost.author?.name)}
                     </h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    <p className="text-xs text-[#4B5563] dark:text-[#94A3B8] mt-0.5">
                       {isArabic ? readingPost.author?.role : (readingPost.author?.roleEn || readingPost.author?.role)}
                     </p>
                   </div>
@@ -1079,22 +1079,22 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
 
                 <button
                   onClick={() => handleBookWithAuthor(readingPost.author?.id)}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition-all shadow-sm shrink-0 cursor-pointer text-center"
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white text-xs font-bold transition-all shadow-sm shadow-[#2B95FF]/20 shrink-0 cursor-pointer text-center"
                 >
                   {isArabic ? 'حجز موعد مع هذا الأخصائي' : 'Book with Specialist'}
                 </button>
               </div>
 
               {/* Social Share Drawer */}
-              <div className="pt-4 border-t border-slate-100 dark:border-white/10 flex items-center justify-between gap-3 flex-wrap">
-                <span className="text-xs font-bold text-slate-500">
+              <div className="pt-4 border-t border-[#161B26]/[0.06] dark:border-white/[0.08] flex items-center justify-between gap-3 flex-wrap">
+                <span className="text-xs font-bold text-[#4B5563] dark:text-[#94A3B8]">
                   {isArabic ? 'شارك هذه المعرفة مع أسرة تحتاجها:' : 'Share this guide:'}
                 </span>
 
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleShareWhatsApp}
-                    className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-full bg-[#10B981]/10 hover:bg-[#10B981]/20 text-[#047857] dark:text-[#34D399] text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
                   >
                     <Send className="w-3.5 h-3.5" />
                     <span>واتساب</span>
@@ -1102,16 +1102,16 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
 
                   <button
                     onClick={handleShareTwitter}
-                    className="px-3 py-1.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-full liquid-glass-pill text-[#161B26] dark:text-[#F8FAFC] text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
                   >
                     <span>منصة X</span>
                   </button>
 
                   <button
                     onClick={handleCopyCurrentLink}
-                    className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-full liquid-glass-pill text-[#4B5563] dark:text-[#94A3B8] text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
                   >
-                    {copyFeedback ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copyFeedback ? <Check className="w-3.5 h-3.5 text-[#10B981]" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copyFeedback ? (isArabic ? 'تم النسخ!' : 'Copied!') : (isArabic ? 'نسخ الرابط' : 'Copy')}</span>
                   </button>
                 </div>
@@ -1120,10 +1120,10 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
             </div>
 
             {/* Sticky Reader Footer */}
-            <div className="px-5 sm:px-8 py-3.5 border-t border-slate-100 dark:border-white/10 flex items-center justify-between gap-4 shrink-0 bg-slate-50 dark:bg-slate-900/90">
+            <div className="px-5 sm:px-8 py-3.5 border-t border-[#161B26]/[0.06] dark:border-white/[0.08] flex items-center justify-between gap-4 shrink-0 liquid-glass-panel">
               <button
                 onClick={handleCloseReader}
-                className="text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors cursor-pointer"
+                className="text-xs font-bold text-[#4B5563] dark:text-[#94A3B8] hover:text-[#161B26] dark:hover:text-white transition-colors cursor-pointer"
               >
                 {isArabic ? '← العودة لكافة المقالات' : '← Back to All Articles'}
               </button>
@@ -1132,7 +1132,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                 onClick={() => {
                   if (onOpenBooking) onOpenBooking(`استفسار بناء على مقال: ${readingPost.title}`);
                 }}
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#0d5c52] to-[#115e59] hover:brightness-110 text-white font-black text-xs transition-all shadow-sm cursor-pointer"
+                className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white font-black text-xs transition-all shadow-sm shadow-[#2B95FF]/20 cursor-pointer"
               >
                 {isArabic ? 'حجز تقييم لحالة طفلي' : 'Book Child Assessment'}
               </button>

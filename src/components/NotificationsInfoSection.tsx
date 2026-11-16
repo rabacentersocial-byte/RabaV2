@@ -27,19 +27,19 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
   const [activePreview, setActivePreview] = useState<'whatsapp' | 'sms'>('whatsapp');
 
   return (
-    <section id="notifications-info" className="py-16 md:py-24 bg-transparent relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10">
+    <section id="notifications-info" className="py-16 md:py-24 bg-transparent relative overflow-hidden transition-colors border-b border-[#161B26]/[0.08] dark:border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#00E5BE]/10 border border-[#00E5BE]/30 text-teal-800 dark:text-[#00E5BE] text-xs font-bold mb-3 shadow-xs backdrop-blur-md">
-            <BellRing className="w-3.5 h-3.5 text-teal-600 dark:text-[#00E5BE] animate-bounce" />
+          <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full liquid-glass-pill text-[#1263D6] dark:text-[#60AFFF] text-xs font-bold mb-3 shadow-xs">
+            <BellRing className="w-3.5 h-3.5 text-[#2B95FF] animate-bounce" />
             <span>{t.notifications.badge}</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#161B26] dark:text-[#F8FAFC] tracking-tight">
             {t.notifications.title}
           </h2>
-          <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
+          <p className="mt-3 text-sm sm:text-base text-[#4B5563] dark:text-[#94A3B8] leading-relaxed">
             {t.notifications.subtitle}
           </p>
         </div>
@@ -50,15 +50,15 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
           {/* Feature Steps with Glassy Cards */}
           <div className={`lg:col-span-7 space-y-4 ${isArabic ? 'text-right' : 'text-left'}`}>
             
-            <div className="glass-card p-5 rounded-2xl flex items-start gap-4 hover:border-[#00E5BE]/40 transition-all backdrop-blur-md">
-              <div className="w-11 h-11 rounded-2xl bg-[#00E5BE]/20 text-[#0284C7] dark:text-[#00E5BE] flex items-center justify-center font-black text-sm shrink-0 border border-[#00E5BE]/30">
+            <div className="liquid-glass-card p-5 rounded-[28px] flex items-start gap-4 hover:border-[#2B95FF]/40 transition-all">
+              <div className="w-11 h-11 rounded-2xl bg-[#2B95FF]/12 text-[#1263D6] dark:text-[#60AFFF] flex items-center justify-center font-black text-sm shrink-0 border border-[#2B95FF]/25">
                 01
               </div>
               <div className="space-y-1">
-                <h4 className="text-base font-black text-slate-900 dark:text-white">
+                <h4 className="text-base font-black text-[#161B26] dark:text-[#F8FAFC]">
                   {isArabic ? 'تأكيد إلكتروني فوري مع سند السداد' : 'Instant Confirmation with Official Receipt'}
                 </h4>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] leading-relaxed">
                   {isArabic 
                     ? 'بمجرد إتمام الحجز والسداد، يصلك إشعار فوري برقم الحجز المرجعي، تفاصيل الجلسة، ورابط موقع العيادة عبر خرائط جوجل.'
                     : 'Immediately upon booking, you receive instant confirmation with booking reference, appointment details, and GPS map guidance.'}
@@ -66,43 +66,43 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
               </div>
             </div>
 
-            <div className="glass-card p-5 rounded-2xl border border-[#00E5BE]/40 ring-1 ring-[#00E5BE]/30 flex items-start gap-4 transition-all backdrop-blur-md">
-              <div className="w-11 h-11 rounded-2xl bg-[#00E5BE]/20 text-[#0284C7] dark:text-[#00E5BE] flex items-center justify-center font-black text-sm shrink-0 border border-[#00E5BE]/40">
+            <div className="liquid-glass-card p-5 rounded-[28px] border-[#2B95FF]/45 ring-1 ring-[#2B95FF]/25 flex items-start gap-4 transition-all">
+              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#2B95FF] to-[#1A73E8] text-white flex items-center justify-center font-black text-sm shrink-0 shadow-sm shadow-[#2B95FF]/25">
                 02
               </div>
               <div className="space-y-1">
-                <h4 className="text-base font-black text-slate-900 dark:text-white">
+                <h4 className="text-base font-black text-[#161B26] dark:text-[#F8FAFC]">
                   {t.notifications.feature1Title}
                 </h4>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] leading-relaxed">
                   {t.notifications.feature1Desc}
                 </p>
               </div>
             </div>
 
-            <div className="glass-card p-5 rounded-2xl flex items-start gap-4 hover:border-[#00E5BE]/40 transition-all backdrop-blur-md">
-              <div className="w-11 h-11 rounded-2xl bg-amber-400/20 text-amber-700 dark:text-amber-300 flex items-center justify-center font-black text-sm shrink-0 border border-amber-400/30">
+            <div className="liquid-glass-card p-5 rounded-[28px] flex items-start gap-4 hover:border-[#F59E0B]/40 transition-all">
+              <div className="w-11 h-11 rounded-2xl bg-[#F59E0B]/12 text-[#B45309] dark:text-[#FBBF24] flex items-center justify-center font-black text-sm shrink-0 border border-[#F59E0B]/25">
                 03
               </div>
               <div className="space-y-1">
-                <h4 className="text-base font-black text-slate-900 dark:text-white">
+                <h4 className="text-base font-black text-[#161B26] dark:text-[#F8FAFC]">
                   {t.notifications.feature2Title}
                 </h4>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] leading-relaxed">
                   {t.notifications.feature2Desc}
                 </p>
               </div>
             </div>
 
-            <div className="glass-card p-5 rounded-2xl flex items-start gap-4 hover:border-[#00E5BE]/40 transition-all backdrop-blur-md">
-              <div className="w-11 h-11 rounded-2xl bg-blue-500/20 text-blue-700 dark:text-blue-300 flex items-center justify-center font-black text-sm shrink-0 border border-blue-500/30">
+            <div className="liquid-glass-card p-5 rounded-[28px] flex items-start gap-4 hover:border-[#8B5CF6]/40 transition-all">
+              <div className="w-11 h-11 rounded-2xl bg-[#8B5CF6]/12 text-[#6D28D9] dark:text-[#A78BFA] flex items-center justify-center font-black text-sm shrink-0 border border-[#8B5CF6]/25">
                 04
               </div>
               <div className="space-y-1">
-                <h4 className="text-base font-black text-slate-900 dark:text-white">
+                <h4 className="text-base font-black text-[#161B26] dark:text-[#F8FAFC]">
                   {t.notifications.feature3Title}
                 </h4>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] leading-relaxed">
                   {t.notifications.feature3Desc}
                 </p>
               </div>
@@ -111,7 +111,7 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
             <div className="pt-2 flex flex-wrap items-center gap-3">
               <button
                 onClick={onOpenNotifications}
-                className="px-6 py-3.5 bg-gradient-to-r from-[#00E5BE] to-[#00c2cb] text-slate-950 text-xs sm:text-sm font-black rounded-2xl flex items-center gap-2 cursor-pointer shadow-lg shadow-teal-500/25 border border-white/40 hover:scale-105 transition-all"
+                className="px-6 py-3.5 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] text-white text-xs sm:text-sm font-black rounded-full flex items-center gap-2 cursor-pointer shadow-lg shadow-[#2B95FF]/25 hover:brightness-110 active:scale-95 transition-all"
               >
                 <BellRing className="w-4 h-4" />
                 <span>{t.notifications.openCenterBtn}</span>
@@ -119,9 +119,9 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
 
               <button
                 onClick={onOpenBooking}
-                className="px-6 py-3.5 bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/20 text-slate-800 dark:text-white text-xs sm:text-sm font-bold rounded-2xl border border-slate-200 dark:border-white/20 backdrop-blur-md shadow-xs transition-all flex items-center gap-2 cursor-pointer"
+                className="px-6 py-3.5 warm-pill-cta text-xs sm:text-sm font-bold rounded-full shadow-xs transition-all flex items-center gap-2 cursor-pointer"
               >
-                <CalendarCheck className="w-4 h-4 text-[#0284C7] dark:text-[#00E5BE]" />
+                <CalendarCheck className="w-4 h-4 text-[#2B95FF]" />
                 <span>{isArabic ? 'حجز جلسة وتفعيل التنبيهات' : 'Book Session & Activate Alerts'}</span>
               </button>
             </div>
@@ -131,7 +131,7 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
           {/* Left: Glassy Interactive Phone Mockup Preview */}
           <div className="lg:col-span-5 flex justify-center perspective-1000">
             <div 
-              className="w-full max-w-sm glass-panel rounded-[2.8rem] p-4 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.6)] border border-white/25 relative backdrop-blur-xl"
+              className="w-full max-w-sm bg-[#141821]/95 rounded-[2.8rem] p-4 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.45)] border border-white/15 relative backdrop-blur-xl"
               style={{
                 transform: 'rotateY(-6deg) rotateX(4deg)',
                 transformStyle: 'preserve-3d',
@@ -142,12 +142,12 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
               <div className="w-28 h-4 bg-white/15 backdrop-blur-md rounded-full mx-auto mb-4 border border-white/10" />
 
               {/* Toggle WhatsApp vs SMS */}
-              <div className="flex bg-white/[0.06] p-1.5 rounded-2xl mb-4 text-xs font-bold border border-white/10 backdrop-blur-md">
+              <div className="flex bg-white/[0.06] p-1.5 rounded-full mb-4 text-xs font-bold border border-white/10 backdrop-blur-md">
                 <button
                   onClick={() => setActivePreview('whatsapp')}
-                  className={`flex-1 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`flex-1 py-2 rounded-full transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     activePreview === 'whatsapp'
-                      ? 'bg-emerald-600 text-white shadow-md'
+                      ? 'bg-[#10B981] text-white shadow-md'
                       : 'text-slate-300 hover:text-white'
                   }`}
                 >
@@ -157,9 +157,9 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
 
                 <button
                   onClick={() => setActivePreview('sms')}
-                  className={`flex-1 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`flex-1 py-2 rounded-full transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                     activePreview === 'sms'
-                      ? 'bg-[#00E5BE] text-slate-950 font-black shadow-md'
+                      ? 'bg-[#2B95FF] text-white font-black shadow-md'
                       : 'text-slate-300 hover:text-white'
                   }`}
                 >
@@ -169,21 +169,21 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
               </div>
 
               {/* Screen Content */}
-              <div className={`bg-slate-950/80 backdrop-blur-md border border-white/15 rounded-2xl p-4 min-h-[380px] ${isArabic ? 'text-right' : 'text-left'} text-xs space-y-3 font-sans shadow-inner text-white`} dir={direction}>
+              <div className={`bg-[#0B0F17]/90 backdrop-blur-md border border-white/10 rounded-[22px] p-4 min-h-[380px] ${isArabic ? 'text-right' : 'text-left'} text-xs space-y-3 font-sans shadow-inner text-white`} dir={direction}>
                 {activePreview === 'whatsapp' ? (
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 pb-2 border-b border-white/10 text-slate-300">
-                      <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-black shadow-xs">
+                      <div className="w-8 h-8 rounded-full bg-[#10B981] text-white flex items-center justify-center text-xs font-black shadow-xs">
                         {isArabic ? 'ر' : 'R'}
                       </div>
                       <div>
                         <span className="font-black text-xs block text-white">{isArabic ? 'مركز رابا للعلاج بتحليل السلوك ABA' : 'Raba Center - ABA Therapy'}</span>
-                        <span className="text-[10px] text-[#00E5BE] font-bold">{isArabic ? 'حساب أعمال موثق معتمد ✓' : 'Verified Business Account ✓'}</span>
+                        <span className="text-[10px] text-[#34D399] font-bold">{isArabic ? 'حساب أعمال موثق معتمد ✓' : 'Verified Business Account ✓'}</span>
                       </div>
                     </div>
 
                     <div className="bg-white/[0.08] backdrop-blur-md p-3.5 rounded-2xl rounded-tr-none shadow-md border border-white/15 text-slate-200 space-y-2">
-                      <p className="font-black text-[#00E5BE] text-xs">
+                      <p className="font-black text-[#60AFFF] text-xs">
                         {isArabic ? 'تذكير بموعد جلسة طفلك القادمة 🔔' : 'Upcoming Session Reminder 🔔'}
                       </p>
                       <p className="text-[11px] leading-relaxed">
@@ -203,7 +203,7 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
                       <span className={`text-[9px] text-slate-400 block ${isArabic ? 'text-left' : 'text-right'}`}>10:00 {isArabic ? 'ص' : 'AM'} ✓✓</span>
                     </div>
 
-                    <div className="bg-emerald-600/90 text-white p-2.5 rounded-xl text-[10px] text-center font-black shadow-sm border border-emerald-400/30">
+                    <div className="bg-[#10B981]/90 text-white p-2.5 rounded-xl text-[10px] text-center font-black shadow-sm border border-[#34D399]/30">
                       {isArabic ? 'تم تأكيد الحضور بنجاح، بانتظاركم بكل حب 💚' : 'Session confirmed, we look forward to seeing you 💚'}
                     </div>
                   </div>
@@ -214,7 +214,7 @@ export const NotificationsInfoSection: React.FC<NotificationsInfoSectionProps> =
                     </div>
 
                     <div className="bg-white/[0.08] backdrop-blur-md p-3.5 rounded-2xl rounded-tr-none shadow-md border border-white/15 text-slate-200 space-y-2 text-[11px] leading-relaxed">
-                      <p className="font-black text-[#00E5BE]">
+                      <p className="font-black text-[#60AFFF]">
                         {isArabic ? 'تم تأكيد الحجز - مركز رابا ABA:' : 'Booking Confirmed - Raba ABA:'}
                       </p>
                       <p>

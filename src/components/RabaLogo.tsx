@@ -90,7 +90,7 @@ export const RabaLogo: React.FC<RabaLogoProps> = ({
   const iconRoundingClass = roundingClassMap[currentSettings.iconRounding] || 'rounded-xl';
 
   // SVG Cut strokes
-  const cutStroke = isDarkMode ? '#05070B' : '#ffffff';
+  const cutStroke = isDarkMode ? '#0B0F17' : '#F5F2EC';
   const cutStrokeWidth = 4.2;
 
   // Vector Brain Puzzle Emblem SVG
@@ -369,7 +369,7 @@ export const RabaLogo: React.FC<RabaLogoProps> = ({
     <span 
       style={mainTitleColorStyle}
       className={`font-black select-none tracking-tight leading-none drop-shadow-2xs ${
-        !currentSettings.titleColor ? 'text-[#2E86EB] dark:text-white' : ''
+        !currentSettings.titleColor ? 'text-[#161B26] dark:text-[#F8FAFC]' : ''
       }`}
       dir={isArabic ? 'rtl' : 'ltr'}
     >
@@ -386,7 +386,7 @@ export const RabaLogo: React.FC<RabaLogoProps> = ({
     <span 
       style={{ fontSize: `${subtitleSizePx}px` }}
       className={`font-semibold select-none ${
-        isDarkMode ? 'text-slate-300' : 'text-slate-600'
+        isDarkMode ? 'text-[#94A3B8]' : 'text-[#4B5563]'
       } tracking-tight leading-tight block whitespace-nowrap`}
       dir={isArabic ? 'rtl' : 'ltr'}
     >
@@ -400,7 +400,7 @@ export const RabaLogo: React.FC<RabaLogoProps> = ({
   ) : (
     currentSettings.showEnglishBadge && currentSettings.titleAr ? (
       <span 
-        className="font-bold select-none text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded-md bg-pink-500/10 text-[#E5007D] dark:text-[#FB7185] border border-pink-500/20 leading-none font-sans"
+        className="font-bold select-none text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded-md bg-[#2B95FF]/12 text-[#1677E6] dark:text-[#2B95FF] border border-[#2B95FF]/25 leading-none font-sans"
         dir="rtl"
       >
         {currentSettings.titleAr}

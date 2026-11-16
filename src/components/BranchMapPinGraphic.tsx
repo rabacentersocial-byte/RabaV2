@@ -9,12 +9,12 @@ export const BranchMapPinGraphic: React.FC<BranchMapPinGraphicProps> = ({ branch
   return (
     <div className={`relative w-full h-full min-h-[120px] sm:min-h-[200px] flex items-center justify-center overflow-hidden select-none ${className}`}>
       {/* Background radial gradient & ambient bokeh lighting */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#1a2c3d] via-[#10202e] to-[#0b141d]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#1C2436] via-[#141821] to-[#0B0F17]" />
       
       {/* Subtle bokeh circles */}
-      <div className="absolute top-4 left-6 w-16 h-16 rounded-full bg-cyan-400/10 blur-xl pointer-events-none" />
-      <div className="absolute top-8 right-8 w-20 h-20 rounded-full bg-blue-300/10 blur-2xl pointer-events-none" />
-      <div className="absolute bottom-6 left-1/3 w-28 h-28 rounded-full bg-teal-400/10 blur-2xl pointer-events-none" />
+      <div className="absolute top-4 left-6 w-16 h-16 rounded-full bg-[#2B95FF]/15 blur-xl pointer-events-none" />
+      <div className="absolute top-8 right-8 w-20 h-20 rounded-full bg-[#8B5CF6]/10 blur-2xl pointer-events-none" />
+      <div className="absolute bottom-6 left-1/3 w-28 h-28 rounded-full bg-[#10B981]/10 blur-2xl pointer-events-none" />
 
       {/* SVG 3D Isometric Map and Pin */}
       <svg 
@@ -213,7 +213,7 @@ export const BranchMapPinGraphic: React.FC<BranchMapPinGraphicProps> = ({ branch
       </svg>
 
       {/* Decorative Glow on Floor */}
-      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-48 h-12 bg-pink-500/15 blur-2xl rounded-full pointer-events-none" />
+      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-48 h-12 bg-[#2B95FF]/15 blur-2xl rounded-full pointer-events-none" />
     </div>
   );
 };

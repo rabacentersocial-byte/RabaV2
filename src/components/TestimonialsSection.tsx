@@ -235,7 +235,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
   return (
     <section 
       id="testimonials" 
-      className="py-16 sm:py-24 bg-transparent relative overflow-hidden transition-colors border-b border-slate-200/80 dark:border-white/10 [content-visibility:auto] [contain-intrinsic-size:1px_600px]"
+      className="py-16 sm:py-24 bg-transparent relative overflow-hidden transition-colors border-b border-[#161B26]/[0.08] dark:border-white/10 [content-visibility:auto] [contain-intrinsic-size:1px_600px]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -245,25 +245,25 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
           <div className={`max-w-2xl ${isArabic ? 'text-right' : 'text-left'}`}>
             
             {/* Small Uppercase Tracked Eyebrow */}
-            <span className="text-[#0D6D54] dark:text-[#2DD4BF] text-[11px] sm:text-xs font-black tracking-widest uppercase block mb-2">
+            <span className="text-[#1263D6] dark:text-[#60AFFF] text-[11px] sm:text-xs font-black tracking-widest uppercase block mb-2">
               {isArabic ? 'نتائج واقعية، تجارب حقيقية' : 'REAL PATIENTS, REAL RESULTS'}
             </span>
 
-            {/* Main Headline with green terminal period */}
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-none mb-3">
+            {/* Main Headline with terminal period */}
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#161B26] dark:text-[#F8FAFC] tracking-tight leading-none mb-3">
               {isArabic ? (
                 <span>
-                  ماذا يقول أولياء الأمور عنّا<span className="text-[#0D6D54] dark:text-[#2DD4BF]">.</span>
+                  ماذا يقول أولياء الأمور عنّا<span className="text-[#2B95FF]">.</span>
                 </span>
               ) : (
                 <span>
-                  What our patients say<span className="text-[#0D6D54] dark:text-[#2DD4BF]">.</span>
+                  What our patients say<span className="text-[#2B95FF]">.</span>
                 </span>
               )}
             </h2>
 
             {/* Subtitle */}
-            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
+            <p className="text-sm sm:text-base text-[#4B5563] dark:text-[#94A3B8] max-w-xl leading-relaxed">
               {isArabic 
                 ? 'كلمات صادقة من أشخاص وأسر عايشوا تجربة رابا على أرض الواقع.' 
                 : 'Honest words from people who have experienced Wellside first-hand.'}
@@ -275,9 +275,9 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
             
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full border border-slate-300 dark:border-white/15 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold transition-colors duration-200 shadow-2xs cursor-pointer active:scale-95"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full liquid-glass-btn text-[#161B26] dark:text-[#F8FAFC] text-xs font-bold transition-colors duration-200 shadow-2xs cursor-pointer active:scale-95"
             >
-              <Plus className="w-3.5 h-3.5 text-[#0D6D54] dark:text-[#2DD4BF]" />
+              <Plus className="w-3.5 h-3.5 text-[#2B95FF]" />
               <span>{isArabic ? 'شاركنا رأيك' : 'Add review'}</span>
             </button>
 
@@ -285,7 +285,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
             <button
               onClick={() => handleScroll('prev')}
               aria-label={isArabic ? 'التقييم السابق' : 'Previous review'}
-              className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer"
+              className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn text-[#161B26] dark:text-[#F8FAFC] flex items-center justify-center shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer"
             >
               {isArabic ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
             </button>
@@ -294,7 +294,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
             <button
               onClick={() => handleScroll('next')}
               aria-label={isArabic ? 'التقييم التالي' : 'Next review'}
-              className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer"
+              className="w-11 h-11 sm:w-12 sm:h-12 min-w-[44px] min-h-[44px] rounded-full liquid-glass-btn text-[#161B26] dark:text-[#F8FAFC] flex items-center justify-center shadow-xs active:scale-95 transition-transform duration-200 cursor-pointer"
             >
               {isArabic ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
             </button>
@@ -313,8 +313,8 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                 onClick={() => setFilterTopic(tab.id)}
                 className={`rounded-full px-5 py-2.5 text-xs sm:text-sm font-semibold transition-colors duration-200 cursor-pointer shrink-0 shadow-2xs whitespace-nowrap ${
                   isActive
-                    ? 'bg-[#2E86EB] dark:bg-[#2E86EB] text-white dark:text-white font-bold border border-[#2E86EB] shadow-sm'
-                    : 'bg-white dark:bg-[#111827] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/90 dark:border-white/10'
+                    ? 'warm-pill-cta font-bold shadow-sm'
+                    : 'liquid-glass-pill text-[#161B26] dark:text-[#F8FAFC]'
                 }`}
               >
                 {isArabic ? tab.labelAr : tab.labelEn}
@@ -346,28 +346,28 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
             return (
               <div
                 key={rev.id}
-                className="w-[82vw] max-w-[325px] sm:w-[320px] md:w-[330px] shrink-0 snap-start liquid-glass-card rounded-2xl p-4 sm:p-5 transition-shadow duration-300 flex flex-col justify-between"
+                className="w-[82vw] max-w-[325px] sm:w-[320px] md:w-[330px] shrink-0 snap-start liquid-glass-card rounded-[28px] p-4 sm:p-5 transition-shadow duration-300 flex flex-col justify-between"
               >
                 <div>
                   
                   {/* Top Row: Stars + Rating score on Left, Google Review Badge & Quotation Mark on Right */}
                   <div className="flex items-center justify-between gap-1.5 mb-2.5">
                     <div className="flex items-center gap-1.5">
-                      <div className="flex items-center text-amber-400 gap-0.5">
+                      <div className="flex items-center text-[#F59E0B] gap-0.5">
                         {Array.from({ length: 5 }).map((_, i) => (
                           <Star 
                             key={i} 
-                            className={`w-3.5 h-3.5 ${i < Math.floor(rev.rating || 5) ? 'fill-amber-400 text-amber-400' : 'text-slate-200 dark:text-slate-700'}`} 
+                            className={`w-3.5 h-3.5 ${i < Math.floor(rev.rating || 5) ? 'fill-[#F59E0B] text-[#F59E0B]' : 'text-slate-300 dark:text-slate-700'}`} 
                           />
                         ))}
                       </div>
-                      <span className="text-xs font-bold text-slate-800 dark:text-slate-200 tracking-tight">
+                      <span className="text-xs font-bold text-[#161B26] dark:text-[#F8FAFC] tracking-tight">
                         {rev.rating ? rev.rating.toFixed(1) : '5.0'}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-1.5">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-[10px] font-semibold text-slate-700 dark:text-slate-300">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full liquid-glass-pill text-[10px] font-semibold text-[#4B5563] dark:text-[#94A3B8]">
                         <svg className="w-3 h-3 shrink-0" viewBox="0 0 24 24">
                           <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
                           <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
@@ -377,14 +377,14 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                         <span>Google</span>
                       </span>
 
-                      <div className="text-xl text-emerald-300 dark:text-emerald-900/60 font-serif leading-none select-none font-bold">
+                      <div className="text-xl text-[#2B95FF]/40 font-serif leading-none select-none font-bold">
                         “
                       </div>
                     </div>
                   </div>
 
                   {/* Review Text: compact, balanced height without dead empty space */}
-                  <p className="text-slate-700 dark:text-slate-200 text-xs sm:text-[13px] leading-relaxed mb-3 font-normal whitespace-pre-line max-h-[175px] overflow-y-auto pr-1 select-text">
+                  <p className="text-[#4B5563] dark:text-[#94A3B8] text-xs sm:text-[13px] leading-relaxed mb-3 font-normal whitespace-pre-line max-h-[175px] overflow-y-auto pr-1 select-text">
                     “{displayComment}”
                   </p>
 
@@ -392,12 +392,12 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
 
                 {/* Bottom Profile Row */}
                 <div>
-                  <div className="flex items-center justify-between gap-2.5 pt-2.5 border-t border-slate-100 dark:border-white/10">
+                  <div className="flex items-center justify-between gap-2.5 pt-2.5 border-t border-[#161B26]/[0.08] dark:border-white/10">
                     
                     {/* Left: Avatar + Name with Verified Check + Location */}
                     <div className="flex items-center gap-2 min-w-0">
                       {/* Anonymous User Silhouette Avatar */}
-                      <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 flex items-center justify-center border border-slate-200 dark:border-white/10 shrink-0 shadow-2xs overflow-hidden">
+                      <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full liquid-glass-panel text-[#8B95A5] dark:text-[#94A3B8] flex items-center justify-center shrink-0 shadow-2xs overflow-hidden">
                         <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                           <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
                         </svg>
@@ -405,23 +405,23 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
 
                       <div className="min-w-0">
                         <div className="flex items-center gap-1">
-                          <h4 className="text-xs sm:text-[13px] font-bold text-slate-900 dark:text-white truncate">
+                          <h4 className="text-xs sm:text-[13px] font-bold text-[#161B26] dark:text-[#F8FAFC] truncate">
                             {displayName}
                           </h4>
-                          <CheckCircle2 className="w-3 h-3 text-[#0D6D54] dark:text-[#2DD4BF] shrink-0 fill-[#0D6D54]/10 dark:fill-[#2DD4BF]/10" />
+                          <CheckCircle2 className="w-3 h-3 text-[#2B95FF] shrink-0 fill-[#2B95FF]/12" />
                         </div>
-                        <span className="text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 block truncate">
+                        <span className="text-[10px] sm:text-[11px] text-[#4B5563] dark:text-[#94A3B8] block truncate">
                           {displayLocation}
                         </span>
                       </div>
                     </div>
 
-                    {/* Right: Specialty / Category in Green + Date */}
+                    {/* Right: Specialty / Category + Date */}
                     <div className="text-right shrink-0">
-                      <span className="text-[11px] font-bold text-[#0D6D54] dark:text-[#2DD4BF] block max-w-[100px] truncate">
+                      <span className="text-[11px] font-bold text-[#1263D6] dark:text-[#60AFFF] block max-w-[100px] truncate">
                         {displayCategory}
                       </span>
-                      <span className="text-[10px] text-slate-600 dark:text-slate-300 block mt-0.5">
+                      <span className="text-[10px] text-[#8B95A5] dark:text-[#64748B] block mt-0.5">
                         {displayDate}
                       </span>
                     </div>
@@ -430,7 +430,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
 
                   {/* "Treated by" Footnote */}
                   {displayTreatedBy && (
-                    <div className="mt-1.5 pt-1 text-[10px] text-slate-600 dark:text-slate-300 border-t border-slate-100/60 dark:border-white/5 truncate">
+                    <div className="mt-1.5 pt-1 text-[10px] text-[#4B5563] dark:text-[#94A3B8] border-t border-[#161B26]/[0.08] dark:border-white/5 truncate">
                       {displayTreatedBy}
                     </div>
                   )}
@@ -443,110 +443,110 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
         </div>
 
         {/* METRICS STRIP: Re-designed with custom icons & mobile-optimized responsive tiles (Moved below evaluation cards) */}
-        <div className="bg-white dark:bg-[#111827] rounded-2xl sm:rounded-3xl border border-slate-200/90 dark:border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] mt-10 sm:mt-14 p-3 sm:p-4.5 relative overflow-hidden backdrop-blur-md">
+        <div className="liquid-glass-card rounded-[28px] mt-10 sm:mt-14 p-3 sm:p-4.5 relative overflow-hidden">
           {/* Subtle ambient lighting */}
-          <div className="absolute top-0 right-0 w-48 h-48 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.08)_0%,transparent_70%)] pointer-events-none transform-gpu" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.08)_0%,transparent_70%)] pointer-events-none transform-gpu" />
+          <div className="absolute top-0 right-0 w-48 h-48 bg-[radial-gradient(circle_at_center,rgba(43,149,255,0.10)_0%,transparent_70%)] pointer-events-none transform-gpu" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.12)_0%,transparent_70%)] pointer-events-none transform-gpu" />
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 relative z-10">
             
             {/* Metric 1: Average Rating */}
-            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-amber-400/40 hover:shadow-md transition-colors duration-300 flex flex-col justify-between">
+            <div className="group liquid-glass-panel rounded-2xl p-3 sm:p-4.5 hover:border-[#F59E0B]/40 transition-colors duration-300 flex flex-col justify-between">
               <div className="flex items-center justify-between gap-1.5 mb-2.5">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-amber-500/10 text-amber-500 border border-amber-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-amber-500/20 transition-transform">
-                  <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-amber-400 text-amber-500" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#F59E0B]/12 text-[#F59E0B] border border-[#F59E0B]/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                  <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-[#F59E0B] text-[#F59E0B]" />
                 </div>
-                <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-400/20 truncate">
+                <span className="text-[9.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#F59E0B]/12 text-[#B45309] dark:text-[#FBBF24] border border-[#F59E0B]/25 truncate">
                   {isArabic ? 'من 5.0' : 'Out of 5'}
                 </span>
               </div>
               <div>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#2E86EB] dark:text-[#22C55E] tracking-tight leading-none">
+                  <span className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#161B26] dark:text-[#F8FAFC] tracking-tight leading-none">
                     4.9
                   </span>
-                  <div className="flex text-amber-400 text-[10px] sm:text-xs">
+                  <div className="flex text-[#F59E0B] text-[10px] sm:text-xs">
                     {'★★★★★'}
                   </div>
                 </div>
-                <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 mt-1.5 leading-tight">
+                <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#161B26] dark:text-[#F8FAFC] mt-1.5 leading-tight">
                   {isArabic ? 'متوسط التقييم' : 'AVERAGE RATING'}
                 </div>
-                <div className="text-[10px] text-slate-600 dark:text-slate-300 mt-0.5 leading-tight">
+                <div className="text-[10px] text-[#4B5563] dark:text-[#94A3B8] mt-0.5 leading-tight">
                   {isArabic ? 'امتياز سريري موثوق' : 'Clinical Excellence'}
                 </div>
               </div>
             </div>
 
             {/* Metric 2: Verified Reviews */}
-            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-emerald-400/40 hover:shadow-md transition-colors duration-300 flex flex-col justify-between">
+            <div className="group liquid-glass-panel rounded-2xl p-3 sm:p-4.5 hover:border-[#10B981]/40 transition-colors duration-300 flex flex-col justify-between">
               <div className="flex items-center justify-between gap-1.5 mb-2.5">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-[#22C55E] border border-emerald-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-emerald-500/20 transition-transform">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#10B981]/12 text-[#047857] dark:text-[#34D399] border border-[#10B981]/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                   <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
                 </div>
-                <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-400/20 truncate">
+                <span className="text-[9.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#10B981]/12 text-[#047857] dark:text-[#34D399] border border-[#10B981]/25 truncate">
                   {isArabic ? 'موثق 100%' : '100% Verified'}
                 </span>
               </div>
               <div>
-                <div className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#2E86EB] dark:text-[#22C55E] tracking-tight leading-none">
+                <div className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#047857] dark:text-[#34D399] tracking-tight leading-none">
                   1,400+
                 </div>
-                <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 mt-1.5 leading-tight">
+                <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#161B26] dark:text-[#F8FAFC] mt-1.5 leading-tight">
                   {isArabic ? 'تقييم موثق' : 'VERIFIED REVIEWS'}
                 </div>
-                <div className="text-[10px] text-slate-600 dark:text-slate-300 mt-0.5 leading-tight">
+                <div className="text-[10px] text-[#4B5563] dark:text-[#94A3B8] mt-0.5 leading-tight">
                   {isArabic ? 'تجارب أولياء الأمور' : 'Parent Testimonials'}
                 </div>
               </div>
             </div>
 
             {/* Metric 3: Would Recommend */}
-            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-blue-400/40 hover:shadow-md transition-colors duration-300 flex flex-col justify-between">
+            <div className="group liquid-glass-panel rounded-2xl p-3 sm:p-4.5 hover:border-[#2B95FF]/40 transition-colors duration-300 flex flex-col justify-between">
               <div className="flex items-center justify-between gap-1.5 mb-2.5">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-blue-500/10 text-[#2E86EB] dark:text-[#2E86EB] border border-blue-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-blue-500/20 transition-transform">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#2B95FF]/12 text-[#1263D6] dark:text-[#60AFFF] border border-[#2B95FF]/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                   <ThumbsUp className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
                 </div>
-                <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-400/20 truncate">
+                <span className="text-[9.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#2B95FF]/12 text-[#1263D6] dark:text-[#60AFFF] border border-[#2B95FF]/25 truncate">
                   {isArabic ? 'ثقة أولياء الأمور' : 'Parent Trust'}
                 </span>
               </div>
               <div>
-                <div className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#2E86EB] dark:text-[#22C55E] tracking-tight leading-none">
+                <div className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#161B26] dark:text-[#F8FAFC] tracking-tight leading-none">
                   98%
                 </div>
-                <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 mt-1.5 leading-tight">
+                <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#161B26] dark:text-[#F8FAFC] mt-1.5 leading-tight">
                   {isArabic ? 'يوصون بالمركز' : 'WOULD RECOMMEND'}
                 </div>
-                <div className="text-[10px] text-slate-600 dark:text-slate-300 mt-0.5 leading-tight">
+                <div className="text-[10px] text-[#4B5563] dark:text-[#94A3B8] mt-0.5 leading-tight">
                   {isArabic ? 'نسبة رضا استثنائية' : 'Exceptional Satisfaction'}
                 </div>
               </div>
             </div>
 
             {/* Metric 4: Booking Experience */}
-            <div className="group bg-slate-50/70 dark:bg-white/[0.03] hover:bg-white dark:hover:bg-white/[0.06] rounded-xl sm:rounded-2xl p-3 sm:p-4.5 border border-slate-100 dark:border-white/5 hover:border-sky-400/40 hover:shadow-md transition-colors duration-300 flex flex-col justify-between">
+            <div className="group liquid-glass-panel rounded-2xl p-3 sm:p-4.5 hover:border-[#8B5CF6]/40 transition-colors duration-300 flex flex-col justify-between">
               <div className="flex items-center justify-between gap-1.5 mb-2.5">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-400/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 group-hover:bg-sky-500/20 transition-transform">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#8B5CF6]/12 text-[#6D28D9] dark:text-[#A78BFA] border border-[#8B5CF6]/25 flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                   <CalendarCheck className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
                 </div>
-                <span className="text-[9.5px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-md sm:rounded-lg bg-sky-500/10 text-sky-700 dark:text-sky-300 border border-sky-400/20 truncate">
+                <span className="text-[9.5px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#8B5CF6]/12 text-[#6D28D9] dark:text-[#A78BFA] border border-[#8B5CF6]/25 truncate">
                   {isArabic ? 'حجز فوري' : 'Fast Booking'}
                 </span>
               </div>
               <div>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#0B3B36] dark:text-[#2DD4BF] tracking-tight leading-none">
+                  <span className="text-2xl sm:text-3xl lg:text-[34px] font-black text-[#6D28D9] dark:text-[#A78BFA] tracking-tight leading-none">
                     4.8
                   </span>
-                  <span className="text-[10px] sm:text-xs font-bold text-slate-600 dark:text-slate-300">
+                  <span className="text-[10px] sm:text-xs font-bold text-[#8B95A5] dark:text-[#64748B]">
                     / 5.0
                   </span>
                 </div>
-                <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 mt-1.5 leading-tight">
+                <div className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#161B26] dark:text-[#F8FAFC] mt-1.5 leading-tight">
                   {isArabic ? 'تجربة الحجز' : 'BOOKING EXPERIENCE'}
                 </div>
-                <div className="text-[10px] text-slate-600 dark:text-slate-300 mt-0.5 leading-tight">
+                <div className="text-[10px] text-[#4B5563] dark:text-[#94A3B8] mt-0.5 leading-tight">
                   {isArabic ? 'سلاسة وسرعة التنسيق' : 'Seamless Coordination'}
                 </div>
               </div>
@@ -560,24 +560,24 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
       {/* ADD TESTIMONIAL MODAL */}
       {isAddModalOpen && (
         <div 
-          className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
           onClick={() => setIsAddModalOpen(false)}
         >
           <div 
-            className={`relative bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full shadow-2xl border border-slate-200 dark:border-white/15 overflow-hidden ${isArabic ? 'text-right' : 'text-left'} my-8`}
+            className={`relative glass-modal-dialog rounded-[28px] max-w-lg w-full overflow-hidden ${isArabic ? 'text-right' : 'text-left'} my-8`}
             onClick={(e) => e.stopPropagation()}
             id="add-testimonial-modal"
             dir={direction}
           >
             {/* Modal Header */}
-            <div className="bg-[#0B3B36] p-6 text-white flex items-center justify-between">
+            <div className="obsidian-anchor-card p-6 flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-black">{isArabic ? 'إضافة تقييم وتجربة جديدة' : 'Submit Review & Experience'}</h3>
-                <p className="text-xs text-emerald-200/80 font-medium mt-1">{isArabic ? 'يسعدنا سماع تجربتك ورأيك في خدمات وأخصائيي المركز' : 'We value your experience and journey with our clinic'}</p>
+                <h3 className="text-lg font-black text-white dark:text-[#161B26]">{isArabic ? 'إضافة تقييم وتجربة جديدة' : 'Submit Review & Experience'}</h3>
+                <p className="text-xs text-[#94A3B8] dark:text-[#4B5563] font-medium mt-1">{isArabic ? 'يسعدنا سماع تجربتك ورأيك في خدمات وأخصائيي المركز' : 'We value your experience and journey with our clinic'}</p>
               </div>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="w-9 h-9 min-w-[36px] min-h-[36px] rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer flex items-center justify-center"
+                className="w-9 h-9 min-w-[36px] min-h-[36px] rounded-full bg-white/10 dark:bg-black/10 hover:bg-white/20 dark:hover:bg-black/20 text-white dark:text-[#161B26] transition-colors cursor-pointer flex items-center justify-center"
                 aria-label={isArabic ? 'إغلاق' : 'Close'}
               >
                 <X className="w-5 h-5" />
@@ -602,8 +602,8 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
 
               {/* Rating Selector */}
               <div>
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">{isArabic ? 'التقييم الإجمالي:' : 'Overall Rating:'}</label>
-                <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-white/10">
+                <label className="text-xs font-bold text-[#161B26] dark:text-[#F8FAFC] block mb-1.5">{isArabic ? 'التقييم الإجمالي:' : 'Overall Rating:'}</label>
+                <div className="flex items-center gap-2 liquid-glass-panel p-2.5 rounded-2xl">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       type="button"
@@ -614,13 +614,13 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                       <Star
                         className={`w-6 h-6 ${
                           star <= rating
-                            ? 'text-amber-400 fill-amber-400'
+                            ? 'text-[#F59E0B] fill-[#F59E0B]'
                             : 'text-slate-300 dark:text-slate-600'
                         }`}
                       />
                     </button>
                   ))}
-                  <span className={`text-xs font-bold text-slate-800 dark:text-slate-200 ${isArabic ? 'mr-2' : 'ml-2'}`}>
+                  <span className={`text-xs font-bold text-[#161B26] dark:text-[#F8FAFC] ${isArabic ? 'mr-2' : 'ml-2'}`}>
                     {rating === 5 ? (isArabic ? 'ممتاز (5.0)' : '5.0 (Excellent)') : `${rating}.0`}
                   </span>
                 </div>
@@ -628,7 +628,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
 
               {/* Quotation / Review Text */}
               <div>
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                <label className="text-xs font-bold text-[#161B26] dark:text-[#F8FAFC] block mb-1">
                   {isArabic ? 'نص التجربة أو التقييم:' : 'Review Text:'} <span className="text-rose-500">*</span>
                 </label>
                 <textarea
@@ -637,22 +637,22 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   placeholder={isArabic ? 'اكتب هنا تجربتك مع طفلك في المركز، مدى التحسن، ورأيك في تعامل الأخصائيين...' : 'Share your experience, clinician support, and outcomes...'}
-                  className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/15 text-slate-900 dark:text-white placeholder:text-slate-400 rounded-xl p-3 text-xs focus:ring-2 focus:ring-[#0D6D54]/50 outline-none"
+                  className="w-full warm-pill-input rounded-2xl p-3 text-xs outline-none"
                 />
               </div>
 
               {/* Name & Location Fields */}
-              <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-white/10 rounded-2xl space-y-3">
+              <div className="p-3.5 liquid-glass-panel rounded-2xl space-y-3">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                  <label className="text-xs font-bold text-[#161B26] dark:text-[#F8FAFC]">
                     {isArabic ? 'اسمك أو صفتك:' : 'Your Name:'}
                   </label>
-                  <label className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400 cursor-pointer">
+                  <label className="flex items-center gap-1.5 text-xs text-[#4B5563] dark:text-[#94A3B8] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={isAnonymous}
                       onChange={(e) => setIsAnonymous(e.target.checked)}
-                      className="w-3.5 h-3.5 text-emerald-600 rounded"
+                      className="w-3.5 h-3.5 accent-[#2B95FF] rounded"
                     />
                     <span>{isArabic ? 'نشر باسم مجهول' : 'Submit Anonymously'}</span>
                   </label>
@@ -665,22 +665,22 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                       value={authorName}
                       onChange={(e) => setAuthorName(e.target.value)}
                       placeholder={isArabic ? 'مثال: سارة المطيري' : 'e.g. Sarah Mitchell'}
-                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 text-slate-900 dark:text-white rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-[#0D6D54]/50 outline-none"
+                      className="w-full warm-pill-input rounded-full px-3.5 py-2.5 text-xs outline-none"
                     />
                     <input
                       type="text"
                       value={locationName}
                       onChange={(e) => setLocationName(e.target.value)}
                       placeholder={isArabic ? 'المدينة / الحي: الرياض، الملقا' : 'City / Neighborhood: Brooklyn, NY'}
-                      className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 text-slate-900 dark:text-white rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-[#0D6D54]/50 outline-none"
+                      className="w-full warm-pill-input rounded-full px-3.5 py-2.5 text-xs outline-none"
                     />
                   </div>
                 )}
               </div>
 
               {/* Avatar Preset */}
-              <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-white/10 rounded-2xl space-y-2">
-                <label className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
+              <div className="p-3.5 liquid-glass-panel rounded-2xl space-y-2">
+                <label className="text-xs font-bold text-[#161B26] dark:text-[#F8FAFC] block">
                   {isArabic ? 'الصورة الشخصية أو الرمزية:' : 'Profile Picture:'}
                 </label>
 
@@ -691,10 +691,10 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                       setSelectedAvatarPreset('');
                       setAvatarUrl('');
                     }}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold border flex items-center gap-1.5 transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold border flex items-center gap-1.5 transition-all cursor-pointer ${
                       !selectedAvatarPreset && !avatarUrl
-                        ? 'bg-[#0B3B36] text-white border-[#0B3B36]'
-                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-white/15 text-slate-600 dark:text-slate-300'
+                        ? 'warm-pill-cta border-transparent'
+                        : 'liquid-glass-pill text-[#4B5563] dark:text-[#94A3B8]'
                     }`}
                   >
                     <User className="w-3.5 h-3.5" />
@@ -711,7 +711,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                       }}
                       className={`relative rounded-full overflow-hidden border-2 transition-all cursor-pointer ${
                         selectedAvatarPreset === preset.url
-                          ? 'border-[#0D6D54] ring-2 ring-[#0D6D54]/40 scale-105'
+                          ? 'border-[#2B95FF] ring-2 ring-[#2B95FF]/40 scale-105'
                           : 'border-transparent opacity-75 hover:opacity-100'
                       }`}
                     >
@@ -724,7 +724,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
               {/* Specialty & Specialist */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label htmlFor="review-category-select" className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                  <label htmlFor="review-category-select" className="text-xs font-bold text-[#161B26] dark:text-[#F8FAFC] block mb-1">
                     {isArabic ? 'التخصص / القسم:' : 'Specialty Track:'}
                   </label>
                   <select
@@ -732,7 +732,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                     aria-label={isArabic ? 'التخصص أو القسم' : 'Specialty Track'}
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/15 text-slate-900 dark:text-white rounded-xl p-2.5 text-xs outline-none cursor-pointer"
+                    className="w-full warm-pill-input rounded-full px-3.5 py-2.5 text-xs outline-none cursor-pointer"
                   >
                     <option value="sensory">{isArabic ? 'العلاج الوظيفي والتكامل الحسي (Cardiology)' : 'Cardiology (Sensory)'}</option>
                     <option value="aba">{isArabic ? 'تحليل السلوك التطبيقي (Dermatology)' : 'Dermatology (ABA)'}</option>
@@ -744,7 +744,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                 </div>
 
                 <div>
-                  <label htmlFor="review-specialist-select" className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                  <label htmlFor="review-specialist-select" className="text-xs font-bold text-[#161B26] dark:text-[#F8FAFC] block mb-1">
                     {isArabic ? 'الأخصائي المعالج:' : 'Attending Clinician:'}
                   </label>
                   <select
@@ -752,7 +752,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                     aria-label={isArabic ? 'الأخصائي المعالج' : 'Attending Clinician'}
                     value={specialistName}
                     onChange={(e) => setSpecialistName(e.target.value)}
-                    className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/15 text-slate-900 dark:text-white rounded-xl p-2.5 text-xs outline-none cursor-pointer"
+                    className="w-full warm-pill-input rounded-full px-3.5 py-2.5 text-xs outline-none cursor-pointer"
                   >
                     {SPECIALISTS.map((spec) => (
                       <option key={spec.id} value={spec.name}>
@@ -764,18 +764,18 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
               </div>
 
               {/* Submit CTA */}
-              <div className="pt-3 border-t border-slate-200 dark:border-white/10 flex items-center justify-end gap-3">
+              <div className="pt-3 border-t border-[#161B26]/[0.08] dark:border-white/10 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2.5 text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
+                  className="px-4 py-2.5 text-xs font-bold text-[#4B5563] dark:text-[#94A3B8] hover:bg-[#161B26]/5 dark:hover:bg-white/5 rounded-full transition-colors cursor-pointer"
                 >
                   {isArabic ? 'إلغاء' : 'Cancel'}
                 </button>
 
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-[#0B3B36] hover:bg-[#082a26] text-white font-bold rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shadow-md"
+                  className="px-6 py-2.5 bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] hover:brightness-110 text-white font-bold rounded-full text-xs flex items-center gap-1.5 cursor-pointer shadow-md shadow-[#2B95FF]/25"
                 >
                   <Send className={`w-3.5 h-3.5 ${isArabic ? 'rotate-180' : ''}`} />
                   <span>{isArabic ? 'نشر التقييم' : 'Publish Review'}</span>

@@ -139,44 +139,24 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
   ];
 
   return (
-    <footer className={`relative overflow-hidden text-slate-700 dark:text-slate-300 pt-16 pb-28 md:pb-12 ${isArabic ? 'text-right' : 'text-left'} transition-colors duration-500 border-t border-slate-200/80 dark:border-white/10 bg-gradient-to-b from-slate-50/70 via-white/50 to-slate-100/90 dark:from-[#0D1B2A]/90 dark:via-[#0B1522]/95 dark:to-[#08101A]/98 backdrop-blur-2xl`}>
+    <footer className={`relative overflow-hidden text-[#4B5563] dark:text-[#94A3B8] pt-16 pb-28 md:pb-12 ${isArabic ? 'text-right' : 'text-left'} transition-colors duration-500 border-t border-[#161B26]/[0.08] dark:border-white/[0.08] bg-[rgba(255,255,255,0.62)] dark:bg-[rgba(11,15,23,0.88)] backdrop-blur-2xl`}>
       
-      {/* 1. Liquid Glass Prismatic Top Horizon Hairline (Curved Light Reflection) */}
-      <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#2E86EB]/60 via-40% via-[#FFD23F]/50 via-60% via-[#22C55E]/60 to-transparent pointer-events-none z-20" />
-      <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-[720px] max-w-full h-20 bg-gradient-to-b from-[#2E86EB]/20 via-[#22C55E]/10 to-transparent blur-2xl pointer-events-none z-10" />
+      {/* Top Horizon Hairline */}
+      <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#2B95FF]/55 via-50% via-[#10B981]/50 to-transparent pointer-events-none z-20" />
+      <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-[720px] max-w-full h-20 bg-gradient-to-b from-[#2B95FF]/15 via-[#8B5CF6]/10 to-transparent blur-2xl pointer-events-none z-10" />
 
-      {/* 2. Floating Liquid Glass Refractive Caustic Orbs (Aligned with Site 5-Color Spectrum) */}
+      {/* Diffused Ambient Orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0">
-        {/* Electric Blue Orb (Top Right) */}
         <div 
-          className="absolute -top-24 -right-16 md:-top-32 md:-right-20 w-[360px] h-[360px] sm:w-[480px] sm:h-[480px] rounded-full blur-[90px] sm:blur-[120px] opacity-40 dark:opacity-35 pointer-events-none"
+          className="absolute -top-24 -right-16 md:-top-32 md:-right-20 w-[360px] h-[360px] sm:w-[480px] sm:h-[480px] rounded-full blur-[90px] sm:blur-[120px] opacity-55 pointer-events-none"
           style={{
-            background: 'radial-gradient(circle, rgba(46, 134, 235, 0.45) 0%, rgba(46, 134, 235, 0.12) 50%, transparent 75%)'
+            background: 'radial-gradient(circle, rgba(43, 149, 255, 0.22) 0%, rgba(43, 149, 255, 0) 70%)'
           }}
         />
-
-        {/* Vivid Emerald Health Green Orb (Mid-Left) */}
         <div 
-          className="absolute top-1/4 -left-20 sm:-left-32 w-[340px] h-[340px] sm:w-[460px] sm:h-[460px] rounded-full blur-[85px] sm:blur-[115px] opacity-35 dark:opacity-30 pointer-events-none"
+          className="absolute top-1/4 -left-20 sm:-left-32 w-[340px] h-[340px] sm:w-[460px] sm:h-[460px] rounded-full blur-[85px] sm:blur-[115px] opacity-55 pointer-events-none"
           style={{
-            background: 'radial-gradient(circle, rgba(34, 197, 94, 0.4) 0%, rgba(34, 197, 94, 0.1) 50%, transparent 75%)'
-          }}
-        />
-
-        {/* Warm Gold & Magenta Prismatic Glow (Bottom Center) */}
-        <div 
-          className="absolute -bottom-24 left-1/3 -translate-x-1/2 w-[520px] h-[260px] rounded-full blur-[100px] opacity-30 dark:opacity-25 pointer-events-none"
-          style={{
-            background: 'radial-gradient(circle, rgba(255, 210, 63, 0.35) 0%, rgba(255, 45, 155, 0.15) 50%, transparent 75%)'
-          }}
-        />
-
-        {/* Subtle Optical Liquid Mesh Texture */}
-        <div 
-          className="absolute inset-0 opacity-[0.025] dark:opacity-[0.045] pointer-events-none"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.7) 1px, transparent 0)`,
-            backgroundSize: '32px 32px'
+            background: 'radial-gradient(circle, rgba(16, 185, 129, 0.20) 0%, rgba(16, 185, 129, 0) 70%)'
           }}
         />
       </div>
@@ -184,19 +164,19 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* Main 3 Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 pb-12 border-b border-slate-200/80 dark:border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 pb-12 border-b border-[#161B26]/[0.08] dark:border-white/[0.08]">
           
           {/* Col 1: About, Logo & Social Media Icons */}
           <div className="space-y-4">
             <RabaLogo showSubtitle={true} size="md" />
 
-            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed pt-2 font-medium">
+            <p className="text-xs text-[#4B5563] dark:text-[#94A3B8] leading-relaxed pt-2 font-medium">
               {isArabic ? (footer.aboutTextAr || t.footer.aboutText) : (footer.aboutTextEn || t.footer.aboutText)}
             </p>
 
             {/* Social Media Icons Section */}
             <div className="pt-3 space-y-2.5">
-              <h5 className="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+              <h5 className="text-xs font-black text-[#161B26] dark:text-[#F8FAFC] flex items-center gap-1.5">
                 <span>{isArabic ? 'تابعونا على شبكات التواصل' : 'Follow Us on Social Media'}</span>
               </h5>
               
@@ -211,7 +191,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
                       rel="noopener noreferrer"
                       aria-label={social.name}
                       title={`${social.name} (${social.badge})`}
-                      className={`w-9 h-9 min-w-[36px] min-h-[36px] sm:w-10 sm:h-10 rounded-xl liquid-glass-btn border border-slate-200/80 dark:border-white/10 bg-white/70 dark:bg-white/[0.05] text-slate-700 dark:text-slate-300 flex items-center justify-center transition-[transform,colors] duration-200 hover:scale-110 active:scale-95 shadow-xs backdrop-blur-md ${social.hoverClass}`}
+                      className={`w-9 h-9 min-w-[36px] min-h-[36px] sm:w-10 sm:h-10 rounded-full liquid-glass-btn text-[#161B26] dark:text-[#F8FAFC] flex items-center justify-center transition-[transform,colors] duration-200 hover:scale-110 active:scale-95 ${social.hoverClass}`}
                     >
                       <Icon className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
                     </a>
@@ -223,27 +203,27 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
             {/* PWA Web App Download / Add to Home Screen for Apple & Android */}
             <div className="pt-4 space-y-2.5">
               <div className="flex items-center justify-between">
-                <h5 className="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
-                  <Smartphone className="w-4 h-4 text-[#2E86EB]" />
+                <h5 className="text-xs font-black text-[#161B26] dark:text-[#F8FAFC] flex items-center gap-1.5">
+                  <Smartphone className="w-4 h-4 text-[#2B95FF]" />
                   <span>{isArabic ? 'تطبيق مركز رابا (Web App)' : 'Raba Center Web App'}</span>
                 </h5>
-                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-800 dark:text-[#4A9CFF] border border-blue-500/20">
+                <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#2B95FF]/12 text-[#1263D6] dark:text-[#60AFFF] border border-[#2B95FF]/25">
                   {isArabic ? 'آبل وأندرويد' : 'iOS & Android'}
                 </span>
               </div>
 
               {/* Install Card Button */}
-              <div className="p-3.5 rounded-2xl liquid-glass-card bg-white/80 dark:bg-white/[0.04] border border-slate-200/90 dark:border-white/10 hover:border-[#2E86EB]/40 transition-colors duration-300 shadow-xs backdrop-blur-md">
+              <div className="p-3.5 rounded-[28px] liquid-glass-card transition-colors duration-300">
                 <div className="flex items-center justify-between gap-3 mb-2.5">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#2E86EB] to-blue-700 flex items-center justify-center text-white font-black shadow-xs shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#2B95FF] to-[#1A73E8] flex items-center justify-center text-white font-black shadow-xs shrink-0">
                       <Download className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="text-xs font-extrabold text-slate-900 dark:text-white leading-tight">
+                      <div className="text-xs font-extrabold text-[#161B26] dark:text-[#F8FAFC] leading-tight">
                         {isArabic ? 'تثبيت التطبيق على الجوال' : 'Install on Mobile Device'}
                       </div>
-                      <div className="text-[10px] text-slate-600 dark:text-slate-300">
+                      <div className="text-[10px] text-[#4B5563] dark:text-[#94A3B8]">
                         {isArabic ? 'إضافة إلى الشاشة الرئيسية كـ تطبيق' : 'Add to Home Screen as Web App'}
                       </div>
                     </div>
@@ -255,26 +235,26 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
                       setPwaModalTab(isIOS ? 'ios' : 'android');
                       setIsPwaModalOpen(true);
                     }}
-                    className="px-3.5 py-2 min-h-[36px] rounded-xl bg-[#1D68C4] hover:bg-[#1554A1] text-white text-xs font-black transition-[transform,background-color] duration-200 cursor-pointer shadow-xs active:scale-95 flex items-center gap-1 shrink-0"
+                    className="px-3.5 py-2 min-h-[36px] rounded-full bg-[#141821] hover:bg-[#2B95FF] text-white dark:bg-[#F5F2EC] dark:hover:bg-[#2B95FF] dark:text-[#141821] dark:hover:text-white text-xs font-black transition-all duration-200 cursor-pointer shadow-xs active:scale-95 flex items-center gap-1 shrink-0 group"
                     title={isArabic ? 'تثبيت التطبيق' : 'Install App'}
                   >
                     <span>{isArabic ? 'تحميل' : 'Install'}</span>
-                    <Sparkles className="w-3 h-3" />
+                    <Sparkles className="w-3 h-3 text-[#2B95FF] group-hover:text-white transition-colors" />
                   </button>
                 </div>
 
                 {/* Direct Platform Quick Badges (Apple & Android) */}
-                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200/70 dark:border-white/5">
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#161B26]/[0.08] dark:border-white/[0.08]">
                   <button
                     type="button"
                     onClick={() => {
                       setPwaModalTab('ios');
                       setIsPwaModalOpen(true);
                     }}
-                    className="flex items-center justify-center gap-1.5 py-2 px-2 min-h-[36px] rounded-xl liquid-glass-btn border border-slate-200/70 dark:border-white/10 bg-white dark:bg-white/[0.06] hover:bg-slate-50 dark:hover:bg-white/15 text-slate-800 dark:text-slate-200 text-[11px] font-bold transition-colors cursor-pointer active:scale-95 shadow-xs"
+                    className="flex items-center justify-center gap-1.5 py-2 px-2 min-h-[36px] rounded-full liquid-glass-btn text-[#161B26] dark:text-[#F8FAFC] text-[11px] font-bold transition-colors cursor-pointer active:scale-95"
                     aria-label="Apple iOS Web App"
                   >
-                    <AppleIcon className="w-3.5 h-3.5 text-slate-800 dark:text-white" />
+                    <AppleIcon className="w-3.5 h-3.5 text-[#161B26] dark:text-[#F8FAFC]" />
                     <span>{isArabic ? 'جوالات آبل (iOS)' : 'Apple (iOS)'}</span>
                   </button>
 
@@ -284,10 +264,10 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
                       setPwaModalTab('android');
                       setIsPwaModalOpen(true);
                     }}
-                    className="flex items-center justify-center gap-1.5 py-2 px-2 min-h-[36px] rounded-xl liquid-glass-btn border border-slate-200/70 dark:border-white/10 bg-white dark:bg-white/[0.06] hover:bg-slate-50 dark:hover:bg-white/15 text-slate-800 dark:text-slate-200 text-[11px] font-bold transition-colors cursor-pointer active:scale-95 shadow-xs"
+                    className="flex items-center justify-center gap-1.5 py-2 px-2 min-h-[36px] rounded-full liquid-glass-btn text-[#161B26] dark:text-[#F8FAFC] text-[11px] font-bold transition-colors cursor-pointer active:scale-95"
                     aria-label="Android Web App"
                   >
-                    <AndroidIcon className="w-3.5 h-3.5 text-emerald-600 dark:text-[#22C55E]" />
+                    <AndroidIcon className="w-3.5 h-3.5 text-[#10B981]" />
                     <span>{isArabic ? 'أندرويد (Android)' : 'Android'}</span>
                   </button>
                 </div>
@@ -297,8 +277,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
 
           {/* Col 2: Services & Blog Quick Links */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold text-slate-900 dark:text-white">{t.footer.programsTitle}</h4>
-            <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-300">
+            <h4 className="text-sm font-bold text-[#161B26] dark:text-[#F8FAFC]">{t.footer.programsTitle}</h4>
+            <ul className="space-y-2 text-xs text-[#4B5563] dark:text-[#94A3B8]">
               {/* Blog Link */}
               <li>
                 <a 
@@ -309,51 +289,51 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
                       onOpenBlogPage();
                     }
                   }}
-                  className="hover:text-[#2E86EB] dark:hover:text-[#FFD23F] transition-colors flex items-center gap-1.5 font-bold text-[#2E86EB] dark:text-[#4A9CFF] cursor-pointer"
+                  className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors flex items-center gap-1.5 font-bold text-[#1263D6] dark:text-[#60AFFF] cursor-pointer"
                 >
                   <BookOpen className="w-3.5 h-3.5" />
                   <span>{isArabic ? 'المدونة الطبية والدليل الإكلينيكي' : 'Clinical Blog & Knowledge Guide'}</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-blue-500/15 text-blue-800 dark:text-[#4A9CFF] font-black">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF] font-black">
                     {isArabic ? 'جديد' : 'NEW'}
                   </span>
                 </a>
               </li>
               {/* Shadow Teacher Link */}
               <li>
-                <a href="#shadow-teacher" className="hover:text-[#2E86EB] dark:hover:text-[#FFD23F] transition-colors flex items-center gap-1 font-semibold text-slate-800 dark:text-slate-100">
+                <a href="#shadow-teacher" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors flex items-center gap-1 font-semibold text-[#161B26] dark:text-[#F8FAFC]">
                   <span>{isArabic ? 'خدمة سِوار – معلم الظل والدمج المدرسي (Shadow Teacher)' : 'Sewar Program – School Shadow Teacher Services'}</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-[#FFD23F]/20 text-amber-700 dark:text-[#FFD23F] font-bold">
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#10B981]/15 text-[#047857] dark:text-[#34D399] font-bold">
                     {isArabic ? 'مميز' : 'Featured'}
                   </span>
                 </a>
               </li>
               <li>
-                <a href="#services" className="hover:text-[#2E86EB] dark:hover:text-[#4A9CFF] transition-colors inline-block py-0.5">
+                <a href="#services" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
                   {isArabic ? 'تحليل السلوك التطبيقي (ABA) وتعديل السلوك' : 'Applied Behavior Analysis (ABA) & Behavior Modification'}
                 </a>
               </li>
               <li>
-                <a href="#services" className="hover:text-[#2E86EB] dark:hover:text-[#4A9CFF] transition-colors inline-block py-0.5">
+                <a href="#services" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
                   {isArabic ? 'التشخيص والتقييم الفردي المقنن' : 'Standardized Diagnostic & Individual Assessment'}
                 </a>
               </li>
               <li>
-                <a href="#services" className="hover:text-[#2E86EB] dark:hover:text-[#4A9CFF] transition-colors inline-block py-0.5">
+                <a href="#services" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
                   {isArabic ? 'برامج التدخل المبكر لطيف التوحد' : 'Early Intervention Autism Programs'}
                 </a>
               </li>
               <li>
-                <a href="#services" className="hover:text-[#2E86EB] dark:hover:text-[#4A9CFF] transition-colors inline-block py-0.5">
+                <a href="#services" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
                   {isArabic ? 'جلسات النطق والتخاطب وتطوير التواصل' : 'Speech-Language Pathology & Communication Therapy'}
                 </a>
               </li>
               <li>
-                <a href="#services" className="hover:text-[#2E86EB] dark:hover:text-[#4A9CFF] transition-colors inline-block py-0.5">
+                <a href="#services" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
                   {isArabic ? 'العلاج الوظيفي والتكامل الحسي' : 'Occupational Therapy & Sensory Integration'}
                 </a>
               </li>
               <li>
-                <a href="#services" className="hover:text-[#2E86EB] dark:hover:text-[#4A9CFF] transition-colors inline-block py-0.5">
+                <a href="#services" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
                   {isArabic ? 'الدعم النفسي والإرشاد الأسري الشامل' : 'Psychological Counseling & Family Guidance'}
                 </a>
               </li>
@@ -362,34 +342,34 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
 
           {/* Col 3: Center Information */}
           <div className="space-y-3">
-            <h4 className="text-sm font-bold text-slate-900 dark:text-white">{t.footer.contactTitle}</h4>
-            <ul className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
+            <h4 className="text-sm font-bold text-[#161B26] dark:text-[#F8FAFC]">{t.footer.contactTitle}</h4>
+            <ul className="space-y-2.5 text-xs text-[#4B5563] dark:text-[#94A3B8]">
               <li className="flex items-start gap-2.5">
-                <div className="w-7 h-7 rounded-lg liquid-glass-btn flex items-center justify-center shrink-0 border border-slate-200/60 dark:border-white/10 text-[#2E86EB] shadow-xs">
+                <div className="w-7 h-7 rounded-full liquid-glass-btn flex items-center justify-center shrink-0 text-[#2B95FF]">
                   <MapPin className="w-3.5 h-3.5" />
                 </div>
                 <span className="pt-1 font-medium">{isArabic ? 'المملكة العربية السعودية' : 'Kingdom of Saudi Arabia'}</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-lg liquid-glass-btn flex items-center justify-center shrink-0 border border-slate-200/60 dark:border-white/10 text-[#2E86EB] shadow-xs">
+                <div className="w-7 h-7 rounded-full liquid-glass-btn flex items-center justify-center shrink-0 text-[#10B981]">
                   <Phone className="w-3.5 h-3.5" />
                 </div>
-                <span dir="ltr" className="font-semibold">{footer.phone || t.footer.phone}</span>
+                <span dir="ltr" className="font-semibold text-[#161B26] dark:text-[#F8FAFC]">{footer.phone || t.footer.phone}</span>
               </li>
               <li className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-lg liquid-glass-btn flex items-center justify-center shrink-0 border border-slate-200/60 dark:border-white/10 text-[#2E86EB] shadow-xs">
+                <div className="w-7 h-7 rounded-full liquid-glass-btn flex items-center justify-center shrink-0 text-[#8B5CF6]">
                   <Mail className="w-3.5 h-3.5" />
                 </div>
                 <a 
                   href="mailto:info@rabacenters.com" 
-                  className="hover:text-[#2E86EB] dark:hover:text-[#4A9CFF] transition-colors font-sans"
+                  className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-sans"
                   dir="ltr"
                 >
                   info@rabacenters.com
                 </a>
               </li>
               <li className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-lg liquid-glass-btn flex items-center justify-center shrink-0 border border-slate-200/60 dark:border-white/10 text-[#2E86EB] shadow-xs">
+                <div className="w-7 h-7 rounded-full liquid-glass-btn flex items-center justify-center shrink-0 text-[#F59E0B]">
                   <Clock className="w-3.5 h-3.5" />
                 </div>
                 <span>{isArabic ? (footer.hoursAr || t.footer.hoursDetails) : (footer.hoursEn || t.footer.hoursDetails)}</span>
@@ -400,25 +380,25 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
         </div>
 
         {/* Bottom Bar with Links, Back to Top & Admin Access */}
-        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-600 dark:text-slate-300">
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#4B5563] dark:text-[#94A3B8]">
           <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 text-center sm:text-start">
             <p className="font-medium">
               {isArabic ? (footer.copyrightAr || t.footer.copyright) : (footer.copyrightEn || t.footer.copyright)}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <a href="/about" className="hover:text-[#2E86EB] dark:hover:text-[#FFD23F] transition-colors font-semibold">
+              <a href="/about" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
                 {isArabic ? 'من نحن' : 'About Us'}
               </a>
-              <span className="text-slate-300 dark:text-white/20 select-none">•</span>
-              <a href="/contact" className="hover:text-[#2E86EB] dark:hover:text-[#FFD23F] transition-colors font-semibold">
+              <span className="text-[#8B95A5] select-none">•</span>
+              <a href="/contact" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
                 {isArabic ? 'اتصل بنا' : 'Contact Us'}
               </a>
-              <span className="text-slate-300 dark:text-white/20 select-none">•</span>
-              <a href="/terms" className="hover:text-[#2E86EB] dark:hover:text-[#FFD23F] transition-colors font-semibold">
+              <span className="text-[#8B95A5] select-none">•</span>
+              <a href="/terms" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
                 {isArabic ? 'الشروط والأحكام' : 'Terms of Service'}
               </a>
-              <span className="text-slate-300 dark:text-white/20 select-none">•</span>
-              <a href="/privacy" className="hover:text-[#2E86EB] dark:hover:text-[#FFD23F] transition-colors font-semibold">
+              <span className="text-[#8B95A5] select-none">•</span>
+              <a href="/privacy" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
                 {isArabic ? 'سياسة الخصوصية' : 'Privacy Policy'}
               </a>
             </div>
@@ -427,7 +407,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
                 onClick={onOpenAdmin}
                 title={isArabic ? 'لوحة تحكم المنظومة' : 'Staff & Admin Portal'}
                 aria-label={isArabic ? 'لوحة تحكم المنظومة' : 'Staff & Admin Portal'}
-                className="text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 w-9 h-9 min-w-[36px] min-h-[36px] inline-flex items-center justify-center rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors cursor-pointer"
+                className="text-[#2B95FF] hover:bg-[#2B95FF]/10 w-9 h-9 min-w-[36px] min-h-[36px] inline-flex items-center justify-center rounded-full transition-colors cursor-pointer"
               >
                 <ShieldCheck className="w-4 h-4" />
               </button>
@@ -436,11 +416,11 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
           
           <button
             onClick={scrollToTop}
-            className="flex items-center gap-1.5 min-h-[38px] liquid-glass-btn text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-transform cursor-pointer px-3.5 py-2 rounded-xl bg-white/70 dark:bg-white/[0.06] border border-slate-200/80 dark:border-white/10 shadow-xs hover:scale-105 active:scale-95"
+            className="flex items-center gap-1.5 min-h-[38px] liquid-glass-btn text-[#161B26] dark:text-[#F8FAFC] transition-transform cursor-pointer px-4 py-2 rounded-full hover:scale-105 active:scale-95"
             aria-label={isArabic ? 'الرجوع لأعلى الصفحة' : 'Back to top'}
           >
             <span className="font-bold">{t.floating.scrollTop}</span>
-            <ArrowUp className="w-3.5 h-3.5" />
+            <ArrowUp className="w-3.5 h-3.5 text-[#2B95FF]" />
           </button>
         </div>
 

@@ -118,15 +118,15 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
       style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 8px)' }}
     >
       {/* Frosted Glass Container with top border & subtle shadow */}
-      <div className="mx-2.5 mb-1.5 rounded-2xl bg-white/95 dark:bg-[#0D1B2A]/95 backdrop-blur-2xl border border-slate-200/90 dark:border-white/15 shadow-[0_-8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_-8px_35px_rgba(0,0,0,0.45)] px-1.5 py-1.5 flex items-center justify-around">
+      <div className="mx-2.5 mb-1.5 rounded-[28px] bg-[rgba(255,255,255,0.80)] dark:bg-[rgba(22,28,42,0.85)] backdrop-blur-2xl border border-[#161B26]/[0.08] dark:border-white/[0.08] shadow-[0_20px_40px_-15px_rgba(22,27,38,0.14)] dark:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.60)] px-1.5 py-1.5 flex items-center justify-around">
         
         {/* 1. Home */}
         <button
           onClick={handleHomeClick}
-          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-colors cursor-pointer min-w-[56px] min-h-[44px] ${
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-colors cursor-pointer min-w-[56px] min-h-[44px] ${
             activeTab === 'home'
-              ? 'text-[#2E86EB] font-black scale-105'
-              : 'text-slate-600 dark:text-slate-300 font-semibold hover:text-slate-800 dark:hover:text-white'
+              ? 'text-[#1263D6] dark:text-[#60AFFF] font-black scale-105'
+              : 'text-[#4B5563] dark:text-[#94A3B8] font-semibold hover:text-[#161B26] dark:hover:text-[#F8FAFC]'
           }`}
         >
           <Home className="w-5 h-5 mb-0.5" />
@@ -136,35 +136,35 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
         {/* 2. Services / Programs */}
         <button
           onClick={handleServicesClick}
-          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-colors cursor-pointer min-w-[56px] min-h-[44px] ${
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-colors cursor-pointer min-w-[56px] min-h-[44px] ${
             activeTab === 'services'
-              ? 'text-[#2E86EB] font-black scale-105'
-              : 'text-slate-600 dark:text-slate-300 font-semibold hover:text-slate-800 dark:hover:text-white'
+              ? 'text-[#1263D6] dark:text-[#60AFFF] font-black scale-105'
+              : 'text-[#4B5563] dark:text-[#94A3B8] font-semibold hover:text-[#161B26] dark:hover:text-[#F8FAFC]'
           }`}
         >
           <Layers className="w-5 h-5 mb-0.5" />
           <span className="text-[11px] font-bold tracking-tight">{isArabic ? 'الخدمات' : 'Services'}</span>
         </button>
 
-        {/* 3. Center CTA: Book Appointment (Primary #2E86EB to Tertiary #22C55E) */}
+        {/* 3. Center CTA */}
         <button
           onClick={onOpenBooking}
           id="mobile-bottom-book-btn"
-          className="flex flex-col items-center justify-center -mt-4 px-3.5 py-1.5 rounded-2xl bg-gradient-to-r from-[#2E86EB] via-[#3B92F5] to-[#22C55E] text-white shadow-lg shadow-blue-500/25 border-2 border-white dark:border-[#0D1B2A] active:scale-95 transition-transform cursor-pointer min-h-[48px]"
+          className="flex flex-col items-center justify-center -mt-4 px-3.5 py-1.5 rounded-full bg-[#141821] hover:bg-[#2B95FF] text-white dark:bg-[#F5F2EC] dark:hover:bg-[#2B95FF] dark:text-[#141821] dark:hover:text-white shadow-lg border-2 border-[#F5F2EC] dark:border-[#0B0F17] active:scale-95 transition-all cursor-pointer min-h-[48px] group"
         >
-          <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center mb-0.5">
-            <CalendarCheck className="w-4 h-4 text-white" />
+          <div className="w-8 h-8 rounded-full bg-[#2B95FF]/20 flex items-center justify-center mb-0.5">
+            <CalendarCheck className="w-4 h-4 text-[#2B95FF] group-hover:text-white transition-colors" />
           </div>
-          <span className="text-[11px] font-black text-white">{isArabic ? 'احجز الآن' : 'Book'}</span>
+          <span className="text-[11px] font-black">{isArabic ? 'احجز الآن' : 'Book'}</span>
         </button>
 
         {/* 4. Specialists */}
         <button
           onClick={handleSpecialistsClick}
-          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-colors cursor-pointer min-w-[56px] min-h-[44px] ${
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-colors cursor-pointer min-w-[56px] min-h-[44px] ${
             activeTab === 'specialists'
-              ? 'text-[#2E86EB] font-black scale-105'
-              : 'text-slate-600 dark:text-slate-300 font-semibold hover:text-slate-800 dark:hover:text-white'
+              ? 'text-[#1263D6] dark:text-[#60AFFF] font-black scale-105'
+              : 'text-[#4B5563] dark:text-[#94A3B8] font-semibold hover:text-[#161B26] dark:hover:text-[#F8FAFC]'
           }`}
         >
           <UserCheck className="w-5 h-5 mb-0.5" />
@@ -174,13 +174,13 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
         {/* 5. Our Branches */}
         <button
           onClick={handleBranchesClick}
-          className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-colors cursor-pointer min-w-[56px] min-h-[44px] ${
+          className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-colors cursor-pointer min-w-[56px] min-h-[44px] ${
             activeTab === 'branches'
-              ? 'text-[#2E86EB] font-black scale-105'
-              : 'text-slate-600 dark:text-slate-300 font-semibold hover:text-slate-800 dark:hover:text-white'
+              ? 'text-[#1263D6] dark:text-[#60AFFF] font-black scale-105'
+              : 'text-[#4B5563] dark:text-[#94A3B8] font-semibold hover:text-[#161B26] dark:hover:text-[#F8FAFC]'
           }`}
         >
-          <MapPin className="w-5 h-5 mb-0.5 text-[#22C55E]" />
+          <MapPin className="w-5 h-5 mb-0.5 text-[#10B981]" />
           <span className="text-[11px] font-bold tracking-tight">{isArabic ? 'فروعنا' : 'Branches'}</span>
         </button>
 

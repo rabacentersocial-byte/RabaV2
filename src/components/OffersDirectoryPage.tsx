@@ -342,23 +342,23 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
   const totalItemsCount = filteredOffers.length + filteredActivities.length;
 
   return (
-    <div className="min-h-screen bg-transparent text-slate-900 dark:text-white transition-colors" dir={direction}>
+    <div className="min-h-screen bg-transparent text-[#161B26] dark:text-[#F8FAFC] transition-colors" dir={direction}>
       
       {/* 1. TOP BREADCRUMB & BACK ACTION BAR */}
-      <div className="border-b border-white/80 dark:border-white/10 liquid-glass-panel sticky top-0 z-30">
+      <div className="border-b border-[#161B26]/[0.08] dark:border-white/10 liquid-glass-panel sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-4">
           
           {/* Breadcrumbs */}
-          <div className="flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-2 text-xs sm:text-sm font-bold text-[#4B5563] dark:text-[#94A3B8]">
             <button 
               onClick={onBackToHome}
-              className="flex items-center gap-1.5 hover:text-[#2E86EB] dark:hover:text-[#2E86EB] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors cursor-pointer"
             >
               <Home className="w-4 h-4" />
               <span>{isArabic ? 'الرئيسية' : 'Home'}</span>
             </button>
-            <span>/</span>
-            <span className="text-[#2E86EB] dark:text-[#2E86EB] font-black">
+            <span className="text-[#8B95A5] dark:text-[#64748B]">/</span>
+            <span className="text-[#1263D6] dark:text-[#60AFFF] font-black">
               {isArabic ? 'العروض والأنشطة' : 'Offers & Activities'}
             </span>
           </div>
@@ -367,18 +367,18 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={handleSharePage}
-              className="p-2 sm:px-3 sm:py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+              className="liquid-glass-btn p-2 sm:px-3.5 sm:py-1.5 rounded-full text-[#161B26] dark:text-[#F8FAFC] text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
               title={isArabic ? 'مشاركة الصفحة' : 'Share Page'}
             >
-              {copiedShare ? <Check className="w-4 h-4 text-emerald-500" /> : <Share2 className="w-4 h-4 text-[#2E86EB] dark:text-[#2E86EB]" />}
+              {copiedShare ? <Check className="w-4 h-4 text-[#10B981]" /> : <Share2 className="w-4 h-4 text-[#2B95FF]" />}
               <span className="hidden sm:inline">{copiedShare ? (isArabic ? 'تم النسخ' : 'Copied') : (isArabic ? 'مشاركة' : 'Share')}</span>
             </button>
 
             <button
               onClick={onBackToHome}
-              className="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#2E86EB] to-[#1E3A8A] text-white hover:brightness-110 text-xs sm:text-sm font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-md shadow-blue-900/20 active:scale-95"
+              className="warm-pill-cta px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-black flex items-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-95"
             >
-              {isArabic ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
+              {isArabic ? <ArrowRight className="w-4 h-4 text-[#2B95FF]" /> : <ArrowLeft className="w-4 h-4 text-[#2B95FF]" />}
               <span>{isArabic ? 'العودة للرئيسية' : 'Back to Home'}</span>
             </button>
           </div>
@@ -387,55 +387,54 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
       </div>
 
       {/* 2. HERO HEADER SECTION */}
-      <section className="relative overflow-hidden py-10 sm:py-14 md:py-16 border-b border-slate-200/80 dark:border-white/10 bg-gradient-to-b from-white via-slate-50/50 to-slate-100/40 dark:from-[#112238] dark:via-[#0D1B2A] dark:to-[#08111D]">
+      <section className="relative overflow-hidden py-10 sm:py-14 md:py-16 border-b border-[#161B26]/[0.08] dark:border-white/10">
         
         {/* Background ambient lighting */}
-        <div className="absolute top-0 right-1/4 w-[420px] h-[420px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-[420px] h-[420px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#34d399_1px,transparent_1px)] [background-size:24px_24px]" />
+        <div className="absolute top-0 right-1/4 w-[420px] h-[420px] rounded-full blur-[120px] pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(43, 149, 255, 0.22) 0%, rgba(43, 149, 255, 0) 70%)' }} />
+        <div className="absolute bottom-0 left-1/4 w-[420px] h-[420px] rounded-full blur-[120px] pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(139, 92, 246, 0.18) 0%, rgba(139, 92, 246, 0) 70%)' }} />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           
           <div className="max-w-3xl">
             {/* National Day Eyebrow */}
-            <div className="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-500/30 px-3.5 py-1.5 rounded-full text-[#0D6D54] dark:text-[#52B79A] text-xs font-black tracking-wide uppercase mb-3 shadow-2xs">
+            <div className="liquid-glass-pill inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[#1263D6] dark:text-[#60AFFF] text-xs font-black tracking-wide uppercase mb-3 shadow-2xs">
               <span className="text-base">🇸🇦</span>
               <span>{isArabic ? 'عروض وتخفيضات اليوم الوطني الـ96 وفعاليات المركز — عزّنا بطبعنا' : 'SAUDI NATIONAL DAY 96 EXCLUSIVE OFFERS & ACTIVITIES'}</span>
             </div>
 
             {/* Headline */}
-            <h1 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight mb-3">
+            <h1 className="text-3xl sm:text-5xl font-black text-[#161B26] dark:text-[#F8FAFC] tracking-tight leading-tight mb-3">
               {isArabic ? (
                 <span>
-                  العروض والأنشطة<span className="text-[#0D6D54] dark:text-[#00E5BE]">.</span>
+                  العروض والأنشطة<span className="text-[#2B95FF]">.</span>
                 </span>
               ) : (
                 <span>
-                  Offers & Activities<span className="text-[#0D6D54] dark:text-[#00E5BE]">.</span>
+                  Offers & Activities<span className="text-[#2B95FF]">.</span>
                 </span>
               )}
             </h1>
 
-            <p className="text-sm sm:text-base text-slate-600 dark:text-emerald-100/80 leading-relaxed max-w-2xl font-medium mb-6">
+            <p className="text-sm sm:text-base text-[#4B5563] dark:text-[#94A3B8] leading-relaxed max-w-2xl font-medium mb-6">
               {isArabic
                 ? 'دليل العروض والأنشطة التفاعلية في مركز رابا لتأهيل ورعاية الأطفال. استكشف كافة الخصومات الاستثنائية، باقات اليوم المجاني، والفعاليات المجتمعية المنعقدة في فروع المركز.'
                 : 'Your comprehensive directory of exclusive offers and interactive activities at RABA Center. Explore special discounts, free days, and community events.'}
             </p>
 
             {/* Quick Stats Cards */}
-            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
-              <span className="flex items-center gap-1.5 bg-white dark:bg-white/5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 shadow-2xs">
-                <Flame className="w-4 h-4 text-emerald-600 dark:text-[#00E5BE]" />
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs sm:text-sm font-bold text-[#161B26] dark:text-[#F8FAFC]">
+              <span className="liquid-glass-pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-full shadow-2xs">
+                <Flame className="w-4 h-4 text-[#2B95FF]" />
                 <span>{activeOffersCount} {isArabic ? 'عروض سارية وحصرية' : 'Live Exclusive Offers'}</span>
               </span>
 
-              <span className="flex items-center gap-1.5 bg-white dark:bg-white/5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 shadow-2xs">
-                <Percent className="w-4 h-4 text-amber-500" />
+              <span className="liquid-glass-pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-full shadow-2xs">
+                <Percent className="w-4 h-4 text-[#10B981]" />
                 <span>{isArabic ? 'خصومات تصل إلى 100% مجاناً' : 'Discounts up to 100% Free'}</span>
               </span>
 
-              <span className="flex items-center gap-1.5 bg-white dark:bg-white/5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 shadow-2xs">
-                <Users className="w-4 h-4 text-sky-500" />
+              <span className="liquid-glass-pill flex items-center gap-1.5 px-3.5 py-1.5 rounded-full shadow-2xs">
+                <Users className="w-4 h-4 text-[#8B5CF6]" />
                 <span>{CENTER_ACTIVITIES.length} {isArabic ? 'أنشطة وورش عمل تفاعلية' : 'Interactive Activities'}</span>
               </span>
             </div>
@@ -446,7 +445,7 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
       </section>
 
       {/* 3. SEARCH & FILTER TOOLBAR */}
-      <div className="bg-white/95 dark:bg-[#06241d]/95 backdrop-blur-md border-b border-slate-200/80 dark:border-white/10 sticky top-14 sm:top-16 z-20 shadow-xs">
+      <div className="liquid-glass-panel border-b border-[#161B26]/[0.08] dark:border-white/10 sticky top-14 sm:top-16 z-20 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 space-y-3">
           
           {/* Top Row: Search input + View Mode Switcher */}
@@ -459,13 +458,13 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={isArabic ? 'ابحث في العروض، الأنشطة، الكوبونات، أو الفعاليات...' : 'Search offers, activities, coupons, or events...'}
-                className="w-full bg-slate-100/90 dark:bg-slate-800/90 text-slate-900 dark:text-white rounded-xl sm:rounded-2xl pl-8 pr-9 sm:pl-10 sm:pr-12 py-2 sm:py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#0D6D54] dark:focus:ring-[#00E5BE] border border-slate-200 dark:border-white/10 transition-all placeholder:text-slate-400"
+                className="warm-pill-input w-full rounded-full pl-8 pr-9 sm:pl-10 sm:pr-12 py-2 sm:py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#2B95FF] transition-all"
               />
-              <Search className={`w-4 h-4 sm:w-5 sm:h-5 text-slate-400 absolute top-1/2 -translate-y-1/2 ${isArabic ? 'right-2.5 sm:right-4' : 'left-2.5 sm:left-4'}`} />
+              <Search className={`w-4 h-4 sm:w-5 sm:h-5 text-[#8B95A5] dark:text-[#64748B] absolute top-1/2 -translate-y-1/2 ${isArabic ? 'right-3 sm:right-4' : 'left-3 sm:left-4'}`} />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className={`absolute top-1/2 -translate-y-1/2 ${isArabic ? 'left-2 sm:left-3' : 'right-2 sm:right-3'} p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 transition-colors cursor-pointer`}
+                  className={`absolute top-1/2 -translate-y-1/2 ${isArabic ? 'left-2 sm:left-3' : 'right-2 sm:right-3'} p-1 rounded-full hover:bg-[#161B26]/5 dark:hover:bg-white/10 text-[#8B95A5] dark:text-[#64748B] transition-colors cursor-pointer`}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -473,13 +472,13 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
             </div>
 
             {/* View Mode Toggle: Grid vs Slider */}
-            <div className="flex items-center gap-1 bg-slate-100 dark:bg-white/5 p-1 rounded-xl border border-slate-200/80 dark:border-white/10 shrink-0">
+            <div className="liquid-glass-pill flex items-center gap-1 p-1 rounded-full shrink-0">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                className={`p-1.5 sm:px-3 sm:py-1.5 rounded-full text-xs font-bold flex items-center gap-1 transition-all cursor-pointer ${
                   viewMode === 'grid'
-                    ? 'bg-white dark:bg-white/15 text-[#0D6D54] dark:text-[#00E5BE] shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'warm-pill-cta shadow-xs'
+                    : 'text-[#4B5563] dark:text-[#94A3B8] hover:text-[#161B26] dark:hover:text-[#F8FAFC]'
                 }`}
                 title={isArabic ? 'عرض كشبكة' : 'Grid View'}
               >
@@ -489,10 +488,10 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
 
               <button
                 onClick={() => setViewMode('slider')}
-                className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                className={`p-1.5 sm:px-3 sm:py-1.5 rounded-full text-xs font-bold flex items-center gap-1 transition-all cursor-pointer ${
                   viewMode === 'slider'
-                    ? 'bg-white dark:bg-white/15 text-[#0D6D54] dark:text-[#00E5BE] shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'warm-pill-cta shadow-xs'
+                    : 'text-[#4B5563] dark:text-[#94A3B8] hover:text-[#161B26] dark:hover:text-[#F8FAFC]'
                 }`}
                 title={isArabic ? 'عرض كسلايدر' : 'Slider View'}
               >
@@ -517,10 +516,10 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                 <button
                   key={tab.id}
                   onClick={() => setSelectedFilter(tab.id as any)}
-                  className={`shrink-0 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer border ${
+                  className={`shrink-0 px-4 py-1.5 rounded-full text-xs sm:text-sm font-black transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-gradient-to-r from-[#2E86EB] to-[#1E3A8A] text-white border-transparent shadow-md shadow-blue-900/20'
-                      : 'bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 border-slate-200/80 dark:border-white/10'
+                      ? 'warm-pill-cta shadow-md'
+                      : 'liquid-glass-pill text-[#4B5563] dark:text-[#94A3B8] hover:text-[#161B26] dark:hover:text-[#F8FAFC]'
                   }`}
                 >
                   {isArabic ? tab.labelAr : tab.labelEn}
@@ -542,14 +541,14 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
             {/* Header with Slider Controls if in slider mode */}
             <div className="flex items-center justify-between gap-4 mb-6">
               <div>
-                <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                  <Gift className="w-5 h-5 text-[#2E86EB] dark:text-[#2E86EB]" />
+                <h2 className="text-xl sm:text-2xl font-black text-[#161B26] dark:text-[#F8FAFC] flex items-center gap-2">
+                  <Gift className="w-5 h-5 text-[#2B95FF]" />
                   <span>{isArabic ? 'العروض والخصومات الحصرية' : 'Exclusive Offers & Discounts'}</span>
-                  <span className="text-xs bg-blue-100 dark:bg-blue-950/60 text-[#2E86EB] dark:text-[#2E86EB] px-2 py-0.5 rounded-full font-bold">
+                  <span className="text-xs bg-[#2B95FF]/12 text-[#1263D6] dark:text-[#60AFFF] px-2.5 py-0.5 rounded-full font-bold">
                     {filteredOffers.length}
                   </span>
                 </h2>
-                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+                <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] mt-1">
                   {isArabic ? 'عروض معتمدة مع كوبونات خصم فورية وسريعة التطبيق' : 'Verified promotional packages with instant claim vouchers'}
                 </p>
               </div>
@@ -559,14 +558,14 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                   <button
                     onClick={() => handleScroll('prev')}
                     aria-label={isArabic ? 'السابق' : 'Previous'}
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111827] text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-[#1E293B] flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
+                    className="liquid-glass-btn w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
                   >
                     {isArabic ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
                   </button>
                   <button
                     onClick={() => handleScroll('next')}
                     aria-label={isArabic ? 'التالي' : 'Next'}
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-[#111827] text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-[#1E293B] flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
+                    className="liquid-glass-btn w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95"
                   >
                     {isArabic ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                   </button>
@@ -596,21 +595,21 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                 const bgGradient = styling.bgGradientFrom 
                   ? `linear-gradient(135deg, ${styling.bgGradientFrom} 0%, ${styling.bgGradientVia || styling.bgGradientFrom} 50%, ${styling.bgGradientTo || styling.bgGradientFrom} 100%)`
                   : undefined;
-                const borderColor = styling.borderColor || 'rgba(16,185,129,0.35)';
-                const accentColor = styling.accentColor || '#00E5BE';
-                const subcardBg = styling.subcardBg || '#032019';
-                const subcardBorder = styling.subcardBorder || 'rgba(16,185,129,0.3)';
+                const borderColor = styling.borderColor || 'rgba(43,149,255,0.28)';
+                const accentColor = styling.accentColor || '#2B95FF';
+                const subcardBg = styling.subcardBg || 'rgba(255, 255, 255, 0.05)';
+                const subcardBorder = styling.subcardBorder || 'rgba(255,255,255,0.12)';
 
                 return (
                   <div
                     key={offer.id}
-                    className={`relative rounded-3xl p-5 sm:p-7 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-xl border text-white ${
+                    className={`relative rounded-[28px] p-5 sm:p-7 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-xl border text-white ${
                       viewMode === 'slider'
                         ? 'shrink-0 w-[86vw] sm:w-[440px] md:w-[480px] snap-center'
                         : 'w-full'
                     }`}
                     style={{
-                      background: bgGradient || 'linear-gradient(135deg, #062c22 0%, #093c2f 50%, #041d17 100%)',
+                      background: bgGradient || 'linear-gradient(135deg, #141821 0%, #161C2A 50%, #0B0F17 100%)',
                       borderColor: borderColor,
                     }}
                   >
@@ -674,22 +673,22 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
 
                       {/* Coupon Code Pill */}
                       {offer.couponCode && (
-                        <div className="flex items-center justify-between gap-2 bg-black/40 border border-white/10 rounded-xl px-3 py-2">
+                        <div className="flex items-center justify-between gap-2 bg-black/40 border border-white/10 rounded-full px-3.5 py-2">
                           <div className="flex items-center gap-2">
-                            <Tag className="w-4 h-4 text-emerald-400" />
+                            <Tag className="w-4 h-4 text-[#2B95FF]" />
                             <span className="text-xs text-slate-300">{isArabic ? 'كود الكوبون:' : 'Coupon Code:'}</span>
-                            <span className="font-mono font-black text-sm text-[#00E5BE] tracking-wider">
+                            <span className="font-mono font-black text-sm text-[#60AFFF] tracking-wider">
                               {offer.couponCode}
                             </span>
                           </div>
                           <button
                             onClick={() => handleCopyCoupon(offer.couponCode!)}
-                            className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1"
+                            className="px-2.5 py-1 rounded-full bg-white/10 hover:bg-white/20 text-xs font-bold transition-colors cursor-pointer flex items-center gap-1"
                           >
                             {copiedCoupon === offer.couponCode ? (
                               <>
-                                <Check className="w-3 h-3 text-emerald-400" />
-                                <span className="text-emerald-400 text-[10px]">{isArabic ? 'تم النسخ' : 'Copied'}</span>
+                                <Check className="w-3 h-3 text-[#34D399]" />
+                                <span className="text-[#34D399] text-[10px]">{isArabic ? 'تم النسخ' : 'Copied'}</span>
                               </>
                             ) : (
                               <>
@@ -707,7 +706,7 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                       
                       {offer.showCountdown && (
                         <div className="mb-4">
-                          <span className="text-[10px] font-bold text-emerald-300/80 block mb-1.5">
+                          <span className="text-[10px] font-bold text-[#94A3B8] block mb-1.5">
                             {isArabic ? 'الوقت المتبقي حتى انتهاء العرض:' : 'Time Left:'}
                           </span>
                           <div className="grid grid-cols-4 gap-2 text-center" dir="ltr">
@@ -717,8 +716,8 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                               { label: isArabic ? 'دقيقة' : 'M', val: cd.minutes },
                               { label: isArabic ? 'ثانية' : 'S', val: cd.seconds },
                             ].map((unit, uIdx) => (
-                              <div key={uIdx} className="bg-black/35 rounded-xl p-1.5 border border-white/10">
-                                <span className="font-mono text-base sm:text-lg font-black text-[#00E5BE] block leading-tight">
+                              <div key={uIdx} className="bg-black/35 rounded-2xl p-1.5 border border-white/10">
+                                <span className="font-mono text-base sm:text-lg font-black text-[#60AFFF] block leading-tight">
                                   {fmt(unit.val)}
                                 </span>
                                 <span className="text-[9px] text-slate-300 font-bold block">
@@ -739,10 +738,10 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                             onOpenBooking(`استفادة من عرض: ${offer.titleAr} (كوبون: ${offer.couponCode || 'مباشر'})`);
                           }
                         }}
-                        className="w-full py-3 px-4 rounded-xl font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98 hover:brightness-110"
+                        className="w-full py-3 px-4 rounded-full font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98 hover:brightness-110"
                         style={{
-                          backgroundColor: styling.accentColor || '#00E5BE',
-                          color: '#022c22'
+                          backgroundColor: styling.accentColor || '#2B95FF',
+                          color: styling.accentColor ? '#141821' : '#FFFFFF'
                         }}
                       >
                         <Sparkles className="w-4 h-4" />
@@ -764,14 +763,14 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
           <div className="mb-14">
             
             <div className="mb-6">
-              <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <Users className="w-5 h-5 text-[#0D6D54] dark:text-[#00E5BE]" />
+              <h2 className="text-xl sm:text-2xl font-black text-[#161B26] dark:text-[#F8FAFC] flex items-center gap-2">
+                <Users className="w-5 h-5 text-[#2B95FF]" />
                 <span>{isArabic ? 'الأنشطة والفعاليات التأهيلية التفاعلية' : 'Interactive Center Activities & Events'}</span>
-                <span className="text-xs bg-teal-100 dark:bg-teal-950/60 text-[#0D6D54] dark:text-[#00E5BE] px-2 py-0.5 rounded-full font-bold">
+                <span className="text-xs bg-[#2B95FF]/12 text-[#1263D6] dark:text-[#60AFFF] px-2.5 py-0.5 rounded-full font-bold">
                   {filteredActivities.length}
                 </span>
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+              <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] mt-1">
                 {isArabic ? 'ورش عمل وفعاليات حضورية مصممة لتعزيز المهارات الحركية والتفاعل الاجتماعي' : 'In-person workshops and community events enhancing motor skills and social communication'}
               </p>
             </div>
@@ -780,43 +779,43 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
               {filteredActivities.map((act) => (
                 <div
                   key={act.id}
-                  className="bg-white dark:bg-[#111827] rounded-3xl p-5 sm:p-6 border border-slate-200/90 dark:border-white/10 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                  className="liquid-glass-card rounded-[28px] p-5 sm:p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
                 >
                   <div>
                     {/* Activity Top Meta */}
                     <div className="flex items-center justify-between gap-3 mb-3.5">
-                      <span className="px-3 py-1 rounded-full text-xs font-black bg-blue-50 dark:bg-blue-950/60 text-[#2E86EB] dark:text-[#2E86EB] border border-blue-200/60 dark:border-blue-800/40">
+                      <span className="px-3 py-1 rounded-full text-xs font-black bg-[#2B95FF]/12 text-[#1263D6] dark:text-[#60AFFF] border border-[#2B95FF]/25">
                         {isArabic ? act.categoryAr : act.categoryEn}
                       </span>
                       <span className={`px-2.5 py-1 rounded-full text-[11px] font-black ${
                         act.isFree 
-                          ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/40'
-                          : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/40'
+                          ? 'bg-[#10B981]/10 text-[#047857] dark:text-[#34D399] border border-[#10B981]/25'
+                          : 'bg-[#F59E0B]/10 text-[#B45309] dark:text-[#FBBF24] border border-[#F59E0B]/25'
                       }`}>
                         {isArabic ? act.badgeAr : act.badgeEn}
                       </span>
                     </div>
 
                     {/* Title & Description */}
-                    <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white mb-2 leading-tight">
+                    <h3 className="text-lg sm:text-xl font-black text-[#161B26] dark:text-[#F8FAFC] mb-2 leading-tight">
                       {isArabic ? act.titleAr : act.titleEn}
                     </h3>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-medium mb-4">
+                    <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] leading-relaxed font-medium mb-4">
                       {isArabic ? act.descriptionAr : act.descriptionEn}
                     </p>
 
                     {/* Schedule & Location Details */}
-                    <div className="bg-slate-50 dark:bg-[#112238] rounded-2xl p-3 sm:p-3.5 mb-5 space-y-2 border border-slate-200/60 dark:border-white/5 text-xs text-slate-700 dark:text-slate-300">
+                    <div className="liquid-glass-panel rounded-2xl p-3 sm:p-3.5 mb-5 space-y-2 text-xs text-[#4B5563] dark:text-[#94A3B8]">
                       <div className="flex items-center gap-2">
-                        <Clock className="w-3.5 h-3.5 text-[#2E86EB] dark:text-[#2E86EB] shrink-0" />
-                        <span className="font-bold">{isArabic ? act.dateAr : act.dateEn}</span>
+                        <Clock className="w-3.5 h-3.5 text-[#2B95FF] shrink-0" />
+                        <span className="font-bold text-[#161B26] dark:text-[#F8FAFC]">{isArabic ? act.dateAr : act.dateEn}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <MapPin className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                        <MapPin className="w-3.5 h-3.5 text-[#8B5CF6] shrink-0" />
                         <span>{isArabic ? act.locationAr : act.locationEn}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Users className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+                        <Users className="w-3.5 h-3.5 text-[#10B981] shrink-0" />
                         <span>{isArabic ? act.targetAudienceAr : act.targetAudienceEn}</span>
                       </div>
                     </div>
@@ -830,7 +829,7 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                           onOpenBooking(`تسجيل في فعالية: ${act.titleAr} (${act.dateAr})`);
                         }
                       }}
-                      className="flex-1 py-2.5 sm:py-3 px-4 rounded-xl bg-gradient-to-r from-[#0D6D54] to-[#0f766e] text-white hover:brightness-110 font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-teal-900/20 active:scale-95"
+                      className="flex-1 py-2.5 sm:py-3 px-4 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] text-white hover:brightness-110 font-black text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-[#2B95FF]/20 active:scale-95"
                     >
                       <CalendarCheck className="w-4 h-4" />
                       <span>{isArabic ? 'تسجيل مقعد بالنشاط' : 'Register for Activity'}</span>
@@ -844,7 +843,7 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2.5 sm:p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors cursor-pointer"
+                      className="p-2.5 sm:p-3 rounded-full bg-[#10B981]/10 text-[#047857] dark:text-[#34D399] border border-[#10B981]/25 hover:bg-[#10B981]/20 transition-colors cursor-pointer"
                       title={isArabic ? 'استفسار عبر واتساب' : 'WhatsApp'}
                     >
                       <MessageCircle className="w-4 h-4" />
@@ -860,14 +859,14 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
 
         {/* SECTION C: NO RESULTS STATE */}
         {totalItemsCount === 0 && (
-          <div className="text-center py-16 bg-white dark:bg-[#06241d]/50 rounded-3xl border border-slate-200 dark:border-white/10 p-8 my-8">
-            <div className="w-16 h-16 rounded-2xl bg-teal-50 dark:bg-teal-950/60 text-[#0D6D54] dark:text-[#00E5BE] flex items-center justify-center mx-auto mb-4">
+          <div className="liquid-glass-card text-center py-16 rounded-[28px] p-8 my-8">
+            <div className="w-16 h-16 rounded-2xl bg-[#2B95FF]/15 text-[#2B95FF] flex items-center justify-center mx-auto mb-4">
               <Search className="w-8 h-8" />
             </div>
-            <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white mb-2">
+            <h3 className="text-lg sm:text-xl font-black text-[#161B26] dark:text-[#F8FAFC] mb-2">
               {isArabic ? 'لم يتم العثور على عروض أو أنشطة مطابقة للبحث' : 'No matching offers or activities found'}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">
+            <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] max-w-md mx-auto mb-6">
               {isArabic 
                 ? 'جرب البحث بكلمات مفتاحية أخرى أو إعادة تعيين الفلاتر لعرض كافة العروض والفعاليات المتاحة.'
                 : 'Try different search keywords or reset filters to view all available offers.'}
@@ -877,7 +876,7 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                 setSearchQuery('');
                 setSelectedFilter('all');
               }}
-              className="px-6 py-2.5 rounded-xl bg-[#0D6D54] text-white text-xs sm:text-sm font-black hover:brightness-110 transition-all cursor-pointer shadow-md"
+              className="warm-pill-cta px-6 py-2.5 rounded-full text-xs sm:text-sm font-black transition-all cursor-pointer shadow-md"
             >
               {isArabic ? 'عرض كافة العروض والأنشطة' : 'Show All Offers'}
             </button>
@@ -885,16 +884,16 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
         )}
 
         {/* SECTION D: BOTTOM CONSULTATION HOOK BANNER */}
-        <div className="p-6 sm:p-8 rounded-3xl border border-[#0D6D54]/20 dark:border-[#00E5BE]/20 bg-gradient-to-r from-[#dff1ec]/70 via-white dark:via-slate-900 to-[#dff1ec]/40 dark:from-teal-950/40 dark:to-slate-900 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="obsidian-anchor-card p-6 sm:p-8 rounded-[28px] shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#0D6D54] to-[#14b8a6] text-white flex items-center justify-center shrink-0 shadow-md">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#2B95FF] to-[#1A73E8] text-white flex items-center justify-center shrink-0 shadow-md">
               <HeartHandshake className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-black text-[#0f2d29] dark:text-white">
+              <h3 className="text-base sm:text-lg font-black text-white dark:text-[#161B26]">
                 {isArabic ? 'هل ترغب في باقة مخصصة أو لديك استفسار عن الأنشطة؟' : 'Need a custom package or inquiry about activities?'}
               </h3>
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1">
+              <p className="text-xs sm:text-sm text-[#94A3B8] dark:text-[#4B5563] mt-1">
                 {isArabic 
                   ? 'فريق الاستشارات بمركز رابا جاهز لتقديم المشورة وتنسيق خطة تأهيلية تناسب احتياجات طفلك.'
                   : 'Raba Center intake team is ready to assist and tailor a rehabilitation package for your child.'}
@@ -905,9 +904,9 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
           <div className="flex items-center gap-2.5 w-full md:w-auto">
             <a
               href="tel:966575100100"
-              className="flex-1 md:flex-initial px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/20 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-bold hover:bg-slate-100 dark:hover:bg-white/10 transition-colors flex items-center justify-center gap-1.5 cursor-pointer text-center"
+              className="flex-1 md:flex-initial px-4 py-2.5 rounded-full border border-white/15 dark:border-[#161B26]/15 bg-white/10 dark:bg-[#161B26]/5 text-white dark:text-[#161B26] text-xs sm:text-sm font-bold hover:bg-white/20 dark:hover:bg-[#161B26]/10 transition-colors flex items-center justify-center gap-1.5 cursor-pointer text-center"
             >
-              <Phone className="w-4 h-4 text-[#0D6D54] dark:text-[#00E5BE]" />
+              <Phone className="w-4 h-4 text-[#2B95FF]" />
               <span>{isArabic ? 'اتصال مباشر' : 'Call'}</span>
             </a>
 
@@ -917,7 +916,7 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
                   onOpenBooking('استفسار عام عن باقات العروض والأنشطة');
                 }
               }}
-              className="flex-1 md:flex-initial px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#0D6D54] to-[#0f766e] text-white font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer hover:brightness-110 active:scale-95 text-center"
+              className="flex-1 md:flex-initial px-5 py-2.5 rounded-full bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] text-white font-black text-xs sm:text-sm shadow-md shadow-[#2B95FF]/25 transition-all cursor-pointer hover:brightness-110 active:scale-95 text-center"
             >
               {isArabic ? 'طلب استشارة فورية' : 'Request Consultation'}
             </button>

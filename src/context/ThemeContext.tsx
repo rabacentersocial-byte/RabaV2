@@ -19,10 +19,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (saved === 'light' || saved === 'dark') {
         return saved;
       }
-      // Default is always dark mode
-      return 'dark';
+      // Default is Light Mode (Warm Frosted Glass & Sand Minimalism)
+      return 'light';
     } catch {
-      return 'dark';
+      return 'light';
     }
   });
 
@@ -33,19 +33,19 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       root.classList.add('dark');
       root.classList.remove('light');
       root.style.colorScheme = 'dark';
-      root.style.backgroundColor = '#0D1B2A';
+      root.style.backgroundColor = '#0B0F17';
       if (body) {
-        body.style.backgroundColor = '#0D1B2A';
-        body.style.color = '#f1f5f9';
+        body.style.backgroundColor = '#0B0F17';
+        body.style.color = '#F8FAFC';
       }
     } else {
       root.classList.remove('dark');
       root.classList.add('light');
       root.style.colorScheme = 'light';
-      root.style.backgroundColor = '#F8FAFC';
+      root.style.backgroundColor = '#F5F2EC';
       if (body) {
-        body.style.backgroundColor = '#F8FAFC';
-        body.style.color = '#0f172a';
+        body.style.backgroundColor = '#F5F2EC';
+        body.style.color = '#161B26';
       }
     }
     try {
