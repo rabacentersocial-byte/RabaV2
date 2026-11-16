@@ -39,6 +39,7 @@ import {
   getAdminFirestoreSetting,
   isFirestoreAdminConfigured
 } from './src/lib/firebase-admin.ts';
+import sitemap, { renderSitemapXml } from './sitemap.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -294,6 +295,25 @@ async function startServer() {
   const app = express();
   const PORT = getPort();
 
+  // 0. Dedicated XML Sitemap route registered BEFORE all middlewares & HTML wrappers
+  app.get(['/sitemap.xml', '/sitemap.xml/'], (_req: Request, res: Response) => {
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
+
+    try {
+      const xml = renderSitemapXml(sitemap());
+      return res.status(200).end(xml);
+    } catch {
+      const sitemapPath = path.join(process.cwd(), 'public', 'sitemap.xml');
+      if (fs.existsSync(sitemapPath)) {
+        const fallbackXml = fs.readFileSync(sitemapPath, 'utf-8');
+        return res.status(200).end(fallbackXml);
+      }
+      return res.status(404).type('text/plain; charset=utf-8').send('Not Found');
+    }
+  });
+
   // 1. Canonical Domain & HTTPS Redirection (Resolves PageSpeed Document Latency & eliminates redirect chains)
   app.use((req: Request, res: Response, next) => {
     const host = (req.headers.host || '').toLowerCase();
@@ -352,7 +372,7 @@ async function startServer() {
   app.use(express.json({ limit: '25mb', inflate: false }));
   app.use(express.urlencoded({ extended: true, limit: '25mb', inflate: false }));
 
-  // Explicit SEO routes for robots.txt and dynamic sitemap.xml (1-hour revalidation)
+  // Explicit SEO route for robots.txt
   app.get('/robots.txt', (_req: Request, res: Response) => {
     const robotsPath = path.join(process.cwd(), 'public', 'robots.txt');
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
@@ -363,63 +383,6 @@ async function startServer() {
     return res.send(
       `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /dashboard/\nDisallow: /api/\nDisallow: /data/admin_users.json\n\nSitemap: https://rabacenters.com/sitemap.xml\n`
     );
-  });
-
-  app.get('/sitemap.xml', (_req: Request, res: Response) => {
-    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-    res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
-
-    try {
-      const baseUrl = 'https://rabacenters.com';
-      const today = new Date().toISOString().split('T')[0];
-
-      const staticEntries = [
-        { loc: `${baseUrl}/`, lastmod: today, changefreq: 'daily', priority: '1.0', hasHreflang: true },
-        { loc: `${baseUrl}/blog`, lastmod: today, changefreq: 'daily', priority: '0.9' },
-        { loc: `${baseUrl}/articles`, lastmod: today, changefreq: 'daily', priority: '0.8' },
-        { loc: `${baseUrl}/#services`, lastmod: today, changefreq: 'weekly', priority: '0.9' },
-        { loc: `${baseUrl}/#specialists`, lastmod: today, changefreq: 'weekly', priority: '0.8' },
-        { loc: `${baseUrl}/#courses`, lastmod: today, changefreq: 'weekly', priority: '0.8' },
-        { loc: `${baseUrl}/#branches`, lastmod: today, changefreq: 'monthly', priority: '0.7' },
-        { loc: `${baseUrl}/#about`, lastmod: today, changefreq: 'monthly', priority: '0.7' },
-        { loc: `${baseUrl}/#booking`, lastmod: today, changefreq: 'daily', priority: '0.9' },
-        { loc: `${baseUrl}/#offers-directory`, lastmod: today, changefreq: 'weekly', priority: '0.8' }
-      ];
-
-      const blogPosts = readJsonFile('blog_posts.json', []);
-      const dynamicBlogEntries = Array.isArray(blogPosts)
-        ? blogPosts
-            .filter((post: any) => post && typeof post.slug === 'string' && post.slug.trim().length > 0 && post.active !== false)
-            .map((post: any) => {
-              const safeSlug = encodeURIComponent(post.slug.trim());
-              return {
-                loc: `${baseUrl}/#blog/${safeSlug}`,
-                lastmod: today,
-                changefreq: 'weekly',
-                priority: '0.7'
-              };
-            })
-        : [];
-
-      const allEntries = [...staticEntries, ...dynamicBlogEntries];
-      const xmlItems = allEntries
-        .map((entry: any) => {
-          const hreflangTag = entry.hasHreflang
-            ? `\n    <xhtml:link rel="alternate" hreflang="ar" href="${entry.loc}" />`
-            : '';
-          return `  <url>\n    <loc>${entry.loc}</loc>\n    <lastmod>${entry.lastmod}</lastmod>\n    <changefreq>${entry.changefreq}</changefreq>\n    <priority>${entry.priority}</priority>${hreflangTag}\n  </url>`;
-        })
-        .join('\n');
-
-      const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n        xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${xmlItems}\n</urlset>\n`;
-      return res.status(200).send(xml);
-    } catch {
-      const sitemapPath = path.join(process.cwd(), 'public', 'sitemap.xml');
-      if (fs.existsSync(sitemapPath)) {
-        return res.sendFile(sitemapPath);
-      }
-      return res.status(404).send('Not Found');
-    }
   });
 
   // Explicit Agentic Browsing routes (llms.txt & .well-known/ard.json)
@@ -454,6 +417,7 @@ async function startServer() {
   const staticCacheOptions = {
     maxAge: '365d',
     immutable: true,
+    redirect: false,
     setHeaders: (res: Response) => {
       res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
     }
@@ -1496,8 +1460,10 @@ async function startServer() {
     res.setHeader('Link', '</llms.txt>; rel="alternate"; type="text/markdown", </.well-known/mcp/server-card.json>; rel="service-desc"');
     res.setHeader('Vary', 'Accept, Accept-Encoding');
 
-    // 2. Skip internal Vite dev assets and API endpoints
+    // 2. Skip internal Vite dev assets, XML sitemap, and API endpoints
     if (
+      req.path === '/sitemap.xml' ||
+      req.path === '/robots.txt' ||
       req.path.startsWith('/api/') ||
       req.path.startsWith('/@') ||
       req.path.startsWith('/src/') ||
@@ -1506,12 +1472,14 @@ async function startServer() {
       return next();
     }
 
-    // 3. Check if this is an actual existing physical file on disk (assets, images, uploads, etc.)
+    // 3. Check if this is an actual existing physical FILE on disk (not a directory like public/specialists)
     const cleanRelativePath = req.path.replace(/^\/+/, '');
     if (cleanRelativePath) {
-      const existsInPublic = fs.existsSync(path.join(publicDir, cleanRelativePath));
-      const existsInDist = fs.existsSync(path.join(distPath, cleanRelativePath));
-      if (existsInPublic || existsInDist) {
+      const publicTarget = path.join(publicDir, cleanRelativePath);
+      const distTarget = path.join(distPath, cleanRelativePath);
+      const isPublicFile = fs.existsSync(publicTarget) && fs.statSync(publicTarget).isFile();
+      const isDistFile = fs.existsSync(distTarget) && fs.statSync(distTarget).isFile();
+      if (isPublicFile || isDistFile) {
         return next();
       }
     }
@@ -1530,10 +1498,21 @@ async function startServer() {
       '/services-directory',
       '/specialists',
       '/specialists-directory',
+      '/courses',
+      '/courses-directory',
+      '/packages',
       '/branches',
       '/branches-directory',
       '/offers',
       '/offers-directory',
+      '/shadow-teacher',
+      '/shadow-teacher-directory',
+      '/sewar',
+      '/partners',
+      '/partners-directory',
+      '/testimonials',
+      '/testimonials-directory',
+      '/reviews',
       '/blog',
       '/blog-directory',
       '/articles',
@@ -1546,7 +1525,9 @@ async function startServer() {
     const isDynamicValid = 
       cleanPath.startsWith('/blog/') || 
       cleanPath.startsWith('/articles/') || 
-      cleanPath.startsWith('/specialist/');
+      cleanPath.startsWith('/specialist/') ||
+      cleanPath.startsWith('/services/') ||
+      cleanPath.startsWith('/courses/');
 
     const isRouteValid = VALID_ROUTES.has(cleanPath) || isDynamicValid;
 
@@ -1629,6 +1610,7 @@ async function startServer() {
       // 1-year cache on static media/images/fonts/js/css, with no-cache on HTML
       app.use(express.static(distPath, {
         maxAge: '365d',
+        redirect: false,
         setHeaders: (res, filePath) => {
           if (filePath.endsWith('.html')) {
             res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
@@ -1642,7 +1624,9 @@ async function startServer() {
         const isDynamicValid = 
           cleanPath.startsWith('/blog/') || 
           cleanPath.startsWith('/articles/') || 
-          cleanPath.startsWith('/specialist/');
+          cleanPath.startsWith('/specialist/') ||
+          cleanPath.startsWith('/services/') ||
+          cleanPath.startsWith('/courses/');
 
         const VALID_EXACT_ROUTES = new Set([
           '/',
@@ -1657,6 +1641,9 @@ async function startServer() {
           '/services-directory',
           '/specialists',
           '/specialists-directory',
+          '/courses',
+          '/courses-directory',
+          '/packages',
           '/branches',
           '/branches-directory',
           '/offers',
@@ -1694,6 +1681,12 @@ async function startServer() {
         }
       });
     } else {
+      app.use((req: Request, _res: Response, next) => {
+        if (req.path === '/specialists' || req.path === '/specialists/') {
+          req.url = '/index.html';
+        }
+        next();
+      });
       viteInstance = await createViteServer({
         server: {
           middlewareMode: true,
@@ -1705,6 +1698,12 @@ async function startServer() {
       app.use(viteInstance.middlewares);
     }
   } else {
+    app.use((req: Request, _res: Response, next) => {
+      if (req.path === '/specialists' || req.path === '/specialists/') {
+        req.url = '/index.html';
+      }
+      next();
+    });
     viteInstance = await createViteServer({
       server: {
         middlewareMode: true,

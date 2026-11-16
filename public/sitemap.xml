@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://rabacenters.com/</loc>
     <lastmod>2026-11-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://rabacenters.com/" />
   </url>
   <url>
     <loc>https://rabacenters.com/blog</loc>
@@ -21,45 +19,105 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://rabacenters.com/#services</loc>
+    <loc>https://rabacenters.com/services</loc>
     <lastmod>2026-11-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://rabacenters.com/#specialists</loc>
+    <loc>https://rabacenters.com/specialists</loc>
     <lastmod>2026-11-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://rabacenters.com/#courses</loc>
+    <loc>https://rabacenters.com/courses</loc>
     <lastmod>2026-11-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://rabacenters.com/#branches</loc>
+    <loc>https://rabacenters.com/branches</loc>
     <lastmod>2026-11-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://rabacenters.com/#about</loc>
+    <loc>https://rabacenters.com/about</loc>
     <lastmod>2026-11-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://rabacenters.com/#booking</loc>
+    <loc>https://rabacenters.com/booking</loc>
     <lastmod>2026-11-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://rabacenters.com/#offers-directory</loc>
+    <loc>https://rabacenters.com/offers-directory</loc>
     <lastmod>2026-11-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rabacenters.com/shadow-teacher</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rabacenters.com/partners</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://rabacenters.com/testimonials</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://rabacenters.com/blog/depersonalization-derealization-psychology-neuroscience</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://rabacenters.com/blog/schema-therapy-what-is-it-why-effective</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://rabacenters.com/blog/occupational-therapy-comprehensive-guide</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://rabacenters.com/blog/understanding-echolalia-speech-language-guide</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://rabacenters.com/blog/bobo-doll-experiment-mirror-neurons-child-brain-violence</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://rabacenters.com/blog/why-child-crying-repeats-at-the-mall-aba</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://rabacenters.com/blog/pairing-procedure-importance-applied-behavior-analysis-cooper</loc>
+    <lastmod>2026-11-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
   </url>
 </urlset>

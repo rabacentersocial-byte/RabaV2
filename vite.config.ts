@@ -113,6 +113,13 @@ export default defineConfig(() => {
             '**/*.map'
           ],
           maximumFileSizeToCacheInBytes: 2 * 1024 * 1024,
+          navigateFallbackDenylist: [
+            /^\/sitemap\.xml$/i,
+            /^\/robots\.txt$/i,
+            /^\/llms\.txt$/i,
+            /^\/api\//i,
+            /^\/\.well-known\//i,
+          ],
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,

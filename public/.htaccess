@@ -20,6 +20,7 @@
   RewriteBase /
 
   # 1. Allow explicitly designated static root files & well-known directories directly
+  RewriteRule ^specialists/?$ /index.html [L,QSA]
   RewriteRule ^(robots\.txt|sitemap\.xml|llms\.txt|favicon\.ico|favicon\.svg|manifest\.webmanifest|manifest\.json|404\.html)$ - [L]
   RewriteRule ^\.well-known/ - [L]
   RewriteRule ^(assets|images|logo|uploads|data|specialists)/ - [L]
@@ -37,15 +38,26 @@
 
   # 4. Rewrite ONLY valid SPA routes to /index.html with HTTP 200
   RewriteRule ^(about|contact|terms|terms-of-service|privacy|privacy-policy)/?$ /index.html [L,QSA]
-  RewriteRule ^(services|services-directory|specialists|specialists-directory|branches|branches-directory|offers|offers-directory)/?$ /index.html [L,QSA]
+  RewriteRule ^(services|services-directory|specialists|specialists-directory|courses|courses-directory|packages|branches|branches-directory|offers|offers-directory)/?$ /index.html [L,QSA]
+  RewriteRule ^(shadow-teacher|shadow-teacher-directory|sewar|partners|partners-directory|testimonials|testimonials-directory|reviews)/?$ /index.html [L,QSA]
   RewriteRule ^(blog|blog-directory|articles|booking|admin|login)/?$ /index.html [L,QSA]
-  RewriteRule ^(blog|articles|specialist)/.+/?$ /index.html [L,QSA]
+  RewriteRule ^(blog|articles|specialist|services|courses)/.+/?$ /index.html [L,QSA]
   RewriteRule ^index\.html$ - [L]
   RewriteRule ^$ /index.html [L]
 
   # 5. Non-existent URLs: Strictly return real HTTP 404 status (Agents require 404 or 410, never 200)
   RewriteRule ^ - [R=404,L]
 </IfModule>
+
+# Ensure sitemap.xml is strictly served with application/xml Content-Type (no HTML wrapping)
+<Files "sitemap.xml">
+  ForceType "application/xml; charset=utf-8"
+  <IfModule mod_headers.c>
+    Header set Content-Type "application/xml; charset=utf-8"
+    Header set X-Content-Type-Options "nosniff"
+    Header unset Link
+  </IfModule>
+</Files>
 
 # Ensure llms.txt is strictly served with text/markdown Content-Type and Vary: Accept
 <Files "llms.txt">

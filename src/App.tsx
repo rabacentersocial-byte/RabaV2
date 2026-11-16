@@ -701,20 +701,72 @@ export default function App() {
     const initialHash = window.location.hash.toLowerCase();
     const initialPath = window.location.pathname.toLowerCase().replace(/\/+$/, '') || '/';
     
-    // Dedicated Blog Route Check
+    // Dedicated Blog Route Check (/blog, /articles, /blog/<slug>, /articles/<slug>)
     if (
       initialHash === '#blog-directory' ||
       initialHash === '#blog-page' ||
       initialHash === '#articles' ||
       initialHash.startsWith('#blog/') ||
       initialPath === '/blog' ||
-      initialPath === '/articles'
+      initialPath === '/blog-directory' ||
+      initialPath === '/articles' ||
+      initialPath.startsWith('/blog/') ||
+      initialPath.startsWith('/articles/')
     ) {
       setIsReadyToHydrate(true);
       setIsBlogPageOpen(true);
       if (initialHash.startsWith('#blog/')) {
-        setActiveBlogSlug(window.location.hash.replace('#blog/', ''));
+        setActiveBlogSlug(decodeURIComponent(window.location.hash.replace('#blog/', '')));
+      } else if (initialPath.startsWith('/blog/') || initialPath.startsWith('/articles/')) {
+        const cleanSlug = window.location.pathname
+          .replace(/^\/(?:blog|articles)\//i, '')
+          .replace(/\/+$/, '');
+        if (cleanSlug) {
+          setActiveBlogSlug(decodeURIComponent(cleanSlug));
+        }
       }
+      return;
+    }
+
+    // Dedicated Services Route Check (/services, /services-directory)
+    if (
+      initialPath === '/services' ||
+      initialPath === '/services-directory' ||
+      initialPath.startsWith('/services/')
+    ) {
+      setIsReadyToHydrate(true);
+      setIsServicesPageOpen(true);
+      return;
+    }
+
+    // Dedicated Specialists Route Check (/specialists, /specialists-directory)
+    if (
+      initialPath === '/specialists' ||
+      initialPath === '/specialists-directory' ||
+      initialPath.startsWith('/specialist/')
+    ) {
+      setIsReadyToHydrate(true);
+      setIsSpecialistsPageOpen(true);
+      return;
+    }
+
+    // Dedicated Branches Route Check (/branches, /branches-directory)
+    if (
+      initialPath === '/branches' ||
+      initialPath === '/branches-directory'
+    ) {
+      setIsReadyToHydrate(true);
+      setIsBranchesPageOpen(true);
+      return;
+    }
+
+    // Dedicated Offers Route Check (/offers, /offers-directory)
+    if (
+      initialPath === '/offers' ||
+      initialPath === '/offers-directory'
+    ) {
+      setIsReadyToHydrate(true);
+      setIsOffersPageOpen(true);
       return;
     }
 
@@ -755,6 +807,35 @@ export default function App() {
     ) {
       setIsReadyToHydrate(true);
       setIsTestimonialsPageOpen(true);
+      return;
+    }
+
+    // Clean Section Routes (/courses, /about, /booking) rendered with 200 OK without 404 or redirect
+    if (
+      initialPath === '/courses' ||
+      initialPath === '/courses-directory' ||
+      initialPath.startsWith('/courses/')
+    ) {
+      setIsReadyToHydrate(true);
+      const timer = window.setTimeout(() => {
+        const el = document.getElementById('courses');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 250);
+      return () => window.clearTimeout(timer);
+    }
+
+    if (initialPath === '/about') {
+      setIsReadyToHydrate(true);
+      const timer = window.setTimeout(() => {
+        const el = document.getElementById('about') || document.getElementById('stats-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 250);
+      return () => window.clearTimeout(timer);
+    }
+
+    if (initialPath === '/booking') {
+      setIsReadyToHydrate(true);
+      setIsBookingOpen(true);
       return;
     }
 
@@ -867,7 +948,27 @@ export default function App() {
     resetAllDirectoryPages();
     setActiveBlogSlug(null);
     const currentPath = window.location.pathname.toLowerCase().replace(/\/+$/, '') || '/';
-    const cleanTargetPath =
+    const isStandaloneCleanPath =
+      currentPath === '/services' ||
+      currentPath === '/services-directory' ||
+      currentPath.startsWith('/services/') ||
+      currentPath === '/specialists' ||
+      currentPath === '/specialists-directory' ||
+      currentPath.startsWith('/specialist/') ||
+      currentPath === '/courses' ||
+      currentPath === '/courses-directory' ||
+      currentPath.startsWith('/courses/') ||
+      currentPath === '/branches' ||
+      currentPath === '/branches-directory' ||
+      currentPath === '/about' ||
+      currentPath === '/booking' ||
+      currentPath === '/offers' ||
+      currentPath === '/offers-directory' ||
+      currentPath === '/blog' ||
+      currentPath === '/blog-directory' ||
+      currentPath === '/articles' ||
+      currentPath.startsWith('/blog/') ||
+      currentPath.startsWith('/articles/') ||
       currentPath === '/shadow-teacher' ||
       currentPath === '/shadow-teacher-directory' ||
       currentPath === '/sewar' ||
@@ -875,9 +976,8 @@ export default function App() {
       currentPath === '/partners-directory' ||
       currentPath === '/testimonials' ||
       currentPath === '/testimonials-directory' ||
-      currentPath === '/reviews'
-        ? '/'
-        : window.location.pathname;
+      currentPath === '/reviews';
+    const cleanTargetPath = isStandaloneCleanPath ? '/' : window.location.pathname;
     if (
       cleanTargetPath !== window.location.pathname ||
       window.location.hash === '#specialists-directory' || 

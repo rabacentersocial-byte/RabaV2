@@ -39,10 +39,14 @@ const isCrawlerUserAgent = (): boolean => {
 const matchesSectionHash = (sectionId?: string): boolean => {
   if (typeof window === 'undefined' || !sectionId) return false;
   const hash = window.location.hash.replace(/^#/, '').toLowerCase();
-  if (!hash) return false;
-  if (hash === sectionId.toLowerCase()) return true;
-  if (hash === 'booking' && (sectionId === 'shadow-teacher' || sectionId === 'packages')) return true;
-  if (hash === 'about' && sectionId === 'accreditations-section') return true;
+  const cleanPath = window.location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase();
+  const target = sectionId.toLowerCase();
+  if (hash && (hash === target || (hash === 'booking' && (target === 'shadow-teacher' || target === 'packages')) || (hash === 'about' && target === 'accreditations-section'))) {
+    return true;
+  }
+  if (cleanPath && (cleanPath === target || (cleanPath === 'booking' && (target === 'shadow-teacher' || target === 'packages')) || (cleanPath === 'about' && target === 'accreditations-section'))) {
+    return true;
+  }
   return false;
 };
 
