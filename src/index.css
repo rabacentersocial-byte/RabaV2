@@ -820,10 +820,9 @@ body {
 }
 
 .liquid-bg-container {
-  contain: strict;
+  contain: layout style paint;
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
-  perspective: 1000px;
 }
 
 .liquid-orb {
@@ -832,9 +831,11 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .liquid-orb {
+  .liquid-orb,
+  .raba-wave-layer {
     animation: none !important;
     transition: none !important;
+    transform: none !important;
     will-change: auto !important;
   }
 }

@@ -1079,7 +1079,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1">
+      <main className="flex-1 relative z-10">
         
         {isSpecialistsPageOpen ? (
           /* Dedicated Specialists Page with Specialty Filter and Grid Format Display */
@@ -1257,12 +1257,14 @@ export default function App() {
 
       {/* Footer (Viewport-gated Hydration with CLS-safe Skeleton) */}
       {isReadyToHydrate && modules.footer && (
-        <LazyViewportWrapper sectionId="footer" minHeight={420}>
-          <Footer 
-            onOpenAdmin={() => setIsAdminOpen(true)} 
-            onOpenBlogPage={handleOpenBlogPage}
-          />
-        </LazyViewportWrapper>
+        <div className="relative z-10">
+          <LazyViewportWrapper sectionId="footer" minHeight={420}>
+            <Footer 
+              onOpenAdmin={() => setIsAdminOpen(true)} 
+              onOpenBlogPage={handleOpenBlogPage}
+            />
+          </LazyViewportWrapper>
+        </div>
       )}
 
       {/* Floating Actions & Mobile Bottom Bar rendered immediately to avoid hydration pop-in */}

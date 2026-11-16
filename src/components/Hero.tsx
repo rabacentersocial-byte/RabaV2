@@ -386,30 +386,6 @@ export const Hero: React.FC<HeroProps> = ({
                   })}
                 </div>
 
-                {/* Minimal Elegant Slide Pagination Dots */}
-                {slides.length > 1 && (
-                  <div className="absolute bottom-3.5 sm:bottom-4 inset-x-0 z-20 flex justify-center items-center pointer-events-auto">
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/85 dark:bg-[#141821]/75 backdrop-blur-md border border-[#161B26]/10 dark:border-white/20 shadow-lg">
-                      {slides.map((s, idx) => (
-                        <button
-                          key={s.id || idx}
-                          onClick={() => setCurrentSlideIndex(idx)}
-                          aria-label={isArabic ? `الانتقال إلى الشريحة ${idx + 1}` : `Go to slide ${idx + 1}`}
-                          className="w-11 h-11 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer p-0 m-0 bg-transparent border-0"
-                        >
-                          <span
-                            className={`block rounded-full transition-colors duration-200 ${
-                              idx === currentSlideIndex
-                                ? 'w-6 h-2.5 bg-gradient-to-r from-[#2B95FF] to-[#8B5CF6] shadow-xs'
-                                : 'w-2.5 h-2.5 bg-[#161B26]/25 hover:bg-[#161B26]/55 dark:bg-white/40 dark:hover:bg-white/80'
-                            }`}
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
               </div>
 
               {/* Navigation Chevron Buttons */}

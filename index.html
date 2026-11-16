@@ -210,18 +210,28 @@
       }
       html.dark .raba-pre-shell {
         color: #F8FAFC;
-        background:
-          radial-gradient(120% 90% at 50% -10%, rgba(43, 149, 255, 0.14) 0%, rgba(16, 185, 129, 0.06) 45%, transparent 80%),
-          radial-gradient(circle at 85% 8%, rgba(43, 149, 255, 0.16) 0%, rgba(43, 149, 255, 0) 60%),
-          #0B0F17;
+        background: #0B0F17;
       }
       html.light .raba-pre-shell {
         color: #161B26;
-        background:
-          radial-gradient(120% 90% at 50% -10%, rgba(255, 255, 255, 0.72) 0%, rgba(43, 149, 255, 0.09) 42%, rgba(237, 233, 224, 0.35) 68%, transparent 85%),
-          radial-gradient(circle at 85% 8%, rgba(43, 149, 255, 0.18) 0%, rgba(43, 149, 255, 0) 60%),
-          #F5F2EC;
+        background: #F5F2EC;
       }
+      .raba-pre-bg-waves {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 0;
+      }
+      .raba-pre-wave-band {
+        position: absolute;
+        left: -6%;
+        right: -6%;
+        top: 0;
+        height: 200vh;
+      }
+      html.light .raba-pre-wave-dark { display: none; }
+      html.dark .raba-pre-wave-light { display: none; }
       .raba-pre-container {
         width: 100%;
         max-width: 80rem;
@@ -960,6 +970,46 @@
     <div id="root">
       <!-- Pixel-Matched Static Shell (Identical to Approved Current Design for Zero-FOUC FCP/LCP) -->
       <div class="raba-pre-shell" dir="rtl">
+        <!-- Pixel-matched static vertical mist waves (identical to AnimatedBackground at scrollY=0) -->
+        <div class="raba-pre-bg-waves" aria-hidden="true">
+          <div class="raba-pre-wave-band">
+            <svg viewBox="0 0 1440 1600" preserveAspectRatio="none" style="width: 100%; height: 100%; display: block; overflow: visible; filter: blur(28px);" fill="none">
+              <g class="raba-pre-wave-light">
+                <path d="M1080,0 C1190,200 970,600 1080,800 C1190,1000 970,1400 1080,1600" stroke="#2B95FF" stroke-width="44" stroke-opacity="0.14" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+                <path d="M1155,0 C1255,200 1055,600 1155,800 C1255,1000 1055,1400 1155,1600" stroke="#8B5CF6" stroke-width="30" stroke-opacity="0.10" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+              </g>
+              <g class="raba-pre-wave-dark">
+                <path d="M1080,0 C1190,200 970,600 1080,800 C1190,1000 970,1400 1080,1600" stroke="#2B95FF" stroke-width="44" stroke-opacity="0.16" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+                <path d="M1155,0 C1255,200 1055,600 1155,800 C1255,1000 1055,1400 1155,1600" stroke="#8B5CF6" stroke-width="30" stroke-opacity="0.12" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+              </g>
+            </svg>
+          </div>
+          <div class="raba-pre-wave-band">
+            <svg viewBox="0 0 1440 1600" preserveAspectRatio="none" style="width: 100%; height: 100%; display: block; overflow: visible; filter: blur(30px);" fill="none">
+              <g class="raba-pre-wave-light">
+                <path d="M390,0 C280,200 500,600 390,800 C280,1000 500,1400 390,1600" stroke="#10B981" stroke-width="42" stroke-opacity="0.12" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+                <path d="M315,0 C215,200 415,600 315,800 C215,1000 415,1400 315,1600" stroke="#2B95FF" stroke-width="28" stroke-opacity="0.10" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+              </g>
+              <g class="raba-pre-wave-dark">
+                <path d="M390,0 C280,200 500,600 390,800 C280,1000 500,1400 390,1600" stroke="#10B981" stroke-width="42" stroke-opacity="0.15" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+                <path d="M315,0 C215,200 415,600 315,800 C215,1000 415,1400 315,1600" stroke="#2B95FF" stroke-width="28" stroke-opacity="0.12" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+              </g>
+            </svg>
+          </div>
+          <div class="raba-pre-wave-band">
+            <svg viewBox="0 0 1440 1600" preserveAspectRatio="none" style="width: 100%; height: 100%; display: block; overflow: visible; filter: blur(32px);" fill="none">
+              <g class="raba-pre-wave-light">
+                <path d="M735,0 C825,200 645,600 735,800 C825,1000 645,1400 735,1600" stroke="#F59E0B" stroke-width="36" stroke-opacity="0.10" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+                <path d="M680,0 C760,200 600,600 680,800 C760,1000 600,1400 680,1600" stroke="#8B5CF6" stroke-width="26" stroke-opacity="0.09" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+              </g>
+              <g class="raba-pre-wave-dark">
+                <path d="M735,0 C825,200 645,600 735,800 C825,1000 645,1400 735,1600" stroke="#F59E0B" stroke-width="36" stroke-opacity="0.11" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+                <path d="M680,0 C760,200 600,600 680,800 C760,1000 600,1400 680,1600" stroke="#8B5CF6" stroke-width="26" stroke-opacity="0.11" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+              </g>
+            </svg>
+          </div>
+        </div>
+
         <header class="raba-pre-header">
           <div class="raba-pre-container">
             <div class="raba-pre-nav-row">
@@ -1007,7 +1057,7 @@
           </div>
         </header>
 
-        <main style="flex: 1 1 0%;">
+        <main style="flex: 1 1 0%; position: relative; z-index: 10;">
           <section id="hero" class="raba-pre-hero">
             <div class="raba-pre-container" style="position: relative; z-index: 10;">
               <div class="raba-pre-hero-grid">

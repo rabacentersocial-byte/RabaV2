@@ -1,96 +1,183 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTheme } from '../context/ThemeContext';
 
 export const AnimatedBackground: React.FC = () => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || typeof window === 'undefined') return;
+
+    const prefersReducedMotion =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) return;
+
+    let rafId: number | null = null;
+
+    const updateWaveTransforms = () => {
+      rafId = null;
+      const sy = window.scrollY || window.pageYOffset || 0;
+      const vh = Math.max(1, window.innerHeight || 800);
+
+      // Seamless C1-continuous vertical flow modulo 100vh + gentle horizontal sway
+      const y1 = -((sy * 0.22) % vh);
+      const x1 = Math.sin(sy * 0.0025) * 16;
+
+      const y2 = -((sy * 0.34) % vh);
+      const x2 = -Math.sin(sy * 0.0021) * 18;
+
+      const y3 = -((sy * 0.14) % vh);
+      const x3 = Math.sin(sy * 0.0018) * 14;
+
+      el.style.setProperty('--raba-vwave-x1', `${x1.toFixed(2)}px`);
+      el.style.setProperty('--raba-vwave-y1', `${y1.toFixed(2)}px`);
+      el.style.setProperty('--raba-vwave-x2', `${x2.toFixed(2)}px`);
+      el.style.setProperty('--raba-vwave-y2', `${y2.toFixed(2)}px`);
+      el.style.setProperty('--raba-vwave-x3', `${x3.toFixed(2)}px`);
+      el.style.setProperty('--raba-vwave-y3', `${y3.toFixed(2)}px`);
+    };
+
+    const handleScroll = () => {
+      if (rafId === null) {
+        rafId = window.requestAnimationFrame(updateWaveTransforms);
+      }
+    };
+
+    updateWaveTransforms();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+
+    return () => {
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+      }
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, []);
+
+  const mist1PrimaryOpacity = isDark ? 0.16 : 0.14;
+  const mist1SecondaryOpacity = isDark ? 0.12 : 0.10;
+
+  const mist2PrimaryOpacity = isDark ? 0.15 : 0.12;
+  const mist2SecondaryOpacity = isDark ? 0.12 : 0.10;
+
+  const mist3PrimaryOpacity = isDark ? 0.11 : 0.10;
+  const mist3SecondaryOpacity = isDark ? 0.11 : 0.09;
 
   return (
-    <div 
-      className="liquid-bg-container fixed inset-0 pointer-events-none overflow-hidden -z-10 select-none transition-colors duration-700"
+    <div
+      ref={containerRef}
+      className={`liquid-bg-container fixed inset-0 pointer-events-none overflow-hidden z-0 select-none ${
+        isDark ? 'bg-[#0B0F17]' : 'bg-[#F5F2EC]'
+      }`}
       aria-hidden="true"
     >
-      {/* 1. Base Warm Canvas Background (#F5F2EC Light / #0B0F17 Dark) */}
-      <div 
-        className={`absolute inset-0 transition-colors duration-700 ${
-          isDark 
-            ? 'bg-[#0B0F17]' 
-            : 'bg-[#F5F2EC]'
-        }`} 
-      />
-
-      {/* 2. Top Diffused Horizon Glow */}
-      <div 
-        className="absolute top-0 inset-x-0 h-[520px] pointer-events-none transition-opacity duration-700"
+      {/* Vertical Mist Wave 1: Right / Sky-Blue & Violet sequential stream */}
+      <div
+        className="raba-wave-layer absolute inset-x-[-6%] top-0 h-[200vh]"
         style={{
-          background: isDark
-            ? 'radial-gradient(120% 90% at 50% -10%, rgba(43, 149, 255, 0.14) 0%, rgba(16, 185, 129, 0.06) 45%, transparent 80%)'
-            : 'radial-gradient(120% 90% at 50% -10%, rgba(255, 255, 255, 0.72) 0%, rgba(43, 149, 255, 0.09) 42%, rgba(237, 233, 224, 0.35) 68%, transparent 85%)'
+          transform: 'translate3d(var(--raba-vwave-x1, 0px), var(--raba-vwave-y1, 0px), 0)',
+          willChange: 'transform',
         }}
-      />
-
-      {/* 3. Ambient Decorative Diffused Glows (Raba Harmonized Spectrum) */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        
-        {/* Orb 1: Raba Sky Blue (#2B95FF) */}
-        <div 
-          className="liquid-orb absolute -top-24 -right-20 md:-top-32 md:-right-24 w-[420px] h-[420px] sm:w-[580px] sm:h-[580px] lg:w-[760px] lg:h-[760px] rounded-full blur-[90px] sm:blur-[120px] lg:blur-[140px] opacity-90 animate-liquid-orb-1"
-          style={{
-            background: isDark 
-              ? 'radial-gradient(circle, rgba(43, 149, 255, 0.16) 0%, rgba(43, 149, 255, 0) 70%)' 
-              : 'radial-gradient(circle, rgba(43, 149, 255, 0.18) 0%, rgba(43, 149, 255, 0) 70%)'
-          }}
-        />
-
-        {/* Orb 2: Raba Warm Gold / Sand (#F59E0B / #EDE9E0) */}
-        <div 
-          className="liquid-orb absolute top-[26%] -left-24 sm:-left-32 md:-left-40 w-[400px] h-[400px] sm:w-[560px] sm:h-[560px] lg:w-[720px] lg:h-[720px] rounded-full blur-[90px] sm:blur-[120px] lg:blur-[140px] opacity-90 animate-liquid-orb-2"
-          style={{
-            background: isDark 
-              ? 'radial-gradient(circle, rgba(139, 92, 246, 0.13) 0%, rgba(139, 92, 246, 0) 70%)' 
-              : 'radial-gradient(circle, rgba(245, 158, 11, 0.14) 0%, rgba(245, 158, 11, 0) 70%)'
-          }}
-        />
-
-        {/* Orb 3: Raba Emerald Green (#10B981) */}
-        <div 
-          className="liquid-orb absolute top-[54%] -right-16 sm:-right-24 md:-right-32 w-[380px] h-[380px] sm:w-[520px] sm:h-[520px] lg:w-[660px] lg:h-[660px] rounded-full blur-[90px] sm:blur-[115px] lg:blur-[135px] opacity-85 animate-liquid-orb-3"
-          style={{
-            background: isDark 
-              ? 'radial-gradient(circle, rgba(16, 185, 129, 0.13) 0%, rgba(16, 185, 129, 0) 70%)' 
-              : 'radial-gradient(circle, rgba(16, 185, 129, 0.14) 0%, rgba(16, 185, 129, 0) 70%)'
-          }}
-        />
-
-        {/* Orb 4: Raba Vibrant Violet (#8B5CF6) */}
-        <div 
-          className="liquid-orb absolute top-[76%] -left-16 sm:-left-24 md:-left-28 w-[380px] h-[380px] sm:w-[500px] sm:h-[500px] lg:w-[640px] lg:h-[640px] rounded-full blur-[90px] sm:blur-[120px] lg:blur-[140px] opacity-85 animate-liquid-orb-4"
-          style={{
-            background: isDark 
-              ? 'radial-gradient(circle, rgba(245, 158, 11, 0.10) 0%, rgba(245, 158, 11, 0) 70%)' 
-              : 'radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, rgba(139, 92, 246, 0) 70%)'
-          }}
-        />
-
+      >
+        <svg
+          viewBox="0 0 1440 1600"
+          preserveAspectRatio="none"
+          className="w-full h-full block overflow-visible"
+          style={{ filter: 'blur(28px)' }}
+          fill="none"
+        >
+          <path
+            d="M1080,0 C1190,200 970,600 1080,800 C1190,1000 970,1400 1080,1600"
+            stroke="#2B95FF"
+            strokeWidth="44"
+            strokeOpacity={mist1PrimaryOpacity}
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+          />
+          <path
+            d="M1155,0 C1255,200 1055,600 1155,800 C1255,1000 1055,1400 1155,1600"
+            stroke="#8B5CF6"
+            strokeWidth="30"
+            strokeOpacity={mist1SecondaryOpacity}
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
       </div>
 
-      {/* 4. Subtle Tactile Organic Grain */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.025] dark:opacity-[0.04] mix-blend-overlay hidden md:block"
+      {/* Vertical Mist Wave 2: Left / Emerald & Sky-Blue sequential stream */}
+      <div
+        className="raba-wave-layer absolute inset-x-[-6%] top-0 h-[200vh]"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-          backgroundRepeat: 'repeat'
+          transform: 'translate3d(var(--raba-vwave-x2, 0px), var(--raba-vwave-y2, 0px), 0)',
+          willChange: 'transform',
         }}
-      />
+      >
+        <svg
+          viewBox="0 0 1440 1600"
+          preserveAspectRatio="none"
+          className="w-full h-full block overflow-visible"
+          style={{ filter: 'blur(30px)' }}
+          fill="none"
+        >
+          <path
+            d="M390,0 C280,200 500,600 390,800 C280,1000 500,1400 390,1600"
+            stroke="#10B981"
+            strokeWidth="42"
+            strokeOpacity={mist2PrimaryOpacity}
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+          />
+          <path
+            d="M315,0 C215,200 415,600 315,800 C215,1000 415,1400 315,1600"
+            stroke="#2B95FF"
+            strokeWidth="28"
+            strokeOpacity={mist2SecondaryOpacity}
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+      </div>
 
-      {/* 5. Ambient Bottom Vignette */}
-      <div 
-        className={`absolute bottom-0 inset-x-0 h-48 pointer-events-none transition-opacity duration-700 ${
-          isDark 
-            ? 'bg-gradient-to-t from-[#0B0F17] to-transparent opacity-80' 
-            : 'bg-gradient-to-t from-[#F5F2EC] to-transparent opacity-70'
-        }`}
-      />
+      {/* Vertical Mist Wave 3: Center / Warm Gold & Violet sequential stream */}
+      <div
+        className="raba-wave-layer absolute inset-x-[-6%] top-0 h-[200vh]"
+        style={{
+          transform: 'translate3d(var(--raba-vwave-x3, 0px), var(--raba-vwave-y3, 0px), 0)',
+          willChange: 'transform',
+        }}
+      >
+        <svg
+          viewBox="0 0 1440 1600"
+          preserveAspectRatio="none"
+          className="w-full h-full block overflow-visible"
+          style={{ filter: 'blur(32px)' }}
+          fill="none"
+        >
+          <path
+            d="M735,0 C825,200 645,600 735,800 C825,1000 645,1400 735,1600"
+            stroke="#F59E0B"
+            strokeWidth="36"
+            strokeOpacity={mist3PrimaryOpacity}
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+          />
+          <path
+            d="M680,0 C760,200 600,600 680,800 C760,1000 600,1400 680,1600"
+            stroke="#8B5CF6"
+            strokeWidth="26"
+            strokeOpacity={mist3SecondaryOpacity}
+            strokeLinecap="round"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+      </div>
     </div>
   );
 };
