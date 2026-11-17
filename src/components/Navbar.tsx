@@ -6,7 +6,6 @@ import {
   Sun, 
   Moon,
   Globe, 
-  ShieldCheck, 
   Home, 
   Sparkles, 
   GraduationCap, 
@@ -18,11 +17,7 @@ import {
   ChevronRight, 
   Phone, 
   MessageCircle,
-  SunMedium,
   Stethoscope,
-  BadgeCheck,
-  Award,
-  Sparkle,
   Gift
 } from 'lucide-react';
 import { RabaLogo } from './RabaLogo';
@@ -58,9 +53,6 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({
   onOpenBooking,
-  onOpenNotifications,
-  onOpenLogin,
-  onOpenAdmin,
   onOpenSpecialistsPage,
   onOpenServicesPage,
   onOpenBranchesPage,
@@ -78,10 +70,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   isShadowTeacherPageOpen = false,
   isPartnersPageOpen = false,
   isTestimonialsPageOpen = false,
-  unreadCount
 }) => {
   const { theme, toggleTheme } = useTheme();
-  const { language, toggleLanguage, t, isArabic } = useLanguage();
+  const { toggleLanguage, t, isArabic } = useLanguage();
   const isDark = theme === 'dark';
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -121,170 +112,135 @@ export const Navbar: React.FC<NavbarProps> = ({
     };
   }, [mobileMenuOpen]);
 
-  // Focused, professional navigation links strictly representing the core sections
+  // Approved final navigation menu (Single source of truth mirrored across desktop header & mobile drawer)
   const navLinks = [
-    { label: t('nav.home'), href: '#hero' },
-    { label: isArabic ? 'الخدمات' : 'Services', href: '#services' },
-    { label: isArabic ? 'العروض والأنشطة' : 'Offers & Activities', href: '#offers' },
-    { label: isArabic ? 'خدمة سِوار (معلم الظل)' : 'Sewar (Shadow Teacher)', href: '#shadow-teacher' },
-    { label: t('nav.specialists'), href: '#specialists' },
-    { label: isArabic ? 'فروعنا بالمملكة' : 'Branches', href: '#branches' },
-    { label: t('nav.blog'), href: '#blog' },
-    { label: isArabic ? 'شركاء النجاح' : 'Success Partners', href: '#partners' },
-    { label: t('nav.stories'), href: '#testimonials' },
+    {
+      id: 'home',
+      label: t('nav.home'),
+      subtitle: isArabic ? 'بوابة المركز الرئيسية ومحاور التميز' : 'Overview & Main Portal',
+      href: '#hero',
+      icon: Home,
+      iconBg: 'bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF] border-[#2B95FF]/30',
+    },
+    {
+      id: 'services',
+      label: isArabic ? 'الخدمات' : 'Services',
+      subtitle: isArabic ? 'جلسات التخاطب والوظيفي وتعديل السلوك' : 'Rehab, Speech & Behavioral Care',
+      href: '#services',
+      icon: Sparkles,
+      iconBg: 'bg-[#10B981]/15 text-[#047857] dark:text-[#34D399] border-[#10B981]/30',
+    },
+    {
+      id: 'offers',
+      label: isArabic ? 'العروض والأنشطة' : 'Offers & Activities',
+      subtitle: isArabic ? 'عروض وفعاليات اليوم الوطني والأنشطة الحصرية' : 'Seasonal Deals & Center Events',
+      href: '#offers',
+      icon: Gift,
+      iconBg: 'bg-[#8B5CF6]/15 text-[#6D28D9] dark:text-[#A78BFA] border-[#8B5CF6]/30',
+    },
+    {
+      id: 'shadow-teacher',
+      label: isArabic ? 'خدمة سِوار (معلم الظل)' : 'Sewar (Shadow Teacher)',
+      subtitle: isArabic ? 'الدمج المدرسي والتربوي المتخصص' : 'School Integration & Support',
+      href: '#shadow-teacher',
+      icon: GraduationCap,
+      iconBg: 'bg-[#F59E0B]/15 text-[#B45309] dark:text-[#FBBF24] border-[#F59E0B]/30',
+    },
+    {
+      id: 'specialists',
+      label: t('nav.specialists'),
+      subtitle: isArabic ? 'نخبة الكوادر الطبية والتأهيلية المعتمدة' : 'Certified Clinical Specialist Team',
+      href: '#specialists',
+      icon: Stethoscope,
+      iconBg: 'bg-[#141821]/10 dark:bg-white/10 text-[#161B26] dark:text-[#F8FAFC] border-[#161B26]/15 dark:border-white/15',
+    },
+    {
+      id: 'branches',
+      label: isArabic ? 'فروعنا بالمملكة' : 'Branches',
+      subtitle: isArabic ? 'الرياض · الخرج · الفروع والمواقع' : 'Riyadh · Al-Kharj & Locations',
+      href: '#branches',
+      icon: MapPin,
+      iconBg: 'bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF] border-[#2B95FF]/30',
+    },
+    {
+      id: 'blog',
+      label: t('nav.blog'),
+      subtitle: isArabic ? 'مقالات وأدلة توعوية شاملة للأسر' : 'Parent Guides & Autism Insights',
+      href: '#blog',
+      icon: BookOpen,
+      iconBg: 'bg-[#8B5CF6]/15 text-[#6D28D9] dark:text-[#A78BFA] border-[#8B5CF6]/30',
+    },
+    {
+      id: 'partners',
+      label: isArabic ? 'شركاء النجاح' : 'Success Partners',
+      subtitle: isArabic ? 'شراكات ورعايات مؤسسية رائدة' : 'Institutional Alliances & Partners',
+      href: '#partners',
+      icon: Handshake,
+      iconBg: 'bg-[#141821]/10 dark:bg-white/10 text-[#161B26] dark:text-[#F8FAFC] border-[#161B26]/15 dark:border-white/15',
+    },
+    {
+      id: 'testimonials',
+      label: t('nav.stories'),
+      subtitle: isArabic ? 'تجارب أسر أطفال رابا الحقيقية' : 'Real Parent Testimonials & Stories',
+      href: '#testimonials',
+      icon: Star,
+      iconBg: 'bg-[#F59E0B]/15 text-[#B45309] dark:text-[#FBBF24] border-[#F59E0B]/30',
+    },
   ];
 
-  // Mobile navigation categorized items with custom professional icons & styling
-  const mobileNavSections = [
-    {
-      sectionTitle: isArabic ? 'البرامج التأهيلية والعلاجية' : 'Clinical Care & Rehabilitation',
-      items: [
-        {
-          id: 'home',
-          label: t('nav.home'),
-          subtitle: isArabic ? 'بوابة المركز الرئيسية ومحاور التميز' : 'Overview & Main Portal',
-          href: '#hero',
-          icon: Home,
-          iconBg: 'bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF] border-[#2B95FF]/30',
-          badge: null,
-        },
-        {
-          id: 'services',
-          label: isArabic ? 'الخدمات وباقات التأهيل' : 'Services & Programs',
-          subtitle: isArabic ? 'جلسات التخاطب والوظيفي وتعديل السلوك' : 'Rehab, Speech & Behavioral Care',
-          href: '#services',
-          icon: Sparkles,
-          iconBg: 'bg-[#10B981]/15 text-[#047857] dark:text-[#34D399] border-[#10B981]/30',
-          badge: isArabic ? 'متاح الآن' : 'Available',
-        },
-        {
-          id: 'offers',
-          label: isArabic ? 'العروض والأنشطة' : 'Offers & Activities',
-          subtitle: isArabic ? 'عروض وفعاليات اليوم الوطني والأنشطة الحصرية' : 'National Day Deals & Center Events',
-          href: '#offers',
-          icon: Gift,
-          iconBg: 'bg-[#8B5CF6]/15 text-[#6D28D9] dark:text-[#A78BFA] border-[#8B5CF6]/30',
-          badge: isArabic ? 'عروض خاصة' : 'Offers',
-          badgeHighlight: true,
-        },
-        {
-          id: 'summer-packages',
-          label: isArabic ? 'باقات الصيف الحصرية' : 'Exclusive Summer Packages',
-          subtitle: isArabic ? 'عروض مكثفة ومخفضة لصيف 2026' : 'Special Intensive Summer Offers',
-          href: '#services',
-          icon: SunMedium,
-          iconBg: 'bg-[#F59E0B]/15 text-[#B45309] dark:text-[#FBBF24] border-[#F59E0B]/35 ring-1 ring-[#F59E0B]/25',
-          badge: isArabic ? 'عروض الصيف' : 'Summer Deal',
-          badgeHighlight: true,
-        },
-        {
-          id: 'shadow-teacher',
-          label: isArabic ? 'خدمة سِوار (معلم الظل)' : 'Sewar (Shadow Teacher)',
-          subtitle: isArabic ? 'الدمج المدرسي والتربوي المتخصص' : 'School Integration & Support',
-          href: '#shadow-teacher',
-          icon: GraduationCap,
-          iconBg: 'bg-[#F59E0B]/15 text-[#B45309] dark:text-[#FBBF24] border-[#F59E0B]/30',
-          badge: isArabic ? 'معتمد' : 'Certified',
-        },
-        {
-          id: 'specialists',
-          label: t('nav.specialists'),
-          subtitle: isArabic ? 'نخبة الكوادر الطبية والتأهيلية المعتمدة' : 'Certified Clinical Specialist Team',
-          href: '#specialists',
-          icon: Stethoscope,
-          iconBg: 'bg-[#141821]/10 dark:bg-white/10 text-[#161B26] dark:text-[#F8FAFC] border-[#161B26]/15 dark:border-white/15',
-          badge: isArabic ? 'نخبة الأطباء' : 'Top Specialists',
-        },
-      ]
-    },
-    {
-      sectionTitle: isArabic ? 'الفروع والمصادر التوعوية' : 'Locations & Family Hub',
-      items: [
-        {
-          id: 'branches',
-          label: isArabic ? 'فروعنا بالمملكة' : 'Branches & Centers',
-          subtitle: isArabic ? 'الرياض · جدة · الخبر والمناطق' : 'Riyadh · Jeddah · Khobar Centers',
-          href: '#branches',
-          icon: MapPin,
-          iconBg: 'bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF] border-[#2B95FF]/30',
-          badge: isArabic ? 'مواقعنا' : 'Locations',
-        },
-        {
-          id: 'blog',
-          label: t('nav.blog'),
-          subtitle: isArabic ? 'مقالات وأدلة توعوية شاملة للأسر' : 'Parent Guides & Autism Insights',
-          href: '#blog',
-          icon: BookOpen,
-          iconBg: 'bg-[#8B5CF6]/15 text-[#6D28D9] dark:text-[#A78BFA] border-[#8B5CF6]/30',
-          badge: null,
-        },
-      ]
-    },
-    {
-      sectionTitle: isArabic ? 'الموثوقية والشركاء' : 'Trust & Proven Impact',
-      items: [
-        {
-          id: 'accreditations',
-          label: isArabic ? 'الاعتمادات والتراخيص' : 'Accreditations & Licensing',
-          subtitle: isArabic ? 'تراخيص وزارة الصحة وهيئة التخصصات' : 'MOH & SCFHS Certified Standards',
-          href: '#accreditations-section',
-          icon: ShieldCheck,
-          iconBg: 'bg-[#10B981]/15 text-[#047857] dark:text-[#34D399] border-[#10B981]/30',
-          badge: isArabic ? 'رسمي' : 'Official',
-        },
-        {
-          id: 'partners',
-          label: isArabic ? 'شركاء النجاح' : 'Success Partners',
-          subtitle: isArabic ? 'شراكات ورعايات مؤسسية رائدة' : 'Institutional Alliances & Partners',
-          href: '#partners',
-          icon: Handshake,
-          iconBg: 'bg-[#141821]/10 dark:bg-white/10 text-[#161B26] dark:text-[#F8FAFC] border-[#161B26]/15 dark:border-white/15',
-          badge: null,
-        },
-        {
-          id: 'testimonials',
-          label: t('nav.stories'),
-          subtitle: isArabic ? 'تجارب أسر أطفال رابا الحقيقية' : 'Real Parent Testimonials & Stories',
-          href: '#testimonials',
-          icon: Star,
-          iconBg: 'bg-[#F59E0B]/15 text-[#B45309] dark:text-[#FBBF24] border-[#F59E0B]/30',
-          badge: null,
-        },
-      ]
-    },
-    {
-      sectionTitle: isArabic ? 'عن المركز والمعلومات القانونية' : 'About & Legal Hub',
-      items: [
-        {
-          id: 'about',
-          label: isArabic ? 'عن مركز رابا' : 'About RABA Center',
-          subtitle: isArabic ? 'رؤيتنا ورسالتنا وفلسفة العلاج' : 'Our Mission, Vision & Approach',
-          href: '/about',
-          icon: ShieldCheck,
-          iconBg: 'bg-[#141821]/10 dark:bg-white/10 text-[#161B26] dark:text-[#F8FAFC] border-[#161B26]/15 dark:border-white/15',
-          badge: null,
-        },
-        {
-          id: 'contact',
-          label: isArabic ? 'اتصل بنا والتواصل' : 'Contact Us',
-          subtitle: isArabic ? 'خدمة العملاء وأرقام الفروع والموقع' : 'Customer Service & Contact Details',
-          href: '/contact',
-          icon: Phone,
-          iconBg: 'bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF] border-[#2B95FF]/30',
-          badge: null,
-        },
-        {
-          id: 'terms',
-          label: isArabic ? 'الشروط والأحكام والخصوصية' : 'Terms & Privacy',
-          subtitle: isArabic ? 'سياسة الخصوصية وحقوق المستفيدين' : 'Terms of Service & Privacy Policy',
-          href: '/terms',
-          icon: BookOpen,
-          iconBg: 'bg-[#141821]/10 dark:bg-white/10 text-[#161B26] dark:text-[#F8FAFC] border-[#161B26]/15 dark:border-white/15',
-          badge: null,
-        },
-      ]
+  const anySubPageOpen =
+    isServicesPageOpen ||
+    isSpecialistsPageOpen ||
+    isBranchesPageOpen ||
+    isOffersPageOpen ||
+    isBlogPageOpen ||
+    isShadowTeacherPageOpen ||
+    isPartnersPageOpen ||
+    isTestimonialsPageOpen;
+
+  const isHrefActive = (href: string): boolean =>
+    (href === '#blog' && isBlogPageOpen) ||
+    (href === '#offers' && isOffersPageOpen) ||
+    (href === '#services' && isServicesPageOpen) ||
+    (href === '#specialists' && isSpecialistsPageOpen) ||
+    (href === '#branches' && isBranchesPageOpen) ||
+    (href === '#shadow-teacher' && isShadowTeacherPageOpen) ||
+    (href === '#partners' && isPartnersPageOpen) ||
+    (href === '#testimonials' && isTestimonialsPageOpen) ||
+    (href === '#hero' && !anySubPageOpen);
+
+  const handleNavClick = (href: string, e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (href === '#blog' && onOpenBlogPage) {
+      e.preventDefault();
+      onOpenBlogPage();
+    } else if (href === '#offers' && onOpenOffersPage) {
+      e.preventDefault();
+      onOpenOffersPage();
+    } else if (href === '#services' && onOpenServicesPage) {
+      e.preventDefault();
+      onOpenServicesPage();
+    } else if (href === '#specialists' && onOpenSpecialistsPage) {
+      e.preventDefault();
+      onOpenSpecialistsPage();
+    } else if (href === '#branches' && onOpenBranchesPage) {
+      e.preventDefault();
+      onOpenBranchesPage();
+    } else if (href === '#shadow-teacher' && onOpenShadowTeacherPage) {
+      e.preventDefault();
+      onOpenShadowTeacherPage();
+    } else if (href === '#partners' && onOpenPartnersPage) {
+      e.preventDefault();
+      onOpenPartnersPage();
+    } else if (href === '#testimonials' && onOpenTestimonialsPage) {
+      e.preventDefault();
+      onOpenTestimonialsPage();
+    } else if (href === '#hero' && onGoHome) {
+      e.preventDefault();
+      onGoHome();
+    } else if (onGoHome && anySubPageOpen) {
+      onGoHome();
     }
-  ];
+  };
 
   return (
     <>
@@ -323,63 +279,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* 2. Primary Navigation (Desktop - Clean Unboxed Links) */}
             <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1.5 min-w-0" aria-label="القائمة الرئيسية">
               {navLinks.map((link) => {
-                const anySubPageOpen =
-                  isServicesPageOpen ||
-                  isSpecialistsPageOpen ||
-                  isBranchesPageOpen ||
-                  isOffersPageOpen ||
-                  isBlogPageOpen ||
-                  isShadowTeacherPageOpen ||
-                  isPartnersPageOpen ||
-                  isTestimonialsPageOpen;
-
-                const isLinkActive = 
-                  (link.href === '#blog' && isBlogPageOpen) ||
-                  (link.href === '#offers' && isOffersPageOpen) ||
-                  (link.href === '#services' && isServicesPageOpen) || 
-                  (link.href === '#specialists' && isSpecialistsPageOpen) ||
-                  (link.href === '#branches' && isBranchesPageOpen) ||
-                  (link.href === '#shadow-teacher' && isShadowTeacherPageOpen) ||
-                  (link.href === '#partners' && isPartnersPageOpen) ||
-                  (link.href === '#testimonials' && isTestimonialsPageOpen) ||
-                  (link.href === '#hero' && !anySubPageOpen);
+                const isLinkActive = isHrefActive(link.href);
 
                 return (
                   <a
                     key={link.href}
                     href={link.href}
-                    onClick={(e) => {
-                      if (link.href === '#blog' && onOpenBlogPage) {
-                        e.preventDefault();
-                        onOpenBlogPage();
-                      } else if (link.href === '#offers' && onOpenOffersPage) {
-                        e.preventDefault();
-                        onOpenOffersPage();
-                      } else if (link.href === '#services' && onOpenServicesPage) {
-                        e.preventDefault();
-                        onOpenServicesPage();
-                      } else if (link.href === '#specialists' && onOpenSpecialistsPage) {
-                        e.preventDefault();
-                        onOpenSpecialistsPage();
-                      } else if (link.href === '#branches' && onOpenBranchesPage) {
-                        e.preventDefault();
-                        onOpenBranchesPage();
-                      } else if (link.href === '#shadow-teacher' && onOpenShadowTeacherPage) {
-                        e.preventDefault();
-                        onOpenShadowTeacherPage();
-                      } else if (link.href === '#partners' && onOpenPartnersPage) {
-                        e.preventDefault();
-                        onOpenPartnersPage();
-                      } else if (link.href === '#testimonials' && onOpenTestimonialsPage) {
-                        e.preventDefault();
-                        onOpenTestimonialsPage();
-                      } else if (link.href === '#hero' && onGoHome) {
-                        e.preventDefault();
-                        onGoHome();
-                      } else if (onGoHome && anySubPageOpen) {
-                        onGoHome();
-                      }
-                    }}
+                    onClick={(e) => handleNavClick(link.href, e)}
                     className={`px-1.5 xl:px-2.5 py-1.5 text-[11px] xl:text-[13px] font-bold rounded-full whitespace-nowrap shrink-0 transition-colors duration-200 ${
                       isLinkActive
                         ? 'text-[#1263D6] dark:text-[#60AFFF] bg-[#2B95FF]/12'
@@ -558,134 +464,66 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </div>
               </div>
 
-              {/* Categorized Navigation Sections with Professional Themed Icons */}
-              <div className="space-y-4">
-                {mobileNavSections.map((section, sIdx) => (
-                  <div key={sIdx} className="space-y-1.5">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-[#4B5563] dark:text-[#94A3B8] px-1.5 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#2B95FF]" />
-                      <span>{section.sectionTitle}</span>
-                    </span>
+              {/* Mirrored Primary Navigation Menu matching Desktop Header */}
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#4B5563] dark:text-[#94A3B8] px-1.5 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#2B95FF]" />
+                  <span>{isArabic ? 'القائمة الرئيسية' : 'Main Menu'}</span>
+                </span>
 
-                    <div className="space-y-1">
-                      {section.items.map((item) => {
-                        const ItemIcon = item.icon;
-                        const anyMobileSubPageOpen =
-                          isServicesPageOpen ||
-                          isSpecialistsPageOpen ||
-                          isBranchesPageOpen ||
-                          isOffersPageOpen ||
-                          isBlogPageOpen ||
-                          isShadowTeacherPageOpen ||
-                          isPartnersPageOpen ||
-                          isTestimonialsPageOpen;
+                <nav className="space-y-1.5" aria-label={isArabic ? 'القائمة الجانبية' : 'Sidebar Navigation'}>
+                  {navLinks.map((item) => {
+                    const ItemIcon = item.icon;
+                    const isLinkActive = isHrefActive(item.href);
 
-                        const isLinkActive = 
-                          (item.href === '#blog' && isBlogPageOpen) ||
-                          (item.href === '#offers' && isOffersPageOpen) ||
-                          (item.href === '#services' && isServicesPageOpen) || 
-                          (item.href === '#specialists' && isSpecialistsPageOpen) ||
-                          (item.href === '#branches' && isBranchesPageOpen) ||
-                          (item.href === '#shadow-teacher' && isShadowTeacherPageOpen) ||
-                          (item.href === '#partners' && isPartnersPageOpen) ||
-                          (item.href === '#testimonials' && isTestimonialsPageOpen) ||
-                          (item.href === '#hero' && !anyMobileSubPageOpen);
+                    return (
+                      <a
+                        key={item.id}
+                        href={item.href}
+                        onClick={(e) => {
+                          setMobileMenuOpen(false);
+                          handleNavClick(item.href, e);
+                        }}
+                        className={`group p-2.5 rounded-2xl transition-colors duration-200 flex items-center justify-between border cursor-pointer ${
+                          isLinkActive
+                            ? 'bg-gradient-to-r from-[#1668DC] to-[#1152B8] text-white shadow-sm border-transparent'
+                            : isDark
+                              ? 'bg-white/[0.04] hover:bg-white/[0.08] text-[#F8FAFC] border-white/[0.08]'
+                              : 'bg-white/70 hover:bg-white text-[#161B26] border-[#161B26]/[0.08]'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 border transition-transform group-hover:scale-105 shadow-2xs ${
+                            isLinkActive ? 'bg-white/15 text-white border-white/25' : item.iconBg
+                          }`}>
+                            <ItemIcon className="w-4.5 h-4.5 stroke-[2.2]" />
+                          </div>
 
-                        return (
-                          <a
-                            key={item.id}
-                            href={item.href}
-                            onClick={(e) => {
-                              setMobileMenuOpen(false);
-                              if (item.href === '#blog' && onOpenBlogPage) {
-                                e.preventDefault();
-                                onOpenBlogPage();
-                              } else if (item.href === '#offers' && onOpenOffersPage) {
-                                e.preventDefault();
-                                onOpenOffersPage();
-                              } else if (item.href === '#services' && onOpenServicesPage) {
-                                e.preventDefault();
-                                onOpenServicesPage();
-                              } else if (item.href === '#specialists' && onOpenSpecialistsPage) {
-                                e.preventDefault();
-                                onOpenSpecialistsPage();
-                              } else if (item.href === '#branches' && onOpenBranchesPage) {
-                                e.preventDefault();
-                                onOpenBranchesPage();
-                              } else if (item.href === '#shadow-teacher' && onOpenShadowTeacherPage) {
-                                e.preventDefault();
-                                onOpenShadowTeacherPage();
-                              } else if (item.href === '#partners' && onOpenPartnersPage) {
-                                e.preventDefault();
-                                onOpenPartnersPage();
-                              } else if (item.href === '#testimonials' && onOpenTestimonialsPage) {
-                                e.preventDefault();
-                                onOpenTestimonialsPage();
-                              } else if (item.href === '#hero' && onGoHome) {
-                                e.preventDefault();
-                                onGoHome();
-                              } else if (onGoHome && anyMobileSubPageOpen) {
-                                onGoHome();
-                              }
-                            }}
-                            className={`group p-2.5 rounded-2xl transition-colors duration-200 flex items-center justify-between border cursor-pointer ${
-                              isLinkActive
-                                ? 'bg-gradient-to-r from-[#1668DC] to-[#1152B8] text-white shadow-sm border-transparent'
-                                : item.badgeHighlight
-                                  ? 'bg-[#2B95FF]/10 hover:bg-[#2B95FF]/15 text-[#161B26] dark:text-[#F8FAFC] border-[#2B95FF]/30'
-                                  : isDark 
-                                    ? 'bg-white/[0.04] hover:bg-white/[0.08] text-[#F8FAFC] border-white/[0.08]' 
-                                    : 'bg-white/70 hover:bg-white text-[#161B26] border-[#161B26]/[0.08]'
-                            }`}
-                          >
-                            <div className="flex items-center gap-3 min-w-0">
-                              {/* Dedicated Custom Icon Box */}
-                              <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 border transition-transform group-hover:scale-105 shadow-2xs ${item.iconBg}`}>
-                                <ItemIcon className="w-4.5 h-4.5 stroke-[2.2]" />
-                              </div>
-
-                              {/* Titles */}
-                              <div className="min-w-0">
-                                <div className="flex items-center gap-1.5">
-                                  <span className={`text-xs font-black truncate ${
-                                    isLinkActive ? 'text-white' : isDark ? 'text-[#F8FAFC]' : 'text-[#161B26]'
-                                  }`}>
-                                    {item.label}
-                                  </span>
-                                  {item.badge && (
-                                    <span className={`text-[8.5px] font-black px-1.5 py-0.2 rounded-full ${
-                                      isLinkActive
-                                        ? 'bg-white/20 text-white'
-                                        : item.badgeHighlight
-                                          ? 'bg-[#1463D6] text-white font-black'
-                                          : 'bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF]'
-                                    }`}>
-                                      {item.badge}
-                                    </span>
-                                  )}
-                                </div>
-                                <p className={`text-[10px] truncate font-medium mt-0.5 ${
-                                  isLinkActive ? 'opacity-80' : isDark ? 'text-[#94A3B8]' : 'text-[#4B5563]'
-                                }`}>
-                                  {item.subtitle}
-                                </p>
-                              </div>
-                            </div>
-
-                            {/* Chevron Arrow */}
-                            <div className={`shrink-0 ms-1.5 transition-transform group-hover:-translate-x-0.5 ${
-                              isLinkActive
-                                ? 'text-white'
-                                : 'text-[#525B6B] dark:text-[#94A3B8] group-hover:text-[#1263D6] dark:group-hover:text-[#60AFFF]'
+                          <div className="min-w-0">
+                            <span className={`block text-xs font-black truncate ${
+                              isLinkActive ? 'text-white' : isDark ? 'text-[#F8FAFC]' : 'text-[#161B26]'
                             }`}>
-                              {isArabic ? <ChevronLeft className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
-                            </div>
-                          </a>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
+                              {item.label}
+                            </span>
+                            <p className={`text-[10px] truncate font-medium mt-0.5 ${
+                              isLinkActive ? 'text-white/80' : isDark ? 'text-[#94A3B8]' : 'text-[#4B5563]'
+                            }`}>
+                              {item.subtitle}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className={`shrink-0 ms-1.5 transition-transform group-hover:-translate-x-0.5 ${
+                          isLinkActive
+                            ? 'text-white'
+                            : 'text-[#525B6B] dark:text-[#94A3B8] group-hover:text-[#1263D6] dark:group-hover:text-[#60AFFF]'
+                        }`}>
+                          {isArabic ? <ChevronLeft className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                        </div>
+                      </a>
+                    );
+                  })}
+                </nav>
               </div>
 
               {/* Direct Instant Contact Bar */}
