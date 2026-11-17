@@ -79,7 +79,7 @@ const AboutDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() =>
 const BookingDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BookingDirectoryPage')).then((m: any) => ({ default: m.default || m.BookingDirectoryPage || (() => null) })));
 const CoursesDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/CoursesDirectoryPage')).then((m: any) => ({ default: m.default || m.CoursesDirectoryPage || (() => null) })));
 const InfoDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/InfoDirectoryPage')).then((m: any) => ({ default: m.default || m.InfoDirectoryPage || (() => null) })));
-import { resolveRouteSeo, getServiceSeoBySlug } from './data/seoRoutes';
+import { resolveRouteSeo, getServiceSeoBySlug, generateBlogPostJsonLd } from './data/seoRoutes';
 
 
 import { 
@@ -806,6 +806,12 @@ export default function App() {
       }
       canonicalEl.setAttribute('href', seo.canonical);
 
+      const lowerRoute = currentPath.toLowerCase();
+      const dynamicJsonLd =
+        lowerRoute.startsWith('/blog/') || lowerRoute.startsWith('/articles/')
+          ? generateBlogPostJsonLd(currentPath, posts).jsonLd
+          : seo.jsonLd;
+
       let ldEl = document.getElementById('raba-structured-data') as HTMLScriptElement | null;
       if (!ldEl) {
         ldEl = document.createElement('script');
@@ -813,7 +819,7 @@ export default function App() {
         ldEl.type = 'application/ld+json';
         document.head.appendChild(ldEl);
       }
-      ldEl.textContent = JSON.stringify(seo.jsonLd);
+      ldEl.textContent = JSON.stringify(dynamicJsonLd);
     };
 
     applyRouteMetadata([]);

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx server.ts",
     "start": "node server.ts",
-    "build": "node scripts/sync-data.js && node scripts/optimize-assets.js && vite build",
+    "build": "node scripts/sync-data.js && node scripts/optimize-assets.js && vite build && tsx scripts/prerender-seo.ts",
     "optimize:images": "node scripts/optimize-assets.js",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",

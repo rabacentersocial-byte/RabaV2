@@ -21,6 +21,37 @@ export interface RouteSeoMeta {
   jsonLd: Record<string, any>;
 }
 
+export const STATIC_SEO_PATHS: string[] = [
+  '/services',
+  '/services-directory',
+  '/specialists',
+  '/specialists-directory',
+  '/branches',
+  '/branches-directory',
+  '/shadow-teacher',
+  '/shadow-teacher-directory',
+  '/sewar',
+  '/about',
+  '/booking',
+  '/offers-directory',
+  '/offers',
+  '/courses',
+  '/courses-directory',
+  '/partners',
+  '/partners-directory',
+  '/testimonials',
+  '/testimonials-directory',
+  '/reviews',
+  '/blog',
+  '/blog-directory',
+  '/articles',
+  '/contact',
+  '/privacy',
+  '/privacy-policy',
+  '/terms',
+  '/terms-of-service',
+];
+
 export const SERVICE_SEO_ROUTES: ServiceSeoRouteConfig[] = [
   {
     slug: 'aba-therapy',
@@ -158,6 +189,59 @@ export interface ArticleSeed {
   active?: boolean;
 }
 
+export interface ArticleJsonLdBundle {
+  canonical: string;
+  headline: string;
+  description: string;
+  image: string;
+  datePublished: string;
+  dateModified: string;
+  medicalOrganization: Record<string, any>;
+  article: Record<string, any>;
+  breadcrumbList: Record<string, any>;
+  jsonLd: Record<string, any>;
+}
+
+const ARABIC_MONTHS: Record<string, string> = {
+  'يناير': '01',
+  'فبراير': '02',
+  'مارس': '03',
+  'أبريل': '04',
+  'ابريل': '04',
+  'مايو': '05',
+  'يونيو': '06',
+  'يوليو': '07',
+  'أغسطس': '08',
+  'اغسطس': '08',
+  'سبتمبر': '09',
+  'أكتوبر': '10',
+  'اكتوبر': '10',
+  'نوفمبر': '11',
+  'ديسمبر': '12',
+};
+
+function normalizeSchemaIsoDate(raw?: string, fallback = '2026-11-14'): string {
+  if (!raw || typeof raw !== 'string') return fallback;
+  const trimmed = raw.trim();
+  if (/^\d{4}-\d{2}-\d{2}/.test(trimmed)) {
+    return trimmed.slice(0, 10);
+  }
+  const arMatch = trimmed.match(/(\d{1,2})\s+([^\s\d]+)\s+(\d{4})/);
+  if (arMatch) {
+    const day = arMatch[1].padStart(2, '0');
+    const month = ARABIC_MONTHS[arMatch[2]];
+    const year = arMatch[3];
+    if (month) {
+      return `${year}-${month}-${day}`;
+    }
+  }
+  const parsed = new Date(trimmed);
+  if (!Number.isNaN(parsed.getTime())) {
+    return parsed.toISOString().split('T')[0];
+  }
+  return fallback;
+}
+
 const ORG_NODE = {
   '@type': 'MedicalBusiness',
   '@id': `${SITE_URL}/#organization`,
@@ -186,6 +270,110 @@ function makeBreadcrumb(items: Array<{ name: string; url: string }>) {
   };
 }
 
+export function generateBlogPostJsonLd(
+  slug: string,
+  blogPosts: ArticleSeed[] = []
+): ArticleJsonLdBundle {
+  const rawSlug = (slug || '').replace(/^\/(?:blog|articles)\//i, '').replace(/^\/+|\/+$/g, '');
+  let decodedSlug = rawSlug;
+  try {
+    decodedSlug = decodeURIComponent(rawSlug);
+  } catch {
+    decodedSlug = rawSlug;
+  }
+
+  const post = blogPosts.find(
+    (p) =>
+      p &&
+      typeof p.slug === 'string' &&
+      (p.slug === decodedSlug || p.slug.toLowerCase() === decodedSlug.toLowerCase())
+  );
+
+  const headline = post?.title || 'مقال طبي متخصص | مدونة مركز رابا';
+  const description = (
+    post?.excerpt ||
+    post?.summary ||
+    'مقال توعوي وإكلينيكي متخصص من مركز رابا حول تحليل السلوك التطبيقي، التوحد، النطق والتخاطب والعلاج الوظيفي.'
+  ).trim();
+  const safeSlug = encodeURIComponent(post?.slug || decodedSlug);
+  const canonical = `${SITE_URL}/blog/${safeSlug}`;
+  const image = post?.image
+    ? post.image.startsWith('http')
+      ? post.image
+      : `${SITE_URL}${post.image.startsWith('/') ? '' : '/'}${post.image}`
+    : `${SITE_URL}/favicon-512x512.png`;
+  const datePublished = normalizeSchemaIsoDate(post?.publishDate, '2026-11-14');
+  const dateModified = normalizeSchemaIsoDate(post?.updatedAt || post?.publishDate, datePublished);
+
+  const medicalOrganization = {
+    '@type': 'MedicalOrganization',
+    '@id': `${SITE_URL}/#medical-organization`,
+    name: 'مركز رابا',
+    alternateName: 'Raba Center | مركز رابا للعلاج بتحليل السلوك التطبيقي ABA',
+    url: `${SITE_URL}/`,
+    logo: {
+      '@type': 'ImageObject',
+      url: `${SITE_URL}/logo/raba_puzzle_brain.png`,
+    },
+    telephone: '+966575100100',
+    email: 'info@rabacenters.com',
+  };
+
+  const article = {
+    '@type': 'Article',
+    '@id': `${canonical}#article`,
+    headline,
+    description,
+    inLanguage: 'ar',
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': canonical,
+    },
+    url: canonical,
+    image: [image],
+    datePublished,
+    dateModified,
+    author: {
+      '@type': 'MedicalOrganization',
+      '@id': `${SITE_URL}/#medical-organization`,
+      name: 'مركز رابا',
+      url: `${SITE_URL}/`,
+    },
+    publisher: {
+      '@type': 'MedicalOrganization',
+      '@id': `${SITE_URL}/#medical-organization`,
+      name: 'مركز رابا',
+      url: `${SITE_URL}/`,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/logo/raba_puzzle_brain.png`,
+      },
+    },
+  };
+
+  const breadcrumbList = makeBreadcrumb([
+    { name: 'الرئيسية', url: `${SITE_URL}/` },
+    { name: 'المدونة الطبية', url: `${SITE_URL}/blog` },
+    { name: headline, url: canonical },
+  ]);
+
+  return {
+    canonical,
+    headline,
+    description,
+    image,
+    datePublished,
+    dateModified,
+    medicalOrganization,
+    article,
+    breadcrumbList,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@graph': [medicalOrganization, article, breadcrumbList],
+    },
+  };
+}
+
 export function resolveRouteSeo(pathname: string, blogPosts: ArticleSeed[] = []): RouteSeoMeta {
   const cleanPath = (pathname || '/').split('?')[0].split('#')[0].replace(/\/+$/, '') || '/';
   const lower = cleanPath.toLowerCase();
@@ -193,68 +381,17 @@ export function resolveRouteSeo(pathname: string, blogPosts: ArticleSeed[] = [])
   // 1. Dynamic Blog / Article route: /blog/:slug or /articles/:slug
   if (lower.startsWith('/blog/') || lower.startsWith('/articles/')) {
     const rawSlug = cleanPath.replace(/^\/(?:blog|articles)\//i, '').replace(/\/+$/, '');
-    let decodedSlug = rawSlug;
-    try {
-      decodedSlug = decodeURIComponent(rawSlug);
-    } catch {
-      decodedSlug = rawSlug;
-    }
-
-    const post = blogPosts.find(
-      (p) =>
-        p &&
-        typeof p.slug === 'string' &&
-        (p.slug === decodedSlug || p.slug.toLowerCase() === decodedSlug.toLowerCase())
-    );
-
-    const postTitle = post?.title || 'مقال طبي متخصص | مدونة مركز رابا';
-    const postDesc =
-      post?.excerpt ||
-      post?.summary ||
-      'مقال توعوي وإكلينيكي متخصص من مركز رابا حول تحليل السلوك التطبيقي، التوحد، النطق والتخاطب والعلاج الوظيفي.';
-    const safeSlug = encodeURIComponent(post?.slug || decodedSlug);
-    const canonical = `${SITE_URL}/blog/${safeSlug}`;
-    const ogImage = post?.image
-      ? post.image.startsWith('http')
-        ? post.image
-        : `${SITE_URL}${post.image.startsWith('/') ? '' : '/'}${post.image}`
-      : `${SITE_URL}/favicon-512x512.png`;
+    const bundle = generateBlogPostJsonLd(rawSlug, blogPosts);
 
     return {
       path: cleanPath,
-      title: `${postTitle} | مدونة مركز رابا`,
-      description: postDesc.slice(0, 160),
-      canonical,
-      h1: postTitle,
+      title: `${bundle.headline} | مدونة مركز رابا`,
+      description: bundle.description.slice(0, 160),
+      canonical: bundle.canonical,
+      h1: bundle.headline,
       ogType: 'article',
-      ogImage,
-      jsonLd: {
-        '@context': 'https://schema.org',
-        '@graph': [
-          ORG_NODE,
-          {
-            '@type': 'Article',
-            '@id': `${canonical}#article`,
-            headline: postTitle,
-            description: postDesc,
-            inLanguage: 'ar',
-            mainEntityOfPage: canonical,
-            image: ogImage,
-            datePublished: post?.publishDate || '2026-11-14',
-            dateModified: post?.updatedAt || post?.publishDate || '2026-11-16',
-            author: {
-              '@type': 'Person',
-              name: post?.author?.name || 'الفريق الطبي بمركز رابا',
-            },
-            publisher: { '@id': `${SITE_URL}/#organization` },
-          },
-          makeBreadcrumb([
-            { name: 'الرئيسية', url: `${SITE_URL}/` },
-            { name: 'المدونة الطبية', url: `${SITE_URL}/blog` },
-            { name: postTitle, url: canonical },
-          ]),
-        ],
-      },
+      ogImage: bundle.image,
+      jsonLd: bundle.jsonLd,
     };
   }
 
@@ -755,4 +892,96 @@ export function resolveRouteSeo(pathname: string, blogPosts: ArticleSeed[] = [])
         },
       };
   }
+}
+
+function escapeHtmlAttr(str: string): string {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+export function injectRouteSeoHtml(
+  rawHtml: string,
+  reqPath: string,
+  blogPosts: ArticleSeed[] = []
+): string {
+  const cleanPath = (reqPath || '/').split('?')[0].split('#')[0].replace(/\/+$/, '') || '/';
+  const lowerPath = cleanPath.toLowerCase();
+  const seo = resolveRouteSeo(cleanPath, blogPosts);
+  const dynamicJsonLd =
+    lowerPath.startsWith('/blog/') || lowerPath.startsWith('/articles/')
+      ? generateBlogPostJsonLd(cleanPath, blogPosts).jsonLd
+      : seo.jsonLd;
+
+  const escTitle = escapeHtmlAttr(seo.title);
+  const escDesc = escapeHtmlAttr(seo.description);
+  const escCanonical = escapeHtmlAttr(seo.canonical);
+  const escH1 = escapeHtmlAttr(seo.h1);
+
+  let html = rawHtml;
+  html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escTitle}</title>`);
+  html = html.replace(
+    /<meta\s+[^>]*name=["']description["'][^>]*\/?>/i,
+    `<meta name="description" content="${escDesc}" />`
+  );
+  html = html.replace(
+    /<link\s+[^>]*rel=["']canonical["'][^>]*\/?>/i,
+    `<link rel="canonical" href="${escCanonical}" />`
+  );
+  html = html.replace(
+    /<meta\s+[^>]*property=["']og:url["'][^>]*\/?>/i,
+    `<meta property="og:url" content="${escCanonical}" />`
+  );
+  html = html.replace(
+    /<meta\s+[^>]*property=["']og:title["'][^>]*\/?>/i,
+    `<meta property="og:title" content="${escTitle}" />`
+  );
+  html = html.replace(
+    /<meta\s+[^>]*property=["']og:description["'][^>]*\/?>/i,
+    `<meta property="og:description" content="${escDesc}" />`
+  );
+  html = html.replace(
+    /<meta\s+[^>]*property=["']og:type["'][^>]*\/?>/i,
+    `<meta property="og:type" content="${seo.ogType}" />`
+  );
+  html = html.replace(
+    /<meta\s+[^>]*name=["']twitter:title["'][^>]*\/?>/i,
+    `<meta name="twitter:title" content="${escTitle}" />`
+  );
+  html = html.replace(
+    /<meta\s+[^>]*name=["']twitter:description["'][^>]*\/?>/i,
+    `<meta name="twitter:description" content="${escDesc}" />`
+  );
+
+  if (seo.ogImage) {
+    const escImg = escapeHtmlAttr(seo.ogImage);
+    html = html.replace(
+      /<meta\s+[^>]*property=["']og:image["'][^>]*\/?>/i,
+      `<meta property="og:image" content="${escImg}" />`
+    );
+    html = html.replace(
+      /<meta\s+[^>]*name=["']twitter:image["'][^>]*\/?>/i,
+      `<meta name="twitter:image" content="${escImg}" />`
+    );
+  }
+
+  const jsonLdString = JSON.stringify(dynamicJsonLd).replace(/</g, '\\u003c');
+  if (/<script\s+[^>]*id=["']raba-structured-data["'][^>]*>[\s\S]*?<\/script>/i.test(html)) {
+    html = html.replace(
+      /<script\s+[^>]*id=["']raba-structured-data["'][^>]*>[\s\S]*?<\/script>/i,
+      `<script id="raba-structured-data" type="application/ld+json">${jsonLdString}</script>`
+    );
+  }
+
+  // Isolate sub-route static pre-shell so crawlers & view-source see route-specific <h1> without JavaScript
+  if (cleanPath !== '/' && cleanPath !== '/index.html') {
+    html = html.replace(
+      /<section\s+id=["']hero["']\s+class=["']raba-pre-hero["']>[\s\S]*?<\/section>/i,
+      `<section class="raba-pre-hero"><div class="raba-pre-container" style="padding: 3rem 0;"><h1 class="raba-pre-h1">${escH1}</h1><p class="raba-pre-sub">${escDesc}</p></div></section>`
+    );
+  }
+
+  return html;
 }

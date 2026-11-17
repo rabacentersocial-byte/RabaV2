@@ -40,7 +40,7 @@ import {
   isFirestoreAdminConfigured
 } from './src/lib/firebase-admin.ts';
 import sitemap, { renderSitemapXml } from './sitemap.ts';
-import { resolveRouteSeo } from './src/data/seoRoutes.ts';
+import { injectRouteSeoHtml as injectSharedRouteSeoHtml } from './src/data/seoRoutes.ts';
 import { BLOG_POSTS } from './src/data/blogData.ts';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -1587,56 +1587,8 @@ async function startServer() {
       return BLOG_POSTS;
     };
 
-    const escapeHtmlAttr = (str: string): string =>
-      String(str || '')
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-
-    const injectRouteSeoHtml = (rawHtml: string, reqPath: string): string => {
-      const cleanPath = (reqPath || '/').split('?')[0].split('#')[0].replace(/\/+$/, '') || '/';
-      const seo = resolveRouteSeo(cleanPath, getServerBlogPosts());
-      const escTitle = escapeHtmlAttr(seo.title);
-      const escDesc = escapeHtmlAttr(seo.description);
-      const escCanonical = escapeHtmlAttr(seo.canonical);
-      const escH1 = escapeHtmlAttr(seo.h1);
-
-      let html = rawHtml;
-      html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escTitle}</title>`);
-      html = html.replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/?>/i, `<meta name="description" content="${escDesc}" />`);
-      html = html.replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i, `<link rel="canonical" href="${escCanonical}" />`);
-      html = html.replace(/<meta\s+property="og:url"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:url" content="${escCanonical}" />`);
-      html = html.replace(/<meta\s+property="og:title"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:title" content="${escTitle}" />`);
-      html = html.replace(/<meta\s+property="og:description"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:description" content="${escDesc}" />`);
-      html = html.replace(/<meta\s+property="og:type"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:type" content="${seo.ogType}" />`);
-      html = html.replace(/<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/?>/i, `<meta name="twitter:title" content="${escTitle}" />`);
-      html = html.replace(/<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/?>/i, `<meta name="twitter:description" content="${escDesc}" />`);
-
-      if (seo.ogImage) {
-        const escImg = escapeHtmlAttr(seo.ogImage);
-        html = html.replace(/<meta\s+property="og:image"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:image" content="${escImg}" />`);
-        html = html.replace(/<meta\s+name="twitter:image"\s+content="[^"]*"\s*\/?>/i, `<meta name="twitter:image" content="${escImg}" />`);
-      }
-
-      const jsonLdString = JSON.stringify(seo.jsonLd);
-      if (/<script\s+id="raba-structured-data"[^>]*>[\s\S]*?<\/script>/i.test(html)) {
-        html = html.replace(
-          /<script\s+id="raba-structured-data"[^>]*>[\s\S]*?<\/script>/i,
-          `<script id="raba-structured-data" type="application/ld+json">${jsonLdString}</script>`
-        );
-      }
-
-      // Isolate sub-route static pre-shell so raw HTML bots do NOT see homepage hero H1 on sub-pages
-      if (cleanPath !== '/' && cleanPath !== '/index.html') {
-        html = html.replace(
-          /<section\s+id="hero"\s+class="raba-pre-hero">[\s\S]*?<\/section>/i,
-          `<section class="raba-pre-hero"><div class="raba-pre-container" style="padding: 3rem 0;"><h1 class="raba-pre-h1">${escH1}</h1><p class="raba-pre-sub">${escDesc}</p></div></section>`
-        );
-      }
-
-      return html;
-    };
+    const injectRouteSeoHtml = (rawHtml: string, reqPath: string): string =>
+      injectSharedRouteSeoHtml(rawHtml, reqPath, getServerBlogPosts());
 
     // 5. If route is NOT valid, strictly return real HTTP 404 status (Never return HTTP 200!)
     if (!isRouteValid) {
