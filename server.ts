@@ -1529,7 +1529,8 @@ async function startServer() {
       cleanPath.startsWith('/articles/') || 
       cleanPath.startsWith('/specialist/') ||
       cleanPath.startsWith('/services/') ||
-      cleanPath.startsWith('/courses/');
+      cleanPath.startsWith('/courses/') ||
+      cleanPath.startsWith('/branches/');
 
     const isRouteValid = VALID_ROUTES.has(cleanPath) || isDynamicValid;
 

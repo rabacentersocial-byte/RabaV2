@@ -40,6 +40,7 @@ import { BlogPost, Specialist } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 import { SPECIALISTS } from '../data/mockData';
 import { getStoredBlogPosts } from '../data/blogCustomizer';
+import { getRelatedServiceForBlogPost } from '../data/seoRoutes';
 
 interface BlogDirectoryPageProps {
   onBackToHome: () => void;
@@ -1062,6 +1063,51 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                   </div>
                 </div>
               )}
+
+              {/* Contextual Related Clinical Service Card */}
+              {(() => {
+                const relatedService = getRelatedServiceForBlogPost({
+                  slug: readingPost.slug,
+                  category: readingPost.category,
+                });
+                return (
+                  <section className="p-5 sm:p-6 rounded-[24px] bg-[#2B95FF]/8 border border-[#2B95FF]/25 space-y-3">
+                    <div className="flex items-center gap-2 text-[#1263D6] dark:text-[#60AFFF] font-black text-xs sm:text-sm">
+                      <Stethoscope className="w-4 h-4 shrink-0" />
+                      <h2>{isArabic ? 'الخدمة الإكلينيكية المرتبطة بهذا المقال' : 'Related Clinical Service at Raba Center'}</h2>
+                    </div>
+                    <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] leading-relaxed">
+                      {relatedService.description}
+                    </p>
+                    <div className="flex flex-wrap items-center gap-3 pt-1">
+                      <a
+                        href={`/services/${relatedService.slug}`}
+                        onClick={(e) => {
+                          if (!onNavigate || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                          e.preventDefault();
+                          onNavigate(`/services/${relatedService.slug}`);
+                        }}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full liquid-glass-btn text-xs font-black text-[#1263D6] dark:text-[#60AFFF] hover:underline"
+                      >
+                        <span>{isArabic ? relatedService.title : relatedService.titleEn}</span>
+                        {isArabic ? <ArrowLeft className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
+                      </a>
+                      <a
+                        href="/booking"
+                        onClick={(e) => {
+                          if (!onNavigate || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                          e.preventDefault();
+                          onNavigate('/booking');
+                        }}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full warm-pill-cta text-xs font-black shadow-sm"
+                      >
+                        <CalendarCheck className="w-3.5 h-3.5" />
+                        <span>{isArabic ? 'احجز تقييم لطفلك الآن' : 'Book Evaluation Now'}</span>
+                      </a>
+                    </div>
+                  </section>
+                );
+              })()}
 
               {/* Author Bio Card with Direct Booking Action */}
               <div className="p-5 sm:p-6 rounded-[24px] liquid-glass-panel flex flex-col sm:flex-row items-center justify-between gap-4">

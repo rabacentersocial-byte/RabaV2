@@ -66,6 +66,8 @@ function prerenderStaticSeoPages(): void {
   for (const srv of SERVICE_SEO_ROUTES) {
     routeSet.add(`/services/${srv.slug}`);
   }
+  routeSet.add('/branches/riyadh');
+  routeSet.add('/branches/alkharj');
   for (const post of blogPosts) {
     const slug = typeof post?.slug === 'string' ? post.slug.trim() : '';
     if (slug) {
@@ -79,8 +81,13 @@ function prerenderStaticSeoPages(): void {
     const seo = resolveRouteSeo(routePath, blogPosts);
     const renderedHtml = injectRouteSeoHtml(baseHtml, routePath, blogPosts);
 
-    if (!renderedHtml.includes(seo.canonical) || !renderedHtml.includes('id="raba-structured-data"')) {
-      throw new Error(`[prerender-seo] Metadata injection verification failed for route: ${routePath}`);
+    if (
+      !renderedHtml.includes(seo.canonical) ||
+      !renderedHtml.includes('id="raba-structured-data"') ||
+      !renderedHtml.includes('<h1') ||
+      !renderedHtml.includes('<h2>')
+    ) {
+      throw new Error(`[prerender-seo] Content/metadata verification failed for route: ${routePath}`);
     }
 
     const relativeDir = routePath.replace(/^\/+/, '');

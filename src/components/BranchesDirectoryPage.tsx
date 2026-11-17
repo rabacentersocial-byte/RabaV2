@@ -39,12 +39,14 @@ interface BranchesDirectoryPageProps {
   onBackToHome: () => void;
   onSelectBranch?: (branch: BranchItem) => void;
   onOpenBooking?: (branchNotes?: string) => void;
+  onNavigate?: (path: string) => void;
 }
 
 export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
   onBackToHome,
   onSelectBranch,
-  onOpenBooking
+  onOpenBooking,
+  onNavigate
 }) => {
   const { isArabic } = useLanguage();
 
@@ -351,6 +353,34 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
                 <Sparkles className="w-4 h-4 text-[#8B5CF6]" />
                 <span>{clubCount} {isArabic ? 'فروع تضم نوادي رابا' : 'With Integrated Clubs'}</span>
               </div>
+            </div>
+
+            {/* Direct Local SEO City Hub Links */}
+            <div className="flex flex-wrap items-center gap-2.5 pt-2">
+              <a
+                href="/branches/riyadh"
+                onClick={(e) => {
+                  if (!onNavigate || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                  e.preventDefault();
+                  onNavigate('/branches/riyadh');
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full liquid-glass-btn text-xs sm:text-sm font-black text-[#1263D6] dark:text-[#60AFFF] hover:border-[#2B95FF]/50 transition-all"
+              >
+                <MapPin className="w-3.5 h-3.5 text-[#2B95FF]" />
+                <span>{isArabic ? 'مركز رابا في الرياض (5 فروع) ←' : 'Raba Center in Riyadh →'}</span>
+              </a>
+              <a
+                href="/branches/alkharj"
+                onClick={(e) => {
+                  if (!onNavigate || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                  e.preventDefault();
+                  onNavigate('/branches/alkharj');
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full liquid-glass-btn text-xs sm:text-sm font-black text-[#047857] dark:text-[#34D399] hover:border-[#10B981]/50 transition-all"
+              >
+                <MapPin className="w-3.5 h-3.5 text-[#10B981]" />
+                <span>{isArabic ? 'مركز رابا في الخرج ←' : 'Raba Center in Al-Kharj →'}</span>
+              </a>
             </div>
 
           </div>

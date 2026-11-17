@@ -75,11 +75,12 @@ const ServicesSection = lazy<React.ComponentType<any>>(() => safeImport(() => im
 const Footer = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/Footer')).then((m: any) => ({ default: m.default || m.Footer || (() => null) })));
 const FloatingActions = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/FloatingActions')).then((m: any) => ({ default: m.default || m.FloatingActions || (() => null) })));
 const ServiceDetailPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/ServiceDetailPage')).then((m: any) => ({ default: m.default || m.ServiceDetailPage || (() => null) })));
+const BranchDetailPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BranchDetailPage')).then((m: any) => ({ default: m.default || m.BranchDetailPage || (() => null) })));
 const AboutDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/AboutDirectoryPage')).then((m: any) => ({ default: m.default || m.AboutDirectoryPage || (() => null) })));
 const BookingDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BookingDirectoryPage')).then((m: any) => ({ default: m.default || m.BookingDirectoryPage || (() => null) })));
 const CoursesDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/CoursesDirectoryPage')).then((m: any) => ({ default: m.default || m.CoursesDirectoryPage || (() => null) })));
 const InfoDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/InfoDirectoryPage')).then((m: any) => ({ default: m.default || m.InfoDirectoryPage || (() => null) })));
-import { resolveRouteSeo, getServiceSeoBySlug, generateBlogPostJsonLd } from './data/seoRoutes';
+import { resolveRouteSeo, getServiceSeoBySlug, getBranchSeoBySlug, generateBlogPostJsonLd } from './data/seoRoutes';
 
 
 import { 
@@ -510,7 +511,10 @@ export default function App() {
   const isServiceDetailPageOpen = Boolean(serviceDetailSlug && getServiceSeoBySlug(serviceDetailSlug));
   const isServicesPageOpen = lowerPath === '/services' || lowerPath === '/services-directory' || (lowerPath.startsWith('/services/') && !isServiceDetailPageOpen);
   const isSpecialistsPageOpen = lowerPath === '/specialists' || lowerPath === '/specialists-directory' || lowerPath.startsWith('/specialist/');
-  const isBranchesPageOpen = lowerPath === '/branches' || lowerPath === '/branches-directory';
+  const branchDetailSlugRaw = lowerPath.startsWith('/branches/') ? lowerPath.slice('/branches/'.length) : null;
+  const branchDetailConfig = branchDetailSlugRaw ? getBranchSeoBySlug(branchDetailSlugRaw) : undefined;
+  const isBranchDetailPageOpen = Boolean(branchDetailConfig);
+  const isBranchesPageOpen = lowerPath === '/branches' || lowerPath === '/branches-directory' || (lowerPath.startsWith('/branches/') && !isBranchDetailPageOpen);
   const isOffersPageOpen = lowerPath === '/offers' || lowerPath === '/offers-directory';
   const isCoursesPageOpen = lowerPath === '/courses' || lowerPath === '/courses-directory' || lowerPath.startsWith('/courses/');
   const isAboutPageOpen = lowerPath === '/about';
@@ -1121,7 +1125,7 @@ export default function App() {
         onGoHome={handleBackToHome}
         isSpecialistsPageOpen={isSpecialistsPageOpen}
         isServicesPageOpen={isServicesPageOpen || isServiceDetailPageOpen}
-        isBranchesPageOpen={isBranchesPageOpen}
+        isBranchesPageOpen={isBranchesPageOpen || isBranchDetailPageOpen}
         isOffersPageOpen={isOffersPageOpen}
         isBlogPageOpen={isBlogPageOpen}
         isShadowTeacherPageOpen={isShadowTeacherPageOpen}
@@ -1168,11 +1172,25 @@ export default function App() {
               onOpenServiceDetail={(slug) => navigateTo(`/services/${slug}`)}
             />
           </Suspense>
+        ) : isBranchDetailPageOpen && branchDetailConfig ? (
+          /* Dedicated Local SEO Branch Detail Page (/branches/riyadh | /branches/alkharj) */
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-[#1263D6] dark:text-[#60AFFF] font-bold">جاري تحميل صفحة الفرع والخدمات الإكلينيكية...</div>}>
+            <BranchDetailPage
+              branchSlug={branchDetailConfig.slug}
+              onBackToHome={handleBackToHome}
+              onNavigate={navigateTo}
+              onOpenBooking={(notes) => {
+                if (notes) setBookingInitialNotes(notes);
+                setIsBookingOpen(true);
+              }}
+            />
+          </Suspense>
         ) : isBranchesPageOpen ? (
           /* Dedicated Branches Directory Page with Cities Filter and Slider/Grid Switcher */
           <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-[#1263D6] dark:text-[#60AFFF] font-bold">جاري تحميل دليل فروع مركز رابا...</div>}>
             <BranchesDirectoryPage
               onBackToHome={handleBackToHome}
+              onNavigate={navigateTo}
               onSelectBranch={(branch) => {
                 setBookingInitialNotes(`استفسار وحجز في فرع: ${branch.name} (${branch.cityNameAr})`);
                 setIsBookingOpen(true);
@@ -1248,6 +1266,7 @@ export default function App() {
               onBackToHome={handleBackToHome}
               onSubmitRequest={handleConfirmBooking}
               onOpenBooking={handleOpenBooking}
+              onNavigate={navigateTo}
             />
           </Suspense>
         ) : isPartnersPageOpen ? (
@@ -1444,7 +1463,7 @@ export default function App() {
         currentPath={currentPath}
         isSpecialistsPageOpen={isSpecialistsPageOpen}
         isServicesPageOpen={isServicesPageOpen || isServiceDetailPageOpen}
-        isBranchesPageOpen={isBranchesPageOpen}
+        isBranchesPageOpen={isBranchesPageOpen || isBranchDetailPageOpen}
         isOffersPageOpen={isOffersPageOpen}
       />
 
