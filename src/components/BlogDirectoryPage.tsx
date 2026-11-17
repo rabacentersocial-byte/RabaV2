@@ -46,13 +46,17 @@ interface BlogDirectoryPageProps {
   onOpenBooking?: (notes?: string) => void;
   onBookSpecialist?: (specialist: Specialist) => void;
   initialPostSlug?: string | null;
+  onNavigate?: (path: string) => void;
+  onPostChange?: (slug: string | null) => void;
 }
 
 export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
   onBackToHome,
   onOpenBooking,
   onBookSpecialist,
-  initialPostSlug
+  initialPostSlug,
+  onNavigate,
+  onPostChange
 }) => {
   const { isArabic } = useLanguage();
 
@@ -65,10 +69,17 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
   const [sortBy, setSortBy] = useState<'latest' | 'popular' | 'likes' | 'reading_time'>('latest');
   const [isSortOpen, setIsSortOpen] = useState(false);
 
-  // Active Reader modal / full view
-  const [readingPost, setReadingPost] = useState<BlogPost | null>(null);
+  // Active Reader full standalone article view
+  const [readingPost, setReadingPost] = useState<BlogPost | null>(() => {
+    if (initialPostSlug) {
+      const stored = getStoredBlogPosts();
+      return stored.find(p => p.slug === initialPostSlug) || null;
+    }
+    return null;
+  });
   const [readerFontSize, setReaderFontSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [readingProgress, setReadingProgress] = useState(0);
+  const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
 
   // Interactive bookmarks & likes
   const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>(() => {
@@ -178,67 +189,68 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
     };
   }, []);
 
-  // Sync initial slug if provided
+  // Sync initial slug from URL routing cleanly
   useEffect(() => {
     if (initialPostSlug) {
       const matched = allPosts.find(p => p.slug === initialPostSlug);
       if (matched) {
         setReadingPost(matched);
       }
-    }
-  }, [initialPostSlug, allPosts]);
-
-  // Check URL hash for article slug deep-linking (#blog/slug or #blog-slug)
-  useEffect(() => {
-    const checkSlugFromHash = () => {
-      const hash = window.location.hash;
+    } else if (initialPostSlug === null || initialPostSlug === undefined) {
+      const hash = typeof window !== 'undefined' ? window.location.hash : '';
       if (hash.startsWith('#blog/')) {
         const slug = hash.replace('#blog/', '');
         const matched = allPosts.find(p => p.slug === slug);
-        if (matched) setReadingPost(matched);
-      } else if (hash.startsWith('#blog-') && hash !== '#blog-directory' && hash !== '#blog-page') {
-        const slug = hash.replace('#blog-', '');
-        const matched = allPosts.find(p => p.slug === slug);
-        if (matched) setReadingPost(matched);
+        if (matched) {
+          setReadingPost(matched);
+          return;
+        }
+      }
+      setReadingPost(null);
+    }
+  }, [initialPostSlug, allPosts]);
+
+  // Reading progress tracker on window scroll while reading a standalone article
+  const readerContentRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!readingPost) {
+      setReadingProgress(0);
+      return;
+    }
+    const handleWindowScroll = () => {
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight > 0) {
+        const pct = (window.scrollY / docHeight) * 100;
+        setReadingProgress(Math.min(100, Math.max(0, pct)));
       }
     };
-    checkSlugFromHash();
-    window.addEventListener('hashchange', checkSlugFromHash);
-    return () => window.removeEventListener('hashchange', checkSlugFromHash);
-  }, [allPosts]);
-
-  // Update document title and canonical meta for SEO
-  useEffect(() => {
-    const originalTitle = document.title;
-    if (readingPost) {
-      document.title = `${isArabic ? readingPost.title : (readingPost.titleEn || readingPost.title)} | مركز رابا ABA`;
-    } else {
-      document.title = isArabic 
-        ? 'المدونة الطبية والدليل المعرفي | مركز رابا للرعاية والتأهيل' 
-        : 'Clinical Blog & Knowledge Guide | Raba Center';
-    }
-    return () => {
-      document.title = originalTitle;
-    };
-  }, [readingPost, isArabic]);
-
-  // Reading progress tracker
-  const readerContentRef = useRef<HTMLDivElement>(null);
-  const handleReaderScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const target = e.currentTarget;
-    const progress = (target.scrollTop / (target.scrollHeight - target.clientHeight)) * 100;
-    setReadingProgress(Math.min(100, Math.max(0, progress)));
-  };
+    window.addEventListener('scroll', handleWindowScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleWindowScroll);
+  }, [readingPost]);
 
   const handleOpenReader = (post: BlogPost) => {
     setReadingPost(post);
     setReadingProgress(0);
-    window.location.hash = `#blog/${post.slug}`;
+    if (onPostChange) {
+      onPostChange(post.slug);
+    } else if (onNavigate) {
+      onNavigate(`/blog/${post.slug}`);
+    } else if (typeof window !== 'undefined') {
+      window.history.pushState(null, '', `/blog/${post.slug}`);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleCloseReader = () => {
     setReadingPost(null);
-    window.location.hash = '#blog-directory';
+    if (onPostChange) {
+      onPostChange(null);
+    } else if (onNavigate) {
+      onNavigate('/blog');
+    } else if (typeof window !== 'undefined') {
+      window.history.pushState(null, '', '/blog');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const toggleLike = (e: React.MouseEvent, postId: string) => {
@@ -266,7 +278,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
   const handleShare = (e: React.MouseEvent, post: BlogPost) => {
     e.stopPropagation();
     const title = isArabic ? post.title : (post.titleEn || post.title);
-    const url = `${window.location.origin}/#blog/${post.slug}`;
+    const url = `${window.location.origin}/blog/${post.slug}`;
 
     if (navigator.share) {
       navigator.share({
@@ -283,7 +295,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
 
   const handleCopyCurrentLink = () => {
     if (!readingPost) return;
-    const url = `${window.location.origin}/#blog/${readingPost.slug}`;
+    const url = `${window.location.origin}/blog/${readingPost.slug}`;
     navigator.clipboard.writeText(url);
     setCopyFeedback(true);
     setTimeout(() => setCopyFeedback(false), 2000);
@@ -292,7 +304,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
   const handleShareWhatsApp = () => {
     if (!readingPost) return;
     const title = isArabic ? readingPost.title : (readingPost.titleEn || readingPost.title);
-    const url = `${window.location.origin}/#blog/${readingPost.slug}`;
+    const url = `${window.location.origin}/blog/${readingPost.slug}`;
     const text = encodeURIComponent(`*${title}*\n\nمقال قيم من مركز رابا للتأهيل:\n${url}`);
     window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
   };
@@ -300,7 +312,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
   const handleShareTwitter = () => {
     if (!readingPost) return;
     const title = isArabic ? readingPost.title : (readingPost.titleEn || readingPost.title);
-    const url = `${window.location.origin}/#blog/${readingPost.slug}`;
+    const url = `${window.location.origin}/blog/${readingPost.slug}`;
     const text = encodeURIComponent(`${title} - مركز رابا`);
     window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}`, '_blank');
   };
@@ -378,39 +390,8 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
     return result;
   }, [publishedPosts, selectedCategory, searchQuery, sortBy, likedPosts]);
 
-  // Schema.org BlogPosting structured data
-  const structuredData = useMemo(() => {
-    return {
-      "@context": "https://schema.org",
-      "@type": "Blog",
-      "name": isArabic ? "مدونة مركز رابا للتأهيل وتحليل السلوك" : "Raba Center Clinical Blog",
-      "description": "دليل معرفي ومقالات إكلينيكية معتمدة في طيف التوحد، تحليل السلوك التطبيقي ABA، والعلاج الوظيفي والتخاطب.",
-      "url": `${typeof window !== 'undefined' ? window.location.origin : 'https://rabacenters.com'}/#blog-directory`,
-      "blogPost": publishedPosts.map(p => ({
-        "@type": "BlogPosting",
-        "headline": p.title,
-        "description": p.excerpt,
-        "datePublished": p.publishDate,
-        "author": {
-          "@type": "Person",
-          "name": p.author?.name || "فريق رابا الطبي"
-        },
-        "publisher": {
-          "@type": "Organization",
-          "name": "مركز رابا للرعاية النهارية والتأهيل"
-        }
-      }))
-    };
-  }, [publishedPosts, isArabic]);
-
   return (
     <div className="min-h-screen bg-[#F5F2EC] dark:bg-[#0B0F17] text-[#161B26] dark:text-[#F8FAFC] transition-colors pb-24 relative overflow-x-clip" dir={isArabic ? 'rtl' : 'ltr'}>
-      
-      {/* JSON-LD Schema.org SEO Injection */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
 
       {/* Ambient Visual Backdrops */}
       <div className="fixed top-0 right-0 w-[520px] h-[520px] rounded-full blur-[120px] pointer-events-none -z-10" style={{ background: 'radial-gradient(circle, rgba(43, 149, 255, 0.14) 0%, rgba(43, 149, 255, 0) 70%)' }} />
@@ -421,28 +402,57 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
           
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-xs sm:text-sm" aria-label="Breadcrumb">
-            <button
-              onClick={onBackToHome}
-              className="text-[#4B5563] dark:text-[#94A3B8] hover:text-[#1263D6] dark:hover:text-[#60AFFF] font-medium transition-colors flex items-center gap-1 cursor-pointer"
+          <nav className="flex items-center gap-2 text-xs sm:text-sm min-w-0" aria-label="Breadcrumb">
+            <a
+              href="/"
+              onClick={(e) => {
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                e.preventDefault();
+                onBackToHome();
+              }}
+              className="text-[#4B5563] dark:text-[#94A3B8] hover:text-[#1263D6] dark:hover:text-[#60AFFF] font-medium transition-colors flex items-center gap-1 cursor-pointer shrink-0"
             >
               <Home className="w-3.5 h-3.5" />
               <span>{isArabic ? 'الرئيسية' : 'Home'}</span>
-            </button>
+            </a>
             <span className="text-[#64748B] dark:text-[#94A3B8]">/</span>
-            <span className="text-[#1263D6] dark:text-[#60AFFF] font-black truncate">
-              {isArabic ? 'المدونة الطبية والدليل المعرفي' : 'Clinical Blog & Knowledge Guide'}
-            </span>
+            {readingPost ? (
+              <>
+                <a
+                  href="/blog"
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    e.preventDefault();
+                    handleCloseReader();
+                  }}
+                  className="text-[#4B5563] dark:text-[#94A3B8] hover:text-[#1263D6] dark:hover:text-[#60AFFF] font-bold truncate cursor-pointer"
+                >
+                  {isArabic ? 'المدونة الطبية والدليل المعرفي' : 'Clinical Blog & Knowledge Guide'}
+                </a>
+                <span className="text-[#64748B] dark:text-[#94A3B8]">/</span>
+                <span className="text-[#1263D6] dark:text-[#60AFFF] font-black truncate">
+                  {isArabic ? readingPost.title : (readingPost.titleEn || readingPost.title)}
+                </span>
+              </>
+            ) : (
+              <span className="text-[#1263D6] dark:text-[#60AFFF] font-black truncate">
+                {isArabic ? 'المدونة الطبية والدليل المعرفي' : 'Clinical Blog & Knowledge Guide'}
+              </span>
+            )}
           </nav>
 
-          {/* Return Home Action Button */}
-          <div className="flex items-center gap-2">
+          {/* Return Action Button */}
+          <div className="flex items-center gap-2 shrink-0">
             <button
-              onClick={onBackToHome}
+              onClick={readingPost ? handleCloseReader : onBackToHome}
               className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full liquid-glass-btn text-[#161B26] dark:text-[#F8FAFC] text-xs font-bold transition-all cursor-pointer"
             >
               {isArabic ? <ArrowRight className="w-3.5 h-3.5" /> : <ArrowLeft className="w-3.5 h-3.5" />}
-              <span>{isArabic ? 'العودة للرئيسية' : 'Back to Home'}</span>
+              <span>
+                {readingPost
+                  ? (isArabic ? 'كافة المقالات' : 'All Articles')
+                  : (isArabic ? 'العودة للرئيسية' : 'Back to Home')}
+              </span>
             </button>
 
             {onOpenBooking && (
@@ -459,7 +469,8 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
         </div>
       </div>
 
-      {/* Main Content Container */}
+      {/* Main Content Container (Strictly mutually exclusive: either Blog Directory OR Single Article View so only 1 <h1> exists) */}
+      {!readingPost ? (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12">
         
         {/* Page Hero Header */}
@@ -712,9 +723,23 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                         <span>{isArabic ? post.publishDate : (post.publishDateEn || post.publishDate)}</span>
                       </div>
 
-                      {/* Title */}
+                      {/* Title with crawlable clean href */}
                       <h3 className="text-base sm:text-lg font-black text-[#161B26] dark:text-[#F8FAFC] leading-snug group-hover:text-[#1263D6] dark:group-hover:text-[#60AFFF] transition-colors mb-2.5">
-                        {isArabic ? post.title : (post.titleEn || post.title)}
+                        <a
+                          href={`/blog/${post.slug}`}
+                          onClick={(e) => {
+                            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+                              e.stopPropagation();
+                              return;
+                            }
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleOpenReader(post);
+                          }}
+                          className="hover:underline focus:outline-none"
+                        >
+                          {isArabic ? post.title : (post.titleEn || post.title)}
+                        </a>
                       </h3>
 
                       {/* Excerpt */}
@@ -802,7 +827,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                alert(isArabic ? 'شكراً لاهتمامك! تم تسجيل اشتراكك في النشرة الإكلينيكية بنجاح.' : 'Thank you! You have subscribed successfully.');
+                setNewsletterSubscribed(true);
               }}
               className="flex flex-col sm:flex-row gap-2.5 max-w-lg"
             >
@@ -819,6 +844,16 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                 {isArabic ? 'اشتراك مجاني' : 'Subscribe Free'}
               </button>
             </form>
+            {newsletterSubscribed && (
+              <div className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#10B981]/15 border border-[#10B981]/30 text-[#047857] dark:text-[#34D399] text-xs font-bold">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>
+                  {isArabic
+                    ? 'شكراً لاهتمامك! تم تسجيل اشتراكك في النشرة الإكلينيكية بنجاح.'
+                    : 'Thank you! You have subscribed successfully.'}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -851,19 +886,11 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
         </div>
 
       </div>
-
-      {/* Full Article Reader Modal (Dedicated Deep-Read View) */}
-      {readingPost && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 lg:p-6 bg-black/60 backdrop-blur-md animate-fade-in"
-          onClick={handleCloseReader}
-        >
-          <div 
-            className="glass-modal-dialog rounded-[28px] w-full max-w-4xl max-h-[92vh] overflow-hidden shadow-2xl relative flex flex-col"
-            onClick={(e) => e.stopPropagation()}
-            dir={isArabic ? 'rtl' : 'ltr'}
-          >
-            {/* Sticky Reading Progress Bar */}
+      ) : (
+        /* Standalone Full Article Reader Page View (Strictly Single H1) */
+        <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10" dir={isArabic ? 'rtl' : 'ltr'}>
+          <div className="glass-modal-dialog rounded-[28px] overflow-hidden shadow-2xl relative flex flex-col">
+            {/* Reading Progress Bar */}
             <div className="w-full bg-[#161B26]/5 dark:bg-white/10 h-1.5">
               <div 
                 className="bg-gradient-to-r from-[#2B95FF] to-[#1A73E8] h-full transition-all duration-150"
@@ -871,22 +898,16 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
               />
             </div>
 
-            {/* Reader Header Bar */}
+            {/* Reader Controls Header Bar */}
             <div className="px-5 sm:px-8 py-3.5 border-b border-[#161B26]/[0.06] dark:border-white/[0.08] flex items-center justify-between gap-3 shrink-0 liquid-glass-panel">
-              
               <div className="flex items-center gap-2 truncate">
                 <span className="text-[10px] font-black uppercase px-3 py-1 rounded-full bg-[#1463D6] dark:bg-[#1E293B] text-white dark:text-[#F8FAFC] dark:border dark:border-white/15">
                   {isArabic ? readingPost.categoryTitle : (readingPost.categoryTitleEn || readingPost.categoryTitle)}
                 </span>
-                <span className="text-xs font-bold text-[#4B5563] dark:text-[#94A3B8] truncate hidden sm:inline">
-                  {isArabic ? readingPost.title : (readingPost.titleEn || readingPost.title)}
-                </span>
               </div>
 
-              {/* Reader Controls: Font Size, Share, Close */}
+              {/* Reader Controls: Font Size, Copy Link, Back */}
               <div className="flex items-center gap-2 shrink-0">
-                
-                {/* Font Size Adjuster */}
                 <div className="flex items-center liquid-glass-pill rounded-full p-0.5 text-xs">
                   <button
                     onClick={() => setReaderFontSize('sm')}
@@ -911,7 +932,6 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                   </button>
                 </div>
 
-                {/* Copy Link */}
                 <button
                   onClick={handleCopyCurrentLink}
                   className="p-2 rounded-full liquid-glass-btn text-[#4B5563] dark:text-[#94A3B8] hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors cursor-pointer relative"
@@ -919,26 +939,14 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                 >
                   {copyFeedback ? <Check className="w-4 h-4 text-[#10B981]" /> : <Copy className="w-4 h-4" />}
                 </button>
-
-                {/* Close Button */}
-                <button
-                  onClick={handleCloseReader}
-                  className="w-8 h-8 rounded-full liquid-glass-btn text-[#4B5563] dark:text-[#94A3B8] hover:text-[#161B26] dark:hover:text-white flex items-center justify-center transition-colors cursor-pointer"
-                  title="إغلاق"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-
               </div>
             </div>
 
-            {/* Scrollable Reader Body */}
+            {/* Article Body */}
             <div 
               ref={readerContentRef}
-              onScroll={handleReaderScroll}
-              className="flex-1 overflow-y-auto px-5 sm:px-10 lg:px-14 py-6 sm:py-8 space-y-6"
+              className="px-5 sm:px-10 lg:px-14 py-6 sm:py-8 space-y-6"
             >
-              
               {/* Post Headline & Unboxed Metadata */}
               <div className="space-y-3 border-b border-[#161B26]/[0.06] dark:border-white/[0.08] pb-6">
                 <div className="flex items-center gap-2 text-xs text-[#4B5563] dark:text-[#94A3B8] flex-wrap">
@@ -1005,22 +1013,22 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                   const trimmed = (block || '').trim();
                   if (trimmed.startsWith('## ')) {
                     return (
-                      <h3
+                      <h2
                         key={pIdx}
                         className="text-lg sm:text-xl font-black text-[#161B26] dark:text-[#F8FAFC] pt-4 pb-1 border-b border-[#161B26]/[0.06] dark:border-white/[0.08]"
                       >
                         {trimmed.slice(3)}
-                      </h3>
+                      </h2>
                     );
                   }
                   if (trimmed.startsWith('### ')) {
                     return (
-                      <h4
+                      <h3
                         key={pIdx}
                         className="text-base sm:text-lg font-extrabold text-[#1263D6] dark:text-[#60AFFF] pt-2.5"
                       >
                         {trimmed.slice(4)}
-                      </h4>
+                      </h3>
                     );
                   }
                   if (trimmed.startsWith('• ')) {
@@ -1127,17 +1135,21 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                   </button>
                 </div>
               </div>
-
             </div>
 
-            {/* Sticky Reader Footer */}
-            <div className="px-5 sm:px-8 py-3.5 border-t border-[#161B26]/[0.06] dark:border-white/[0.08] flex items-center justify-between gap-4 shrink-0 liquid-glass-panel">
-              <button
-                onClick={handleCloseReader}
+            {/* Bottom Navigation Footer inside Article Card */}
+            <div className="px-5 sm:px-8 py-4 border-t border-[#161B26]/[0.06] dark:border-white/[0.08] flex items-center justify-between gap-4 shrink-0 liquid-glass-panel">
+              <a
+                href="/blog"
+                onClick={(e) => {
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                  e.preventDefault();
+                  handleCloseReader();
+                }}
                 className="text-xs font-bold text-[#4B5563] dark:text-[#94A3B8] hover:text-[#161B26] dark:hover:text-white transition-colors cursor-pointer"
               >
                 {isArabic ? '← العودة لكافة المقالات' : '← Back to All Articles'}
-              </button>
+              </a>
 
               <button
                 onClick={() => {
@@ -1148,9 +1160,8 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
                 {isArabic ? 'حجز تقييم لحالة طفلي' : 'Book Child Assessment'}
               </button>
             </div>
-
           </div>
-        </div>
+        </article>
       )}
 
     </div>

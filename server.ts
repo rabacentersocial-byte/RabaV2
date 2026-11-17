@@ -40,6 +40,8 @@ import {
   isFirestoreAdminConfigured
 } from './src/lib/firebase-admin.ts';
 import sitemap, { renderSitemapXml } from './sitemap.ts';
+import { resolveRouteSeo } from './src/data/seoRoutes.ts';
+import { BLOG_POSTS } from './src/data/blogData.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1541,12 +1543,107 @@ async function startServer() {
       req.query.format === 'md' ||
       req.query.alt === 'markdown';
 
+    const VALID_EXACT_ROUTES = new Set([
+      '/',
+      '/index.html',
+      '/about',
+      '/contact',
+      '/terms',
+      '/terms-of-service',
+      '/privacy',
+      '/privacy-policy',
+      '/services',
+      '/services-directory',
+      '/specialists',
+      '/specialists-directory',
+      '/courses',
+      '/courses-directory',
+      '/packages',
+      '/branches',
+      '/branches-directory',
+      '/offers',
+      '/offers-directory',
+      '/shadow-teacher',
+      '/shadow-teacher-directory',
+      '/sewar',
+      '/partners',
+      '/partners-directory',
+      '/testimonials',
+      '/testimonials-directory',
+      '/reviews',
+      '/blog',
+      '/blog-directory',
+      '/articles',
+      '/booking',
+      '/admin',
+      '/login'
+    ]);
+
+    const getServerBlogPosts = () => {
+      const diskPosts = readJsonFile('blog_posts.json', null);
+      if (Array.isArray(diskPosts) && diskPosts.length > 0) {
+        return diskPosts;
+      }
+      return BLOG_POSTS;
+    };
+
+    const escapeHtmlAttr = (str: string): string =>
+      String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+    const injectRouteSeoHtml = (rawHtml: string, reqPath: string): string => {
+      const cleanPath = (reqPath || '/').split('?')[0].split('#')[0].replace(/\/+$/, '') || '/';
+      const seo = resolveRouteSeo(cleanPath, getServerBlogPosts());
+      const escTitle = escapeHtmlAttr(seo.title);
+      const escDesc = escapeHtmlAttr(seo.description);
+      const escCanonical = escapeHtmlAttr(seo.canonical);
+      const escH1 = escapeHtmlAttr(seo.h1);
+
+      let html = rawHtml;
+      html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escTitle}</title>`);
+      html = html.replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/?>/i, `<meta name="description" content="${escDesc}" />`);
+      html = html.replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i, `<link rel="canonical" href="${escCanonical}" />`);
+      html = html.replace(/<meta\s+property="og:url"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:url" content="${escCanonical}" />`);
+      html = html.replace(/<meta\s+property="og:title"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:title" content="${escTitle}" />`);
+      html = html.replace(/<meta\s+property="og:description"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:description" content="${escDesc}" />`);
+      html = html.replace(/<meta\s+property="og:type"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:type" content="${seo.ogType}" />`);
+      html = html.replace(/<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/?>/i, `<meta name="twitter:title" content="${escTitle}" />`);
+      html = html.replace(/<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/?>/i, `<meta name="twitter:description" content="${escDesc}" />`);
+
+      if (seo.ogImage) {
+        const escImg = escapeHtmlAttr(seo.ogImage);
+        html = html.replace(/<meta\s+property="og:image"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:image" content="${escImg}" />`);
+        html = html.replace(/<meta\s+name="twitter:image"\s+content="[^"]*"\s*\/?>/i, `<meta name="twitter:image" content="${escImg}" />`);
+      }
+
+      const jsonLdString = JSON.stringify(seo.jsonLd);
+      if (/<script\s+id="raba-structured-data"[^>]*>[\s\S]*?<\/script>/i.test(html)) {
+        html = html.replace(
+          /<script\s+id="raba-structured-data"[^>]*>[\s\S]*?<\/script>/i,
+          `<script id="raba-structured-data" type="application/ld+json">${jsonLdString}</script>`
+        );
+      }
+
+      // Isolate sub-route static pre-shell so raw HTML bots do NOT see homepage hero H1 on sub-pages
+      if (cleanPath !== '/' && cleanPath !== '/index.html') {
+        html = html.replace(
+          /<section\s+id="hero"\s+class="raba-pre-hero">[\s\S]*?<\/section>/i,
+          `<section class="raba-pre-hero"><div class="raba-pre-container" style="padding: 3rem 0;"><h1 class="raba-pre-h1">${escH1}</h1><p class="raba-pre-sub">${escDesc}</p></div></section>`
+        );
+      }
+
+      return html;
+    };
+
     // 5. If route is NOT valid, strictly return real HTTP 404 status (Never return HTTP 200!)
     if (!isRouteValid) {
       res.status(404);
       if (isMarkdownRequested) {
         res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
-        return res.send(`# 404 - الصفحة غير موجودة / Page Not Found\n\nالصفحة المطلوبة غير موجودة على مركز رابا.\nThe requested URL was not found on this server.\n\n- [الرئيسية / Homepage](https://rabacenters.com/)\n- [الخدمات / Services](https://rabacenters.com/#services)\n- [سياق الذكاء الاصطناعي / LLM Context](https://rabacenters.com/llms.txt)\n`);
+        return res.send(`# 404 - الصفحة غير موجودة / Page Not Found\n\nالصفحة المطلوبة غير موجودة على مركز رابا.\nThe requested URL was not found on this server.\n\n- [الرئيسية / Homepage](https://rabacenters.com/)\n- [الخدمات / Services](https://rabacenters.com/services)\n- [سياق الذكاء الاصطناعي / LLM Context](https://rabacenters.com/llms.txt)\n`);
       }
       if (req.accepts('html')) {
         const custom404 = path.join(publicDir, '404.html');
@@ -1569,9 +1666,12 @@ async function startServer() {
       if (fs.existsSync(distLlms)) {
         return res.sendFile(distLlms);
       }
-      return res.send(`# مركز رابا للعلاج بتحليل السلوك التطبيقي (ABA) والتأهيل الشامل\n\n> مركز رابا (Raba Center) في المملكة العربية السعودية من أقدم وأعرق المراكز الطبية والتأهيلية المتخصصة في تقديم خدمات التأهيل والدعم لذوي اضطراب طيف التوحد، برامج تحليل السلوك التطبيقي المكثفة (ABA)، التشخيص والتقييم النمائي المبكر، جلسات علاج النطق والتخاطب، التكامل الحسي والعلاج الوظيفي، وخدمة سِوار المتخصصة في معلم الظل والدمج المدرسي.\n\n## البرامج والخدمات العلاجية الأساسية\n- [برنامج تحليل السلوك التطبيقي المكثف ABA](https://rabacenters.com/#services)\n- [التشخيص والتقييم النمائي الشامل](https://rabacenters.com/#services)\n- [العلاج الوظيفي والتكامل الحسي](https://rabacenters.com/#services)\n- [علاج اضطرابات النطق واللغة والتخاطب](https://rabacenters.com/#services)\n- [خدمة سِوار — معلم الظل المدرسي والدمج](https://rabacenters.com/#shadow-teacher)\n- [باقات التأهيل الصيفية والمكثفة](https://rabacenters.com/#packages)\n\n## الكادر الطبي وفريق الأخصائيين\n- [دليل الأخصائيين والاستشاريين](https://rabacenters.com/#specialists)\n\n## الحجز والتواصل\n- الموقع: https://rabacenters.com\n- هاتف وواتساب: +966575100100\n- حجز استشارة: https://rabacenters.com/#booking\n`);
+      return res.send(`# مركز رابا للعلاج بتحليل السلوك التطبيقي (ABA) والتأهيل الشامل\n\n> مركز رابا (Raba Center) في المملكة العربية السعودية من أقدم وأعرق المراكز الطبية والتأهيلية المتخصصة في تقديم خدمات التأهيل والدعم لذوي اضطراب طيف التوحد، برامج تحليل السلوك التطبيقي المكثفة (ABA)، التشخيص والتقييم النمائي المبكر، جلسات علاج النطق والتخاطب، التكامل الحسي والعلاج الوظيفي، وخدمة سِوار المتخصصة في معلم الظل والدمج المدرسي.\n\n## البرامج والخدمات العلاجية الأساسية\n- [برنامج تحليل السلوك التطبيقي المكثف ABA](https://rabacenters.com/services/aba-therapy)\n- [التشخيص والتقييم النمائي الشامل](https://rabacenters.com/services/developmental-assessment)\n- [العلاج الوظيفي والتكامل الحسي](https://rabacenters.com/services/occupational-therapy)\n- [علاج اضطرابات النطق واللغة والتخاطب](https://rabacenters.com/services/speech-therapy)\n- [خدمة سِوار — معلم الظل المدرسي والدمج](https://rabacenters.com/shadow-teacher)\n- [الدورات التدريبية وبرامج التأهيل](https://rabacenters.com/courses)\n\n## الكادر الطبي وفريق الأخصائيين\n- [دليل الأخصائيين والاستشاريين](https://rabacenters.com/specialists)\n\n## الحجز والتواصل\n- الموقع: https://rabacenters.com\n- هاتف وواتساب: +966575100100\n- حجز استشارة: https://rabacenters.com/booking\n`);
     }
 
+    // Production HTML route handler with per-route SEO injection
+    (req as any).__rabaInjectSeo = injectRouteSeoHtml;
+    (req as any).__rabaIsValidRoute = VALID_EXACT_ROUTES.has(cleanPath) || isDynamicValid;
     next();
   });
 
@@ -1580,6 +1680,31 @@ async function startServer() {
   const distPath = path.join(process.cwd(), 'dist');
   const indexPath = path.join(distPath, 'index.html');
   const hasDist = fs.existsSync(indexPath);
+
+  const isDevAssetRequest = (reqPath: string): boolean => {
+    if (
+      reqPath.startsWith('/api/') ||
+      reqPath.startsWith('/@') ||
+      reqPath.startsWith('/src/') ||
+      reqPath.startsWith('/node_modules/') ||
+      reqPath.startsWith('/assets/') ||
+      reqPath.startsWith('/images/') ||
+      reqPath.startsWith('/logo/') ||
+      reqPath.startsWith('/uploads/') ||
+      reqPath.startsWith('/data/') ||
+      reqPath.startsWith('/.well-known/') ||
+      reqPath === '/sitemap.xml' ||
+      reqPath === '/robots.txt' ||
+      reqPath === '/llms.txt'
+    ) {
+      return true;
+    }
+    const base = path.posix.basename(reqPath);
+    if (base && base.includes('.') && reqPath !== '/index.html') {
+      return true;
+    }
+    return false;
+  };
 
   if (hasDist || isProduction || process.env.NODE_ENV === 'production') {
     // Auto-build client bundle if missing when starting in production
@@ -1607,9 +1732,10 @@ async function startServer() {
       app.use('/assets', (_req: Request, res: Response) => {
         res.status(404).json({ error: 'Asset chunk not found', reloadRequired: true });
       });
-      // 1-year cache on static media/images/fonts/js/css, with no-cache on HTML
+      // 1-year cache on static media/images/fonts/js/css; disable directory index so '/' enters route handler for SEO injection
       app.use(express.static(distPath, {
         maxAge: '365d',
+        index: false,
         redirect: false,
         setHeaders: (res, filePath) => {
           if (filePath.endsWith('.html')) {
@@ -1620,51 +1746,8 @@ async function startServer() {
         }
       }));
       app.get('*', (req: Request, res: Response) => {
-        const cleanPath = req.path.replace(/\/+$/, '') || '/';
-        const isDynamicValid = 
-          cleanPath.startsWith('/blog/') || 
-          cleanPath.startsWith('/articles/') || 
-          cleanPath.startsWith('/specialist/') ||
-          cleanPath.startsWith('/services/') ||
-          cleanPath.startsWith('/courses/');
-
-        const VALID_EXACT_ROUTES = new Set([
-          '/',
-          '/index.html',
-          '/about',
-          '/contact',
-          '/terms',
-          '/terms-of-service',
-          '/privacy',
-          '/privacy-policy',
-          '/services',
-          '/services-directory',
-          '/specialists',
-          '/specialists-directory',
-          '/courses',
-          '/courses-directory',
-          '/packages',
-          '/branches',
-          '/branches-directory',
-          '/offers',
-          '/offers-directory',
-          '/shadow-teacher',
-          '/shadow-teacher-directory',
-          '/sewar',
-          '/partners',
-          '/partners-directory',
-          '/testimonials',
-          '/testimonials-directory',
-          '/reviews',
-          '/blog',
-          '/blog-directory',
-          '/articles',
-          '/booking',
-          '/admin',
-          '/login'
-        ]);
-
-        if (!VALID_EXACT_ROUTES.has(cleanPath) && !isDynamicValid) {
+        const isRouteValid = Boolean((req as any).__rabaIsValidRoute);
+        if (!isRouteValid) {
           res.status(404);
           const custom404 = path.join(publicDir, '404.html');
           if (fs.existsSync(custom404)) {
@@ -1674,43 +1757,71 @@ async function startServer() {
         }
 
         res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
         if (fs.existsSync(indexPath)) {
-          res.sendFile(indexPath);
+          const rawHtml = fs.readFileSync(indexPath, 'utf-8');
+          const injectFn = (req as any).__rabaInjectSeo;
+          const finalHtml = typeof injectFn === 'function' ? injectFn(rawHtml, req.path) : rawHtml;
+          return res.status(200).send(finalHtml);
         } else {
-          res.status(200).send('<!DOCTYPE html><html><head><title>مركز رابا للتأهيل</title></head><body><div style="font-family:system-ui,sans-serif;text-align:center;padding:40px;direction:rtl"><h2>جاري تجهيز الموقع...</h2><p>يرجى إعادة تحميل الصفحة خلال لحظات.</p></div></body></html>');
+          return res.status(200).send('<!DOCTYPE html><html><head><title>مركز رابا للتأهيل</title></head><body><div style="font-family:system-ui,sans-serif;text-align:center;padding:40px;direction:rtl"><h2>جاري تجهيز الموقع...</h2><p>يرجى إعادة تحميل الصفحة خلال لحظات.</p></div></body></html>');
         }
       });
     } else {
-      app.use((req: Request, _res: Response, next) => {
-        if (req.path === '/specialists' || req.path === '/specialists/') {
-          req.url = '/index.html';
-        }
-        next();
-      });
       viteInstance = await createViteServer({
         server: {
           middlewareMode: true,
           hmr: false,
           watch: null,
         },
-        appType: 'spa',
+        appType: 'custom',
+      });
+      app.get('*', async (req: Request, res: Response, next) => {
+        if (isDevAssetRequest(req.path)) return next();
+        try {
+          const template = fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf-8');
+          const transformed = await viteInstance.transformIndexHtml(req.originalUrl, template);
+          const injectFn = (req as any).__rabaInjectSeo;
+          const finalHtml = typeof injectFn === 'function' ? injectFn(transformed, req.path) : transformed;
+          res.status(200)
+            .set({
+              'Content-Type': 'text/html; charset=utf-8',
+              'Cache-Control': 'public, max-age=0, must-revalidate',
+            })
+            .send(finalHtml);
+        } catch (err) {
+          viteInstance.ssrFixStacktrace(err as Error);
+          next(err);
+        }
       });
       app.use(viteInstance.middlewares);
     }
   } else {
-    app.use((req: Request, _res: Response, next) => {
-      if (req.path === '/specialists' || req.path === '/specialists/') {
-        req.url = '/index.html';
-      }
-      next();
-    });
     viteInstance = await createViteServer({
       server: {
         middlewareMode: true,
         hmr: false,
         watch: null,
       },
-      appType: 'spa',
+      appType: 'custom',
+    });
+    app.get('*', async (req: Request, res: Response, next) => {
+      if (isDevAssetRequest(req.path)) return next();
+      try {
+        const template = fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf-8');
+        const transformed = await viteInstance.transformIndexHtml(req.originalUrl, template);
+        const injectFn = (req as any).__rabaInjectSeo;
+        const finalHtml = typeof injectFn === 'function' ? injectFn(transformed, req.path) : transformed;
+        res.status(200)
+          .set({
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'public, max-age=0, must-revalidate',
+          })
+          .send(finalHtml);
+      } catch (err) {
+        viteInstance.ssrFixStacktrace(err as Error);
+        next(err);
+      }
     });
     app.use(viteInstance.middlewares);
   }

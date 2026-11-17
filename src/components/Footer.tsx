@@ -29,6 +29,9 @@ import { usePWAInstall } from '../hooks/usePWAInstall';
 interface FooterProps {
   onOpenAdmin?: () => void;
   onOpenBlogPage?: () => void;
+  onNavigate?: (path: string) => void;
+  onOpenBranchesPage?: () => void;
+  onOpenBooking?: () => void;
 }
 
 // Custom SVGs for platforms not directly in standard icons
@@ -50,9 +53,38 @@ const SnapchatIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' 
   </svg>
 );
 
-export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) => {
+export const Footer: React.FC<FooterProps> = ({
+  onOpenAdmin,
+  onOpenBlogPage,
+  onNavigate,
+  onOpenBranchesPage,
+  onOpenBooking,
+}) => {
   const { t, isArabic } = useLanguage();
   const { isIOS } = usePWAInstall();
+
+  const handleRouteLink = (path: string, e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (path === '/blog' && onOpenBlogPage) {
+      e.preventDefault();
+      onOpenBlogPage();
+      return;
+    }
+    if (path === '/branches' && onOpenBranchesPage) {
+      e.preventDefault();
+      onOpenBranchesPage();
+      return;
+    }
+    if (path === '/booking' && onOpenBooking) {
+      e.preventDefault();
+      onOpenBooking();
+      return;
+    }
+    if (onNavigate) {
+      e.preventDefault();
+      onNavigate(path);
+    }
+  };
   const [social, setSocial] = useState<SocialLinksSettings>(() => getStoredSocialSettings());
   const [footer, setFooter] = useState<FooterSettings>(() => getStoredFooterSettings());
   const [isPwaModalOpen, setIsPwaModalOpen] = useState(false);
@@ -282,13 +314,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
               {/* Blog Link */}
               <li>
                 <a 
-                  href="#blog-directory" 
-                  onClick={(e) => {
-                    if (onOpenBlogPage) {
-                      e.preventDefault();
-                      onOpenBlogPage();
-                    }
-                  }}
+                  href="/blog" 
+                  onClick={(e) => handleRouteLink('/blog', e)}
                   className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors flex items-center gap-1.5 font-bold text-[#1263D6] dark:text-[#60AFFF] cursor-pointer"
                 >
                   <BookOpen className="w-3.5 h-3.5" />
@@ -300,7 +327,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
               </li>
               {/* Shadow Teacher Link */}
               <li>
-                <a href="#shadow-teacher" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors flex items-center gap-1 font-semibold text-[#161B26] dark:text-[#F8FAFC]">
+                <a href="/shadow-teacher" onClick={(e) => handleRouteLink('/shadow-teacher', e)} className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors flex items-center gap-1 font-semibold text-[#161B26] dark:text-[#F8FAFC]">
                   <span>{isArabic ? 'خدمة سِوار – معلم الظل والدمج المدرسي (Shadow Teacher)' : 'Sewar Program – School Shadow Teacher Services'}</span>
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#10B981]/15 text-[#047857] dark:text-[#34D399] font-bold">
                     {isArabic ? 'مميز' : 'Featured'}
@@ -308,32 +335,32 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
                 </a>
               </li>
               <li>
-                <a href="#services" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
+                <a href="/services/aba-therapy" onClick={(e) => handleRouteLink('/services/aba-therapy', e)} className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
                   {isArabic ? 'تحليل السلوك التطبيقي (ABA) وتعديل السلوك' : 'Applied Behavior Analysis (ABA) & Behavior Modification'}
                 </a>
               </li>
               <li>
-                <a href="#services" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
+                <a href="/services/developmental-assessment" onClick={(e) => handleRouteLink('/services/developmental-assessment', e)} className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
                   {isArabic ? 'التشخيص والتقييم الفردي المقنن' : 'Standardized Diagnostic & Individual Assessment'}
                 </a>
               </li>
               <li>
-                <a href="#services" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
+                <a href="/services" onClick={(e) => handleRouteLink('/services', e)} className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
                   {isArabic ? 'برامج التدخل المبكر لطيف التوحد' : 'Early Intervention Autism Programs'}
                 </a>
               </li>
               <li>
-                <a href="#services" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
+                <a href="/services/speech-therapy" onClick={(e) => handleRouteLink('/services/speech-therapy', e)} className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
                   {isArabic ? 'جلسات النطق والتخاطب وتطوير التواصل' : 'Speech-Language Pathology & Communication Therapy'}
                 </a>
               </li>
               <li>
-                <a href="#services" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
+                <a href="/services/occupational-therapy" onClick={(e) => handleRouteLink('/services/occupational-therapy', e)} className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
                   {isArabic ? 'العلاج الوظيفي والتكامل الحسي' : 'Occupational Therapy & Sensory Integration'}
                 </a>
               </li>
               <li>
-                <a href="#services" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
+                <a href="/services/psychological-therapy" onClick={(e) => handleRouteLink('/services/psychological-therapy', e)} className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors inline-block py-0.5">
                   {isArabic ? 'الدعم النفسي والإرشاد الأسري الشامل' : 'Psychological Counseling & Family Guidance'}
                 </a>
               </li>
@@ -386,19 +413,27 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin, onOpenBlogPage }) =
               {isArabic ? (footer.copyrightAr || t.footer.copyright) : (footer.copyrightEn || t.footer.copyright)}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <a href="/about" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
+              <a href="/about" onClick={(e) => handleRouteLink('/about', e)} className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
                 {isArabic ? 'من نحن' : 'About Us'}
               </a>
               <span className="text-[#525B6B] dark:text-[#94A3B8] select-none">•</span>
-              <a href="/contact" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
+              <a href="/branches" onClick={(e) => handleRouteLink('/branches', e)} className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
+                {isArabic ? 'الفروع والعناوين' : 'Branches'}
+              </a>
+              <span className="text-[#525B6B] dark:text-[#94A3B8] select-none">•</span>
+              <a href="/booking" onClick={(e) => handleRouteLink('/booking', e)} className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
+                {isArabic ? 'حجز موعد' : 'Booking'}
+              </a>
+              <span className="text-[#525B6B] dark:text-[#94A3B8] select-none">•</span>
+              <a href="/contact" onClick={(e) => handleRouteLink('/contact', e)} className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
                 {isArabic ? 'اتصل بنا' : 'Contact Us'}
               </a>
               <span className="text-[#525B6B] dark:text-[#94A3B8] select-none">•</span>
-              <a href="/terms" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
+              <a href="/terms" onClick={(e) => handleRouteLink('/terms', e)} className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
                 {isArabic ? 'الشروط والأحكام' : 'Terms of Service'}
               </a>
               <span className="text-[#525B6B] dark:text-[#94A3B8] select-none">•</span>
-              <a href="/privacy" className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
+              <a href="/privacy" onClick={(e) => handleRouteLink('/privacy', e)} className="hover:text-[#1263D6] dark:hover:text-[#60AFFF] transition-colors font-semibold">
                 {isArabic ? 'سياسة الخصوصية' : 'Privacy Policy'}
               </a>
             </div>

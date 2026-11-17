@@ -32,6 +32,7 @@ import {
 import { ServiceItem, TherapyPackage } from '../types';
 import { CourseItem, getStoredCoursesData } from '../data/coursesData';
 import { getStoredServices, getStoredPackages } from '../data/mockData';
+import { getServiceSlugById } from '../data/seoRoutes';
 import { useLanguage } from '../context/LanguageContext';
 import { CourseCustomIcon } from './CourseCustomIcon';
 import { CourseDetailsModal } from './CourseDetailsModal';
@@ -43,6 +44,7 @@ interface ServicesDirectoryPageProps {
   onSelectPackage: (pkg: TherapyPackage) => void;
   onRegisterCourse: (course: CourseItem) => void;
   onOpenSpecialistsPage?: () => void;
+  onOpenServiceDetail?: (slug: string) => void;
 }
 
 export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
@@ -51,6 +53,7 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
   onSelectPackage,
   onRegisterCourse,
   onOpenSpecialistsPage,
+  onOpenServiceDetail,
 }) => {
   const { isArabic } = useLanguage();
 
@@ -860,7 +863,17 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
 
                           <div className="min-w-0 flex-1">
                             <h3 className="text-base sm:text-xl font-black text-[#161B26] dark:text-[#F8FAFC] leading-tight group-hover:text-[#1263D6] dark:group-hover:text-[#60AFFF] transition-colors">
-                              {isArabic ? service.title : (service.titleEn || service.title)}
+                              <a
+                                href={`/services/${getServiceSlugById(service.id)}`}
+                                onClick={(e) => {
+                                  if (!onOpenServiceDetail || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                                  e.preventDefault();
+                                  onOpenServiceDetail(getServiceSlugById(service.id));
+                                }}
+                                className="hover:underline focus:outline-none"
+                              >
+                                {isArabic ? service.title : (service.titleEn || service.title)}
+                              </a>
                             </h3>
                             {service.titleEn && isArabic && (
                               <span className="text-[10px] sm:text-[11px] font-semibold text-[#4B5563] dark:text-[#94A3B8] block mt-0.5 truncate" dir="ltr">

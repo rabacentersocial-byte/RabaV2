@@ -47,6 +47,8 @@ interface NavbarProps {
   isShadowTeacherPageOpen?: boolean;
   isPartnersPageOpen?: boolean;
   isTestimonialsPageOpen?: boolean;
+  currentPath?: string;
+  onNavigate?: (path: string) => void;
   unreadCount?: number;
   cartCount?: number;
 }
@@ -70,6 +72,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   isShadowTeacherPageOpen = false,
   isPartnersPageOpen = false,
   isTestimonialsPageOpen = false,
+  currentPath = '/',
+  onNavigate,
 }) => {
   const { theme, toggleTheme } = useTheme();
   const { toggleLanguage, t, isArabic } = useLanguage();
@@ -118,7 +122,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       id: 'home',
       label: t('nav.home'),
       subtitle: isArabic ? 'بوابة المركز الرئيسية ومحاور التميز' : 'Overview & Main Portal',
-      href: '#hero',
+      href: '/',
       icon: Home,
       iconBg: 'bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF] border-[#2B95FF]/30',
     },
@@ -126,7 +130,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       id: 'services',
       label: isArabic ? 'الخدمات' : 'Services',
       subtitle: isArabic ? 'جلسات التخاطب والوظيفي وتعديل السلوك' : 'Rehab, Speech & Behavioral Care',
-      href: '#services',
+      href: '/services',
       icon: Sparkles,
       iconBg: 'bg-[#10B981]/15 text-[#047857] dark:text-[#34D399] border-[#10B981]/30',
     },
@@ -134,7 +138,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       id: 'offers',
       label: isArabic ? 'العروض والأنشطة' : 'Offers & Activities',
       subtitle: isArabic ? 'عروض وفعاليات اليوم الوطني والأنشطة الحصرية' : 'Seasonal Deals & Center Events',
-      href: '#offers',
+      href: '/offers-directory',
       icon: Gift,
       iconBg: 'bg-[#8B5CF6]/15 text-[#6D28D9] dark:text-[#A78BFA] border-[#8B5CF6]/30',
     },
@@ -142,7 +146,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       id: 'shadow-teacher',
       label: isArabic ? 'خدمة سِوار (معلم الظل)' : 'Sewar (Shadow Teacher)',
       subtitle: isArabic ? 'الدمج المدرسي والتربوي المتخصص' : 'School Integration & Support',
-      href: '#shadow-teacher',
+      href: '/shadow-teacher',
       icon: GraduationCap,
       iconBg: 'bg-[#F59E0B]/15 text-[#B45309] dark:text-[#FBBF24] border-[#F59E0B]/30',
     },
@@ -150,7 +154,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       id: 'specialists',
       label: t('nav.specialists'),
       subtitle: isArabic ? 'نخبة الكوادر الطبية والتأهيلية المعتمدة' : 'Certified Clinical Specialist Team',
-      href: '#specialists',
+      href: '/specialists',
       icon: Stethoscope,
       iconBg: 'bg-[#141821]/10 dark:bg-white/10 text-[#161B26] dark:text-[#F8FAFC] border-[#161B26]/15 dark:border-white/15',
     },
@@ -158,7 +162,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       id: 'branches',
       label: isArabic ? 'فروعنا بالمملكة' : 'Branches',
       subtitle: isArabic ? 'الرياض · الخرج · الفروع والمواقع' : 'Riyadh · Al-Kharj & Locations',
-      href: '#branches',
+      href: '/branches',
       icon: MapPin,
       iconBg: 'bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF] border-[#2B95FF]/30',
     },
@@ -166,7 +170,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       id: 'blog',
       label: t('nav.blog'),
       subtitle: isArabic ? 'مقالات وأدلة توعوية شاملة للأسر' : 'Parent Guides & Autism Insights',
-      href: '#blog',
+      href: '/blog',
       icon: BookOpen,
       iconBg: 'bg-[#8B5CF6]/15 text-[#6D28D9] dark:text-[#A78BFA] border-[#8B5CF6]/30',
     },
@@ -174,7 +178,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       id: 'partners',
       label: isArabic ? 'شركاء النجاح' : 'Success Partners',
       subtitle: isArabic ? 'شراكات ورعايات مؤسسية رائدة' : 'Institutional Alliances & Partners',
-      href: '#partners',
+      href: '/partners',
       icon: Handshake,
       iconBg: 'bg-[#141821]/10 dark:bg-white/10 text-[#161B26] dark:text-[#F8FAFC] border-[#161B26]/15 dark:border-white/15',
     },
@@ -182,7 +186,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       id: 'testimonials',
       label: t('nav.stories'),
       subtitle: isArabic ? 'تجارب أسر أطفال رابا الحقيقية' : 'Real Parent Testimonials & Stories',
-      href: '#testimonials',
+      href: '/testimonials',
       icon: Star,
       iconBg: 'bg-[#F59E0B]/15 text-[#B45309] dark:text-[#FBBF24] border-[#F59E0B]/30',
     },
@@ -196,49 +200,45 @@ export const Navbar: React.FC<NavbarProps> = ({
     isBlogPageOpen ||
     isShadowTeacherPageOpen ||
     isPartnersPageOpen ||
-    isTestimonialsPageOpen;
+    isTestimonialsPageOpen ||
+    currentPath !== '/';
 
-  const isHrefActive = (href: string): boolean =>
-    (href === '#blog' && isBlogPageOpen) ||
-    (href === '#offers' && isOffersPageOpen) ||
-    (href === '#services' && isServicesPageOpen) ||
-    (href === '#specialists' && isSpecialistsPageOpen) ||
-    (href === '#branches' && isBranchesPageOpen) ||
-    (href === '#shadow-teacher' && isShadowTeacherPageOpen) ||
-    (href === '#partners' && isPartnersPageOpen) ||
-    (href === '#testimonials' && isTestimonialsPageOpen) ||
-    (href === '#hero' && !anySubPageOpen);
+  const isHrefActive = (href: string): boolean => {
+    if (href === '/blog') return isBlogPageOpen || currentPath.startsWith('/blog') || currentPath.startsWith('/articles');
+    if (href === '/offers-directory') return isOffersPageOpen || currentPath === '/offers-directory' || currentPath === '/offers';
+    if (href === '/services') return isServicesPageOpen || currentPath === '/services' || currentPath.startsWith('/services/');
+    if (href === '/specialists') return isSpecialistsPageOpen || currentPath.startsWith('/specialists') || currentPath.startsWith('/specialist/');
+    if (href === '/branches') return isBranchesPageOpen || currentPath.startsWith('/branches');
+    if (href === '/shadow-teacher') return isShadowTeacherPageOpen || currentPath === '/shadow-teacher' || currentPath === '/sewar';
+    if (href === '/partners') return isPartnersPageOpen || currentPath.startsWith('/partners');
+    if (href === '/testimonials') return isTestimonialsPageOpen || currentPath.startsWith('/testimonials') || currentPath === '/reviews';
+    if (href === '/') return !anySubPageOpen && currentPath === '/';
+    return false;
+  };
 
   const handleNavClick = (href: string, e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (href === '#blog' && onOpenBlogPage) {
-      e.preventDefault();
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    if (href === '/blog' && onOpenBlogPage) {
       onOpenBlogPage();
-    } else if (href === '#offers' && onOpenOffersPage) {
-      e.preventDefault();
+    } else if (href === '/offers-directory' && onOpenOffersPage) {
       onOpenOffersPage();
-    } else if (href === '#services' && onOpenServicesPage) {
-      e.preventDefault();
+    } else if (href === '/services' && onOpenServicesPage) {
       onOpenServicesPage();
-    } else if (href === '#specialists' && onOpenSpecialistsPage) {
-      e.preventDefault();
+    } else if (href === '/specialists' && onOpenSpecialistsPage) {
       onOpenSpecialistsPage();
-    } else if (href === '#branches' && onOpenBranchesPage) {
-      e.preventDefault();
+    } else if (href === '/branches' && onOpenBranchesPage) {
       onOpenBranchesPage();
-    } else if (href === '#shadow-teacher' && onOpenShadowTeacherPage) {
-      e.preventDefault();
+    } else if (href === '/shadow-teacher' && onOpenShadowTeacherPage) {
       onOpenShadowTeacherPage();
-    } else if (href === '#partners' && onOpenPartnersPage) {
-      e.preventDefault();
+    } else if (href === '/partners' && onOpenPartnersPage) {
       onOpenPartnersPage();
-    } else if (href === '#testimonials' && onOpenTestimonialsPage) {
-      e.preventDefault();
+    } else if (href === '/testimonials' && onOpenTestimonialsPage) {
       onOpenTestimonialsPage();
-    } else if (href === '#hero' && onGoHome) {
-      e.preventDefault();
+    } else if (href === '/' && onGoHome) {
       onGoHome();
-    } else if (onGoHome && anySubPageOpen) {
-      onGoHome();
+    } else if (onNavigate) {
+      onNavigate(href);
     }
   };
 
@@ -262,11 +262,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             
             {/* 1. Brand Identity & Logo (Right in RTL) */}
             <a 
-              href="#hero" 
+              href="/" 
               onClick={(e) => {
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
                 if (onGoHome) {
                   e.preventDefault();
                   onGoHome();
+                } else if (onNavigate) {
+                  e.preventDefault();
+                  onNavigate('/');
                 }
               }}
               className="flex items-center group cursor-pointer shrink-0 transition-opacity hover:opacity-95" 

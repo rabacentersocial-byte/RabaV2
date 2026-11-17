@@ -73,7 +73,7 @@ export const PartnersDirectoryPage: React.FC<PartnersDirectoryPageProps> = ({
       </div>
 
       {/* Main Interactive Partners Directory (Grid Default with View Switcher & Filters) */}
-      <PartnersSection defaultViewMode="grid" />
+      <PartnersSection defaultViewMode="grid" headingTag="h1" />
 
       {/* Institutional Partnership Inquiry Strip */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 sm:mt-14">

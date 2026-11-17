@@ -33,7 +33,7 @@
   RewriteCond %{HTTP:Accept} text/(x-)?markdown [NC,OR]
   RewriteCond %{HTTP:Accept} application/markdown [NC,OR]
   RewriteCond %{QUERY_STRING} (format=markdown|format=md|alt=markdown) [NC]
-  RewriteCond %{REQUEST_URI} ^/((about|contact|terms|terms-of-service|privacy|privacy-policy|services|services-directory|specialists|specialists-directory|branches|branches-directory|offers|offers-directory|blog|blog-directory|articles|booking|admin|login)/?|(blog|articles|specialist)/.+/?|index\.html)?$ [NC]
+  RewriteCond %{REQUEST_URI} ^/((about|contact|terms|terms-of-service|privacy|privacy-policy|services|services-directory|specialists|specialists-directory|courses|courses-directory|packages|branches|branches-directory|offers|offers-directory|shadow-teacher|shadow-teacher-directory|sewar|partners|partners-directory|testimonials|testimonials-directory|reviews|blog|blog-directory|articles|booking|admin|login)/?|(blog|articles|specialist|services|courses)/.+/?|index\.html)?$ [NC]
   RewriteRule ^ /llms.txt [L]
 
   # 4. Rewrite ONLY valid SPA routes to /index.html with HTTP 200

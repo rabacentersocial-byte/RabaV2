@@ -33,11 +33,14 @@ const SEWAR_AVAILABLE_CITIES = [
 
 interface ShadowTeacherSectionProps {
   onSubmitRequest?: (request: Appointment) => void;
+  headingTag?: 'h1' | 'h2';
 }
 
 export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
-  onSubmitRequest
+  onSubmitRequest,
+  headingTag = 'h2'
 }) => {
+  const HeadingTag = headingTag;
   const { language } = useLanguage();
   const isArabic = language === 'ar';
 
@@ -204,9 +207,9 @@ export const ShadowTeacherSection: React.FC<ShadowTeacherSectionProps> = ({
             <div className="hidden sm:flex w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#8B5CF6]/15 border border-[#8B5CF6]/30 items-center justify-center text-[#8B5CF6] shadow-xs shrink-0">
               <SiwarBraceletIcon className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
-            <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-black text-[#161B26] dark:text-[#F8FAFC] tracking-tight leading-snug">
+            <HeadingTag className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-black text-[#161B26] dark:text-[#F8FAFC] tracking-tight leading-snug">
               {isArabic ? 'خدمة سِوار — معلم الظل والدمج التعليمي والمدرسي' : 'Sewar Service — School Shadow Teacher & Inclusion'}
-            </h2>
+            </HeadingTag>
             <div className="hidden sm:flex w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#2B95FF]/15 border border-[#2B95FF]/30 items-center justify-center text-[#2B95FF] shadow-xs shrink-0">
               <SiwarBraceletIcon className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>

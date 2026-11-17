@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { SERVICE_SEO_ROUTES } from './src/data/seoRoutes.ts';
 
 export namespace MetadataRoute {
   export interface SitemapItem {
@@ -155,7 +156,32 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.8,
     },
+    {
+      url: `${BASE_URL}/contact`,
+      lastModified: today,
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
+    {
+      url: `${BASE_URL}/privacy`,
+      lastModified: today,
+      changeFrequency: 'monthly',
+      priority: 0.4,
+    },
+    {
+      url: `${BASE_URL}/terms`,
+      lastModified: today,
+      changeFrequency: 'monthly',
+      priority: 0.4,
+    },
   ];
+
+  const serviceDetailRoutes: MetadataRoute.Sitemap = SERVICE_SEO_ROUTES.map((srv) => ({
+    url: `${BASE_URL}/services/${srv.slug}`,
+    lastModified: today,
+    changeFrequency: 'weekly' as const,
+    priority: 0.9,
+  }));
 
   const blogPosts = readBlogPostsFromDisk();
   const dynamicBlogRoutes: MetadataRoute.Sitemap = blogPosts
@@ -183,7 +209,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       };
     });
 
-  return [...staticRoutes, ...dynamicBlogRoutes].filter(
+  return [...staticRoutes, ...serviceDetailRoutes, ...dynamicBlogRoutes].filter(
     (entry) => typeof entry.url === 'string' && !entry.url.includes('#')
   );
 }

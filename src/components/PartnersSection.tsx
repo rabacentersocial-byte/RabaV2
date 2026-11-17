@@ -489,11 +489,14 @@ const ConcaveArcPartnerSlider: React.FC<ConcaveArcPartnerSliderProps> = ({
 
 interface PartnersSectionProps {
   defaultViewMode?: 'slider' | 'grid';
+  headingTag?: 'h1' | 'h2';
 }
 
 export const PartnersSection: React.FC<PartnersSectionProps> = ({
   defaultViewMode = 'slider',
+  headingTag = 'h2',
 }) => {
+  const HeadingTag = headingTag;
   const { isArabic } = useLanguage();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
@@ -686,7 +689,7 @@ export const PartnersSection: React.FC<PartnersSectionProps> = ({
           </div>
 
           {/* Heading */}
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-black text-[#161B26] dark:text-[#F8FAFC] tracking-tight leading-tight mb-4">
+          <HeadingTag className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-black text-[#161B26] dark:text-[#F8FAFC] tracking-tight leading-tight mb-4">
             {isArabic ? (
               <>
                 <span>{settings.sectionTitleAr || 'شركاؤنا في مسيرة النجاح والتمكين'}</span>
@@ -698,7 +701,7 @@ export const PartnersSection: React.FC<PartnersSectionProps> = ({
                 <span className="text-[#2B95FF]">.</span>
               </>
             )}
-          </h2>
+          </HeadingTag>
 
           {/* Subtitle */}
           <p className="text-[#4B5563] dark:text-[#94A3B8] text-xs sm:text-sm md:text-base leading-relaxed px-4 max-w-2xl mx-auto font-normal">

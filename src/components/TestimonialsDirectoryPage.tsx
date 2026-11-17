@@ -85,6 +85,7 @@ export const TestimonialsDirectoryPage: React.FC<TestimonialsDirectoryPageProps>
         testimonials={testimonials}
         onAddTestimonial={onAddTestimonial}
         defaultLayout="grid"
+        headingTag="h1"
       />
     </div>
   );

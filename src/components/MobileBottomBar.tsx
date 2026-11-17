@@ -18,6 +18,8 @@ interface MobileBottomBarProps {
   onOpenBranchesPage?: () => void;
   onOpenOffersPage?: () => void;
   onGoHome?: () => void;
+  onNavigate?: (path: string) => void;
+  currentPath?: string;
   isSpecialistsPageOpen?: boolean;
   isServicesPageOpen?: boolean;
   isBranchesPageOpen?: boolean;
@@ -26,12 +28,12 @@ interface MobileBottomBarProps {
 
 export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
   onOpenBooking,
-  onOpenWhatsApp,
   onOpenSpecialistsPage,
   onOpenServicesPage,
   onOpenBranchesPage,
-  onOpenOffersPage,
   onGoHome,
+  onNavigate,
+  currentPath = '/',
   isSpecialistsPageOpen = false,
   isServicesPageOpen = false,
   isBranchesPageOpen = false,
@@ -43,70 +45,60 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
   );
 
   useEffect(() => {
-    if (isBranchesPageOpen) {
+    if (isBranchesPageOpen || currentPath.startsWith('/branches')) {
       setActiveTab('branches');
-    } else if (isSpecialistsPageOpen) {
+    } else if (isSpecialistsPageOpen || currentPath.startsWith('/specialists') || currentPath.startsWith('/specialist/')) {
       setActiveTab('specialists');
-    } else if (isServicesPageOpen) {
+    } else if (isServicesPageOpen || currentPath === '/services' || currentPath.startsWith('/services/')) {
       setActiveTab('services');
     } else {
       setActiveTab('home');
     }
-  }, [isBranchesPageOpen, isSpecialistsPageOpen, isServicesPageOpen, isOffersPageOpen]);
+  }, [isBranchesPageOpen, isSpecialistsPageOpen, isServicesPageOpen, isOffersPageOpen, currentPath]);
 
-  const handleHomeClick = () => {
+  const handleHomeClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
     setActiveTab('home');
-    if ((isSpecialistsPageOpen || isServicesPageOpen || isBranchesPageOpen || isOffersPageOpen) && onGoHome) {
+    if (onGoHome) {
       onGoHome();
+    } else if (onNavigate) {
+      onNavigate('/');
     } else {
-      const element = document.getElementById('hero');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  const handleServicesClick = () => {
+  const handleServicesClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
     setActiveTab('services');
     if (onOpenServicesPage) {
       onOpenServicesPage();
-    } else if ((isSpecialistsPageOpen || isBranchesPageOpen) && onGoHome) {
-      onGoHome();
-      setTimeout(() => {
-        const element = document.getElementById('services');
-        if (element) element.scrollIntoView({ behavior: 'smooth' });
-      }, 150);
-    } else {
-      const element = document.getElementById('services');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+    } else if (onNavigate) {
+      onNavigate('/services');
     }
   };
 
-  const handleSpecialistsClick = () => {
+  const handleSpecialistsClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
     setActiveTab('specialists');
-    if (onOpenSpecialistsPage && !isSpecialistsPageOpen) {
+    if (onOpenSpecialistsPage) {
       onOpenSpecialistsPage();
-    } else {
-      const element = document.getElementById('specialists');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+    } else if (onNavigate) {
+      onNavigate('/specialists');
     }
   };
 
-  const handleBranchesClick = () => {
+  const handleBranchesClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
     setActiveTab('branches');
-    if (onOpenBranchesPage && !isBranchesPageOpen) {
+    if (onOpenBranchesPage) {
       onOpenBranchesPage();
-    } else {
-      const element = document.getElementById('branches');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+    } else if (onNavigate) {
+      onNavigate('/branches');
     }
   };
 
@@ -121,7 +113,8 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
       <div className="mx-2.5 mb-1.5 rounded-[28px] bg-[rgba(255,255,255,0.80)] dark:bg-[rgba(22,28,42,0.85)] backdrop-blur-2xl border border-[#161B26]/[0.08] dark:border-white/[0.08] shadow-[0_20px_40px_-15px_rgba(22,27,38,0.14)] dark:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.60)] px-1.5 py-1.5 flex items-center justify-around">
         
         {/* 1. Home */}
-        <button
+        <a
+          href="/"
           onClick={handleHomeClick}
           className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-colors cursor-pointer min-w-[56px] min-h-[44px] ${
             activeTab === 'home'
@@ -131,10 +124,11 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
         >
           <Home className="w-5 h-5 mb-0.5" />
           <span className="text-[11px] font-bold tracking-tight">{isArabic ? 'الرئيسية' : 'Home'}</span>
-        </button>
+        </a>
 
         {/* 2. Services / Programs */}
-        <button
+        <a
+          href="/services"
           onClick={handleServicesClick}
           className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-colors cursor-pointer min-w-[56px] min-h-[44px] ${
             activeTab === 'services'
@@ -144,7 +138,7 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
         >
           <Layers className="w-5 h-5 mb-0.5" />
           <span className="text-[11px] font-bold tracking-tight">{isArabic ? 'الخدمات' : 'Services'}</span>
-        </button>
+        </a>
 
         {/* 3. Center CTA */}
         <button
@@ -159,7 +153,8 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
         </button>
 
         {/* 4. Specialists */}
-        <button
+        <a
+          href="/specialists"
           onClick={handleSpecialistsClick}
           className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-colors cursor-pointer min-w-[56px] min-h-[44px] ${
             activeTab === 'specialists'
@@ -169,10 +164,11 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
         >
           <UserCheck className="w-5 h-5 mb-0.5" />
           <span className="text-[11px] font-bold tracking-tight">{isArabic ? 'الأخصائيين' : 'Specialists'}</span>
-        </button>
+        </a>
 
         {/* 5. Our Branches */}
-        <button
+        <a
+          href="/branches"
           onClick={handleBranchesClick}
           className={`flex flex-col items-center justify-center py-1 px-2 rounded-full transition-colors cursor-pointer min-w-[56px] min-h-[44px] ${
             activeTab === 'branches'
@@ -182,7 +178,7 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
         >
           <MapPin className="w-5 h-5 mb-0.5 text-[#10B981]" />
           <span className="text-[11px] font-bold tracking-tight">{isArabic ? 'فروعنا' : 'Branches'}</span>
-        </button>
+        </a>
 
       </div>
     </nav>

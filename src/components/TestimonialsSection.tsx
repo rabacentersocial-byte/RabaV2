@@ -20,13 +20,16 @@ interface TestimonialsSectionProps {
   testimonials?: ParentReview[];
   onAddTestimonial?: (review: ParentReview) => void;
   defaultLayout?: 'slider' | 'grid';
+  headingTag?: 'h1' | 'h2';
 }
 
 export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
   testimonials: propTestimonials,
   onAddTestimonial: propOnAdd,
-  defaultLayout = 'slider'
+  defaultLayout = 'slider',
+  headingTag = 'h2'
 }) => {
+  const HeadingTag = headingTag;
   const { isArabic, direction } = useLanguage();
 
   const [reviewsList, setReviewsList] = useState<ParentReview[]>(
@@ -253,7 +256,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
             </span>
 
             {/* Main Headline with terminal period */}
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#161B26] dark:text-[#F8FAFC] tracking-tight leading-none mb-3">
+            <HeadingTag className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#161B26] dark:text-[#F8FAFC] tracking-tight leading-none mb-3">
               {isArabic ? (
                 <span>
                   ماذا يقول أولياء الأمور عنّا<span className="text-[#2B95FF]">.</span>
@@ -263,7 +266,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                   What our patients say<span className="text-[#2B95FF]">.</span>
                 </span>
               )}
-            </h2>
+            </HeadingTag>
 
             {/* Subtitle */}
             <p className="text-sm sm:text-base text-[#4B5563] dark:text-[#94A3B8] max-w-xl leading-relaxed">

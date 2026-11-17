@@ -127,7 +127,7 @@ export const ShadowTeacherDirectoryPage: React.FC<ShadowTeacherDirectoryPageProp
       </div>
 
       {/* Main Embedded Interactive Shadow Teacher Service Experience */}
-      <ShadowTeacherSection onSubmitRequest={onSubmitRequest} />
+      <ShadowTeacherSection onSubmitRequest={onSubmitRequest} headingTag="h1" />
 
       {/* Additional Dedicated Page Details: Inclusion Roadmap & Regional Coverage */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 sm:mt-14 space-y-10">
