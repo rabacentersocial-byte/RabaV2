@@ -81,6 +81,9 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
   const [readerFontSize, setReaderFontSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [readingProgress, setReadingProgress] = useState(0);
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
+  const [newsletterContact, setNewsletterContact] = useState('');
+  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
+  const [newsletterError, setNewsletterError] = useState('');
 
   // Interactive bookmarks & likes
   const [likedPosts, setLikedPosts] = useState<Record<string, boolean>>(() => {
@@ -826,25 +829,88 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
             </p>
 
             <form
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
-                setNewsletterSubscribed(true);
+                setNewsletterError('');
+                const trimmed = newsletterContact.trim();
+                if (!trimmed || trimmed.length < 5) {
+                  setNewsletterError(isArabic ? 'يرجى إدخال البريد الإلكتروني أو رقم الواتساب' : 'Please enter a valid email or WhatsApp number');
+                  return;
+                }
+                const isEmail = trimmed.includes('@');
+                const digits = trimmed.replace(/\D/g, '');
+                if (!isEmail && digits.length < 7) {
+                  setNewsletterError(isArabic ? 'يرجى إدخال بريد إلكتروني صحيح أو رقم جوال من 7 أرقام على الأقل' : 'Please enter a valid email or mobile number');
+                  return;
+                }
+
+                setNewsletterSubmitting(true);
+                try {
+                  const { saveCustomerRequestToFirestore } = await import('../services/firestoreService');
+                  await saveCustomerRequestToFirestore({
+                    id: `news-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+                    referenceNumber: `NWS-${Math.floor(100000 + Math.random() * 900000)}`,
+                    childName: isArabic ? 'مشترك النشرة المعرفية' : 'Newsletter Subscriber',
+                    childAge: 0,
+                    guardianName: isArabic ? 'مشترك النشرة المعرفية' : 'Newsletter Subscriber',
+                    guardianPhone: isEmail ? '0500000000' : trimmed,
+                    guardianEmail: isEmail ? trimmed : '',
+                    serviceId: 'newsletter-clinical',
+                    serviceTitle: isArabic ? 'اشتراك النشرة المعرفية والتأهيلية الأسبوعية' : 'Weekly Clinical Newsletter',
+                    specialistId: 'spec-general',
+                    specialistName: isArabic ? 'فريق المحتوى الإكلينيكي' : 'Clinical Editorial Team',
+                    date: new Date().toISOString().split('T')[0],
+                    timeSlot: 'اشتراك نشرة',
+                    notes: isArabic ? `طلب اشتراك بالنشرة المعرفية: ${trimmed}` : `Newsletter subscription: ${trimmed}`,
+                    status: 'new',
+                    paymentStatus: 'unpaid',
+                    amount: 0,
+                    reminderSettings: { whatsapp: !isEmail, sms: false, email: isEmail },
+                    createdAt: new Date().toISOString(),
+                    requestType: 'newsletter',
+                    requestSource: 'صفحة المدونة - النشرة المعرفية الأسبوعية',
+                    city: 'الرياض',
+                    branch: 'الرياض',
+                    readByAdmin: false
+                  });
+                  setNewsletterSubscribed(true);
+                  setNewsletterContact('');
+                } catch (err) {
+                  console.error('[BlogDirectoryPage] Newsletter save error:', err);
+                  setNewsletterError(
+                    isArabic
+                      ? 'تعذر تسجيل الاشتراك في قاعدة البيانات حالياً. يرجى المحاولة مجدداً.'
+                      : 'Failed to save subscription to database. Please try again.'
+                  );
+                } finally {
+                  setNewsletterSubmitting(false);
+                }
               }}
               className="flex flex-col sm:flex-row gap-2.5 max-w-lg"
             >
               <input
-                type="email"
+                type="text"
                 required
+                value={newsletterContact}
+                onChange={(e) => setNewsletterContact(e.target.value)}
                 placeholder={isArabic ? 'أدخل بريدك الإلكتروني أو رقم الواتساب...' : 'Enter your email or WhatsApp number...'}
                 className="flex-1 px-5 py-3 rounded-full bg-white/90 dark:bg-white/10 border border-[#161B26]/12 dark:border-white/20 text-[#161B26] dark:text-white placeholder:text-[#525B6B] dark:placeholder:text-[#94A3B8] text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[#2B95FF]"
               />
               <button
                 type="submit"
-                className="px-6 py-3 rounded-full bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 text-white font-black text-xs sm:text-sm transition-all cursor-pointer shadow-md shadow-[#2B95FF]/25 shrink-0"
+                disabled={newsletterSubmitting}
+                className="px-6 py-3 rounded-full bg-gradient-to-r from-[#1668DC] to-[#1152B8] hover:brightness-110 disabled:opacity-60 text-white font-black text-xs sm:text-sm transition-all cursor-pointer shadow-md shadow-[#2B95FF]/25 shrink-0"
               >
-                {isArabic ? 'اشتراك مجاني' : 'Subscribe Free'}
+                {newsletterSubmitting
+                  ? (isArabic ? 'جاري التسجيل...' : 'Subscribing...')
+                  : (isArabic ? 'اشتراك مجاني' : 'Subscribe Free')}
               </button>
             </form>
+            {newsletterError && (
+              <div className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-700 dark:text-rose-300 text-xs font-bold">
+                <span>{newsletterError}</span>
+              </div>
+            )}
             {newsletterSubscribed && (
               <div className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#10B981]/15 border border-[#10B981]/30 text-[#047857] dark:text-[#34D399] text-xs font-bold">
                 <CheckCircle2 className="w-4 h-4 shrink-0" />

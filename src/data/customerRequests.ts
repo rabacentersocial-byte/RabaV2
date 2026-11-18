@@ -11,7 +11,9 @@ export function generateRequestReference(type: CustomerRequestType): string {
     shadow_teacher: 'ST',
     national_day_offer: 'ND96',
     quick_consultation: 'QC',
-    store_order: 'ORD'
+    store_order: 'ORD',
+    newsletter: 'NWS',
+    contact: 'CNT'
   };
   const prefix = prefixMap[type] || 'REQ';
   const num = Math.floor(100000 + Math.random() * 900000);

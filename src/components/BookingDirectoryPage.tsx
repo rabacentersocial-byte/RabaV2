@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -19,7 +19,8 @@ import {
   User,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { SPECIALISTS, SERVICES, THERAPY_PACKAGES, TIME_SLOTS } from '../data/mockData';
+import { SERVICES, THERAPY_PACKAGES, TIME_SLOTS } from '../data/mockData';
+import { getStoredBranchesData, BranchItem } from '../data/branchesData';
 import { Specialist, ServiceItem, TherapyPackage, Appointment } from '../types';
 import {
   generateRequestReference,
@@ -60,9 +61,60 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
   const [selectedPackageId, setSelectedPackageId] = useState<string>(
     initialPackage?.id || THERAPY_PACKAGES[0].id
   );
-  const [selectedSpecialistId, setSelectedSpecialistId] = useState<string>(
-    initialSpecialist?.id || SPECIALISTS[0].id
+  const [branchesList, setBranchesList] = useState<BranchItem[]>(() => getStoredBranchesData());
+
+  const availableCities = useMemo(() => {
+    const map = new Map<string, { key: string; labelAr: string; labelEn: string }>();
+    branchesList.forEach((b) => {
+      if (b.city && !map.has(b.city)) {
+        map.set(b.city, {
+          key: b.city,
+          labelAr: b.cityNameAr || b.city,
+          labelEn: b.cityNameEn || b.city,
+        });
+      }
+    });
+    return Array.from(map.values());
+  }, [branchesList]);
+
+  const [selectedCity, setSelectedCity] = useState<string>(() => {
+    const initialBranches = getStoredBranchesData();
+    return initialBranches[0]?.city || 'riyadh';
+  });
+
+  const branchesInCity = useMemo(
+    () => branchesList.filter((b) => b.city === selectedCity),
+    [branchesList, selectedCity]
   );
+
+  const [selectedBranchId, setSelectedBranchId] = useState<string>(() => {
+    const initialBranches = getStoredBranchesData();
+    const defaultCity = initialBranches[0]?.city || 'riyadh';
+    return initialBranches.find((b) => b.city === defaultCity)?.id || '';
+  });
+
+  useEffect(() => {
+    const handleBranchesSync = () => {
+      setBranchesList(getStoredBranchesData());
+    };
+    window.addEventListener('raba_branches_updated', handleBranchesSync);
+    window.addEventListener('raba_persistent_sync_ready' as any, handleBranchesSync);
+    return () => {
+      window.removeEventListener('raba_branches_updated', handleBranchesSync);
+      window.removeEventListener('raba_persistent_sync_ready' as any, handleBranchesSync);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (branchesInCity.length > 0 && !branchesInCity.some((b) => b.id === selectedBranchId)) {
+      setSelectedBranchId(branchesInCity[0].id);
+    }
+  }, [branchesInCity, selectedBranchId]);
+
+  const getCleanBranchName = (branch: BranchItem) => {
+    const rawName = isArabic ? branch.name : (branch.nameEn || branch.name);
+    return rawName.split(/\s*[-–—]\s*/)[0].replace(/\s*\([^)]*\)/g, '').trim();
+  };
 
   const todayStr = new Date().toISOString().split('T')[0];
   const [selectedDate, setSelectedDate] = useState<string>(initialDate || todayStr);
@@ -87,7 +139,14 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
 
   const activeService = SERVICES.find((s) => s.id === selectedServiceId) || SERVICES[0];
   const activePackage = THERAPY_PACKAGES.find((p) => p.id === selectedPackageId) || THERAPY_PACKAGES[0];
-  const activeSpecialist = SPECIALISTS.find((s) => s.id === selectedSpecialistId) || SPECIALISTS[0];
+  const activeCityObj = availableCities.find((c) => c.key === selectedCity) || availableCities[0];
+  const activeBranchObj = branchesInCity.find((b) => b.id === selectedBranchId) || branchesInCity[0];
+
+  const handleCityChange = (cityKey: string) => {
+    setSelectedCity(cityKey);
+    const firstInCity = branchesList.find((b) => b.city === cityKey);
+    setSelectedBranchId(firstInCity?.id || '');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,6 +162,11 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
       return;
     }
 
+    if (!activeCityObj || !activeBranchObj) {
+      setFormError(isArabic ? 'يرجى اختيار المدينة والفرع المناسب' : 'Please select a city and branch');
+      return;
+    }
+
     setFormError('');
     setIsSubmitting(true);
 
@@ -112,8 +176,8 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
       bookingType === 'package'
         ? (!isArabic && activePackage.nameEn ? activePackage.nameEn : activePackage.name)
         : (!isArabic && activeService.titleEn ? activeService.titleEn : activeService.title);
-    const specialistName =
-      !isArabic && activeSpecialist.nameEn ? activeSpecialist.nameEn : activeSpecialist.name;
+    const cityLabel = isArabic ? activeCityObj.labelAr : activeCityObj.labelEn;
+    const branchLabel = getCleanBranchName(activeBranchObj);
 
     const newAppointment: Appointment = {
       id: `apt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
@@ -125,14 +189,20 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
       guardianEmail: 'contact@customer.com',
       serviceId: bookingType === 'package' ? activePackage.id : activeService.id,
       serviceTitle,
-      specialistId: activeSpecialist.id,
-      specialistName,
+      specialistId: initialSpecialist?.id || 'spec-general',
+      specialistName: initialSpecialist
+        ? (!isArabic && initialSpecialist.nameEn ? initialSpecialist.nameEn : initialSpecialist.name)
+        : (isArabic ? 'الفريق الإكلينيكي المختص' : 'Clinical Specialist Team'),
+      city: cityLabel,
+      branch: branchLabel,
       date: selectedDate,
       timeSlot: selectedTimeSlot,
       notes: notes.trim(),
       status: 'new',
       paymentStatus: 'unpaid',
-      amount: bookingType === 'package' ? activePackage.price : activeSpecialist.sessionPrice,
+      amount: bookingType === 'package'
+        ? activePackage.price
+        : (activeService.sessionPrice || initialSpecialist?.sessionPrice || 280),
       reminderSettings: {
         whatsapp: true,
         sms: true,
@@ -140,7 +210,9 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
       },
       createdAt: new Date().toISOString(),
       requestType,
-      requestSource: bookingType === 'package' ? 'صفحة حجز الباقات' : 'صفحة حجز المواعيد المستقلة',
+      requestSource: bookingType === 'package'
+        ? `صفحة حجز الباقات - ${cityLabel} (${branchLabel})`
+        : `صفحة حجز المواعيد المستقلة - ${cityLabel} (${branchLabel})`,
       couponCode: '',
       readByAdmin: false,
     };
@@ -221,7 +293,7 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
               <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8] leading-relaxed">
                 {isArabic
                   ? 'اختر البرنامج التأهيلي أو جلسة التقييم والموعد المناسب لك، وسيتواصل معك فريق الاستقبال فوراً لتأكيد الحضور.'
-                  : 'Select your preferred clinical service, specialist, and date. Our reception team will confirm immediately.'}
+                  : 'Select your preferred clinical service, city, branch, and date. Our reception team will confirm immediately.'}
               </p>
             </div>
 
@@ -235,8 +307,8 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
                 </h2>
                 <p className="text-xs sm:text-sm text-[#4B5563] dark:text-[#94A3B8]">
                   {isArabic
-                    ? `رقم المرجع: ${confirmedApp.referenceNumber} — الموعد: ${confirmedApp.date} (${confirmedApp.timeSlot})`
-                    : `Reference: ${confirmedApp.referenceNumber} — Date: ${confirmedApp.date} (${confirmedApp.timeSlot})`}
+                    ? `رقم المرجع: ${confirmedApp.referenceNumber} — ${confirmedApp.city || ''} (${confirmedApp.branch || ''}) — الموعد: ${confirmedApp.date} (${confirmedApp.timeSlot})`
+                    : `Reference: ${confirmedApp.referenceNumber} — ${confirmedApp.city || ''} (${confirmedApp.branch || ''}) — Date: ${confirmedApp.date} (${confirmedApp.timeSlot})`}
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                   <a
@@ -359,29 +431,49 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
                     >
                       {THERAPY_PACKAGES.map((pkg) => (
                         <option key={pkg.id} value={pkg.id}>
-                          {!isArabic && pkg.nameEn ? pkg.nameEn : pkg.name} ({pkg.price} {isArabic ? 'ر.س' : 'SAR'})
+                          {!isArabic && pkg.nameEn ? pkg.nameEn : pkg.name}
                         </option>
                       ))}
                     </select>
                   )}
                 </div>
 
-                <div>
-                  <label htmlFor="page-booking-specialist" className="text-xs font-bold text-[#161B26] dark:text-slate-200 block mb-1.5">
-                    {isArabic ? 'الأخصائي المفضل:' : 'Preferred Specialist:'}
-                  </label>
-                  <select
-                    id="page-booking-specialist"
-                    value={selectedSpecialistId}
-                    onChange={(e) => setSelectedSpecialistId(e.target.value)}
-                    className="w-full h-11 bg-white/80 dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-3.5 text-sm text-[#161B26] dark:text-white outline-none focus:border-[#2B95FF]"
-                  >
-                    {SPECIALISTS.map((sp) => (
-                      <option key={sp.id} value={sp.id}>
-                        {!isArabic && sp.nameEn ? sp.nameEn : sp.name}
-                      </option>
-                    ))}
-                  </select>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="page-booking-city" className="text-xs font-bold text-[#161B26] dark:text-slate-200 block mb-1.5">
+                      {isArabic ? 'المدينة:' : 'City:'} <span className="text-rose-500">*</span>
+                    </label>
+                    <select
+                      id="page-booking-city"
+                      value={selectedCity}
+                      onChange={(e) => handleCityChange(e.target.value)}
+                      className="w-full h-11 bg-white/80 dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-3.5 text-sm text-[#161B26] dark:text-white outline-none focus:border-[#2B95FF]"
+                    >
+                      {availableCities.map((cityItem) => (
+                        <option key={cityItem.key} value={cityItem.key}>
+                          {isArabic ? cityItem.labelAr : cityItem.labelEn}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="page-booking-branch" className="text-xs font-bold text-[#161B26] dark:text-slate-200 block mb-1.5">
+                      {isArabic ? 'الفرع:' : 'Branch:'} <span className="text-rose-500">*</span>
+                    </label>
+                    <select
+                      id="page-booking-branch"
+                      value={selectedBranchId}
+                      onChange={(e) => setSelectedBranchId(e.target.value)}
+                      className="w-full h-11 bg-white/80 dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-3.5 text-sm text-[#161B26] dark:text-white outline-none focus:border-[#2B95FF]"
+                    >
+                      {branchesInCity.map((branchItem) => (
+                        <option key={branchItem.id} value={branchItem.id}>
+                          {getCleanBranchName(branchItem)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

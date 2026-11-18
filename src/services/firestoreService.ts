@@ -521,10 +521,29 @@ export async function saveCustomerRequestToFirestore(request: Appointment): Prom
   try {
     const { fs, db } = await loadFirestoreCtx();
     const docRef = fs.doc(db, 'customer_requests', docId);
+    let normalizedStatus = request.status || 'new';
+    if (!['new', 'pending', 'contacted', 'confirmed', 'completed', 'cancelled'].includes(normalizedStatus)) {
+      normalizedStatus = 'new';
+    }
     const createdAtISO = request.createdAt || new Date().toISOString();
     const sanitized = sanitizeFirestoreData({
       ...request,
       id: docId,
+      referenceNumber: request.referenceNumber || `REQ-${docId.slice(-6).toUpperCase()}`,
+      patientName: (request.childName || request.guardianName || 'مستفيد').trim().slice(0, 150),
+      guardianName: (request.guardianName || 'ولي أمر').trim().slice(0, 150),
+      phone: (request.guardianPhone || '').trim().slice(0, 35),
+      guardianPhone: (request.guardianPhone || '').trim().slice(0, 35),
+      guardianEmail: (request.guardianEmail || '').trim().slice(0, 120),
+      serviceId: (request.serviceId || 'general').slice(0, 120),
+      serviceName: (request.serviceTitle || 'طلب تواصل').trim().slice(0, 200),
+      serviceTitle: (request.serviceTitle || 'طلب تواصل').trim().slice(0, 200),
+      branch: (request.branch || request.city || 'الرياض').trim().slice(0, 100),
+      city: (request.city || request.branch || 'الرياض').trim().slice(0, 100),
+      requestType: request.requestType || 'contact',
+      requestSource: (request.requestSource || 'الموقع الإلكتروني').slice(0, 150),
+      notes: (request.notes || '').slice(0, 2000),
+      status: normalizedStatus,
       createdAtISO
     });
     await fs.setDoc(docRef, { ...sanitized, createdAt: fs.serverTimestamp() }, { merge: true });
@@ -682,32 +701,37 @@ export function subscribeAppointments(
 // ============================================================================
 
 export async function saveTestimonialToFirestore(review: ParentReview): Promise<boolean> {
-  const docId = review.id || `rev-${Date.now()}`;
+  const rawId = review.id || `rev-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+  const docId = rawId.replace(/[^a-zA-Z0-9_\-]/g, '-').slice(0, 128);
   const path = `testimonials/${docId}`;
   try {
     const { fs, db } = await loadFirestoreCtx();
     const docRef = fs.doc(db, 'testimonials', docId);
 
-    const payload = sanitizeFirestoreData({
+    const sanitizedPayload = sanitizeFirestoreData({
       id: docId,
-      parentName: review.parentName || 'ولي أمر مستفيد',
-      parentNameEn: review.parentNameEn || 'Beneficiary Parent',
-      rating: Number(review.rating) || 5,
-      comment: review.comment || '',
-      category: review.category || 'general',
-      specialistName: review.specialistName || '',
-      location: review.location || 'الرياض',
-      date: review.date || 'اليوم',
+      parentName: (review.parentName || 'ولي أمر مستفيد').trim().slice(0, 100),
+      parentNameEn: (review.parentNameEn || 'Beneficiary Parent').trim().slice(0, 100),
+      rating: Math.min(5, Math.max(1, Number(review.rating) || 5)),
+      comment: (review.comment || '').trim().slice(0, 1500),
+      category: (review.category || 'general').slice(0, 80),
+      specialistName: (review.specialistName || '').slice(0, 120),
+      location: (review.location || 'الرياض').slice(0, 100),
+      date: (review.date || 'اليوم').slice(0, 50),
       isAnonymous: Boolean(review.isAnonymous),
-      avatar: review.avatar || ''
+      avatar: (review.avatar || '').slice(0, 300),
+      createdAtISO: new Date().toISOString()
     });
 
-    await fs.setDoc(docRef, payload, { merge: true });
+    await fs.setDoc(docRef, {
+      ...sanitizedPayload,
+      createdAt: fs.serverTimestamp()
+    }, { merge: true });
     console.log(`[Firestore] Successfully saved review: ${docId}`);
     return true;
   } catch (error) {
     console.error(`[Firestore Error - WRITE] Failed to save testimonial to ${path}:`, error);
-    handleFirestoreError(error, OperationType.WRITE, path);
+    handleFirestoreError(error, OperationType.WRITE, path, true);
     return false;
   }
 }

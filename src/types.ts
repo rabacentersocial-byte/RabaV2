@@ -111,7 +111,9 @@ export type CustomerRequestType =
   | 'shadow_teacher'       // طلب خدمة معلم ظل
   | 'national_day_offer'   // عرض اليوم الوطني 96
   | 'quick_consultation'   // استشارة سريعة / اتصال هاتفي
-  | 'store_order';         // طلب منتجات من المتجر
+  | 'store_order'          // طلب منتجات من المتجر
+  | 'newsletter'           // اشتراك النشرة المعرفية
+  | 'contact';             // طلب تواصل عام
 
 export interface StoreOrderItem {
   id: string;

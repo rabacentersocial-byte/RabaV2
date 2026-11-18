@@ -10,7 +10,7 @@
         "type": { "type": "string" },
         "requestType": {
           "type": "string",
-          "enum": ["appointment", "package", "course", "shadow_teacher", "national_day_offer", "quick_consultation", "store_order"]
+          "enum": ["appointment", "package", "course", "shadow_teacher", "national_day_offer", "quick_consultation", "store_order", "newsletter", "contact"]
         },
         "requestSource": { "type": "string" },
         "patientName": { "type": "string", "maxLength": 150 },
@@ -153,6 +153,10 @@
     "/appointments/{appointmentId}": {
       "schema": "Appointment",
       "description": "Collection of patient booking requests and appointments"
+    },
+    "/customer_requests/{requestId}": {
+      "schema": "Appointment",
+      "description": "Collection of general customer inquiries and newsletter subscriptions"
     },
     "/specialists/{specialistId}": {
       "schema": "Specialist",

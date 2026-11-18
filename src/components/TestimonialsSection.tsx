@@ -200,42 +200,47 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
       // Persist to Firestore collection 'testimonials' via dynamic import to decouple Firebase from initial bundle
       const { saveTestimonialToFirestore } = await import('../services/firestoreService');
       await saveTestimonialToFirestore(newReview);
+
+      if (propOnAdd) {
+        propOnAdd(newReview);
+      } else {
+        setReviewsList((prev) => [newReview, ...prev]);
+      }
+
+      try {
+        const { default: confetti } = await import('canvas-confetti');
+        confetti({
+          particleCount: 60,
+          spread: 60,
+          origin: { y: 0.7 }
+        });
+      } catch {
+        // ignore
+      }
+
+      setFormSuccess(true);
+      setTimeout(() => {
+        setFormSuccess(false);
+        setIsAddModalOpen(false);
+        setAuthorName('');
+        setLocationName('');
+        setIsAnonymous(false);
+        setAvatarUrl('');
+        setSelectedAvatarPreset('');
+        setComment('');
+        setFormError('');
+        if (sliderRef.current) {
+          sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        }
+      }, 1200);
     } catch (err) {
       console.error('[TestimonialsSection] Error saving review to Firestore:', err);
+      setFormError(
+        isArabic
+          ? 'عذراً، تعذر حفظ تقييمك في قاعدة البيانات حالياً. يرجى التحقق من اتصالك والمحاولة مجدداً.'
+          : 'Failed to save your review to the database. Please check your connection and try again.'
+      );
     }
-
-    if (propOnAdd) {
-      propOnAdd(newReview);
-    } else {
-      setReviewsList((prev) => [newReview, ...prev]);
-    }
-
-    try {
-      const { default: confetti } = await import('canvas-confetti');
-      confetti({
-        particleCount: 60,
-        spread: 60,
-        origin: { y: 0.7 }
-      });
-    } catch {
-      // ignore
-    }
-
-    setFormSuccess(true);
-    setTimeout(() => {
-      setFormSuccess(false);
-      setIsAddModalOpen(false);
-      setAuthorName('');
-      setLocationName('');
-      setIsAnonymous(false);
-      setAvatarUrl('');
-      setSelectedAvatarPreset('');
-      setComment('');
-      setFormError('');
-      if (sliderRef.current) {
-        sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-      }
-    }, 1200);
   };
 
   return (

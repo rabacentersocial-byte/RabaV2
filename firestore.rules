@@ -28,20 +28,52 @@ service cloud.firestore {
       return isSignedIn();
     }
 
+    function isTestDocId(id) {
+      return id.matches('^verify-test-[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isTestRecordDoc(id) {
+      return isTestDocId(id) && ('isTestRecord' in existing()) && existing().isTestRecord == true;
+    }
+
     // --- Entity Validation Helpers ---
     function isValidAppointment(data) {
-      return ((data.patientName is string && data.patientName.size() > 0 && data.patientName.size() <= 150)
-          || (data.parentName is string && data.parentName.size() > 0 && data.parentName.size() <= 150)
-          || (data.childName is string && data.childName.size() > 0 && data.childName.size() <= 150)
-          || (data.guardianName is string && data.guardianName.size() > 0 && data.guardianName.size() <= 150))
-        && ((data.phone is string && data.phone.size() >= 7 && data.phone.size() <= 35)
-          || (data.guardianPhone is string && data.guardianPhone.size() >= 7 && data.guardianPhone.size() <= 35))
+      return ((('patientName' in data) && data.patientName is string && data.patientName.size() > 0 && data.patientName.size() <= 150)
+          || (('parentName' in data) && data.parentName is string && data.parentName.size() > 0 && data.parentName.size() <= 150)
+          || (('childName' in data) && data.childName is string && data.childName.size() > 0 && data.childName.size() <= 150)
+          || (('guardianName' in data) && data.guardianName is string && data.guardianName.size() > 0 && data.guardianName.size() <= 150))
+        && ((('phone' in data) && data.phone is string && data.phone.size() >= 7 && data.phone.size() <= 35)
+          || (('guardianPhone' in data) && data.guardianPhone is string && data.guardianPhone.size() >= 7 && data.guardianPhone.size() <= 35))
         && (!('date' in data) || (data.date is string && data.date.size() <= 50))
         && data.status is string && (data.status in ['new', 'pending', 'contacted', 'confirmed', 'completed', 'cancelled'])
         && (!('notes' in data) || (data.notes is string && data.notes.size() <= 2000))
         && (!('adminNotes' in data) || (data.adminNotes is string && data.adminNotes.size() <= 2000))
         && (!('serviceName' in data) || (data.serviceName is string && data.serviceName.size() <= 200))
-        && (!('serviceTitle' in data) || (data.serviceTitle is string && data.serviceTitle.size() <= 200));
+        && (!('serviceTitle' in data) || (data.serviceTitle is string && data.serviceTitle.size() <= 200))
+        && (!('requestSource' in data) || (data.requestSource is string && data.requestSource.size() <= 150))
+        && (!('branch' in data) || (data.branch is string && data.branch.size() <= 100))
+        && (!('city' in data) || (data.city is string && data.city.size() <= 100));
+    }
+
+    function isValidAppointmentCreate(id, data) {
+      return isValidAppointment(data)
+        && (data.status in ['new', 'pending'])
+        && ('createdAt' in data) && data.createdAt == request.time
+        && ((!('isTestRecord' in data) && !isTestDocId(id)) || (isTestDocId(id) && data.isTestRecord == true));
+    }
+
+    function isValidCustomerRequestCreate(id, data) {
+      return data.status is string && (data.status in ['new', 'pending'])
+        && ('createdAt' in data) && data.createdAt == request.time
+        && ((('phone' in data) && data.phone is string && data.phone.size() >= 7 && data.phone.size() <= 35)
+          || (('guardianPhone' in data) && data.guardianPhone is string && data.guardianPhone.size() >= 7 && data.guardianPhone.size() <= 35)
+          || (('guardianEmail' in data) && data.guardianEmail is string && data.guardianEmail.size() >= 3 && data.guardianEmail.size() <= 150))
+        && (!('patientName' in data) || (data.patientName is string && data.patientName.size() <= 150))
+        && (!('guardianName' in data) || (data.guardianName is string && data.guardianName.size() <= 150))
+        && (!('serviceTitle' in data) || (data.serviceTitle is string && data.serviceTitle.size() <= 200))
+        && (!('requestSource' in data) || (data.requestSource is string && data.requestSource.size() <= 150))
+        && (!('notes' in data) || (data.notes is string && data.notes.size() <= 2000))
+        && ((!('isTestRecord' in data) && !isTestDocId(id)) || (isTestDocId(id) && data.isTestRecord == true));
     }
 
     function isValidTestimonial(data) {
@@ -50,62 +82,81 @@ service cloud.firestore {
         && data.comment is string && data.comment.size() > 0 && data.comment.size() <= 1500;
     }
 
+    function isValidTestimonialCreate(id, data) {
+      return isValidTestimonial(data)
+        && ('createdAt' in data) && data.createdAt == request.time
+        && ((!('isTestRecord' in data) && !isTestDocId(id)) || (isTestDocId(id) && data.isTestRecord == true));
+    }
+
     // --- Collection Rule Blocks ---
 
     // 1. Dynamic Site Settings (Public Read for Visitors, Authenticated Admin Write)
     match /site_settings/{settingId} {
-      allow read: if true;
-      allow write: if isSignedIn() && isValidId(settingId);
+      allow get: if isValidId(settingId);
+      allow list: if true;
+      allow create, update, delete: if isSignedIn() && isValidId(settingId);
     }
 
     // 2. Specialists Directory (Public Read for Visitors, Authenticated Admin Write)
     match /specialists/{specialistId} {
-      allow read: if true;
-      allow write: if isSignedIn() && isValidId(specialistId);
+      allow get: if isValidId(specialistId);
+      allow list: if true;
+      allow create, update, delete: if isSignedIn() && isValidId(specialistId);
     }
 
-    // 3. Appointments & Consultation Bookings (Public Create for Patients, Authenticated Admin Read/Update/Delete)
+    // 3. Appointments & Consultation Bookings (Public Create with Strict Validation, Authenticated Admin Read/Update/Delete)
     match /appointments/{appointmentId} {
-      allow create: if isValidId(appointmentId) && isValidAppointment(incoming());
-      allow get: if isSignedIn() && isValidId(appointmentId);
+      allow create: if isValidId(appointmentId) && isValidAppointmentCreate(appointmentId, incoming());
+      allow get: if isValidId(appointmentId) && (isSignedIn() || isTestRecordDoc(appointmentId));
       allow list: if isSignedIn();
       allow update: if isSignedIn() && isValidId(appointmentId) && isValidAppointment(incoming());
-      allow delete: if isSignedIn() && isValidId(appointmentId);
+      allow delete: if isValidId(appointmentId) && (isSignedIn() || isTestRecordDoc(appointmentId));
     }
 
     // 4. Parent Reviews and Testimonials (Public Read, Public Create with Validation, Admin Update/Delete)
     match /testimonials/{testimonialId} {
-      allow read: if true;
-      allow create: if isValidId(testimonialId) && isValidTestimonial(incoming());
-      allow update, delete: if isSignedIn() && isValidId(testimonialId);
+      allow get: if isValidId(testimonialId);
+      allow list: if true;
+      allow create: if isValidId(testimonialId) && isValidTestimonialCreate(testimonialId, incoming());
+      allow update: if isSignedIn() && isValidId(testimonialId) && isValidTestimonial(incoming());
+      allow delete: if isValidId(testimonialId) && (isSignedIn() || isTestRecordDoc(testimonialId));
     }
 
     // 5. Clinical & Educational Blog Posts (Public Read, Admin Write)
     match /blog_posts/{postId} {
-      allow read: if true;
-      allow write: if isSignedIn() && isValidId(postId);
+      allow get: if isValidId(postId);
+      allow list: if true;
+      allow create, update, delete: if isSignedIn() && isValidId(postId);
     }
 
     // 6. System Notifications (Authenticated Admin Read & Write)
     match /notifications/{notificationId} {
-      allow read, write: if isSignedIn() && isValidId(notificationId);
+      allow get: if isSignedIn() && isValidId(notificationId);
+      allow list: if isSignedIn();
+      allow create, update, delete: if isSignedIn() && isValidId(notificationId);
     }
 
     // 7. Admin User Access Control (Authenticated Admin Read & Write)
     match /admins/{adminId} {
-      allow read, write: if isSignedIn() && isValidId(adminId);
+      allow get: if isSignedIn() && isValidId(adminId);
+      allow list: if isSignedIn();
+      allow create, update, delete: if isSignedIn() && isValidId(adminId);
     }
 
-    // 8. Public Customer Requests & Inquiries
+    // 8. Public Customer Requests & Newsletter Subscriptions (Public Create with Validation, Admin Read/Update/Delete)
     match /customer_requests/{requestId} {
-      allow create: if isValidId(requestId);
-      allow read, update, delete: if isSignedIn();
+      allow create: if isValidId(requestId) && isValidCustomerRequestCreate(requestId, incoming());
+      allow get: if isValidId(requestId) && (isSignedIn() || isTestRecordDoc(requestId));
+      allow list: if isSignedIn();
+      allow update: if isSignedIn() && isValidId(requestId);
+      allow delete: if isValidId(requestId) && (isSignedIn() || isTestRecordDoc(requestId));
     }
 
     // 9. User Profiles & Accounts
     match /users/{userId} {
-      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
-      allow write: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow get: if isSignedIn() && isValidId(userId) && (request.auth.uid == userId || isAdmin());
+      allow list: if isSignedIn();
+      allow create, update, delete: if isSignedIn() && isValidId(userId) && (request.auth.uid == userId || isAdmin());
     }
 
     // 10. Connection Test Document

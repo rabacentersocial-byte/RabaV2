@@ -433,7 +433,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 >
                   {THERAPY_PACKAGES.map((pkg) => (
                     <option key={pkg.id} value={pkg.id}>
-                      {!isArabic && pkg.nameEn ? pkg.nameEn : pkg.name} ({pkg.price} {isArabic ? 'ر.س' : 'SAR'})
+                      {!isArabic && pkg.nameEn ? pkg.nameEn : pkg.name}
                     </option>
                   ))}
                 </select>

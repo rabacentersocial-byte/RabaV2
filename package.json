@@ -10,7 +10,8 @@
     "optimize:images": "node scripts/optimize-assets.js",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "verify:firebase": "tsx scripts/verify-firebase-records.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
@@ -38,6 +39,7 @@
     "vite": "^8.3.5"
   },
   "devDependencies": {
+    "@firebase/eslint-plugin-security-rules": "^0.0.2",
     "@types/express": "^4.17.21",
     "@types/multer": "^2.3.0",
     "@types/node": "^22.14.0",
@@ -47,6 +49,7 @@
     "@types/sharp": "^0.31.1",
     "autoprefixer": "^10.4.21",
     "drizzle-kit": "^0.31.11",
+    "eslint": "^10.15.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.8.2",
     "vite-plugin-image-optimizer": "^2.0.3",
