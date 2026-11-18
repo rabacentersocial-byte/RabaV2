@@ -102,14 +102,12 @@ const ALL_COURSES = [
       "اساسيات تحليل السلوك التطبيقي ABA المتقدمة",
       "جمع وتحليل البيانات وأنظمة القياس الإكلينيكي",
       "تدخلات إكساب المهارات وتدخلات خفض السلوك والتدخل في السوابق",
-      "التقييم الشامل والتدريب والإشراف الإكلينيكي الميداني",
       "الأخلاقيات والقوانين المهنية والمعرفة الأساسية باضطراب طيف التوحد"
     ],
     featuresEn: [
       "Advanced ABA behavioral principles and methodologies",
       "Behavioral data collection, graphing, and measurement systems",
       "Skill acquisition protocols, behavior reduction, and antecedent strategies",
-      "Comprehensive clinical assessment, staff training, and supervision",
       "Professional ethics, regulatory compliance, and core ASD foundations"
     ],
     priceDisplayAr: "3500 ريال (بعد خصم 30% - الأصل 5000 ريال)",
