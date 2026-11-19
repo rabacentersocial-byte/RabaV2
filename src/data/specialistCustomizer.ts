@@ -2107,53 +2107,118 @@ export function saveStoredSpecialistSettings(settings: Record<string, Specialist
   window.dispatchEvent(new CustomEvent('raba_specialist_settings_updated', { detail: settings }));
 }
 
-export function updateSpecialistCardSetting(id: string, updates: Partial<SpecialistImageSetting>): void {
+export function updateSpecialistCardSetting(
+  id: string,
+  updates: Partial<SpecialistImageSetting>,
+  options?: { skipSpecialistsSync?: boolean }
+): void {
   const current = getStoredSpecialistSettings();
-  const existing = current[id] || {
+  const altId = id.startsWith('spec-') ? id.replace('spec-', 'doc-') : id.replace('doc-', 'spec-');
+  const existing = current[id] || current[altId] || {
     id,
-    name: '',
-    avatar: '/specialists/poster_ahmed_raad_1790197742838.jpg',
-    posterCrop: '/specialists/poster_ahmed_raad_1790197742838.jpg',
-    portraitCrop: '/specialists/spec_ahmed_raad_1790197197424.jpg',
-    fallbackAvatar: '/specialists/ahmed_raad_poster.jpg',
-    displayMode: 'cover',
-    focalPosition: 'top',
+    name: updates.name || '',
+    avatar: updates.avatar || '',
+    posterCrop: updates.avatar || '',
+    portraitCrop: updates.avatar || '',
+    fallbackAvatar: updates.avatar || '',
+    displayMode: 'cover' as const,
+    focalPosition: 'top' as const,
     zoomLevel: 100,
   };
 
   const updatedSetting: SpecialistImageSetting = {
     ...existing,
     ...updates,
+    id,
   };
 
   current[id] = updatedSetting;
 
   // Sync dual doc- / spec- ID representation
-  const altId = id.startsWith('spec-') ? id.replace('spec-', 'doc-') : id.replace('doc-', 'spec-');
   current[altId] = { ...updatedSetting, id: altId };
 
   // Special alias sync for Ahmed Abouzeid (spec-1 <-> doc-ahmed-abouzeid <-> spec-ahmed-abouzeid)
-  if (id === 'spec-1' || id === 'doc-ahmed-abouzeid' || id === 'spec-ahmed-abouzeid') {
+  if (id === 'spec-1' || id === 'doc-ahmed-abouzeid' || id === 'spec-ahmed-abouzeid' || id === 'doc-1') {
     current['spec-1'] = { ...updatedSetting, id: 'spec-1' };
+    current['doc-1'] = { ...updatedSetting, id: 'doc-1' };
     current['doc-ahmed-abouzeid'] = { ...updatedSetting, id: 'doc-ahmed-abouzeid' };
     current['spec-ahmed-abouzeid'] = { ...updatedSetting, id: 'spec-ahmed-abouzeid' };
   }
 
   saveStoredSpecialistSettings(current);
 
-  // Also update raba_specialists array so cards and modals are 100% in sync
-  if (updates.avatar) {
+  // Also sync avatar / isTopRated back to raba_specialists array so cards, admin list, and modals stay 100% aligned
+  if (!options?.skipSpecialistsSync && (updates.avatar !== undefined || updates.isTopRated !== undefined)) {
     try {
       const rawSpec = localStorage.getItem('raba_specialists');
       if (rawSpec) {
         const specList = JSON.parse(rawSpec);
         if (Array.isArray(specList)) {
+          let didModify = false;
+          const isAhmedAlias = (sid: string) =>
+            (id === 'spec-1' || id === 'doc-1' || id === 'doc-ahmed-abouzeid' || id === 'spec-ahmed-abouzeid') &&
+            (sid === 'spec-1' || sid === 'doc-1' || sid === 'doc-ahmed-abouzeid' || sid === 'spec-ahmed-abouzeid');
+
           const updatedList = specList.map((s: any) => {
-            if (s.id === id || s.id === altId || (id === 'spec-1' && (s.id === 'doc-ahmed-abouzeid' || s.id === 'spec-ahmed-abouzeid'))) {
-              return { ...s, avatar: updates.avatar };
+            if (s && (s.id === id || s.id === altId || isAhmedAlias(s.id))) {
+              didModify = true;
+              return {
+                ...s,
+                ...(updates.avatar ? { avatar: updates.avatar } : {}),
+                ...(updates.isTopRated !== undefined ? { isTopRated: updates.isTopRated } : {}),
+              };
             }
             return s;
           });
+
+          if (didModify) {
+            localStorage.setItem('raba_specialists', JSON.stringify(updatedList));
+            localStorage.setItem('raba_ts_raba_specialists', Date.now().toString());
+            savePersistentModule('raba_specialists', updatedList);
+            window.dispatchEvent(new CustomEvent('raba_specialists_updated', { detail: updatedList }));
+          }
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }
+}
+
+export function resetSpecialistCardSetting(id: string, fallbackAvatar?: string): void {
+  const current = getStoredSpecialistSettings();
+  const altId = id.startsWith('spec-') ? id.replace('spec-', 'doc-') : id.replace('doc-', 'spec-');
+
+  if (DEFAULT_SPECIALIST_SETTINGS[id]) {
+    current[id] = { ...DEFAULT_SPECIALIST_SETTINGS[id] };
+    if (DEFAULT_SPECIALIST_SETTINGS[altId]) {
+      current[altId] = { ...DEFAULT_SPECIALIST_SETTINGS[altId] };
+    }
+  } else {
+    delete current[id];
+    delete current[altId];
+  }
+
+  if (id === 'spec-1' || id === 'doc-1' || id === 'doc-ahmed-abouzeid' || id === 'spec-ahmed-abouzeid') {
+    current['spec-1'] = { ...DEFAULT_SPECIALIST_SETTINGS['spec-1'] };
+    current['doc-ahmed-abouzeid'] = { ...DEFAULT_SPECIALIST_SETTINGS['doc-ahmed-abouzeid'] };
+    current['spec-ahmed-abouzeid'] = { ...DEFAULT_SPECIALIST_SETTINGS['spec-ahmed-abouzeid'] };
+  }
+
+  saveStoredSpecialistSettings(current);
+
+  const restoredAvatar = DEFAULT_SPECIALIST_SETTINGS[id]?.avatar || fallbackAvatar;
+  if (restoredAvatar) {
+    try {
+      const rawSpec = localStorage.getItem('raba_specialists');
+      if (rawSpec) {
+        const specList = JSON.parse(rawSpec);
+        if (Array.isArray(specList)) {
+          const updatedList = specList.map((s: any) =>
+            s && (s.id === id || s.id === altId)
+              ? { ...s, avatar: restoredAvatar }
+              : s
+          );
           localStorage.setItem('raba_specialists', JSON.stringify(updatedList));
           savePersistentModule('raba_specialists', updatedList);
           window.dispatchEvent(new CustomEvent('raba_specialists_updated', { detail: updatedList }));
@@ -2165,45 +2230,50 @@ export function updateSpecialistCardSetting(id: string, updates: Partial<Special
   }
 }
 
-export function resetSpecialistCardSetting(id: string): void {
+export function removeSpecialistCardSetting(id: string): void {
   const current = getStoredSpecialistSettings();
-  if (DEFAULT_SPECIALIST_SETTINGS[id]) {
-    current[id] = { ...DEFAULT_SPECIALIST_SETTINGS[id] };
-    const altId = id.startsWith('spec-') ? id.replace('spec-', 'doc-') : id.replace('doc-', 'spec-');
-    if (DEFAULT_SPECIALIST_SETTINGS[altId]) {
-      current[altId] = { ...DEFAULT_SPECIALIST_SETTINGS[altId] };
-    }
-  } else {
+  const altId = id.startsWith('spec-') ? id.replace('spec-', 'doc-') : id.replace('doc-', 'spec-');
+  let changed = false;
+  if (current[id]) {
     delete current[id];
+    changed = true;
   }
-  
-  if (id === 'spec-1' || id === 'doc-ahmed-abouzeid' || id === 'spec-ahmed-abouzeid') {
-    current['spec-1'] = { ...DEFAULT_SPECIALIST_SETTINGS['spec-1'] };
-    current['doc-ahmed-abouzeid'] = { ...DEFAULT_SPECIALIST_SETTINGS['doc-ahmed-abouzeid'] };
-    current['spec-ahmed-abouzeid'] = { ...DEFAULT_SPECIALIST_SETTINGS['spec-ahmed-abouzeid'] };
+  if (current[altId]) {
+    delete current[altId];
+    changed = true;
   }
-
-  saveStoredSpecialistSettings(current);
+  if (changed) {
+    saveStoredSpecialistSettings(current);
+  }
 }
 
-export function getSpecialistImageSetting(id: string): SpecialistImageSetting {
+export function getSpecialistImageSetting(
+  id: string,
+  specialistFallback?: { avatar?: string; fallbackAvatar?: string; name?: string; isTopRated?: boolean }
+): SpecialistImageSetting {
   const all = getStoredSpecialistSettings();
   if (all[id]) return all[id];
   const altId = id.startsWith('spec-') ? id.replace('spec-', 'doc-') : id.replace('doc-', 'spec-');
   if (all[altId]) return all[altId];
-  if (id === 'spec-1' || id === 'doc-ahmed-abouzeid' || id === 'spec-ahmed-abouzeid') {
+  if (id === 'spec-1' || id === 'doc-1' || id === 'doc-ahmed-abouzeid' || id === 'spec-ahmed-abouzeid') {
     return all['doc-ahmed-abouzeid'] || all['spec-1'] || DEFAULT_SPECIALIST_SETTINGS['spec-1'];
   }
+  if (specialistFallback?.name) {
+    const byName = findCustomSettingForDoctor({ id, name: specialistFallback.name });
+    if (byName) return byName;
+  }
+  const safeAvatar = specialistFallback?.avatar || specialistFallback?.fallbackAvatar || '/images/specialists/haneen_obaidi.jpg';
   return {
     id,
-    name: '',
-    avatar: '/images/specialists/ahmed_raad.jpg',
-    posterCrop: '/images/specialists/ahmed_raad.jpg',
-    portraitCrop: '/images/specialists/ahmed_raad.jpg',
-    fallbackAvatar: '/images/specialists/ahmed_raad.jpg',
+    name: specialistFallback?.name || '',
+    avatar: safeAvatar,
+    posterCrop: safeAvatar,
+    portraitCrop: safeAvatar,
+    fallbackAvatar: specialistFallback?.fallbackAvatar || safeAvatar,
     displayMode: 'cover',
     focalPosition: 'top',
     zoomLevel: 100,
+    isTopRated: specialistFallback?.isTopRated,
   };
 }
 
@@ -2222,11 +2292,11 @@ export function findCustomSettingForDoctor(
   const altId = id.startsWith('spec-') ? id.replace('spec-', 'doc-') : id.replace('doc-', 'spec-');
   if (all[altId]) return all[altId];
 
-  if (id === 'spec-1' || id === 'doc-ahmed-abouzeid' || id === 'spec-ahmed-abouzeid') {
+  if (id === 'spec-1' || id === 'doc-1' || id === 'doc-ahmed-abouzeid' || id === 'spec-ahmed-abouzeid') {
     return all['doc-ahmed-abouzeid'] || all['spec-1'] || all['spec-ahmed-abouzeid'] || null;
   }
 
-  // Name matching fallback
+  // Exact normalized name matching fallback (prevents partial substring false matches)
   const rawName = doctorOrSpecialist.name || doctorOrSpecialist.arabicName || '';
   if (rawName) {
     const cleanSearchName = rawName.replace(/^[أادد]\.?\s*/, '').trim().toLowerCase();
@@ -2234,7 +2304,7 @@ export function findCustomSettingForDoctor(
       const sett = all[key];
       if (sett && sett.name) {
         const cleanSettName = sett.name.replace(/^[أادد]\.?\s*/, '').trim().toLowerCase();
-        if (cleanSettName && (cleanSearchName.includes(cleanSettName) || cleanSettName.includes(cleanSearchName))) {
+        if (cleanSettName && cleanSearchName === cleanSettName) {
           return sett;
         }
       }

@@ -24,7 +24,12 @@ import {
   resetSpecialistCardSetting 
 } from '../../data/specialistCustomizer';
 import { compressImage } from '../../utils/imageCompressor';
-import { savePersistentImage } from '../../utils/persistentImageStore';
+import {
+  savePersistentImage,
+  getResolvedImageUrl,
+  handleImageErrorWithStore
+} from '../../utils/persistentImageStore';
+import { saveSpecialistToFirestore } from '../../services/firestoreService';
 
 interface SpecialistImageCustomizerModalProps {
   specialist: Specialist;
@@ -42,10 +47,10 @@ export const SpecialistImageCustomizerModal: React.FC<SpecialistImageCustomizerM
   const { isArabic } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Load current settings for this specialist
-  const initialSettings = getSpecialistImageSetting(specialist.id);
+  // Load current settings for this specialist with fallback metadata
+  const initialSettings = getSpecialistImageSetting(specialist.id, specialist);
 
-  const [activeAvatar, setActiveAvatar] = useState<string>(initialSettings.avatar);
+  const [activeAvatar, setActiveAvatar] = useState<string>(initialSettings.avatar || specialist.avatar);
   const [displayMode, setDisplayMode] = useState<'cover' | 'contain'>(initialSettings.displayMode || 'cover');
   const [focalPosition, setFocalPosition] = useState<'top' | 'center' | 'bottom'>(initialSettings.focalPosition || 'top');
   const [zoomLevel, setZoomLevel] = useState<number>(initialSettings.zoomLevel || 100);
@@ -55,6 +60,7 @@ export const SpecialistImageCustomizerModal: React.FC<SpecialistImageCustomizerM
 
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [uploadNotice, setUploadNotice] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [isCompressing, setIsCompressing] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isDraggingOver, setIsDraggingOver] = useState<boolean>(false);
@@ -122,17 +128,20 @@ export const SpecialistImageCustomizerModal: React.FC<SpecialistImageCustomizerM
     }
   };
 
-  // Save changes persistently
+  // Save changes persistently across IndexedDB, customizer settings, raba_specialists, Cloud SQL & Firestore
   const handleSave = async () => {
     setIsSaving(true);
+    setSaveError(null);
     try {
-      if (activeAvatar) {
-        await savePersistentImage(specialist.id, activeAvatar);
-        await savePersistentImage(activeAvatar, activeAvatar);
+      const targetAvatar = activeAvatar || specialist.avatar;
+      if (targetAvatar) {
+        await savePersistentImage(specialist.id, targetAvatar);
+        await savePersistentImage(targetAvatar, targetAvatar);
       }
 
       updateSpecialistCardSetting(specialist.id, {
-        avatar: activeAvatar,
+        name: specialist.name,
+        avatar: targetAvatar,
         displayMode,
         focalPosition,
         zoomLevel,
@@ -141,22 +150,34 @@ export const SpecialistImageCustomizerModal: React.FC<SpecialistImageCustomizerM
         hideSessionPrice
       });
 
+      // Keep Firestore specialists/{id} document in sync too
+      await saveSpecialistToFirestore({
+        ...specialist,
+        avatar: targetAvatar,
+        isTopRated
+      });
+
       if (onSaved) onSaved();
       setTimeout(() => {
         setIsSaving(false);
         onClose();
-      }, 250);
-    } catch {
+      }, 200);
+    } catch (err) {
+      console.error('[SpecialistImageCustomizerModal] Failed to save customization:', err);
       setIsSaving(false);
-      onClose();
+      setSaveError(
+        isArabic
+          ? 'حدث خطأ أثناء حفظ تخصيص البطاقة في السحابة، يرجى المحاولة مرة أخرى.'
+          : 'Failed to save card customization. Please try again.'
+      );
     }
   };
 
   // Reset to default original image
   const handleReset = () => {
-    resetSpecialistCardSetting(specialist.id);
-    const refreshed = getSpecialistImageSetting(specialist.id);
-    setActiveAvatar(refreshed.posterCrop || refreshed.fallbackAvatar || refreshed.avatar);
+    resetSpecialistCardSetting(specialist.id, specialist.avatar);
+    const refreshed = getSpecialistImageSetting(specialist.id, specialist);
+    setActiveAvatar(refreshed.posterCrop || refreshed.fallbackAvatar || refreshed.avatar || specialist.avatar);
     setDisplayMode('cover');
     setFocalPosition('top');
     setZoomLevel(100);
@@ -164,6 +185,7 @@ export const SpecialistImageCustomizerModal: React.FC<SpecialistImageCustomizerM
     setIsAvailableToday(refreshed.isAvailableToday ?? true);
     setHideSessionPrice(false);
     setUploadedFileName(null);
+    setSaveError(null);
     setUploadNotice(isArabic ? 'تمت استعادة الصورة والإعدادات الافتراضية للبطاقة' : 'Reset to default card photo & settings');
   };
 
@@ -202,7 +224,13 @@ export const SpecialistImageCustomizerModal: React.FC<SpecialistImageCustomizerM
           {/* Controls Column (7 cols) */}
           <div className="lg:col-span-7 space-y-5">
             
-            {/* Notice / Alert if any */}
+            {/* Notice / Error Alerts */}
+            {saveError && (
+              <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/40 rounded-2xl flex items-center gap-2.5 text-xs text-rose-800 dark:text-rose-300 animate-fadeIn">
+                <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                <span className="font-bold">{saveError}</span>
+              </div>
+            )}
             {uploadNotice && (
               <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/40 rounded-2xl flex items-center gap-2.5 text-xs text-emerald-800 dark:text-emerald-300 animate-fadeIn">
                 <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
@@ -420,7 +448,7 @@ export const SpecialistImageCustomizerModal: React.FC<SpecialistImageCustomizerM
               {/* Card Header Hero Image */}
               <div className="relative h-56 overflow-hidden bg-slate-100 dark:bg-slate-800 border-b border-slate-100 dark:border-white/5">
                 <img
-                  src={activeAvatar}
+                  src={getResolvedImageUrl(activeAvatar)}
                   alt={specialist.name}
                   className={`w-full h-full transition-all duration-300 ${
                     displayMode === 'contain' ? 'object-contain' : 'object-cover'
@@ -431,6 +459,7 @@ export const SpecialistImageCustomizerModal: React.FC<SpecialistImageCustomizerM
                     transform: `scale(${zoomLevel / 100})`
                   }}
                   referrerPolicy="no-referrer"
+                  onError={(e) => handleImageErrorWithStore(e, activeAvatar, specialist.avatar)}
                 />
 
                 {/* Overlaid Badge: Top Rated */}

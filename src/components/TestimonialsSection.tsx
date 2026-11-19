@@ -13,7 +13,7 @@ import {
   CalendarCheck
 } from 'lucide-react';
 import { PARENT_REVIEWS, SPECIALISTS } from '../data/mockData';
-import { ParentReview } from '../types';
+import { ParentReview, Specialist } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 
 interface TestimonialsSectionProps {
@@ -48,7 +48,20 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('sensory');
-  const [specialistName, setSpecialistName] = useState(SPECIALISTS[0].name);
+  const [liveSpecialists, setLiveSpecialists] = useState<Specialist[]>(() => {
+    try {
+      const saved = localStorage.getItem('raba_specialists');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // ignore
+    }
+    return SPECIALISTS;
+  });
+
+  const [specialistName, setSpecialistName] = useState(() => liveSpecialists[0]?.name || SPECIALISTS[0].name);
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState(false);
 
@@ -57,6 +70,26 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
   const containerOffsetLeftRef = useRef(0);
+
+  // Synchronize live specialists updates
+  useEffect(() => {
+    const syncSpecs = () => {
+      try {
+        const saved = localStorage.getItem('raba_specialists');
+        if (!saved) return;
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) setLiveSpecialists(parsed);
+      } catch {
+        // ignore
+      }
+    };
+    window.addEventListener('raba_specialists_updated', syncSpecs);
+    window.addEventListener('raba_persistent_sync_ready', syncSpecs);
+    return () => {
+      window.removeEventListener('raba_specialists_updated', syncSpecs);
+      window.removeEventListener('raba_persistent_sync_ready', syncSpecs);
+    };
+  }, []);
 
   // Synchronize prop updates
   useEffect(() => {
@@ -786,7 +819,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
                     onChange={(e) => setSpecialistName(e.target.value)}
                     className="w-full warm-pill-input rounded-full px-3.5 py-2.5 text-xs outline-none cursor-pointer"
                   >
-                    {SPECIALISTS.map((spec) => (
+                    {(liveSpecialists.length > 0 ? liveSpecialists : SPECIALISTS).map((spec) => (
                       <option key={spec.id} value={spec.name}>
                         {spec.name} ({spec.role})
                       </option>

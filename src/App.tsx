@@ -307,7 +307,7 @@ export default function App() {
       if (Array.isArray(e?.detail)) {
         const next = e.detail;
         setSpecialists((prev) => {
-          if (prev.length === next.length && prev.every((s, i) => s.id === next[i].id && s.avatar === next[i].avatar)) {
+          if (JSON.stringify(prev) === JSON.stringify(next)) {
             return prev;
           }
           return next;
@@ -315,11 +315,11 @@ export default function App() {
       } else {
         try {
           const saved = localStorage.getItem('raba_specialists');
-          if (saved) {
+          if (saved !== null) {
             const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length > 0) {
+            if (Array.isArray(parsed)) {
               setSpecialists((prev) => {
-                if (prev.length === parsed.length && prev.every((s, i) => s.id === parsed[i].id && s.avatar === parsed[i].avatar)) {
+                if (JSON.stringify(prev) === JSON.stringify(parsed)) {
                   return prev;
                 }
                 return parsed;
@@ -349,31 +349,30 @@ export default function App() {
         return nextMods;
       });
 
-      // Re-read specialists gracefully without loop
+      // Re-read specialists gracefully without overwriting user additions/deletions/edits
       try {
         const savedSpec = localStorage.getItem('raba_specialists');
-        if (savedSpec) {
+        if (savedSpec !== null) {
           const parsed = JSON.parse(savedSpec);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            import('./data/mockData').then(({ SPECIALISTS }) => {
-              const hasStaleMocks = parsed.length !== SPECIALISTS.length ||
-                parsed.some((s: any) => 
-                  s.id === 'spec-rawan-tablett' || 
-                  s.id === 'spec-hossam-malki' ||
-                  (s.id === 'spec-hanaa-basheer' && (!s.education || s.education.length < 5 || s.category !== 'psychology' || s.experienceYears !== 15)) ||
-                  (s.id === 'spec-sara-abdelhamid' && s.name && s.name.includes('يارا')) ||
-                  (s.id === 'spec-sadeem-mshari' && s.experienceYears !== 2)
-                );
-              const fullList = hasStaleMocks
-                ? SPECIALISTS
-                : parsed;
-              setSpecialists((prev) => {
-                if (prev.length === fullList.length && prev.every((s, i) => s.id === fullList[i].id && s.avatar === fullList[i].avatar)) {
-                  return prev;
-                }
-                return fullList;
-              });
-            }).catch(() => {});
+          if (Array.isArray(parsed)) {
+            const isAlreadyMigrated = localStorage.getItem('raba_specialists_v2_migrated') === '1';
+            const hasObsoleteLegacyMocks = !isAlreadyMigrated && parsed.some((s: any) =>
+              s?.id === 'spec-rawan-tablett' ||
+              s?.id === 'spec-hossam-malki' ||
+              (s?.id === 'spec-sara-abdelhamid' && typeof s?.name === 'string' && s.name.includes('يارا'))
+            );
+
+            if (hasObsoleteLegacyMocks) {
+              import('./data/mockData').then(({ SPECIALISTS }) => {
+                localStorage.setItem('raba_specialists_v2_migrated', '1');
+                setSpecialists((prev) => (JSON.stringify(prev) === JSON.stringify(SPECIALISTS) ? prev : SPECIALISTS));
+              }).catch(() => {});
+            } else {
+              if (!isAlreadyMigrated && parsed.length > 0) {
+                localStorage.setItem('raba_specialists_v2_migrated', '1');
+              }
+              setSpecialists((prev) => (JSON.stringify(prev) === JSON.stringify(parsed) ? prev : parsed));
+            }
           }
         }
       } catch { /* ignore */ }
@@ -673,18 +672,40 @@ export default function App() {
       setNotifications((prev) => (prev.length > 0 ? prev : INITIAL_NOTIFICATIONS));
       setTestimonials((prev) => (prev.length > 0 ? prev : PARENT_REVIEWS));
       setSpecialists((prev) => {
-        if (!prev || prev.length === 0) {
+        const hasStoredKey = (() => {
+          try {
+            return localStorage.getItem('raba_specialists') !== null;
+          } catch {
+            return false;
+          }
+        })();
+
+        if ((!prev || prev.length === 0) && !hasStoredKey) {
+          try {
+            localStorage.setItem('raba_specialists_v2_migrated', '1');
+          } catch { /* ignore */ }
           return deduplicateSpecialists(SPECIALISTS);
         }
-        const hasStaleMocks = prev.length !== SPECIALISTS.length ||
-          prev.some((s: any) =>
-            s.id === 'spec-rawan-tablett' ||
-            s.id === 'spec-hossam-malki' ||
-            (s.id === 'spec-hanaa-basheer' && (!s.education || s.education.length < 5 || s.category !== 'psychology' || s.experienceYears !== 15)) ||
-            (s.id === 'spec-sara-abdelhamid' && s.name && s.name.includes('يارا')) ||
-            (s.id === 'spec-sadeem-mshari' && s.experienceYears !== 2)
-          );
-        return hasStaleMocks ? deduplicateSpecialists(SPECIALISTS) : deduplicateSpecialists(prev);
+
+        const isAlreadyMigrated = (() => {
+          try {
+            return localStorage.getItem('raba_specialists_v2_migrated') === '1';
+          } catch {
+            return false;
+          }
+        })();
+
+        const hasObsoleteLegacyMocks = !isAlreadyMigrated && prev.some((s: any) =>
+          s?.id === 'spec-rawan-tablett' ||
+          s?.id === 'spec-hossam-malki' ||
+          (s?.id === 'spec-sara-abdelhamid' && typeof s?.name === 'string' && s.name.includes('يارا'))
+        );
+
+        try {
+          localStorage.setItem('raba_specialists_v2_migrated', '1');
+        } catch { /* ignore */ }
+
+        return hasObsoleteLegacyMocks ? deduplicateSpecialists(SPECIALISTS) : deduplicateSpecialists(prev);
       });
     }).catch(() => {});
 

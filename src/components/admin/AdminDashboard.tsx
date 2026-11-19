@@ -87,7 +87,7 @@ interface AdminDashboardProps {
   reviews: ParentReview[];
   onUpdateReviews: (updated: ParentReview[]) => void;
   specialists?: Specialist[];
-  onUpdateSpecialists?: (updated: Specialist[]) => void;
+  onUpdateSpecialists?: (updated: Specialist[]) => Promise<boolean> | void;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
@@ -180,7 +180,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     saveStoredPackages(updated);
   };
   const [specialistsList, setSpecialistsList] = useState<Specialist[]>(() => {
-    if (specialists && specialists.length > 0) return specialists;
+    if (specialists && specialists.length >= 0) return specialists;
     try {
       const saved = localStorage.getItem('raba_specialists');
       return saved ? JSON.parse(saved) : SPECIALISTS;
@@ -188,6 +188,34 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       return SPECIALISTS;
     }
   });
+
+  // Keep AdminDashboard specialistsList synchronized with parent App state & cloud/disk sync events
+  useEffect(() => {
+    if (specialists) {
+      setSpecialistsList((prev) => (JSON.stringify(prev) === JSON.stringify(specialists) ? prev : specialists));
+    }
+  }, [specialists]);
+
+  useEffect(() => {
+    const syncSpecialistsFromStorage = () => {
+      try {
+        const raw = localStorage.getItem('raba_specialists');
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          setSpecialistsList((prev) => (JSON.stringify(prev) === JSON.stringify(parsed) ? prev : parsed));
+        }
+      } catch {
+        // ignore
+      }
+    };
+    window.addEventListener('raba_specialists_updated', syncSpecialistsFromStorage);
+    window.addEventListener('raba_persistent_sync_ready', syncSpecialistsFromStorage);
+    return () => {
+      window.removeEventListener('raba_specialists_updated', syncSpecialistsFromStorage);
+      window.removeEventListener('raba_persistent_sync_ready', syncSpecialistsFromStorage);
+    };
+  }, []);
 
   // Quick Persistent Sync State
   const [isQuickSyncing, setIsQuickSyncing] = useState(false);
@@ -210,16 +238,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
   };
 
-  const handleUpdateSpecialists = (updated: Specialist[]) => {
+  const handleUpdateSpecialists = async (updated: Specialist[]): Promise<boolean> => {
     setSpecialistsList(updated);
     try {
       localStorage.setItem('raba_specialists', JSON.stringify(updated));
+      localStorage.setItem('raba_ts_raba_specialists', Date.now().toString());
     } catch {
       // ignore
     }
-    savePersistentModule('raba_specialists', updated);
     if (onUpdateSpecialists) {
       onUpdateSpecialists(updated);
+    }
+    try {
+      return await savePersistentModule('raba_specialists', updated);
+    } catch (err) {
+      console.error('[AdminDashboard] Failed to persist specialists update:', err);
+      return false;
     }
   };
 

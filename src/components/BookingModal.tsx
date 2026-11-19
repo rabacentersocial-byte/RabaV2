@@ -94,10 +94,36 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [confirmedApp, setConfirmedApp] = useState<Appointment | null>(null);
 
+  const [liveSpecialists, setLiveSpecialists] = useState<Specialist[]>(() => {
+    try {
+      const saved = localStorage.getItem('raba_specialists');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch { /* ignore */ }
+    return SPECIALISTS;
+  });
+
   useEffect(() => {
+    const syncSpecs = () => {
+      try {
+        const saved = localStorage.getItem('raba_specialists');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) setLiveSpecialists(parsed);
+        }
+      } catch { /* ignore */ }
+    };
     const syncBranches = () => setBranchesList(getStoredBranchesData());
     window.addEventListener('raba_branches_updated', syncBranches);
-    return () => window.removeEventListener('raba_branches_updated', syncBranches);
+    window.addEventListener('raba_specialists_updated', syncSpecs);
+    window.addEventListener('raba_persistent_sync_ready' as any, syncSpecs);
+    return () => {
+      window.removeEventListener('raba_branches_updated', syncBranches);
+      window.removeEventListener('raba_specialists_updated', syncSpecs);
+      window.removeEventListener('raba_persistent_sync_ready' as any, syncSpecs);
+    };
   }, []);
 
   useEffect(() => {
@@ -171,7 +197,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   const activeService = SERVICES.find((s) => s.id === selectedServiceId) || SERVICES[0];
   const activePackage = THERAPY_PACKAGES.find((p) => p.id === selectedPackageId) || THERAPY_PACKAGES[0];
-  const activeSpecialist = SPECIALISTS.find((s) => s.id === selectedSpecialistId) || SPECIALISTS[0];
+  const activeSpecialist =
+    liveSpecialists.find((s) => s.id === selectedSpecialistId) ||
+    (initialSpecialist && initialSpecialist.id === selectedSpecialistId ? initialSpecialist : null) ||
+    SPECIALISTS.find((s) => s.id === selectedSpecialistId) ||
+    liveSpecialists[0] ||
+    SPECIALISTS[0];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

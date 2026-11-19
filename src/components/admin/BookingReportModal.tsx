@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   X, 
   FileSpreadsheet, 
@@ -17,7 +17,7 @@ import {
   RefreshCw,
   Phone
 } from 'lucide-react';
-import { Appointment } from '../../types';
+import { Appointment, Specialist } from '../../types';
 import { SERVICES, SPECIALISTS } from '../../data/mockData';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -33,6 +33,38 @@ export const BookingReportModal: React.FC<BookingReportModalProps> = ({
   appointments
 }) => {
   const { isArabic } = useLanguage();
+
+  const [liveSpecialists, setLiveSpecialists] = useState<Specialist[]>(() => {
+    try {
+      const saved = localStorage.getItem('raba_specialists');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // ignore
+    }
+    return SPECIALISTS;
+  });
+
+  useEffect(() => {
+    const syncSpecs = () => {
+      try {
+        const saved = localStorage.getItem('raba_specialists');
+        if (!saved) return;
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) setLiveSpecialists(parsed);
+      } catch {
+        // ignore
+      }
+    };
+    window.addEventListener('raba_specialists_updated', syncSpecs);
+    window.addEventListener('raba_persistent_sync_ready', syncSpecs);
+    return () => {
+      window.removeEventListener('raba_specialists_updated', syncSpecs);
+      window.removeEventListener('raba_persistent_sync_ready', syncSpecs);
+    };
+  }, []);
 
   // Filters state
   const [datePreset, setDatePreset] = useState<'all' | 'today' | 'this_week' | 'this_month'>('all');
@@ -368,7 +400,7 @@ export const BookingReportModal: React.FC<BookingReportModalProps> = ({
                   className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-white/15 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-slate-200 outline-none focus:ring-2 focus:ring-emerald-500"
                 >
                   <option value="all">{isArabic ? 'كافة الكوادر والأخصائيين' : 'All Specialists'}</option>
-                  {SPECIALISTS.map((spec) => (
+                  {(liveSpecialists.length > 0 ? liveSpecialists : SPECIALISTS).map((spec) => (
                     <option key={spec.id} value={spec.id}>
                       {spec.name}
                     </option>

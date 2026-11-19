@@ -37,12 +37,12 @@ export async function getDbSpecialists() {
  * Converts 70+ round-trips into a single batched atomic operation.
  */
 export async function syncDbSpecialists(specialistList: any[]): Promise<boolean> {
-  if (!Array.isArray(specialistList) || specialistList.length === 0) return true;
+  if (!Array.isArray(specialistList)) return true;
   try {
     const rows = specialistList.map(spec => ({
       name: spec.name || spec.arabicName || 'أخصائي',
       title: spec.title || '',
-      specialty: spec.specialty || spec.specialtyCode || '',
+      specialty: spec.role || spec.specialty || spec.specialtyCode || '',
       image: spec.avatar || spec.image || '',
       bio: spec.bio || '',
       experience: spec.experienceYears ? `${spec.experienceYears} سنوات` : '',

@@ -281,45 +281,104 @@ export function sanitizeFirestoreData<T>(obj: T): T {
 // 1. DYNAMIC SITE SETTINGS (Synchronized with Admin Dashboard & Visitor UI)
 // ============================================================================
 
-export async function saveSiteSettingToFirestore(key: string, data: any): Promise<void> {
-  const path = `site_settings/${key}`;
-  if (!auth.currentUser) {
-    return;
+function sanitizeFirestoreDocId(id: string): string {
+  const cleaned = String(id || '')
+    .trim()
+    .replace(/[^a-zA-Z0-9_-]/g, '_')
+    .slice(0, 128);
+  return cleaned || `item_${Date.now()}`;
+}
+
+function isValidFirestoreRuleId(id: string): boolean {
+  return typeof id === 'string' && id.length >= 1 && id.length <= 128 && /^[a-zA-Z0-9_-]+$/.test(id);
+}
+
+/**
+ * Strips giant inline base64 data URIs from collection-wide blob arrays before writing to
+ * a single `site_settings` document so we never breach Firestore's 1MB document limit.
+ */
+function prepareSiteSettingPayloadForFirestore(key: string, data: any): any {
+  if (key === 'raba_specialists' && Array.isArray(data)) {
+    const roughSize = JSON.stringify(data).length;
+    if (roughSize > 850_000) {
+      return data.map((s: any) => {
+        if (!s || typeof s !== 'object') return s;
+        const copy = { ...s };
+        if (typeof copy.avatar === 'string' && copy.avatar.startsWith('data:') && copy.avatar.length > 35_000) {
+          copy.avatar = copy.fallbackAvatar && !String(copy.fallbackAvatar).startsWith('data:') ? copy.fallbackAvatar : '';
+        }
+        return copy;
+      });
+    }
   }
+  if (key === 'raba_specialists_card_customizations' && data && typeof data === 'object') {
+    const roughSize = JSON.stringify(data).length;
+    if (roughSize > 850_000) {
+      const trimmed: Record<string, any> = {};
+      for (const [k, v] of Object.entries(data)) {
+        if (v && typeof v === 'object') {
+          const item = { ...(v as Record<string, any>) };
+          if (typeof item.avatar === 'string' && item.avatar.startsWith('data:') && item.avatar.length > 35_000) {
+            item.avatar = item.fallbackAvatar && !String(item.fallbackAvatar).startsWith('data:') ? item.fallbackAvatar : '';
+          }
+          trimmed[k] = item;
+        }
+      }
+      return trimmed;
+    }
+  }
+  return data;
+}
+
+export async function saveSiteSettingToFirestore(key: string, data: any): Promise<boolean> {
+  const safeKey = sanitizeFirestoreDocId(key);
+  const path = `site_settings/${safeKey}`;
   try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser) {
+      return false;
+    }
     const { fs, db } = await loadFirestoreCtx();
-    const docRef = fs.doc(db, 'site_settings', key);
+    const docRef = fs.doc(db, 'site_settings', safeKey);
+    const preparedData = prepareSiteSettingPayloadForFirestore(safeKey, data);
     await fs.setDoc(docRef, sanitizeFirestoreData({
-      key,
-      data,
+      key: safeKey,
+      data: preparedData,
       updatedAt: new Date().toISOString()
     }), { merge: true });
-    console.log(`[Firestore] Successfully saved site setting: ${key}`);
+    console.log(`[Firestore] Successfully saved site setting: ${safeKey}`);
+    return true;
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, path, false);
+    return false;
   }
 }
 
-export async function deleteSiteSettingFromFirestore(key: string): Promise<void> {
-  const path = `site_settings/${key}`;
-  if (!auth.currentUser) {
-    return;
-  }
+export async function deleteSiteSettingFromFirestore(key: string): Promise<boolean> {
+  const safeKey = sanitizeFirestoreDocId(key);
+  const path = `site_settings/${safeKey}`;
   try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser) {
+      return false;
+    }
     const { fs, db } = await loadFirestoreCtx();
-    const docRef = fs.doc(db, 'site_settings', key);
+    const docRef = fs.doc(db, 'site_settings', safeKey);
     await fs.deleteDoc(docRef);
-    console.log(`[Firestore] Successfully deleted site setting: ${key}`);
+    console.log(`[Firestore] Successfully deleted site setting: ${safeKey}`);
+    return true;
   } catch (error) {
     handleFirestoreError(error, OperationType.DELETE, path, false);
+    return false;
   }
 }
 
 export async function getSiteSettingFromFirestore(key: string): Promise<any | null> {
-  const path = `site_settings/${key}`;
+  const safeKey = sanitizeFirestoreDocId(key);
+  const path = `site_settings/${safeKey}`;
   try {
     const { fs, db } = await loadFirestoreCtx();
-    const docRef = fs.doc(db, 'site_settings', key);
+    const docRef = fs.doc(db, 'site_settings', safeKey);
     const snap = await withTimeout(fs.getDoc(docRef), 10000);
     if (!snap.exists()) {
       return null;
@@ -393,34 +452,64 @@ export function subscribeSiteSettings(
 // 2. SPECIALISTS (CRUD & Realtime)
 // ============================================================================
 
-export async function saveSpecialistToFirestore(specialist: Specialist): Promise<void> {
-  const docId = specialist.id;
+export async function saveSpecialistToFirestore(specialist: Specialist): Promise<boolean> {
+  const docId = sanitizeFirestoreDocId(specialist.id);
   const path = `specialists/${docId}`;
-  if (!auth.currentUser) {
-    return;
-  }
   try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser) {
+      return false;
+    }
+    const isAdminUser = await verifyIsFirebaseAdmin(fbUser);
+    if (!isAdminUser) {
+      return false;
+    }
     const { fs, db } = await loadFirestoreCtx();
     const docRef = fs.doc(db, 'specialists', docId);
-    await fs.setDoc(docRef, sanitizeFirestoreData(specialist), { merge: true });
+    const payload = sanitizeFirestoreData({
+      ...specialist,
+      id: docId,
+      updatedAt: new Date().toISOString()
+    });
+    await withTimeout(fs.setDoc(docRef, payload, { merge: true }), 10000);
     console.log(`[Firestore] Successfully saved specialist: ${specialist.name} (${docId})`);
+    return true;
   } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, path);
+    handleFirestoreError(error, OperationType.WRITE, path, false);
+    return false;
   }
 }
 
-export async function deleteSpecialistFromFirestore(specialistId: string): Promise<void> {
-  const path = `specialists/${specialistId}`;
-  if (!auth.currentUser) {
-    return;
-  }
+export async function deleteSpecialistFromFirestore(specialistId: string): Promise<boolean> {
+  const docId = sanitizeFirestoreDocId(specialistId);
+  const path = `specialists/${docId}`;
   try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser) {
+      return false;
+    }
+    const isAdminUser = await verifyIsFirebaseAdmin(fbUser);
+    if (!isAdminUser) {
+      return false;
+    }
     const { fs, db } = await loadFirestoreCtx();
-    const docRef = fs.doc(db, 'specialists', specialistId);
-    await fs.deleteDoc(docRef);
-    console.log(`[Firestore] Successfully deleted specialist: ${specialistId}`);
+    const idsToDelete = new Set<string>();
+    if (isValidFirestoreRuleId(specialistId)) idsToDelete.add(specialistId);
+    idsToDelete.add(docId);
+    if (docId.startsWith('spec-')) idsToDelete.add(docId.replace('spec-', 'doc-'));
+    if (docId.startsWith('doc-')) idsToDelete.add(docId.replace('doc-', 'spec-'));
+
+    for (const targetId of idsToDelete) {
+      if (isValidFirestoreRuleId(targetId)) {
+        const docRef = fs.doc(db, 'specialists', targetId);
+        await withTimeout(fs.deleteDoc(docRef), 10000);
+      }
+    }
+    console.log(`[Firestore] Successfully deleted specialist: ${docId}`);
+    return true;
   } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, path);
+    handleFirestoreError(error, OperationType.DELETE, path, false);
+    return false;
   }
 }
 
@@ -429,10 +518,13 @@ export async function getSpecialistsFromFirestore(): Promise<Specialist[]> {
   try {
     const { fs, db } = await loadFirestoreCtx();
     const colRef = fs.collection(db, 'specialists');
-    const snap = await withTimeout(fs.getDocs(colRef), 3000);
+    const snap = await withTimeout(fs.getDocs(colRef), 5000);
     const list: Specialist[] = [];
     snap.forEach((d) => {
-      list.push(d.data() as Specialist);
+      const data = d.data() as Specialist;
+      if (data && data.name) {
+        list.push({ ...data, id: data.id || d.id });
+      }
     });
     return list;
   } catch (error) {
@@ -458,14 +550,17 @@ export function subscribeSpecialists(
         (snapshot) => {
           const list: Specialist[] = [];
           snapshot.forEach((d) => {
-            list.push(d.data() as Specialist);
+            const data = d.data() as Specialist;
+            if (data && data.name) {
+              list.push({ ...data, id: data.id || d.id });
+            }
           });
           onUpdate(list);
         },
         (error) => {
-          console.error('[Firestore Realtime Error] specialists listener error:', error);
+          console.warn('[Firestore Realtime Notice] specialists listener info:', error?.message || error);
           if (onError) onError(error);
-          handleFirestoreError(error, OperationType.LIST, path);
+          handleFirestoreError(error, OperationType.LIST, path, false);
         }
       );
     })

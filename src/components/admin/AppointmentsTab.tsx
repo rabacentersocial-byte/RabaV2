@@ -38,7 +38,7 @@ import {
   CreditCard
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { Appointment, AdminUser, PermissionId, CustomerRequestType } from '../../types';
+import { Appointment, AdminUser, PermissionId, CustomerRequestType, Specialist } from '../../types';
 import { SERVICES, SPECIALISTS } from '../../data/mockData';
 import { getStoredAdminUsers } from '../../data/adminData';
 import { BranchItem, getStoredBranchesData } from '../../data/branchesData';
@@ -175,6 +175,38 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
     }
   }, [branchFilter, allowedBranches]);
 
+  const [liveSpecialists, setLiveSpecialists] = useState<Specialist[]>(() => {
+    try {
+      const saved = localStorage.getItem('raba_specialists');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // ignore
+    }
+    return SPECIALISTS;
+  });
+
+  useEffect(() => {
+    const syncSpecs = () => {
+      try {
+        const saved = localStorage.getItem('raba_specialists');
+        if (!saved) return;
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) setLiveSpecialists(parsed);
+      } catch {
+        // ignore
+      }
+    };
+    window.addEventListener('raba_specialists_updated', syncSpecs);
+    window.addEventListener('raba_persistent_sync_ready', syncSpecs);
+    return () => {
+      window.removeEventListener('raba_specialists_updated', syncSpecs);
+      window.removeEventListener('raba_persistent_sync_ready', syncSpecs);
+    };
+  }, []);
+
   // New Manual Appointment Form State
   const [manualType, setManualType] = useState<CustomerRequestType>('appointment');
   const [manualBranchId, setManualBranchId] = useState<string>('');
@@ -184,7 +216,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
   const [guardianPhone, setGuardianPhone] = useState('');
   const [guardianEmail, setGuardianEmail] = useState('');
   const [serviceId, setServiceId] = useState(SERVICES[0].id);
-  const [specialistId, setSpecialistId] = useState(SPECIALISTS[0].id);
+  const [specialistId, setSpecialistId] = useState(() => liveSpecialists[0]?.id || SPECIALISTS[0].id);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [timeSlot, setTimeSlot] = useState('04:30 م');
   const [notes, setNotes] = useState('');
@@ -478,7 +510,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
     setActionError(null);
 
     const selectedService = SERVICES.find(s => s.id === serviceId) || SERVICES[0];
-    const selectedSpec = SPECIALISTS.find(s => s.id === specialistId) || SPECIALISTS[0];
+    const selectedSpec = liveSpecialists.find(s => s.id === specialistId) || liveSpecialists[0] || SPECIALISTS[0];
     const ref = generateRequestReference(manualType);
 
     let defaultTitle = selectedService.title;
@@ -1679,7 +1711,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                     onChange={(e) => setSpecialistId(e.target.value)}
                     className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 outline-none cursor-pointer"
                   >
-                    {SPECIALISTS.map((sp) => (
+                    {(liveSpecialists.length > 0 ? liveSpecialists : SPECIALISTS).map((sp) => (
                       <option key={sp.id} value={sp.id}>{sp.name}</option>
                     ))}
                   </select>

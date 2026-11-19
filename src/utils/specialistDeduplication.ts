@@ -137,27 +137,23 @@ export function deduplicateSpecialists(list: Specialist[]): Specialist[] {
     const existingIndex = result.findIndex(existing => isSameSpecialist(existing, item));
 
     if (existingIndex >= 0) {
-      // Merge: keep the most complete version
+      // Preserve primary/first (already-edited/stored) record fields, only filling empty fields from fallback
       const current = result[existingIndex];
       const merged: Specialist = {
+        ...item,
         ...current,
-        // Prefer longer biography if available
-        bio: (item.bio && item.bio.length > (current.bio?.length || 0)) ? item.bio : current.bio,
-        bioEn: (item.bioEn && item.bioEn.length > (current.bioEn?.length || 0)) ? item.bioEn : current.bioEn,
-        // Prefer clean /images/specialists/ avatar if current doesn't have it or is empty
-        avatar: item.avatar && (item.avatar.startsWith('/images/specialists/') || !current.avatar) 
-          ? item.avatar 
-          : (current.avatar || item.avatar),
-        // Prefer higher rating or more reviews
-        rating: Math.max(current.rating || 0, item.rating || 0),
-        reviewsCount: Math.max(current.reviewsCount || 0, item.reviewsCount || 0),
-        experienceYears: Math.max(current.experienceYears || 0, item.experienceYears || 0),
-        specialties: (item.specialties && item.specialties.length > (current.specialties?.length || 0)) 
-          ? item.specialties 
-          : current.specialties,
-        certifications: (item.certifications && item.certifications.length > (current.certifications?.length || 0)) 
-          ? item.certifications 
-          : current.certifications,
+        bio: current.bio?.trim() ? current.bio : item.bio,
+        bioEn: current.bioEn?.trim() ? current.bioEn : item.bioEn,
+        avatar: current.avatar?.trim() ? current.avatar : item.avatar,
+        rating: current.rating || item.rating || 4.9,
+        reviewsCount: current.reviewsCount ?? item.reviewsCount ?? 1,
+        experienceYears: current.experienceYears ?? item.experienceYears ?? 1,
+        specialties: (current.specialties && current.specialties.length > 0)
+          ? current.specialties
+          : item.specialties,
+        certifications: (current.certifications && current.certifications.length > 0)
+          ? current.certifications
+          : item.certifications,
       };
       result[existingIndex] = merged;
     } else {
@@ -171,7 +167,7 @@ export function deduplicateSpecialists(list: Specialist[]): Specialist[] {
 }
 
 /**
- * Deduplicates an array of Doctors, merging duplicate records.
+ * Deduplicates an array of Doctors, preserving primary/edited values first and filling missing fallbacks.
  */
 export function deduplicateDoctors(list: Doctor[]): Doctor[] {
   if (!Array.isArray(list)) return [];
@@ -185,16 +181,16 @@ export function deduplicateDoctors(list: Doctor[]): Doctor[] {
     if (existingIndex >= 0) {
       const current = result[existingIndex];
       result[existingIndex] = {
+        ...item,
         ...current,
-        bio: (item.bio && item.bio.length > (current.bio?.length || 0)) ? item.bio : current.bio,
-        avatar: item.avatar && (item.avatar.startsWith('/images/specialists/') || !current.avatar)
-          ? item.avatar
-          : (current.avatar || item.avatar),
-        fallbackAvatar: current.fallbackAvatar || item.fallbackAvatar,
-        rating: Math.max(current.rating || 0, item.rating || 0),
-        reviewCount: Math.max(current.reviewCount || 0, item.reviewCount || 0),
-        experienceYears: Math.max(current.experienceYears || 0, item.experienceYears || 0),
-        tags: (item.tags && item.tags.length > (current.tags?.length || 0)) ? item.tags : current.tags,
+        bio: current.bio?.trim() ? current.bio : item.bio,
+        avatar: current.avatar?.trim() ? current.avatar : item.avatar,
+        image: current.image?.trim() ? current.image : (current.avatar || item.image || item.avatar),
+        fallbackAvatar: current.fallbackAvatar || item.fallbackAvatar || item.avatar,
+        rating: current.rating || item.rating || 4.9,
+        reviewCount: current.reviewCount ?? item.reviewCount ?? 100,
+        experienceYears: current.experienceYears ?? item.experienceYears ?? 1,
+        tags: (current.tags && current.tags.length > 0) ? current.tags : item.tags,
       };
     } else {
       result.push({ ...item });

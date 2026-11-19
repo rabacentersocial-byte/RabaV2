@@ -28,6 +28,8 @@ import { CourseItem, getStoredCoursesData, saveStoredCoursesData } from '../../d
 import { getStoredPackages, saveStoredPackages, getStoredServices, saveStoredServices, THERAPY_PACKAGES, SERVICES, SPECIALISTS } from '../../data/mockData';
 import { useLanguage } from '../../context/LanguageContext';
 import { savePersistentModule } from '../../utils/persistentSync';
+import { getResolvedImageUrl, handleImageErrorWithStore } from '../../utils/persistentImageStore';
+import { saveSpecialistToFirestore } from '../../services/firestoreService';
 import { TamaraLogo, EmkanLogo } from '../InstallmentLogos';
 
 interface PricingManagementTabProps {
@@ -122,6 +124,27 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
   useEffect(() => {
     if (propsSpecialists) setSpecialistsList(propsSpecialists);
   }, [propsSpecialists]);
+
+  useEffect(() => {
+    const syncSpecialists = () => {
+      try {
+        const raw = localStorage.getItem('raba_specialists');
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          setSpecialistsList((prev) => (JSON.stringify(prev) === JSON.stringify(parsed) ? prev : parsed));
+        }
+      } catch {
+        // ignore
+      }
+    };
+    window.addEventListener('raba_specialists_updated', syncSpecialists);
+    window.addEventListener('raba_persistent_sync_ready', syncSpecialists);
+    return () => {
+      window.removeEventListener('raba_specialists_updated', syncSpecialists);
+      window.removeEventListener('raba_persistent_sync_ready', syncSpecialists);
+    };
+  }, []);
 
   // ----------------------------------------------------
   // Package Management Handlers
@@ -278,13 +301,15 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
     setSpecialistPriceInput(spec.sessionPrice || 350);
   };
 
-  const handleSaveSpecialistPricing = (specId: string) => {
+  const handleSaveSpecialistPricing = async (specId: string) => {
+    let updatedSpec: Specialist | null = null;
     const updated = specialistsList.map((s) => {
       if (s.id === specId) {
-        return {
+        updatedSpec = {
           ...s,
           sessionPrice: Number(specialistPriceInput) || 350
         };
+        return updatedSpec;
       }
       return s;
     });
@@ -292,13 +317,20 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
     setSpecialistsList(updated);
     try {
       localStorage.setItem('raba_specialists', JSON.stringify(updated));
-      savePersistentModule('raba_specialists', updated);
+      localStorage.setItem('raba_ts_raba_specialists', Date.now().toString());
       window.dispatchEvent(new Event('raba_specialists_updated'));
-    } catch {}
+    } catch {
+      // ignore
+    }
     if (onUpdateSpecialists) onUpdateSpecialists(updated);
 
     setEditingSpecialistId(null);
     showSuccessFeedback(isArabic ? '✓ تم تحديث سعر جلسة الأخصائي بنجاح!' : '✓ Specialist session price updated!');
+
+    await savePersistentModule('raba_specialists', updated);
+    if (updatedSpec) {
+      await saveSpecialistToFirestore(updatedSpec).catch(() => false);
+    }
   };
 
   // ----------------------------------------------------
@@ -999,10 +1031,10 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 overflow-hidden border border-slate-200 dark:border-white/10 shrink-0">
                         <img 
-                          src={spec.avatar} 
+                          src={getResolvedImageUrl(spec.avatar)} 
                           alt={spec.name} 
                           className="w-full h-full object-cover" 
-                          onError={(e) => { (e.currentTarget as any).src = '/images/specialists/specialist_1.jpg'; }}
+                          onError={(e) => handleImageErrorWithStore(e, spec.avatar, '/images/specialists/specialist_1.jpg')}
                         />
                       </div>
                       <div className="min-w-0 flex-1">

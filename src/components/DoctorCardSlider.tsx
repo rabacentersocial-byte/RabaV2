@@ -2589,42 +2589,57 @@ export function doctorToSpecialist(doctor: Doctor, allSpecialists?: Specialist[]
 }
 
 export function getUnifiedDoctors(baseDoctors: Doctor[] = DOCTORS_DATA, extraSpecialists?: Specialist[]): Doctor[] {
-  if (!extraSpecialists || extraSpecialists.length === 0) {
+  if (!extraSpecialists) {
     return deduplicateDoctors(baseDoctors);
   }
 
-  const convertedFromSpecialists: Doctor[] = extraSpecialists.map((s) => ({
-    id: s.id.startsWith('spec-') ? s.id.replace('spec-', 'doc-') : `doc-${s.id}`,
-    name: s.name,
-    arabicName: s.name,
-    nameEn: s.nameEn || s.name,
-    title: s.title,
-    titleEn: s.titleEn || s.title,
-    specialty: s.role,
-    specialtyEn: s.roleEn || s.role,
-    specialtyCode: s.title || s.role,
-    specialtyCodeEn: s.titleEn || s.roleEn || 'SPECIALIST',
-    category: (s.category as any) || 'aba',
-    department: s.department,
-    avatar: s.avatar,
-    image: s.avatar,
-    fallbackAvatar: s.fallbackAvatar || s.avatar,
-    rating: s.rating || 4.9,
-    reviewCount: s.reviewsCount || 100,
-    experienceYears: s.experienceYears || 3,
-    patientsCount: (s.reviewsCount || 100) * 5,
-    sessionPrice: 0,
-    location: "الرياض",
-    locationEn: "Riyadh",
-    isAvailable: true,
-    nextSlot: "متاح للحجز",
-    nextSlotEn: "Available for booking",
-    tags: s.specialties || [],
-    bio: s.bio,
-    isTopRated: s.isTopRated || false
-  }));
+  // If raba_specialists is explicitly synced in storage (even if customized/filtered/empty), treat extraSpecialists as authoritative
+  let hasStoredSpecialists = false;
+  try {
+    hasStoredSpecialists = typeof window !== 'undefined' && localStorage.getItem('raba_specialists') !== null;
+  } catch {
+    hasStoredSpecialists = false;
+  }
 
-  return deduplicateDoctors([...convertedFromSpecialists, ...baseDoctors]);
+  if (extraSpecialists.length === 0) {
+    return hasStoredSpecialists ? [] : deduplicateDoctors(baseDoctors);
+  }
+
+  const convertedFromSpecialists: Doctor[] = extraSpecialists.map((s) => {
+    const matchingBase = baseDoctors.find((b) => isSameSpecialist(b, s));
+    return {
+      id: s.id.startsWith('spec-') ? s.id.replace('spec-', 'doc-') : s.id.startsWith('doc-') ? s.id : `doc-${s.id}`,
+      name: s.name,
+      arabicName: s.name,
+      nameEn: s.nameEn || matchingBase?.nameEn || s.name,
+      title: s.title,
+      titleEn: s.titleEn || matchingBase?.titleEn || s.title,
+      specialty: s.role || s.title,
+      specialtyEn: s.roleEn || s.titleEn || matchingBase?.specialtyEn || s.role,
+      specialtyCode: s.title || s.role,
+      specialtyCodeEn: s.titleEn || s.roleEn || matchingBase?.specialtyCodeEn || 'SPECIALIST',
+      category: (s.category as any) || matchingBase?.category || 'aba',
+      department: s.department || matchingBase?.department,
+      avatar: s.avatar || matchingBase?.avatar || '',
+      image: s.avatar || matchingBase?.image || '',
+      fallbackAvatar: s.fallbackAvatar || matchingBase?.fallbackAvatar || s.avatar || '',
+      rating: s.rating ?? matchingBase?.rating ?? 4.9,
+      reviewCount: s.reviewsCount ?? matchingBase?.reviewCount ?? 100,
+      experienceYears: s.experienceYears ?? matchingBase?.experienceYears ?? 3,
+      patientsCount: (s.reviewsCount || matchingBase?.reviewCount || 100) * 5,
+      sessionPrice: s.sessionPrice || 0,
+      location: 'الرياض',
+      locationEn: 'Riyadh',
+      isAvailable: true,
+      nextSlot: 'متاح للحجز',
+      nextSlotEn: 'Available for booking',
+      tags: (s.specialties && s.specialties.length > 0) ? s.specialties : (matchingBase?.tags || []),
+      bio: s.bio || matchingBase?.bio || '',
+      isTopRated: s.isTopRated !== undefined ? s.isTopRated : matchingBase?.isTopRated || false,
+    };
+  });
+
+  return deduplicateDoctors(convertedFromSpecialists);
 }
 
 export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
