@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Users, 
   UserPlus, 
@@ -15,11 +15,23 @@ import {
   UserCheck, 
   Sparkles,
   AlertCircle,
-  X
+  X,
+  MapPin,
+  Building2,
+  GitBranch,
+  GraduationCap,
+  Cloud
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { AdminUser, PermissionId, UserRole } from '../../types';
+import { AdminUser, BranchAccessScope, PermissionId, UserRole } from '../../types';
 import { SYSTEM_PERMISSIONS, ROLE_PRESETS } from '../../data/adminData';
+import { BranchItem, getStoredBranchesData } from '../../data/branchesData';
+import { getCleanBranchDisplayName, getEffectiveBranchScope } from '../../utils/branchPermissions';
+import { provisionStaffFirebaseAccount } from '../../lib/firebase';
+import {
+  saveAdminUserToFirestore,
+  deleteAdminUserFromFirestore
+} from '../../services/firestoreService';
 import { useLanguage } from '../../context/LanguageContext';
 
 interface UserManagementTabProps {
@@ -54,6 +66,34 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
     setTimeout(() => setToastMsg(null), 4000);
   };
 
+  const [branchesList, setBranchesList] = useState<BranchItem[]>(() => getStoredBranchesData());
+
+  useEffect(() => {
+    const handleBranchesSync = () => {
+      setBranchesList(getStoredBranchesData());
+    };
+    window.addEventListener('raba_branches_updated', handleBranchesSync);
+    window.addEventListener('raba_persistent_sync_ready' as any, handleBranchesSync);
+    return () => {
+      window.removeEventListener('raba_branches_updated', handleBranchesSync);
+      window.removeEventListener('raba_persistent_sync_ready' as any, handleBranchesSync);
+    };
+  }, []);
+
+  const cityGroups = useMemo(() => {
+    const map = new Map<string, { cityKey: string; labelAr: string; labelEn: string }>();
+    branchesList.forEach((b) => {
+      if (b.city && !map.has(b.city)) {
+        map.set(b.city, {
+          cityKey: b.city,
+          labelAr: b.cityNameAr || b.city,
+          labelEn: b.cityNameEn || b.city
+        });
+      }
+    });
+    return Array.from(map.values());
+  }, [branchesList]);
+
   // Form states for Add/Edit
   const [formName, setFormName] = useState('');
   const [formUsername, setFormUsername] = useState('');
@@ -64,9 +104,13 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
   const [formRole, setFormRole] = useState<UserRole>('receptionist');
   const [formStatus, setFormStatus] = useState<'active' | 'suspended'>('active');
   const [formPermissions, setFormPermissions] = useState<PermissionId[]>([]);
+  const [formBranchScope, setFormBranchScope] = useState<BranchAccessScope>('all');
+  const [formAssignedBranches, setFormAssignedBranches] = useState<string[]>([]);
   const [formError, setFormError] = useState('');
+  const [isSavingUser, setIsSavingUser] = useState(false);
 
   const canManageUsers = hasPermission('manage_users');
+  const isSystemAdmin = currentUser?.role === 'super_admin' && currentUser?.status !== 'suspended';
 
   // Filtered users
   const filteredUsers = users.filter((u) => {
@@ -91,10 +135,12 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
     setFormPassword('');
     setFormEmail('');
     setFormPhone('');
-    setFormDepartment('إدارة العمليات');
+    setFormDepartment('خدمة العملاء والاستقبال');
     setFormRole('receptionist');
     const preset = ROLE_PRESETS.find(r => r.role === 'receptionist');
     setFormPermissions(preset ? [...preset.defaultPermissions] : ['manage_appointments']);
+    setFormBranchScope('all');
+    setFormAssignedBranches([]);
     setFormStatus('active');
     setFormError('');
     setIsAddModalOpen(true);
@@ -111,6 +157,8 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
     setFormDepartment(user.department);
     setFormRole(user.role);
     setFormPermissions([...user.permissions]);
+    setFormBranchScope(getEffectiveBranchScope(user));
+    setFormAssignedBranches(Array.isArray(user.assignedBranches) ? [...user.assignedBranches] : []);
     setFormStatus(user.status);
     setFormError('');
     setIsAddModalOpen(true);
@@ -122,6 +170,10 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
     const preset = ROLE_PRESETS.find(r => r.role === newRole);
     if (preset) {
       setFormPermissions([...preset.defaultPermissions]);
+    }
+    if (newRole === 'super_admin') {
+      setFormBranchScope('all');
+      setFormAssignedBranches([]);
     }
   };
 
@@ -145,80 +197,157 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
     }
   };
 
+  // Toggle single branch for booking routing
+  const handleToggleBranch = (branchId: string) => {
+    if (formBranchScope === 'all') {
+      setFormBranchScope('assigned_only');
+    }
+    setFormAssignedBranches((prev) =>
+      prev.includes(branchId) ? prev.filter((id) => id !== branchId) : [...prev, branchId]
+    );
+  };
+
+  // Quick-select all branches in a city
+  const handleSelectCityBranches = (cityKey: string) => {
+    const cityIds = branchesList.filter((b) => b.city === cityKey).map((b) => b.id);
+    if (formBranchScope === 'all') {
+      setFormBranchScope('assigned_only');
+    }
+    setFormAssignedBranches((prev) => {
+      const allSelected = cityIds.every((id) => prev.includes(id));
+      if (allSelected) {
+        return prev.filter((id) => !cityIds.includes(id));
+      }
+      return Array.from(new Set([...prev, ...cityIds]));
+    });
+  };
+
   // Submit User
-  const handleSubmitUser = (e: React.FormEvent) => {
+  const handleSubmitUser = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormError('');
+
     if (!formName.trim() || !formEmail.trim() || !formUsername.trim()) {
       setFormError(isArabic ? 'يرجى إكمال جميع الحقول المطلوبة' : 'Please fill all required fields');
+      return;
+    }
+
+    const effectiveScope: BranchAccessScope = formRole === 'super_admin' ? 'all' : formBranchScope;
+    const effectiveAssignedBranches =
+      effectiveScope === 'all' ? [] : Array.from(new Set(formAssignedBranches));
+
+    if (effectiveScope !== 'all' && effectiveAssignedBranches.length === 0) {
+      setFormError(
+        isArabic
+          ? 'يرجى تحديد فرع واحد على الأقل لتوجيه الحجوزات إليه، أو اختيار "جميع الفروع".'
+          : 'Please select at least one branch for booking routing, or choose "All Branches".'
+      );
       return;
     }
 
     const preset = ROLE_PRESETS.find(r => r.role === formRole);
     const roleTitleAr = preset ? preset.titleAr : 'دور مخصص';
     const roleTitleEn = preset ? preset.titleEn : 'Custom Role';
+    const cleanPass = formPassword.trim();
+    const cleanEmail = formEmail.trim();
 
-    if (editingUser) {
-      // Update existing
-      const updatedList = users.map((u) => {
-        if (u.id === editingUser.id) {
-          return {
-            ...u,
-            name: formName.trim(),
-            username: formUsername.trim(),
-            email: formEmail.trim(),
-            phone: formPhone.trim() || u.phone,
-            department: formDepartment.trim(),
-            role: formRole,
-            roleTitleAr,
-            roleTitleEn,
-            status: formStatus,
-            password: formPassword.trim() ? formPassword.trim() : (u.password || 'raba'),
-            permissions: formPermissions
-          };
+    setIsSavingUser(true);
+    try {
+      let provisionedUid: string | undefined = editingUser?.firebaseUid;
+      let cloudAuthLinked = false;
+
+      if (cleanPass.length >= 6) {
+        const prov = await provisionStaffFirebaseAccount(cleanEmail, cleanPass);
+        if (prov.uid) {
+          provisionedUid = prov.uid;
+          cloudAuthLinked = true;
         }
-        return u;
-      });
-
-      onUpdateUsers(updatedList);
-      // If editing current user, update session as well
-      if (currentUser.id === editingUser.id) {
-        const myUpdated = updatedList.find(u => u.id === editingUser.id);
-        if (myUpdated) onSwitchUser(myUpdated);
       }
-    } else {
-      // Create new user
-      const newUser: AdminUser = {
-        id: 'usr-' + Date.now(),
-        name: formName.trim(),
-        nameEn: formName.trim(),
-        username: formUsername.trim(),
-        email: formEmail.trim(),
-        phone: formPhone.trim() || '+966 50 000 0000',
-        role: formRole,
-        roleTitleAr,
-        roleTitleEn,
-        department: formDepartment.trim(),
-        status: formStatus,
-        password: formPassword.trim() || 'raba',
-        permissions: formPermissions,
-        createdAt: new Date().toISOString().split('T')[0],
-        lastLogin: isArabic ? 'لم يسجل دخول بعد' : 'Never'
-      };
 
-      onUpdateUsers([newUser, ...users]);
-
-      try {
-        confetti({
-          particleCount: 50,
-          spread: 60,
-          origin: { y: 0.6 }
+      if (editingUser) {
+        let savedUser: AdminUser | null = null;
+        const updatedList = users.map((u) => {
+          if (u.id === editingUser.id) {
+            savedUser = {
+              ...u,
+              name: formName.trim(),
+              username: formUsername.trim(),
+              email: cleanEmail,
+              phone: formPhone.trim() || u.phone,
+              department: formDepartment.trim(),
+              role: formRole,
+              roleTitleAr,
+              roleTitleEn,
+              status: formStatus,
+              password: cleanPass || u.password || 'raba',
+              permissions: formPermissions,
+              branchScope: effectiveScope,
+              assignedBranches: effectiveAssignedBranches,
+              ...(provisionedUid ? { firebaseUid: provisionedUid } : {})
+            };
+            return savedUser;
+          }
+          return u;
         });
-      } catch {
-        // ignore
-      }
-    }
 
-    setIsAddModalOpen(false);
+        onUpdateUsers(updatedList);
+        if (savedUser) {
+          await saveAdminUserToFirestore(savedUser, provisionedUid).catch(() => {});
+        }
+        if (currentUser.id === editingUser.id) {
+          const myUpdated = updatedList.find(u => u.id === editingUser.id);
+          if (myUpdated) onSwitchUser(myUpdated);
+        }
+        showToast(
+          cloudAuthLinked
+            ? (isArabic ? 'تم تحديث الحساب وتفعيل الربط السحابي التلقائي بنجاح' : 'User updated & cloud auto-sync enabled')
+            : (isArabic ? 'تم تحديث بيانات المستخدم وصلاحيات الفروع بنجاح' : 'User & branch permissions updated')
+        );
+      } else {
+        const newUser: AdminUser = {
+          id: 'usr-' + Date.now(),
+          ...(provisionedUid ? { firebaseUid: provisionedUid } : {}),
+          name: formName.trim(),
+          nameEn: formName.trim(),
+          username: formUsername.trim(),
+          email: cleanEmail,
+          phone: formPhone.trim() || '+966 50 000 0000',
+          role: formRole,
+          roleTitleAr,
+          roleTitleEn,
+          department: formDepartment.trim(),
+          status: formStatus,
+          password: cleanPass || 'raba',
+          permissions: formPermissions,
+          branchScope: effectiveScope,
+          assignedBranches: effectiveAssignedBranches,
+          createdAt: new Date().toISOString().split('T')[0],
+          lastLogin: isArabic ? 'لم يسجل دخول بعد' : 'Never'
+        };
+
+        onUpdateUsers([newUser, ...users]);
+        await saveAdminUserToFirestore(newUser, provisionedUid).catch(() => {});
+        showToast(
+          cloudAuthLinked
+            ? (isArabic ? 'تم إنشاء الحساب وتفعيل الربط السحابي التلقائي للموظف بنجاح' : 'Staff account created with automatic cloud sync')
+            : (isArabic ? 'تم إنشاء الحساب وتخصيص صلاحيات الفروع بنجاح' : 'User created with branch routing permissions')
+        );
+
+        try {
+          confetti({
+            particleCount: 50,
+            spread: 60,
+            origin: { y: 0.6 }
+          });
+        } catch {
+          // ignore
+        }
+      }
+
+      setIsAddModalOpen(false);
+    } finally {
+      setIsSavingUser(false);
+    }
   };
 
   // Toggle user status active/suspended
@@ -229,14 +358,16 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
       return;
     }
     const newStatus = user.status === 'active' ? 'suspended' : 'active';
-    const updated = users.map(u => u.id === user.id ? { ...u, status: newStatus as 'active' | 'suspended' } : u);
+    const updatedUser: AdminUser = { ...user, status: newStatus as 'active' | 'suspended' };
+    const updated = users.map(u => u.id === user.id ? updatedUser : u);
     onUpdateUsers(updated);
+    saveAdminUserToFirestore(updatedUser, updatedUser.firebaseUid).catch(() => {});
     showToast(isArabic ? 'تم تحديث حالة المستخدم بنجاح' : 'User status updated');
   };
 
-  // Delete user
+  // Delete user (Strictly System Super Admin only)
   const handleConfirmDelete = () => {
-    if (!userToDelete) return;
+    if (!userToDelete || !isSystemAdmin) return;
     if (userToDelete.id === currentUser.id) {
       showToast(isArabic ? 'لا يمكنك حذف حسابك الحالي الذي تستخدمه لتسجيل الدخول!' : 'Cannot delete the logged-in user!', 'error');
       setUserToDelete(null);
@@ -244,6 +375,7 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
     }
     const updated = users.filter(u => u.id !== userToDelete.id);
     onUpdateUsers(updated);
+    deleteAdminUserFromFirestore(userToDelete.id, userToDelete.firebaseUid).catch(() => {});
     setUserToDelete(null);
     showToast(isArabic ? 'تم حذف المستخدم بنجاح' : 'User deleted successfully');
   };
@@ -404,7 +536,7 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
                     {isArabic ? user.roleTitleAr : user.roleTitleEn}
                   </span>
 
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 flex-wrap justify-end">
                     {user.status === 'active' ? (
                       <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
@@ -414,6 +546,24 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
                       <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 dark:text-rose-400 bg-rose-500/10 px-2.5 py-0.5 rounded-full">
                         <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
                         {isArabic ? 'موقوف' : 'Suspended'}
+                      </span>
+                    )}
+
+                    {(user.firebaseUid || user.email?.toLowerCase() === 'rabacentersocial@gmail.com') ? (
+                      <span
+                        className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full"
+                        title={isArabic ? 'يتصل بقاعدة البيانات السحابية تلقائياً عند تسجيل الدخول' : 'Automatically connects to Firestore upon sign-in'}
+                      >
+                        <Cloud className="w-3 h-3" />
+                        <span>{isArabic ? 'ربط سحابي تلقائي' : 'Cloud Ready'}</span>
+                      </span>
+                    ) : (
+                      <span
+                        className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 dark:text-amber-300 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full"
+                        title={isArabic ? 'يمكن تفعيل الربط السحابي التلقائي بتعيين كلمة مرور من 6 أحرف فأكثر أو الدخول عبر Google' : 'Set a 6+ char password or sign in with Google to enable auto cloud sync'}
+                      >
+                        <Cloud className="w-3 h-3" />
+                        <span>{isArabic ? 'جلسة محلية فقط' : 'Local Only'}</span>
                       </span>
                     )}
 
@@ -453,7 +603,7 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
                 </div>
 
                 {/* Permissions Badges Summary */}
-                <div className="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl border border-slate-100 dark:border-white/5 space-y-2 mb-4">
+                <div className="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl border border-slate-100 dark:border-white/5 space-y-2 mb-3">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                       <KeyRound className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
@@ -479,6 +629,67 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
                     })}
                   </div>
                 </div>
+
+                {/* Branch Visibility & Routing Summary */}
+                {(() => {
+                  const effScope = getEffectiveBranchScope(user);
+                  const assignedItems = effScope === 'all'
+                    ? []
+                    : branchesList.filter((b) => (user.assignedBranches || []).includes(b.id));
+
+                  return (
+                    <div className="bg-teal-50/60 dark:bg-teal-950/20 p-3 rounded-2xl border border-teal-200/70 dark:border-teal-700/30 space-y-1.5 mb-4">
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="font-bold text-teal-900 dark:text-teal-200 flex items-center gap-1.5">
+                          <MapPin className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                          <span>{isArabic ? 'نطاق فروع الحجوزات:' : 'Branch Booking Scope:'}</span>
+                        </span>
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          effScope === 'all'
+                            ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                            : 'bg-teal-600/15 text-teal-800 dark:text-teal-200'
+                        }`}>
+                          {effScope === 'all'
+                            ? (isArabic ? 'جميع الفروع' : 'All Branches')
+                            : effScope === 'assigned_only'
+                            ? (isArabic ? 'فروع محددة فقط' : 'Assigned Only')
+                            : (isArabic ? 'المحددة + العامة' : 'Assigned + General')}
+                        </span>
+                      </div>
+                      {effScope !== 'all' && (
+                        <div className="flex flex-wrap gap-1 pt-0.5">
+                          {assignedItems.length > 0 ? (
+                            assignedItems.map((b) => (
+                              <span
+                                key={b.id}
+                                className="px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-teal-200 dark:border-teal-800/60 text-teal-800 dark:text-teal-200 text-[10px] font-bold"
+                              >
+                                {getCleanBranchDisplayName(b, isArabic)}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-[10px] text-amber-700 dark:text-amber-300 font-medium">
+                              {isArabic ? 'لم يتم تحديد فروع بعد' : 'No branches assigned yet'}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+
+                {/* Course Routing Eligibility Pill */}
+                {(user.role === 'super_admin' || user.permissions.includes('manage_courses')) && (
+                  <div className="bg-pink-500/10 dark:bg-pink-950/25 px-3 py-2 rounded-xl border border-pink-500/20 flex items-center justify-between text-[11px] mb-3">
+                    <span className="font-bold text-pink-800 dark:text-pink-200 flex items-center gap-1.5">
+                      <GraduationCap className="w-3.5 h-3.5 text-pink-600 dark:text-pink-400 shrink-0" />
+                      <span>{isArabic ? 'مخول لاستلام طلبات الكورسات' : 'Eligible for Course Requests'}</span>
+                    </span>
+                    <span className="text-[10px] font-black text-pink-700 dark:text-pink-300">
+                      {isArabic ? 'نشط' : 'Active'}
+                    </span>
+                  </div>
+                )}
 
               </div>
 
@@ -527,16 +738,18 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
                         {user.status === 'active' ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
                       </button>
 
-                      <button
-                        onClick={() => setUserToDelete(user)}
-                        disabled={isMe}
-                        className={`p-1.5 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors cursor-pointer ${
-                          isMe ? 'opacity-30 cursor-not-allowed' : ''
-                        }`}
-                        title={isArabic ? 'حذف المستخدم' : 'Delete User'}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      {isSystemAdmin && (
+                        <button
+                          onClick={() => setUserToDelete(user)}
+                          disabled={isMe}
+                          className={`p-1.5 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors cursor-pointer ${
+                            isMe ? 'opacity-30 cursor-not-allowed' : ''
+                          }`}
+                          title={isArabic ? 'حذف المستخدم (صلاحية الأدمن فقط)' : 'Delete User (Admin Only)'}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
                     </>
                   )}
                 </div>
@@ -631,9 +844,17 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
                     type="password"
                     value={formPassword}
                     onChange={(e) => setFormPassword(e.target.value)}
-                    placeholder={editingUser ? (isArabic ? '•••••••• (غير معدل)' : 'Unchanged') : (isArabic ? 'كلمة المرور الجديدة' : 'New password')}
+                    placeholder={editingUser ? (isArabic ? '•••••••• (غير معدل)' : 'Unchanged') : (isArabic ? '6 أحرف فأكثر للربط السحابي التلقائي' : '6+ chars for auto cloud sync')}
                     className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/15 text-slate-900 dark:text-white rounded-xl p-2.5 text-xs outline-none focus:ring-2 focus:ring-emerald-500/40 font-mono"
                   />
+                  <p className="text-[10px] text-emerald-700 dark:text-emerald-300/90 mt-1 flex items-center gap-1">
+                    <Cloud className="w-3 h-3 shrink-0" />
+                    <span>
+                      {isArabic
+                        ? 'كلمة مرور من 6 أحرف فأكثر تفعّل المزامنة السحابية تلقائياً لهذا الموظف بدون الحاجة لـ Google.'
+                        : 'A password of 6+ characters enables automatic cloud sync on login without requiring Google.'}
+                    </span>
+                  </p>
                 </div>
 
                 <div>
@@ -775,6 +996,184 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
                 </div>
               </div>
 
+              {/* Branch Routing & Booking Visibility Configuration */}
+              <div className="p-4 sm:p-5 bg-teal-50/60 dark:bg-teal-950/20 rounded-2xl border border-teal-200 dark:border-teal-800/40 space-y-4">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div>
+                    <h4 className="text-xs sm:text-sm font-black text-teal-950 dark:text-teal-100 flex items-center gap-2">
+                      <GitBranch className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+                      <span>
+                        {isArabic
+                          ? 'ربط الفروع وتخصيص آلية ظهور الحجوزات'
+                          : 'Branch Assignment & Booking Visibility Scope'}
+                      </span>
+                    </h4>
+                    <p className="text-[11px] text-teal-800/80 dark:text-teal-200/75 mt-0.5 leading-relaxed">
+                      {formRole === 'super_admin'
+                        ? (isArabic
+                            ? 'حساب المدير العام والتنفيذي يمتلك صلاحية تلقائية لاستعراض حجوزات كافة فروع المركز.'
+                            : 'Super Administrator always has unrestricted visibility across all center branches.')
+                        : (isArabic
+                            ? 'حدد آلية ظهور حجوزات العملاء لهذا المستخدم والفروع المصرح له باستقبالها وإدارتها.'
+                            : 'Customize how bookings appear for this user and select authorized clinic branches.')}
+                    </p>
+                  </div>
+
+                  {formRole !== 'super_admin' &&
+                    !formPermissions.includes('manage_appointments') &&
+                    !formPermissions.includes('manage_courses') && (
+                    <span className="px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30 text-[10px] font-bold">
+                      {isArabic ? 'فعّل «إدارة المواعيد والحجوزات» لتطبيق التوجيه' : 'Enable Appointments permission to apply'}
+                    </span>
+                  )}
+                </div>
+
+                {formRole !== 'super_admin' && (
+                  <>
+                    {/* Booking Visibility Mode Selector */}
+                    <div className="space-y-2">
+                      <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 block">
+                        {isArabic ? 'آلية ظهور الحجوزات للمستخدم:' : 'Booking Visibility Rule:'}
+                      </span>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        {(
+                          [
+                            {
+                              id: 'all' as BranchAccessScope,
+                              titleAr: 'جميع الفروع',
+                              titleEn: 'All Branches',
+                              descAr: 'عرض كافة حجوزات المركز بدون تقييد بفرع',
+                              descEn: 'Show bookings across all clinic branches'
+                            },
+                            {
+                              id: 'assigned_only' as BranchAccessScope,
+                              titleAr: 'الفروع المحددة فقط',
+                              titleEn: 'Assigned Branches Only',
+                              descAr: 'يظهر له حجوزات العملاء للفروع المحددة له فقط',
+                              descEn: 'Only bookings matching assigned branches'
+                            },
+                            {
+                              id: 'assigned_and_unassigned' as BranchAccessScope,
+                              titleAr: 'المحددة + بدون فرع',
+                              titleEn: 'Assigned + Unspecified',
+                              descAr: 'حجوزات الفروع المحددة + الطلبات العامة بدون فرع',
+                              descEn: 'Assigned branches plus general bookings with no branch'
+                            }
+                          ] as const
+                        ).map((mode) => {
+                          const active = formBranchScope === mode.id;
+                          return (
+                            <button
+                              key={mode.id}
+                              type="button"
+                              onClick={() => setFormBranchScope(mode.id)}
+                              className={`p-3 rounded-xl border text-start transition-all cursor-pointer ${
+                                active
+                                  ? 'bg-[#0B3B36] text-white border-[#0B3B36] shadow-sm'
+                                  : 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-white/10 hover:border-teal-400'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between gap-1.5">
+                                <span className="text-xs font-black">{isArabic ? mode.titleAr : mode.titleEn}</span>
+                                {active && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-300 shrink-0" />}
+                              </div>
+                              <span className={`text-[10px] block mt-1 leading-relaxed ${active ? 'text-emerald-100/90' : 'text-slate-500 dark:text-slate-400'}`}>
+                                {isArabic ? mode.descAr : mode.descEn}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Branch Multi-Select Checkboxes */}
+                    <div className="space-y-2.5 pt-1">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                          <Building2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                          <span>
+                            {isArabic
+                              ? `تحديد الفروع المصرح بالتوجيه لها (${formAssignedBranches.length} / ${branchesList.length}):`
+                              : `Select Authorized Branches (${formAssignedBranches.length}/${branchesList.length}):`}
+                          </span>
+                        </span>
+
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {cityGroups.map((cg) => (
+                            <button
+                              key={cg.cityKey}
+                              type="button"
+                              onClick={() => handleSelectCityBranches(cg.cityKey)}
+                              className="px-2 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 text-[10px] font-bold text-slate-700 dark:text-slate-300 hover:border-teal-500 cursor-pointer transition-colors"
+                            >
+                              {isArabic ? cg.labelAr : cg.labelEn}
+                            </button>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (formBranchScope === 'all') setFormBranchScope('assigned_only');
+                              setFormAssignedBranches(branchesList.map((b) => b.id));
+                            }}
+                            className="px-2 py-1 rounded-lg bg-teal-600/15 text-teal-800 dark:text-teal-300 text-[10px] font-bold hover:bg-teal-600/25 cursor-pointer"
+                          >
+                            {isArabic ? 'تحديد الكل' : 'All'}
+                          </button>
+                          {formAssignedBranches.length > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => setFormAssignedBranches([])}
+                              className="px-2 py-1 rounded-lg bg-rose-500/10 text-rose-700 dark:text-rose-300 text-[10px] font-bold hover:bg-rose-500/20 cursor-pointer"
+                            >
+                              {isArabic ? 'مسح' : 'Clear'}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {formBranchScope === 'all' && (
+                        <div className="text-[11px] text-teal-800 dark:text-teal-200 bg-white/80 dark:bg-slate-900/60 border border-teal-200/70 dark:border-teal-800/40 rounded-xl px-3 py-2">
+                          {isArabic
+                            ? 'الوضع الحالي «جميع الفروع». عند تحديد أي فرع أدناه سيتم التحويل تلقائياً إلى «الفروع المحددة فقط».'
+                            : 'Currently set to "All Branches". Selecting any branch below automatically enables branch-scoped routing.'}
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-52 overflow-y-auto p-1">
+                        {branchesList.map((branch) => {
+                          const isChecked = formAssignedBranches.includes(branch.id);
+                          return (
+                            <label
+                              key={branch.id}
+                              className={`p-2.5 rounded-xl border flex items-center gap-2.5 cursor-pointer transition-all ${
+                                isChecked
+                                  ? 'bg-white dark:bg-slate-900 border-teal-500 ring-1 ring-teal-500/30 shadow-2xs'
+                                  : 'bg-white/75 dark:bg-slate-900/60 border-slate-200 dark:border-white/10 hover:border-teal-300'
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => handleToggleBranch(branch.id)}
+                                className="w-4 h-4 text-teal-600 rounded border-slate-300 focus:ring-teal-500 cursor-pointer shrink-0"
+                              />
+                              <div className="min-w-0 flex-1">
+                                <span className="text-xs font-bold text-slate-900 dark:text-white block truncate">
+                                  {getCleanBranchDisplayName(branch, isArabic)}
+                                </span>
+                                <span className="text-[10px] text-slate-500 dark:text-slate-400 block truncate">
+                                  {isArabic ? branch.regionBadgeAr : branch.regionBadgeEn}
+                                </span>
+                              </div>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+
               {/* Action Buttons */}
               <div className="pt-4 border-t border-slate-200 dark:border-white/10 flex items-center justify-end gap-3">
                 <button
@@ -786,11 +1185,19 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#00E5BE] to-[#0284C7] text-slate-950 font-black text-xs shadow-md hover:brightness-110 cursor-pointer"
+                  disabled={isSavingUser}
+                  className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#00E5BE] to-[#0284C7] text-slate-950 font-black text-xs shadow-md hover:brightness-110 cursor-pointer disabled:opacity-60 inline-flex items-center gap-2"
                 >
-                  {editingUser 
-                    ? (isArabic ? 'حفظ التعديلات' : 'Save Changes') 
-                    : (isArabic ? 'إنشاء وتفعيل الحساب' : 'Create Account')}
+                  {isSavingUser && (
+                    <span className="w-3.5 h-3.5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+                  )}
+                  <span>
+                    {isSavingUser
+                      ? (isArabic ? 'جاري التفعيل والربط السحابي...' : 'Provisioning & Saving...')
+                      : editingUser
+                        ? (isArabic ? 'حفظ التعديلات' : 'Save Changes')
+                        : (isArabic ? 'إنشاء وتفعيل الحساب' : 'Create Account')}
+                  </span>
                 </button>
               </div>
 

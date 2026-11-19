@@ -15,6 +15,10 @@ import {
 } from 'lucide-react';
 import { Appointment, PermissionId } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
+import {
+  getStoredAnnouncementBarSettings,
+  saveStoredAnnouncementBarSettings
+} from '../../data/siteCustomizer';
 
 interface FinancesSettingsTabProps {
   appointments: Appointment[];
@@ -32,7 +36,7 @@ export const FinancesSettingsTab: React.FC<FinancesSettingsTabProps> = ({
   const [whatsapp, setWhatsapp] = useState('0575100100');
   const [workingHours, setWorkingHours] = useState('السبت – الخميس: 8:00 ص – 9:00 م');
   const [address, setAddress] = useState('الرياض – حي النرجس / حي الملقا، طريق الملك سلمان');
-  const [announcement, setAnnouncement] = useState('خصم 30% على جلسات التقييم الشامل للتوحد والنطق خلال هذا الشهر');
+  const [announcement, setAnnouncement] = useState(() => getStoredAnnouncementBarSettings().messageAr);
   const [isSaved, setIsSaved] = useState(false);
 
   const canViewFinances = hasPermission('view_finances');
@@ -48,6 +52,12 @@ export const FinancesSettingsTab: React.FC<FinancesSettingsTabProps> = ({
 
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
+    const currentBar = getStoredAnnouncementBarSettings();
+    saveStoredAnnouncementBarSettings({
+      ...currentBar,
+      messageAr: announcement.trim() || currentBar.messageAr,
+      updatedAt: new Date().toISOString()
+    });
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 2500);
   };

@@ -134,6 +134,46 @@ export interface SiteModulesVisibility {
   footer: boolean;
 }
 
+export type AnnouncementStyleVariant =
+  | 'theme_glass'
+  | 'primary_gradient'
+  | 'emerald_clinical'
+  | 'obsidian_gold';
+
+export type AnnouncementCtaAction =
+  | 'booking'
+  | 'courses'
+  | 'offers'
+  | 'branches'
+  | 'portal'
+  | 'whatsapp'
+  | 'custom_url'
+  | 'none';
+
+export type AnnouncementIconName =
+  | 'megaphone'
+  | 'bell'
+  | 'sparkles'
+  | 'calendar'
+  | 'gift'
+  | 'info';
+
+export interface AnnouncementBarSettings {
+  enabled: boolean;
+  badgeAr: string;
+  badgeEn: string;
+  messageAr: string;
+  messageEn: string;
+  ctaTextAr: string;
+  ctaTextEn: string;
+  ctaAction: AnnouncementCtaAction;
+  ctaUrl: string;
+  iconName: AnnouncementIconName;
+  styleVariant: AnnouncementStyleVariant;
+  dismissible: boolean;
+  updatedAt?: string;
+}
+
 export interface SiteLogoSettings {
   logoSource: 'vector' | 'custom';
   customLogoUrl: string;
@@ -292,6 +332,22 @@ export const DEFAULT_MODULES_VISIBILITY: SiteModulesVisibility = {
   footer: true
 };
 
+export const DEFAULT_ANNOUNCEMENT_BAR_SETTINGS: AnnouncementBarSettings = {
+  enabled: false,
+  badgeAr: 'إعلان هام',
+  badgeEn: 'Notice',
+  messageAr: 'فتح باب الحجز والتسجيل للجلسات التأهيلية الصباحية والمسائية والكورسات التدريبية المعتمدة في جميع فروعنا.',
+  messageEn: 'Bookings and registrations are now open for clinical rehabilitation sessions and accredited courses across all branches.',
+  ctaTextAr: 'احجز موعدك الآن',
+  ctaTextEn: 'Book Now',
+  ctaAction: 'booking',
+  ctaUrl: '',
+  iconName: 'megaphone',
+  styleVariant: 'theme_glass',
+  dismissible: true
+};
+
+export const STORAGE_ANNOUNCEMENT_BAR_KEY = 'raba_announcement_bar_v1';
 const STORAGE_THEME_KEY = 'raba_site_theme_v1';
 const STORAGE_SOCIAL_KEY = 'raba_social_links_v2';
 const STORAGE_PILLARS_KEY = 'raba_program_pillars_v1';
@@ -582,4 +638,42 @@ export function saveStoredModulesVisibility(modules: SiteModulesVisibility): voi
   }
   lazySavePersistentModule(STORAGE_MODULES_KEY, modules);
   window.dispatchEvent(new CustomEvent('raba_modules_updated', { detail: modules }));
+}
+
+// Announcement Bar Load / Save
+export function getStoredAnnouncementBarSettings(): AnnouncementBarSettings {
+  try {
+    const raw = localStorage.getItem(STORAGE_ANNOUNCEMENT_BAR_KEY);
+    if (!raw) return { ...DEFAULT_ANNOUNCEMENT_BAR_SETTINGS };
+    const parsed = JSON.parse(raw);
+    return {
+      ...DEFAULT_ANNOUNCEMENT_BAR_SETTINGS,
+      ...parsed
+    };
+  } catch {
+    return { ...DEFAULT_ANNOUNCEMENT_BAR_SETTINGS };
+  }
+}
+
+export function saveStoredAnnouncementBarSettings(settings: AnnouncementBarSettings): void {
+  const payload: AnnouncementBarSettings = {
+    ...DEFAULT_ANNOUNCEMENT_BAR_SETTINGS,
+    ...settings,
+    updatedAt: new Date().toISOString()
+  };
+  try {
+    localStorage.setItem(STORAGE_ANNOUNCEMENT_BAR_KEY, JSON.stringify(payload));
+  } catch (err) {
+    console.error('Failed to save announcement bar settings', err);
+  }
+  lazySavePersistentModule(STORAGE_ANNOUNCEMENT_BAR_KEY, payload);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('raba_announcement_bar_updated', { detail: payload }));
+  }
+}
+
+export function resetAnnouncementBarSettings(): AnnouncementBarSettings {
+  const fresh = { ...DEFAULT_ANNOUNCEMENT_BAR_SETTINGS };
+  saveStoredAnnouncementBarSettings(fresh);
+  return fresh;
 }

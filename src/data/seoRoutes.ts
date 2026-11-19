@@ -1719,6 +1719,28 @@ export function resolveRouteSeo(pathname: string, blogPosts: ArticleSeed[] = [])
         },
       };
 
+    case '/portal':
+      return {
+        path: '/portal',
+        title: 'بوابة الأسرة وملف العميل الإلكتروني | مركز رابا',
+        description:
+          'بوابة الأسرة لعملاء مركز رابا لمتابعة المواعيد المحجوزة، الباقات التأهيلية، وتحديث بيانات الملف الطبي.',
+        canonical: `${SITE_URL}/portal`,
+        h1: 'بوابة الأسرة وملف العميل الإلكتروني',
+        ogType: 'website',
+        jsonLd: {
+          '@context': 'https://schema.org',
+          '@graph': [
+            ORG_NODE,
+            { '@type': 'WebPage', name: 'بوابة الأسرة | مركز رابا', url: `${SITE_URL}/portal` },
+            makeBreadcrumb([
+              { name: 'الرئيسية', url: `${SITE_URL}/` },
+              { name: 'بوابة الأسرة', url: `${SITE_URL}/portal` },
+            ]),
+          ],
+        },
+      };
+
     default:
       return {
         path: '/',

@@ -158,6 +158,11 @@ export interface Appointment {
   requestSource?: string;
   branch?: string;
   city?: string;
+  country?: string;
+  qualification?: string;
+  assignedToUserId?: string;
+  assignedToUserName?: string;
+  assignedToUserEmail?: string;
   childBirthDate?: string;
   couponCode?: string;
   orderItems?: StoreOrderItem[];
@@ -165,6 +170,73 @@ export interface Appointment {
   preferredCallTime?: string;
   adminNotes?: string;
   readByAdmin?: boolean;
+  userId?: string;
+  clientId?: string;
+  familyMemberId?: string;
+  familyMemberName?: string;
+}
+
+export interface FamilyMember {
+  id: string;
+  name: string;
+  relation: string;
+  dob: string;
+  gender?: 'male' | 'female';
+  subFileNumber?: string;
+  notes?: string;
+}
+
+export type MemberRecordCategory = 'report' | 'subfile';
+
+export type MemberReportType =
+  | 'developmental_assessment'
+  | 'aba_progress'
+  | 'speech_therapy'
+  | 'occupational_therapy'
+  | 'iep_plan'
+  | 'medical_file'
+  | 'school_report'
+  | 'other';
+
+export interface MemberRecord {
+  id: string;
+  clientUid: string;
+  familyMemberId: string;
+  familyMemberName: string;
+  recordCategory: MemberRecordCategory;
+  reportType: MemberReportType;
+  title: string;
+  summary: string;
+  recommendations?: string;
+  specialistName?: string;
+  reportDate: string;
+  fileUrl?: string;
+  fileName?: string;
+  authorRole: 'admin' | 'client';
+  createdByUid: string;
+  createdAt: string;
+  createdAtISO?: string;
+  updatedAt?: string;
+}
+
+export interface ClientProfile {
+  uid: string;
+  fileNumber: string;
+  fullName: string;
+  phone: string;
+  email: string;
+  gender: 'male' | 'female';
+  dob: string;
+  familyMembers: FamilyMember[];
+  role: 'client';
+  status: 'active' | 'suspended';
+  adminNotes?: string;
+  suspensionReason?: string;
+  suspendedAt?: string;
+  suspendedBy?: string;
+  createdAt: string;
+  createdAtISO?: string;
+  updatedAt?: string;
 }
 
 export interface NotificationItem {
@@ -220,6 +292,7 @@ export interface ParentReview {
 
 export type PermissionId = 
   | 'manage_appointments'   // إدارة المواعيد والحجوزات
+  | 'manage_courses'        // إدارة الكورسات وطلبات التسجيل والتوجيه
   | 'manage_services'       // إدارة الخدمات وتعديل الأسعار
   | 'manage_packages'       // إدارة باقات التأهيل
   | 'manage_specialists'    // إدارة الأخصائيين والكوادر
@@ -238,6 +311,11 @@ export type UserRole =
   | 'accountant'            // المحاسب المالي
   | 'custom';               // دور مخصص
 
+export type BranchAccessScope =
+  | 'all'                     // جميع الفروع (كامل حجوزات المركز)
+  | 'assigned_only'           // حجوزات الفروع المحددة فقط
+  | 'assigned_and_unassigned'; // حجوزات الفروع المحددة + الطلبات العامة بدون فرع محدد
+
 export interface AdminUser {
   id: string;
   name: string;
@@ -253,6 +331,9 @@ export interface AdminUser {
   avatar?: string;
   password?: string;
   permissions: PermissionId[];
+  assignedBranches?: string[];
+  branchScope?: BranchAccessScope;
+  firebaseUid?: string;
   createdAt: string;
   lastLogin?: string;
 }

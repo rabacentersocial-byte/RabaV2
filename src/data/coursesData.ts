@@ -43,6 +43,46 @@ export interface CourseItem {
   videoPreviewUrl?: string;
 }
 
+export interface MiddleEastCountryOption {
+  code: string;
+  nameAr: string;
+  nameEn: string;
+  flag: string;
+  dialCode: string;
+}
+
+export const MIDDLE_EAST_COUNTRIES: MiddleEastCountryOption[] = [
+  { code: 'SA', nameAr: 'المملكة العربية السعودية', nameEn: 'Saudi Arabia', flag: '🇸🇦', dialCode: '+966' },
+  { code: 'AE', nameAr: 'الإمارات العربية المتحدة', nameEn: 'United Arab Emirates', flag: '🇦🇪', dialCode: '+971' },
+  { code: 'KW', nameAr: 'دولة الكويت', nameEn: 'Kuwait', flag: '🇰🇼', dialCode: '+965' },
+  { code: 'QA', nameAr: 'دولة قطر', nameEn: 'Qatar', flag: '🇶🇦', dialCode: '+974' },
+  { code: 'BH', nameAr: 'مملكة البحرين', nameEn: 'Bahrain', flag: '🇧🇭', dialCode: '+973' },
+  { code: 'OM', nameAr: 'سلطنة عُمان', nameEn: 'Oman', flag: '🇴🇲', dialCode: '+968' },
+  { code: 'JO', nameAr: 'المملكة الأردنية الهاشمية', nameEn: 'Jordan', flag: '🇯🇴', dialCode: '+962' },
+  { code: 'EG', nameAr: 'جمهورية مصر العربية', nameEn: 'Egypt', flag: '🇪🇬', dialCode: '+20' },
+  { code: 'IQ', nameAr: 'جمهورية العراق', nameEn: 'Iraq', flag: '🇮🇶', dialCode: '+964' },
+  { code: 'LB', nameAr: 'الجمهورية اللبنانية', nameEn: 'Lebanon', flag: '🇱🇧', dialCode: '+961' },
+  { code: 'SY', nameAr: 'الجمهورية العربية السورية', nameEn: 'Syria', flag: '🇸🇾', dialCode: '+963' },
+  { code: 'PS', nameAr: 'دولة فلسطين', nameEn: 'Palestine', flag: '🇵🇸', dialCode: '+970' },
+  { code: 'YE', nameAr: 'الجمهورية اليمنية', nameEn: 'Yemen', flag: '🇾🇪', dialCode: '+967' },
+  { code: 'TR', nameAr: 'الجمهورية التركية', nameEn: 'Turkey', flag: '🇹🇷', dialCode: '+90' },
+  { code: 'CY', nameAr: 'جمهورية قبرص', nameEn: 'Cyprus', flag: '🇨🇾', dialCode: '+357' },
+  { code: 'IR', nameAr: 'إيران', nameEn: 'Iran', flag: '🇮🇷', dialCode: '+98' }
+];
+
+export interface CoursePaymentOptionsConfig {
+  tamara: boolean;
+  emkan: boolean;
+  cash: boolean;
+}
+
+export interface CourseRequestRoutingConfig {
+  mode: 'all_authorized' | 'specific_user';
+  assignedUserId?: string;
+  assignedUserName?: string;
+  assignedUserEmail?: string;
+}
+
 export interface CoursesSectionSettings {
   badgeAr: string;
   badgeEn: string;
@@ -52,6 +92,8 @@ export interface CoursesSectionSettings {
   subtitleAr: string;
   subtitleEn: string;
   whatsappNumber: string;
+  paymentOptions?: CoursePaymentOptionsConfig;
+  courseRouting?: CourseRequestRoutingConfig;
 }
 
 export const DEFAULT_COURSES_SETTINGS: CoursesSectionSettings = {
@@ -62,7 +104,18 @@ export const DEFAULT_COURSES_SETTINGS: CoursesSectionSettings = {
   titleEn: 'Courses That Make a Real Difference',
   subtitleAr: 'برامج تدريبية عملية للمتخصصين والأسر، مصممة لتطوير المهارات وتحويل المعرفة إلى أثر يومي.',
   subtitleEn: 'Practical training programs for professionals and families, designed to develop competencies and transform knowledge into daily impact.',
-  whatsappNumber: '966575100100'
+  whatsappNumber: '966575100100',
+  paymentOptions: {
+    tamara: true,
+    emkan: true,
+    cash: true
+  },
+  courseRouting: {
+    mode: 'all_authorized',
+    assignedUserId: '',
+    assignedUserName: '',
+    assignedUserEmail: ''
+  }
 };
 
 export const COURSES_DATA: CourseItem[] = [
@@ -929,7 +982,18 @@ export function getStoredCoursesSettings(): CoursesSectionSettings {
         badgeAr: parsed.badgeAr === 'الكورسات والدورات التدريبية' ? DEFAULT_COURSES_SETTINGS.badgeAr : (parsed.badgeAr || DEFAULT_COURSES_SETTINGS.badgeAr),
         titlePart1Ar: parsed.titlePart1Ar === 'طوّر مسارك المهني في' ? DEFAULT_COURSES_SETTINGS.titlePart1Ar : (parsed.titlePart1Ar || DEFAULT_COURSES_SETTINGS.titlePart1Ar),
         titleHighlightAr: parsed.titleHighlightAr === 'تحليل السلوك التطبيقي (ABA)' ? DEFAULT_COURSES_SETTINGS.titleHighlightAr : (parsed.titleHighlightAr || DEFAULT_COURSES_SETTINGS.titleHighlightAr),
-        subtitleAr: (parsed.subtitleAr && parsed.subtitleAr.includes('بأعلى المعايير الإكلينيكية')) ? DEFAULT_COURSES_SETTINGS.subtitleAr : (parsed.subtitleAr || DEFAULT_COURSES_SETTINGS.subtitleAr)
+        subtitleAr: (parsed.subtitleAr && parsed.subtitleAr.includes('بأعلى المعايير الإكلينيكية')) ? DEFAULT_COURSES_SETTINGS.subtitleAr : (parsed.subtitleAr || DEFAULT_COURSES_SETTINGS.subtitleAr),
+        paymentOptions: {
+          tamara: parsed?.paymentOptions?.tamara !== undefined ? Boolean(parsed.paymentOptions.tamara) : true,
+          emkan: parsed?.paymentOptions?.emkan !== undefined ? Boolean(parsed.paymentOptions.emkan) : true,
+          cash: parsed?.paymentOptions?.cash !== undefined ? Boolean(parsed.paymentOptions.cash) : true
+        },
+        courseRouting: {
+          mode: parsed?.courseRouting?.mode === 'specific_user' ? 'specific_user' : 'all_authorized',
+          assignedUserId: parsed?.courseRouting?.assignedUserId || '',
+          assignedUserName: parsed?.courseRouting?.assignedUserName || '',
+          assignedUserEmail: parsed?.courseRouting?.assignedUserEmail || ''
+        }
       };
     }
     return DEFAULT_COURSES_SETTINGS;

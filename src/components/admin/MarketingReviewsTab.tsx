@@ -31,6 +31,7 @@ interface MarketingReviewsTabProps {
   hasPermission: (perm: PermissionId) => boolean;
   offers?: OfferData[];
   onUpdateOffers?: (updated: OfferData[]) => void;
+  isSystemAdmin?: boolean;
 }
 
 export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
@@ -38,7 +39,8 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
   onUpdateReviews,
   hasPermission,
   offers: propOffers,
-  onUpdateOffers
+  onUpdateOffers,
+  isSystemAdmin = false
 }) => {
   const { isArabic } = useLanguage();
   const [activeSubTab, setActiveSubTab] = useState<'reviews' | 'offers'>('reviews');
@@ -79,9 +81,9 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
     showFeedback(isArabic ? 'تم تحديث حالة توثيق ولي الأمر' : 'Review status updated');
   };
 
-  // Delete review
+  // Delete review (System Admin only)
   const handleDeleteReview = (reviewId: string) => {
-    if (!canManageReviews) return;
+    if (!canManageReviews || !isSystemAdmin) return;
     const updated = reviews.filter((r) => r.id !== reviewId);
     onUpdateReviews(updated);
     showFeedback(isArabic ? '✓ تم حذف التقييم بنجاح' : 'Review deleted successfully');
@@ -95,9 +97,9 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
     showFeedback(isArabic ? 'تم تحديث حالة العرض في السلايدر' : 'Offer slider status updated');
   };
 
-  // Delete Offer
+  // Delete Offer (System Admin only)
   const handleDeleteOffer = (offerId: string) => {
-    if (!canManageOffers) return;
+    if (!canManageOffers || !isSystemAdmin) return;
     const updated = offersList.filter((o) => o.id !== offerId);
     syncOffers(updated);
     showFeedback(isArabic ? '✓ تم حذف العرض بنجاح' : 'Offer deleted successfully');
@@ -237,13 +239,15 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
                     >
                       {rev.isVerifiedParent ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                     </button>
-                    <button
-                      onClick={() => handleDeleteReview(rev.id)}
-                      title={isArabic ? 'حذف التقييم' : 'Delete review'}
-                      className="p-1 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg cursor-pointer"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                    {isSystemAdmin && (
+                      <button
+                        onClick={() => handleDeleteReview(rev.id)}
+                        title={isArabic ? 'حذف التقييم' : 'Delete review'}
+                        className="p-1 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
@@ -445,14 +449,16 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
                             )}
                           </button>
 
-                          {/* Delete */}
-                          <button
-                            onClick={() => handleDeleteOffer(offer.id)}
-                            className="text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 p-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            <span>{isArabic ? 'حذف' : 'Delete'}</span>
-                          </button>
+                          {/* Delete (System Admin Only) */}
+                          {isSystemAdmin && (
+                            <button
+                              onClick={() => handleDeleteOffer(offer.id)}
+                              className="text-xs text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 p-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                              <span>{isArabic ? 'حذف' : 'Delete'}</span>
+                            </button>
+                          )}
                         </div>
 
                       </div>
@@ -475,6 +481,7 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
         onSave={handleSaveCustomizedOffer}
         offerToEdit={editingOffer}
         isArabic={isArabic}
+        isSystemAdmin={isSystemAdmin}
       />
 
     </div>

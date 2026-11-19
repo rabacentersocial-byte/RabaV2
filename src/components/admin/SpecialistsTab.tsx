@@ -38,12 +38,14 @@ interface SpecialistsTabProps {
   specialists: Specialist[];
   onUpdateSpecialists: (updated: Specialist[]) => void;
   hasPermission: (perm: PermissionId) => boolean;
+  isSystemAdmin?: boolean;
 }
 
 export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
   specialists,
   onUpdateSpecialists,
-  hasPermission
+  hasPermission,
+  isSystemAdmin = false
 }) => {
   const { isArabic } = useLanguage();
   
@@ -197,9 +199,9 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
     showToast(isArabic ? '✨ تمت إضافة الأخصائي الجديد بنجاح إلى القائمة والسلايدر' : 'Specialist added successfully to directory & slider');
   };
 
-  // Delete specialist handler
+  // Delete specialist handler (System Admin only)
   const handleConfirmDelete = () => {
-    if (!deletingSpecialist) return;
+    if (!deletingSpecialist || !isSystemAdmin) return;
     const deletedName = deletingSpecialist.name;
     const updated = specialists.filter(s => s.id !== deletingSpecialist.id);
     onUpdateSpecialists(updated);
@@ -592,8 +594,8 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
                     </button>
                   )}
 
-                  {/* Delete Specialist Card */}
-                  {canManage && (
+                  {/* Delete Specialist Card (System Admin Only) */}
+                  {canManage && isSystemAdmin && (
                     <button
                       onClick={() => setDeletingSpecialist(spec)}
                       className="px-2.5 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200/50 dark:border-rose-900/50 hover:bg-rose-600 hover:text-white text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
@@ -906,8 +908,8 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
         </div>
       )}
 
-      {/* 8. Delete Confirmation Modal */}
-      {deletingSpecialist && (
+      {/* 8. Delete Confirmation Modal (System Admin Only) */}
+      {deletingSpecialist && isSystemAdmin && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-6 w-full max-w-md shadow-2xl">
             <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 text-rose-600 flex items-center justify-center mb-4">

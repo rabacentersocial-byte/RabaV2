@@ -18,13 +18,16 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { SPECIALISTS, SERVICES, THERAPY_PACKAGES, TIME_SLOTS } from '../data/mockData';
+import { getStoredBranchesData, BranchItem } from '../data/branchesData';
 import { Specialist, ServiceItem, TherapyPackage, Appointment } from '../types';
 import { 
   generateRequestReference, 
   saveAndBroadcastCustomerRequestAsync,
   getCustomerWhatsAppMessage 
 } from '../data/customerRequests';
+import { getCleanBranchDisplayName, normalizeBranchText } from '../utils/branchPermissions';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -48,6 +51,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   onConfirmBooking
 }) => {
   const { isArabic, direction } = useLanguage();
+  const { user, clientProfile } = useAuth();
 
   // Booking Type: service or package
   const [bookingType, setBookingType] = useState<'service' | 'package'>(
@@ -73,10 +77,15 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [fullName, setFullName] = useState('');
   const [mobilePhone, setMobilePhone] = useState('');
 
+  const [branchesList, setBranchesList] = useState<BranchItem[]>(() => getStoredBranchesData());
+  const [selectedBranchId, setSelectedBranchId] = useState<string>('');
+
   // Optional expandable details
+  const [selectedFamilyMemberId, setSelectedFamilyMemberId] = useState<string>('');
   const [showOptionalDetails, setShowOptionalDetails] = useState(Boolean(initialNotes));
   const [childName, setChildName] = useState('');
   const [childAge, setChildAge] = useState<number>(5);
+  const [childBirthDate, setChildBirthDate] = useState<string>('');
   const [notes, setNotes] = useState(initialNotes || '');
 
   // Form State
@@ -84,6 +93,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [confirmedApp, setConfirmedApp] = useState<Appointment | null>(null);
+
+  useEffect(() => {
+    const syncBranches = () => setBranchesList(getStoredBranchesData());
+    window.addEventListener('raba_branches_updated', syncBranches);
+    return () => window.removeEventListener('raba_branches_updated', syncBranches);
+  }, []);
 
   useEffect(() => {
     if (initialPackage) {
@@ -99,11 +114,50 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     if (initialNotes !== undefined) {
       setNotes(initialNotes);
       if (initialNotes.trim()) setShowOptionalDetails(true);
+      const normNotes = normalizeBranchText(initialNotes);
+      const matchedBranch = branchesList.find((b) => {
+        const cleanAr = normalizeBranchText(getCleanBranchDisplayName(b, true));
+        const cleanEn = normalizeBranchText(getCleanBranchDisplayName(b, false));
+        return (cleanAr && normNotes.includes(cleanAr)) || (cleanEn && normNotes.includes(cleanEn));
+      });
+      if (matchedBranch) {
+        setSelectedBranchId(matchedBranch.id);
+      }
     }
     if (initialDate) {
       setSelectedDate(initialDate);
     }
-  }, [initialService, initialPackage, initialSpecialist, initialNotes, initialDate]);
+  }, [initialService, initialPackage, initialSpecialist, initialNotes, initialDate, branchesList]);
+
+  useEffect(() => {
+    if (clientProfile) {
+      setFullName((prev) => prev || clientProfile.fullName || '');
+      setMobilePhone((prev) => prev || clientProfile.phone || '');
+    }
+  }, [clientProfile]);
+
+  const computeAgeYearsFromDob = (dob?: string): number => {
+    if (!dob) return 5;
+    const d = new Date(dob);
+    if (Number.isNaN(d.getTime())) return 5;
+    const now = new Date();
+    let age = now.getFullYear() - d.getFullYear();
+    const m = now.getMonth() - d.getMonth();
+    if (m < 0 || (m === 0 && now.getDate() < d.getDate())) age -= 1;
+    return Math.max(1, Math.min(18, age || 5));
+  };
+
+  const handleSelectFamilyMember = (memberId: string) => {
+    setSelectedFamilyMemberId(memberId);
+    const member = (clientProfile?.familyMembers || []).find((m) => m.id === memberId);
+    if (member) {
+      setChildName(member.name);
+      setChildAge(computeAgeYearsFromDob(member.dob));
+      setChildBirthDate(member.dob || '');
+    } else {
+      setChildBirthDate('');
+    }
+  };
 
   const handleModalClose = () => {
     setIsSubmitted(false);
@@ -154,18 +208,31 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     
     const specialistName = !isArabic && activeSpecialist.nameEn ? activeSpecialist.nameEn : activeSpecialist.name;
 
+    const selectedMember = (clientProfile?.familyMembers || []).find(
+      (m) => m.id === selectedFamilyMemberId
+    );
+    const chosenBranch = branchesList.find((b) => b.id === selectedBranchId);
+    const branchLabel = chosenBranch ? getCleanBranchDisplayName(chosenBranch, isArabic) : '';
+    const cityLabel = chosenBranch ? (isArabic ? chosenBranch.cityNameAr : chosenBranch.cityNameEn) : '';
+
     const newAppointment: Appointment = {
       id: `apt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       referenceNumber: ref,
-      childName: childName.trim() || (isArabic ? 'المستفيد' : 'Beneficiary'),
+      childName: selectedMember?.name || childName.trim() || (isArabic ? 'المستفيد' : 'Beneficiary'),
       childAge: Number(childAge) || 5,
+      ...(childBirthDate ? { childBirthDate } : {}),
       guardianName: fullName.trim(),
       guardianPhone: mobilePhone.trim(),
-      guardianEmail: 'contact@customer.com',
+      guardianEmail: clientProfile?.email || user?.email || 'contact@customer.com',
+      userId: user?.uid || undefined,
+      clientId: user?.uid || undefined,
+      ...(selectedMember ? { familyMemberId: selectedMember.id, familyMemberName: selectedMember.name } : {}),
       serviceId: bookingType === 'package' ? activePackage.id : activeService.id,
       serviceTitle: serviceTitle,
       specialistId: activeSpecialist.id,
       specialistName: specialistName,
+      ...(branchLabel ? { branch: branchLabel } : {}),
+      ...(cityLabel ? { city: cityLabel } : {}),
       date: selectedDate,
       timeSlot: selectedTimeSlot,
       notes: notes.trim(),
@@ -440,6 +507,29 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               )}
             </div>
 
+            {/* Field 3.5: Preferred Clinic Branch (Optional for direct branch routing) */}
+            <div>
+              <label htmlFor="booking-branch-select" className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">
+                {isArabic ? 'الفرع المفضل (اختياري):' : 'Preferred Branch (Optional):'}
+              </label>
+              <select
+                id="booking-branch-select"
+                aria-label={isArabic ? 'الفرع المفضل' : 'Preferred Branch'}
+                value={selectedBranchId}
+                onChange={(e) => setSelectedBranchId(e.target.value)}
+                className="w-full h-11 bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none cursor-pointer"
+              >
+                <option value="">
+                  {isArabic ? '— أي فرع / يحدده فريق الاستقبال —' : '— Any Branch / Decided with Coordinator —'}
+                </option>
+                {branchesList.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {isArabic ? `${b.cityNameAr} - ${getCleanBranchDisplayName(b, true)}` : `${b.cityNameEn} - ${getCleanBranchDisplayName(b, false)}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             {/* Field 4: Preferred Date & Time (Optimized Touch Heights) */}
             <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
               <div>
@@ -492,6 +582,26 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
               {showOptionalDetails && (
                 <div className="mt-2 p-3 rounded-xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/70 dark:border-white/10 space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-150">
+                  {clientProfile && clientProfile.familyMembers && clientProfile.familyMembers.length > 0 && (
+                    <div>
+                      <label htmlFor="booking-family-member" className="text-[11px] font-bold text-slate-600 dark:text-slate-300 block mb-1">
+                        {isArabic ? 'اختيار الفرد من ملف الأسرة:' : 'Select from Family File:'}
+                      </label>
+                      <select
+                        id="booking-family-member"
+                        value={selectedFamilyMemberId}
+                        onChange={(e) => handleSelectFamilyMember(e.target.value)}
+                        className="w-full h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-3 text-xs sm:text-sm text-slate-900 dark:text-white outline-none focus:border-[#2E86EB]"
+                      >
+                        <option value="">{isArabic ? '— مستفيد جديد / إدخال يدوي —' : '— Manual entry —'}</option>
+                        {clientProfile.familyMembers.map((m) => (
+                          <option key={m.id} value={m.id}>
+                            {m.name} ({m.relation})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                   <div className="grid grid-cols-3 gap-2">
                     <div className="col-span-2">
                       <label htmlFor="booking-child-name" className="sr-only">{isArabic ? 'اسم الطفل' : 'Child Name'}</label>

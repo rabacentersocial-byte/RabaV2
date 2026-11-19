@@ -46,6 +46,7 @@ import { getAccessibleAccentColor } from '../../utils/colorContrast';
 
 interface PartnersSettingsTabProps {
   onClose?: () => void;
+  isSystemAdmin?: boolean;
 }
 
 // Pre-installed official partner logos for quick 1-click selection
@@ -84,7 +85,7 @@ const ACCENT_COLOR_PRESETS = [
   { name: 'كحلي داكن', hex: '#1E293B' }
 ];
 
-export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
+export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = ({ isSystemAdmin = false }) => {
   const { isArabic } = useLanguage();
 
   const [partners, setPartners] = useState<PartnerItem[]>(() => getStoredPartners());
@@ -349,8 +350,9 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
     triggerSuccessFeedback(isArabic ? 'تم حفظ وتخصيص بطاقة الشريك بنجاح!' : 'Partner card customized successfully!');
   };
 
-  // Delete Partner
+  // Delete Partner (System Admin only)
   const handleDeletePartner = (id: string) => {
+    if (!isSystemAdmin) return;
     if (!window.confirm(isArabic ? 'هل أنت متأكد من حذف هذا الشريك من السلايدر؟' : 'Are you sure you want to delete this partner?')) {
       return;
     }
@@ -705,14 +707,16 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = () => {
                     <Edit2 className="w-4 h-4" />
                   </button>
 
-                  {/* Delete */}
-                  <button
-                    onClick={() => handleDeletePartner(partner.id)}
-                    className="p-1.5 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
-                    title={isArabic ? 'حذف الشريك' : 'Delete'}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  {/* Delete (System Admin Only) */}
+                  {isSystemAdmin && (
+                    <button
+                      onClick={() => handleDeletePartner(partner.id)}
+                      className="p-1.5 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                      title={isArabic ? 'حذف الشريك' : 'Delete'}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
 
                 </div>
               </div>

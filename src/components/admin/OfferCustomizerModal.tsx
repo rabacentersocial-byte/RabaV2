@@ -30,6 +30,7 @@ interface OfferCustomizerModalProps {
   onSave: (savedOffer: OfferData) => void;
   offerToEdit?: OfferData | null;
   isArabic?: boolean;
+  isSystemAdmin?: boolean;
 }
 
 // Preset color themes for quick 1-click styling
@@ -185,7 +186,8 @@ export const OfferCustomizerModal: React.FC<OfferCustomizerModalProps> = ({
   onClose,
   onSave,
   offerToEdit,
-  isArabic = true
+  isArabic = true,
+  isSystemAdmin = false
 }) => {
   if (!isOpen) return null;
 
@@ -268,6 +270,7 @@ export const OfferCustomizerModal: React.FC<OfferCustomizerModalProps> = ({
   };
 
   const handleRemoveTerm = (index: number) => {
+    if (offerToEdit && !isSystemAdmin) return;
     setTerms(terms.filter((_, i) => i !== index));
   };
 
@@ -976,13 +979,15 @@ export const OfferCustomizerModal: React.FC<OfferCustomizerModalProps> = ({
                           </span>
                           <span className="truncate">{t.textAr}</span>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveTerm(idx)}
-                          className="text-slate-400 hover:text-rose-400 p-1 rounded-lg cursor-pointer transition-colors"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        {(!offerToEdit || isSystemAdmin) && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveTerm(idx)}
+                            className="text-slate-400 hover:text-rose-400 p-1 rounded-lg cursor-pointer transition-colors"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                       </div>
                     ))}
                   </div>

@@ -104,6 +104,14 @@ export interface DispatchCustomerRequestPayload {
   sourcePage?: string;
   notes?: string;
   city?: string;
+  country?: string;
+  branch?: string;
+  qualification?: string;
+  paymentMethod?: Appointment['paymentMethod'];
+  paymentStatus?: Appointment['paymentStatus'];
+  assignedToUserId?: string;
+  assignedToUserName?: string;
+  assignedToUserEmail?: string;
   requestType?: CustomerRequestType;
   type?: string;
   amount?: number;
@@ -130,7 +138,8 @@ function buildRequestFromPayload(payload: DispatchCustomerRequestPayload): Appoi
     requestType,
     requestSource: payload.sourcePage || 'الموقع الإلكتروني',
     referenceNumber: generateRequestReference(requestType),
-    paymentStatus: 'unpaid',
+    paymentStatus: payload.paymentStatus || 'unpaid',
+    ...(payload.paymentMethod ? { paymentMethod: payload.paymentMethod } : {}),
     amount: typeof payload.amount === 'number' ? payload.amount : 0,
     reminderSettings: {
       whatsapp: true,
@@ -138,8 +147,13 @@ function buildRequestFromPayload(payload: DispatchCustomerRequestPayload): Appoi
       email: true
     },
     createdAt: new Date().toISOString(),
-    city: payload.city || 'الرياض',
-    branch: payload.city || 'الرياض',
+    city: payload.city || '',
+    country: payload.country || '',
+    branch: payload.branch || '',
+    qualification: payload.qualification || '',
+    ...(payload.assignedToUserId ? { assignedToUserId: payload.assignedToUserId } : {}),
+    ...(payload.assignedToUserName ? { assignedToUserName: payload.assignedToUserName } : {}),
+    ...(payload.assignedToUserEmail ? { assignedToUserEmail: payload.assignedToUserEmail } : {}),
     readByAdmin: false
   };
 }
@@ -160,18 +174,34 @@ export function getCustomerWhatsAppMessage(request: Appointment, isArabic = true
 
   let text = '';
   switch (request.requestType) {
+    case 'course': {
+      const paymentLabelAr =
+        request.paymentMethod === 'tamara'
+          ? 'تقسيط تمارا'
+          : request.paymentMethod === 'emkan'
+          ? 'تمويل إمكان'
+          : request.paymentMethod === 'bank_transfer'
+          ? 'سداد / تحويل بنكي'
+          : 'يتم التحديد مع المنسق';
+      text = isArabic
+        ? `السلام عليكم، أود متابعة طلب التسجيل في الكورس التدريبي عبر منصة رابا التعليمية:\n🔖 رقم الطلب: ${request.referenceNumber}\n🎓 الكورس: ${request.serviceTitle}\n👤 المتقدم: ${request.guardianName}\n📱 الجوال: ${request.guardianPhone}\n🌍 الدولة والمدينة: ${[request.country, request.city].filter(Boolean).join(' - ') || 'السعودية'}\n💳 خيار السداد: ${paymentLabelAr}\nأرجو تأكيد التسجيل وتفاصيل البدء.`
+        : `Hello, I submitted a course registration via RABA Academy. Ref: ${request.referenceNumber}, Course: ${request.serviceTitle}, Name: ${request.guardianName}, Country: ${request.country || 'Saudi Arabia'}, City: ${request.city || '-'}. Please confirm enrollment details.`;
+      break;
+    }
+
     case 'shadow_teacher':
       text = isArabic
         ? `السلام عليكم ورحمة الله، أود تأكيد طلبي لـ «خدمة سِوار» (معلم الظل والدمج المدرسي والتربوي Shadow Teacher) بمركز رابا للأطفال.\n🔖 رقم الطلب: ${request.referenceNumber}\n👤 ولي الأمر: ${request.guardianName}\n📱 الجوال: ${request.guardianPhone}\n📍 المدينة: ${request.city || 'الرياض'}\nأرجو إفادتي بالخطوة القادمة وتحديد موعد المقابلة والتقييم.`
         : `Hello, I submitted a Sewar Program request (School Shadow Teacher) at Raba Center. Ref: ${request.referenceNumber}, Parent: ${request.guardianName}, Phone: ${request.guardianPhone}, City: ${request.city || 'Riyadh'}. Please confirm next steps.`;
       break;
 
-    case 'store_order':
+    case 'store_order': {
       const itemsList = request.orderItems?.map(i => `• ${i.name} (كمية: ${i.quantity}) - ${i.price * i.quantity} ر.س`).join('\n') || '';
       text = isArabic
         ? `السلام عليكم، قمت بطلب منتجات من متجر رابا التعليمي والتأهيلي:\n🔖 رقم الطلب: ${request.referenceNumber}\n👤 المستلم: ${request.guardianName}\n📱 الجوال: ${request.guardianPhone}\n📍 عنوان التوصيل: ${request.shippingAddress || 'الرياض'}\n💳 الإجمالي: ${request.amount} ريال (${request.paymentMethod === 'cod' ? 'دفع عند الاستلام' : 'تحويل/بطاقة'})\nالمنتجات المطلوبة:\n${itemsList}\nأرجو تأكيد الشحن والتوصيل.`
         : `Hello, I placed a store order at Raba Store. Ref: ${request.referenceNumber}, Recipient: ${request.guardianName}, Phone: ${request.guardianPhone}, Total: ${request.amount} SAR. Please confirm shipping.`;
       break;
+    }
 
     case 'quick_consultation':
       text = isArabic

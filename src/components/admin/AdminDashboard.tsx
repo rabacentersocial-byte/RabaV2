@@ -29,7 +29,8 @@ import {
   PanelRightOpen,
   PanelRightClose,
   PanelLeftOpen,
-  PanelLeftClose
+  PanelLeftClose,
+  FolderHeart
 } from 'lucide-react';
 import { Appointment, ParentReview, AdminUser, PermissionId, ServiceItem, TherapyPackage, Specialist } from '../../types';
 import { syncAllToDiskNow, savePersistentModule } from '../../utils/persistentSync';
@@ -43,6 +44,14 @@ import {
   clearStoredAdminSession
 } from '../../data/adminData';
 import { SPECIALISTS, getStoredServices, saveStoredServices, getStoredPackages, saveStoredPackages } from '../../data/mockData';
+import { BranchItem, getStoredBranchesData } from '../../data/branchesData';
+import {
+  filterAppointmentsByUserBranchAccess,
+  getCleanBranchDisplayName,
+  getEffectiveBranchScope,
+  getUserAssignedBranchItems,
+  isUserBranchScoped
+} from '../../utils/branchPermissions';
 import { useLanguage } from '../../context/LanguageContext';
 import { useTheme } from '../../context/ThemeContext';
 import { AnimatedBackground } from '../AnimatedBackground';
@@ -63,6 +72,7 @@ import { CoursesManagementTab } from './CoursesManagementTab';
 import { MarketingReviewsTab } from './MarketingReviewsTab';
 import { FinancesSettingsTab } from './FinancesSettingsTab';
 import { TrackingPixelSettings } from './TrackingPixelSettings';
+import { ClientFilesTab } from './ClientFilesTab';
 
 interface AdminDashboardProps {
   onClose: () => void;
@@ -72,6 +82,7 @@ interface AdminDashboardProps {
   isSyncingAppointments?: boolean;
   appointmentsSyncError?: string | null;
   isFirebaseAuthenticated?: boolean;
+  firebaseAuthEmail?: string | null;
   onRefreshAppointments?: () => Promise<void> | void;
   reviews: ParentReview[];
   onUpdateReviews: (updated: ParentReview[]) => void;
@@ -87,6 +98,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   isSyncingAppointments = false,
   appointmentsSyncError = null,
   isFirebaseAuthenticated = false,
+  firebaseAuthEmail = null,
   onRefreshAppointments,
   reviews,
   onUpdateReviews,
@@ -99,10 +111,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Active navigation tab
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'users' | 'appointments' | 'services' | 'pricing' | 'specialists' | 'slider' | 'courses' | 'blog' | 'accreditations' | 'partners' | 'site_settings' | 'marketing' | 'finances' | 'pixels'
+    'overview' | 'users' | 'clients' | 'appointments' | 'services' | 'pricing' | 'specialists' | 'slider' | 'courses' | 'blog' | 'accreditations' | 'partners' | 'site_settings' | 'marketing' | 'finances' | 'pixels'
   >(() => {
-    if (typeof window !== 'undefined' && window.location.hash.toLowerCase().includes('pixels')) {
-      return 'pixels';
+    if (typeof window !== 'undefined') {
+      const h = window.location.hash.toLowerCase();
+      if (h.includes('pixels')) return 'pixels';
+      if (h.includes('clients')) return 'clients';
     }
     return 'overview';
   });
@@ -113,6 +127,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       const hash = window.location.hash.toLowerCase();
       if (hash.includes('pixels')) {
         setActiveTab('pixels');
+      } else if (hash.includes('clients')) {
+        setActiveTab('clients');
       }
     };
     window.addEventListener('hashchange', handleHashSync);
@@ -138,6 +154,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>(() => getStoredAdminUsers());
   const [currentUser, setCurrentUser] = useState<AdminUser>(() => getStoredAdminSession() || getStoredCurrentAdminUser());
   const [isSwitchUserDropdownOpen, setIsSwitchUserDropdownOpen] = useState(false);
+  const [branchesList, setBranchesList] = useState<BranchItem[]>(() => getStoredBranchesData());
+
+  useEffect(() => {
+    const syncBranches = () => setBranchesList(getStoredBranchesData());
+    window.addEventListener('raba_branches_updated', syncBranches);
+    window.addEventListener('raba_persistent_sync_ready' as any, syncBranches);
+    return () => {
+      window.removeEventListener('raba_branches_updated', syncBranches);
+      window.removeEventListener('raba_persistent_sync_ready' as any, syncBranches);
+    };
+  }, []);
 
   // Services, Packages, Specialists
   const [servicesList, setServicesList] = useState<ServiceItem[]>(() => getStoredServices());
@@ -227,7 +254,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     return currentUser.permissions.includes(perm);
   };
 
-  const newLeadsCount = appointments.filter(a => a.status === 'new' || (!a.readByAdmin && a.status === 'pending')).length;
+  // Appointments scoped by active user's branch permissions
+  const visibleAppointments = React.useMemo(
+    () => filterAppointmentsByUserBranchAccess(appointments, currentUser, branchesList),
+    [appointments, currentUser, branchesList]
+  );
+
+  const newLeadsCount = visibleAppointments.filter(a => a.status === 'new' || (!a.readByAdmin && a.status === 'pending')).length;
 
   // Sidebar items definition
   const navItems = [
@@ -250,13 +283,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       perm: null // Anyone can view the list, only manage_users can add/edit
     },
     {
+      id: 'clients',
+      labelAr: 'إدارة ملفات العملاء',
+      labelEn: 'Client Files',
+      icon: FolderHeart,
+      badge: isArabic ? 'بوابة الأسرة' : 'Files',
+      isHighlighted: false,
+      perm: null
+    },
+    {
       id: 'appointments',
       labelAr: 'الحجوزات وطلبات العملاء',
       labelEn: 'Bookings & Inquiries',
       icon: Calendar,
-      badge: newLeadsCount > 0 ? `${newLeadsCount} ${isArabic ? 'جديد' : 'new'}` : `${appointments.length}`,
+      badge: newLeadsCount > 0 ? `${newLeadsCount} ${isArabic ? 'جديد' : 'new'}` : `${visibleAppointments.length}`,
       isHighlighted: newLeadsCount > 0,
-      perm: 'manage_appointments' as PermissionId
+      perm: 'manage_appointments' as PermissionId,
+      anyOfPerms: ['manage_appointments', 'manage_courses'] as PermissionId[]
     },
     {
       id: 'services',
@@ -476,7 +519,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           )}
                           <div className="truncate">
                             <div className="truncate font-bold">{u?.name || u?.username || 'مستخدم'}</div>
-                            <div className="text-[10px] text-slate-600 dark:text-slate-400">{u?.roleTitleAr || ''}</div>
+                            <div className="text-[10px] text-slate-600 dark:text-slate-400">
+                              {u?.roleTitleAr || ''}
+                              {getEffectiveBranchScope(u) !== 'all' && (
+                                <span className="text-teal-600 dark:text-teal-400 font-bold">
+                                  {' · '}
+                                  {(u.assignedBranches || []).length}{' '}
+                                  {isArabic ? 'فروع' : 'branches'}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
 
@@ -604,7 +656,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = activeTab === item.id;
-                  const locked = item.perm && !hasPermission(item.perm);
+                  const anyOf = (item as { anyOfPerms?: PermissionId[] }).anyOfPerms;
+                  const locked = anyOf
+                    ? !anyOf.some((p) => hasPermission(p))
+                    : Boolean(item.perm && !hasPermission(item.perm));
                   const label = isArabic ? item.labelAr : item.labelEn;
 
                   return (
@@ -700,6 +755,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     ? `أنت متصل بصلاحيات: ${currentUser.roleTitleAr}. يمكنك التحكم بكافة الخيارات المتاحة لدورك.`
                     : `Logged in as ${currentUser.roleTitleEn}.`}
                 </p>
+                {isUserBranchScoped(currentUser) && (
+                  <div className="pt-1.5 border-t border-slate-200/70 dark:border-white/10 text-[10px] font-bold text-teal-700 dark:text-teal-300">
+                    {isArabic ? 'فروع الحجوزات: ' : 'Branches: '}
+                    {getUserAssignedBranchItems(currentUser, branchesList)
+                      .map((b) => getCleanBranchDisplayName(b, isArabic))
+                      .join('، ') || (isArabic ? 'غير محدد' : 'None')}
+                  </div>
+                )}
               </div>
             ) : (
               <button
@@ -804,7 +867,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           <main className="flex-1 min-w-0 raba-admin-content">
             {activeTab === 'overview' && (
               <OverviewTab
-                appointments={appointments}
+                appointments={visibleAppointments}
                 users={adminUsers}
                 currentUser={currentUser}
                 reviews={reviews}
@@ -823,10 +886,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               />
             )}
 
+            {activeTab === 'clients' && (
+              <ClientFilesTab
+                appointments={appointments}
+                specialists={specialistsList}
+                adminUsers={adminUsers}
+                currentUser={currentUser}
+                hasPermission={hasPermission}
+                isFirebaseAuthenticated={isFirebaseAuthenticated}
+                firebaseAuthEmail={firebaseAuthEmail}
+              />
+            )}
+
             {activeTab === 'appointments' && (
               <AppointmentsTab
                 appointments={appointments}
                 onUpdateAppointments={onUpdateAppointments}
+                currentUser={currentUser}
+                adminUsers={adminUsers}
                 isSyncingAppointments={isSyncingAppointments}
                 appointmentsSyncError={appointmentsSyncError}
                 isFirebaseAuthenticated={isFirebaseAuthenticated}
@@ -862,38 +939,49 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 specialists={specialistsList}
                 onUpdateSpecialists={handleUpdateSpecialists}
                 hasPermission={hasPermission}
+                isSystemAdmin={currentUser?.role === 'super_admin' && currentUser?.status !== 'suspended'}
               />
             )}
 
             {activeTab === 'slider' && (
               <SliderManagementTab
                 hasPermission={hasPermission}
+                isSystemAdmin={currentUser?.role === 'super_admin' && currentUser?.status !== 'suspended'}
               />
             )}
 
             {activeTab === 'courses' && (
               <CoursesManagementTab
                 hasPermission={hasPermission}
+                isSystemAdmin={currentUser?.role === 'super_admin' && currentUser?.status !== 'suspended'}
+                adminUsers={adminUsers}
+                onNavigateTab={(tab) => handleSelectTab(tab as any)}
               />
             )}
 
             {activeTab === 'blog' && (
               <BlogManagementTab
                 hasPermission={hasPermission}
+                isSystemAdmin={currentUser?.role === 'super_admin' && currentUser?.status !== 'suspended'}
               />
             )}
 
             {activeTab === 'accreditations' && (
-              <AccreditationsSettingsTab />
+              <AccreditationsSettingsTab
+                isSystemAdmin={currentUser?.role === 'super_admin' && currentUser?.status !== 'suspended'}
+              />
             )}
 
             {activeTab === 'partners' && (
-              <PartnersSettingsTab />
+              <PartnersSettingsTab
+                isSystemAdmin={currentUser?.role === 'super_admin' && currentUser?.status !== 'suspended'}
+              />
             )}
 
             {activeTab === 'site_settings' && (
               <SiteSettingsTab
                 hasPermission={hasPermission}
+                isSystemAdmin={currentUser?.role === 'super_admin' && currentUser?.status !== 'suspended'}
               />
             )}
 
@@ -902,6 +990,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 reviews={reviews}
                 onUpdateReviews={onUpdateReviews}
                 hasPermission={hasPermission}
+                isSystemAdmin={currentUser?.role === 'super_admin' && currentUser?.status !== 'suspended'}
               />
             )}
 

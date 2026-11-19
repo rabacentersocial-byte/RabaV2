@@ -34,9 +34,10 @@ import { SPECIALISTS } from '../../data/mockData';
 
 interface BlogManagementTabProps {
   hasPermission?: (perm: any) => boolean;
+  isSystemAdmin?: boolean;
 }
 
-export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
+export const BlogManagementTab: React.FC<BlogManagementTabProps> = ({ isSystemAdmin = false }) => {
   const { isArabic } = useLanguage();
   const [posts, setPosts] = useState<BlogPost[]>(() => getStoredBlogPosts());
   const [activeFilter, setActiveFilter] = useState<string>('all');
@@ -128,14 +129,15 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
     updatePostsState(next);
   };
 
-  // Delete initiation - opens styled confirmation modal
+  // Delete initiation - opens styled confirmation modal (System Admin only)
   const handleDeletePost = (post: BlogPost) => {
+    if (!isSystemAdmin) return;
     setPostToDelete(post);
   };
 
-  // Confirm delete post
+  // Confirm delete post (System Admin only)
   const handleConfirmDelete = () => {
-    if (!postToDelete) return;
+    if (!postToDelete || !isSystemAdmin) return;
     const next = posts.filter((p) => p.id !== postToDelete.id);
     next.forEach((p, idx) => { p.order = idx + 1; });
     updatePostsState(next);
@@ -567,15 +569,17 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
                   <span>{isArabic ? 'تعديل' : 'Edit'}</span>
                 </button>
 
-                {/* Delete */}
-                <button
-                  type="button"
-                  onClick={() => handleDeletePost(post)}
-                  className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-600 text-rose-700 dark:text-rose-400 hover:text-white transition-all cursor-pointer"
-                  title={isArabic ? 'حذف المقال' : 'Delete'}
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
+                {/* Delete (System Admin Only) */}
+                {isSystemAdmin && (
+                  <button
+                    type="button"
+                    onClick={() => handleDeletePost(post)}
+                    className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-600 text-rose-700 dark:text-rose-400 hover:text-white transition-all cursor-pointer"
+                    title={isArabic ? 'حذف المقال' : 'Delete'}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -965,8 +969,8 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = () => {
         </div>
       )}
 
-      {/* 6. CONFIRM DELETE POST MODAL */}
-      {postToDelete && (
+      {/* 6. CONFIRM DELETE POST MODAL (System Admin Only) */}
+      {postToDelete && isSystemAdmin && (
         <div 
           className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/75 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in"
           onClick={() => setPostToDelete(null)}

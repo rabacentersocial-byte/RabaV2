@@ -42,11 +42,13 @@ import { SmartAccreditationLogo } from '../SmartAccreditationLogo';
 interface AccreditationsSettingsTabProps {
   onModuleToggle?: (key: string, enabled: boolean) => void;
   isModuleEnabled?: boolean;
+  isSystemAdmin?: boolean;
 }
 
 export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps> = ({
   onModuleToggle,
-  isModuleEnabled = true
+  isModuleEnabled = true,
+  isSystemAdmin = false
 }) => {
   const { isArabic } = useLanguage();
 
@@ -147,8 +149,9 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
     }
   };
 
-  // Remove an item's custom logo
+  // Remove an item's custom logo (System Admin only)
   const handleRemoveCardLogo = (id: string) => {
+    if (!isSystemAdmin) return;
     const next = items.map((it) => it.id === id ? {
       ...it,
       logoType: undefined,
@@ -260,8 +263,9 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
     saveStoredAccreditations(next);
   };
 
-  // Delete Item
+  // Delete Item (System Admin only)
   const handleDeleteItem = (id: string) => {
+    if (!isSystemAdmin) return;
     if (items.length <= 1) {
       showFeedback(isArabic ? 'يجب الإبقاء على اعتماد واحد على الأقل' : 'At least one accreditation must remain', 'error');
       return;
@@ -736,7 +740,7 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
                     <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
                       {isArabic ? item.issuerAr : item.issuerEn}
                     </p>
-                    {item.customLogoUrl && (
+                    {item.customLogoUrl && isSystemAdmin && (
                       <button
                         type="button"
                         onClick={(e) => {
@@ -793,15 +797,17 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
                   <Edit2 className="w-4 h-4" />
                 </button>
 
-                {/* Delete Button */}
-                <button
-                  type="button"
-                  onClick={() => handleDeleteItem(item.id)}
-                  className="p-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 transition-colors cursor-pointer"
-                  title={isArabic ? 'حذف الاعتماد' : 'Delete'}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                {/* Delete Button (System Admin Only) */}
+                {isSystemAdmin && (
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteItem(item.id)}
+                    className="p-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 transition-colors cursor-pointer"
+                    title={isArabic ? 'حذف الاعتماد' : 'Delete'}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </div>
           ))}
@@ -900,15 +906,17 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
                         <span>{isArabic ? 'استبدال الصورة' : 'Replace Image'}</span>
                       </button>
 
-                      <button
-                        type="button"
-                        onClick={() => setCustomLogoUrl('')}
-                        className="px-3 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
-                        title={isArabic ? 'حذف الصورة' : 'Remove image'}
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        <span>{isArabic ? 'حذف' : 'Remove'}</span>
-                      </button>
+                      {isSystemAdmin && (
+                        <button
+                          type="button"
+                          onClick={() => setCustomLogoUrl('')}
+                          className="px-3 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                          title={isArabic ? 'حذف الصورة' : 'Remove image'}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>{isArabic ? 'حذف' : 'Remove'}</span>
+                        </button>
+                      )}
                     </div>
                   </div>
                 ) : (

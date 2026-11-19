@@ -28,6 +28,14 @@ export const SYSTEM_PERMISSIONS: PermissionDefinition[] = [
     category: 'appointments'
   },
   {
+    id: 'manage_courses',
+    titleAr: 'إدارة الكورسات وطلبات التسجيل',
+    titleEn: 'Courses & Registration Requests',
+    descriptionAr: 'تخصيص الكورسات، تفعيل خيارات السداد، واستقبال وتوجيه طلبات التسجيل في الكورسات',
+    descriptionEn: 'Manage courses, activate payment methods, and receive or route course registration requests',
+    category: 'services'
+  },
+  {
     id: 'manage_services',
     titleAr: 'إدارة الخدمات والبرامج التأهيلية',
     titleEn: 'Services & Programs Management',
@@ -108,6 +116,7 @@ export const ROLE_PRESETS: {
     descriptionAr: 'صلاحيات كاملة وغير مقيدة على كافة أجزاء النظام والإعدادات والمستخدمين',
     defaultPermissions: [
       'manage_appointments',
+      'manage_courses',
       'send_notifications',
       'manage_services',
       'manage_packages',
@@ -127,6 +136,7 @@ export const ROLE_PRESETS: {
     descriptionAr: 'إدارة تشغيلية شاملة للمواعيد، الخدمات، الأخصائيين، العروض، والتقارير المالية',
     defaultPermissions: [
       'manage_appointments',
+      'manage_courses',
       'send_notifications',
       'manage_services',
       'manage_packages',
@@ -201,6 +211,7 @@ export const INITIAL_ADMIN_USERS: AdminUser[] = [
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
     permissions: [
       'manage_appointments',
+      'manage_courses',
       'send_notifications',
       'manage_services',
       'manage_packages',
@@ -229,6 +240,7 @@ export const INITIAL_ADMIN_USERS: AdminUser[] = [
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
     permissions: [
       'manage_appointments',
+      'manage_courses',
       'send_notifications',
       'manage_services',
       'manage_packages',
@@ -403,17 +415,23 @@ export const getStoredAdminSession = (): AdminUser | null => {
   }
 };
 
-export const saveStoredAdminSession = (user: AdminUser, token?: string): void => {
+export const saveStoredAdminSession = (
+  user: AdminUser,
+  token?: string,
+  rememberMe = true
+): void => {
   try {
     const sessionToken = token || btoa(`${user.id}:${user.username}:${Date.now()}`);
+    const ttlMs = rememberMe ? 7 * 24 * 60 * 60 * 1000 : 12 * 60 * 60 * 1000;
     const sessionData = {
       userId: user.id,
       username: user.username,
       email: user.email,
       role: user.role,
       token: sessionToken,
+      rememberMe,
       loginAt: new Date().toISOString(),
-      expiresAt: Date.now() + 24 * 60 * 60 * 1000 // 24 hours
+      expiresAt: Date.now() + ttlMs
     };
     localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessionData));
     saveStoredCurrentAdminUser(user);
@@ -440,13 +458,51 @@ export interface AuthResult {
   error?: string;
 }
 
-export const authenticateAdmin = async (identifier: string, pass: string): Promise<AuthResult> => {
+const tryFirebaseEmailLogin = async (email: string, password: string) => {
+  const cleanEmail = email.trim();
+  if (!cleanEmail || !cleanEmail.includes('@') || !password || password.length < 6) {
+    return null;
+  }
+  try {
+    const [{ getLazyAuth }, { signInWithEmailAndPassword }] = await Promise.all([
+      import('../lib/firebase'),
+      import('firebase/auth')
+    ]);
+    const authInstance = await getLazyAuth();
+    const cred = await signInWithEmailAndPassword(authInstance, cleanEmail, password);
+    return cred.user;
+  } catch {
+    return null;
+  }
+};
+
+export const authenticateAdmin = async (
+  identifier: string,
+  pass: string,
+  rememberMe = true
+): Promise<AuthResult> => {
   const cleanId = identifier.trim().toLowerCase();
   const cleanPass = pass.trim();
 
   if (!cleanId || !cleanPass) {
     return { success: false, error: 'يرجى إدخال اسم المستخدم وكلمة المرور' };
   }
+
+  const users = getStoredAdminUsers();
+  const matchedUser = users.find(
+    u => u.username.toLowerCase() === cleanId || u.email.toLowerCase() === cleanId
+  );
+
+  if (matchedUser?.status === 'suspended') {
+    return {
+      success: false,
+      error: 'عذراً، هذا الحساب معطل حالياً من قِبل إدارة النظام. يرجى التواصل مع المدير العام.'
+    };
+  }
+
+  const candidateEmail = matchedUser?.email || (cleanId.includes('@') ? cleanId : '');
+  let serverRejected = false;
+  let serverErrorMsg = '';
 
   // 1. Attempt Server-Side Authentication
   try {
@@ -461,6 +517,10 @@ export const authenticateAdmin = async (identifier: string, pass: string): Promi
     if (response.ok) {
       const data = await response.json();
       if (data.success && data.user) {
+        let finalUser: AdminUser = matchedUser
+          ? { ...matchedUser, ...data.user, lastLogin: data.user.lastLogin || 'الآن (متصل)' }
+          : data.user;
+
         if (data.customToken) {
           try {
             const [{ getLazyAuth }, { signInWithCustomToken }] = await Promise.all([
@@ -468,35 +528,83 @@ export const authenticateAdmin = async (identifier: string, pass: string): Promi
               import('firebase/auth')
             ]);
             const authInstance = await getLazyAuth();
-            await signInWithCustomToken(authInstance, data.customToken);
+            const cred = await signInWithCustomToken(authInstance, data.customToken);
+            if (cred?.user?.uid) {
+              finalUser = { ...finalUser, firebaseUid: cred.user.uid };
+            }
           } catch (fbErr) {
             console.warn('[Admin Auth] Firebase custom token sign-in notice:', fbErr);
           }
+        } else if (finalUser.email) {
+          const fbUser = await tryFirebaseEmailLogin(finalUser.email, cleanPass);
+          if (fbUser?.uid) {
+            finalUser = { ...finalUser, firebaseUid: fbUser.uid };
+          }
         }
-        saveStoredAdminSession(data.user, data.token);
+
+        saveStoredAdminSession(finalUser, data.token, rememberMe);
         return {
           success: true,
-          user: data.user,
+          user: finalUser,
           token: data.token
         };
       }
-    } else if (response.status === 401 || response.status === 403 || response.status === 429) {
+    } else if (response.status === 403 || response.status === 429) {
       const errData = await response.json().catch(() => ({}));
       return {
         success: false,
-        error: errData.error || 'اسم المستخدم أو كلمة المرور غير صحيحة'
+        error: errData.error || 'تعذر تسجيل الدخول حالياً'
       };
+    } else if (response.status === 401) {
+      const errData = await response.json().catch(() => ({}));
+      serverRejected = true;
+      serverErrorMsg = errData.error || 'اسم المستخدم أو كلمة المرور غير صحيحة';
     }
   } catch (netErr) {
     console.warn('[Admin Auth] Server login request notice, falling back:', netErr);
   }
 
-  // 2. Offline / Preview Fallback (prevents locking out during static build previews)
-  const users = getStoredAdminUsers();
-  const matchedUser = users.find(
-    u => u.username.toLowerCase() === cleanId || u.email.toLowerCase() === cleanId
-  );
+  // 2. Try Firebase Email/Password Authentication directly (handles dynamically created staff & cloud admins)
+  if (candidateEmail) {
+    const fbUser = await tryFirebaseEmailLogin(candidateEmail, cleanPass);
+    if (fbUser) {
+      const { verifyIsFirebaseAdmin, getFirebaseAdminProfile } = await import('../services/firestoreService');
+      const [isVerifiedInCloud, cloudProfile] = await Promise.all([
+        verifyIsFirebaseAdmin(fbUser),
+        getFirebaseAdminProfile(fbUser)
+      ]);
+      const isLinkedActiveStaff = Boolean(
+        matchedUser &&
+          matchedUser.status === 'active' &&
+          (!matchedUser.firebaseUid || matchedUser.firebaseUid === fbUser.uid)
+      );
 
+      if (isVerifiedInCloud || isLinkedActiveStaff) {
+        const resolved = authenticateAdminWithGoogle(
+          fbUser,
+          isVerifiedInCloud || isLinkedActiveStaff,
+          rememberMe,
+          cloudProfile
+        );
+        if (resolved) {
+          return {
+            success: true,
+            user: resolved,
+            token: btoa(`${resolved.id}:${resolved.username}:${Date.now()}`)
+          };
+        }
+      }
+    }
+  }
+
+  if (serverRejected && !matchedUser) {
+    return {
+      success: false,
+      error: serverErrorMsg || 'اسم المستخدم أو كلمة المرور غير صحيحة'
+    };
+  }
+
+  // 3. Offline / Static Preview Fallback (seeded roles in static hosting builds)
   if (!matchedUser) {
     return {
       success: false,
@@ -504,27 +612,20 @@ export const authenticateAdmin = async (identifier: string, pass: string): Promi
     };
   }
 
-  if (matchedUser.status === 'suspended') {
-    return {
-      success: false,
-      error: 'عذراً، هذا الحساب معطل حالياً من قِبل إدارة النظام. يرجى التواصل مع المدير العام.'
-    };
-  }
-
-  const isMatch =
+  const isLegacyDemoMatch =
     (matchedUser.role === 'super_admin' && (cleanPass === 'admin' || cleanPass === 'admin123' || cleanPass === 'raba2025')) ||
     (cleanPass === 'raba' || cleanPass === 'raba123');
 
-  if (!isMatch) {
+  if (!isLegacyDemoMatch) {
     return {
       success: false,
-      error: 'كلمة المرور غير صحيحة، يرجى التحقق وإعادة المحاولة'
+      error: serverErrorMsg || 'كلمة المرور غير صحيحة، يرجى التحقق وإعادة المحاولة'
     };
   }
 
-  const updatedUser = { ...matchedUser, lastLogin: 'الآن (متصل)' };
+  const updatedUser: AdminUser = { ...matchedUser, lastLogin: 'الآن (متصل)' };
   const offlineToken = btoa(`${updatedUser.id}:${updatedUser.username}:${Date.now()}`);
-  saveStoredAdminSession(updatedUser, offlineToken);
+  saveStoredAdminSession(updatedUser, offlineToken, rememberMe);
 
   return {
     success: true,
@@ -533,39 +634,90 @@ export const authenticateAdmin = async (identifier: string, pass: string): Promi
   };
 };
 
-export const authenticateAdminWithGoogle = (firebaseUser: {
-  uid: string;
-  email?: string | null;
-  displayName?: string | null;
-  photoURL?: string | null;
-}): AdminUser => {
+export const authenticateAdminWithGoogle = (
+  firebaseUser: {
+    uid: string;
+    email?: string | null;
+    displayName?: string | null;
+    photoURL?: string | null;
+  },
+  isVerifiedInFirestore = false,
+  rememberMe = true,
+  cloudAdminProfile?: Partial<AdminUser> | null
+): AdminUser | null => {
   const emailLower = (firebaseUser.email || '').trim().toLowerCase();
   const users = getStoredAdminUsers();
-  const matched = emailLower
-    ? users.find((u) => u.email?.toLowerCase() === emailLower && u.status !== 'suspended')
-    : undefined;
+  const matchedByUidOrEmail = users.find(
+    (u) =>
+      (u.firebaseUid && u.firebaseUid === firebaseUser.uid) ||
+      (emailLower && u.email?.toLowerCase() === emailLower)
+  );
 
-  const resolvedUser: AdminUser = matched
-    ? { ...matched, lastLogin: 'الآن (متصل عبر Google)', avatar: firebaseUser.photoURL || matched.avatar }
-    : {
-        id: firebaseUser.uid,
-        name: firebaseUser.displayName || firebaseUser.email || 'مدير النظام (Google)',
-        nameEn: firebaseUser.displayName || firebaseUser.email || 'System Admin',
-        username: (firebaseUser.email || 'admin').split('@')[0],
-        email: firebaseUser.email || 'admin@raba.sa',
-        phone: '',
-        role: 'super_admin',
-        roleTitleAr: 'المدير العام والتنفيذي',
-        roleTitleEn: 'Super Administrator',
-        department: 'الإدارة التنفيذية العليا',
-        status: 'active',
-        avatar: firebaseUser.photoURL || '',
-        permissions: ROLE_PRESETS[0].defaultPermissions,
-        createdAt: new Date().toISOString().split('T')[0],
-        lastLogin: 'الآن (متصل عبر Google)'
-      };
+  if (matchedByUidOrEmail?.status === 'suspended' || cloudAdminProfile?.status === 'suspended') {
+    return null;
+  }
+
+  let resolvedUser: AdminUser | null = null;
+
+  if (matchedByUidOrEmail) {
+    resolvedUser = {
+      ...matchedByUidOrEmail,
+      ...(cloudAdminProfile || {}),
+      id: matchedByUidOrEmail.id,
+      firebaseUid: firebaseUser.uid,
+      lastLogin: 'الآن (متصل سحابياً)',
+      avatar: firebaseUser.photoURL || cloudAdminProfile?.avatar || matchedByUidOrEmail.avatar
+    };
+  } else if (cloudAdminProfile && cloudAdminProfile.role) {
+    const preset = ROLE_PRESETS.find((r) => r.role === cloudAdminProfile.role) || ROLE_PRESETS[0];
+    resolvedUser = {
+      id: cloudAdminProfile.id || firebaseUser.uid,
+      firebaseUid: firebaseUser.uid,
+      name: cloudAdminProfile.name || firebaseUser.displayName || firebaseUser.email || 'موظف معتمد',
+      nameEn: cloudAdminProfile.nameEn || firebaseUser.displayName || firebaseUser.email || 'Authorized Staff',
+      username: cloudAdminProfile.username || (firebaseUser.email || 'staff').split('@')[0],
+      email: cloudAdminProfile.email || firebaseUser.email || '',
+      phone: cloudAdminProfile.phone || '',
+      role: cloudAdminProfile.role,
+      roleTitleAr: cloudAdminProfile.roleTitleAr || preset.titleAr,
+      roleTitleEn: cloudAdminProfile.roleTitleEn || preset.titleEn,
+      department: cloudAdminProfile.department || 'المركز',
+      status: 'active',
+      avatar: firebaseUser.photoURL || cloudAdminProfile.avatar || '',
+      permissions: Array.isArray(cloudAdminProfile.permissions) && cloudAdminProfile.permissions.length > 0
+        ? cloudAdminProfile.permissions
+        : preset.defaultPermissions,
+      branchScope: cloudAdminProfile.branchScope,
+      assignedBranches: cloudAdminProfile.assignedBranches,
+      createdAt: cloudAdminProfile.createdAt || new Date().toISOString().split('T')[0],
+      lastLogin: 'الآن (متصل سحابياً)'
+    };
+  } else if (emailLower === 'rabacentersocial@gmail.com' && isVerifiedInFirestore) {
+    resolvedUser = {
+      id: firebaseUser.uid,
+      firebaseUid: firebaseUser.uid,
+      name: firebaseUser.displayName || firebaseUser.email || 'مدير النظام (Google)',
+      nameEn: firebaseUser.displayName || firebaseUser.email || 'System Admin',
+      username: (firebaseUser.email || 'admin').split('@')[0],
+      email: firebaseUser.email || 'rabacentersocial@gmail.com',
+      phone: '',
+      role: 'super_admin',
+      roleTitleAr: 'المدير العام والتنفيذي',
+      roleTitleEn: 'Super Administrator',
+      department: 'الإدارة التنفيذية العليا',
+      status: 'active',
+      avatar: firebaseUser.photoURL || '',
+      permissions: ROLE_PRESETS[0].defaultPermissions,
+      createdAt: new Date().toISOString().split('T')[0],
+      lastLogin: 'الآن (متصل سحابياً)'
+    };
+  }
+
+  if (!resolvedUser) {
+    return null;
+  }
 
   const sessionToken = btoa(`${resolvedUser.id}:${resolvedUser.username}:${Date.now()}`);
-  saveStoredAdminSession(resolvedUser, sessionToken);
+  saveStoredAdminSession(resolvedUser, sessionToken, rememberMe);
   return resolvedUser;
 };

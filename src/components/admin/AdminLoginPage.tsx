@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ShieldCheck, 
   Lock, 
@@ -12,7 +12,8 @@ import {
   KeyRound, 
   Globe, 
   Sun, 
-  Moon
+  Moon,
+  Cloud
 } from 'lucide-react';
 import { RabaLogo } from '../RabaLogo';
 import { useLanguage } from '../../context/LanguageContext';
@@ -45,24 +46,109 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
+  const [existingFirebaseAdmin, setExistingFirebaseAdmin] = useState<{
+    uid: string;
+    email?: string | null;
+    displayName?: string | null;
+    photoURL?: string | null;
+    cloudProfile?: Partial<AdminUser> | null;
+  } | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([
+      import('../../lib/firebase'),
+      import('../../services/firestoreService'),
+    ])
+      .then(async ([{ getLazyAuth }, { verifyIsFirebaseAdmin, getFirebaseAdminProfile }]) => {
+        if (cancelled) return;
+        const authInstance = await getLazyAuth();
+        if (typeof (authInstance as any).authStateReady === 'function') {
+          await (authInstance as any).authStateReady();
+        }
+        if (cancelled) return;
+        const fbUser = authInstance.currentUser;
+        if (!fbUser) return;
+        const [isVerified, cloudProfile] = await Promise.all([
+          verifyIsFirebaseAdmin(fbUser),
+          getFirebaseAdminProfile(fbUser),
+        ]);
+        if (!cancelled && isVerified) {
+          setExistingFirebaseAdmin({
+            uid: fbUser.uid,
+            email: fbUser.email,
+            displayName: fbUser.displayName,
+            photoURL: fbUser.photoURL,
+            cloudProfile,
+          });
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const handleQuickContinueCloudSession = () => {
+    if (!existingFirebaseAdmin) return;
+    setErrorMessage(null);
+    const adminUser = authenticateAdminWithGoogle(
+      existingFirebaseAdmin,
+      true,
+      rememberMe,
+      existingFirebaseAdmin.cloudProfile
+    );
+    if (!adminUser) {
+      setErrorMessage(
+        isArabic
+          ? 'هذا الحساب موقوف أو غير مصرح له بالدخول إلى لوحة التحكم.'
+          : 'This account is suspended or not authorized for Admin Dashboard access.'
+      );
+      return;
+    }
+    setIsSuccess(true);
+    setTimeout(() => {
+      onLoginSuccess(adminUser);
+    }, 450);
+  };
 
   const handleGoogleSignIn = async () => {
     setErrorMessage(null);
     setIsGoogleLoading(true);
     try {
       await signInWithGoogle();
-      const { getLazyAuth } = await import('../../lib/firebase');
+      const [{ getLazyAuth }, { verifyIsFirebaseAdmin, getFirebaseAdminProfile }] = await Promise.all([
+        import('../../lib/firebase'),
+        import('../../services/firestoreService'),
+      ]);
       const authInstance = await getLazyAuth();
       const fbUser = authInstance.currentUser;
       if (!fbUser) {
         throw new Error('لم يكتمل التحقق من حساب Google');
       }
-      const adminUser = authenticateAdminWithGoogle({
-        uid: fbUser.uid,
-        email: fbUser.email,
-        displayName: fbUser.displayName,
-        photoURL: fbUser.photoURL
-      });
+      const [isVerified, cloudProfile] = await Promise.all([
+        verifyIsFirebaseAdmin(fbUser),
+        getFirebaseAdminProfile(fbUser),
+      ]);
+      const adminUser = authenticateAdminWithGoogle(
+        {
+          uid: fbUser.uid,
+          email: fbUser.email,
+          displayName: fbUser.displayName,
+          photoURL: fbUser.photoURL
+        },
+        isVerified,
+        rememberMe,
+        cloudProfile
+      );
+      if (!adminUser) {
+        setErrorMessage(
+          isArabic
+            ? 'هذا البريد غير مسجل ضمن حسابات الإدارة المعتمدة في النظام.'
+            : 'This email is not registered as an authorized Admin account.'
+        );
+        return;
+      }
       setIsSuccess(true);
       setTimeout(() => {
         onLoginSuccess(adminUser);
@@ -101,7 +187,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
     setIsLoading(true);
 
     try {
-      const result = await authenticateAdmin(identifier, password);
+      const result = await authenticateAdmin(identifier, password, rememberMe);
       setIsLoading(false);
 
       if (result.success && result.user) {
@@ -222,7 +308,29 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
             ) : (
               /* Login Form */
               <form onSubmit={handleSubmit} className="space-y-4">
-                
+
+                {/* Quick Continue Banner when Persistent Firebase Admin Session is already active */}
+                {existingFirebaseAdmin && (
+                  <div className="p-3.5 rounded-2xl bg-emerald-950/60 border border-emerald-500/40 flex flex-col gap-2.5 animate-fadeIn">
+                    <div className="flex items-center gap-2 text-xs text-emerald-200 font-bold">
+                      <Cloud className="w-4 h-4 text-[#00E5BE] shrink-0" />
+                      <span className="truncate">
+                        {isArabic
+                          ? `الجلسة السحابية نشطة (${existingFirebaseAdmin.email || 'حساب معتمد'})`
+                          : `Cloud session active (${existingFirebaseAdmin.email || 'Verified'})`}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleQuickContinueCloudSession}
+                      className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#00E5BE] to-[#0284C7] text-slate-950 font-black text-xs flex items-center justify-center gap-2 hover:brightness-110 transition-all cursor-pointer"
+                    >
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>{isArabic ? 'متابعة الدخول المباشر بالجلسة السحابية' : 'Continue with Active Cloud Session'}</span>
+                    </button>
+                  </div>
+                )}
+
                 {/* Error Notice */}
                 {errorMessage && (
                   <div className="p-3.5 rounded-2xl bg-rose-950/60 border border-rose-500/40 flex items-start gap-2.5 text-xs text-rose-200 animate-fadeIn">

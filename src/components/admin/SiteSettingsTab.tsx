@@ -27,11 +27,17 @@ import {
   Sliders,
   X,
   Award,
-  Database
+  Database,
+  Megaphone,
+  Bell,
+  CalendarCheck,
+  Gift,
+  Info
 } from 'lucide-react';
 import { AccreditationsSettingsTab } from './AccreditationsSettingsTab';
 import { LogoSettingsSubTab } from './LogoSettingsSubTab';
 import { PersistentSyncTab } from './PersistentSyncTab';
+import { AnnouncementBar } from '../AnnouncementBar';
 import { useLanguage } from '../../context/LanguageContext';
 import { 
   getStoredThemeSettings, 
@@ -53,18 +59,28 @@ import {
   getStoredModulesVisibility,
   saveStoredModulesVisibility,
   SiteModulesVisibility,
-  DEFAULT_MODULES_VISIBILITY
+  DEFAULT_MODULES_VISIBILITY,
+  AnnouncementBarSettings,
+  AnnouncementStyleVariant,
+  AnnouncementCtaAction,
+  AnnouncementIconName,
+  DEFAULT_ANNOUNCEMENT_BAR_SETTINGS,
+  getStoredAnnouncementBarSettings,
+  saveStoredAnnouncementBarSettings,
+  resetAnnouncementBarSettings
 } from '../../data/siteCustomizer';
 
 interface SiteSettingsTabProps {
   hasPermission?: (perm: any) => boolean;
+  isSystemAdmin?: boolean;
 }
 
-export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
+export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = ({ hasPermission, isSystemAdmin = false }) => {
   const { isArabic } = useLanguage();
+  const canEditSiteSettings = isSystemAdmin || Boolean(hasPermission?.('system_settings'));
 
   // Active Sub-Tab
-  const [subTab, setSubTab] = useState<'logo' | 'theme' | 'accreditations' | 'pillars' | 'social' | 'footer' | 'modules' | 'sync'>('logo');
+  const [subTab, setSubTab] = useState<'logo' | 'announcement' | 'theme' | 'accreditations' | 'pillars' | 'social' | 'footer' | 'modules' | 'sync'>('logo');
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // 1. Theme State
@@ -94,6 +110,23 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
 
   // 5. Modules Visibility State
   const [modulesVisibility, setModulesVisibility] = useState<SiteModulesVisibility>(() => getStoredModulesVisibility());
+
+  // 6. Header Notification / Announcement Bar State
+  const [announcementSettings, setAnnouncementSettings] = useState<AnnouncementBarSettings>(() =>
+    getStoredAnnouncementBarSettings()
+  );
+
+  useEffect(() => {
+    const syncAnnouncement = () => {
+      setAnnouncementSettings(getStoredAnnouncementBarSettings());
+    };
+    window.addEventListener('raba_announcement_bar_updated', syncAnnouncement);
+    window.addEventListener('raba_persistent_sync_ready', syncAnnouncement);
+    return () => {
+      window.removeEventListener('raba_announcement_bar_updated', syncAnnouncement);
+      window.removeEventListener('raba_persistent_sync_ready', syncAnnouncement);
+    };
+  }, []);
 
   const showFeedback = (text: string, type: 'success' | 'error' = 'success') => {
     setFeedbackMsg({ type, text });
@@ -165,6 +198,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
   };
 
   const handleDeletePillar = (id: string) => {
+    if (!isSystemAdmin) return;
     if (pillars.length <= 1) {
       showFeedback(isArabic ? 'لا يمكن حذف آخر محور' : 'Cannot delete last pillar', 'error');
       return;
@@ -286,6 +320,60 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
     showFeedback(isArabic ? '✓ تم تفعيل واستعادة جميع المديولات' : 'All modules enabled');
   };
 
+  // --- Handlers: Announcement Bar ---
+  const handleToggleAnnouncementEnabled = () => {
+    if (!canEditSiteSettings) {
+      showFeedback(isArabic ? 'ليس لديك صلاحية تعديل شريط الإشعارات' : 'Permission required', 'error');
+      return;
+    }
+    const next: AnnouncementBarSettings = {
+      ...announcementSettings,
+      enabled: !announcementSettings.enabled,
+      updatedAt: new Date().toISOString()
+    };
+    setAnnouncementSettings(next);
+    saveStoredAnnouncementBarSettings(next);
+    showFeedback(
+      next.enabled
+        ? (isArabic ? '✓ تم تفعيل وتنشيط شريط الإشعارات أسفل الهيدر مباشرة' : 'Header notification bar activated')
+        : (isArabic ? 'تم إيقاف إظهار شريط الإشعارات أسفل الهيدر' : 'Header notification bar hidden')
+    );
+  };
+
+  const handleSaveAnnouncement = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!canEditSiteSettings) {
+      showFeedback(isArabic ? 'ليس لديك صلاحية حفظ الإعدادات' : 'Permission required', 'error');
+      return;
+    }
+    if (!announcementSettings.messageAr.trim() && !announcementSettings.messageEn.trim()) {
+      showFeedback(isArabic ? 'يرجى إدخال نص الإشعار قبل الحفظ' : 'Please enter an announcement message', 'error');
+      return;
+    }
+    const next: AnnouncementBarSettings = {
+      ...announcementSettings,
+      updatedAt: new Date().toISOString()
+    };
+    setAnnouncementSettings(next);
+    saveStoredAnnouncementBarSettings(next);
+    showFeedback(isArabic ? '✓ تم حفظ وتحديث شريط الإشعارات بنجاح' : 'Announcement bar settings saved');
+  };
+
+  const handleResetAnnouncement = () => {
+    if (!canEditSiteSettings) return;
+    resetAnnouncementBarSettings();
+    setAnnouncementSettings(DEFAULT_ANNOUNCEMENT_BAR_SETTINGS);
+    showFeedback(isArabic ? '✓ تمت استعادة الإعدادات الافتراضية لشريط الإشعارات' : 'Announcement bar reset to defaults');
+  };
+
+  const applyAnnouncementTemplate = (tpl: Partial<AnnouncementBarSettings>) => {
+    const next: AnnouncementBarSettings = {
+      ...announcementSettings,
+      ...tpl
+    };
+    setAnnouncementSettings(next);
+  };
+
   return (
     <div className="space-y-6">
       
@@ -325,6 +413,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
       <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 dark:border-white/10 pb-3">
         {[
           { id: 'logo', label: isArabic ? '✨ هوية وشعار الموقع (Logo)' : '✨ Brand Logo & Text', icon: Sparkles },
+          { id: 'announcement', label: isArabic ? '🔔 شريط الإشعارات أسفل الهيدر' : '🔔 Header Notification Bar', icon: Megaphone },
           { id: 'theme', label: isArabic ? '🎨 لون الثيم والهوية' : '🎨 Theme & Colors', icon: Palette },
           { id: 'accreditations', label: isArabic ? '🏅 اعتمادات وشهادات (معترف بنا من)' : '🏅 Accreditations & Badges', icon: Award },
           { id: 'pillars', label: isArabic ? '⭐ محاور برنامجنا' : '⭐ Program Pillars', icon: Layers },
@@ -347,6 +436,15 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
             >
               <Icon className="w-4 h-4" />
               <span>{tab.label}</span>
+              {tab.id === 'announcement' && (
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    announcementSettings.enabled
+                      ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.9)]'
+                      : 'bg-slate-300 dark:bg-slate-600'
+                  }`}
+                />
+              )}
             </button>
           );
         })}
@@ -357,6 +455,477 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
       {/* ========================================================================= */}
       {subTab === 'logo' && (
         <LogoSettingsSubTab onFeedback={showFeedback} />
+      )}
+
+      {/* ========================================================================= */}
+      {/* 2.8. SUB-TAB: HEADER NOTIFICATION / ANNOUNCEMENT BAR                      */}
+      {/* ========================================================================= */}
+      {subTab === 'announcement' && (
+        <div className="space-y-6 animate-in fade-in">
+          {/* Master Activation Card */}
+          <div className={`rounded-3xl p-5 sm:p-6 border shadow-xs transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+            announcementSettings.enabled
+              ? 'bg-emerald-50/70 dark:bg-emerald-950/25 border-emerald-200 dark:border-emerald-500/30'
+              : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-white/10'
+          }`}>
+            <div className="flex items-start gap-3.5">
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
+                announcementSettings.enabled
+                  ? 'bg-emerald-500 text-white shadow-md'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+              }`}>
+                <Megaphone className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="text-base font-black text-slate-900 dark:text-white">
+                    {isArabic ? 'تفعيل وتنشيط شريط الإشعارات أسفل الهيدر' : 'Header Notification Bar Activation'}
+                  </h3>
+                  <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-black ${
+                    announcementSettings.enabled
+                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                      : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                  }`}>
+                    {announcementSettings.enabled
+                      ? (isArabic ? 'نشط ومفعل حالياً' : 'Active & Live')
+                      : (isArabic ? 'موقوف حالياً' : 'Inactive')}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                  {isArabic
+                    ? 'يظهر هذا الشريط مباشرة أسفل شريط التنقل العلوي (الهيدر) ويتكيّف تلقائياً مع ثيم الموقع العام (الوضع النهاري والليلي وألوان الهوية).'
+                    : 'Appears directly underneath the sticky header and automatically harmonizes with the active site theme.'}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
+              <span className="text-xs font-black text-slate-700 dark:text-slate-300">
+                {announcementSettings.enabled
+                  ? (isArabic ? 'مفعل' : 'Enabled')
+                  : (isArabic ? 'معطل' : 'Disabled')}
+              </span>
+              <button
+                type="button"
+                disabled={!canEditSiteSettings}
+                onClick={handleToggleAnnouncementEnabled}
+                aria-label={isArabic ? 'تفعيل أو تعطيل شريط الإشعارات' : 'Toggle notification bar'}
+                className={`w-14 h-8 rounded-full transition-colors p-1 shrink-0 ${
+                  !canEditSiteSettings ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                } ${announcementSettings.enabled ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'}`}
+              >
+                <div className={`w-6 h-6 rounded-full bg-white shadow-sm transition-transform ${
+                  announcementSettings.enabled ? 'ltr:translate-x-6 rtl:-translate-x-6' : 'translate-x-0'
+                }`} />
+              </button>
+            </div>
+          </div>
+
+          {/* Live Theme-Aligned Preview */}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-5 sm:p-6 shadow-xs space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <Eye className="w-4 h-4 text-[#1463D6] dark:text-[#60AFFF]" />
+                <span>{isArabic ? 'معاينة حية متوافقة مع الهيدر وثيم الموقع' : 'Live Header & Theme Preview'}</span>
+              </h4>
+              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
+                {isArabic ? 'تظهر المعاينة شكل الشريط أسفل الهيدر مباشرة' : 'Preview shows exact position beneath header'}
+              </span>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden bg-slate-100/80 dark:bg-slate-950/60">
+              {/* Mock compact header shell */}
+              <div className="h-11 px-4 bg-white/95 dark:bg-[#101622]/95 border-b border-slate-200/80 dark:border-white/10 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+                <span className="font-black text-slate-800 dark:text-white">
+                  {isArabic ? 'الهيدر الرئيسي للموقع (Raba Center)' : 'Site Main Header (Raba Center)'}
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800">
+                    {isArabic ? 'الخدمات' : 'Services'}
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800">
+                    {isArabic ? 'الفروع' : 'Branches'}
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#1463D6] text-white font-bold">
+                    {isArabic ? 'احجز الآن' : 'Book Now'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Actual AnnouncementBar in preview mode */}
+              <div className="p-2">
+                <AnnouncementBar previewSettings={announcementSettings} isPreview />
+              </div>
+            </div>
+          </div>
+
+          {/* Style Variants + Quick Templates + Editor Form */}
+          <form onSubmit={handleSaveAnnouncement} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl p-5 sm:p-6 shadow-xs space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-white/10 pb-4">
+              <div>
+                <h4 className="text-base font-black text-slate-900 dark:text-white">
+                  {isArabic ? 'تخصيص المحتوى والتصميم وزر الإجراء' : 'Customize Content, Theme Style & Action'}
+                </h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  {isArabic
+                    ? 'اختر نمط العرض المتوافق مع الثيم العام وحدد نص الإشعار والوجهة عند الضغط'
+                    : 'Choose a theme-harmonized preset and configure bilingual notice text and action link'}
+                </p>
+              </div>
+              <button
+                type="button"
+                disabled={!canEditSiteSettings}
+                onClick={handleResetAnnouncement}
+                className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold cursor-pointer flex items-center gap-1.5 self-start sm:self-auto"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>{isArabic ? 'استعادة الافتراضي' : 'Reset Default'}</span>
+              </button>
+            </div>
+
+            {/* Style Variants */}
+            <div className="space-y-2.5">
+              <label className="text-xs font-black text-slate-800 dark:text-slate-200 block">
+                {isArabic ? 'نمط المظهر والتوافق مع ثيم الموقع:' : 'Theme Style Preset:'}
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {[
+                  {
+                    id: 'theme_glass' as AnnouncementStyleVariant,
+                    titleAr: 'زجاجي متوافق مع الثيم',
+                    titleEn: 'Theme Adaptive Glass',
+                    descAr: 'يستخدم لون الهوية الأساسي ويتغير تلقائياً مع الوضع النهاري والليلي',
+                    swatch: 'bg-gradient-to-r from-[#2B95FF]/25 via-white to-[#4A9CFF]/25 dark:via-slate-800 border-[#2B95FF]/40'
+                  },
+                  {
+                    id: 'primary_gradient' as AnnouncementStyleVariant,
+                    titleAr: 'تدرج لون الهوية الأساسي',
+                    titleEn: 'Brand Primary Gradient',
+                    descAr: 'شريط بارز بتدرج اللون الأساسي المحدد في إعدادات الثيم',
+                    swatch: 'bg-gradient-to-r from-[#1463D6] to-[#4A9CFF] border-transparent'
+                  },
+                  {
+                    id: 'emerald_clinical' as AnnouncementStyleVariant,
+                    titleAr: 'إكلينيكي زمردي (Emerald)',
+                    titleEn: 'Emerald Clinical',
+                    descAr: 'طابع طبي هادئ ومريح للعين متناسق مع أقسام التأهيل',
+                    swatch: 'bg-gradient-to-r from-[#0B3B36] to-[#0E5246] border-transparent'
+                  },
+                  {
+                    id: 'obsidian_gold' as AnnouncementStyleVariant,
+                    titleAr: 'داكن فاخر بالذهبي',
+                    titleEn: 'Obsidian & Gold',
+                    descAr: 'تباين عالٍ للإعلانات المهمة والمبادرات الخاصة',
+                    swatch: 'bg-gradient-to-r from-[#141821] to-[#1C2333] border-[#F59E0B]/60'
+                  }
+                ].map((opt) => {
+                  const selected = announcementSettings.styleVariant === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      disabled={!canEditSiteSettings}
+                      onClick={() => setAnnouncementSettings({ ...announcementSettings, styleVariant: opt.id })}
+                      className={`p-3 rounded-2xl border text-start transition-all cursor-pointer ${
+                        selected
+                          ? 'border-[#1463D6] ring-2 ring-[#1463D6]/20 bg-blue-50/50 dark:bg-blue-950/20'
+                          : 'border-slate-200 dark:border-white/10 bg-slate-50/60 dark:bg-slate-800/40 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className={`h-3 w-full rounded-full border mb-2.5 ${opt.swatch}`} />
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-black text-slate-900 dark:text-white">
+                          {isArabic ? opt.titleAr : opt.titleEn}
+                        </span>
+                        {selected && <Check className="w-3.5 h-3.5 text-[#1463D6] shrink-0" />}
+                      </div>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                        {opt.descAr}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Quick Templates */}
+            <div className="space-y-2">
+              <span className="text-xs font-black text-slate-700 dark:text-slate-300 block">
+                {isArabic ? 'قوالب إشعارات سريعة (تعبئة فورية):' : 'Quick Notice Templates:'}
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  {
+                    labelAr: 'فتح باب الحجز والمواعيد',
+                    data: {
+                      badgeAr: 'إعلان هام',
+                      badgeEn: 'Notice',
+                      messageAr: 'فتح باب الحجز للفترة المسائية في جميع الفروع — احجز جلسة التقييم المبدئي لطفلك الآن',
+                      messageEn: 'Evening session bookings are now open across all branches — Book your child assessment today',
+                      iconName: 'calendar' as AnnouncementIconName,
+                      ctaAction: 'booking' as AnnouncementCtaAction,
+                      ctaTextAr: 'احجز موعدك الآن',
+                      ctaTextEn: 'Book Now'
+                    }
+                  },
+                  {
+                    labelAr: 'التسجيل في الكورسات المعتمدة',
+                    data: {
+                      badgeAr: 'دورات معتمدة',
+                      badgeEn: 'Courses',
+                      messageAr: 'التسجيل متاح الآن في دورات البورد الأمريكي ABAT و QABA مع خيارات سداد وتقسيط مرنة',
+                      messageEn: 'Enrollment open for accredited ABAT & QABA courses with flexible payment options',
+                      iconName: 'sparkles' as AnnouncementIconName,
+                      ctaAction: 'courses' as AnnouncementCtaAction,
+                      ctaTextAr: 'استعرض الدورات',
+                      ctaTextEn: 'View Courses'
+                    }
+                  },
+                  {
+                    labelAr: 'عروض وخصومات التقييم',
+                    data: {
+                      badgeAr: 'عرض خاص',
+                      badgeEn: 'Special Offer',
+                      messageAr: 'خصم خاص على باقات التقييم الشامل للتوحد واضطرابات النطق والتخاطب لفترة محدودة',
+                      messageEn: 'Limited-time offer on comprehensive autism & speech therapy assessment packages',
+                      iconName: 'gift' as AnnouncementIconName,
+                      ctaAction: 'offers' as AnnouncementCtaAction,
+                      ctaTextAr: 'شاهد العروض',
+                      ctaTextEn: 'View Offers'
+                    }
+                  },
+                  {
+                    labelAr: 'تفعيل بوابة الأسرة الرقمية',
+                    data: {
+                      badgeAr: 'بوابة الأسرة',
+                      badgeEn: 'Family Portal',
+                      messageAr: 'يمكنك الآن متابعة تقارير طفلك والملفات الفرعية وحجز المواعيد مباشرة عبر بوابة الأسرة',
+                      messageEn: 'Track your child reports, sub-files, and appointments directly from the Family Portal',
+                      iconName: 'bell' as AnnouncementIconName,
+                      ctaAction: 'portal' as AnnouncementCtaAction,
+                      ctaTextAr: 'دخول البوابة',
+                      ctaTextEn: 'Open Portal'
+                    }
+                  }
+                ].map((tpl) => (
+                  <button
+                    key={tpl.labelAr}
+                    type="button"
+                    disabled={!canEditSiteSettings}
+                    onClick={() => applyAnnouncementTemplate(tpl.data)}
+                    className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-blue-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/10 text-[11px] font-bold cursor-pointer transition-colors"
+                  >
+                    + {tpl.labelAr}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Badge & Icon */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                  {isArabic ? 'شارة التنبيه المختصرة (عربي):' : 'Badge Label (AR):'}
+                </label>
+                <input
+                  type="text"
+                  disabled={!canEditSiteSettings}
+                  value={announcementSettings.badgeAr}
+                  onChange={(e) => setAnnouncementSettings({ ...announcementSettings, badgeAr: e.target.value })}
+                  placeholder="إعلان هام / جديد"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-xs outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                  {isArabic ? 'شارة التنبيه المختصرة (إنجليزي):' : 'Badge Label (EN):'}
+                </label>
+                <input
+                  type="text"
+                  disabled={!canEditSiteSettings}
+                  value={announcementSettings.badgeEn}
+                  onChange={(e) => setAnnouncementSettings({ ...announcementSettings, badgeEn: e.target.value })}
+                  placeholder="Notice / New"
+                  dir="ltr"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-xs outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                  {isArabic ? 'أيقونة شريط الإشعارات:' : 'Bar Icon:'}
+                </label>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {[
+                    { id: 'megaphone' as AnnouncementIconName, icon: Megaphone, title: 'مكبر صوت' },
+                    { id: 'bell' as AnnouncementIconName, icon: Bell, title: 'جرس' },
+                    { id: 'sparkles' as AnnouncementIconName, icon: Sparkles, title: 'بريق' },
+                    { id: 'calendar' as AnnouncementIconName, icon: CalendarCheck, title: 'مواعيد' },
+                    { id: 'gift' as AnnouncementIconName, icon: Gift, title: 'عرض' },
+                    { id: 'info' as AnnouncementIconName, icon: Info, title: 'معلومة' }
+                  ].map((item) => {
+                    const IconComp = item.icon;
+                    const active = announcementSettings.iconName === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        disabled={!canEditSiteSettings}
+                        title={item.title}
+                        onClick={() => setAnnouncementSettings({ ...announcementSettings, iconName: item.id })}
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center border transition-all cursor-pointer ${
+                          active
+                            ? 'bg-[#1463D6] text-white border-[#1463D6] shadow-xs'
+                            : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10'
+                        }`}
+                      >
+                        <IconComp className="w-4 h-4" />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Bilingual Message */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                  {isArabic ? 'نص الإشعار الرئيسي (بالعربية): *' : 'Notification Message (Arabic): *'}
+                </label>
+                <textarea
+                  rows={2}
+                  disabled={!canEditSiteSettings}
+                  value={announcementSettings.messageAr}
+                  onChange={(e) => setAnnouncementSettings({ ...announcementSettings, messageAr: e.target.value })}
+                  placeholder="أدخل نص التنبيه أو الإعلان الذي سيظهر أسفل الهيدر..."
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-xs outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                  {isArabic ? 'نص الإشعار (بالإنجليزية):' : 'Notification Message (English):'}
+                </label>
+                <textarea
+                  rows={2}
+                  dir="ltr"
+                  disabled={!canEditSiteSettings}
+                  value={announcementSettings.messageEn}
+                  onChange={(e) => setAnnouncementSettings({ ...announcementSettings, messageEn: e.target.value })}
+                  placeholder="Enter the English announcement text..."
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-xs outline-none"
+                />
+              </div>
+            </div>
+
+            {/* CTA Action & Button Text */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                  {isArabic ? 'إجراء الزر التفاعلي (CTA):' : 'CTA Button Destination:'}
+                </label>
+                <select
+                  disabled={!canEditSiteSettings}
+                  value={announcementSettings.ctaAction}
+                  onChange={(e) =>
+                    setAnnouncementSettings({
+                      ...announcementSettings,
+                      ctaAction: e.target.value as AnnouncementCtaAction
+                    })
+                  }
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-xs outline-none"
+                >
+                  <option value="booking">{isArabic ? 'فتح نافذة حجز موعد' : 'Open Booking Modal'}</option>
+                  <option value="courses">{isArabic ? 'صفحة الكورسات والدورات' : 'Courses Page'}</option>
+                  <option value="offers">{isArabic ? 'صفحة العروض والباقات' : 'Offers Directory'}</option>
+                  <option value="branches">{isArabic ? 'صفحة الفروع والمواقع' : 'Branches Directory'}</option>
+                  <option value="portal">{isArabic ? 'بوابة الأسرة' : 'Family Portal'}</option>
+                  <option value="whatsapp">{isArabic ? 'تواصل مباشر عبر واتساب' : 'Direct WhatsApp'}</option>
+                  <option value="custom_url">{isArabic ? 'رابط مخصص (URL)' : 'Custom URL'}</option>
+                  <option value="none">{isArabic ? 'بدون زر إجراء' : 'No CTA Button'}</option>
+                </select>
+              </div>
+
+              {announcementSettings.ctaAction !== 'none' && (
+                <>
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                      {isArabic ? 'نص الزر (عربي):' : 'Button Text (AR):'}
+                    </label>
+                    <input
+                      type="text"
+                      disabled={!canEditSiteSettings}
+                      value={announcementSettings.ctaTextAr}
+                      onChange={(e) => setAnnouncementSettings({ ...announcementSettings, ctaTextAr: e.target.value })}
+                      placeholder="احجز الآن"
+                      className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-xs outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                      {isArabic ? 'نص الزر (إنجليزي):' : 'Button Text (EN):'}
+                    </label>
+                    <input
+                      type="text"
+                      dir="ltr"
+                      disabled={!canEditSiteSettings}
+                      value={announcementSettings.ctaTextEn}
+                      onChange={(e) => setAnnouncementSettings({ ...announcementSettings, ctaTextEn: e.target.value })}
+                      placeholder="Book Now"
+                      className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-xs outline-none"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+
+            {announcementSettings.ctaAction === 'custom_url' && (
+              <div>
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                  {isArabic ? 'الرابط المخصص (مسار داخلي مثل /services أو رابط خارجي):' : 'Custom URL:'}
+                </label>
+                <input
+                  type="text"
+                  dir="ltr"
+                  disabled={!canEditSiteSettings}
+                  value={announcementSettings.ctaUrl}
+                  onChange={(e) => setAnnouncementSettings({ ...announcementSettings, ctaUrl: e.target.value })}
+                  placeholder="https://... or /booking"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-xs font-mono outline-none"
+                />
+              </div>
+            )}
+
+            {/* Dismissible & Save Footer */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-slate-200 dark:border-white/10">
+              <label className="inline-flex items-center gap-2.5 text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
+                <input
+                  type="checkbox"
+                  disabled={!canEditSiteSettings}
+                  checked={announcementSettings.dismissible}
+                  onChange={(e) =>
+                    setAnnouncementSettings({ ...announcementSettings, dismissible: e.target.checked })
+                  }
+                  className="w-4 h-4 accent-[#1463D6] rounded"
+                />
+                <span>{isArabic ? 'السماح للزائر بإخفاء شريط الإشعارات مؤقتاً خلال الجلسة' : 'Allow visitors to dismiss bar during session'}</span>
+              </label>
+
+              {canEditSiteSettings && (
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 rounded-2xl bg-[#1463D6] hover:bg-[#1152B8] text-white font-black text-xs shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>{isArabic ? 'حفظ وتطبيق إعدادات شريط الإشعارات' : 'Save Notification Bar Settings'}</span>
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
       )}
 
       {/* ========================================================================= */}
@@ -560,6 +1129,7 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
             showFeedback(isArabic ? 'تم تحديث حالة ظهور قسم الاعتمادات بالموقع' : 'Accreditations module visibility updated');
           }}
           isModuleEnabled={modulesVisibility.accreditations}
+          isSystemAdmin={isSystemAdmin}
         />
       )}
 
@@ -680,14 +1250,16 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
                     <span>{isArabic ? 'تعديل' : 'Edit'}</span>
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={() => handleDeletePillar(pillar.id)}
-                    className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-700 dark:text-rose-400 hover:text-white transition-all cursor-pointer"
-                    title={isArabic ? 'حذف' : 'Delete'}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  {isSystemAdmin && (
+                    <button
+                      type="button"
+                      onClick={() => handleDeletePillar(pillar.id)}
+                      className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-700 dark:text-rose-400 hover:text-white transition-all cursor-pointer"
+                      title={isArabic ? 'حذف' : 'Delete'}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -1127,6 +1699,38 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+            {/* Synchronized Header Notification Bar Toggle */}
+            <div
+              className={`p-4 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
+                announcementSettings.enabled
+                  ? 'bg-emerald-50/70 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-500/30'
+                  : 'bg-slate-100/50 dark:bg-slate-900/30 border-dashed border-slate-300 dark:border-white/5 opacity-75'
+              }`}
+            >
+              <div className="min-w-0 flex-1">
+                <span className="text-xs font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <Megaphone className="w-3.5 h-3.5 text-[#1463D6] dark:text-[#60AFFF] shrink-0" />
+                  <span>{isArabic ? 'شريط الإشعارات أسفل الهيدر' : 'Header Notification Bar'}</span>
+                </span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5 block">
+                  {isArabic ? 'شريط تنبيهات تفاعلي متوافق مع ثيم الموقع أسفل الهيدر' : 'Theme-aligned announcement bar directly below the header'}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                disabled={!canEditSiteSettings}
+                onClick={handleToggleAnnouncementEnabled}
+                className={`w-11 h-6 rounded-full transition-colors cursor-pointer relative p-0.5 shrink-0 ${
+                  announcementSettings.enabled ? 'bg-[#00E5BE]' : 'bg-slate-300 dark:bg-slate-700'
+                }`}
+              >
+                <div className={`w-5 h-5 rounded-full bg-white shadow-xs transition-transform ${
+                  announcementSettings.enabled ? 'ltr:translate-x-5 rtl:-translate-x-5' : 'translate-x-0'
+                }`} />
+              </button>
+            </div>
+
             {[
               { key: 'hero', labelAr: 'سلايدر العرض الرئيسي (Hero Section)', descAr: 'البانر الترحيبي والصورة الدائرية ونموذج التواصل السريع' },
               { key: 'accreditations', labelAr: 'اعتمادات وشهادات (معترف بنا من)', descAr: 'شريط جهات الاعتماد الرسمية (ISO, IBAO, QABA, BACB, ضمان, سباهي CBAHI)' },

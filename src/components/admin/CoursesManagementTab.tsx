@@ -31,8 +31,14 @@ import {
   MinusCircle,
   Play,
   Star,
-  ShieldCheck
+  ShieldCheck,
+  CreditCard,
+  GitBranch,
+  UserCheck,
+  Lock
 } from 'lucide-react';
+import { AdminUser, PermissionId } from '../../types';
+import { getStoredAdminUsers } from '../../data/adminData';
 import { useLanguage } from '../../context/LanguageContext';
 import { compressImage } from '../../utils/imageCompressor';
 import { getAccessibleAccentColor } from '../../utils/colorContrast';
@@ -50,7 +56,10 @@ import { CourseCustomIcon, COURSE_ICON_OPTIONS, resolveCourseIcon } from '../Cou
 import { getCourseLogoTheme } from '../../utils/courseLogoThemes';
 
 interface CoursesManagementTabProps {
-  hasPermission?: (perm: any) => boolean;
+  hasPermission?: (perm: PermissionId) => boolean;
+  isSystemAdmin?: boolean;
+  adminUsers?: AdminUser[];
+  onNavigateTab?: (tab: string) => void;
 }
 
 const ACCENT_COLOR_PRESETS = [
@@ -62,7 +71,12 @@ const ACCENT_COLOR_PRESETS = [
   { name: 'أخضر عشبي', hex: '#10B981' }
 ];
 
-export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
+export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = ({
+  hasPermission,
+  isSystemAdmin = false,
+  adminUsers,
+  onNavigateTab
+}) => {
   const { isArabic } = useLanguage();
 
   const [courses, setCourses] = useState<CourseItem[]>(() => getStoredCoursesData());
@@ -189,6 +203,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
   };
 
   const handleDeleteCourse = (id: string) => {
+    if (!isSystemAdmin) return;
     if (!window.confirm(isArabic ? 'هل أنت متأكد من حذف هذا الكورس نهائياً؟' : 'Are you sure you want to delete this course?')) {
       return;
     }
@@ -260,6 +275,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
   };
 
   const handleRemoveFeature = (index: number, lang: 'ar' | 'en') => {
+    if (editingCourse && !isSystemAdmin) return;
     if (lang === 'ar') {
       const updated = (formData.featuresAr || []).filter((_, i) => i !== index);
       setFormData(prev => ({ ...prev, featuresAr: updated.length > 0 ? updated : [''] }));
@@ -330,6 +346,105 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
   const handleSaveSettings = () => {
     saveStoredCoursesSettings(settings);
     triggerSuccess(isArabic ? 'تم حفظ وتحديث إعدادات قسم الكورسات بنجاح!' : 'Section settings saved!');
+  };
+
+  const resolvedAdminUsers = React.useMemo(
+    () => (adminUsers && adminUsers.length > 0 ? adminUsers : getStoredAdminUsers()),
+    [adminUsers]
+  );
+
+  // Users eligible to receive routed course requests (active super_admin OR holds 'manage_courses')
+  const courseCoordinatorCandidates = React.useMemo(
+    () =>
+      resolvedAdminUsers.filter(
+        (u) =>
+          u.status === 'active' &&
+          (u.role === 'super_admin' || (Array.isArray(u.permissions) && u.permissions.includes('manage_courses')))
+      ),
+    [resolvedAdminUsers]
+  );
+
+  const canConfigurePayments = isSystemAdmin || Boolean(hasPermission?.('system_settings'));
+  const canConfigureRouting = isSystemAdmin || Boolean(hasPermission?.('manage_users')) || Boolean(hasPermission?.('manage_courses'));
+
+  const handleTogglePaymentOption = (key: 'tamara' | 'emkan' | 'cash') => {
+    if (!canConfigurePayments) return;
+    const currentOpts = settings.paymentOptions || { tamara: true, emkan: true, cash: true };
+    const nextSettings: CoursesSectionSettings = {
+      ...settings,
+      paymentOptions: {
+        tamara: currentOpts.tamara !== false,
+        emkan: currentOpts.emkan !== false,
+        cash: currentOpts.cash !== false,
+        [key]: !(currentOpts[key] !== false)
+      }
+    };
+    setSettings(nextSettings);
+    saveStoredCoursesSettings(nextSettings);
+    triggerSuccess(
+      isArabic
+        ? 'تم تحديث حالة خيار السداد في نموذج التسجيل مباشرة!'
+        : 'Course registration payment option updated!'
+    );
+  };
+
+  const handleChangeRoutingMode = (mode: 'all_authorized' | 'specific_user') => {
+    if (!canConfigureRouting) return;
+    const firstCandidate = courseCoordinatorCandidates[0];
+    const currentAssignedId = settings.courseRouting?.assignedUserId;
+    const matchedUser =
+      courseCoordinatorCandidates.find((u) => u.id === currentAssignedId) || firstCandidate;
+
+    const nextSettings: CoursesSectionSettings = {
+      ...settings,
+      courseRouting:
+        mode === 'specific_user' && matchedUser
+          ? {
+              mode: 'specific_user',
+              assignedUserId: matchedUser.id,
+              assignedUserName: matchedUser.name,
+              assignedUserEmail: matchedUser.email
+            }
+          : {
+              mode: 'all_authorized',
+              assignedUserId: '',
+              assignedUserName: '',
+              assignedUserEmail: ''
+            }
+    };
+    setSettings(nextSettings);
+    saveStoredCoursesSettings(nextSettings);
+    triggerSuccess(
+      isArabic ? 'تم تحديث آلية توجيه طلبات الكورسات بنجاح!' : 'Course request routing updated!'
+    );
+  };
+
+  const handleSelectCoordinator = (userId: string) => {
+    if (!canConfigureRouting) return;
+    const user = courseCoordinatorCandidates.find((u) => u.id === userId);
+    const nextSettings: CoursesSectionSettings = {
+      ...settings,
+      courseRouting: user
+        ? {
+            mode: 'specific_user',
+            assignedUserId: user.id,
+            assignedUserName: user.name,
+            assignedUserEmail: user.email
+          }
+        : {
+            mode: 'all_authorized',
+            assignedUserId: '',
+            assignedUserName: '',
+            assignedUserEmail: ''
+          }
+    };
+    setSettings(nextSettings);
+    saveStoredCoursesSettings(nextSettings);
+    triggerSuccess(
+      isArabic
+        ? `تم تعيين «${user?.name || ''}» مسؤولاً عن استلام طلبات الكورسات!`
+        : `Course requests routed to ${user?.name || 'authorized staff'}!`
+    );
   };
 
   // Restore Defaults
@@ -504,6 +619,238 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
       </div>
 
       {/* ========================================================================= */}
+      {/* ADMIN PAYMENT / INSTALLMENT ACTIVATION & COURSE REQUEST ROUTING           */}
+      {/* ========================================================================= */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        
+        {/* 1. Payment & Installment Options Toggle Card */}
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-5">
+          <div className="flex items-start justify-between gap-3 border-b border-slate-100 dark:border-white/10 pb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800/40 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                <CreditCard className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                  {isArabic ? 'تفعيل خيارات السداد والتقسيط بالكورسات' : 'Course Payment & Installment Toggles'}
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  {isArabic
+                    ? 'تنشيط أو إيقاف طرق الدفع والتقسيط الظاهرة للمتدربين في نموذج التسجيل.'
+                    : 'Enable or disable payment and installment options in the course registration modal.'}
+                </p>
+              </div>
+            </div>
+            {!canConfigurePayments && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 text-[11px] font-bold shrink-0">
+                <Lock className="w-3 h-3" />
+                <span>{isArabic ? 'للأدمن فقط' : 'Admin Only'}</span>
+              </span>
+            )}
+          </div>
+
+          <div className="space-y-3">
+            {[
+              {
+                key: 'tamara' as const,
+                titleAr: 'تقسيط تمارا (Tamara)',
+                titleEn: 'Tamara Installments',
+                descAr: 'تقسيط الرسوم على دفعات شهرية بدون فوائد',
+                descEn: 'Split course fees into interest-free installments',
+                logo: '/assets/tamara-logo.svg',
+                badgeColor: 'amber'
+              },
+              {
+                key: 'emkan' as const,
+                titleAr: 'تمويل إمكان (Emkan)',
+                titleEn: 'Emkan Financing',
+                descAr: 'خيار التمويل الميسر عبر منصة إمكان',
+                descEn: 'Flexible financing option via Emkan',
+                logo: '/assets/emkan-logo.svg',
+                badgeColor: 'emerald'
+              },
+              {
+                key: 'cash' as const,
+                titleAr: 'سداد مباشر / تحويل بنكي',
+                titleEn: 'Direct Payment / Bank Transfer',
+                descAr: 'الدفع المباشر أو التحويل على حساب المركز الرسمي',
+                descEn: 'Direct clinic payment or official bank transfer',
+                logo: null,
+                badgeColor: 'cyan'
+              }
+            ].map((opt) => {
+              const isEnabled = settings.paymentOptions?.[opt.key] !== false;
+              return (
+                <div
+                  key={opt.key}
+                  className={`p-3.5 rounded-2xl border flex items-center justify-between gap-3 transition-all ${
+                    isEnabled
+                      ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-700/40'
+                      : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-white/10 opacity-75'
+                  }`}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-14 h-10 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 flex items-center justify-center p-1.5 shrink-0">
+                      {opt.logo ? (
+                        <img src={opt.logo} alt={opt.titleEn} className="h-4 object-contain" />
+                      ) : (
+                        <CreditCard className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs sm:text-sm font-black text-slate-900 dark:text-white truncate">
+                        {isArabic ? opt.titleAr : opt.titleEn}
+                      </div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                        {isArabic ? opt.descAr : opt.descEn}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    disabled={!canConfigurePayments}
+                    onClick={() => handleTogglePaymentOption(opt.key)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 flex items-center gap-1.5 ${
+                      !canConfigurePayments
+                        ? 'opacity-50 cursor-not-allowed bg-slate-200 dark:bg-slate-700 text-slate-600'
+                        : isEnabled
+                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs cursor-pointer'
+                        : 'bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 cursor-pointer'
+                    }`}
+                  >
+                    <span className={`w-2 h-2 rounded-full ${isEnabled ? 'bg-white' : 'bg-slate-400'}`} />
+                    <span>{isEnabled ? (isArabic ? 'نشط ومفعّل' : 'Active') : (isArabic ? 'معطّل' : 'Disabled')}</span>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 2. Course Request Routing & Permission Coordinator Card */}
+        <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-5">
+          <div className="flex items-start justify-between gap-3 border-b border-slate-100 dark:border-white/10 pb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
+                <GitBranch className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                  {isArabic ? 'توجيه طلبات التسجيل في الكورسات للمسؤول' : 'Course Requests Coordinator Routing'}
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  {isArabic
+                    ? 'حدد المسؤول أو المستخدم المصرح له باستلام ومتابعة طلبات تسجيل الكورسات الواردة.'
+                    : 'Assign incoming course registration requests automatically to an authorized coordinator.'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Mode Toggle */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <button
+              type="button"
+              disabled={!canConfigureRouting}
+              onClick={() => handleChangeRoutingMode('all_authorized')}
+              className={`p-3 rounded-2xl border text-start transition-all ${
+                (settings.courseRouting?.mode || 'all_authorized') === 'all_authorized'
+                  ? 'bg-[#0B3B36] text-white border-[#0B3B36] shadow-xs'
+                  : 'bg-slate-50 dark:bg-slate-800/50 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-white/10 hover:border-teal-400'
+              } ${!canConfigureRouting ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
+            >
+              <div className="text-xs font-black">
+                {isArabic ? 'جميع المصرح لهم بالكورسات' : 'All Authorized Users'}
+              </div>
+              <div className={`text-[10px] mt-1 ${
+                (settings.courseRouting?.mode || 'all_authorized') === 'all_authorized'
+                  ? 'text-emerald-100/85'
+                  : 'text-slate-500 dark:text-slate-400'
+              }`}>
+                {isArabic
+                  ? 'تظهر الطلبات لكل مستخدم يمتلك صلاحية «إدارة الكورسات»'
+                  : 'Visible to any user with Course Management permission'}
+              </div>
+            </button>
+
+            <button
+              type="button"
+              disabled={!canConfigureRouting}
+              onClick={() => handleChangeRoutingMode('specific_user')}
+              className={`p-3 rounded-2xl border text-start transition-all ${
+                settings.courseRouting?.mode === 'specific_user'
+                  ? 'bg-[#0B3B36] text-white border-[#0B3B36] shadow-xs'
+                  : 'bg-slate-50 dark:bg-slate-800/50 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-white/10 hover:border-teal-400'
+              } ${!canConfigureRouting ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
+            >
+              <div className="text-xs font-black">
+                {isArabic ? 'توجيه مباشر لمسؤول محدد' : 'Route to Specific Coordinator'}
+              </div>
+              <div className={`text-[10px] mt-1 ${
+                settings.courseRouting?.mode === 'specific_user'
+                  ? 'text-emerald-100/85'
+                  : 'text-slate-500 dark:text-slate-400'
+              }`}>
+                {isArabic
+                  ? 'إسناد تلقائي لكل طلب تسجيل جديد لموظف معين'
+                  : 'Auto-assign every new course request to a designated user'}
+              </div>
+            </button>
+          </div>
+
+          {/* Specific Assignee Selector */}
+          {settings.courseRouting?.mode === 'specific_user' && (
+            <div className="space-y-2 p-3.5 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/25 border border-indigo-200 dark:border-indigo-800/40">
+              <label className="block text-xs font-bold text-indigo-950 dark:text-indigo-200 flex items-center gap-1.5">
+                <UserCheck className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                <span>{isArabic ? 'المسؤول المعين لاستقبال طلبات الكورسات:' : 'Assigned Course Requests Officer:'}</span>
+              </label>
+              <select
+                disabled={!canConfigureRouting}
+                value={settings.courseRouting?.assignedUserId || ''}
+                onChange={(e) => handleSelectCoordinator(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-indigo-200 dark:border-indigo-700/50 bg-white dark:bg-slate-900 text-xs font-bold text-slate-900 dark:text-white outline-none cursor-pointer"
+              >
+                <option value="">
+                  {isArabic ? '— اختر المسؤول المخول —' : '— Select Authorized Staff —'}
+                </option>
+                {courseCoordinatorCandidates.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {u.name} ({isArabic ? u.roleTitleAr : u.roleTitleEn})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Eligible Users Summary & Quick Link to RBAC Users Tab */}
+          <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div className="space-y-0.5">
+              <div className="font-bold text-slate-800 dark:text-slate-200">
+                {isArabic
+                  ? `المستخدمون المصرح لهم بالكورسات حالياً: (${courseCoordinatorCandidates.length})`
+                  : `Users with Course Requests Permission: (${courseCoordinatorCandidates.length})`}
+              </div>
+              <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                {courseCoordinatorCandidates.map((u) => u.name).join('، ') || (isArabic ? 'لا يوجد' : 'None')}
+              </div>
+            </div>
+            {onNavigateTab && (
+              <button
+                type="button"
+                onClick={() => onNavigateTab('users')}
+                className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 text-[11px] font-bold text-indigo-700 dark:text-indigo-300 hover:border-indigo-400 cursor-pointer shrink-0"
+              >
+                {isArabic ? 'منح الصلاحية لمستخدم ↗' : 'Grant Permission ↗'}
+              </button>
+            )}
+          </div>
+        </div>
+
+      </div>
+
+      {/* ========================================================================= */}
       {/* COURSES LIST TABLE & CARDS                                                */}
       {/* ========================================================================= */}
       <div className="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-white/10 shadow-xs">
@@ -621,14 +968,16 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
                     <span>{isArabic ? 'تعديل وتخصيص' : 'Edit'}</span>
                   </button>
 
-                  {/* Delete */}
-                  <button
-                    onClick={() => handleDeleteCourse(course.id)}
-                    className="p-2 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
-                    title={isArabic ? 'حذف الكورس' : 'Delete'}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  {/* Delete (System Admin Only) */}
+                  {isSystemAdmin && (
+                    <button
+                      onClick={() => handleDeleteCourse(course.id)}
+                      className="p-2 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                      title={isArabic ? 'حذف الكورس' : 'Delete'}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
 
                 </div>
               </div>
@@ -979,7 +1328,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = () => {
                             onChange={(e) => handleFeatureChange(fIdx, e.target.value, 'ar')}
                             className="flex-1 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-800 text-xs text-slate-900 dark:text-white outline-none focus:ring-1 focus:ring-teal-500"
                           />
-                          {(formData.featuresAr || []).length > 1 && (
+                          {(formData.featuresAr || []).length > 1 && (!editingCourse || isSystemAdmin) && (
                             <button
                               type="button"
                               onClick={() => handleRemoveFeature(fIdx, 'ar')}

@@ -28,6 +28,7 @@ import {
   getCustomerWhatsAppMessage,
 } from '../data/customerRequests';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 
 interface BookingDirectoryPageProps {
   onBackToHome: () => void;
@@ -51,6 +52,7 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
   onNavigate,
 }) => {
   const { isArabic, direction } = useLanguage();
+  const { user, clientProfile } = useAuth();
 
   const [bookingType, setBookingType] = useState<'service' | 'package'>(
     initialPackage ? 'package' : 'service'
@@ -123,9 +125,11 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
   const [fullName, setFullName] = useState('');
   const [mobilePhone, setMobilePhone] = useState('');
 
+  const [selectedFamilyMemberId, setSelectedFamilyMemberId] = useState<string>('');
   const [showOptionalDetails, setShowOptionalDetails] = useState(Boolean(initialNotes));
   const [childName, setChildName] = useState('');
   const [childAge, setChildAge] = useState<number>(5);
+  const [childBirthDate, setChildBirthDate] = useState<string>('');
   const [notes, setNotes] = useState(initialNotes || '');
 
   const [formError, setFormError] = useState('');
@@ -136,6 +140,36 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
+
+  useEffect(() => {
+    if (clientProfile) {
+      setFullName((prev) => prev || clientProfile.fullName || '');
+      setMobilePhone((prev) => prev || clientProfile.phone || '');
+    }
+  }, [clientProfile]);
+
+  const computeAgeYearsFromDob = (dob?: string): number => {
+    if (!dob) return 5;
+    const d = new Date(dob);
+    if (Number.isNaN(d.getTime())) return 5;
+    const now = new Date();
+    let age = now.getFullYear() - d.getFullYear();
+    const m = now.getMonth() - d.getMonth();
+    if (m < 0 || (m === 0 && now.getDate() < d.getDate())) age -= 1;
+    return Math.max(1, Math.min(18, age || 5));
+  };
+
+  const handleSelectFamilyMember = (memberId: string) => {
+    setSelectedFamilyMemberId(memberId);
+    const member = (clientProfile?.familyMembers || []).find((m) => m.id === memberId);
+    if (member) {
+      setChildName(member.name);
+      setChildAge(computeAgeYearsFromDob(member.dob));
+      setChildBirthDate(member.dob || '');
+    } else {
+      setChildBirthDate('');
+    }
+  };
 
   const activeService = SERVICES.find((s) => s.id === selectedServiceId) || SERVICES[0];
   const activePackage = THERAPY_PACKAGES.find((p) => p.id === selectedPackageId) || THERAPY_PACKAGES[0];
@@ -179,14 +213,22 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
     const cityLabel = isArabic ? activeCityObj.labelAr : activeCityObj.labelEn;
     const branchLabel = getCleanBranchName(activeBranchObj);
 
+    const selectedMember = (clientProfile?.familyMembers || []).find(
+      (m) => m.id === selectedFamilyMemberId
+    );
+
     const newAppointment: Appointment = {
       id: `apt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       referenceNumber: ref,
-      childName: childName.trim() || (isArabic ? 'المستفيد' : 'Beneficiary'),
+      childName: selectedMember?.name || childName.trim() || (isArabic ? 'المستفيد' : 'Beneficiary'),
       childAge: Number(childAge) || 5,
+      ...(childBirthDate ? { childBirthDate } : {}),
       guardianName: fullName.trim(),
       guardianPhone: mobilePhone.trim(),
-      guardianEmail: 'contact@customer.com',
+      guardianEmail: clientProfile?.email || user?.email || 'contact@customer.com',
+      userId: user?.uid || undefined,
+      clientId: user?.uid || undefined,
+      ...(selectedMember ? { familyMemberId: selectedMember.id, familyMemberName: selectedMember.name } : {}),
       serviceId: bookingType === 'package' ? activePackage.id : activeService.id,
       serviceTitle,
       specialistId: initialSpecialist?.id || 'spec-general',
@@ -524,6 +566,26 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
 
                   {showOptionalDetails && (
                     <div className="mt-2.5 p-3.5 rounded-xl liquid-glass-panel space-y-2.5">
+                      {clientProfile && clientProfile.familyMembers && clientProfile.familyMembers.length > 0 && (
+                        <div>
+                          <label htmlFor="page-booking-family-member" className="text-[11px] font-bold text-[#161B26] dark:text-slate-200 block mb-1">
+                            {isArabic ? 'اختيار الفرد من ملف الأسرة:' : 'Select from Family File:'}
+                          </label>
+                          <select
+                            id="page-booking-family-member"
+                            value={selectedFamilyMemberId}
+                            onChange={(e) => handleSelectFamilyMember(e.target.value)}
+                            className="w-full h-10 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-3 text-xs sm:text-sm outline-none"
+                          >
+                            <option value="">{isArabic ? '— مستفيد جديد / إدخال يدوي —' : '— Manual entry —'}</option>
+                            {clientProfile.familyMembers.map((m) => (
+                              <option key={m.id} value={m.id}>
+                                {m.name} ({m.relation})
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
                       <div className="grid grid-cols-3 gap-2">
                         <input
                           type="text"

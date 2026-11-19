@@ -18,11 +18,13 @@ import {
   Phone, 
   MessageCircle,
   Stethoscope,
-  Gift
+  Gift,
+  User as UserIcon
 } from 'lucide-react';
 import { RabaLogo } from './RabaLogo';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 
 interface NavbarProps {
   onOpenBooking: () => void;
@@ -38,6 +40,7 @@ interface NavbarProps {
   onOpenShadowTeacherPage?: () => void;
   onOpenPartnersPage?: () => void;
   onOpenTestimonialsPage?: () => void;
+  onOpenPortal?: () => void;
   onGoHome?: () => void;
   isSpecialistsPageOpen?: boolean;
   isServicesPageOpen?: boolean;
@@ -55,6 +58,8 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({
   onOpenBooking,
+  onOpenLogin,
+  onOpenPortal,
   onOpenSpecialistsPage,
   onOpenServicesPage,
   onOpenBranchesPage,
@@ -77,6 +82,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const { theme, toggleTheme } = useTheme();
   const { toggleLanguage, t, isArabic } = useLanguage();
+  const { user, clientProfile } = useAuth();
   const isDark = theme === 'dark';
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -342,6 +348,37 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </button>
 
+              {/* Family Portal / Account Action */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (user) {
+                    if (onOpenPortal) onOpenPortal();
+                    else if (onNavigate) onNavigate('/portal');
+                  } else if (onOpenLogin) {
+                    onOpenLogin();
+                  }
+                }}
+                id="header-portal-btn"
+                className={`h-9 px-2.5 sm:px-3 rounded-full transition-colors cursor-pointer flex items-center justify-center gap-1.5 text-xs font-black border backdrop-blur-md shrink-0 ${
+                  currentPath === '/portal'
+                    ? 'bg-[#1463D6] text-white border-transparent'
+                    : isDark
+                    ? 'bg-white/[0.06] hover:bg-white/[0.12] border-white/[0.10] text-[#F8FAFC]'
+                    : 'bg-white/75 hover:bg-white border-[#161B26]/[0.08] text-[#161B26]'
+                }`}
+                title={user ? (isArabic ? 'بوابة الأسرة' : 'Family Portal') : (isArabic ? 'دخول / بوابة الأسرة' : 'Sign In / Portal')}
+                aria-label={isArabic ? 'بوابة الأسرة' : 'Family Portal'}
+              >
+                <UserIcon className={`w-3.5 h-3.5 shrink-0 ${currentPath === '/portal' ? 'text-white' : 'text-[#2B95FF]'}`} />
+                <span className="hidden xl:inline max-w-[96px] truncate">
+                  {user
+                    ? clientProfile?.fullName?.split(' ')[0] || user.displayName?.split(' ')[0] || (isArabic ? 'بوابتي' : 'Portal')
+                    : isArabic
+                    ? 'بوابة الأسرة'
+                    : 'Portal'}
+                </span>
+              </button>
 
               {/* Primary Action Button: "احجز الآن" / "Book Now" */}
               <button
@@ -467,6 +504,48 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </button>
                 </div>
               </div>
+
+              {/* Family Portal / Account Card in Mobile Drawer */}
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  if (user) {
+                    if (onOpenPortal) onOpenPortal();
+                    else if (onNavigate) onNavigate('/portal');
+                  } else if (onOpenLogin) {
+                    onOpenLogin();
+                  }
+                }}
+                className={`w-full p-3 rounded-2xl border flex items-center justify-between cursor-pointer transition-colors ${
+                  isDark
+                    ? 'bg-white/[0.05] hover:bg-white/[0.09] border-white/[0.08] text-[#F8FAFC]'
+                    : 'bg-white/80 hover:bg-white border-[#161B26]/[0.08] text-[#161B26]'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-9 h-9 rounded-full bg-[#2B95FF]/15 text-[#1263D6] dark:text-[#60AFFF] border border-[#2B95FF]/30 flex items-center justify-center shrink-0">
+                    <UserIcon className="w-4 h-4" />
+                  </div>
+                  <div className="text-start min-w-0">
+                    <div className="text-xs font-black truncate">
+                      {user
+                        ? clientProfile?.fullName || user.displayName || (isArabic ? 'بوابة الأسرة' : 'Family Portal')
+                        : isArabic
+                        ? 'بوابة الأسرة وملف العميل'
+                        : 'Family Portal & Sign In'}
+                    </div>
+                    <div className="text-[10px] opacity-75 truncate">
+                      {user
+                        ? clientProfile?.fileNumber || (isArabic ? 'إدارة المواعيد والبيانات' : 'Manage profile & bookings')
+                        : isArabic
+                        ? 'تسجيل الدخول أو إنشاء ملف جديد'
+                        : 'Sign in or create a new client file'}
+                    </div>
+                  </div>
+                </div>
+                {isArabic ? <ChevronLeft className="w-4 h-4 opacity-70 shrink-0" /> : <ChevronRight className="w-4 h-4 opacity-70 shrink-0" />}
+              </button>
 
               {/* Mirrored Primary Navigation Menu matching Desktop Header */}
               <div className="space-y-1.5">

@@ -1,6 +1,17 @@
 import type { Unsubscribe } from 'firebase/firestore';
 import { auth, getLazyDb } from '../lib/firebase';
-import { Appointment, ParentReview, Specialist, BlogPost, AdminUser } from '../types';
+import {
+  Appointment,
+  ParentReview,
+  Specialist,
+  BlogPost,
+  AdminUser,
+  ClientProfile,
+  FamilyMember,
+  MemberRecord,
+  MemberRecordCategory,
+  MemberReportType
+} from '../types';
 
 async function loadFirestoreCtx() {
   const [fs, db] = await Promise.all([
@@ -86,6 +97,154 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
     throw new Error(JSON.stringify(errInfo));
   } else {
     console.warn(`[Firestore Notice - ${operationType.toUpperCase()}] Collection/Doc: [${path}]:`, errMessage);
+  }
+}
+
+export interface FormattedFirestoreError {
+  message: string;
+  rawError: string;
+  isPermissionDenied: boolean;
+  isNetwork: boolean;
+  isPrecondition: boolean;
+}
+
+/**
+ * Parses raw Firestore errors (including JSON-serialized FirestoreErrorInfo thrown by handleFirestoreError)
+ * into clean, localized UI messages so raw developer JSON or English permission dumps never appear in the UI.
+ */
+export function formatFirestoreUiError(
+  error: unknown,
+  isArabic = true,
+  fallbackAr = 'حدث خطأ أثناء الاتصال بقاعدة البيانات السحابية.',
+  fallbackEn = 'A cloud database error occurred.'
+): FormattedFirestoreError {
+  let rawMessage = error instanceof Error ? error.message : String(error || '');
+  const rawCode = typeof (error as any)?.code === 'string' ? (error as any).code : '';
+
+  if (rawMessage.trim().startsWith('{')) {
+    try {
+      const parsed = JSON.parse(rawMessage);
+      if (parsed && typeof parsed.error === 'string') {
+        rawMessage = parsed.error;
+      }
+    } catch {
+      // Keep original string if not valid JSON
+    }
+  }
+
+  const lower = `${rawCode} ${rawMessage}`.toLowerCase();
+  const isPermissionDenied =
+    lower.includes('permission-denied') ||
+    lower.includes('missing or insufficient permissions') ||
+    lower.includes('insufficient permissions');
+  const isNetwork =
+    lower.includes('unavailable') ||
+    lower.includes('offline') ||
+    lower.includes('timed out') ||
+    lower.includes('network');
+  const isPrecondition =
+    lower.includes('failed-precondition') ||
+    lower.includes('requires an index');
+
+  if (isPermissionDenied) {
+    return {
+      rawError: rawMessage,
+      isPermissionDenied: true,
+      isNetwork: false,
+      isPrecondition: false,
+      message: isArabic
+        ? 'جلسة Firebase الحالية لا تملك صلاحيات الإدارة السحابية. يرجى تفعيل المزامنة السحابية باستخدام حساب المدير المعتمد (rabacentersocial@gmail.com).'
+        : 'Current Firebase session lacks admin permissions. Please activate Cloud Sync using the authorized Admin account (rabacentersocial@gmail.com).',
+    };
+  }
+
+  if (isNetwork) {
+    return {
+      rawError: rawMessage,
+      isPermissionDenied: false,
+      isNetwork: true,
+      isPrecondition: false,
+      message: isArabic
+        ? 'تعذر الاتصال بقاعدة البيانات السحابية حالياً. يرجى التحقق من اتصال الإنترنت وإعادة المحاولة.'
+        : 'Unable to reach Cloud Firestore right now. Please check your internet connection and retry.',
+    };
+  }
+
+  if (isPrecondition) {
+    return {
+      rawError: rawMessage,
+      isPermissionDenied: false,
+      isNetwork: false,
+      isPrecondition: true,
+      message: isArabic
+        ? 'يتطلب هذا الاستعلام تهيئة فهرس في قاعدة البيانات. يرجى المحاولة مرة أخرى.'
+        : 'This query requires a database index precondition. Please retry.',
+    };
+  }
+
+  return {
+    rawError: rawMessage,
+    isPermissionDenied: false,
+    isNetwork: false,
+    isPrecondition: false,
+    message: isArabic ? fallbackAr : fallbackEn,
+  };
+}
+
+/**
+ * Verifies whether the currently authenticated Firebase user satisfies `isAdmin()` in firestore.rules
+ * (either verified primary admin email rabacentersocial@gmail.com or an active document in /admins/{uid}).
+ * Prevents non-admin client/family portal sessions from triggering admin Firestore list queries.
+ */
+export async function verifyIsFirebaseAdmin(
+  user?: { uid?: string; email?: string | null; emailVerified?: boolean } | null
+): Promise<boolean> {
+  try {
+    const targetUser = user !== undefined ? user : await ensureFirebaseUser();
+    if (!targetUser || !targetUser.uid) {
+      return false;
+    }
+
+    const emailLower = (targetUser.email || '').trim().toLowerCase();
+    if (emailLower === 'rabacentersocial@gmail.com' && Boolean(targetUser.emailVerified)) {
+      return true;
+    }
+
+    const { fs, db } = await loadFirestoreCtx();
+    const adminDocRef = fs.doc(db, 'admins', targetUser.uid);
+    const snap = await withTimeout(fs.getDoc(adminDocRef), 4000);
+    if (snap.exists()) {
+      const data = snap.data();
+      return data?.status !== 'suspended';
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+export async function getFirebaseAdminProfile(
+  user?: { uid?: string; email?: string | null; emailVerified?: boolean } | null
+): Promise<Partial<AdminUser> | null> {
+  try {
+    const targetUser = user !== undefined ? user : await ensureFirebaseUser();
+    if (!targetUser || !targetUser.uid) {
+      return null;
+    }
+
+    const { fs, db } = await loadFirestoreCtx();
+    const adminDocRef = fs.doc(db, 'admins', targetUser.uid);
+    const snap = await withTimeout(fs.getDoc(adminDocRef), 4000);
+    if (snap.exists()) {
+      const data = snap.data() as Partial<AdminUser>;
+      if (data?.status === 'suspended') {
+        return null;
+      }
+      return { ...data, firebaseUid: targetUser.uid };
+    }
+    return null;
+  } catch {
+    return null;
   }
 }
 
@@ -397,8 +556,13 @@ function mapDocToAppointment(docId: string, data: Record<string, any>): Appointm
     serviceTitle: data.serviceTitle || data.serviceName || '',
     specialistId: data.specialistId || '',
     specialistName: data.specialistName || '',
-    branch: data.branch || data.city || '',
-    city: data.city || data.branch || '',
+    branch: data.branch || '',
+    city: data.city || '',
+    country: data.country || '',
+    qualification: data.qualification || '',
+    assignedToUserId: data.assignedToUserId || undefined,
+    assignedToUserName: data.assignedToUserName || undefined,
+    assignedToUserEmail: data.assignedToUserEmail || undefined,
     date: data.date || '',
     timeSlot: data.timeSlot || data.time || '',
     status: data.status || 'pending',
@@ -416,6 +580,10 @@ function mapDocToAppointment(docId: string, data: Record<string, any>): Appointm
     shippingAddress: data.shippingAddress || '',
     preferredCallTime: data.preferredCallTime || '',
     readByAdmin: Boolean(data.readByAdmin),
+    userId: data.userId || '',
+    clientId: data.clientId || data.userId || '',
+    familyMemberId: data.familyMemberId || undefined,
+    familyMemberName: data.familyMemberName || undefined,
     createdAt: createdAtISO,
     createdAtISO: data.createdAtISO || createdAtISO,
     updatedAt: data.updatedAt ? normalizeTimestampToISO(data.updatedAt) : undefined
@@ -466,8 +634,13 @@ export async function saveAppointmentToFirestore(appointment: Appointment): Prom
       serviceTitle: (appointment.serviceTitle || 'استشارة تأهيلية').trim().slice(0, 200),
       specialistId: (appointment.specialistId || 'general').slice(0, 120),
       specialistName: (appointment.specialistName || 'الفريق الاستشاري').trim().slice(0, 150),
-      branch: (appointment.branch || appointment.city || 'الرياض').trim().slice(0, 100),
-      city: (appointment.city || appointment.branch || 'الرياض').trim().slice(0, 100),
+      branch: (appointment.branch || '').trim().slice(0, 100),
+      city: (appointment.city || '').trim().slice(0, 100),
+      country: (appointment.country || '').trim().slice(0, 100),
+      qualification: (appointment.qualification || '').trim().slice(0, 200),
+      ...(appointment.assignedToUserId ? { assignedToUserId: String(appointment.assignedToUserId).slice(0, 128) } : {}),
+      ...(appointment.assignedToUserName ? { assignedToUserName: String(appointment.assignedToUserName).trim().slice(0, 150) } : {}),
+      ...(appointment.assignedToUserEmail ? { assignedToUserEmail: String(appointment.assignedToUserEmail).trim().slice(0, 150) } : {}),
       date: (appointment.date || new Date().toISOString().split('T')[0]).slice(0, 50),
       time: (appointment.timeSlot || '10:00 AM').slice(0, 80),
       timeSlot: (appointment.timeSlot || '10:00 AM').slice(0, 80),
@@ -483,6 +656,10 @@ export async function saveAppointmentToFirestore(appointment: Appointment): Prom
       preferredCallTime: (appointment.preferredCallTime || '').slice(0, 100),
       readByAdmin: Boolean(appointment.readByAdmin),
       reminderSettings: appointment.reminderSettings || { whatsapp: true, sms: false, email: false },
+      userId: (appointment.userId || auth?.currentUser?.uid || '').slice(0, 128),
+      clientId: (appointment.clientId || appointment.userId || auth?.currentUser?.uid || '').slice(0, 128),
+      ...(appointment.familyMemberId ? { familyMemberId: String(appointment.familyMemberId).slice(0, 128) } : {}),
+      ...(appointment.familyMemberName ? { familyMemberName: String(appointment.familyMemberName).trim().slice(0, 150) } : {}),
       createdAtISO
     });
 
@@ -540,6 +717,11 @@ export async function saveCustomerRequestToFirestore(request: Appointment): Prom
       serviceTitle: (request.serviceTitle || 'طلب تواصل').trim().slice(0, 200),
       branch: (request.branch || request.city || 'الرياض').trim().slice(0, 100),
       city: (request.city || request.branch || 'الرياض').trim().slice(0, 100),
+      country: (request.country || '').trim().slice(0, 100),
+      qualification: (request.qualification || '').trim().slice(0, 200),
+      ...(request.assignedToUserId ? { assignedToUserId: String(request.assignedToUserId).slice(0, 128) } : {}),
+      ...(request.assignedToUserName ? { assignedToUserName: String(request.assignedToUserName).trim().slice(0, 150) } : {}),
+      ...(request.assignedToUserEmail ? { assignedToUserEmail: String(request.assignedToUserEmail).trim().slice(0, 150) } : {}),
       requestType: request.requestType || 'contact',
       requestSource: (request.requestSource || 'الموقع الإلكتروني').slice(0, 150),
       notes: (request.notes || '').slice(0, 2000),
@@ -842,42 +1024,61 @@ export async function deleteBlogPostFromFirestore(postId: string): Promise<void>
 // 6. ADMIN USERS & ACCOUNTS (RBAC System)
 // ============================================================================
 
-export async function saveAdminUserToFirestore(user: AdminUser): Promise<boolean> {
+export async function saveAdminUserToFirestore(
+  user: AdminUser,
+  explicitFirebaseUid?: string
+): Promise<boolean> {
   const docId = user.id;
-  const path = `admins/${docId}`;
-  if (!auth.currentUser) {
+  const resolvedUid = (explicitFirebaseUid || user.firebaseUid || '').trim();
+  const path = `admins/${resolvedUid || docId}`;
+  const currentFbUser = await ensureFirebaseUser();
+  if (!currentFbUser) {
     return false;
   }
   try {
     const { fs, db } = await loadFirestoreCtx();
-    const docRef = fs.doc(db, 'admins', docId);
     const { password: _, ...cleanUser } = user;
-    await fs.setDoc(docRef, sanitizeFirestoreData({
+    const payload = sanitizeFirestoreData({
       ...cleanUser,
+      ...(resolvedUid ? { firebaseUid: resolvedUid } : {}),
       updatedAt: new Date().toISOString()
-    }), { merge: true });
-    console.log(`[Firestore] Successfully saved admin user: ${user.username} (${docId})`);
+    });
+
+    await fs.setDoc(fs.doc(db, 'admins', docId), payload, { merge: true });
+
+    // Crucial: firestore.rules checks exists(/admins/$(request.auth.uid)), so also store under firebaseUid
+    if (resolvedUid && resolvedUid !== docId && /^[a-zA-Z0-9_-]+$/.test(resolvedUid)) {
+      await fs.setDoc(fs.doc(db, 'admins', resolvedUid), payload, { merge: true });
+    }
+
+    console.log(`[Firestore] Successfully saved admin user: ${user.username} (${docId}${resolvedUid ? ` / uid:${resolvedUid}` : ''})`);
     return true;
   } catch (error) {
     console.error(`[Firestore Error - WRITE] Failed to save admin user to ${path}:`, error);
-    handleFirestoreError(error, OperationType.WRITE, path);
+    handleFirestoreError(error, OperationType.WRITE, path, false);
     return false;
   }
 }
 
-export async function deleteAdminUserFromFirestore(userId: string): Promise<boolean> {
+export async function deleteAdminUserFromFirestore(
+  userId: string,
+  firebaseUid?: string
+): Promise<boolean> {
   const path = `admins/${userId}`;
-  if (!auth.currentUser) {
+  const currentFbUser = await ensureFirebaseUser();
+  if (!currentFbUser) {
     return false;
   }
   try {
     const { fs, db } = await loadFirestoreCtx();
-    const docRef = fs.doc(db, 'admins', userId);
-    await fs.deleteDoc(docRef);
+    await fs.deleteDoc(fs.doc(db, 'admins', userId));
+    if (firebaseUid && firebaseUid !== userId && /^[a-zA-Z0-9_-]+$/.test(firebaseUid)) {
+      await fs.deleteDoc(fs.doc(db, 'admins', firebaseUid)).catch(() => {});
+    }
     console.log(`[Firestore] Successfully deleted admin user: ${userId}`);
     return true;
   } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, path);
+    handleFirestoreError(error, OperationType.DELETE, path, false);
     return false;
   }
 }
@@ -902,3 +1103,751 @@ export async function getAdminUsersFromFirestore(): Promise<AdminUser[]> {
     return [];
   }
 }
+
+// ============================================================================
+// 7. CLIENT PROFILES & FAMILY PORTAL (clients/{uid})
+// ============================================================================
+
+export function generateClientFileNumber(): string {
+  const tsPart = String(Date.now()).slice(-4);
+  const randPart = String(Math.floor(10 + Math.random() * 89));
+  return `FILE-${tsPart}${randPart}`;
+}
+
+function sanitizeFamilyMembers(members: FamilyMember[] | undefined): FamilyMember[] {
+  if (!Array.isArray(members)) return [];
+  return members
+    .filter((m) => m && typeof m.name === 'string' && m.name.trim().length > 0)
+    .slice(0, 20)
+    .map((m, idx) => {
+      const cleanSubFile = (m.subFileNumber || `SUB-${String(idx + 1).padStart(2, '0')}`).trim().slice(0, 40);
+      return {
+        id: (m.id || `fam-${Date.now()}-${idx}`).slice(0, 64),
+        name: m.name.trim().slice(0, 150),
+        relation: (m.relation || 'طفل مستفيد').trim().slice(0, 80),
+        dob: (m.dob || '').trim().slice(0, 30),
+        ...(m.gender === 'male' || m.gender === 'female' ? { gender: m.gender } : {}),
+        subFileNumber: cleanSubFile,
+        ...(typeof m.notes === 'string' && m.notes.trim() ? { notes: m.notes.trim().slice(0, 500) } : {})
+      };
+    });
+}
+
+function mapDocToClientProfile(docId: string, data: Record<string, any>): ClientProfile {
+  const createdAtISO = normalizeTimestampToISO(data.createdAt, data.createdAtISO);
+  return {
+    uid: data.uid || docId,
+    fileNumber: data.fileNumber || `FILE-${docId.slice(-6).toUpperCase()}`,
+    fullName: data.fullName || '',
+    phone: data.phone || '',
+    email: data.email || '',
+    gender: data.gender === 'female' ? 'female' : 'male',
+    dob: data.dob || '',
+    familyMembers: Array.isArray(data.familyMembers) ? data.familyMembers : [],
+    role: 'client',
+    status: data.status === 'suspended' ? 'suspended' : 'active',
+    adminNotes: data.adminNotes || '',
+    ...(typeof data.suspensionReason === 'string' && data.suspensionReason ? { suspensionReason: data.suspensionReason } : {}),
+    ...(typeof data.suspendedAt === 'string' && data.suspendedAt ? { suspendedAt: data.suspendedAt } : {}),
+    ...(typeof data.suspendedBy === 'string' && data.suspendedBy ? { suspendedBy: data.suspendedBy } : {}),
+    createdAt: createdAtISO,
+    createdAtISO: data.createdAtISO || createdAtISO,
+    updatedAt: data.updatedAt ? normalizeTimestampToISO(data.updatedAt) : undefined
+  };
+}
+
+export function sortClientsNewestFirst(list: ClientProfile[]): ClientProfile[] {
+  return [...list].sort((a, b) => {
+    const timeA = Date.parse(a.createdAtISO || a.createdAt || '') || 0;
+    const timeB = Date.parse(b.createdAtISO || b.createdAt || '') || 0;
+    if (timeB !== timeA) return timeB - timeA;
+    return String(a.fullName || '').localeCompare(String(b.fullName || ''));
+  });
+}
+
+export async function getClientProfileFromFirestore(uid: string): Promise<ClientProfile | null> {
+  if (!uid) return null;
+  const path = `clients/${uid}`;
+  try {
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'clients', uid);
+    const snap = await withTimeout(fs.getDoc(docRef), 10000);
+    if (!snap.exists()) return null;
+    return mapDocToClientProfile(snap.id, snap.data());
+  } catch (error) {
+    handleFirestoreError(error, OperationType.GET, path, false);
+    return null;
+  }
+}
+
+export interface CreateClientProfileInput {
+  fullName: string;
+  phone: string;
+  email: string;
+  gender: 'male' | 'female';
+  dob: string;
+  familyMembers?: FamilyMember[];
+}
+
+export async function createClientProfileInFirestore(
+  uid: string,
+  input: CreateClientProfileInput
+): Promise<ClientProfile> {
+  const path = `clients/${uid}`;
+  const currentUser = await ensureFirebaseUser();
+  if (!currentUser || currentUser.uid !== uid) {
+    throw new Error('User must be authenticated to create a client profile.');
+  }
+
+  try {
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'clients', uid);
+    const fileNumber = generateClientFileNumber();
+    const createdAtISO = new Date().toISOString();
+    const sanitizedMembers = sanitizeFamilyMembers(input.familyMembers);
+
+    const normalizedGender: 'male' | 'female' = input.gender === 'female' ? 'female' : 'male';
+    const basePayload: Omit<ClientProfile, 'createdAt' | 'updatedAt'> = {
+      uid,
+      fileNumber,
+      fullName: input.fullName.trim().slice(0, 150),
+      phone: input.phone.trim().slice(0, 35),
+      email: input.email.trim().slice(0, 150),
+      gender: normalizedGender,
+      dob: input.dob.trim().slice(0, 30),
+      familyMembers: sanitizedMembers,
+      role: 'client',
+      status: 'active',
+      adminNotes: '',
+      createdAtISO
+    };
+
+    await fs.setDoc(docRef, {
+      ...sanitizeFirestoreData(basePayload),
+      createdAt: fs.serverTimestamp(),
+      updatedAt: fs.serverTimestamp()
+    });
+
+    return {
+      ...basePayload,
+      createdAt: createdAtISO,
+      updatedAt: createdAtISO
+    };
+  } catch (error) {
+    handleFirestoreError(error, OperationType.CREATE, path, true);
+    throw error;
+  }
+}
+
+export interface AdminCreateClientProfileInput extends CreateClientProfileInput {
+  adminNotes?: string;
+  status?: 'active' | 'suspended';
+  suspensionReason?: string;
+  suspendedBy?: string;
+}
+
+export async function adminCreateClientProfileInFirestore(
+  input: AdminCreateClientProfileInput
+): Promise<ClientProfile> {
+  const currentUser = await ensureFirebaseUser();
+  if (!currentUser) {
+    throw new Error('Authentication required to create a client file.');
+  }
+
+  const docId = `client-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+  const path = `clients/${docId}`;
+
+  try {
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'clients', docId);
+    const fileNumber = generateClientFileNumber();
+    const createdAtISO = new Date().toISOString();
+    const sanitizedMembers = sanitizeFamilyMembers(input.familyMembers);
+    const normalizedGender: 'male' | 'female' = input.gender === 'female' ? 'female' : 'male';
+    const status: 'active' | 'suspended' = input.status === 'suspended' ? 'suspended' : 'active';
+
+    const basePayload: Omit<ClientProfile, 'createdAt' | 'updatedAt'> = {
+      uid: docId,
+      fileNumber,
+      fullName: input.fullName.trim().slice(0, 150),
+      phone: input.phone.trim().slice(0, 35),
+      email: input.email.trim().slice(0, 150),
+      gender: normalizedGender,
+      dob: input.dob.trim().slice(0, 30),
+      familyMembers: sanitizedMembers,
+      role: 'client',
+      status,
+      adminNotes: (input.adminNotes || '').trim().slice(0, 4000),
+      ...(status === 'suspended' && input.suspensionReason?.trim()
+        ? {
+            suspensionReason: input.suspensionReason.trim().slice(0, 1000),
+            suspendedAt: createdAtISO,
+            suspendedBy: (input.suspendedBy || 'الإدارة').trim().slice(0, 150),
+          }
+        : {}),
+      createdAtISO
+    };
+
+    await fs.setDoc(docRef, {
+      ...sanitizeFirestoreData(basePayload),
+      createdAt: fs.serverTimestamp(),
+      updatedAt: fs.serverTimestamp()
+    });
+
+    return {
+      ...basePayload,
+      createdAt: createdAtISO,
+      updatedAt: createdAtISO
+    };
+  } catch (error) {
+    handleFirestoreError(error, OperationType.CREATE, path, true);
+    throw error;
+  }
+}
+
+export async function updateClientProfileInFirestore(
+  uid: string,
+  patch: Partial<
+    Pick<
+      ClientProfile,
+      | 'fullName'
+      | 'phone'
+      | 'email'
+      | 'gender'
+      | 'dob'
+      | 'familyMembers'
+      | 'status'
+      | 'adminNotes'
+      | 'suspensionReason'
+      | 'suspendedAt'
+      | 'suspendedBy'
+    >
+  >
+): Promise<void> {
+  const path = `clients/${uid}`;
+  const currentUser = await ensureFirebaseUser();
+  if (!currentUser) {
+    throw new Error('Authentication required to update client profile.');
+  }
+
+  try {
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'clients', uid);
+    const cleanPatch: Record<string, any> = {};
+
+    if (patch.fullName !== undefined) cleanPatch.fullName = patch.fullName.trim().slice(0, 150);
+    if (patch.phone !== undefined) cleanPatch.phone = patch.phone.trim().slice(0, 35);
+    if (patch.email !== undefined) cleanPatch.email = patch.email.trim().slice(0, 150);
+    if (patch.gender !== undefined) cleanPatch.gender = patch.gender === 'female' ? 'female' : 'male';
+    if (patch.dob !== undefined) cleanPatch.dob = patch.dob.trim().slice(0, 30);
+    if (patch.familyMembers !== undefined) cleanPatch.familyMembers = sanitizeFamilyMembers(patch.familyMembers);
+    if (patch.status !== undefined) cleanPatch.status = patch.status === 'suspended' ? 'suspended' : 'active';
+    if (patch.adminNotes !== undefined) cleanPatch.adminNotes = patch.adminNotes.slice(0, 4000);
+    if (patch.suspensionReason !== undefined) cleanPatch.suspensionReason = patch.suspensionReason.trim().slice(0, 1000);
+    if (patch.suspendedAt !== undefined) cleanPatch.suspendedAt = patch.suspendedAt.trim().slice(0, 50);
+    if (patch.suspendedBy !== undefined) cleanPatch.suspendedBy = patch.suspendedBy.trim().slice(0, 150);
+
+    await fs.updateDoc(docRef, {
+      ...sanitizeFirestoreData(cleanPatch),
+      updatedAt: fs.serverTimestamp()
+    });
+  } catch (error) {
+    handleFirestoreError(error, OperationType.UPDATE, path, true);
+    throw error;
+  }
+}
+
+export async function deleteClientProfileFromFirestore(uid: string): Promise<void> {
+  if (!uid) return;
+  const path = `clients/${uid}`;
+  const currentUser = await ensureFirebaseUser();
+  if (!currentUser) {
+    throw new Error('Authentication required to delete client file.');
+  }
+
+  try {
+    const { fs, db } = await loadFirestoreCtx();
+    const subColRef = fs.collection(db, 'clients', uid, 'member_records');
+    const subSnap = await fs.getDocs(subColRef);
+    for (const subDoc of subSnap.docs) {
+      await fs.deleteDoc(subDoc.ref);
+    }
+    const docRef = fs.doc(db, 'clients', uid);
+    await fs.deleteDoc(docRef);
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, path, true);
+    throw error;
+  }
+}
+
+export function subscribeClientProfile(
+  uid: string,
+  onUpdate: (profile: ClientProfile | null) => void,
+  onError?: (err: any) => void
+): Unsubscribe {
+  const path = `clients/${uid}`;
+  let cancelled = false;
+  let realUnsub: Unsubscribe | null = null;
+
+  Promise.all([ensureFirebaseUser(), loadFirestoreCtx()])
+    .then(([currentUser, { fs, db }]) => {
+      if (cancelled || !currentUser || !uid) return;
+      const docRef = fs.doc(db, 'clients', uid);
+      realUnsub = fs.onSnapshot(
+        docRef,
+        (snapshot: any) => {
+          if (cancelled) return;
+          if (!snapshot.exists()) {
+            onUpdate(null);
+          } else {
+            onUpdate(mapDocToClientProfile(snapshot.id, snapshot.data()));
+          }
+        },
+        (error: any) => {
+          if (onError) onError(error);
+          handleFirestoreError(error, OperationType.GET, path, false);
+        }
+      );
+    })
+    .catch((err) => {
+      if (onError) onError(err);
+    });
+
+  return () => {
+    cancelled = true;
+    if (realUnsub) realUnsub();
+  };
+}
+
+export async function getAllClientsFromFirestore(): Promise<ClientProfile[]> {
+  const path = 'clients';
+  const currentUser = await ensureFirebaseUser();
+  if (!currentUser) return [];
+
+  try {
+    const { fs, db } = await loadFirestoreCtx();
+    const colRef = fs.collection(db, 'clients');
+    let snap;
+
+    try {
+      const orderedQuery = fs.query(colRef, fs.orderBy('createdAt', 'desc'));
+      snap = await withTimeout(fs.getDocs(orderedQuery), 8000);
+    } catch (queryErr: any) {
+      const code = queryErr?.code || '';
+      const msg = String(queryErr?.message || '');
+      if (code === 'failed-precondition' || msg.includes('index')) {
+        snap = await withTimeout(fs.getDocs(colRef), 8000);
+      } else {
+        throw queryErr;
+      }
+    }
+
+    const list: ClientProfile[] = [];
+    snap.forEach((d) => {
+      list.push(mapDocToClientProfile(d.id, d.data()));
+    });
+    return sortClientsNewestFirst(list);
+  } catch (error) {
+    handleFirestoreError(error, OperationType.LIST, path, true);
+    return [];
+  }
+}
+
+export function subscribeAllClients(
+  onUpdate: (clients: ClientProfile[]) => void,
+  onError?: (err: any) => void
+): Unsubscribe {
+  const path = 'clients';
+  let cancelled = false;
+  let realUnsub: Unsubscribe | null = null;
+
+  const attachListener = (fs: any, db: any, useOrderBy: boolean) => {
+    if (cancelled) return;
+    if (realUnsub) {
+      realUnsub();
+      realUnsub = null;
+    }
+
+    const colRef = fs.collection(db, 'clients');
+    const targetRef = useOrderBy ? fs.query(colRef, fs.orderBy('createdAt', 'desc')) : colRef;
+
+    realUnsub = fs.onSnapshot(
+      targetRef,
+      (snapshot: any) => {
+        const list: ClientProfile[] = [];
+        snapshot.forEach((d: any) => {
+          list.push(mapDocToClientProfile(d.id, d.data()));
+        });
+        onUpdate(sortClientsNewestFirst(list));
+      },
+      (error: any) => {
+        const code = error?.code || '';
+        const msg = String(error?.message || '');
+        if (useOrderBy && (code === 'failed-precondition' || msg.includes('index'))) {
+          attachListener(fs, db, false);
+          return;
+        }
+        if (onError) onError(error);
+        handleFirestoreError(error, OperationType.LIST, path, false);
+      }
+    );
+  };
+
+  Promise.all([ensureFirebaseUser(), loadFirestoreCtx()])
+    .then(([currentUser, { fs, db }]) => {
+      if (cancelled || !currentUser) return;
+      attachListener(fs, db, true);
+    })
+    .catch((err) => {
+      if (onError) onError(err);
+    });
+
+  return () => {
+    cancelled = true;
+    if (realUnsub) realUnsub();
+  };
+}
+
+export async function getClientAppointmentsFromFirestore(clientUid: string): Promise<Appointment[]> {
+  if (!clientUid) return [];
+  const path = `appointments?userId=${clientUid}`;
+  const currentUser = await ensureFirebaseUser();
+  if (!currentUser) return [];
+
+  try {
+    const { fs, db } = await loadFirestoreCtx();
+    const colRef = fs.collection(db, 'appointments');
+    let snap;
+
+    try {
+      const orderedQuery = fs.query(
+        colRef,
+        fs.where('userId', '==', clientUid),
+        fs.orderBy('createdAt', 'desc')
+      );
+      snap = await withTimeout(fs.getDocs(orderedQuery), 8000);
+    } catch (queryErr: any) {
+      const code = queryErr?.code || '';
+      const msg = String(queryErr?.message || '');
+      if (code === 'failed-precondition' || msg.includes('index')) {
+        const fallbackQuery = fs.query(colRef, fs.where('userId', '==', clientUid));
+        snap = await withTimeout(fs.getDocs(fallbackQuery), 8000);
+      } else {
+        throw queryErr;
+      }
+    }
+
+    const list: Appointment[] = [];
+    snap.forEach((d) => {
+      list.push(mapDocToAppointment(d.id, d.data()));
+    });
+    return sortAppointmentsNewestFirst(list);
+  } catch (error) {
+    handleFirestoreError(error, OperationType.LIST, path, false);
+    return [];
+  }
+}
+
+export function subscribeClientAppointments(
+  clientUid: string,
+  onUpdate: (appointments: Appointment[]) => void,
+  onError?: (err: any) => void
+): Unsubscribe {
+  const path = `appointments?userId=${clientUid}`;
+  let cancelled = false;
+  let realUnsub: Unsubscribe | null = null;
+
+  const attachListener = (fs: any, db: any, useOrderBy: boolean) => {
+    if (cancelled) return;
+    if (realUnsub) {
+      realUnsub();
+      realUnsub = null;
+    }
+
+    const colRef = fs.collection(db, 'appointments');
+    const targetRef = useOrderBy
+      ? fs.query(colRef, fs.where('userId', '==', clientUid), fs.orderBy('createdAt', 'desc'))
+      : fs.query(colRef, fs.where('userId', '==', clientUid));
+
+    realUnsub = fs.onSnapshot(
+      targetRef,
+      (snapshot: any) => {
+        const list: Appointment[] = [];
+        snapshot.forEach((d: any) => {
+          list.push(mapDocToAppointment(d.id, d.data()));
+        });
+        onUpdate(sortAppointmentsNewestFirst(list));
+      },
+      (error: any) => {
+        const code = error?.code || '';
+        const msg = String(error?.message || '');
+        if (useOrderBy && (code === 'failed-precondition' || msg.includes('index'))) {
+          attachListener(fs, db, false);
+          return;
+        }
+        if (onError) onError(error);
+        handleFirestoreError(error, OperationType.LIST, path, false);
+      }
+    );
+  };
+
+  Promise.all([ensureFirebaseUser(), loadFirestoreCtx()])
+    .then(([currentUser, { fs, db }]) => {
+      if (cancelled || !currentUser || !clientUid) return;
+      attachListener(fs, db, true);
+    })
+    .catch((err) => {
+      if (onError) onError(err);
+    });
+
+  return () => {
+    cancelled = true;
+    if (realUnsub) realUnsub();
+  };
+}
+
+// ============================================================================
+// 8. PER-MEMBER REPORTS & SUB-FILES (clients/{uid}/member_records/{recordId})
+// ============================================================================
+
+const VALID_MEMBER_REPORT_TYPES: MemberReportType[] = [
+  'developmental_assessment',
+  'aba_progress',
+  'speech_therapy',
+  'occupational_therapy',
+  'iep_plan',
+  'medical_file',
+  'school_report',
+  'other',
+];
+
+function mapDocToMemberRecord(docId: string, clientUid: string, data: Record<string, any>): MemberRecord {
+  const createdAtISO = normalizeTimestampToISO(data.createdAt, data.createdAtISO);
+  const reportType: MemberReportType = VALID_MEMBER_REPORT_TYPES.includes(data.reportType)
+    ? data.reportType
+    : 'other';
+  const recordCategory: MemberRecordCategory = data.recordCategory === 'subfile' ? 'subfile' : 'report';
+
+  return {
+    id: data.id || docId,
+    clientUid: data.clientUid || clientUid,
+    familyMemberId: data.familyMemberId || '',
+    familyMemberName: data.familyMemberName || '',
+    recordCategory,
+    reportType,
+    title: data.title || '',
+    summary: data.summary || '',
+    recommendations: data.recommendations || '',
+    specialistName: data.specialistName || '',
+    reportDate: data.reportDate || createdAtISO.slice(0, 10),
+    fileUrl: data.fileUrl || '',
+    fileName: data.fileName || '',
+    authorRole: data.authorRole === 'admin' ? 'admin' : 'client',
+    createdByUid: data.createdByUid || '',
+    createdAt: createdAtISO,
+    createdAtISO: data.createdAtISO || createdAtISO,
+    updatedAt: data.updatedAt ? normalizeTimestampToISO(data.updatedAt) : undefined
+  };
+}
+
+export function sortMemberRecordsNewestFirst(list: MemberRecord[]): MemberRecord[] {
+  return [...list].sort((a, b) => {
+    const dateCompare = String(b.reportDate || '').localeCompare(String(a.reportDate || ''));
+    if (dateCompare !== 0) return dateCompare;
+    const timeA = Date.parse(a.createdAtISO || a.createdAt || '') || 0;
+    const timeB = Date.parse(b.createdAtISO || b.createdAt || '') || 0;
+    return timeB - timeA;
+  });
+}
+
+export async function getMemberRecordsFromFirestore(clientUid: string): Promise<MemberRecord[]> {
+  if (!clientUid) return [];
+  const path = `clients/${clientUid}/member_records`;
+  const currentUser = await ensureFirebaseUser();
+  if (!currentUser) return [];
+
+  try {
+    const { fs, db } = await loadFirestoreCtx();
+    const colRef = fs.collection(db, 'clients', clientUid, 'member_records');
+    const snap = await withTimeout(fs.getDocs(colRef), 8000);
+    const list: MemberRecord[] = [];
+    snap.forEach((d) => {
+      list.push(mapDocToMemberRecord(d.id, clientUid, d.data()));
+    });
+    return sortMemberRecordsNewestFirst(list);
+  } catch (error) {
+    handleFirestoreError(error, OperationType.LIST, path, false);
+    return [];
+  }
+}
+
+export function subscribeMemberRecords(
+  clientUid: string,
+  onUpdate: (records: MemberRecord[]) => void,
+  onError?: (err: any) => void
+): Unsubscribe {
+  const path = `clients/${clientUid}/member_records`;
+  let cancelled = false;
+  let realUnsub: Unsubscribe | null = null;
+
+  Promise.all([ensureFirebaseUser(), loadFirestoreCtx()])
+    .then(([currentUser, { fs, db }]) => {
+      if (cancelled || !currentUser || !clientUid) return;
+      const colRef = fs.collection(db, 'clients', clientUid, 'member_records');
+      realUnsub = fs.onSnapshot(
+        colRef,
+        (snapshot: any) => {
+          if (cancelled) return;
+          const list: MemberRecord[] = [];
+          snapshot.forEach((d: any) => {
+            list.push(mapDocToMemberRecord(d.id, clientUid, d.data()));
+          });
+          onUpdate(sortMemberRecordsNewestFirst(list));
+        },
+        (error: any) => {
+          if (onError) onError(error);
+          handleFirestoreError(error, OperationType.LIST, path, false);
+        }
+      );
+    })
+    .catch((err) => {
+      if (onError) onError(err);
+    });
+
+  return () => {
+    cancelled = true;
+    if (realUnsub) realUnsub();
+  };
+}
+
+export interface CreateMemberRecordInput {
+  id?: string;
+  familyMemberId: string;
+  familyMemberName: string;
+  recordCategory: MemberRecordCategory;
+  reportType: MemberReportType;
+  title: string;
+  summary: string;
+  recommendations?: string;
+  specialistName?: string;
+  reportDate: string;
+  fileUrl?: string;
+  fileName?: string;
+  authorRole: 'admin' | 'client';
+}
+
+export async function createMemberRecordInFirestore(
+  clientUid: string,
+  input: CreateMemberRecordInput
+): Promise<MemberRecord> {
+  const currentUser = await ensureFirebaseUser();
+  if (!currentUser) {
+    throw new Error('Authentication required to create member record.');
+  }
+
+  const rawId = input.id || `rec-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+  const docId = rawId.replace(/[^a-zA-Z0-9_\-]/g, '-').slice(0, 128);
+  const path = `clients/${clientUid}/member_records/${docId}`;
+
+  const reportType: MemberReportType = VALID_MEMBER_REPORT_TYPES.includes(input.reportType)
+    ? input.reportType
+    : 'other';
+
+  try {
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'clients', clientUid, 'member_records', docId);
+    const createdAtISO = new Date().toISOString();
+
+    const basePayload = sanitizeFirestoreData({
+      id: docId,
+      clientUid: clientUid.slice(0, 128),
+      familyMemberId: input.familyMemberId.trim().slice(0, 128),
+      familyMemberName: input.familyMemberName.trim().slice(0, 150),
+      recordCategory: input.recordCategory === 'subfile' ? 'subfile' : 'report',
+      reportType,
+      title: input.title.trim().slice(0, 200),
+      summary: (input.summary || '').trim().slice(0, 6000),
+      ...(input.recommendations?.trim() ? { recommendations: input.recommendations.trim().slice(0, 4000) } : {}),
+      ...(input.specialistName?.trim() ? { specialistName: input.specialistName.trim().slice(0, 150) } : {}),
+      reportDate: (input.reportDate || createdAtISO.slice(0, 10)).trim().slice(0, 30),
+      ...(input.fileUrl?.trim() ? { fileUrl: input.fileUrl.trim().slice(0, 1000) } : {}),
+      ...(input.fileName?.trim() ? { fileName: input.fileName.trim().slice(0, 250) } : {}),
+      authorRole: input.authorRole === 'admin' ? 'admin' : 'client',
+      createdByUid: currentUser.uid.slice(0, 128),
+      createdAtISO
+    });
+
+    await fs.setDoc(docRef, {
+      ...basePayload,
+      createdAt: fs.serverTimestamp(),
+      updatedAt: fs.serverTimestamp()
+    });
+
+    return {
+      ...(basePayload as any),
+      createdAt: createdAtISO,
+      updatedAt: createdAtISO
+    };
+  } catch (error) {
+    handleFirestoreError(error, OperationType.CREATE, path, true);
+    throw error;
+  }
+}
+
+export async function updateMemberRecordInFirestore(
+  clientUid: string,
+  recordId: string,
+  patch: Partial<Pick<MemberRecord, 'familyMemberId' | 'familyMemberName' | 'reportType' | 'title' | 'summary' | 'recommendations' | 'specialistName' | 'reportDate' | 'fileUrl' | 'fileName'>>
+): Promise<void> {
+  const currentUser = await ensureFirebaseUser();
+  if (!currentUser) {
+    throw new Error('Authentication required to update member record.');
+  }
+  const path = `clients/${clientUid}/member_records/${recordId}`;
+
+  try {
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'clients', clientUid, 'member_records', recordId);
+    const cleanPatch: Record<string, any> = {};
+
+    if (patch.familyMemberId !== undefined) cleanPatch.familyMemberId = patch.familyMemberId.trim().slice(0, 128);
+    if (patch.familyMemberName !== undefined) cleanPatch.familyMemberName = patch.familyMemberName.trim().slice(0, 150);
+    if (patch.reportType !== undefined) {
+      cleanPatch.reportType = VALID_MEMBER_REPORT_TYPES.includes(patch.reportType) ? patch.reportType : 'other';
+    }
+    if (patch.title !== undefined) cleanPatch.title = patch.title.trim().slice(0, 200);
+    if (patch.summary !== undefined) cleanPatch.summary = patch.summary.trim().slice(0, 6000);
+    if (patch.recommendations !== undefined) cleanPatch.recommendations = patch.recommendations.trim().slice(0, 4000);
+    if (patch.specialistName !== undefined) cleanPatch.specialistName = patch.specialistName.trim().slice(0, 150);
+    if (patch.reportDate !== undefined) cleanPatch.reportDate = patch.reportDate.trim().slice(0, 30);
+    if (patch.fileUrl !== undefined) cleanPatch.fileUrl = patch.fileUrl.trim().slice(0, 1000);
+    if (patch.fileName !== undefined) cleanPatch.fileName = patch.fileName.trim().slice(0, 250);
+
+    await fs.updateDoc(docRef, {
+      ...sanitizeFirestoreData(cleanPatch),
+      updatedAt: fs.serverTimestamp()
+    });
+  } catch (error) {
+    handleFirestoreError(error, OperationType.UPDATE, path, true);
+    throw error;
+  }
+}
+
+export async function deleteMemberRecordFromFirestore(clientUid: string, recordId: string): Promise<void> {
+  const currentUser = await ensureFirebaseUser();
+  if (!currentUser) {
+    throw new Error('Authentication required to delete member record.');
+  }
+  const path = `clients/${clientUid}/member_records/${recordId}`;
+
+  try {
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'clients', clientUid, 'member_records', recordId);
+    await fs.deleteDoc(docRef);
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, path, true);
+    throw error;
+  }
+}
+
+

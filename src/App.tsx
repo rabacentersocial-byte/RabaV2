@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { Navbar } from './components/Navbar';
+import { AnnouncementBar } from './components/AnnouncementBar';
 import { AnimatedBackground } from './components/AnimatedBackground';
 import { Hero } from './components/Hero';
 import { MobileBottomBar } from './components/MobileBottomBar';
@@ -80,6 +81,7 @@ const AboutDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() =>
 const BookingDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BookingDirectoryPage')).then((m: any) => ({ default: m.default || m.BookingDirectoryPage || (() => null) })));
 const CoursesDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/CoursesDirectoryPage')).then((m: any) => ({ default: m.default || m.CoursesDirectoryPage || (() => null) })));
 const InfoDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/InfoDirectoryPage')).then((m: any) => ({ default: m.default || m.InfoDirectoryPage || (() => null) })));
+const ClientPortalPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/ClientPortalPage')).then((m: any) => ({ default: m.default || m.ClientPortalPage || (() => null) })));
 import { resolveRouteSeo, getServiceSeoBySlug, getBranchSeoBySlug, generateBlogPostJsonLd } from './data/seoRoutes';
 
 
@@ -139,6 +141,7 @@ const mapLegacyHashToPath = (hash: string): string | null => {
   if (lower === '#courses') return '/courses';
   if (lower === '#about') return '/about';
   if (lower === '#booking') return '/booking';
+  if (lower === '#portal' || lower === '#family-portal') return '/portal';
   return null;
 };
 
@@ -526,6 +529,7 @@ export default function App() {
   const isContactPageOpen = lowerPath === '/contact';
   const isPrivacyPageOpen = lowerPath === '/privacy' || lowerPath === '/privacy-policy';
   const isTermsPageOpen = lowerPath === '/terms' || lowerPath === '/terms-of-service';
+  const isPortalPageOpen = lowerPath === '/portal';
 
   const activeBlogSlug = React.useMemo(() => {
     if (lowerPath.startsWith('/blog/') || lowerPath.startsWith('/articles/')) {
@@ -542,6 +546,7 @@ export default function App() {
 
   const [adminSession, setAdminSession] = useState<AdminUser | null>(() => readInitialAdminSession());
   const [firebaseAdminUid, setFirebaseAdminUid] = useState<string | null>(null);
+  const [firebaseAdminEmail, setFirebaseAdminEmail] = useState<string | null>(null);
   const [appointmentsSyncLoading, setAppointmentsSyncLoading] = useState<boolean>(false);
   const [appointmentsSyncError, setAppointmentsSyncError] = useState<string | null>(null);
 
@@ -549,20 +554,29 @@ export default function App() {
     setAppointmentsSyncLoading(true);
     setAppointmentsSyncError(null);
     try {
-      const { getLazyAuth } = await import('./lib/firebase');
+      const [{ getLazyAuth }, { verifyIsFirebaseAdmin, getAppointmentsFromFirestore }] = await Promise.all([
+        import('./lib/firebase'),
+        import('./services/firestoreService'),
+      ]);
       const authInstance = await getLazyAuth();
       if (typeof (authInstance as any).authStateReady === 'function') {
         await (authInstance as any).authStateReady();
       }
 
-      if (authInstance.currentUser) {
-        const { getAppointmentsFromFirestore } = await import('./services/firestoreService');
+      const currentFbUser = authInstance.currentUser;
+      setFirebaseAdminEmail(currentFbUser?.email || null);
+      const isVerifiedAdmin = currentFbUser ? await verifyIsFirebaseAdmin(currentFbUser) : false;
+
+      if (isVerifiedAdmin && currentFbUser) {
+        setFirebaseAdminUid(currentFbUser.uid);
         const cloudList = await getAppointmentsFromFirestore();
         setAppointments(cloudList);
         return;
       }
 
-      // Local admin session without Firebase Auth: gracefully sync from Cloud SQL API without triggering unauthenticated Firestore LIST
+      setFirebaseAdminUid(null);
+
+      // Local/non-admin session without Firebase Admin Auth: gracefully sync from Cloud SQL API without triggering unauthenticated Firestore LIST
       try {
         const [{ getAdminHeaders }, { sortAppointmentsNewestFirst }] = await Promise.all([
           import('./utils/persistentSync'),
@@ -610,7 +624,13 @@ export default function App() {
       }
     } catch (err: any) {
       console.error('[App] Failed to fetch appointments from Firestore:', err);
-      setAppointmentsSyncError(err?.message || String(err));
+      import('./services/firestoreService')
+        .then(({ formatFirestoreUiError }) => {
+          setAppointmentsSyncError(formatFirestoreUiError(err, true).message);
+        })
+        .catch(() => {
+          setAppointmentsSyncError('تعذر مزامنة الحجوزات من قاعدة البيانات السحابية.');
+        });
     } finally {
       setAppointmentsSyncLoading(false);
     }
@@ -673,7 +693,7 @@ export default function App() {
     };
   }, [isReadyToHydrate, isAdminOpen, isSpecialistsPageOpen, isNotificationsOpen, isBookingOpen]);
 
-  // Validate admin session & Firebase Auth state lazily only when admin portal is opened
+  // Validate admin session & Firebase Admin Auth state lazily only when admin portal is opened
   useEffect(() => {
     if (!isAdminOpen) return;
     import('./data/adminData')
@@ -684,16 +704,33 @@ export default function App() {
     let unsubAuth: (() => void) | undefined;
     Promise.all([
       import('./lib/firebase'),
-      import('firebase/auth')
-    ]).then(async ([{ getLazyAuth }, { onAuthStateChanged }]) => {
+      import('firebase/auth'),
+      import('./services/firestoreService'),
+    ]).then(async ([{ getLazyAuth }, { onAuthStateChanged }, { verifyIsFirebaseAdmin }]) => {
       if (cancelled) return;
       const authInstance = await getLazyAuth();
+      if (typeof (authInstance as any).authStateReady === 'function') {
+        await (authInstance as any).authStateReady();
+      }
       if (cancelled) return;
-      setFirebaseAdminUid(authInstance.currentUser?.uid || null);
-      unsubAuth = onAuthStateChanged(authInstance, (user) => {
-        if (!cancelled) {
-          setFirebaseAdminUid(user?.uid || null);
+
+      const evaluateUser = async (fbUser: any) => {
+        if (cancelled) return;
+        setFirebaseAdminEmail(fbUser?.email || null);
+        if (!fbUser) {
+          setFirebaseAdminUid(null);
+          return;
         }
+        const ok = await verifyIsFirebaseAdmin(fbUser);
+        if (!cancelled) {
+          setFirebaseAdminUid(ok ? fbUser.uid : null);
+        }
+      };
+
+      await evaluateUser(authInstance.currentUser);
+      if (cancelled) return;
+      unsubAuth = onAuthStateChanged(authInstance, (user) => {
+        evaluateUser(user);
       });
     }).catch(() => {});
 
@@ -711,7 +748,7 @@ export default function App() {
 
     fetchCloudAppointments();
 
-    // Only attach Firestore real-time listener once Firebase Auth is authenticated
+    // Only attach Firestore real-time listener once verified Firebase Admin Auth is authenticated
     if (!firebaseAdminUid) {
       return () => {
         cancelled = true;
@@ -719,7 +756,7 @@ export default function App() {
     }
 
     import('./services/firestoreService')
-      .then(({ subscribeAppointments }) => {
+      .then(({ subscribeAppointments, formatFirestoreUiError }) => {
         if (cancelled) return;
         unsubAppointments = subscribeAppointments(
           (cloudList) => {
@@ -730,7 +767,7 @@ export default function App() {
           },
           (err) => {
             if (!cancelled) {
-              setAppointmentsSyncError(err?.message || String(err));
+              setAppointmentsSyncError(formatFirestoreUiError(err, true).message);
             }
           }
         );
@@ -1063,6 +1100,7 @@ export default function App() {
           isSyncingAppointments={appointmentsSyncLoading}
           appointmentsSyncError={appointmentsSyncError}
           isFirebaseAuthenticated={Boolean(firebaseAdminUid)}
+          firebaseAuthEmail={firebaseAdminEmail}
           onRefreshAppointments={fetchCloudAppointments}
           reviews={testimonials}
           onUpdateReviews={setTestimonials}
@@ -1071,6 +1109,7 @@ export default function App() {
           onLogout={() => {
             setAdminSession(null);
             setFirebaseAdminUid(null);
+            setFirebaseAdminEmail(null);
             import('./data/adminData')
               .then(({ clearStoredAdminSession }) => clearStoredAdminSession())
               .catch(() => {
@@ -1113,6 +1152,7 @@ export default function App() {
         onOpenNotifications={() => setIsNotificationsOpen(true)}
         onOpenLogin={() => setIsLoginOpen(true)}
         onOpenAdmin={() => setIsAdminOpen(true)}
+        onOpenPortal={() => navigateTo('/portal')}
         onOpenStore={() => setIsStoreOpen(true)}
         onOpenSpecialistsPage={handleOpenSpecialistsPage}
         onOpenServicesPage={handleOpenServicesPage}
@@ -1135,6 +1175,15 @@ export default function App() {
         onNavigate={navigateTo}
         unreadCount={unreadCount}
         cartCount={cartCount}
+      />
+
+      {/* 2.5. Theme-Aligned Header Notification / Announcement Bar */}
+      <AnnouncementBar
+        onOpenBooking={handleOpenBooking}
+        onOpenOffersPage={handleOpenOffersPage}
+        onOpenBranchesPage={handleOpenBranchesPage}
+        onOpenPortal={() => navigateTo('/portal')}
+        onNavigate={navigateTo}
       />
 
       {/* Main Content Area */}
@@ -1303,6 +1352,14 @@ export default function App() {
               onBackToHome={handleBackToHome}
               onOpenBooking={handleOpenBooking}
               onNavigate={navigateTo}
+            />
+          </Suspense>
+        ) : isPortalPageOpen ? (
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-[#1263D6] dark:text-[#60AFFF] font-bold">جاري تحميل بوابة الأسرة...</div>}>
+            <ClientPortalPage
+              onBackToHome={handleBackToHome}
+              onOpenLogin={() => setIsLoginOpen(true)}
+              onOpenBooking={handleOpenBooking}
             />
           </Suspense>
         ) : isTermsPageOpen ? (
@@ -1480,6 +1537,7 @@ export default function App() {
           isOpen={isLoginOpen}
           onClose={() => setIsLoginOpen(false)}
           onOpenAdmin={() => setIsAdminOpen(true)}
+          onOpenPortal={() => navigateTo('/portal')}
         />
 
         {/* Store Modal */}

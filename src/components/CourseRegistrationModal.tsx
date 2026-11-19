@@ -1,19 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   X, 
   CheckCircle2, 
-  GraduationCap, 
   Clock, 
   Award, 
   MessageCircle, 
   Sparkles,
   ShieldCheck,
   CreditCard,
-  Send
+  Send,
+  Globe
 } from 'lucide-react';
-import { CourseItem } from '../data/coursesData';
+import {
+  CourseItem,
+  CoursesSectionSettings,
+  DEFAULT_COURSES_SETTINGS,
+  MIDDLE_EAST_COUNTRIES,
+  STORAGE_COURSES_SETTINGS_KEY,
+  getStoredCoursesSettings
+} from '../data/coursesData';
 import { useLanguage } from '../context/LanguageContext';
 import { dispatchCustomerRequestAsync } from '../data/customerRequests';
+import { Appointment } from '../types';
 
 interface CourseRegistrationModalProps {
   course: CourseItem | null;
@@ -21,32 +29,133 @@ interface CourseRegistrationModalProps {
   onClose: () => void;
 }
 
+type CoursePaymentPlanId = 'tamara' | 'emkan' | 'cash';
+
 export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = ({
   course,
   isOpen,
   onClose
 }) => {
   const { isArabic } = useLanguage();
+  const [coursesSettings, setCoursesSettings] = useState<CoursesSectionSettings>(() => getStoredCoursesSettings());
+
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [countryCode, setCountryCode] = useState<string>('SA');
   const [city, setCity] = useState('');
   const [qualification, setQualification] = useState('');
-  const [paymentPlan, setPaymentPlan] = useState<'tamara' | 'emkan' | 'cash'>('tamara');
+  const [paymentPlan, setPaymentPlan] = useState<CoursePaymentPlanId>('tamara');
   const [notes, setNotes] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  // Synchronize courses settings (payment toggles & routing coordinator) dynamically
+  useEffect(() => {
+    const syncFromStorage = () => {
+      setCoursesSettings(getStoredCoursesSettings());
+    };
+    window.addEventListener('raba_courses_settings_updated', syncFromStorage);
+    window.addEventListener('raba_persistent_sync_ready' as any, syncFromStorage);
+    window.addEventListener('storage', syncFromStorage);
+    return () => {
+      window.removeEventListener('raba_courses_settings_updated', syncFromStorage);
+      window.removeEventListener('raba_persistent_sync_ready' as any, syncFromStorage);
+      window.removeEventListener('storage', syncFromStorage);
+    };
+  }, []);
+
+  // Refresh latest settings from Firestore public site_settings when modal opens
+  useEffect(() => {
+    if (!isOpen) return;
+    setCoursesSettings(getStoredCoursesSettings());
+    let active = true;
+    import('../services/firestoreService')
+      .then((m) => m.getSiteSettingFromFirestore(STORAGE_COURSES_SETTINGS_KEY))
+      .then((remote) => {
+        if (!active || !remote || typeof remote !== 'object') return;
+        const merged: CoursesSectionSettings = {
+          ...DEFAULT_COURSES_SETTINGS,
+          ...getStoredCoursesSettings(),
+          ...remote,
+          paymentOptions: {
+            tamara: remote?.paymentOptions?.tamara !== undefined ? Boolean(remote.paymentOptions.tamara) : true,
+            emkan: remote?.paymentOptions?.emkan !== undefined ? Boolean(remote.paymentOptions.emkan) : true,
+            cash: remote?.paymentOptions?.cash !== undefined ? Boolean(remote.paymentOptions.cash) : true
+          },
+          courseRouting: {
+            mode: remote?.courseRouting?.mode === 'specific_user' ? 'specific_user' : 'all_authorized',
+            assignedUserId: remote?.courseRouting?.assignedUserId || '',
+            assignedUserName: remote?.courseRouting?.assignedUserName || '',
+            assignedUserEmail: remote?.courseRouting?.assignedUserEmail || ''
+          }
+        };
+        setCoursesSettings(merged);
+        try {
+          localStorage.setItem(STORAGE_COURSES_SETTINGS_KEY, JSON.stringify(merged));
+        } catch {
+          // ignore
+        }
+      })
+      .catch(() => {
+        // non-blocking fallback to local settings
+      });
+    return () => {
+      active = false;
+    };
+  }, [isOpen]);
+
+  const paymentConfig = useMemo(() => ({
+    tamara: coursesSettings.paymentOptions?.tamara !== false,
+    emkan: coursesSettings.paymentOptions?.emkan !== false,
+    cash: coursesSettings.paymentOptions?.cash !== false
+  }), [coursesSettings]);
+
+  const enabledPaymentPlans = useMemo(() => {
+    const list: CoursePaymentPlanId[] = [];
+    if (paymentConfig.tamara) list.push('tamara');
+    if (paymentConfig.emkan) list.push('emkan');
+    if (paymentConfig.cash) list.push('cash');
+    return list;
+  }, [paymentConfig]);
+
+  const hasAnyInstallmentActive = paymentConfig.tamara || paymentConfig.emkan;
+
+  // Ensure selected payment plan always stays valid when admin toggles options
+  useEffect(() => {
+    if (enabledPaymentPlans.length > 0 && !enabledPaymentPlans.includes(paymentPlan)) {
+      setPaymentPlan(enabledPaymentPlans[0]);
+    }
+  }, [enabledPaymentPlans, paymentPlan]);
+
   if (!isOpen || !course) return null;
+
+  const selectedCountry = MIDDLE_EAST_COUNTRIES.find((c) => c.code === countryCode) || MIDDLE_EAST_COUNTRIES[0];
+  const selectedCountryLabel = isArabic ? selectedCountry.nameAr : selectedCountry.nameEn;
 
   const courseTitle = isArabic ? course.titleAr : course.titleEn;
   const hoursBadge = isArabic ? course.hoursBadgeAr : course.hoursBadgeEn;
+  const targetWhatsappNumber = (coursesSettings.whatsappNumber || '966575100100').replace(/[^0-9]/g, '') || '966575100100';
 
   const whatsappMessage = encodeURIComponent(
-    `السلام عليكم، أود الاستفسار والتسجيل في: ${course.titleAr} (${course.hoursBadgeAr}) عبر منصة رابا التعليمية.`
+    `السلام عليكم، أود الاستفسار والتسجيل في: ${course.titleAr} (${course.hoursBadgeAr}) - الدولة: ${selectedCountry.nameAr} عبر منصة رابا التعليمية.`
   );
-  const whatsappUrl = `https://wa.me/966575100100?text=${whatsappMessage}`;
+  const whatsappUrl = `https://wa.me/${targetWhatsappNumber}?text=${whatsappMessage}`;
+
+  const resolvePaymentMethod = (): Appointment['paymentMethod'] | undefined => {
+    if (enabledPaymentPlans.length === 0) return undefined;
+    if (paymentPlan === 'tamara') return 'tamara';
+    if (paymentPlan === 'emkan') return 'emkan';
+    return 'bank_transfer';
+  };
+
+  const resolvePaymentLabelAr = (): string => {
+    if (enabledPaymentPlans.length === 0) return 'يتم التنسيق مع مسؤول الكورسات';
+    if (paymentPlan === 'tamara') return 'تقسيط تمارا';
+    if (paymentPlan === 'emkan') return 'تمويل إمكان';
+    return 'سداد / تحويل بنكي';
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,12 +167,19 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
     }
 
     const digits = phone.replace(/\D/g, '');
-    if (!phone.trim() || digits.length < 9) {
+    if (!phone.trim() || digits.length < 8) {
       setErrorMessage(isArabic ? 'يرجى إدخال رقم جوال صحيح (مثال: 05XXXXXXXX)' : 'Please enter a valid mobile number (e.g. 05XXXXXXXX)');
       return;
     }
 
+    if (!countryCode) {
+      setErrorMessage(isArabic ? 'يرجى اختيار الدولة' : 'Please select your country');
+      return;
+    }
+
     const parsedPrice = Number(String(course.currentPrice ?? '').replace(/[^0-9.]/g, '')) || 0;
+    const routing = coursesSettings.courseRouting;
+    const hasSpecificAssignee = Boolean(routing?.mode === 'specific_user' && routing?.assignedUserId);
 
     setIsSubmitting(true);
 
@@ -77,10 +193,22 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
         type: 'course',
         serviceId: course.id,
         serviceType: course.titleAr,
+        specialistName: hasSpecificAssignee && routing?.assignedUserName
+          ? routing.assignedUserName
+          : (isArabic ? 'إدارة التدريب والكورسات' : 'Training & Courses Department'),
         sourcePage: 'سلايدر الكورسات والدورات',
-        city: city.trim() || 'الرياض',
+        country: selectedCountry.nameAr,
+        city: city.trim() || selectedCountry.nameAr,
+        qualification: qualification.trim(),
+        paymentMethod: resolvePaymentMethod(),
+        paymentStatus: enabledPaymentPlans.length > 0 && (paymentPlan === 'tamara' || paymentPlan === 'emkan') ? 'installment' : 'unpaid',
+        ...(hasSpecificAssignee ? {
+          assignedToUserId: routing?.assignedUserId,
+          assignedToUserName: routing?.assignedUserName,
+          assignedToUserEmail: routing?.assignedUserEmail
+        } : {}),
         amount: parsedPrice,
-        notes: `الدورة: ${course.titleAr} | الساعات: ${course.hoursBadgeAr} | المدينة: ${city || 'الرياض'} | التخصص: ${qualification || 'غير محدد'} | طريقة الدفع المفضلة: ${paymentPlan} | ملاحظات: ${notes || 'لا توجد'}`
+        notes: `الدورة: ${course.titleAr} | الساعات: ${course.hoursBadgeAr} | الدولة: ${selectedCountry.nameAr} | المدينة: ${city.trim() || 'غير محددة'} | التخصص: ${qualification.trim() || 'غير محدد'} | طريقة السداد المفضلة: ${resolvePaymentLabelAr()}${notes ? ` | ملاحظات: ${notes}` : ''}`
       });
 
       setIsSuccess(true);
@@ -102,11 +230,19 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
     setFullName('');
     setPhone('');
     setEmail('');
+    setCountryCode('SA');
     setCity('');
     setQualification('');
     setNotes('');
     onClose();
   };
+
+  const paymentGridColsClass =
+    enabledPaymentPlans.length === 1
+      ? 'grid-cols-1'
+      : enabledPaymentPlans.length === 2
+      ? 'grid-cols-2'
+      : 'grid-cols-3';
 
   return (
     <div 
@@ -161,8 +297,8 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
               </h4>
               <p className="text-sm text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed">
                 {isArabic 
-                  ? 'شكراً لاهتمامك ببرامج منصة رابا التعليمية. سيتواصل معك مستشار التدريب الأكاديمي خلال وقت قصير لتأكيد المقعد وتزويدك بالجدول التدريبي ورابط المنصة.'
-                  : 'Thank you for registering with RABA Academy. Our academic advisor will contact you shortly to confirm your seat.'}
+                  ? `شكراً لاهتمامك ببرامج منصة رابا التعليمية (${selectedCountryLabel}). سيتواصل معك مستشار التدريب الأكاديمي خلال وقت قصير لتأكيد المقعد وتزويدك بالجدول التدريبي ورابط المنصة.`
+                  : `Thank you for registering with RABA Academy (${selectedCountryLabel}). Our academic advisor will contact you shortly to confirm your seat.`}
               </p>
 
               <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -177,7 +313,7 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
                 </a>
                 <button
                   onClick={handleReset}
-                  className="w-full sm:w-auto px-6 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-white font-bold rounded-xl text-sm"
+                  className="w-full sm:w-auto px-6 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:text-white font-bold rounded-xl text-sm cursor-pointer"
                 >
                   {isArabic ? 'إغلاق النافذة' : 'Close'}
                 </button>
@@ -190,6 +326,7 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
                   {errorMessage}
                 </div>
               )}
+
               {/* Highlights badge bar */}
               <div className="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl border border-slate-200 dark:border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
                 <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200 font-bold">
@@ -235,7 +372,7 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
                     required
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="05XXXXXXXX"
+                    placeholder={`${selectedCountry.dialCode} / 05XXXXXXXX`}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-[#00E5BE]"
                     dir="ltr"
                   />
@@ -256,6 +393,25 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
                 </div>
 
                 <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                    <Globe className="w-3.5 h-3.5 text-teal-600 dark:text-[#00E5BE]" />
+                    <span>{isArabic ? 'الدولة (دول الشرق الأوسط) *' : 'Country (Middle East) *'}</span>
+                  </label>
+                  <select
+                    required
+                    value={countryCode}
+                    onChange={(e) => setCountryCode(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-[#00E5BE] cursor-pointer"
+                  >
+                    {MIDDLE_EAST_COUNTRIES.map((c) => (
+                      <option key={c.code} value={c.code}>
+                        {c.flag} {isArabic ? c.nameAr : c.nameEn} ({c.dialCode})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
                     {isArabic ? 'المدينة' : 'City'}
                   </label>
@@ -263,74 +419,93 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
                     type="text"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    placeholder={isArabic ? 'الرياض / جدة / الخبر...' : 'Riyadh, Jeddah, Khobar...'}
+                    placeholder={isArabic ? 'الرياض / دبي / عمان / القاهرة...' : 'Riyadh, Dubai, Amman, Cairo...'}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-[#00E5BE]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    {isArabic ? 'المؤهل الأكاديمي أو التخصص الحالي' : 'Academic Field or Current Role'}
+                  </label>
+                  <input
+                    type="text"
+                    value={qualification}
+                    onChange={(e) => setQualification(e.target.value)}
+                    placeholder={isArabic ? 'بكالوريوس تربية خاصة / أخصائي علم نفس / معلم ظل...' : 'Special Education / Psychology / Shadow Teacher'}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-[#00E5BE]"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                  {isArabic ? 'المؤهل الأكاديمي أو التخصص الحالي' : 'Academic Field or Current Role'}
-                </label>
-                <input
-                  type="text"
-                  value={qualification}
-                  onChange={(e) => setQualification(e.target.value)}
-                  placeholder={isArabic ? 'مثال: بكالوريوس تربية خاصة / أخصائي علم نفس / معلم ظل...' : 'e.g. Special Education / Psychology / Shadow Teacher'}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:border-[#00E5BE]"
-                />
-              </div>
+              {/* Admin-Controlled Installment / Payment Options */}
+              {enabledPaymentPlans.length > 0 ? (
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center justify-between">
+                    <span>{isArabic ? 'خيار السداد أو التقسيط المفضل:' : 'Preferred Payment Plan:'}</span>
+                    {hasAnyInstallmentActive && (
+                      <span className="text-[11px] text-teal-600 dark:text-[#00E5BE] font-bold">
+                        {isArabic ? 'متاح التقسيط بدون فوائد' : '0% Interest Installments'}
+                      </span>
+                    )}
+                  </label>
+                  <div className={`grid ${paymentGridColsClass} gap-3`}>
+                    {paymentConfig.tamara && (
+                      <button
+                        type="button"
+                        onClick={() => setPaymentPlan('tamara')}
+                        className={`p-3 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1.5 ${
+                          paymentPlan === 'tamara'
+                            ? 'border-amber-500 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-black'
+                            : 'border-slate-200 dark:border-white/10 hover:border-slate-400 text-slate-600 dark:text-slate-300'
+                        }`}
+                      >
+                        <img src="/assets/tamara-logo.svg" alt="Tamara" width={60} height={20} loading="lazy" decoding="async" className="h-5 object-contain" />
+                        <span className="text-[11px] font-bold">{isArabic ? 'تقسيط تمارا' : 'Tamara'}</span>
+                      </button>
+                    )}
 
-              {/* Installment / Payment Options */}
-              <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 flex items-center justify-between">
-                  <span>{isArabic ? 'خيار السداد أو التقسيط المفضل:' : 'Preferred Payment Plan:'}</span>
-                  <span className="text-[11px] text-teal-600 dark:text-[#00E5BE] font-bold">
-                    {isArabic ? 'متاح التقسيط بدون فوائد' : '0% Interest Installments'}
-                  </span>
-                </label>
-                <div className="grid grid-cols-3 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setPaymentPlan('tamara')}
-                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1.5 ${
-                      paymentPlan === 'tamara'
-                        ? 'border-amber-500 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-black'
-                        : 'border-slate-200 dark:border-white/10 hover:border-slate-400 text-slate-600 dark:text-slate-300'
-                    }`}
-                  >
-                    <img src="/assets/tamara-logo.svg" alt="Tamara" width={60} height={20} loading="lazy" decoding="async" className="h-5 object-contain" />
-                    <span className="text-[11px] font-bold">{isArabic ? 'تقسيط تمارا' : 'Tamara'}</span>
-                  </button>
+                    {paymentConfig.emkan && (
+                      <button
+                        type="button"
+                        onClick={() => setPaymentPlan('emkan')}
+                        className={`p-3 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1.5 ${
+                          paymentPlan === 'emkan'
+                            ? 'border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-black'
+                            : 'border-slate-200 dark:border-white/10 hover:border-slate-400 text-slate-600 dark:text-slate-300'
+                        }`}
+                      >
+                        <img src="/assets/emkan-logo.svg" alt="Emkan" width={60} height={20} loading="lazy" decoding="async" className="h-5 object-contain" />
+                        <span className="text-[11px] font-bold">{isArabic ? 'تمويل إمكان' : 'Emkan'}</span>
+                      </button>
+                    )}
 
-                  <button
-                    type="button"
-                    onClick={() => setPaymentPlan('emkan')}
-                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1.5 ${
-                      paymentPlan === 'emkan'
-                        ? 'border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-black'
-                        : 'border-slate-200 dark:border-white/10 hover:border-slate-400 text-slate-600 dark:text-slate-300'
-                    }`}
-                  >
-                    <img src="/assets/emkan-logo.svg" alt="Emkan" width={60} height={20} loading="lazy" decoding="async" className="h-5 object-contain" />
-                    <span className="text-[11px] font-bold">{isArabic ? 'تمويل إمكان' : 'Emkan'}</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setPaymentPlan('cash')}
-                    className={`p-3 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1.5 ${
-                      paymentPlan === 'cash'
-                        ? 'border-cyan-500 bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 font-black'
-                        : 'border-slate-200 dark:border-white/10 hover:border-slate-400 text-slate-600 dark:text-slate-300'
-                    }`}
-                  >
-                    <CreditCard className="w-5 h-5 text-cyan-500" />
-                    <span className="text-[11px] font-bold">{isArabic ? 'سداد / تحويل' : 'Direct / Bank'}</span>
-                  </button>
+                    {paymentConfig.cash && (
+                      <button
+                        type="button"
+                        onClick={() => setPaymentPlan('cash')}
+                        className={`p-3 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1.5 ${
+                          paymentPlan === 'cash'
+                            ? 'border-cyan-500 bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 font-black'
+                            : 'border-slate-200 dark:border-white/10 hover:border-slate-400 text-slate-600 dark:text-slate-300'
+                        }`}
+                      >
+                        <CreditCard className="w-5 h-5 text-cyan-500" />
+                        <span className="text-[11px] font-bold">{isArabic ? 'سداد / تحويل' : 'Direct / Bank'}</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 text-xs text-slate-600 dark:text-slate-300 flex items-center gap-2.5">
+                  <CreditCard className="w-4 h-4 text-teal-600 dark:text-[#00E5BE] shrink-0" />
+                  <span>
+                    {isArabic
+                      ? 'سيتم تزويدك بتفاصيل وطرق السداد المتاحة عند تأكيد التسجيل من قِبل فريق الأكاديمية.'
+                      : 'Payment details and options will be shared upon enrollment confirmation by our academy team.'}
+                  </span>
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">

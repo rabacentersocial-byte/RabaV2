@@ -608,6 +608,13 @@ async function startServer() {
             role: matchedUser.role,
             email: matchedUser.email || ''
           });
+          await adminDb.collection('admins').doc(String(matchedUser.id)).set({
+            id: String(matchedUser.id),
+            email: matchedUser.email || '',
+            role: matchedUser.role || 'admin',
+            status: matchedUser.status || 'active',
+            updatedAt: new Date().toISOString()
+          }, { merge: true }).catch(() => {});
         } catch (ctErr: any) {
           console.warn('[Admin Auth] Notice creating Firebase custom token:', ctErr?.message || ctErr);
         }
@@ -1456,20 +1463,37 @@ async function startServer() {
     return res.status(200).send('# مركز رابا للتأهيل\n\nخدمات تحليل السلوك التطبيقي ABA');
   });
 
+  const distPath = path.join(process.cwd(), 'dist');
+  const indexPath = path.join(distPath, 'index.html');
+  const hasDist = fs.existsSync(indexPath);
+
   // Agent middleware for Link headers, Markdown serving, and real 404 detection
   app.use((req: Request, res: Response, next) => {
     // 1. Emit RFC 8288 Link header and Vary headers on ALL responses for Agentic Browsing & Cache consistency
     res.setHeader('Link', '</llms.txt>; rel="alternate"; type="text/markdown", </.well-known/mcp/server-card.json>; rel="service-desc"');
     res.setHeader('Vary', 'Accept, Accept-Encoding');
 
-    // 2. Skip internal Vite dev assets, XML sitemap, and API endpoints
+    // 2. Skip internal Vite dev assets, Vite module queries (?import, ?raw, etc.), XML sitemap, and API endpoints
+    const isViteDevRequest =
+      !isProduction &&
+      !hasDist &&
+      ('import' in req.query ||
+        'html-proxy' in req.query ||
+        'direct' in req.query ||
+        'raw' in req.query ||
+        'url' in req.query ||
+        'inline' in req.query ||
+        'worker' in req.query);
+
     if (
       req.path === '/sitemap.xml' ||
       req.path === '/robots.txt' ||
+      req.path === '/__vite_ping' ||
       req.path.startsWith('/api/') ||
       req.path.startsWith('/@') ||
       req.path.startsWith('/src/') ||
-      req.path.startsWith('/node_modules/')
+      req.path.startsWith('/node_modules/') ||
+      isViteDevRequest
     ) {
       return next();
     }
@@ -1519,6 +1543,8 @@ async function startServer() {
       '/blog-directory',
       '/articles',
       '/booking',
+      '/portal',
+      '/family-portal',
       '/admin',
       '/login'
     ]);
@@ -1576,6 +1602,8 @@ async function startServer() {
       '/blog-directory',
       '/articles',
       '/booking',
+      '/portal',
+      '/family-portal',
       '/admin',
       '/login'
     ]);
@@ -1630,9 +1658,6 @@ async function startServer() {
 
   // --- Vite Dev Server Middleware or Production Static Serving ---
   let viteInstance: any = null;
-  const distPath = path.join(process.cwd(), 'dist');
-  const indexPath = path.join(distPath, 'index.html');
-  const hasDist = fs.existsSync(indexPath);
 
   const isDevAssetRequest = (reqPath: string): boolean => {
     if (

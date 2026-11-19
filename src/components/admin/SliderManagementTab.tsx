@@ -47,9 +47,10 @@ import { useDailyChildrenCounter } from '../../utils/dailyChildrenCounter';
 
 interface SliderManagementTabProps {
   hasPermission?: (perm: any) => boolean;
+  isSystemAdmin?: boolean;
 }
 
-export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
+export const SliderManagementTab: React.FC<SliderManagementTabProps> = ({ isSystemAdmin = false }) => {
   const { isArabic } = useLanguage();
 
   // State
@@ -165,8 +166,9 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
     showFeedback(isArabic ? 'تم تغيير حالة ظهور الشريحة' : 'Slide visibility updated');
   };
 
-  // Delete slide
+  // Delete slide (System Admin only)
   const handleDeleteSlide = (id: string) => {
+    if (!isSystemAdmin) return;
     if (slides.length <= 1) {
       showFeedback(isArabic ? 'لا يمكن حذف الشريحة الأخيرة' : 'Cannot delete the only slide', 'error');
       return;
@@ -803,15 +805,17 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = () => {
                     <span>{isArabic ? 'تخصيص' : 'Edit'}</span>
                   </button>
 
-                  {/* Delete Slide */}
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteSlide(slide.id)}
-                    className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-700 dark:text-rose-400 hover:text-white transition-all cursor-pointer"
-                    title={isArabic ? 'حذف الشريحة' : 'Delete'}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  {/* Delete Slide (System Admin Only) */}
+                  {isSystemAdmin && (
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteSlide(slide.id)}
+                      className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-700 dark:text-rose-400 hover:text-white transition-all cursor-pointer"
+                      title={isArabic ? 'حذف الشريحة' : 'Delete'}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                 </div>
 
               </div>

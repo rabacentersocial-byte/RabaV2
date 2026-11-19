@@ -92,10 +92,17 @@ scheduleIdleWork(() => {
     })
     .catch((e) => console.warn('[main] Persistent sync notice:', e));
 
-  // Register PWA service worker during idle time so it never blocks FCP, LCP, or TBT
+  // Register PWA service worker only in production so it never intercepts or 404s in Vite dev
   if (typeof window !== 'undefined' && 'serviceWorker' in navigator && !window.location.hash.includes('admin')) {
     try {
-      navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+      if (import.meta.env.PROD) {
+        navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+      } else {
+        navigator.serviceWorker
+          .getRegistrations()
+          .then((regs) => regs.forEach((reg) => reg.unregister().catch(() => {})))
+          .catch(() => {});
+      }
     } catch {
       // ignore
     }

@@ -65,7 +65,9 @@ export const SYNC_KEYS = {
   ADMIN_USERS: 'raba_admin_users',
   PARTNERS: 'raba_partners_list_v7',
   PARTNERS_SETTINGS: 'raba_partners_settings_v7',
-  COURSES: 'raba_courses_data_v1'
+  COURSES: 'raba_courses_data_v1',
+  COURSES_SETTINGS: 'raba_courses_settings_v1',
+  ANNOUNCEMENT_BAR: 'raba_announcement_bar_v1'
 } as const;
 
 // Canonical primary keys used in the synchronization loop to prevent legacy collisions
@@ -91,7 +93,9 @@ export const PRIMARY_SYNC_KEYS = [
   SYNC_KEYS.ADMIN_USERS,
   SYNC_KEYS.PARTNERS,
   SYNC_KEYS.PARTNERS_SETTINGS,
-  SYNC_KEYS.COURSES
+  SYNC_KEYS.COURSES,
+  SYNC_KEYS.COURSES_SETTINGS,
+  SYNC_KEYS.ANNOUNCEMENT_BAR
 ] as const;
 
 // Helper to mirror primary keys to legacy aliases with identical timestamps
@@ -141,7 +145,9 @@ const EVENT_MAP: Record<string, string> = {
   [SYNC_KEYS.NOTIFICATIONS]: 'raba_notifications_updated',
   [SYNC_KEYS.PARTNERS]: 'raba_partners_updated',
   [SYNC_KEYS.PARTNERS_SETTINGS]: 'raba_partners_settings_updated',
-  [SYNC_KEYS.COURSES]: 'raba_courses_updated'
+  [SYNC_KEYS.COURSES]: 'raba_courses_updated',
+  [SYNC_KEYS.COURSES_SETTINGS]: 'raba_courses_settings_updated',
+  [SYNC_KEYS.ANNOUNCEMENT_BAR]: 'raba_announcement_bar_updated'
 };
 
 // In-memory fallback dictionary for private/incognito browsers where localStorage is restricted

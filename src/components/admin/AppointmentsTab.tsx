@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Calendar, 
   Search, 
@@ -31,11 +31,26 @@ import {
   Tag,
   RefreshCw,
   Cloud,
-  ShieldAlert
+  ShieldAlert,
+  GitBranch,
+  Globe,
+  UserCheck,
+  CreditCard
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { Appointment, PermissionId, CustomerRequestType } from '../../types';
+import { Appointment, AdminUser, PermissionId, CustomerRequestType } from '../../types';
 import { SERVICES, SPECIALISTS } from '../../data/mockData';
+import { getStoredAdminUsers } from '../../data/adminData';
+import { BranchItem, getStoredBranchesData } from '../../data/branchesData';
+import {
+  doesAppointmentMatchBranch,
+  filterAppointmentsByUserBranchAccess,
+  getCleanBranchDisplayName,
+  getEffectiveBranchScope,
+  getUserAssignedBranchItems,
+  isAppointmentBranchUnassigned,
+  isUserBranchScoped
+} from '../../utils/branchPermissions';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
 import { BookingReportModal } from './BookingReportModal';
@@ -51,16 +66,43 @@ interface AppointmentsTabProps {
   appointments: Appointment[];
   onUpdateAppointments: (updated: Appointment[]) => void;
   hasPermission: (perm: PermissionId) => boolean;
+  currentUser?: AdminUser;
+  adminUsers?: AdminUser[];
   isSyncingAppointments?: boolean;
   appointmentsSyncError?: string | null;
   isFirebaseAuthenticated?: boolean;
   onRefreshAppointments?: () => Promise<void> | void;
 }
 
+const getPaymentMethodDisplayLabel = (method: Appointment['paymentMethod'], isArabic: boolean): string | null => {
+  switch (method) {
+    case 'tamara':
+      return isArabic ? 'تقسيط تمارا (Tamara)' : 'Tamara Installments';
+    case 'emkan':
+      return isArabic ? 'تمويل إمكان (Emkan)' : 'Emkan Financing';
+    case 'bank_transfer':
+      return isArabic ? 'سداد / تحويل بنكي' : 'Direct Pay / Bank Transfer';
+    case 'apple_pay':
+      return isArabic ? 'Apple Pay' : 'Apple Pay';
+    case 'mada':
+      return isArabic ? 'بطاقة مدى' : 'Mada Card';
+    case 'visa':
+      return isArabic ? 'بطاقة ائتمانية' : 'Credit Card';
+    case 'cod':
+      return isArabic ? 'نقدي في المركز / عند الاستلام' : 'Cash / Pay on Arrival';
+    case 'tabby':
+      return isArabic ? 'تقسيط تابي (Tabby)' : 'Tabby Installments';
+    default:
+      return null;
+  }
+};
+
 export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
   appointments,
   onUpdateAppointments,
   hasPermission,
+  currentUser,
+  adminUsers,
   isSyncingAppointments = false,
   appointmentsSyncError = null,
   isFirebaseAuthenticated = false,
@@ -72,6 +114,8 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [branchFilter, setBranchFilter] = useState<string>('all');
+  const [branchesList, setBranchesList] = useState<BranchItem[]>(() => getStoredBranchesData());
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<Appointment | null>(null);
@@ -80,9 +124,60 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
   const [actionError, setActionError] = useState<string | null>(null);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
   const [isActivatingCloudAuth, setIsActivatingCloudAuth] = useState(false);
+  const [assignedToMeOnly, setAssignedToMeOnly] = useState(false);
+
+  useEffect(() => {
+    const syncBranches = () => setBranchesList(getStoredBranchesData());
+    window.addEventListener('raba_branches_updated', syncBranches);
+    window.addEventListener('raba_persistent_sync_ready' as any, syncBranches);
+    return () => {
+      window.removeEventListener('raba_branches_updated', syncBranches);
+      window.removeEventListener('raba_persistent_sync_ready' as any, syncBranches);
+    };
+  }, []);
+
+  const userBranchScope = getEffectiveBranchScope(currentUser);
+  const isBranchScoped = isUserBranchScoped(currentUser);
+  const allowedBranches = useMemo(
+    () => getUserAssignedBranchItems(currentUser, branchesList),
+    [currentUser, branchesList]
+  );
+
+  // Appointments visible to the current user according to their branch & course permissions
+  const scopedAppointments = useMemo(
+    () => filterAppointmentsByUserBranchAccess(appointments, currentUser, branchesList),
+    [appointments, currentUser, branchesList]
+  );
+
+  const resolvedAdminUsers = useMemo(
+    () => (adminUsers && adminUsers.length > 0 ? adminUsers : getStoredAdminUsers()),
+    [adminUsers]
+  );
+
+  const courseCoordinatorCandidates = useMemo(
+    () =>
+      resolvedAdminUsers.filter(
+        (u) =>
+          u.status === 'active' &&
+          (u.role === 'super_admin' || (Array.isArray(u.permissions) && u.permissions.includes('manage_courses')))
+      ),
+    [resolvedAdminUsers]
+  );
+
+  // Reset branch filter if active user switches to one without access to that branch filter
+  useEffect(() => {
+    if (
+      branchFilter !== 'all' &&
+      branchFilter !== '__unassigned__' &&
+      !allowedBranches.some((b) => b.id === branchFilter)
+    ) {
+      setBranchFilter('all');
+    }
+  }, [branchFilter, allowedBranches]);
 
   // New Manual Appointment Form State
   const [manualType, setManualType] = useState<CustomerRequestType>('appointment');
+  const [manualBranchId, setManualBranchId] = useState<string>('');
   const [childName, setChildName] = useState('');
   const [childAge, setChildAge] = useState(5);
   const [guardianName, setGuardianName] = useState('');
@@ -96,20 +191,49 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
   const [amount, setAmount] = useState(280);
   const [status, setStatus] = useState<Appointment['status']>('confirmed');
 
-  const canManage = hasPermission('manage_appointments');
-  const canSendWhatsapp = hasPermission('send_notifications');
+  useEffect(() => {
+    if (allowedBranches.length > 0 && (!manualBranchId || !allowedBranches.some((b) => b.id === manualBranchId))) {
+      setManualBranchId(allowedBranches[0].id);
+    }
+  }, [allowedBranches, manualBranchId]);
 
-  // Counts by Request Type
-  const countAll = appointments.length;
-  const countSessions = appointments.filter(a => !a.requestType || a.requestType === 'appointment').length;
-  const countPackages = appointments.filter(a => a.requestType === 'package').length;
-  const countCourses = appointments.filter(a => a.requestType === 'course').length;
-  const countShadow = appointments.filter(a => a.requestType === 'shadow_teacher').length;
-  const countNationalDay = appointments.filter(a => a.requestType === 'national_day_offer').length;
-  const countConsultations = appointments.filter(a => a.requestType === 'quick_consultation').length;
-  const countStore = appointments.filter(a => a.requestType === 'store_order').length;
+  const isSystemAdmin = currentUser?.role === 'super_admin' && currentUser?.status !== 'suspended';
+  const canManageAppointments = isSystemAdmin || hasPermission('manage_appointments');
+  const canManageCourses = isSystemAdmin || hasPermission('manage_courses');
+  const canManage = canManageAppointments || canManageCourses;
+  const canAssignCourses = isSystemAdmin || hasPermission('manage_courses') || hasPermission('manage_users');
+  const canSendWhatsapp = isSystemAdmin || hasPermission('send_notifications');
 
-  const countNewLeads = appointments.filter(a => a.status === 'new' || (!a.readByAdmin && a.status === 'pending')).length;
+  const canManageRequest = (app: Appointment): boolean => {
+    if (isSystemAdmin) return true;
+    if (app.requestType === 'course') {
+      return canManageCourses || (Boolean(app.assignedToUserId) && app.assignedToUserId === currentUser?.id);
+    }
+    return canManageAppointments;
+  };
+
+  useEffect(() => {
+    if (!canManageAppointments && canManageCourses) {
+      setTypeFilter('course');
+      setManualType('course');
+    }
+  }, [canManageAppointments, canManageCourses]);
+
+  // Counts by Request Type (scoped to authorized branches & course permissions)
+  const countAll = scopedAppointments.length;
+  const countSessions = scopedAppointments.filter(a => !a.requestType || a.requestType === 'appointment').length;
+  const countPackages = scopedAppointments.filter(a => a.requestType === 'package').length;
+  const countCourses = scopedAppointments.filter(a => a.requestType === 'course').length;
+  const myAssignedCourseCount = useMemo(
+    () => scopedAppointments.filter(a => a.requestType === 'course' && a.assignedToUserId === currentUser?.id).length,
+    [scopedAppointments, currentUser]
+  );
+  const countShadow = scopedAppointments.filter(a => a.requestType === 'shadow_teacher').length;
+  const countNationalDay = scopedAppointments.filter(a => a.requestType === 'national_day_offer').length;
+  const countConsultations = scopedAppointments.filter(a => a.requestType === 'quick_consultation').length;
+  const countStore = scopedAppointments.filter(a => a.requestType === 'store_order').length;
+
+  const countNewLeads = scopedAppointments.filter(a => a.status === 'new' || (!a.readByAdmin && a.status === 'pending')).length;
 
   const showToastSuccess = (msg: string) => {
     setActionError(null);
@@ -139,7 +263,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
   };
 
   // Filtered List
-  const filtered = appointments.filter((app) => {
+  const filtered = scopedAppointments.filter((app) => {
     const q = searchQuery.toLowerCase();
     const matchesSearch = 
       (app.childName && app.childName.toLowerCase().includes(q)) ||
@@ -147,6 +271,11 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
       (app.guardianPhone && app.guardianPhone.toLowerCase().includes(q)) ||
       (app.referenceNumber && app.referenceNumber.toLowerCase().includes(q)) ||
       (app.serviceTitle && app.serviceTitle.toLowerCase().includes(q)) ||
+      (app.branch && app.branch.toLowerCase().includes(q)) ||
+      (app.country && app.country.toLowerCase().includes(q)) ||
+      (app.city && app.city.toLowerCase().includes(q)) ||
+      (app.qualification && app.qualification.toLowerCase().includes(q)) ||
+      (app.assignedToUserName && app.assignedToUserName.toLowerCase().includes(q)) ||
       (app.notes && app.notes.toLowerCase().includes(q));
 
     const matchesStatus = statusFilter === 'all' || app.status === statusFilter;
@@ -160,12 +289,23 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
       }
     }
 
-    return matchesSearch && matchesStatus && matchesType;
+    let matchesBranch = true;
+    if (branchFilter === '__unassigned__') {
+      matchesBranch = isAppointmentBranchUnassigned(app, branchesList);
+    } else if (branchFilter !== 'all') {
+      const targetBranch = branchesList.find((b) => b.id === branchFilter);
+      matchesBranch = targetBranch ? doesAppointmentMatchBranch(app, targetBranch, branchesList) : true;
+    }
+
+    const matchesAssignedToMe = !assignedToMeOnly || app.assignedToUserId === currentUser?.id;
+
+    return matchesSearch && matchesStatus && matchesType && matchesBranch && matchesAssignedToMe;
   });
 
   // Update Status
   const handleUpdateStatus = async (appId: string, newStatus: Appointment['status']) => {
-    if (!canManage) return;
+    const targetApp = appointments.find((a) => a.id === appId);
+    if (!targetApp || !canManageRequest(targetApp)) return;
     setActionError(null);
     const previous = appointments;
     const updated = appointments.map((a) => {
@@ -195,7 +335,8 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
 
   // Save Admin Internal Note
   const handleSaveAdminNote = async (appId: string) => {
-    if (!canManage) return;
+    const targetApp = appointments.find((a) => a.id === appId);
+    if (!targetApp || !canManageRequest(targetApp)) return;
     setActionError(null);
     const previous = appointments;
     const updated = appointments.map((a) => {
@@ -223,14 +364,70 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
     }
   };
 
-  // Delete Request
+  // Assign or reassign a course request to a coordinator
+  const handleAssignCourseCoordinator = async (appId: string, coordinatorId: string) => {
+    if (!canAssignCourses) return;
+    const coordinator = courseCoordinatorCandidates.find((u) => u.id === coordinatorId);
+    const assignedToUserId = coordinator ? coordinator.id : '';
+    const assignedToUserName = coordinator ? coordinator.name : '';
+    const assignedToUserEmail = coordinator ? coordinator.email : '';
+
+    setActionError(null);
+    const previous = appointments;
+    const updated = appointments.map((a) => {
+      if (a.id === appId) {
+        return {
+          ...a,
+          assignedToUserId: assignedToUserId || undefined,
+          assignedToUserName: assignedToUserName || undefined,
+          assignedToUserEmail: assignedToUserEmail || undefined,
+          readByAdmin: true
+        };
+      }
+      return a;
+    });
+    onUpdateAppointments(updated);
+    if (selectedRequest && selectedRequest.id === appId) {
+      setSelectedRequest({
+        ...selectedRequest,
+        assignedToUserId: assignedToUserId || undefined,
+        assignedToUserName: assignedToUserName || undefined,
+        assignedToUserEmail: assignedToUserEmail || undefined,
+        readByAdmin: true
+      });
+    }
+
+    try {
+      await updateAppointmentFieldsInFirestore(appId, {
+        assignedToUserId,
+        assignedToUserName,
+        assignedToUserEmail,
+        readByAdmin: true
+      });
+      showToastSuccess(
+        coordinator
+          ? (isArabic ? `تم توجيه طلب الكورس إلى ${coordinator.name}` : `Course request assigned to ${coordinator.name}`)
+          : (isArabic ? 'تم إتاحة الطلب لجميع مخولي إدارة الكورسات' : 'Course request shared with all authorized staff')
+      );
+    } catch (err) {
+      console.error('[AppointmentsTab] Failed to assign course request in Firestore:', err);
+      onUpdateAppointments(previous);
+      setActionError(
+        isArabic
+          ? 'تعذر حفظ توجيه طلب الكورس في قاعدة البيانات.'
+          : 'Failed to persist course assignment to Firestore.'
+      );
+    }
+  };
+
+  // Delete Request (Strictly System Super Admin only)
   const handleDeleteRequest = (app: Appointment) => {
-    if (!canManage) return;
+    if (!isSystemAdmin) return;
     setRequestToDelete(app);
   };
 
   const handleConfirmDeleteRequest = async () => {
-    if (!requestToDelete) return;
+    if (!requestToDelete || !isSystemAdmin) return;
     const target = requestToDelete;
     setRequestToDelete(null);
     setActionError(null);
@@ -291,6 +488,10 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
     else if (manualType === 'quick_consultation') defaultTitle = 'طلب استشارة هاتفية سريعة';
     else if (manualType === 'store_order') defaultTitle = 'طلب منتجات من المتجر التأهيلي';
 
+    const chosenManualBranch = branchesList.find((b) => b.id === manualBranchId);
+    const manualBranchLabel = chosenManualBranch ? getCleanBranchDisplayName(chosenManualBranch, isArabic) : '';
+    const manualCityLabel = chosenManualBranch ? (isArabic ? chosenManualBranch.cityNameAr : chosenManualBranch.cityNameEn) : '';
+
     const newApp: Appointment = {
       id: `app-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       referenceNumber: ref,
@@ -303,6 +504,8 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
       serviceTitle: defaultTitle,
       specialistId: selectedSpec.id,
       specialistName: selectedSpec.name,
+      ...(manualBranchLabel ? { branch: manualBranchLabel } : {}),
+      ...(manualCityLabel ? { city: manualCityLabel } : {}),
       date: date,
       timeSlot: timeSlot,
       notes: notes.trim(),
@@ -415,7 +618,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
     <div className="space-y-6">
 
       {/* Cloud Sync Auth / Error Warning Banner */}
-      {(!isFirebaseAuthenticated || appointmentsSyncError) && (
+      {!isSyncingAppointments && (!isFirebaseAuthenticated || appointmentsSyncError) && (
         <div className="p-4 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-950 dark:text-amber-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
           <div className="flex items-start gap-3">
             <ShieldAlert className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
@@ -432,8 +635,8 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
               <p className="text-[11px] opacity-90 leading-relaxed">
                 {!isFirebaseAuthenticated || hasPermissionDeniedError
                   ? isArabic
-                    ? 'تم تسجيل الدخول بالجلسة المحلية فقط. انقر على «تفعيل الربط السحابي (Google)» لجلب كافة الطلبات والحجوزات المسجلة من العملاء مباشرة.'
-                    : 'Signed in with local session only. Click "Activate Cloud Sync (Google)" to load and manage live customer bookings from Firestore.'
+                    ? 'هذا الحساب متصل حالياً بالجلسة المحلية فقط. يتفعل الربط السحابي تلقائياً عند تسجيل الدخول بحساب موظف مرتبط سحابياً (بريد إلكتروني + كلمة مرور من 6 أحرف فأكثر)، أو بالنقر على «تفعيل الربط السحابي (Google)».'
+                    : 'Signed in with a local-only session. Cloud sync activates automatically for staff linked with Email/Password (6+ chars) or by clicking "Activate Cloud Sync (Google)".'
                   : appointmentsSyncError}
               </p>
             </div>
@@ -489,6 +692,52 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
           <span>{actionSuccess}</span>
         </div>
       )}
+
+      {/* Branch Permissions Routing Banner */}
+      {isBranchScoped && (
+        <div className="p-4 rounded-2xl bg-teal-500/10 border border-teal-500/30 text-teal-950 dark:text-teal-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <div className="w-9 h-9 rounded-xl bg-teal-500/20 text-teal-700 dark:text-teal-300 flex items-center justify-center shrink-0">
+              <GitBranch className="w-4 h-4" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <h4 className="text-xs sm:text-sm font-black">
+                  {isArabic ? 'صلاحيات توجيه الحجوزات المخصصة لحسابك' : 'Branch-Scoped Booking Routing Active'}
+                </h4>
+                <span className="px-2 py-0.5 rounded-full bg-teal-600/15 text-teal-800 dark:text-teal-200 text-[10px] font-bold">
+                  {userBranchScope === 'assigned_only'
+                    ? (isArabic ? 'الفروع المحددة فقط' : 'Assigned Branches Only')
+                    : (isArabic ? 'المحددة + الطلبات العامة بدون فرع' : 'Assigned + Unspecified')}
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+                <span className="text-teal-800/80 dark:text-teal-200/80">
+                  {isArabic ? 'الفروع المصرح لك بها:' : 'Authorized branches:'}
+                </span>
+                {allowedBranches.length > 0 ? (
+                  allowedBranches.map((b) => (
+                    <span
+                      key={b.id}
+                      className="px-2 py-0.5 rounded-md bg-white dark:bg-slate-900 border border-teal-200 dark:border-teal-800/60 text-teal-800 dark:text-teal-200 font-bold"
+                    >
+                      {getCleanBranchDisplayName(b, isArabic)}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-amber-700 dark:text-amber-300 font-bold">
+                    {isArabic ? 'لا توجد فروع محددة لهذا الحساب' : 'No branches assigned'}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="text-xs font-black text-teal-800 dark:text-teal-200 shrink-0 tabular-nums bg-white/70 dark:bg-slate-900/60 px-3 py-1.5 rounded-xl border border-teal-200/70 dark:border-teal-800/40">
+            {scopedAppointments.length} / {appointments.length} {isArabic ? 'حجز مطابق' : 'matching'}
+          </div>
+        </div>
+      )}
       
       {/* New Leads Notification Banner */}
       {countNewLeads > 0 && (
@@ -528,109 +777,117 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
       {/* Request Type Navigation Tabs */}
       <div className="bg-white dark:bg-slate-900 p-2 sm:p-3 rounded-2xl border border-slate-200 dark:border-white/10 shadow-xs overflow-x-auto flex items-center gap-1.5 scrollbar-none">
         
-        <button
-          onClick={() => setTypeFilter('all')}
-          className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
-            typeFilter === 'all'
-              ? 'bg-[#0B3B36] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-sm'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-          }`}
-        >
-          <Layers className="w-3.5 h-3.5" />
-          <span>{isArabic ? 'جميع الطلبات والمواعيد' : 'All Requests'}</span>
-          <span className="px-1.5 py-0.2 rounded-md bg-white/20 text-[10px] font-mono">{countAll}</span>
-        </button>
+        {canManageAppointments && (
+          <>
+            <button
+              onClick={() => setTypeFilter('all')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
+                typeFilter === 'all'
+                  ? 'bg-[#0B3B36] dark:bg-[#00E5BE] text-white dark:text-slate-950 shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>{isArabic ? 'جميع الطلبات والمواعيد' : 'All Requests'}</span>
+              <span className="px-1.5 py-0.2 rounded-md bg-white/20 text-[10px] font-mono">{countAll}</span>
+            </button>
 
-        <button
-          onClick={() => setTypeFilter('appointment')}
-          className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
-            typeFilter === 'appointment'
-              ? 'bg-teal-700 text-white shadow-sm'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-          }`}
-        >
-          <Calendar className="w-3.5 h-3.5" />
-          <span>{isArabic ? 'جلسات العيادة' : 'Sessions'}</span>
-          <span className="px-1.5 py-0.2 rounded-md bg-white/20 text-[10px] font-mono">{countSessions}</span>
-        </button>
+            <button
+              onClick={() => setTypeFilter('appointment')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
+                typeFilter === 'appointment'
+                  ? 'bg-teal-700 text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              <span>{isArabic ? 'جلسات العيادة' : 'Sessions'}</span>
+              <span className="px-1.5 py-0.2 rounded-md bg-white/20 text-[10px] font-mono">{countSessions}</span>
+            </button>
 
-        <button
-          onClick={() => setTypeFilter('package')}
-          className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
-            typeFilter === 'package'
-              ? 'bg-indigo-700 text-white shadow-sm'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-          }`}
-        >
-          <Package className="w-3.5 h-3.5" />
-          <span>{isArabic ? 'باقات التأهيل' : 'Packages'}</span>
-          <span className="px-1.5 py-0.2 rounded-md bg-white/20 text-[10px] font-mono">{countPackages}</span>
-        </button>
+            <button
+              onClick={() => setTypeFilter('package')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
+                typeFilter === 'package'
+                  ? 'bg-indigo-700 text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <Package className="w-3.5 h-3.5" />
+              <span>{isArabic ? 'باقات التأهيل' : 'Packages'}</span>
+              <span className="px-1.5 py-0.2 rounded-md bg-white/20 text-[10px] font-mono">{countPackages}</span>
+            </button>
 
-        <button
-          onClick={() => setTypeFilter('shadow_teacher')}
-          className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
-            typeFilter === 'shadow_teacher'
-              ? 'bg-purple-700 text-white shadow-sm'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-          }`}
-        >
-          <GraduationCap className="w-3.5 h-3.5" />
-          <span>{isArabic ? 'طلبات خدمة سِوار (معلم الظل)' : 'Sewar (Shadow Teacher)'}</span>
-          <span className="px-1.5 py-0.2 rounded-md bg-white/20 text-[10px] font-mono">{countShadow}</span>
-        </button>
+            <button
+              onClick={() => setTypeFilter('shadow_teacher')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
+                typeFilter === 'shadow_teacher'
+                  ? 'bg-purple-700 text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <GraduationCap className="w-3.5 h-3.5" />
+              <span>{isArabic ? 'طلبات خدمة سِوار (معلم الظل)' : 'Sewar (Shadow Teacher)'}</span>
+              <span className="px-1.5 py-0.2 rounded-md bg-white/20 text-[10px] font-mono">{countShadow}</span>
+            </button>
 
-        <button
-          onClick={() => setTypeFilter('national_day_offer')}
-          className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
-            typeFilter === 'national_day_offer'
-              ? 'bg-emerald-700 text-white shadow-sm'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-          }`}
-        >
-          <span>🇸🇦</span>
-          <span>{isArabic ? 'عروض اليوم الوطني' : 'National Day'}</span>
-          <span className="px-1.5 py-0.2 rounded-md bg-white/20 text-[10px] font-mono">{countNationalDay}</span>
-        </button>
+            <button
+              onClick={() => setTypeFilter('national_day_offer')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
+                typeFilter === 'national_day_offer'
+                  ? 'bg-emerald-700 text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <span>🇸🇦</span>
+              <span>{isArabic ? 'عروض اليوم الوطني' : 'National Day'}</span>
+              <span className="px-1.5 py-0.2 rounded-md bg-white/20 text-[10px] font-mono">{countNationalDay}</span>
+            </button>
 
-        <button
-          onClick={() => setTypeFilter('quick_consultation')}
-          className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
-            typeFilter === 'quick_consultation'
-              ? 'bg-amber-700 text-white shadow-sm'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-          }`}
-        >
-          <PhoneCall className="w-3.5 h-3.5" />
-          <span>{isArabic ? 'استشارات واتصال' : 'Consultations'}</span>
-          <span className="px-1.5 py-0.2 rounded-md bg-white/20 text-[10px] font-mono">{countConsultations}</span>
-        </button>
+            <button
+              onClick={() => setTypeFilter('quick_consultation')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
+                typeFilter === 'quick_consultation'
+                  ? 'bg-amber-700 text-white shadow-sm'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <PhoneCall className="w-3.5 h-3.5" />
+              <span>{isArabic ? 'استشارات واتصال' : 'Consultations'}</span>
+              <span className="px-1.5 py-0.2 rounded-md bg-white/20 text-[10px] font-mono">{countConsultations}</span>
+            </button>
+          </>
+        )}
 
-        <button
-          onClick={() => setTypeFilter('course')}
-          className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
-            typeFilter === 'course'
-              ? 'bg-pink-700 text-white shadow-sm'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-          }`}
-        >
-          <GraduationCap className="w-3.5 h-3.5" />
-          <span>{isArabic ? 'تسجيل الكورسات' : 'Courses'}</span>
-          <span className="px-1.5 py-0.2 rounded-md bg-white/20 text-[10px] font-mono">{countCourses}</span>
-        </button>
+        {(canManageCourses || myAssignedCourseCount > 0) && (
+          <button
+            onClick={() => setTypeFilter('course')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
+              typeFilter === 'course'
+                ? 'bg-pink-700 text-white shadow-sm'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
+          >
+            <GraduationCap className="w-3.5 h-3.5" />
+            <span>{isArabic ? 'تسجيل الكورسات' : 'Courses'}</span>
+            <span className="px-1.5 py-0.2 rounded-md bg-white/20 text-[10px] font-mono">{countCourses}</span>
+          </button>
+        )}
 
-        <button
-          onClick={() => setTypeFilter('store_order')}
-          className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
-            typeFilter === 'store_order'
-              ? 'bg-sky-700 text-white shadow-sm'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-          }`}
-        >
-          <ShoppingBag className="w-3.5 h-3.5" />
-          <span>{isArabic ? 'طلبات المتجر' : 'Store Orders'}</span>
-          <span className="px-1.5 py-0.2 rounded-md bg-white/20 text-[10px] font-mono">{countStore}</span>
-        </button>
+        {canManageAppointments && (
+          <button
+            onClick={() => setTypeFilter('store_order')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 cursor-pointer ${
+              typeFilter === 'store_order'
+                ? 'bg-sky-700 text-white shadow-sm'
+                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+            }`}
+          >
+            <ShoppingBag className="w-3.5 h-3.5" />
+            <span>{isArabic ? 'طلبات المتجر' : 'Store Orders'}</span>
+            <span className="px-1.5 py-0.2 rounded-md bg-white/20 text-[10px] font-mono">{countStore}</span>
+          </button>
+        )}
 
       </div>
       
@@ -643,7 +900,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={isArabic ? 'بحث بالاسم، الجوال، المرجع، أو الملاحظات...' : 'Search by name, phone, ref, or notes...'}
+            placeholder={isArabic ? 'بحث بالاسم، الدولة، الجوال، المرجع، أو الملاحظات...' : 'Search by name, country, phone, ref, or notes...'}
             className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-slate-800 dark:text-slate-100 placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
           />
           <Search className={`w-4 h-4 text-slate-500 dark:text-slate-400 absolute ${isArabic ? 'left-3' : 'right-3'} top-3`} />
@@ -651,7 +908,47 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
 
         {/* Filters and Add button */}
         <div className="flex items-center gap-2.5 w-full md:w-auto justify-between md:justify-end overflow-x-auto">
+
+          {myAssignedCourseCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setAssignedToMeOnly((prev) => !prev)}
+              className={`px-3 py-2 rounded-xl text-xs font-bold border flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ${
+                assignedToMeOnly
+                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
+                  : 'bg-slate-50 dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-700/50 hover:bg-indigo-50 dark:hover:bg-indigo-950/30'
+              }`}
+            >
+              <UserCheck className="w-3.5 h-3.5" />
+              <span>{isArabic ? `الموجهة لي (${myAssignedCourseCount})` : `Assigned to Me (${myAssignedCourseCount})`}</span>
+            </button>
+          )}
           
+          {canManageAppointments && (
+            <select
+              value={branchFilter}
+              onChange={(e) => setBranchFilter(e.target.value)}
+              aria-label={isArabic ? 'تصفية حسب الفرع' : 'Filter by branch'}
+              className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-200 text-xs rounded-xl px-3 py-2 outline-none cursor-pointer shrink-0"
+            >
+              <option value="all">
+                {isBranchScoped
+                  ? (isArabic ? 'كافة الفروع المصرح بها' : 'All Allowed Branches')
+                  : (isArabic ? 'جميع فروع المركز' : 'All Clinic Branches')}
+              </option>
+              {allowedBranches.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {getCleanBranchDisplayName(b, isArabic)}
+                </option>
+              ))}
+              {(!isBranchScoped || userBranchScope === 'assigned_and_unassigned') && (
+                <option value="__unassigned__">
+                  {isArabic ? 'طلبات عامة بدون فرع محدد' : 'General / Unassigned Branch'}
+                </option>
+              )}
+            </select>
+          )}
+
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -774,13 +1071,34 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                       </td>
 
                       {/* Service / Request Title */}
-                      <td className="p-4 max-w-[220px]">
+                      <td className="p-4 max-w-[230px]">
                         <div className="font-bold text-slate-900 dark:text-white line-clamp-1">
                           {app.serviceTitle}
                         </div>
                         {app.specialistName && (
                           <div className="text-[11px] text-emerald-700 dark:text-emerald-400 mt-0.5 line-clamp-1">
                             {app.specialistName}
+                          </div>
+                        )}
+                        {app.requestType === 'course' && (
+                          <div className="flex flex-wrap items-center gap-1 mt-1">
+                            {app.assignedToUserName ? (
+                              <span className="inline-flex items-center gap-1 text-[10px] bg-indigo-500/12 text-indigo-700 dark:text-indigo-300 font-bold px-2 py-0.5 rounded-md border border-indigo-500/25">
+                                <UserCheck className="w-2.5 h-2.5 shrink-0" />
+                                <span>{isArabic ? `موجه: ${app.assignedToUserName}` : `Assigned: ${app.assignedToUserName}`}</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold px-2 py-0.5 rounded-md">
+                                <UserCheck className="w-2.5 h-2.5 shrink-0" />
+                                <span>{isArabic ? 'مشترك لمخولي الكورسات' : 'All Course Staff'}</span>
+                              </span>
+                            )}
+                            {app.paymentMethod && getPaymentMethodDisplayLabel(app.paymentMethod, isArabic) && (
+                              <span className="inline-flex items-center gap-1 text-[10px] bg-pink-500/10 text-pink-700 dark:text-pink-300 font-bold px-2 py-0.5 rounded-md border border-pink-500/20">
+                                <CreditCard className="w-2.5 h-2.5 shrink-0" />
+                                <span>{getPaymentMethodDisplayLabel(app.paymentMethod, isArabic)}</span>
+                              </span>
+                            )}
                           </div>
                         )}
                         {app.couponCode && (
@@ -790,10 +1108,24 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                         )}
                       </td>
 
-                      {/* Date & Time */}
+                      {/* Date, Time & Branch / Country */}
                       <td className="p-4">
                         <div className="font-bold">{app.date}</div>
                         <div className="text-[11px] text-slate-600 dark:text-slate-400 mt-0.5">{app.timeSlot}</div>
+                        <div className="flex flex-wrap items-center gap-1 mt-1">
+                          {app.country && (
+                            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-sky-500/10 text-sky-800 dark:text-sky-300 border border-sky-500/20 text-[10px] font-bold">
+                              <Globe className="w-2.5 h-2.5 shrink-0" />
+                              <span>{app.country}</span>
+                            </div>
+                          )}
+                          {(app.branch || app.city) && (
+                            <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-teal-500/10 text-teal-800 dark:text-teal-300 border border-teal-500/20 text-[10px] font-bold">
+                              <MapPin className="w-2.5 h-2.5 shrink-0" />
+                              <span>{app.branch || app.city}</span>
+                            </div>
+                          )}
+                        </div>
                       </td>
 
                       {/* Amount */}
@@ -809,7 +1141,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
 
                       {/* Status Selector */}
                       <td className="p-4">
-                        {canManage ? (
+                        {canManageRequest(app) ? (
                           <select
                             value={app.status}
                             onChange={(e) => handleUpdateStatus(app.id, e.target.value as Appointment['status'])}
@@ -866,12 +1198,12 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                             </button>
                           )}
 
-                          {/* Delete Request */}
-                          {canManage && (
+                          {/* Delete Request (Super Admin Only) */}
+                          {isSystemAdmin && (
                             <button
                               onClick={() => handleDeleteRequest(app)}
                               className="p-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-700 dark:text-rose-400 hover:text-white transition-colors cursor-pointer"
-                              title={isArabic ? 'حذف الطلب' : 'Delete Request'}
+                              title={isArabic ? 'حذف الطلب (صلاحية الأدمن فقط)' : 'Delete Request (Admin Only)'}
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -997,10 +1329,73 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                       <span className="font-medium">{selectedRequest.specialistName}</span>
                     </div>
                   )}
+                  {selectedRequest.country && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'الدولة:' : 'Country:'}</span>
+                      <span className="font-bold text-sky-700 dark:text-sky-300">{selectedRequest.country}</span>
+                    </div>
+                  )}
+                  {(selectedRequest.branch || selectedRequest.city) && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'الفرع / المدينة:' : 'Branch / City:'}</span>
+                      <span className="font-bold text-teal-700 dark:text-teal-300">
+                        {selectedRequest.branch || selectedRequest.city}
+                      </span>
+                    </div>
+                  )}
+                  {selectedRequest.qualification && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'المؤهل / التخصص:' : 'Qualification:'}</span>
+                      <span className="font-medium text-slate-800 dark:text-slate-200">{selectedRequest.qualification}</span>
+                    </div>
+                  )}
+                  {selectedRequest.paymentMethod && getPaymentMethodDisplayLabel(selectedRequest.paymentMethod, isArabic) && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'طريقة السداد / التقسيط:' : 'Payment Option:'}</span>
+                      <span className="font-bold text-pink-700 dark:text-pink-300">
+                        {getPaymentMethodDisplayLabel(selectedRequest.paymentMethod, isArabic)}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
             </div>
+
+            {/* Course Coordinator Routing Control (For course registration requests) */}
+            {selectedRequest.requestType === 'course' && (
+              <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/25 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="space-y-0.5">
+                  <div className="font-black text-indigo-950 dark:text-indigo-200 flex items-center gap-1.5">
+                    <UserCheck className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                    <span>{isArabic ? 'توجيه طلب الكورس للمسؤول المختص:' : 'Course Request Coordinator Assignment:'}</span>
+                  </div>
+                  <p className="text-[11px] text-indigo-800/80 dark:text-indigo-300/80">
+                    {selectedRequest.assignedToUserName
+                      ? (isArabic ? `موجه حالياً إلى: ${selectedRequest.assignedToUserName}` : `Currently assigned to: ${selectedRequest.assignedToUserName}`)
+                      : (isArabic ? 'غير معين لموظف محدد — يظهر لجميع من لديهم صلاحية «إدارة الكورسات».' : 'Shared across all staff holding Courses Management permission.')}
+                  </p>
+                </div>
+
+                {canAssignCourses && (
+                  <select
+                    value={selectedRequest.assignedToUserId || ''}
+                    onChange={(e) => handleAssignCourseCoordinator(selectedRequest.id, e.target.value)}
+                    aria-label={isArabic ? 'تعيين مسؤول طلب الكورس' : 'Assign course coordinator'}
+                    className="bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-700/60 text-slate-900 dark:text-white rounded-xl px-3 py-2 text-xs font-bold outline-none cursor-pointer shrink-0"
+                  >
+                    <option value="">
+                      {isArabic ? '— مشترك لجميع مخولي الكورسات —' : '— All Authorized Course Staff —'}
+                    </option>
+                    {courseCoordinatorCandidates.map((u) => (
+                      <option key={u.id} value={u.id}>
+                        {u.name} ({isArabic ? u.roleTitleAr : u.roleTitleEn})
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            )}
 
             {/* Store Order Items (if store order) */}
             {selectedRequest.orderItems && selectedRequest.orderItems.length > 0 && (
@@ -1056,16 +1451,19 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                   rows={2}
                   value={internalAdminNote}
                   onChange={(e) => setInternalAdminNote(e.target.value)}
+                  disabled={!canManageRequest(selectedRequest)}
                   placeholder={isArabic ? 'اكتب ملاحظة (مثال: تم الاتصال بولي الأمر وتم الاتفاق على جلسة تقييم الأحد القادم)...' : 'Write staff follow-up note...'}
-                  className="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500/40"
+                  className="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-emerald-500/40 disabled:opacity-60"
                 />
-                <button
-                  type="button"
-                  onClick={() => handleSaveAdminNote(selectedRequest.id)}
-                  className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl self-end cursor-pointer shadow-sm transition-all"
-                >
-                  {isArabic ? 'حفظ' : 'Save'}
-                </button>
+                {canManageRequest(selectedRequest) && (
+                  <button
+                    type="button"
+                    onClick={() => handleSaveAdminNote(selectedRequest.id)}
+                    className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl self-end cursor-pointer shadow-sm transition-all"
+                  >
+                    {isArabic ? 'حفظ' : 'Save'}
+                  </button>
+                )}
               </div>
             </div>
 
@@ -1076,8 +1474,9 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
                 <span className="text-slate-600 dark:text-slate-400 font-bold">{isArabic ? 'تحديث الحالة:' : 'Status:'}</span>
                 <select
                   value={selectedRequest.status}
+                  disabled={!canManageRequest(selectedRequest)}
                   onChange={(e) => handleUpdateStatus(selectedRequest.id, e.target.value as Appointment['status'])}
-                  className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-1.5 font-bold outline-none cursor-pointer"
+                  className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-1.5 font-bold outline-none cursor-pointer disabled:opacity-60"
                 >
                   <option value="new">{isArabic ? 'جديد (New)' : 'New'}</option>
                   <option value="contacted">{isArabic ? 'تم التواصل' : 'Contacted'}</option>
@@ -1144,24 +1543,56 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
 
             <form onSubmit={handleAddAppointmentSubmit} className="space-y-4 text-xs">
               
-              {/* Type Selection */}
-              <div>
-                <label className="block text-slate-600 dark:text-slate-400 mb-1 font-semibold">
-                  {isArabic ? 'نوع الطلب الوارد:' : 'Request Category:'}
-                </label>
-                <select
-                  value={manualType}
-                  onChange={(e) => setManualType(e.target.value as CustomerRequestType)}
-                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 outline-none cursor-pointer font-bold text-slate-900 dark:text-white"
-                >
-                  <option value="appointment">{isArabic ? 'جلسة عيادة عادية' : 'Clinic Session'}</option>
-                  <option value="package">{isArabic ? 'باقة تأهيلية' : 'Therapy Package'}</option>
-                  <option value="course">{isArabic ? 'تسجيل دورة تدريبية' : 'Training Course'}</option>
-                  <option value="shadow_teacher">{isArabic ? 'طلب خدمة معلم ظل' : 'Shadow Teacher Application'}</option>
-                  <option value="national_day_offer">{isArabic ? 'طلب عرض اليوم الوطني' : 'National Day Offer'}</option>
-                  <option value="quick_consultation">{isArabic ? 'طلب استشارة واتصال هاتفي' : 'Phone Callback Consultation'}</option>
-                  <option value="store_order">{isArabic ? 'طلب من متجر رابا' : 'Store Rehab Tools Order'}</option>
-                </select>
+              {/* Type & Branch Selection */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-600 dark:text-slate-400 mb-1 font-semibold">
+                    {isArabic ? 'نوع الطلب الوارد:' : 'Request Category:'}
+                  </label>
+                  <select
+                    value={manualType}
+                    onChange={(e) => setManualType(e.target.value as CustomerRequestType)}
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 outline-none cursor-pointer font-bold text-slate-900 dark:text-white"
+                  >
+                    {canManageAppointments && (
+                      <>
+                        <option value="appointment">{isArabic ? 'جلسة عيادة عادية' : 'Clinic Session'}</option>
+                        <option value="package">{isArabic ? 'باقة تأهيلية' : 'Therapy Package'}</option>
+                      </>
+                    )}
+                    {(canManageAppointments || canManageCourses) && (
+                      <option value="course">{isArabic ? 'تسجيل دورة تدريبية' : 'Training Course'}</option>
+                    )}
+                    {canManageAppointments && (
+                      <>
+                        <option value="shadow_teacher">{isArabic ? 'طلب خدمة معلم ظل' : 'Shadow Teacher Application'}</option>
+                        <option value="national_day_offer">{isArabic ? 'طلب عرض اليوم الوطني' : 'National Day Offer'}</option>
+                        <option value="quick_consultation">{isArabic ? 'طلب استشارة واتصال هاتفي' : 'Phone Callback Consultation'}</option>
+                        <option value="store_order">{isArabic ? 'طلب من متجر رابا' : 'Store Rehab Tools Order'}</option>
+                      </>
+                    )}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-slate-600 dark:text-slate-400 mb-1 font-semibold">
+                    {isArabic ? 'الفرع الموجه له الطلب:' : 'Assigned Branch:'}
+                  </label>
+                  <select
+                    value={manualBranchId}
+                    onChange={(e) => setManualBranchId(e.target.value)}
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 outline-none cursor-pointer font-bold text-slate-900 dark:text-white"
+                  >
+                    {!isBranchScoped && (
+                      <option value="">{isArabic ? '— عام / غير محدد بفرع —' : '— General / Unspecified —'}</option>
+                    )}
+                    {allowedBranches.map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {isArabic ? `${b.cityNameAr} - ${getCleanBranchDisplayName(b, true)}` : `${b.cityNameEn} - ${getCleanBranchDisplayName(b, false)}`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               {/* Child Info */}

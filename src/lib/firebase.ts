@@ -124,3 +124,58 @@ export async function getLazyDb(): Promise<Firestore> {
   return _dbPromise;
 }
 
+/**
+ * Creates or links a staff member's Firebase Auth Email/Password account using a temporary
+ * secondary Firebase App instance so the Super Admin's primary Auth session is never interrupted.
+ */
+export async function provisionStaffFirebaseAccount(
+  email: string,
+  password: string
+): Promise<{ uid?: string; error?: string }> {
+  const cleanEmail = email.trim().toLowerCase();
+  const cleanPassword = password.trim();
+
+  if (!cleanEmail || !cleanEmail.includes('@')) {
+    return { error: 'Invalid email address' };
+  }
+  if (cleanPassword.length < 6) {
+    return { error: 'Firebase password must be at least 6 characters' };
+  }
+
+  const { deleteApp } = await import('firebase/app');
+  const {
+    initializeAuth,
+    inMemoryPersistence,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut
+  } = await import('firebase/auth');
+
+  const secondaryAppName = `raba-staff-prov-${Date.now()}`;
+  const secondaryApp = initializeApp(firebaseConfig, secondaryAppName);
+  const secondaryAuth = initializeAuth(secondaryApp, {
+    persistence: inMemoryPersistence
+  });
+
+  try {
+    try {
+      const cred = await createUserWithEmailAndPassword(secondaryAuth, cleanEmail, cleanPassword);
+      return { uid: cred.user.uid };
+    } catch (createErr: any) {
+      if (createErr?.code === 'auth/email-already-in-use') {
+        try {
+          const existingCred = await signInWithEmailAndPassword(secondaryAuth, cleanEmail, cleanPassword);
+          return { uid: existingCred.user.uid };
+        } catch (signInErr: any) {
+          return {
+            error: signInErr?.code || 'email-already-in-use-different-password'
+          };
+        }
+      }
+      return { error: createErr?.code || createErr?.message || 'provision-failed' };
+    }
+  } finally {
+    await signOut(secondaryAuth).catch(() => {});
+    await deleteApp(secondaryApp).catch(() => {});
+  }
+}

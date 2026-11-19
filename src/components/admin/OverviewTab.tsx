@@ -16,6 +16,7 @@ import {
   Star
 } from 'lucide-react';
 import { Appointment, AdminUser, PermissionId, ParentReview } from '../../types';
+import { getCleanBranchDisplayName, getUserAssignedBranchItems, isUserBranchScoped } from '../../utils/branchPermissions';
 import { useLanguage } from '../../context/LanguageContext';
 
 interface OverviewTabProps {
@@ -79,6 +80,16 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
                 ? `أنت مسجل كـ (${safeCurrentUser.roleTitleAr || 'إدارة'}) - قسم ${safeCurrentUser.department || 'الإدارة'}. لديك صلاحيات للتحكم بالمنظومة.` 
                 : `Logged in as (${safeCurrentUser.roleTitleEn || 'Admin'}) - ${safeCurrentUser.department || 'Operations'}.`}
             </p>
+            {isUserBranchScoped(currentUser) && (
+              <div className="inline-flex flex-wrap items-center gap-1.5 mt-2 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-[11px] font-bold text-emerald-100">
+                <span>{isArabic ? 'نطاق فروع الحجوزات المخصص لك:' : 'Assigned Branches:'}</span>
+                <span>
+                  {getUserAssignedBranchItems(currentUser)
+                    .map((b) => getCleanBranchDisplayName(b, isArabic))
+                    .join('، ') || (isArabic ? 'غير محدد' : 'None')}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Quick Actions in Banner */}
