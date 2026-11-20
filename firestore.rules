@@ -34,7 +34,7 @@ service cloud.firestore {
     function isCenterStaffEmail() {
       return ('email' in request.auth.token)
         && request.auth.token.email is string
-        && request.auth.token.email.matches('^[a-zA-Z0-9._%+\\-]+@raba\\.sa$');
+        && request.auth.token.email.matches('^[a-zA-Z0-9._%+\\-]+@(rabacenters\\.com|raba\\.sa)$');
     }
 
     function isSuspendedAdmin(uid) {
@@ -55,7 +55,7 @@ service cloud.firestore {
         (exists(/databases/$(database)/documents/admins/$(request.auth.uid))
           && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'super_admin')
         || isPrimaryVerifiedAdmin()
-        || (('email' in request.auth.token) && request.auth.token.email == 'admin@raba.sa' && !exists(/databases/$(database)/documents/clients/$(request.auth.uid)))
+        || (('email' in request.auth.token) && request.auth.token.email in ['admin@rabacenters.com', 'admin@raba.sa'] && !exists(/databases/$(database)/documents/clients/$(request.auth.uid)))
       );
     }
 

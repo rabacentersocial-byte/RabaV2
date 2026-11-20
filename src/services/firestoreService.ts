@@ -89,7 +89,7 @@ function deriveAdminFirebaseEmail(adminUser: AdminUser): string {
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9._-]/g, '');
-  return `${safeUsername || 'admin'}@raba.sa`;
+  return `${safeUsername || 'admin'}@rabacenters.com`;
 }
 
 function buildAdminPasswordCandidates(adminUser: AdminUser, plainPassword?: string): string[] {
@@ -498,8 +498,8 @@ export async function verifyIsFirebaseAdmin(
       return data?.status !== 'suspended';
     }
 
-    // Recognize center staff emails (@raba.sa) aligned with firestore.rules isCenterStaffEmail()
-    if (/^[a-z0-9._%+-]+@raba\.sa$/.test(emailLower)) {
+    // Recognize center staff emails (@rabacenters.com / @raba.sa) aligned with firestore.rules isCenterStaffEmail()
+    if (/^[a-z0-9._%+-]+@(rabacenters\.com|raba\.sa)$/.test(emailLower)) {
       return true;
     }
 
