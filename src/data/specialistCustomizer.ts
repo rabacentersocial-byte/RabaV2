@@ -2282,9 +2282,10 @@ export function getSpecialistImageSetting(
  * known aliases, or normalized Arabic name matching.
  */
 export function findCustomSettingForDoctor(
-  doctorOrSpecialist: { id: string; name?: string; arabicName?: string }
+  doctorOrSpecialist: { id: string; name?: string; arabicName?: string },
+  settingsMap?: Record<string, SpecialistImageSetting>
 ): SpecialistImageSetting | null {
-  const all = getStoredSpecialistSettings();
+  const all = settingsMap ?? getStoredSpecialistSettings();
   const id = doctorOrSpecialist.id;
 
   if (all[id]) return all[id];

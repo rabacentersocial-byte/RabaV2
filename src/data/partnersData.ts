@@ -25,6 +25,7 @@ export interface PartnerItem {
   description?: string;
   descriptionEn?: string;
   isActive?: boolean;
+  order?: number;
 }
 
 export interface PartnersSliderSettings {
@@ -592,22 +593,16 @@ export function getStoredPartners(): PartnerItem[] {
       }));
     }
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed) || parsed.length === 0) {
+    if (!Array.isArray(parsed)) {
       return DEFAULT_PARTNERS.map(p => ({
         ...p,
         logoUrl: BUNDLED_PARTNER_LOGOS[p.id] || p.logoUrl
       }));
     }
-    // If old list with obsolete nafea / unsplash or uncustomized moi exists, migrate to customized 21 partners
-    const hasOldNafea = parsed.some((p: PartnerItem) => p.id === 'partner-nafea');
-    const hasUncustomizedMoi = parsed.some((p: PartnerItem) => p.id === 'partner-moi' && p.logoUrl === '/images/partners/moi.svg');
-    if (hasOldNafea || parsed.length < 15 || hasUncustomizedMoi) {
-      return DEFAULT_PARTNERS.map(p => ({
-        ...p,
-        logoUrl: BUNDLED_PARTNER_LOGOS[p.id] || p.logoUrl
-      }));
+    if (parsed.length === 0) {
+      return [];
     }
-    // Automatically sanitize and guarantee bundled inlined logos in incognito and offline mode
+    // Automatically sanitize and guarantee bundled inlined logos only when no custom logoUrl is saved
     let modified = false;
     const sanitized = parsed.map((p: PartnerItem) => {
       const bundled = BUNDLED_PARTNER_LOGOS[p.id];
@@ -624,7 +619,7 @@ export function getStoredPartners(): PartnerItem[] {
       }
       return {
         ...p,
-        logoUrl: bundled || p.logoUrl || `/images/partners/${p.id}_custom.webp`
+        logoUrl: p.logoUrl || bundled || `/images/partners/${p.id}_custom.webp`
       };
     });
     if (modified) {

@@ -20,8 +20,9 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { SERVICES, THERAPY_PACKAGES, TIME_SLOTS } from '../data/mockData';
-import { getStoredBranchesData, BranchItem } from '../data/branchesData';
+import { BRANCHES_DATA, BranchItem } from '../data/branchesData';
 import { Specialist, ServiceItem, TherapyPackage, Appointment } from '../types';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 import {
   generateRequestReference,
   saveAndBroadcastCustomerRequestAsync,
@@ -53,17 +54,24 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
 }) => {
   const { isArabic, direction } = useLanguage();
   const { user, clientProfile } = useAuth();
+  const live = useLiveDataOptional();
+
+  const activeLiveServices = (live?.services || []).filter((s) => s.active !== false && s.isActive !== false);
+  const activeLivePackages = (live?.packages || []).filter((p) => p.active !== false && p.isActive !== false);
+
+  const servicesList = activeLiveServices.length ? activeLiveServices : (live?.isAuthoritativeServices ? [] : SERVICES);
+  const packagesList = activeLivePackages.length ? activeLivePackages : (live?.isAuthoritativePackages ? [] : THERAPY_PACKAGES);
+  const branchesList: BranchItem[] = live?.branches?.length ? live.branches : BRANCHES_DATA;
 
   const [bookingType, setBookingType] = useState<'service' | 'package'>(
     initialPackage ? 'package' : 'service'
   );
   const [selectedServiceId, setSelectedServiceId] = useState<string>(
-    initialService?.id || SERVICES[0].id
+    initialService?.id || servicesList[0]?.id || SERVICES[0].id
   );
   const [selectedPackageId, setSelectedPackageId] = useState<string>(
-    initialPackage?.id || THERAPY_PACKAGES[0].id
+    initialPackage?.id || packagesList[0]?.id || THERAPY_PACKAGES[0].id
   );
-  const [branchesList, setBranchesList] = useState<BranchItem[]>(() => getStoredBranchesData());
 
   const availableCities = useMemo(() => {
     const map = new Map<string, { key: string; labelAr: string; labelEn: string }>();
@@ -80,8 +88,7 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
   }, [branchesList]);
 
   const [selectedCity, setSelectedCity] = useState<string>(() => {
-    const initialBranches = getStoredBranchesData();
-    return initialBranches[0]?.city || 'riyadh';
+    return branchesList[0]?.city || 'riyadh';
   });
 
   const branchesInCity = useMemo(
@@ -90,22 +97,9 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
   );
 
   const [selectedBranchId, setSelectedBranchId] = useState<string>(() => {
-    const initialBranches = getStoredBranchesData();
-    const defaultCity = initialBranches[0]?.city || 'riyadh';
-    return initialBranches.find((b) => b.city === defaultCity)?.id || '';
+    const defaultCity = branchesList[0]?.city || 'riyadh';
+    return branchesList.find((b) => b.city === defaultCity)?.id || '';
   });
-
-  useEffect(() => {
-    const handleBranchesSync = () => {
-      setBranchesList(getStoredBranchesData());
-    };
-    window.addEventListener('raba_branches_updated', handleBranchesSync);
-    window.addEventListener('raba_persistent_sync_ready' as any, handleBranchesSync);
-    return () => {
-      window.removeEventListener('raba_branches_updated', handleBranchesSync);
-      window.removeEventListener('raba_persistent_sync_ready' as any, handleBranchesSync);
-    };
-  }, []);
 
   useEffect(() => {
     if (branchesInCity.length > 0 && !branchesInCity.some((b) => b.id === selectedBranchId)) {
@@ -171,8 +165,8 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
     }
   };
 
-  const activeService = SERVICES.find((s) => s.id === selectedServiceId) || SERVICES[0];
-  const activePackage = THERAPY_PACKAGES.find((p) => p.id === selectedPackageId) || THERAPY_PACKAGES[0];
+  const activeService = servicesList.find((s) => s.id === selectedServiceId) || servicesList[0];
+  const activePackage = packagesList.find((p) => p.id === selectedPackageId) || packagesList[0];
   const activeCityObj = availableCities.find((c) => c.key === selectedCity) || availableCities[0];
   const activeBranchObj = branchesInCity.find((b) => b.id === selectedBranchId) || branchesInCity[0];
 
@@ -458,7 +452,7 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
                       onChange={(e) => setSelectedServiceId(e.target.value)}
                       className="w-full h-11 bg-white/80 dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-3.5 text-sm text-[#161B26] dark:text-white outline-none focus:border-[#2B95FF]"
                     >
-                      {SERVICES.map((srv) => (
+                      {servicesList.map((srv) => (
                         <option key={srv.id} value={srv.id}>
                           {!isArabic && srv.titleEn ? srv.titleEn : srv.title}
                         </option>
@@ -471,7 +465,7 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
                       onChange={(e) => setSelectedPackageId(e.target.value)}
                       className="w-full h-11 bg-white/80 dark:bg-slate-900 border border-slate-200 dark:border-white/15 rounded-xl px-3.5 text-sm text-[#161B26] dark:text-white outline-none focus:border-[#2B95FF]"
                     >
-                      {THERAPY_PACKAGES.map((pkg) => (
+                      {packagesList.map((pkg) => (
                         <option key={pkg.id} value={pkg.id}>
                           {!isArabic && pkg.nameEn ? pkg.nameEn : pkg.name}
                         </option>

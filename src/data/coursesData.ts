@@ -945,12 +945,9 @@ export function getStoredCoursesData(): CourseItem[] {
     const raw = localStorage.getItem(STORAGE_COURSES_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
+      if (Array.isArray(parsed)) {
         const cleaned = parsed.filter((p: any) => p && typeof p.id === 'string');
-        const existingIds = new Set(cleaned.map((p: any) => p.id));
-        const missing = COURSES_DATA.filter(c => !existingIds.has(c.id));
-        const combined = [...cleaned, ...missing];
-        return sortCoursesForDisplay(combined.map(enrichItem));
+        return sortCoursesForDisplay(cleaned.map(enrichItem));
       }
     }
     return sortCoursesForDisplay(COURSES_DATA.map(enrichItem));

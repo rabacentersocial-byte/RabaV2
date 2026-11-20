@@ -91,15 +91,9 @@ import {
   TherapyPackage, 
   Appointment, 
   NotificationItem,
-  ParentReview,
   AdminUser
 } from './types';
-import { 
-  getStoredThemeSettings, 
-  applyGlobalTheme, 
-  getStoredModulesVisibility, 
-  SiteModulesVisibility 
-} from './data/siteCustomizer';
+import { useLiveData } from './context/LiveDataContext';
 
 const readInitialAdminSession = (): AdminUser | null => {
   if (typeof window === 'undefined') return null;
@@ -153,8 +147,8 @@ const getInitialRoutePath = (): string => {
 };
 
 export default function App() {
-  // Modules Visibility & Theme Control
-  const [modules, setModules] = useState<SiteModulesVisibility>(() => getStoredModulesVisibility());
+  // Real-time Firestore state from centralized LiveDataContext
+  const { modules, specialists, testimonials, blogPosts, trackingPixels, loadingSettings } = useLiveData();
 
   // Safe, Smooth Background Hydration: Instant Hero paint on '/', immediate hydration on all sub-routes & crawlers
   const [isReadyToHydrate, setIsReadyToHydrate] = useState<boolean>(() => {
@@ -174,8 +168,6 @@ export default function App() {
   });
 
   useEffect(() => {
-    // Apply saved theme colors on startup
-    applyGlobalTheme(getStoredThemeSettings());
 
     // Schedule hydration during browser idle time or right after initial paint
     let idleId: number | any;
@@ -272,18 +264,6 @@ export default function App() {
       (window as any).dismissSplash();
     }
 
-    const handleThemeUpdate = () => applyGlobalTheme(getStoredThemeSettings());
-    const handleModulesUpdate = () => {
-      const next = getStoredModulesVisibility();
-      setModules((prev) => {
-        if (JSON.stringify(prev) === JSON.stringify(next)) return prev;
-        return next;
-      });
-    };
-
-    window.addEventListener('raba_theme_updated', handleThemeUpdate);
-    window.addEventListener('raba_modules_updated', handleModulesUpdate);
-
     const handleNewRequest = (e: any) => {
       const req = e?.detail as Appointment;
       if (req) {
@@ -300,36 +280,6 @@ export default function App() {
       }
     };
 
-    window.addEventListener(DISPATCH_REQUEST_EVENT, handleNewRequest);
-    window.addEventListener('raba_notifications_updated', handleNotifsUpdate);
-
-    const handleSpecialistsUpdate = (e: any) => {
-      if (Array.isArray(e?.detail)) {
-        const next = e.detail;
-        setSpecialists((prev) => {
-          if (JSON.stringify(prev) === JSON.stringify(next)) {
-            return prev;
-          }
-          return next;
-        });
-      } else {
-        try {
-          const saved = localStorage.getItem('raba_specialists');
-          if (saved !== null) {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed)) {
-              setSpecialists((prev) => {
-                if (JSON.stringify(prev) === JSON.stringify(parsed)) {
-                  return prev;
-                }
-                return parsed;
-              });
-            }
-          }
-        } catch { /* ignore */ }
-      }
-    };
-
     const handleAppointmentsUpdate = (e: any) => {
       if (Array.isArray(e?.detail)) {
         const next = e.detail;
@@ -340,74 +290,28 @@ export default function App() {
       }
     };
 
-    const handleSyncReady = () => {
-      // Re-read theme and modules
-      applyGlobalTheme(getStoredThemeSettings());
-      const nextMods = getStoredModulesVisibility();
-      setModules((prev) => {
-        if (JSON.stringify(prev) === JSON.stringify(nextMods)) return prev;
-        return nextMods;
-      });
-
-      // Re-read specialists gracefully without overwriting user additions/deletions/edits
-      try {
-        const savedSpec = localStorage.getItem('raba_specialists');
-        if (savedSpec !== null) {
-          const parsed = JSON.parse(savedSpec);
-          if (Array.isArray(parsed)) {
-            const isAlreadyMigrated = localStorage.getItem('raba_specialists_v2_migrated') === '1';
-            const hasObsoleteLegacyMocks = !isAlreadyMigrated && parsed.some((s: any) =>
-              s?.id === 'spec-rawan-tablett' ||
-              s?.id === 'spec-hossam-malki' ||
-              (s?.id === 'spec-sara-abdelhamid' && typeof s?.name === 'string' && s.name.includes('يارا'))
-            );
-
-            if (hasObsoleteLegacyMocks) {
-              import('./data/mockData').then(({ SPECIALISTS }) => {
-                localStorage.setItem('raba_specialists_v2_migrated', '1');
-                setSpecialists((prev) => (JSON.stringify(prev) === JSON.stringify(SPECIALISTS) ? prev : SPECIALISTS));
-              }).catch(() => {});
-            } else {
-              if (!isAlreadyMigrated && parsed.length > 0) {
-                localStorage.setItem('raba_specialists_v2_migrated', '1');
-              }
-              setSpecialists((prev) => (JSON.stringify(prev) === JSON.stringify(parsed) ? prev : parsed));
-            }
-          }
-        }
-      } catch { /* ignore */ }
-
-      // Re-read appointments gracefully
-      try {
-        const savedAppt = localStorage.getItem('raba_appointments');
-        if (savedAppt) {
-          const parsed = JSON.parse(savedAppt);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setAppointments((prev) => {
-              if (prev.length === parsed.length && prev.every((a, i) => a.id === parsed[i].id)) return prev;
-              return parsed;
-            });
-          }
-        }
-      } catch { /* ignore */ }
-    };
-
-    window.addEventListener('raba_specialists_updated', handleSpecialistsUpdate);
+    window.addEventListener(DISPATCH_REQUEST_EVENT, handleNewRequest);
+    window.addEventListener('raba_notifications_updated', handleNotifsUpdate);
     window.addEventListener('raba_appointments_updated', handleAppointmentsUpdate);
-    window.addEventListener('raba_persistent_sync_ready', handleSyncReady);
 
     return () => {
-      window.removeEventListener('raba_theme_updated', handleThemeUpdate);
-      window.removeEventListener('raba_modules_updated', handleModulesUpdate);
       window.removeEventListener(DISPATCH_REQUEST_EVENT, handleNewRequest);
       window.removeEventListener('raba_notifications_updated', handleNotifsUpdate);
-      window.removeEventListener('raba_specialists_updated', handleSpecialistsUpdate);
       window.removeEventListener('raba_appointments_updated', handleAppointmentsUpdate);
-      window.removeEventListener('raba_persistent_sync_ready', handleSyncReady);
       cleanupPixels();
       cleanupBelowFold();
     };
   }, []);
+
+  // Reactive live tracking pixels update whenever Firestore site_settings pushes changes
+  useEffect(() => {
+    if (loadingSettings) return;
+    import('./utils/trackingPixels')
+      .then(({ applyTrackingPixels }) => {
+        applyTrackingPixels(trackingPixels);
+      })
+      .catch(() => {});
+  }, [loadingSettings, trackingPixels]);
 
   const didHydrateDefaultsRef = useRef(false);
 
@@ -439,35 +343,7 @@ export default function App() {
     }
   });
 
-  const [testimonials, setTestimonials] = useState<ParentReview[]>(() => {
-    try {
-      const saved = localStorage.getItem('raba_testimonials_v7');
-      const parsed = saved ? JSON.parse(saved) : [];
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
-  });
-
-  const [specialists, setSpecialists] = useState<Specialist[]>(() => {
-    try {
-      const saved = localStorage.getItem('raba_specialists');
-      const parsed = saved ? JSON.parse(saved) : [];
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
-  });
-
-  // Save to localStorage (only when hydrated or non-empty so empty defaults don't overwrite cache pre-hydration)
-  useEffect(() => {
-    if (!didHydrateDefaultsRef.current && specialists.length === 0) return;
-    try {
-      localStorage.setItem('raba_specialists', JSON.stringify(specialists));
-    } catch {
-      // ignore
-    }
-  }, [specialists]);
+  // Save appointments & notifications to localStorage
   useEffect(() => {
     if (!didHydrateDefaultsRef.current && appointments.length === 0) return;
     try {
@@ -485,15 +361,6 @@ export default function App() {
       // ignore
     }
   }, [notifications]);
-
-  useEffect(() => {
-    if (!didHydrateDefaultsRef.current && testimonials.length === 0) return;
-    try {
-      localStorage.setItem('raba_testimonials_v7', JSON.stringify(testimonials));
-    } catch {
-      // ignore
-    }
-  }, [testimonials]);
 
   // Modal states
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -635,7 +502,7 @@ export default function App() {
     }
   }, []);
 
-  // Lazy-hydrate fallback mockData & specialist deduplication after Hero render / on interactive demand
+  // Lazy-hydrate appointments/notifications defaults after Hero render / on interactive demand
   useEffect(() => {
     if (didHydrateDefaultsRef.current) return;
     if (!isReadyToHydrate && !isAdminOpen && !isSpecialistsPageOpen && !isNotificationsOpen && !isBookingOpen) {
@@ -644,70 +511,26 @@ export default function App() {
     didHydrateDefaultsRef.current = true;
     let cancelled = false;
 
-    Promise.all([
-      import('./data/mockData'),
-      import('./utils/specialistDeduplication')
-    ]).then(([mock, dedup]) => {
-      if (cancelled) return;
-      const {
-        INITIAL_APPOINTMENTS,
-        INITIAL_NOTIFICATIONS,
-        PARENT_REVIEWS,
-        SPECIALISTS
-      } = mock;
-      const { deduplicateSpecialists } = dedup;
+    import('./data/mockData')
+      .then((mock) => {
+        if (cancelled) return;
+        const { INITIAL_APPOINTMENTS, INITIAL_NOTIFICATIONS } = mock;
 
-      if (!isAdminOpen) {
-        setAppointments((prev) => {
-          if (prev.length > 0) return prev;
-          const seen = new Set<string>();
-          return INITIAL_APPOINTMENTS.filter((item) => {
-            if (!item || !item.id || seen.has(item.id)) return false;
-            seen.add(item.id);
-            return true;
+        if (!isAdminOpen) {
+          setAppointments((prev) => {
+            if (prev.length > 0) return prev;
+            const seen = new Set<string>();
+            return INITIAL_APPOINTMENTS.filter((item) => {
+              if (!item || !item.id || seen.has(item.id)) return false;
+              seen.add(item.id);
+              return true;
+            });
           });
-        });
-      }
-
-      setNotifications((prev) => (prev.length > 0 ? prev : INITIAL_NOTIFICATIONS));
-      setTestimonials((prev) => (prev.length > 0 ? prev : PARENT_REVIEWS));
-      setSpecialists((prev) => {
-        const hasStoredKey = (() => {
-          try {
-            return localStorage.getItem('raba_specialists') !== null;
-          } catch {
-            return false;
-          }
-        })();
-
-        if ((!prev || prev.length === 0) && !hasStoredKey) {
-          try {
-            localStorage.setItem('raba_specialists_v2_migrated', '1');
-          } catch { /* ignore */ }
-          return deduplicateSpecialists(SPECIALISTS);
         }
 
-        const isAlreadyMigrated = (() => {
-          try {
-            return localStorage.getItem('raba_specialists_v2_migrated') === '1';
-          } catch {
-            return false;
-          }
-        })();
-
-        const hasObsoleteLegacyMocks = !isAlreadyMigrated && prev.some((s: any) =>
-          s?.id === 'spec-rawan-tablett' ||
-          s?.id === 'spec-hossam-malki' ||
-          (s?.id === 'spec-sara-abdelhamid' && typeof s?.name === 'string' && s.name.includes('يارا'))
-        );
-
-        try {
-          localStorage.setItem('raba_specialists_v2_migrated', '1');
-        } catch { /* ignore */ }
-
-        return hasObsoleteLegacyMocks ? deduplicateSpecialists(SPECIALISTS) : deduplicateSpecialists(prev);
-      });
-    }).catch(() => {});
+        setNotifications((prev) => (prev.length > 0 ? prev : INITIAL_NOTIFICATIONS));
+      })
+      .catch(() => {});
 
     return () => {
       cancelled = true;
@@ -830,81 +653,57 @@ export default function App() {
     }
   }, [navigateTo]);
 
-  // Synchronize Document Title, Meta Description, Canonical, OpenGraph & JSON-LD per route
+  // Synchronize Document Title, Meta Description, Canonical, OpenGraph & JSON-LD per route using live blogPosts
   useEffect(() => {
-    let active = true;
-    const applyRouteMetadata = (posts: any[]) => {
-      if (!active || typeof document === 'undefined') return;
-      const seo = resolveRouteSeo(currentPath, posts);
-      document.title = seo.title;
+    if (typeof document === 'undefined') return;
+    const seo = resolveRouteSeo(currentPath, blogPosts);
+    document.title = seo.title;
 
-      const setMetaTag = (selector: string, attr: 'name' | 'property', key: string, content: string) => {
-        let el = document.querySelector(selector) as HTMLMetaElement | null;
-        if (!el) {
-          el = document.createElement('meta');
-          el.setAttribute(attr, key);
-          document.head.appendChild(el);
-        }
-        el.setAttribute('content', content);
-      };
-
-      setMetaTag('meta[name="description"]', 'name', 'description', seo.description);
-      setMetaTag('meta[property="og:url"]', 'property', 'og:url', seo.canonical);
-      setMetaTag('meta[property="og:title"]', 'property', 'og:title', seo.title);
-      setMetaTag('meta[property="og:description"]', 'property', 'og:description', seo.description);
-      setMetaTag('meta[property="og:type"]', 'property', 'og:type', seo.ogType);
-      if (seo.ogImage) {
-        setMetaTag('meta[property="og:image"]', 'property', 'og:image', seo.ogImage);
-        setMetaTag('meta[name="twitter:image"]', 'name', 'twitter:image', seo.ogImage);
+    const setMetaTag = (selector: string, attr: 'name' | 'property', key: string, content: string) => {
+      let el = document.querySelector(selector) as HTMLMetaElement | null;
+      if (!el) {
+        el = document.createElement('meta');
+        el.setAttribute(attr, key);
+        document.head.appendChild(el);
       }
-      setMetaTag('meta[name="twitter:title"]', 'name', 'twitter:title', seo.title);
-      setMetaTag('meta[name="twitter:description"]', 'name', 'twitter:description', seo.description);
-
-      let canonicalEl = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-      if (!canonicalEl) {
-        canonicalEl = document.createElement('link');
-        canonicalEl.setAttribute('rel', 'canonical');
-        document.head.appendChild(canonicalEl);
-      }
-      canonicalEl.setAttribute('href', seo.canonical);
-
-      const lowerRoute = currentPath.toLowerCase();
-      const dynamicJsonLd =
-        lowerRoute.startsWith('/blog/') || lowerRoute.startsWith('/articles/')
-          ? generateBlogPostJsonLd(currentPath, posts).jsonLd
-          : seo.jsonLd;
-
-      let ldEl = document.getElementById('raba-structured-data') as HTMLScriptElement | null;
-      if (!ldEl) {
-        ldEl = document.createElement('script');
-        ldEl.id = 'raba-structured-data';
-        ldEl.type = 'application/ld+json';
-        document.head.appendChild(ldEl);
-      }
-      ldEl.textContent = JSON.stringify(dynamicJsonLd);
+      el.setAttribute('content', content);
     };
 
-    applyRouteMetadata([]);
-    import('./data/blogCustomizer')
-      .then(({ getStoredBlogPosts }) => applyRouteMetadata(getStoredBlogPosts()))
-      .catch(() => {});
+    setMetaTag('meta[name="description"]', 'name', 'description', seo.description);
+    setMetaTag('meta[property="og:url"]', 'property', 'og:url', seo.canonical);
+    setMetaTag('meta[property="og:title"]', 'property', 'og:title', seo.title);
+    setMetaTag('meta[property="og:description"]', 'property', 'og:description', seo.description);
+    setMetaTag('meta[property="og:type"]', 'property', 'og:type', seo.ogType);
+    if (seo.ogImage) {
+      setMetaTag('meta[property="og:image"]', 'property', 'og:image', seo.ogImage);
+      setMetaTag('meta[name="twitter:image"]', 'name', 'twitter:image', seo.ogImage);
+    }
+    setMetaTag('meta[name="twitter:title"]', 'name', 'twitter:title', seo.title);
+    setMetaTag('meta[name="twitter:description"]', 'name', 'twitter:description', seo.description);
 
-    const handlePostsUpdated = (e: any) => {
-      if (Array.isArray(e?.detail)) {
-        applyRouteMetadata(e.detail);
-      } else {
-        import('./data/blogCustomizer')
-          .then(({ getStoredBlogPosts }) => applyRouteMetadata(getStoredBlogPosts()))
-          .catch(() => {});
-      }
-    };
+    let canonicalEl = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!canonicalEl) {
+      canonicalEl = document.createElement('link');
+      canonicalEl.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonicalEl);
+    }
+    canonicalEl.setAttribute('href', seo.canonical);
 
-    window.addEventListener('raba_blog_posts_updated', handlePostsUpdated);
-    return () => {
-      active = false;
-      window.removeEventListener('raba_blog_posts_updated', handlePostsUpdated);
-    };
-  }, [currentPath]);
+    const lowerRoute = currentPath.toLowerCase();
+    const dynamicJsonLd =
+      lowerRoute.startsWith('/blog/') || lowerRoute.startsWith('/articles/')
+        ? generateBlogPostJsonLd(currentPath, blogPosts).jsonLd
+        : seo.jsonLd;
+
+    let ldEl = document.getElementById('raba-structured-data') as HTMLScriptElement | null;
+    if (!ldEl) {
+      ldEl = document.createElement('script');
+      ldEl.id = 'raba-structured-data';
+      ldEl.type = 'application/ld+json';
+      document.head.appendChild(ldEl);
+    }
+    ldEl.textContent = JSON.stringify(dynamicJsonLd);
+  }, [currentPath, blogPosts]);
 
   const handleOpenCourseRegistration = (course: CourseItem) => {
     setSelectedCourseForRegistration(course);
@@ -1124,9 +923,39 @@ export default function App() {
           firebaseAuthEmail={firebaseAdminEmail}
           onRefreshAppointments={fetchCloudAppointments}
           reviews={testimonials}
-          onUpdateReviews={setTestimonials}
+          onUpdateReviews={async (updatedReviews: any) => {
+            try {
+              const [{ syncTestimonialsCollectionToFirestore }, { savePersistentModule }] = await Promise.all([
+                import('./services/firestoreService'),
+                import('./utils/persistentSync')
+              ]);
+              const [colOk, modOk] = await Promise.all([
+                syncTestimonialsCollectionToFirestore(updatedReviews),
+                savePersistentModule('raba_testimonials', updatedReviews)
+              ]);
+              return colOk || modOk;
+            } catch (err) {
+              console.error('[App] Failed to sync reviews:', err);
+              return false;
+            }
+          }}
           specialists={specialists}
-          onUpdateSpecialists={setSpecialists}
+          onUpdateSpecialists={async (updatedSpecialists: Specialist[]) => {
+            try {
+              const [{ syncSpecialistsCollectionToFirestore }, { savePersistentModule }] = await Promise.all([
+                import('./services/firestoreService'),
+                import('./utils/persistentSync')
+              ]);
+              const [colOk, modOk] = await Promise.all([
+                syncSpecialistsCollectionToFirestore(updatedSpecialists),
+                savePersistentModule('raba_specialists', updatedSpecialists)
+              ]);
+              return colOk || modOk;
+            } catch (err) {
+              console.error('[App] Failed to sync specialists:', err);
+              return false;
+            }
+          }}
           onLogout={() => {
             setAdminSession(null);
             setFirebaseAdminUid(null);
@@ -1352,7 +1181,6 @@ export default function App() {
           <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-[#1263D6] dark:text-[#60AFFF] font-bold">جاري تحميل صفحة آراء العملاء...</div>}>
             <TestimonialsDirectoryPage
               testimonials={testimonials}
-              onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
               onBackToHome={handleBackToHome}
               onOpenBooking={handleOpenBooking}
             />
@@ -1484,7 +1312,6 @@ export default function App() {
                   <LazyViewportWrapper sectionId="testimonials" minHeight={620}>
                     <TestimonialsSection
                       testimonials={testimonials}
-                      onAddTestimonial={(newReview) => setTestimonials((prev) => [newReview, ...prev])}
                     />
                   </LazyViewportWrapper>
                 )}

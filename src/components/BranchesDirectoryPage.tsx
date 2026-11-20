@@ -23,9 +23,10 @@ import {
   X,
   CalendarCheck
 } from 'lucide-react';
-import { getStoredBranchesData, BranchItem } from '../data/branchesData';
+import { BRANCHES_DATA, BranchItem } from '../data/branchesData';
 import { BranchMapPinGraphic } from './BranchMapPinGraphic';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 
 const LedClubBadge: React.FC = () => (
   <span 
@@ -50,8 +51,9 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
 }) => {
   const { isArabic } = useLanguage();
 
-  // Branch data state with live sync
-  const [branches, setBranches] = useState<BranchItem[]>(() => getStoredBranchesData());
+  // Branch data state (live from Firestore LiveDataContext)
+  const live = useLiveDataOptional();
+  const branches: BranchItem[] = live?.branches || BRANCHES_DATA;
 
   // Filters state
   const [selectedCity, setSelectedCity] = useState<'all' | 'riyadh' | 'jeddah' | 'khobar' | 'ahsa' | 'kharj'>('all');
@@ -84,20 +86,7 @@ export const BranchesDirectoryPage: React.FC<BranchesDirectoryPageProps> = ({
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
-  // Sync branches data updates
-  useEffect(() => {
-    const handleUpdate = () => {
-      setBranches(getStoredBranchesData());
-    };
-    window.addEventListener('raba_branches_updated', handleUpdate);
-    window.addEventListener('raba_persistent_sync_ready' as any, handleUpdate);
-    window.addEventListener('storage', handleUpdate);
-    return () => {
-      window.removeEventListener('raba_branches_updated', handleUpdate);
-      window.removeEventListener('raba_persistent_sync_ready' as any, handleUpdate);
-      window.removeEventListener('storage', handleUpdate);
-    };
-  }, []);
+
 
   // Filtered branches list
   const filteredBranches = useMemo(() => {

@@ -15,6 +15,7 @@ import {
 import { PARENT_REVIEWS, SPECIALISTS } from '../data/mockData';
 import { ParentReview, Specialist } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 
 interface TestimonialsSectionProps {
   testimonials?: ParentReview[];
@@ -31,10 +32,26 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
 }) => {
   const HeadingTag = headingTag;
   const { isArabic, direction } = useLanguage();
+  const live = useLiveDataOptional();
 
-  const [reviewsList, setReviewsList] = useState<ParentReview[]>(
-    propTestimonials || PARENT_REVIEWS
-  );
+  const rawReviews: ParentReview[] =
+    propTestimonials !== undefined
+      ? propTestimonials
+      : live
+      ? (live.loadingTestimonials || live.loadingSettings
+          ? []
+          : live.isAuthoritativeTestimonials
+          ? live.testimonials
+          : live.testimonials.length > 0
+          ? live.testimonials
+          : PARENT_REVIEWS)
+      : PARENT_REVIEWS;
+  const reviewsList: ParentReview[] = rawReviews.filter((r) => r.active !== false && r.isActive !== false);
+  const liveSpecialists: Specialist[] =
+    live?.specialists && live.specialists.length > 0
+      ? live.specialists.filter((s) => s.active !== false && s.isActive !== false)
+      : SPECIALISTS;
+
   const [filterTopic, setFilterTopic] = useState<string>('all');
   const [layoutMode, setLayoutMode] = useState<'slider' | 'grid'>(defaultLayout);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -48,19 +65,6 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('sensory');
-  const [liveSpecialists, setLiveSpecialists] = useState<Specialist[]>(() => {
-    try {
-      const saved = localStorage.getItem('raba_specialists');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch {
-      // ignore
-    }
-    return SPECIALISTS;
-  });
-
   const [specialistName, setSpecialistName] = useState(() => liveSpecialists[0]?.name || SPECIALISTS[0].name);
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState(false);
@@ -71,32 +75,11 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
   const scrollLeftRef = useRef(0);
   const containerOffsetLeftRef = useRef(0);
 
-  // Synchronize live specialists updates
   useEffect(() => {
-    const syncSpecs = () => {
-      try {
-        const saved = localStorage.getItem('raba_specialists');
-        if (!saved) return;
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) setLiveSpecialists(parsed);
-      } catch {
-        // ignore
-      }
-    };
-    window.addEventListener('raba_specialists_updated', syncSpecs);
-    window.addEventListener('raba_persistent_sync_ready', syncSpecs);
-    return () => {
-      window.removeEventListener('raba_specialists_updated', syncSpecs);
-      window.removeEventListener('raba_persistent_sync_ready', syncSpecs);
-    };
-  }, []);
-
-  // Synchronize prop updates
-  useEffect(() => {
-    if (propTestimonials) {
-      setReviewsList(propTestimonials);
+    if (liveSpecialists.length > 0 && !liveSpecialists.some((s) => s.name === specialistName)) {
+      setSpecialistName(liveSpecialists[0].name);
     }
-  }, [propTestimonials]);
+  }, [liveSpecialists, specialistName]);
 
   const presetAvatars = [
     { label: isArabic ? 'أم 1' : 'Mother 1', url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80' },
@@ -236,8 +219,6 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
 
       if (propOnAdd) {
         propOnAdd(newReview);
-      } else {
-        setReviewsList((prev) => [newReview, ...prev]);
       }
 
       try {

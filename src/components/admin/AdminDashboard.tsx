@@ -52,7 +52,13 @@ import {
   getUserAssignedBranchItems,
   isUserBranchScoped
 } from '../../utils/branchPermissions';
+import {
+  syncPackagesCollectionToFirestore,
+  syncServicesCollectionToFirestore,
+  syncSpecialistsCollectionToFirestore
+} from '../../services/firestoreService';
 import { useLanguage } from '../../context/LanguageContext';
+import { useLiveDataOptional } from '../../context/LiveDataContext';
 import { useTheme } from '../../context/ThemeContext';
 import { AnimatedBackground } from '../AnimatedBackground';
 import { RabaLogo } from '../RabaLogo';
@@ -166,18 +172,46 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     };
   }, []);
 
-  // Services, Packages, Specialists
-  const [servicesList, setServicesList] = useState<ServiceItem[]>(() => getStoredServices());
-  const [packagesList, setPackagesList] = useState<TherapyPackage[]>(() => getStoredPackages());
+  const live = useLiveDataOptional();
+
+  // Services, Packages, Specialists (live-hydrated from Firestore when available)
+  const [servicesList, setServicesList] = useState<ServiceItem[]>(() =>
+    live && !live.loadingServices && !live.loadingSettings && (live.isAuthoritativeServices || live.services.length > 0)
+      ? live.services
+      : getStoredServices()
+  );
+  const [packagesList, setPackagesList] = useState<TherapyPackage[]>(() =>
+    live && !live.loadingPackages && !live.loadingSettings && (live.isAuthoritativePackages || live.packages.length > 0)
+      ? live.packages
+      : getStoredPackages()
+  );
+
+  useEffect(() => {
+    if (live && !live.loadingServices && !live.loadingSettings) {
+      if (live.isAuthoritativeServices || live.services.length > 0) {
+        setServicesList((prev) => (JSON.stringify(prev) === JSON.stringify(live.services) ? prev : live.services));
+      }
+    }
+  }, [live?.loadingServices, live?.loadingSettings, live?.isAuthoritativeServices, live?.services]);
+
+  useEffect(() => {
+    if (live && !live.loadingPackages && !live.loadingSettings) {
+      if (live.isAuthoritativePackages || live.packages.length > 0) {
+        setPackagesList((prev) => (JSON.stringify(prev) === JSON.stringify(live.packages) ? prev : live.packages));
+      }
+    }
+  }, [live?.loadingPackages, live?.loadingSettings, live?.isAuthoritativePackages, live?.packages]);
 
   const handleUpdateServices = (updated: ServiceItem[]) => {
     setServicesList(updated);
     saveStoredServices(updated);
+    void syncServicesCollectionToFirestore(updated);
   };
 
   const handleUpdatePackages = (updated: TherapyPackage[]) => {
     setPackagesList(updated);
     saveStoredPackages(updated);
+    void syncPackagesCollectionToFirestore(updated);
   };
   const [specialistsList, setSpecialistsList] = useState<Specialist[]>(() => {
     if (specialists && specialists.length >= 0) return specialists;
@@ -246,11 +280,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     } catch {
       // ignore
     }
-    if (onUpdateSpecialists) {
-      onUpdateSpecialists(updated);
-    }
     try {
-      return await savePersistentModule('raba_specialists', updated);
+      const [parentResult, colSaved, modSaved] = await Promise.all([
+        onUpdateSpecialists ? Promise.resolve(onUpdateSpecialists(updated)) : Promise.resolve(false),
+        syncSpecialistsCollectionToFirestore(updated),
+        savePersistentModule('raba_specialists', updated),
+      ]);
+      return Boolean(parentResult) || colSaved || modSaved;
     } catch (err) {
       console.error('[AdminDashboard] Failed to persist specialists update:', err);
       return false;
@@ -953,6 +989,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 onUpdateServices={handleUpdateServices}
                 onUpdatePackages={handleUpdatePackages}
                 hasPermission={hasPermission}
+                isSystemAdmin={currentUser?.role === 'super_admin' && currentUser?.status !== 'suspended'}
               />
             )}
 

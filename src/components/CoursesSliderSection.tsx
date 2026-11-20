@@ -8,14 +8,15 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { 
-  getStoredCoursesData, 
-  getStoredCoursesSettings, 
+  COURSES_DATA,
+  DEFAULT_COURSES_SETTINGS,
   getCourseNumericPrice,
   sortCoursesForDisplay,
   CourseItem, 
   CoursesSectionSettings 
 } from '../data/coursesData';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 import { CourseDetailsModal } from './CourseDetailsModal';
 import { CourseCustomIcon } from './CourseCustomIcon';
 import { getCourseLogoTheme } from '../utils/courseLogoThemes';
@@ -26,8 +27,17 @@ interface CoursesSliderSectionProps {
 
 export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRegisterCourse }) => {
   const { isArabic } = useLanguage();
-  const [courses, setCourses] = useState<CourseItem[]>(() => getStoredCoursesData());
-  const [sectionSettings, setSectionSettings] = useState<CoursesSectionSettings>(() => getStoredCoursesSettings());
+  const live = useLiveDataOptional();
+  const courses: CourseItem[] = live
+    ? (live.loadingCourses || live.loadingSettings
+        ? []
+        : live.isAuthoritativeCourses
+        ? live.courses
+        : live.courses.length > 0
+        ? live.courses
+        : COURSES_DATA)
+    : COURSES_DATA;
+  const sectionSettings: CoursesSectionSettings = live?.coursesSettings || DEFAULT_COURSES_SETTINGS;
   
   // Selected course for details modal
   const [selectedCourseForDetails, setSelectedCourseForDetails] = useState<CourseItem | null>(null);
@@ -47,26 +57,6 @@ export const CoursesSliderSection: React.FC<CoursesSliderSectionProps> = ({ onRe
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  // Sync courses and settings if updated in persistent storage
-  useEffect(() => {
-    const handleCoursesUpdate = () => {
-      setCourses(getStoredCoursesData());
-    };
-    const handleSettingsUpdate = () => {
-      setSectionSettings(getStoredCoursesSettings());
-    };
-    window.addEventListener('raba_courses_updated', handleCoursesUpdate);
-    window.addEventListener('raba_courses_settings_updated', handleSettingsUpdate);
-    window.addEventListener('raba_persistent_sync_ready' as any, handleCoursesUpdate);
-    window.addEventListener('storage', handleCoursesUpdate);
-    return () => {
-      window.removeEventListener('raba_courses_updated', handleCoursesUpdate);
-      window.removeEventListener('raba_courses_settings_updated', handleSettingsUpdate);
-      window.removeEventListener('raba_persistent_sync_ready' as any, handleCoursesUpdate);
-      window.removeEventListener('storage', handleCoursesUpdate);
-    };
-  }, []);
 
   const getSlideWidth = () => {
     if (typeof window === 'undefined') return 380;

@@ -1,4 +1,5 @@
 import { TrackingPixelsConfig, DEFAULT_TRACKING_PIXELS } from '../types';
+import { savePersistentModule } from './persistentSync';
 
 export const TRACKING_PIXELS_STORAGE_KEY = 'raba_tracking_pixels';
 
@@ -26,6 +27,7 @@ export function saveStoredTrackingPixels(config: TrackingPixelsConfig): void {
   } catch (err) {
     console.error('Failed to store tracking pixels locally', err);
   }
+  savePersistentModule(TRACKING_PIXELS_STORAGE_KEY, config).catch(() => {});
   window.dispatchEvent(new CustomEvent('raba_tracking_pixels_updated', { detail: config }));
   applyTrackingPixels(config);
 }

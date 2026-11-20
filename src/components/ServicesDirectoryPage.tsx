@@ -30,10 +30,11 @@ import {
   RotateCcw
 } from 'lucide-react';
 import { ServiceItem, TherapyPackage } from '../types';
-import { CourseItem, getStoredCoursesData } from '../data/coursesData';
-import { getStoredServices, getStoredPackages } from '../data/mockData';
+import { COURSES_DATA, CourseItem } from '../data/coursesData';
+import { SERVICES, THERAPY_PACKAGES } from '../data/servicesData';
 import { getServiceSlugById, getServiceSeoBySlug } from '../data/seoRoutes';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 import { CourseCustomIcon } from './CourseCustomIcon';
 import { CourseDetailsModal } from './CourseDetailsModal';
 import { TamaraLogo, EmkanLogo } from './InstallmentLogos';
@@ -57,10 +58,42 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
 }) => {
   const { isArabic } = useLanguage();
 
-  // Data states with persistent sync support
-  const [services, setServices] = useState<ServiceItem[]>(() => getStoredServices());
-  const [courses, setCourses] = useState<CourseItem[]>(() => getStoredCoursesData());
-  const [packages, setPackages] = useState<TherapyPackage[]>(() => getStoredPackages());
+  const live = useLiveDataOptional();
+  const services: ServiceItem[] = useMemo(() => {
+    const raw = live
+      ? (live.loadingServices || live.loadingSettings
+          ? []
+          : live.isAuthoritativeServices
+          ? live.services
+          : live.services.length > 0
+          ? live.services
+          : SERVICES)
+      : SERVICES;
+    return raw.filter((s) => s.active !== false && s.isActive !== false);
+  }, [live]);
+
+  const courses: CourseItem[] = useMemo(() => {
+    if (!live) return COURSES_DATA;
+    if (live.loadingCourses || live.loadingSettings) return [];
+    return live.isAuthoritativeCourses
+      ? live.courses
+      : live.courses.length > 0
+      ? live.courses
+      : COURSES_DATA;
+  }, [live]);
+
+  const packages: TherapyPackage[] = useMemo(() => {
+    const raw = live
+      ? (live.loadingPackages || live.loadingSettings
+          ? []
+          : live.isAuthoritativePackages
+          ? live.packages
+          : live.packages.length > 0
+          ? live.packages
+          : THERAPY_PACKAGES)
+      : THERAPY_PACKAGES;
+    return raw.filter((p) => p.active !== false && p.isActive !== false);
+  }, [live]);
 
   // Modal for course details
   const [selectedCourseForDetails, setSelectedCourseForDetails] = useState<CourseItem | null>(null);
@@ -85,29 +118,6 @@ export const ServicesDirectoryPage: React.FC<ServicesDirectoryPageProps> = ({
       return next;
     });
   };
-
-  // Sync listener
-  useEffect(() => {
-    const handleServicesUpdate = () => setServices(getStoredServices());
-    const handleCoursesUpdate = () => setCourses(getStoredCoursesData());
-    const handlePackagesUpdate = () => setPackages(getStoredPackages());
-
-    window.addEventListener('raba_services_updated', handleServicesUpdate);
-    window.addEventListener('raba_courses_updated', handleCoursesUpdate);
-    window.addEventListener('raba_packages_updated', handlePackagesUpdate);
-    window.addEventListener('raba_persistent_sync_ready', handleServicesUpdate);
-    window.addEventListener('raba_persistent_sync_ready', handleCoursesUpdate);
-    window.addEventListener('raba_persistent_sync_ready', handlePackagesUpdate);
-
-    return () => {
-      window.removeEventListener('raba_services_updated', handleServicesUpdate);
-      window.removeEventListener('raba_courses_updated', handleCoursesUpdate);
-      window.removeEventListener('raba_packages_updated', handlePackagesUpdate);
-      window.removeEventListener('raba_persistent_sync_ready', handleServicesUpdate);
-      window.removeEventListener('raba_persistent_sync_ready', handleCoursesUpdate);
-      window.removeEventListener('raba_persistent_sync_ready', handlePackagesUpdate);
-    };
-  }, []);
 
   // Top Global Search & Tab Filters
   const [activeTab, setActiveTab] = useState<'all' | 'programs' | 'courses' | 'packages'>('all');

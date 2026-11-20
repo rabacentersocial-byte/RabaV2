@@ -18,9 +18,10 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 import { SaudiNationalDayBadge, SaudiFalconGraphic } from './NationalDayVisuals';
 import { OfferData } from '../types';
-import { getStoredOffers } from '../data/offersData';
+import { INITIAL_OFFERS } from '../data/offersData';
 import { getAccessibleAccentColor, getContrastTextForBg } from '../utils/colorContrast';
 
 interface OffersSectionProps {
@@ -38,6 +39,7 @@ interface Countdown {
 export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offers: propOffers }) => {
   const { isArabic } = useLanguage();
   const { theme } = useTheme();
+  const live = useLiveDataOptional();
   const isLight = theme === 'light';
   const sliderRef = useRef<HTMLDivElement>(null);
   const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
@@ -48,28 +50,19 @@ export const OffersSection: React.FC<OffersSectionProps> = ({ onClaimOffer, offe
   const scrollLeftRef = useRef(0);
   const movedDistanceRef = useRef(0);
 
-  // Offers state (syncs with prop or localStorage)
-  const [offersList, setOffersList] = useState<OfferData[]>(() => {
-    return propOffers || getStoredOffers();
-  });
-
-  useEffect(() => {
-    if (propOffers) {
-      setOffersList(propOffers);
-    } else {
-      const handleStorage = () => {
-        setOffersList(getStoredOffers());
-      };
-      window.addEventListener('storage', handleStorage);
-      window.addEventListener('raba_offers_updated', handleStorage);
-      window.addEventListener('raba_persistent_sync_ready', handleStorage);
-      return () => {
-        window.removeEventListener('storage', handleStorage);
-        window.removeEventListener('raba_offers_updated', handleStorage);
-        window.removeEventListener('raba_persistent_sync_ready', handleStorage);
-      };
-    }
-  }, [propOffers]);
+  // Live Offers state from prop or LiveDataContext
+  const offersList: OfferData[] =
+    propOffers !== undefined
+      ? propOffers
+      : live
+      ? (live.loadingOffers || live.loadingSettings
+          ? []
+          : live.isAuthoritativeOffers
+          ? live.offers
+          : live.offers.length > 0
+          ? live.offers
+          : INITIAL_OFFERS)
+      : INITIAL_OFFERS;
 
   // Timers mapped by offer id
   const [countdowns, setCountdowns] = useState<Record<string, Countdown>>({});

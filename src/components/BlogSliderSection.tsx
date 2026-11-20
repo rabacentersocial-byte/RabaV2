@@ -25,8 +25,9 @@ import {
 } from 'lucide-react';
 import { BlogPost, Specialist } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 import { SPECIALISTS } from '../data/mockData';
-import { getStoredBlogPosts } from '../data/blogCustomizer';
+import { BLOG_POSTS } from '../data/blogData';
 
 interface ConcaveArcBlogHandle {
   step: (direction: 1 | -1) => void;
@@ -584,8 +585,17 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
     typeof window !== 'undefined' ? window.matchMedia('(max-width: 767.98px)').matches : false
   );
 
-  // Dynamic Stored Posts
-  const [allPosts, setAllPosts] = useState<BlogPost[]>(() => getStoredBlogPosts());
+  // Live Blog Posts & Specialists from Firestore LiveDataContext
+  const live = useLiveDataOptional();
+  const allPosts: BlogPost[] = live
+    ? (live.loadingBlogPosts || live.loadingSettings
+        ? []
+        : live.isAuthoritativeBlogPosts
+        ? live.blogPosts
+        : live.blogPosts.length > 0
+        ? live.blogPosts
+        : BLOG_POSTS)
+    : BLOG_POSTS;
 
   // Track responsive breakpoint synced identically with Tailwind md: (768px)
   useEffect(() => {
@@ -595,18 +605,6 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
     setIsMobileViewport(mql.matches);
     mql.addEventListener('change', onChange);
     return () => mql.removeEventListener('change', onChange);
-  }, []);
-
-  useEffect(() => {
-    const handleUpdate = () => {
-      setAllPosts(getStoredBlogPosts());
-    };
-    window.addEventListener('raba_blog_posts_updated', handleUpdate);
-    window.addEventListener('raba_persistent_sync_ready', handleUpdate);
-    return () => {
-      window.removeEventListener('raba_blog_posts_updated', handleUpdate);
-      window.removeEventListener('raba_persistent_sync_ready', handleUpdate);
-    };
   }, []);
 
   // Filter posts (memoized to prevent breaking slider animation loop on re-renders)
@@ -679,7 +677,8 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
   const handleAuthorClick = (e: React.MouseEvent, authorId?: string) => {
     e.stopPropagation();
     if (!authorId || !onBookSpecialist) return;
-    const matched = SPECIALISTS.find(s => s.id === authorId);
+    const specsSource = live?.specialists && live.specialists.length > 0 ? live.specialists : SPECIALISTS;
+    const matched = specsSource.find((s) => s.id === authorId);
     if (matched) {
       onBookSpecialist(matched);
     }

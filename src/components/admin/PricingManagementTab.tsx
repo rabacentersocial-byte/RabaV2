@@ -21,15 +21,23 @@ import {
   Clock,
   Zap,
   Save,
-  CreditCard
+  CreditCard,
+  AlertTriangle
 } from 'lucide-react';
 import { TherapyPackage, ServiceItem, Specialist, PermissionId } from '../../types';
 import { CourseItem, getStoredCoursesData, saveStoredCoursesData } from '../../data/coursesData';
 import { getStoredPackages, saveStoredPackages, getStoredServices, saveStoredServices, THERAPY_PACKAGES, SERVICES, SPECIALISTS } from '../../data/mockData';
 import { useLanguage } from '../../context/LanguageContext';
+import { useLiveDataOptional } from '../../context/LiveDataContext';
 import { savePersistentModule } from '../../utils/persistentSync';
 import { getResolvedImageUrl, handleImageErrorWithStore } from '../../utils/persistentImageStore';
-import { saveSpecialistToFirestore } from '../../services/firestoreService';
+import {
+  saveSpecialistToFirestore,
+  syncPackagesCollectionToFirestore,
+  syncServicesCollectionToFirestore,
+  syncCoursesCollectionToFirestore,
+  saveFinanceRecordToFirestore
+} from '../../services/firestoreService';
 import { TamaraLogo, EmkanLogo } from '../InstallmentLogos';
 
 interface PricingManagementTabProps {
@@ -52,6 +60,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
   hasPermission
 }) => {
   const { isArabic } = useLanguage();
+  const liveData = useLiveDataOptional();
 
   // Active section tab
   const [activeSection, setActiveSection] = useState<'packages' | 'services' | 'courses' | 'specialists' | 'global'>('packages');
@@ -84,9 +93,10 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
     return localStorage.getItem('raba_installment_note') || 'تقسيط ميسر حتى 4 دفعات بدون فوائد عبر تمارا أو تابي أو إمكان';
   });
 
-  // Bulk discount state
+  // Bulk discount & reset confirmation modal states
   const [bulkDiscountPercentage, setBulkDiscountPercentage] = useState<number>(10);
   const [isBulkDiscountModalOpen, setIsBulkDiscountModalOpen] = useState(false);
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
 
   // Editing state for Package
   const [editingPackageId, setEditingPackageId] = useState<string | null>(null);
@@ -112,21 +122,57 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
     setTimeout(() => setSaveToast(null), 3500);
   };
 
-  // Keep in sync with parent props if they change
+  // Hydrate from real-time LiveDataContext & parent props when no inline editor is active
   useEffect(() => {
-    if (propsPackages) setPackagesList(propsPackages);
-  }, [propsPackages]);
+    if (editingPackageId) return;
+    if (liveData?.isAuthoritativePackages && liveData.packages) {
+      setPackagesList(liveData.packages);
+    } else if (propsPackages) {
+      setPackagesList(propsPackages);
+    }
+  }, [propsPackages, liveData?.packages, liveData?.isAuthoritativePackages, editingPackageId]);
 
   useEffect(() => {
-    if (propsServices) setServicesList(propsServices);
-  }, [propsServices]);
+    if (editingServiceId) return;
+    if (liveData?.isAuthoritativeServices && liveData.services) {
+      setServicesList(liveData.services);
+    } else if (propsServices) {
+      setServicesList(propsServices);
+    }
+  }, [propsServices, liveData?.services, liveData?.isAuthoritativeServices, editingServiceId]);
 
   useEffect(() => {
-    if (propsSpecialists) setSpecialistsList(propsSpecialists);
-  }, [propsSpecialists]);
+    if (editingCourseId) return;
+    if (liveData?.isAuthoritativeCourses && liveData.courses) {
+      setCoursesList(liveData.courses);
+    }
+  }, [liveData?.courses, liveData?.isAuthoritativeCourses, editingCourseId]);
+
+  useEffect(() => {
+    if (editingSpecialistId) return;
+    if (liveData?.isAuthoritativeSpecialists && liveData.specialists) {
+      setSpecialistsList(liveData.specialists);
+    } else if (propsSpecialists) {
+      setSpecialistsList(propsSpecialists);
+    }
+  }, [propsSpecialists, liveData?.specialists, liveData?.isAuthoritativeSpecialists, editingSpecialistId]);
+
+  useEffect(() => {
+    if (!liveData?.pricingGlobalSettings) return;
+    if (liveData.pricingGlobalSettings.currencySymbol) {
+      setCurrencySymbol(liveData.pricingGlobalSettings.currencySymbol === 'SAR' ? 'SAR' : 'ر.س');
+    }
+    if (liveData.pricingGlobalSettings.isVatInclusive !== undefined) {
+      setIsVatInclusive(Boolean(liveData.pricingGlobalSettings.isVatInclusive));
+    }
+    if (liveData.pricingGlobalSettings.installmentNote) {
+      setInstallmentNote(liveData.pricingGlobalSettings.installmentNote);
+    }
+  }, [liveData?.pricingGlobalSettings]);
 
   useEffect(() => {
     const syncSpecialists = () => {
+      if (editingSpecialistId) return;
       try {
         const raw = localStorage.getItem('raba_specialists');
         if (!raw) return;
@@ -144,7 +190,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
       window.removeEventListener('raba_specialists_updated', syncSpecialists);
       window.removeEventListener('raba_persistent_sync_ready', syncSpecialists);
     };
-  }, []);
+  }, [editingSpecialistId]);
 
   // ----------------------------------------------------
   // Package Management Handlers
@@ -183,6 +229,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
 
     setPackagesList(updated);
     saveStoredPackages(updated);
+    void syncPackagesCollectionToFirestore(updated);
     if (onUpdatePackages) onUpdatePackages(updated);
 
     setEditingPackageId(null);
@@ -207,6 +254,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
 
     setPackagesList(updated);
     saveStoredPackages(updated);
+    void syncPackagesCollectionToFirestore(updated);
     if (onUpdatePackages) onUpdatePackages(updated);
     setIsBulkDiscountModalOpen(false);
     showSuccessFeedback(isArabic ? `✓ تم تطبيق خصم ${bulkDiscountPercentage}% على جميع الباقات!` : `✓ Applied ${bulkDiscountPercentage}% discount to all packages!`);
@@ -214,10 +262,15 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
 
   // Reset packages to defaults
   const handleResetPackagesToDefault = () => {
-    if (!window.confirm(isArabic ? 'هل تريد استعادة أسعار الباقات الافتراضية؟' : 'Reset all packages to default prices?')) return;
+    setIsResetConfirmOpen(true);
+  };
+
+  const handleConfirmResetPackages = () => {
     setPackagesList(THERAPY_PACKAGES);
     saveStoredPackages(THERAPY_PACKAGES);
+    void syncPackagesCollectionToFirestore(THERAPY_PACKAGES);
     if (onUpdatePackages) onUpdatePackages(THERAPY_PACKAGES);
+    setIsResetConfirmOpen(false);
     showSuccessFeedback(isArabic ? '✓ تم استعادة أسعار الباقات الافتراضية' : '✓ Reset to default packages');
   };
 
@@ -252,6 +305,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
 
     setServicesList(updated);
     saveStoredServices(updated);
+    void syncServicesCollectionToFirestore(updated);
     if (onUpdateServices) onUpdateServices(updated);
 
     setEditingServiceId(null);
@@ -289,6 +343,7 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
 
     setCoursesList(updated);
     saveStoredCoursesData(updated);
+    void syncCoursesCollectionToFirestore(updated);
     setEditingCourseId(null);
     showSuccessFeedback(isArabic ? '✓ تم تحديث سعر الدورة التدريبية بنجاح!' : '✓ Course price updated successfully!');
   };
@@ -339,14 +394,16 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
   const handleSaveGlobalSettings = (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      localStorage.setItem('raba_currency_symbol', currencySymbol);
-      localStorage.setItem('raba_vat_inclusive', String(isVatInclusive));
-      localStorage.setItem('raba_installment_note', installmentNote);
-      savePersistentModule('raba_pricing_global_settings', {
+      const payload = {
         currencySymbol,
         isVatInclusive,
         installmentNote
-      });
+      };
+      localStorage.setItem('raba_currency_symbol', currencySymbol);
+      localStorage.setItem('raba_vat_inclusive', String(isVatInclusive));
+      localStorage.setItem('raba_installment_note', installmentNote);
+      savePersistentModule('raba_pricing_global_settings', payload);
+      void saveFinanceRecordToFirestore('pricing_global_settings', payload);
       showSuccessFeedback(isArabic ? '✓ تم حفظ إعدادات العملة والتقسيط العامة بنجاح!' : '✓ Global pricing settings saved!');
     } catch (err) {
       console.error(err);
@@ -1293,6 +1350,51 @@ export const PricingManagementTab: React.FC<PricingManagementTabProps> = ({
                 className="px-5 py-2.5 rounded-xl bg-[#0B3B36] hover:bg-[#082925] text-white font-black cursor-pointer shadow-md"
               >
                 {isArabic ? 'تطبيق الخصم الآن' : 'Apply Discount'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ------------------------------------------------------------------ */}
+      {/* RESET PACKAGES CONFIRMATION MODAL                                  */}
+      {/* ------------------------------------------------------------------ */}
+      {isResetConfirmOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in"
+          onClick={() => setIsResetConfirmOpen(false)}
+        >
+          <div
+            className="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-sm w-full border border-slate-200 dark:border-white/15 shadow-2xl text-center space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto border border-amber-500/20">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <div className="space-y-1.5">
+              <h4 className="text-base font-black text-slate-900 dark:text-white">
+                {isArabic ? 'استعادة أسعار الباقات الافتراضية' : 'Reset Package Prices'}
+              </h4>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                {isArabic
+                  ? 'هل تريد استعادة أسعار الباقات الافتراضية المعتمدة ومزامنتها مع قاعدة البيانات؟'
+                  : 'Reset all therapy packages to default prices and sync to Firestore?'}
+              </p>
+            </div>
+            <div className="flex items-center gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsResetConfirmOpen(false)}
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+              >
+                {isArabic ? 'إلغاء' : 'Cancel'}
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmResetPackages}
+                className="flex-1 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black shadow-md cursor-pointer"
+              >
+                {isArabic ? 'تأكيد الاستعادة' : 'Confirm Reset'}
               </button>
             </div>
           </div>

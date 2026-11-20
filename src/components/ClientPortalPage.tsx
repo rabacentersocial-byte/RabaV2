@@ -54,7 +54,8 @@ import {
 } from '../services/firestoreService';
 import { ClientProfileOnboardingForm } from './ClientProfileOnboardingForm';
 import { SERVICES, THERAPY_PACKAGES, TIME_SLOTS } from '../data/mockData';
-import { getStoredBranchesData, BranchItem } from '../data/branchesData';
+import { BRANCHES_DATA, BranchItem } from '../data/branchesData';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 import {
   generateRequestReference,
   saveAndBroadcastCustomerRequestAsync,
@@ -94,6 +95,11 @@ export const ClientPortalPage: React.FC<ClientPortalPageProps> = ({
     logout,
     setClientProfile,
   } = useAuth();
+  const live = useLiveDataOptional();
+
+  const servicesList = live?.services?.length ? live.services : SERVICES;
+  const packagesList = live?.packages?.length ? live.packages : THERAPY_PACKAGES;
+  const branchesList: BranchItem[] = live?.branches?.length ? live.branches : BRANCHES_DATA;
 
   const [clientAppointments, setClientAppointments] = useState<Appointment[]>([]);
   const [appointmentsLoading, setAppointmentsLoading] = useState(false);
@@ -132,14 +138,12 @@ export const ClientPortalPage: React.FC<ClientPortalPageProps> = ({
   const [isPortalBookingOpen, setIsPortalBookingOpen] = useState(false);
   const [bookingMemberId, setBookingMemberId] = useState<string>('primary');
   const [bookingType, setBookingType] = useState<'service' | 'package'>('service');
-  const [selectedServiceId, setSelectedServiceId] = useState<string>(SERVICES[0].id);
-  const [selectedPackageId, setSelectedPackageId] = useState<string>(THERAPY_PACKAGES[0].id);
-  const [branchesList, setBranchesList] = useState<BranchItem[]>(() => getStoredBranchesData());
-  const [selectedCity, setSelectedCity] = useState<string>(() => getStoredBranchesData()[0]?.city || 'riyadh');
+  const [selectedServiceId, setSelectedServiceId] = useState<string>(servicesList[0].id);
+  const [selectedPackageId, setSelectedPackageId] = useState<string>(packagesList[0].id);
+  const [selectedCity, setSelectedCity] = useState<string>(() => branchesList[0]?.city || 'riyadh');
   const [selectedBranchId, setSelectedBranchId] = useState<string>(() => {
-    const all = getStoredBranchesData();
-    const defaultCity = all[0]?.city || 'riyadh';
-    return all.find((b) => b.city === defaultCity)?.id || '';
+    const defaultCity = branchesList[0]?.city || 'riyadh';
+    return branchesList.find((b) => b.city === defaultCity)?.id || '';
   });
   const todayStr = new Date().toISOString().split('T')[0];
   const [bookingDate, setBookingDate] = useState<string>(todayStr);
@@ -167,18 +171,6 @@ export const ClientPortalPage: React.FC<ClientPortalPageProps> = ({
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
-
-  useEffect(() => {
-    const handleBranchesSync = () => {
-      setBranchesList(getStoredBranchesData());
-    };
-    window.addEventListener('raba_branches_updated', handleBranchesSync);
-    window.addEventListener('raba_persistent_sync_ready' as any, handleBranchesSync);
-    return () => {
-      window.removeEventListener('raba_branches_updated', handleBranchesSync);
-      window.removeEventListener('raba_persistent_sync_ready' as any, handleBranchesSync);
-    };
   }, []);
 
   const availableCities = useMemo(() => {
@@ -501,8 +493,8 @@ export const ClientPortalPage: React.FC<ClientPortalPageProps> = ({
       return;
     }
 
-    const activeService = SERVICES.find((s) => s.id === selectedServiceId) || SERVICES[0];
-    const activePackage = THERAPY_PACKAGES.find((p) => p.id === selectedPackageId) || THERAPY_PACKAGES[0];
+    const activeService = servicesList.find((s) => s.id === selectedServiceId) || servicesList[0];
+    const activePackage = packagesList.find((p) => p.id === selectedPackageId) || packagesList[0];
     const targetMember = (clientProfile.familyMembers || []).find((m) => m.id === bookingMemberId) || null;
 
     setBookingError('');
@@ -2236,7 +2228,7 @@ export const ClientPortalPage: React.FC<ClientPortalPageProps> = ({
                       onChange={(e) => setSelectedServiceId(e.target.value)}
                       className="w-full h-11 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/15 px-3 text-xs sm:text-sm outline-none"
                     >
-                      {SERVICES.map((srv) => (
+                      {servicesList.map((srv) => (
                         <option key={srv.id} value={srv.id}>
                           {!isArabic && srv.titleEn ? srv.titleEn : srv.title}
                         </option>
@@ -2248,7 +2240,7 @@ export const ClientPortalPage: React.FC<ClientPortalPageProps> = ({
                       onChange={(e) => setSelectedPackageId(e.target.value)}
                       className="w-full h-11 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/15 px-3 text-xs sm:text-sm outline-none"
                     >
-                      {THERAPY_PACKAGES.map((pkg) => (
+                      {packagesList.map((pkg) => (
                         <option key={pkg.id} value={pkg.id}>
                           {!isArabic && pkg.nameEn ? pkg.nameEn : pkg.name}
                         </option>

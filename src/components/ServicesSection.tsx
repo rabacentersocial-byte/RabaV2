@@ -18,10 +18,11 @@ import {
   ShieldCheck,
   CheckCircle2
 } from 'lucide-react';
-import { getStoredServices } from '../data/mockData';
+import { SERVICES } from '../data/servicesData';
 import { getServiceSlugById } from '../data/seoRoutes';
 import { ServiceItem } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 
 interface ServicesSectionProps {
   onSelectService: (service: ServiceItem) => void;
@@ -33,7 +34,17 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
   onOpenServiceDetail,
 }) => {
   const { isArabic } = useLanguage();
-  const [services, setServices] = useState<ServiceItem[]>(() => getStoredServices());
+  const live = useLiveDataOptional();
+  const rawServices: ServiceItem[] = live
+    ? (live.loadingServices || live.loadingSettings
+        ? []
+        : live.isAuthoritativeServices
+        ? live.services
+        : live.services.length > 0
+        ? live.services
+        : SERVICES)
+    : SERVICES;
+  const services: ServiceItem[] = rawServices.filter((s) => s.active !== false && s.isActive !== false);
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [favorites, setFavorites] = useState<Record<string, boolean>>({});
   
@@ -47,22 +58,9 @@ export const ServicesSection: React.FC<ServicesSectionProps> = ({
   const [canScrollNext, setCanScrollNext] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Sync with localStorage updates from Admin Dashboard
-  useEffect(() => {
-    const handleUpdate = () => {
-      setServices(getStoredServices());
-    };
-    window.addEventListener('raba_services_updated', handleUpdate);
-    window.addEventListener('raba_persistent_sync_ready', handleUpdate);
-    return () => {
-      window.removeEventListener('raba_services_updated', handleUpdate);
-      window.removeEventListener('raba_persistent_sync_ready', handleUpdate);
-    };
-  }, []);
-
   // Filter categories
   const categories = [
-    { id: 'all', labelAr: 'كافة الخدمات التخصصية (6)', labelEn: 'All Specialized Services (6)' },
+    { id: 'all', labelAr: `كافة الخدمات التخصصية (${services.length})`, labelEn: `All Specialized Services (${services.length})` },
     { id: 'aba', labelAr: 'تحليل السلوك التطبيقي ABA', labelEn: 'ABA Therapy' },
     { id: 'speech', labelAr: 'النطق والتخاطب', labelEn: 'Speech & Language' },
     { id: 'occupational', labelAr: 'العلاج الوظيفي', labelEn: 'Occupational Therapy' },

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -19,13 +19,14 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react';
-import { getStoredServices } from '../data/mockData';
+import { SERVICES } from '../data/servicesData';
 import {
   getServiceSeoBySlug,
   SERVICE_SEO_ROUTES,
 } from '../data/seoRoutes';
 import { ServiceItem } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 
 interface ServiceDetailPageProps {
   serviceSlug: string;
@@ -41,21 +42,22 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({
   onSelectService,
 }) => {
   const { isArabic } = useLanguage();
-  const [services, setServices] = useState<ServiceItem[]>(() => getStoredServices());
+  const live = useLiveDataOptional();
+  const rawServices: ServiceItem[] = live
+    ? (live.loadingServices || live.loadingSettings
+        ? SERVICES
+        : live.isAuthoritativeServices
+        ? live.services
+        : live.services.length > 0
+        ? live.services
+        : SERVICES)
+    : SERVICES;
+  const activeServices = rawServices.filter((s) => s.active !== false && s.isActive !== false);
+  const services: ServiceItem[] = activeServices.length > 0 ? activeServices : SERVICES;
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [serviceSlug]);
-
-  useEffect(() => {
-    const handleUpdate = () => setServices(getStoredServices());
-    window.addEventListener('raba_services_updated', handleUpdate);
-    window.addEventListener('raba_persistent_sync_ready', handleUpdate);
-    return () => {
-      window.removeEventListener('raba_services_updated', handleUpdate);
-      window.removeEventListener('raba_persistent_sync_ready', handleUpdate);
-    };
-  }, []);
 
   const seoConfig = useMemo(
     () => getServiceSeoBySlug(serviceSlug) || SERVICE_SEO_ROUTES[0],

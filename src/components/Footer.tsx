@@ -17,9 +17,10 @@ import {
 } from 'lucide-react';
 import { RabaLogo } from './RabaLogo';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 import { 
-  getStoredSocialSettings, 
-  getStoredFooterSettings, 
+  DEFAULT_FOOTER_SETTINGS,
+  DEFAULT_SOCIAL_SETTINGS,
   SocialLinksSettings, 
   FooterSettings 
 } from '../data/siteCustomizer';
@@ -85,27 +86,11 @@ export const Footer: React.FC<FooterProps> = ({
       onNavigate(path);
     }
   };
-  const [social, setSocial] = useState<SocialLinksSettings>(() => getStoredSocialSettings());
-  const [footer, setFooter] = useState<FooterSettings>(() => getStoredFooterSettings());
+  const live = useLiveDataOptional();
+  const social: SocialLinksSettings = live?.social || DEFAULT_SOCIAL_SETTINGS;
+  const footer: FooterSettings = live?.footer || DEFAULT_FOOTER_SETTINGS;
   const [isPwaModalOpen, setIsPwaModalOpen] = useState(false);
   const [pwaModalTab, setPwaModalTab] = useState<'ios' | 'android'>('android');
-
-  useEffect(() => {
-    const handleSocialUpdate = () => setSocial(getStoredSocialSettings());
-    const handleFooterUpdate = () => setFooter(getStoredFooterSettings());
-
-    window.addEventListener('raba_social_updated', handleSocialUpdate);
-    window.addEventListener('raba_footer_updated', handleFooterUpdate);
-    window.addEventListener('raba_persistent_sync_ready', handleSocialUpdate);
-    window.addEventListener('raba_persistent_sync_ready', handleFooterUpdate);
-
-    return () => {
-      window.removeEventListener('raba_social_updated', handleSocialUpdate);
-      window.removeEventListener('raba_footer_updated', handleFooterUpdate);
-      window.removeEventListener('raba_persistent_sync_ready', handleSocialUpdate);
-      window.removeEventListener('raba_persistent_sync_ready', handleFooterUpdate);
-    };
-  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });

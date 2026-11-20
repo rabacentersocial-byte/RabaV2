@@ -33,9 +33,10 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 import { SaudiNationalDayBadge, SaudiFalconGraphic } from './NationalDayVisuals';
 import { OfferData } from '../types';
-import { getStoredOffers } from '../data/offersData';
+import { INITIAL_OFFERS } from '../data/offersData';
 import { getAccessibleAccentColor, getContrastTextForBg } from '../utils/colorContrast';
 
 interface Countdown {
@@ -184,25 +185,20 @@ export const OffersDirectoryPage: React.FC<OffersDirectoryPageProps> = ({
     return 'grid';
   });
 
-  // Offers data sync
-  const [offersList, setOffersList] = useState<OfferData[]>(() => getStoredOffers());
+  // Live offers data from Firestore LiveDataContext
+  const live = useLiveDataOptional();
+  const offersList: OfferData[] = live
+    ? (live.loadingOffers || live.loadingSettings
+        ? []
+        : live.isAuthoritativeOffers
+        ? live.offers
+        : live.offers.length > 0
+        ? live.offers
+        : INITIAL_OFFERS)
+    : INITIAL_OFFERS;
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
-
-  useEffect(() => {
-    const handleStorage = () => {
-      setOffersList(getStoredOffers());
-    };
-    window.addEventListener('storage', handleStorage);
-    window.addEventListener('raba_offers_updated', handleStorage);
-    window.addEventListener('raba_persistent_sync_ready' as any, handleStorage);
-    return () => {
-      window.removeEventListener('storage', handleStorage);
-      window.removeEventListener('raba_offers_updated', handleStorage);
-      window.removeEventListener('raba_persistent_sync_ready' as any, handleStorage);
-    };
   }, []);
 
   // Timers mapped by offer id

@@ -4,6 +4,7 @@ import App from './App';
 import { ThemeProvider } from './context/ThemeContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { AuthProvider } from './context/AuthContext';
+import { LiveDataProvider } from './context/LiveDataContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import './index.css';
 
@@ -21,7 +22,9 @@ if (rootEl) {
             <ThemeProvider>
               <LanguageProvider>
                 <AuthProvider>
-                  <App />
+                  <LiveDataProvider>
+                    <App />
+                  </LiveDataProvider>
                 </AuthProvider>
               </LanguageProvider>
             </ThemeProvider>
@@ -67,8 +70,8 @@ if (rootEl) {
   }
 }
 
-// Safely execute background sync, WebMCP, and favicon setup during idle time without bloating critical entry JS
-const scheduleIdleWork = (fn: () => void, delayMs = 2500) => {
+// Safely execute WebMCP, asset store preload, and service worker setup during idle time without bloating critical entry JS
+const scheduleIdleWork = (fn: () => void, delayMs = 2000) => {
   if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
     (window as any).requestIdleCallback(fn, { timeout: delayMs + 1000 });
   } else {
@@ -81,15 +84,8 @@ scheduleIdleWork(() => {
     .then(({ initWebMcp }) => initWebMcp())
     .catch((e) => console.warn('[main] WebMCP notice:', e));
 
-  import('./data/siteCustomizer')
-    .then(({ updateTabFavicon }) => updateTabFavicon())
-    .catch((e) => console.warn('[main] Favicon notice:', e));
-
   import('./utils/persistentSync')
-    .then(({ hydratePersistentData, initPersistentSync }) => {
-      hydratePersistentData();
-      return initPersistentSync();
-    })
+    .then(({ initPersistentSync }) => initPersistentSync())
     .catch((e) => console.warn('[main] Persistent sync notice:', e));
 
   // Register PWA service worker only in production so it never intercepts or 404s in Vite dev
@@ -107,4 +103,4 @@ scheduleIdleWork(() => {
       // ignore
     }
   }
-}, 2500);
+}, 2000);

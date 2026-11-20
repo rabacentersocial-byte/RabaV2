@@ -184,22 +184,15 @@ export function getStoredHeroSlides(): HeroSlideItem[] {
     const raw = localStorage.getItem(STORAGE_HERO_SLIDES_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        // Upgrade to new 7 custom cards if older slides are detected
-        const hasNewCards = parsed.some(p => p.id === 'card-1-journey' || p.id === 'card-2-assessment');
-        if (!hasNewCards || parsed.length !== 7) {
-          localStorage.setItem(STORAGE_HERO_SLIDES_KEY, JSON.stringify(DEFAULT_HERO_SLIDES));
-          return [...DEFAULT_HERO_SLIDES];
-        }
-
-        const upgraded = parsed.map(slide => {
+      if (Array.isArray(parsed)) {
+        const upgraded = parsed.map((slide: HeroSlideItem) => {
           let src = slide.src || '';
           if (src.includes('/images/hero/slide_') && (src.endsWith('.png') || src.endsWith('.jpg'))) {
             src = src.replace(/\.(png|jpg)$/, '.webp');
           }
           return { ...slide, src };
         });
-        return upgraded.sort((a, b) => (a.order || 0) - (b.order || 0));
+        return upgraded.sort((a: HeroSlideItem, b: HeroSlideItem) => (a.order || 0) - (b.order || 0));
       }
     }
     return [...DEFAULT_HERO_SLIDES];

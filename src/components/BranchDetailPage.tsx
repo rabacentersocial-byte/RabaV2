@@ -17,7 +17,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from 'lucide-react';
-import { getStoredBranchesData, BranchItem } from '../data/branchesData';
+import { BRANCHES_DATA, BranchItem } from '../data/branchesData';
 import {
   getBranchSeoBySlug,
   SERVICE_SEO_ROUTES,
@@ -25,6 +25,7 @@ import {
 } from '../data/seoRoutes';
 import { BranchMapPinGraphic } from './BranchMapPinGraphic';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 
 interface BranchDetailPageProps {
   branchSlug: 'riyadh' | 'alkharj';
@@ -40,22 +41,13 @@ export const BranchDetailPage: React.FC<BranchDetailPageProps> = ({
   onOpenBooking,
 }) => {
   const { isArabic } = useLanguage();
-  const [branches, setBranches] = useState<BranchItem[]>(() => getStoredBranchesData());
+  const live = useLiveDataOptional();
+  const branches: BranchItem[] = live?.branches || BRANCHES_DATA;
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [branchSlug]);
-
-  useEffect(() => {
-    const handleUpdate = () => setBranches(getStoredBranchesData());
-    window.addEventListener('raba_branches_updated', handleUpdate);
-    window.addEventListener('raba_persistent_sync_ready' as any, handleUpdate);
-    return () => {
-      window.removeEventListener('raba_branches_updated', handleUpdate);
-      window.removeEventListener('raba_persistent_sync_ready' as any, handleUpdate);
-    };
-  }, []);
 
   const branchSeo = useMemo(
     () => getBranchSeoBySlug(branchSlug)!,

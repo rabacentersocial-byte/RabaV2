@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   DollarSign, 
   CreditCard, 
@@ -15,6 +15,9 @@ import {
 } from 'lucide-react';
 import { Appointment, PermissionId } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
+import { useLiveDataOptional } from '../../context/LiveDataContext';
+import { saveFinanceRecordToFirestore, subscribeFinanceRecords } from '../../services/firestoreService';
+import { savePersistentModule } from '../../utils/persistentSync';
 import {
   getStoredAnnouncementBarSettings,
   saveStoredAnnouncementBarSettings
@@ -30,6 +33,7 @@ export const FinancesSettingsTab: React.FC<FinancesSettingsTabProps> = ({
   hasPermission
 }) => {
   const { isArabic } = useLanguage();
+  const liveData = useLiveDataOptional();
 
   const [clinicName, setClinicName] = useState('مركز رابا للرعاية النهارية وتأهيل أطفال التوحد');
   const [phone, setPhone] = useState('0575100100');
@@ -42,6 +46,44 @@ export const FinancesSettingsTab: React.FC<FinancesSettingsTabProps> = ({
   const canViewFinances = hasPermission('view_finances');
   const canManageSettings = hasPermission('system_settings');
 
+  // Hydrate announcement bar live from LiveDataContext
+  useEffect(() => {
+    if (liveData && !liveData.loadingSettings && liveData.announcementBar?.messageAr) {
+      setAnnouncement(liveData.announcementBar.messageAr);
+    }
+  }, [liveData, liveData?.loadingSettings, liveData?.announcementBar?.messageAr]);
+
+  // Hydrate clinic settings live from Firestore /finance/clinic_settings + /site_settings fallback
+  useEffect(() => {
+    if (liveData?.rawSettings?.raba_clinic_settings) {
+      const s = liveData.rawSettings.raba_clinic_settings;
+      if (s.clinicName) setClinicName(s.clinicName);
+      if (s.phone) setPhone(s.phone);
+      if (s.whatsapp) setWhatsapp(s.whatsapp);
+      if (s.workingHours) setWorkingHours(s.workingHours);
+      if (s.address) setAddress(s.address);
+    }
+  }, [liveData?.rawSettings?.raba_clinic_settings]);
+
+  useEffect(() => {
+    const unsubscribe = subscribeFinanceRecords(
+      (recordsMap) => {
+        const clinicDoc = recordsMap['clinic_settings'];
+        if (clinicDoc) {
+          if (clinicDoc.clinicName) setClinicName(String(clinicDoc.clinicName));
+          if (clinicDoc.phone) setPhone(String(clinicDoc.phone));
+          if (clinicDoc.whatsapp) setWhatsapp(String(clinicDoc.whatsapp));
+          if (clinicDoc.workingHours) setWorkingHours(String(clinicDoc.workingHours));
+          if (clinicDoc.address) setAddress(String(clinicDoc.address));
+        }
+      },
+      (err) => {
+        console.error('[Firestore Live Sync Error]:', err?.code || 'unknown', err?.message || err);
+      }
+    );
+    return () => unsubscribe();
+  }, []);
+
   const totalRevenue = appointments
     .filter(a => a.status === 'confirmed' || a.status === 'completed')
     .reduce((sum, a) => sum + (a.amount || 0), 0);
@@ -52,7 +94,18 @@ export const FinancesSettingsTab: React.FC<FinancesSettingsTabProps> = ({
 
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
-    const currentBar = getStoredAnnouncementBarSettings();
+    const clinicPayload = {
+      clinicName: clinicName.trim(),
+      phone: phone.trim(),
+      whatsapp: whatsapp.trim(),
+      workingHours: workingHours.trim(),
+      address: address.trim(),
+      updatedAtISO: new Date().toISOString()
+    };
+    void saveFinanceRecordToFirestore('clinic_settings', clinicPayload);
+    void savePersistentModule('raba_clinic_settings', clinicPayload);
+
+    const currentBar = liveData?.announcementBar || getStoredAnnouncementBarSettings();
     saveStoredAnnouncementBarSettings({
       ...currentBar,
       messageAr: announcement.trim() || currentBar.messageAr,

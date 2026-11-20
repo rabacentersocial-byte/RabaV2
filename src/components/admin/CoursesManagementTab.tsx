@@ -35,11 +35,14 @@ import {
   CreditCard,
   GitBranch,
   UserCheck,
-  Lock
+  Lock,
+  AlertTriangle
 } from 'lucide-react';
 import { AdminUser, PermissionId } from '../../types';
 import { getStoredAdminUsers } from '../../data/adminData';
 import { useLanguage } from '../../context/LanguageContext';
+import { useLiveDataOptional } from '../../context/LiveDataContext';
+import { syncCoursesCollectionToFirestore, deleteCourseFromFirestore } from '../../services/firestoreService';
 import { compressImage } from '../../utils/imageCompressor';
 import { getAccessibleAccentColor } from '../../utils/colorContrast';
 import { 
@@ -78,6 +81,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = ({
   onNavigateTab
 }) => {
   const { isArabic } = useLanguage();
+  const liveData = useLiveDataOptional();
 
   const [courses, setCourses] = useState<CourseItem[]>(() => getStoredCoursesData());
   const [settings, setSettings] = useState<CoursesSectionSettings>(() => getStoredCoursesSettings());
@@ -90,6 +94,28 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = ({
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<CourseItem | null>(null);
+  const [courseToDelete, setCourseToDelete] = useState<CourseItem | null>(null);
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
+
+  // Real-time Firestore hydration when no edit/confirm modal is open
+  useEffect(() => {
+    if (!liveData || isModalOpen || courseToDelete || isResetConfirmOpen) return;
+    if (liveData.isAuthoritativeCourses) {
+      setCourses(liveData.courses);
+    }
+    if (!liveData.loadingSettings && liveData.coursesSettings) {
+      setSettings(liveData.coursesSettings);
+    }
+  }, [
+    liveData,
+    liveData?.courses,
+    liveData?.isAuthoritativeCourses,
+    liveData?.coursesSettings,
+    liveData?.loadingSettings,
+    isModalOpen,
+    courseToDelete,
+    isResetConfirmOpen
+  ]);
 
   // Form State
   const [formData, setFormData] = useState<Partial<CourseItem>>({
@@ -199,17 +225,24 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = ({
     const updated = [...courses, duplicated];
     setCourses(updated);
     saveStoredCoursesData(updated);
+    void syncCoursesCollectionToFirestore(updated);
     triggerSuccess(isArabic ? 'تم تكرار الكورس بنجاح، يمكنك الآن تعديله!' : 'Course duplicated successfully!');
   };
 
-  const handleDeleteCourse = (id: string) => {
+  const handleDeleteCourse = (course: CourseItem) => {
     if (!isSystemAdmin) return;
-    if (!window.confirm(isArabic ? 'هل أنت متأكد من حذف هذا الكورس نهائياً؟' : 'Are you sure you want to delete this course?')) {
-      return;
-    }
-    const updated = courses.filter(c => c.id !== id);
+    setCourseToDelete(course);
+  };
+
+  const handleConfirmDeleteCourse = () => {
+    if (!isSystemAdmin || !courseToDelete) return;
+    const deletedId = courseToDelete.id;
+    const updated = courses.filter(c => c.id !== deletedId);
     setCourses(updated);
     saveStoredCoursesData(updated);
+    void deleteCourseFromFirestore(deletedId);
+    void syncCoursesCollectionToFirestore(updated);
+    setCourseToDelete(null);
     triggerSuccess(isArabic ? 'تم حذف الكورس بنجاح.' : 'Course deleted.');
   };
 
@@ -219,6 +252,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = ({
     );
     setCourses(updated);
     saveStoredCoursesData(updated);
+    void syncCoursesCollectionToFirestore(updated);
     triggerSuccess(isArabic ? 'تم تحديث حالة الظهور.' : 'Visibility updated.');
   };
 
@@ -235,6 +269,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = ({
     const reordered = listCopy.map((item, idx) => ({ ...item, order: idx + 1 }));
     setCourses(reordered);
     saveStoredCoursesData(reordered);
+    void syncCoursesCollectionToFirestore(reordered);
   };
 
   const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -338,6 +373,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = ({
 
     setCourses(updatedList);
     saveStoredCoursesData(updatedList);
+    void syncCoursesCollectionToFirestore(updatedList);
     setIsModalOpen(false);
     triggerSuccess(isArabic ? 'تم حفظ وتحديث بطاقة الكورس بنجاح!' : 'Course card saved successfully!');
   };
@@ -449,13 +485,16 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = ({
 
   // Restore Defaults
   const handleRestoreDefaults = () => {
-    if (!window.confirm(isArabic ? `هل تريد استعادة الكورسات المعتمدة (${COURSES_DATA.length} كورساً) والإعدادات الأصلية؟` : `Restore default ${COURSES_DATA.length} accredited courses and settings?`)) {
-      return;
-    }
+    setIsResetConfirmOpen(true);
+  };
+
+  const handleConfirmRestoreDefaults = () => {
     setCourses(COURSES_DATA);
     saveStoredCoursesData(COURSES_DATA);
+    void syncCoursesCollectionToFirestore(COURSES_DATA);
     setSettings(DEFAULT_COURSES_SETTINGS);
     saveStoredCoursesSettings(DEFAULT_COURSES_SETTINGS);
+    setIsResetConfirmOpen(false);
     triggerSuccess(isArabic ? 'تمت استعادة الكورسات الافتراضية بنجاح!' : 'Defaults restored!');
   };
 
@@ -971,7 +1010,7 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = ({
                   {/* Delete (System Admin Only) */}
                   {isSystemAdmin && (
                     <button
-                      onClick={() => handleDeleteCourse(course.id)}
+                      onClick={() => handleDeleteCourse(course)}
                       className="p-2 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                       title={isArabic ? 'حذف الكورس' : 'Delete'}
                     >
@@ -1598,6 +1637,84 @@ export const CoursesManagementTab: React.FC<CoursesManagementTabProps> = ({
               </div>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* Delete Course Confirmation Modal */}
+      {courseToDelete && isSystemAdmin && (
+        <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/10 shadow-2xl p-6 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 border border-rose-200 dark:border-rose-800/40">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-black text-slate-900 dark:text-white">
+                  {isArabic ? 'تأكيد حذف الكورس التدريبي' : 'Confirm Course Deletion'}
+                </h4>
+                <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                  {isArabic
+                    ? `هل أنت متأكد من حذف «${courseToDelete.titleAr}» نهائياً من قاعدة البيانات والموقع؟`
+                    : `Are you sure you want to permanently delete "${courseToDelete.titleEn || courseToDelete.titleAr}"?`}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setCourseToDelete(null)}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+              >
+                {isArabic ? 'إلغاء' : 'Cancel'}
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDeleteCourse}
+                className="px-4 py-2 rounded-xl text-xs font-black text-white bg-rose-600 hover:bg-rose-700 cursor-pointer shadow-sm"
+              >
+                {isArabic ? 'تأكيد الحذف النهائي' : 'Delete Permanently'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Restore Default Courses Confirmation Modal */}
+      {isResetConfirmOpen && (
+        <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/10 shadow-2xl p-6 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-200 dark:border-amber-800/40">
+                <RotateCcw className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-black text-slate-900 dark:text-white">
+                  {isArabic ? 'استعادة الكورسات الافتراضية' : 'Restore Default Courses'}
+                </h4>
+                <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                  {isArabic
+                    ? `هل تريد استعادة الكورسات المعتمدة (${COURSES_DATA.length} كورساً) والإعدادات الأصلية ومزامنتها فوراً مع قاعدة البيانات؟`
+                    : `Restore the ${COURSES_DATA.length} accredited default courses and section settings?`}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsResetConfirmOpen(false)}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+              >
+                {isArabic ? 'إلغاء' : 'Cancel'}
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmRestoreDefaults}
+                className="px-4 py-2 rounded-xl text-xs font-black text-slate-950 bg-[#00E5BE] hover:brightness-105 cursor-pointer shadow-sm"
+              >
+                {isArabic ? 'تأكيد الاستعادة' : 'Confirm Restore'}
+              </button>
+            </div>
           </div>
         </div>
       )}

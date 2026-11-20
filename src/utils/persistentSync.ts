@@ -43,9 +43,11 @@ export const SYNC_KEYS = {
   LOGO_V2: 'raba_site_logo_v2',
   LOGO_V1: 'raba_site_logo_v1',
   THEME: 'raba_site_theme_v1',
-  SOCIAL: 'raba_social_links_v1',
+  SOCIAL: 'raba_social_links_v2',
+  SOCIAL_LEGACY: 'raba_social_links_v1',
   PILLARS: 'raba_program_pillars_v1',
-  FOOTER: 'raba_footer_settings_v1',
+  FOOTER: 'raba_footer_settings_v2',
+  FOOTER_LEGACY: 'raba_footer_settings_v1',
   MODULES: 'raba_site_modules_v1',
   HERO_SLIDES: 'raba_hero_slides_v2',
   HERO_CONFIG: 'raba_hero_slider_config_v2',
@@ -60,6 +62,10 @@ export const SYNC_KEYS = {
   ACCREDITATIONS_SETTINGS: 'raba_accreditations_settings',
   SERVICES: 'raba_custom_services_v2',
   SERVICES_LEGACY: 'raba_custom_services_v1',
+  PACKAGES: 'raba_custom_packages_v2',
+  PRICING_GLOBAL: 'raba_pricing_global_settings',
+  BRANCHES: 'raba_branches_data_v3',
+  BRANCHES_LEGACY: 'raba_branches_data_v1',
   APPOINTMENTS: 'raba_appointments',
   NOTIFICATIONS: 'raba_notifications',
   ADMIN_USERS: 'raba_admin_users',
@@ -67,7 +73,8 @@ export const SYNC_KEYS = {
   PARTNERS_SETTINGS: 'raba_partners_settings_v7',
   COURSES: 'raba_courses_data_v1',
   COURSES_SETTINGS: 'raba_courses_settings_v1',
-  ANNOUNCEMENT_BAR: 'raba_announcement_bar_v1'
+  ANNOUNCEMENT_BAR: 'raba_announcement_bar_v1',
+  TRACKING_PIXELS: 'raba_tracking_pixels'
 } as const;
 
 // Canonical primary keys used in the synchronization loop to prevent legacy collisions
@@ -88,6 +95,9 @@ export const PRIMARY_SYNC_KEYS = [
   SYNC_KEYS.ACCREDITATIONS,
   SYNC_KEYS.ACCREDITATIONS_SETTINGS,
   SYNC_KEYS.SERVICES,
+  SYNC_KEYS.PACKAGES,
+  SYNC_KEYS.PRICING_GLOBAL,
+  SYNC_KEYS.BRANCHES,
   SYNC_KEYS.APPOINTMENTS,
   SYNC_KEYS.NOTIFICATIONS,
   SYNC_KEYS.ADMIN_USERS,
@@ -95,8 +105,12 @@ export const PRIMARY_SYNC_KEYS = [
   SYNC_KEYS.PARTNERS_SETTINGS,
   SYNC_KEYS.COURSES,
   SYNC_KEYS.COURSES_SETTINGS,
-  SYNC_KEYS.ANNOUNCEMENT_BAR
+  SYNC_KEYS.ANNOUNCEMENT_BAR,
+  SYNC_KEYS.TRACKING_PIXELS
 ] as const;
+
+// Tracks keys hydrated live from Firestore onSnapshot so stale /api/sync/all or /data/all_sync.json cannot overwrite them
+const FIRESTORE_AUTHORITATIVE_KEYS = new Set<string>();
 
 // Helper to mirror primary keys to legacy aliases with identical timestamps
 function mirrorAliases(key: string, stringified: string, ts: number) {
@@ -115,6 +129,15 @@ function mirrorAliases(key: string, stringified: string, ts: number) {
   } else if (key === SYNC_KEYS.OFFERS) {
     localStorage.setItem(SYNC_KEYS.OFFERS_LEGACY, stringified);
     localStorage.setItem(`raba_ts_${SYNC_KEYS.OFFERS_LEGACY}`, tsStr);
+  } else if (key === SYNC_KEYS.SOCIAL) {
+    localStorage.setItem(SYNC_KEYS.SOCIAL_LEGACY, stringified);
+    localStorage.setItem(`raba_ts_${SYNC_KEYS.SOCIAL_LEGACY}`, tsStr);
+  } else if (key === SYNC_KEYS.FOOTER) {
+    localStorage.setItem(SYNC_KEYS.FOOTER_LEGACY, stringified);
+    localStorage.setItem(`raba_ts_${SYNC_KEYS.FOOTER_LEGACY}`, tsStr);
+  } else if (key === SYNC_KEYS.BRANCHES) {
+    localStorage.setItem(SYNC_KEYS.BRANCHES_LEGACY, stringified);
+    localStorage.setItem(`raba_ts_${SYNC_KEYS.BRANCHES_LEGACY}`, tsStr);
   }
 }
 
@@ -125,8 +148,10 @@ const EVENT_MAP: Record<string, string> = {
   [SYNC_KEYS.LOGO_V1]: 'raba_logo_updated',
   [SYNC_KEYS.THEME]: 'raba_theme_updated',
   [SYNC_KEYS.SOCIAL]: 'raba_social_updated',
+  [SYNC_KEYS.SOCIAL_LEGACY]: 'raba_social_updated',
   [SYNC_KEYS.PILLARS]: 'raba_pillars_updated',
   [SYNC_KEYS.FOOTER]: 'raba_footer_updated',
+  [SYNC_KEYS.FOOTER_LEGACY]: 'raba_footer_updated',
   [SYNC_KEYS.MODULES]: 'raba_modules_updated',
   [SYNC_KEYS.HERO_SLIDES]: 'raba_hero_slides_updated',
   [SYNC_KEYS.HERO_CONFIG]: 'raba_hero_slides_updated',
@@ -141,17 +166,53 @@ const EVENT_MAP: Record<string, string> = {
   [SYNC_KEYS.ACCREDITATIONS_SETTINGS]: 'raba_accreditations_settings_updated',
   [SYNC_KEYS.SERVICES]: 'raba_services_updated',
   [SYNC_KEYS.SERVICES_LEGACY]: 'raba_services_updated',
+  [SYNC_KEYS.PACKAGES]: 'raba_packages_updated',
+  [SYNC_KEYS.PRICING_GLOBAL]: 'raba_pricing_global_updated',
+  [SYNC_KEYS.BRANCHES]: 'raba_branches_updated',
+  [SYNC_KEYS.BRANCHES_LEGACY]: 'raba_branches_updated',
   [SYNC_KEYS.APPOINTMENTS]: 'raba_appointments_updated',
   [SYNC_KEYS.NOTIFICATIONS]: 'raba_notifications_updated',
   [SYNC_KEYS.PARTNERS]: 'raba_partners_updated',
   [SYNC_KEYS.PARTNERS_SETTINGS]: 'raba_partners_settings_updated',
   [SYNC_KEYS.COURSES]: 'raba_courses_updated',
   [SYNC_KEYS.COURSES_SETTINGS]: 'raba_courses_settings_updated',
-  [SYNC_KEYS.ANNOUNCEMENT_BAR]: 'raba_announcement_bar_updated'
+  [SYNC_KEYS.ANNOUNCEMENT_BAR]: 'raba_announcement_bar_updated',
+  [SYNC_KEYS.TRACKING_PIXELS]: 'raba_tracking_pixels_updated'
 };
 
 // In-memory fallback dictionary for private/incognito browsers where localStorage is restricted
 const IN_MEMORY_SYNC_CACHE = new Map<string, any>();
+
+/**
+ * Mirrors an authoritative Firestore onSnapshot emission into memory, localStorage, and custom DOM events
+ * so both LiveDataContext consumers and legacy helpers stay 100% consistent without stale cache overrides.
+ */
+export function applyAuthoritativeFirestoreSetting(key: string, data: any): void {
+  if (!key) return;
+  FIRESTORE_AUTHORITATIVE_KEYS.add(key);
+  IN_MEMORY_SYNC_CACHE.set(key, data);
+
+  if (key === SYNC_KEYS.SOCIAL_LEGACY) FIRESTORE_AUTHORITATIVE_KEYS.add(SYNC_KEYS.SOCIAL);
+  if (key === SYNC_KEYS.FOOTER_LEGACY) FIRESTORE_AUTHORITATIVE_KEYS.add(SYNC_KEYS.FOOTER);
+  if (key === SYNC_KEYS.BRANCHES_LEGACY) FIRESTORE_AUTHORITATIVE_KEYS.add(SYNC_KEYS.BRANCHES);
+  if (key === SYNC_KEYS.SERVICES_LEGACY) FIRESTORE_AUTHORITATIVE_KEYS.add(SYNC_KEYS.SERVICES);
+  if (key === SYNC_KEYS.OFFERS_LEGACY) FIRESTORE_AUTHORITATIVE_KEYS.add(SYNC_KEYS.OFFERS);
+
+  if (typeof window === 'undefined') return;
+  try {
+    const now = Date.now();
+    const stringified = typeof data === 'string' ? data : JSON.stringify(data);
+    localStorage.setItem(key, stringified);
+    localStorage.setItem(`raba_ts_${key}`, now.toString());
+    mirrorAliases(key, stringified, now);
+  } catch (e) {
+    console.warn('[PersistentSync] Local cache notice:', e);
+  }
+  const eventName = EVENT_MAP[key];
+  if (eventName) {
+    window.dispatchEvent(new CustomEvent(eventName, { detail: data }));
+  }
+}
 
 /**
  * Fast synchronous pre-hydration from localStorage into memory cache.
@@ -220,43 +281,26 @@ export async function initPersistentSync(): Promise<void> {
     // 0. Preload all IndexedDB image assets into RAM immediately
     await loadPersistentImagesToMemory();
 
-    // 0.5. Attach Firestore Realtime Listener lazily for authenticated admins or after initial idle
-    const isSpecialistOrAdmin = typeof window !== 'undefined' && (
-      window.location.hash.includes('admin') || 
-      !!localStorage.getItem('raba_admin_session_auth')
-    );
-
+    // 0.5. Live Firestore site_settings subscription is active for ALL visitors and admins in production
     const setupLiveSubscriber = async () => {
       try {
         const { subscribeSiteSettings } = await getFirestoreService();
-        subscribeSiteSettings((settingsMap) => {
-          for (const [key, data] of Object.entries(settingsMap)) {
-            IN_MEMORY_SYNC_CACHE.set(key, data);
-            try {
-              const stringified = typeof data === 'string' ? data : JSON.stringify(data);
-              localStorage.setItem(key, stringified);
-              localStorage.setItem(`raba_ts_${key}`, Date.now().toString());
-              mirrorAliases(key, stringified, Date.now());
-            } catch (e) {
-              console.warn('[PersistentSync] Local cache notice:', e);
+        subscribeSiteSettings(
+          (settingsMap) => {
+            for (const [key, data] of Object.entries(settingsMap)) {
+              applyAuthoritativeFirestoreSetting(key, data);
             }
-            const eventName = EVENT_MAP[key];
-            if (eventName) {
-              window.dispatchEvent(new CustomEvent(eventName, { detail: data }));
-            }
+          },
+          (err) => {
+            console.error('[Firestore Live Sync Error]:', (err as any)?.code || 'unknown', (err as any)?.message || err);
           }
-        }, (err) => {
-          console.warn('[PersistentSync] Realtime subscriber notice:', err?.message || err);
-        });
-      } catch (err) {
-        console.warn('[PersistentSync] Non-blocking subscriber notice:', err);
+        );
+      } catch (err: any) {
+        console.error('[Firestore Live Sync Error]:', err?.code || 'init-failed', err?.message || err);
       }
     };
 
-    // Only attach live Firestore subscriber for authenticated admin routes - never for public landing visitors
-    if (isSpecialistOrAdmin) {
-      setupLiveSubscriber();
-    }
+    setupLiveSubscriber();
 
     let serverData: Record<string, any> | null = null;
     let syncTimestamp = new Date().toISOString();
@@ -313,10 +357,14 @@ export async function initPersistentSync(): Promise<void> {
 
     const localKeysToPush: Record<string, any> = {};
 
-    // Synchronize ONLY canonical primary keys to ensure Firestore data is authoritative!
+    // Synchronize ONLY canonical primary keys where Firestore has NOT already provided an authoritative live snapshot
     for (const storageKey of PRIMARY_SYNC_KEYS) {
+      if (FIRESTORE_AUTHORITATIVE_KEYS.has(storageKey)) {
+        continue;
+      }
+
       const serverVal = serverData[storageKey];
-      let localValRaw = localStorage.getItem(storageKey);
+      const localValRaw = localStorage.getItem(storageKey);
       const localTsRaw = localStorage.getItem(`raba_ts_${storageKey}`);
       const localTs = localTsRaw ? Number(localTsRaw) : 0;
 
@@ -376,7 +424,7 @@ export async function initPersistentSync(): Promise<void> {
           console.error(`[PersistentSync] Failed to store ${storageKey}:`, e);
         }
       } else if (localValRaw) {
-        // Server doesn't have this key yet, push local value to server/Firestore
+        // Server doesn't have this key yet, stage local value only for authenticated admins
         try {
           localKeysToPush[storageKey] = JSON.parse(localValRaw);
         } catch {
@@ -386,11 +434,12 @@ export async function initPersistentSync(): Promise<void> {
       }
     }
 
-    // Push local customizations to server and Firestore if any
-    if (Object.keys(localKeysToPush).length > 0) {
+    // Push local customizations to server ONLY when authenticated admin session token exists
+    const adminHeaders = getAdminHeaders();
+    if (adminHeaders['x-admin-token'] && Object.keys(localKeysToPush).length > 0) {
       fetch('/api/sync/save', {
         method: 'POST',
-        headers: getAdminHeaders(),
+        headers: adminHeaders,
         body: JSON.stringify({ all: localKeysToPush })
       }).catch((err) => {
         console.error('[PersistentSync] Failed to push local customizations to server:', err);
@@ -446,14 +495,16 @@ export async function savePersistentModule<T>(key: string, data: T): Promise<boo
   }
 
   // 3. Save directly to Firestore from the client if authenticated
+  let fbSaved = false;
   try {
     const { saveSiteSettingToFirestore } = await getFirestoreService();
-    await saveSiteSettingToFirestore(key, data);
+    fbSaved = await saveSiteSettingToFirestore(key, data);
   } catch {
     // Handled or skipped if client unauthenticated
   }
 
   // 4. Save to server persistent API endpoint (which also writes to Firestore admin SDK)
+  let apiSaved = false;
   try {
     const res = await fetch('/api/sync/save', {
       method: 'POST',
@@ -462,13 +513,13 @@ export async function savePersistentModule<T>(key: string, data: T): Promise<boo
     });
     if (res.ok) {
       const json = await res.json();
-      return json.success === true;
+      apiSaved = json.success === true;
     }
-    return false;
   } catch (err) {
     console.warn(`[PersistentSync] Server API save notice for key "${key}":`, err);
-    return false;
   }
+
+  return fbSaved || apiSaved;
 }
 
 /**

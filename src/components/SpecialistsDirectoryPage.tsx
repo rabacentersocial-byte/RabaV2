@@ -30,12 +30,13 @@ import {
 } from 'lucide-react';
 import { Specialist } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 import { getSpecialistLogoTheme } from '../utils/specialistCardThemes';
 import { 
-  getStoredSpecialistSettings, 
+  DEFAULT_SPECIALIST_SETTINGS,
   SpecialistImageSetting, 
   GlobalCardSettings, 
-  getStoredGlobalCardSettings, 
+  DEFAULT_GLOBAL_CARD_SETTINGS,
   findCustomSettingForDoctor 
 } from '../data/specialistCustomizer';
 import { getResolvedImageUrl, handleImageErrorWithStore } from '../utils/persistentImageStore';
@@ -115,9 +116,10 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isSortOpen]);
 
-  // Dynamic Specialist Image Settings (synced from Admin Dashboard)
-  const [customSettings, setCustomSettings] = useState<Record<string, SpecialistImageSetting>>(() => getStoredSpecialistSettings());
-  const [globalCardSettings, setGlobalCardSettings] = useState<GlobalCardSettings>(() => getStoredGlobalCardSettings());
+  // Dynamic Specialist Image Settings (live from Firestore LiveDataContext)
+  const live = useLiveDataOptional();
+  const customSettings: Record<string, SpecialistImageSetting> = live?.specialistCardSettings || DEFAULT_SPECIALIST_SETTINGS;
+  const globalCardSettings: GlobalCardSettings = live?.globalCardSettings || DEFAULT_GLOBAL_CARD_SETTINGS;
 
   // Interactive user ratings state (synced with homepage slider)
   const [userRatings, setUserRatings] = useState<Record<string, number>>(() => {
@@ -141,22 +143,8 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
     }
   });
 
-  // Cross-component synchronizations
+  // Cross-component user interaction synchronizations (ratings & favorites)
   useEffect(() => {
-    const handleSettingsUpdate = (e?: any) => {
-      if (e?.type === 'raba_specialist_settings_updated' && e?.detail && !('timestamp' in e.detail)) {
-        setCustomSettings(e.detail);
-      } else {
-        setCustomSettings(getStoredSpecialistSettings());
-      }
-    };
-    const handleGlobalUpdate = (e?: any) => {
-      if (e?.type === 'raba_global_card_settings_updated' && e?.detail && !('timestamp' in e.detail)) {
-        setGlobalCardSettings(e.detail);
-      } else {
-        setGlobalCardSettings(getStoredGlobalCardSettings());
-      }
-    };
     const handleRatingUpdate = () => {
       try {
         const saved = localStorage.getItem('raba_user_doctor_ratings');
@@ -173,24 +161,14 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
       }
     };
 
-    window.addEventListener('raba_specialist_settings_updated', handleSettingsUpdate);
-    window.addEventListener('raba_global_card_settings_updated', handleGlobalUpdate);
     window.addEventListener('raba_doctor_rating_updated', handleRatingUpdate);
     window.addEventListener('raba_favorite_doctors_updated', handleFavUpdate);
-    window.addEventListener('storage', handleSettingsUpdate);
     window.addEventListener('storage', handleFavUpdate);
-    window.addEventListener('raba_persistent_sync_ready', handleSettingsUpdate);
-    window.addEventListener('raba_persistent_sync_ready', handleGlobalUpdate);
 
     return () => {
-      window.removeEventListener('raba_specialist_settings_updated', handleSettingsUpdate);
-      window.removeEventListener('raba_global_card_settings_updated', handleGlobalUpdate);
       window.removeEventListener('raba_doctor_rating_updated', handleRatingUpdate);
       window.removeEventListener('raba_favorite_doctors_updated', handleFavUpdate);
-      window.removeEventListener('storage', handleSettingsUpdate);
       window.removeEventListener('storage', handleFavUpdate);
-      window.removeEventListener('raba_persistent_sync_ready', handleSettingsUpdate);
-      window.removeEventListener('raba_persistent_sync_ready', handleGlobalUpdate);
     };
   }, []);
 
@@ -246,9 +224,10 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
   };
 
   // Compute unified, deduplicated and priority-sorted doctors: Exactly identical to homepage slider
+  const resolvedSpecialists = propSpecialists !== undefined ? propSpecialists : live?.specialists;
   const effectiveDoctors = useMemo(() => {
-    return getUnifiedDoctors(DOCTORS_DATA, propSpecialists);
-  }, [propSpecialists]);
+    return getUnifiedDoctors(DOCTORS_DATA, resolvedSpecialists, live?.isAuthoritativeSpecialists);
+  }, [resolvedSpecialists, live?.isAuthoritativeSpecialists]);
 
   // Categories definition matching Raba Centers specialties
   const categories = useMemo(() => [
@@ -356,11 +335,11 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
 
   // Convert Doctor to Specialist for CV modal and booking
   const handleViewCvClick = (doctor: Doctor) => {
-    onViewCv(doctorToSpecialist(doctor, propSpecialists));
+    onViewCv(doctorToSpecialist(doctor, resolvedSpecialists));
   };
 
   const handleBookClick = (doctor: Doctor) => {
-    onBookSpecialist(doctorToSpecialist(doctor, propSpecialists));
+    onBookSpecialist(doctorToSpecialist(doctor, resolvedSpecialists));
   };
 
   // Build WhatsApp quick chat URL
@@ -614,7 +593,7 @@ export const SpecialistsDirectoryPage: React.FC<SpecialistsDirectoryPageProps> =
             {filteredDoctors.map((doctor, index) => {
               const theme = getSpecialistLogoTheme(doctor, index);
               
-              const custom = findCustomSettingForDoctor(doctor) || customSettings[doctor.id] || customSettings[doctor.id.replace('doc-', 'spec-')];
+              const custom = findCustomSettingForDoctor(doctor, customSettings) || customSettings[doctor.id] || customSettings[doctor.id.replace('doc-', 'spec-')];
               const rawAvatar = custom?.avatar || doctor.avatar;
               const activeAvatar = getResolvedImageUrl(rawAvatar);
               const fitClass = custom?.displayMode === 'contain' ? 'object-contain' : 'object-cover';

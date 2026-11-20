@@ -27,6 +27,9 @@ import {
 } from 'lucide-react';
 import { compressImage } from '../../utils/imageCompressor';
 import { useLanguage } from '../../context/LanguageContext';
+import { useLiveDataOptional } from '../../context/LiveDataContext';
+import { syncAccreditationsCollectionToFirestore, deleteAccreditationFromFirestore } from '../../services/firestoreService';
+import { uploadAttachmentToServer } from '../../utils/persistentSync';
 import { 
   AccreditationItem, 
   AccreditationsSectionSettings,
@@ -51,6 +54,7 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
   isSystemAdmin = false
 }) => {
   const { isArabic } = useLanguage();
+  const liveData = useLiveDataOptional();
 
   // Section Header & Config State
   const [sectionSettings, setSectionSettings] = useState<AccreditationsSectionSettings>(() => getStoredAccreditationSettings());
@@ -113,31 +117,37 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
       setIsCompressing(true);
       showFeedback(isArabic ? 'جاري ضغط ومعالجة صورة الشعار...' : 'Processing logo image...');
       const dataUrl = await compressImage(file, 800, 800, 0.9);
+      const uploadRes = await uploadAttachmentToServer(dataUrl, file.name);
+      const resolvedUrl = uploadRes?.success && uploadRes.url ? uploadRes.url : dataUrl;
       
       const next = items.map((it) => it.id === targetCardItem.id ? {
         ...it,
         logoType: 'custom' as const,
-        customLogoUrl: dataUrl
+        customLogoUrl: resolvedUrl
       } : it);
       
       setItems(next);
       saveStoredAccreditations(next);
+      void syncAccreditationsCollectionToFirestore(next);
       setIsCompressing(false);
       showFeedback(isArabic ? `✓ تم تحديث ورفع شعار "${targetCardItem.nameAr}" بنجاح!` : `Logo updated for "${targetCardItem.nameEn}"!`);
     } catch (err) {
       console.error(err);
       // Fallback to FileReader
       const reader = new FileReader();
-      reader.onload = (event) => {
+      reader.onload = async (event) => {
         const res = event.target?.result as string;
         if (res && targetCardItem) {
+          const uploadRes = await uploadAttachmentToServer(res, file.name);
+          const resolvedUrl = uploadRes?.success && uploadRes.url ? uploadRes.url : res;
           const next = items.map((it) => it.id === targetCardItem.id ? {
             ...it,
             logoType: 'custom' as const,
-            customLogoUrl: res
+            customLogoUrl: resolvedUrl
           } : it);
           setItems(next);
           saveStoredAccreditations(next);
+          void syncAccreditationsCollectionToFirestore(next);
           showFeedback(isArabic ? `✓ تم رفع شعار "${targetCardItem.nameAr}" بنجاح!` : `Logo updated!`);
         }
       };
@@ -159,6 +169,7 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
     } : it);
     setItems(next);
     saveStoredAccreditations(next);
+    void syncAccreditationsCollectionToFirestore(next);
     showFeedback(isArabic ? 'تمت إزالة صورة الشعار بنجاح' : 'Logo removed successfully');
   };
 
@@ -168,16 +179,20 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
       setIsCompressing(true);
       showFeedback(isArabic ? 'جاري معالجة وضغط صورة الشعار...' : 'Processing logo...');
       const dataUrl = await compressImage(file, 800, 800, 0.9);
-      setCustomLogoUrl(dataUrl);
+      const uploadRes = await uploadAttachmentToServer(dataUrl, file.name);
+      const resolvedUrl = uploadRes?.success && uploadRes.url ? uploadRes.url : dataUrl;
+      setCustomLogoUrl(resolvedUrl);
       setIsCompressing(false);
       showFeedback(isArabic ? '✓ تم رفع وضغط صورة الشعار بنجاح!' : '✓ Logo image ready!');
     } catch (err) {
       console.error(err);
       const reader = new FileReader();
-      reader.onload = (event) => {
+      reader.onload = async (event) => {
         const res = event.target?.result as string;
         if (res) {
-          setCustomLogoUrl(res);
+          const uploadRes = await uploadAttachmentToServer(res, file.name);
+          const resolvedUrl = uploadRes?.success && uploadRes.url ? uploadRes.url : res;
+          setCustomLogoUrl(resolvedUrl);
           showFeedback(isArabic ? '✓ تم رفع صورة الشعار بنجاح!' : '✓ Logo uploaded!');
         }
       };
@@ -202,7 +217,24 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
     }
   };
 
-  // Sync external events if needed
+  // Sync live Firestore snapshot and external events
+  useEffect(() => {
+    if (!liveData || isModalOpen) return;
+    if (liveData.isAuthoritativeAccreditations) {
+      setItems(liveData.accreditations);
+    }
+    if (!liveData.loadingSettings && liveData.accreditationSettings) {
+      setSectionSettings(liveData.accreditationSettings);
+    }
+  }, [
+    liveData,
+    liveData?.accreditations,
+    liveData?.isAuthoritativeAccreditations,
+    liveData?.accreditationSettings,
+    liveData?.loadingSettings,
+    isModalOpen
+  ]);
+
   useEffect(() => {
     const handleUpdate = () => {
       const stored = getStoredAccreditations();
@@ -236,6 +268,7 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
     const next = items.map((it) => it.id === id ? { ...it, active: !it.active } : it);
     setItems(next);
     saveStoredAccreditations(next);
+    void syncAccreditationsCollectionToFirestore(next);
     showFeedback(isArabic ? 'تم تغيير حالة الظهور للاعتماد' : 'Accreditation visibility updated');
   };
 
@@ -249,6 +282,7 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
     next.forEach((it, idx) => { it.order = idx + 1; });
     setItems(next);
     saveStoredAccreditations(next);
+    void syncAccreditationsCollectionToFirestore(next);
   };
 
   // Move Item Down
@@ -261,6 +295,7 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
     next.forEach((it, idx) => { it.order = idx + 1; });
     setItems(next);
     saveStoredAccreditations(next);
+    void syncAccreditationsCollectionToFirestore(next);
   };
 
   // Delete Item (System Admin only)
@@ -274,6 +309,8 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
     next.forEach((it, idx) => { it.order = idx + 1; });
     setItems(next);
     saveStoredAccreditations(next);
+    void deleteAccreditationFromFirestore(id);
+    void syncAccreditationsCollectionToFirestore(next);
     showFeedback(isArabic ? 'تم حذف الاعتماد بنجاح' : 'Accreditation deleted');
   };
 
@@ -286,6 +323,7 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
     }));
     setItems(next);
     saveStoredAccreditations(next);
+    void syncAccreditationsCollectionToFirestore(next);
     showFeedback(isArabic ? 'تمت استعادة قائمة الاعتمادات مع تفريغ الشعارات لرفعها من جديد' : 'Reset accreditations list');
   };
 
@@ -363,6 +401,7 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
       const next = [...items, newItem];
       setItems(next);
       saveStoredAccreditations(next);
+      void syncAccreditationsCollectionToFirestore(next);
       showFeedback(isArabic ? 'تمت إضافة الاعتماد الجديد بنجاح' : 'New accreditation added');
     } else if (editingItem) {
       const next = items.map((it) => {
@@ -389,6 +428,7 @@ export const AccreditationsSettingsTab: React.FC<AccreditationsSettingsTabProps>
       });
       setItems(next);
       saveStoredAccreditations(next);
+      void syncAccreditationsCollectionToFirestore(next);
       showFeedback(isArabic ? 'تم تحديث بيانات وشعار الاعتماد بنجاح' : 'Accreditation updated');
     }
 

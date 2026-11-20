@@ -13,9 +13,10 @@ import {
   ArrowLeft,
   ArrowRight
 } from 'lucide-react';
-import { getStoredBranchesData, BranchItem } from '../data/branchesData';
+import { BRANCHES_DATA, BranchItem } from '../data/branchesData';
 import { BranchMapPinGraphic } from './BranchMapPinGraphic';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 
 const LedClubBadge: React.FC = () => (
   <span 
@@ -32,7 +33,8 @@ interface BranchesSectionProps {
 
 export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch, onOpenBranchesPage }) => {
   const { isArabic } = useLanguage();
-  const [branches, setBranches] = useState<BranchItem[]>(() => getStoredBranchesData());
+  const live = useLiveDataOptional();
+  const branches: BranchItem[] = live?.branches || BRANCHES_DATA;
   const [selectedCity, setSelectedCity] = useState<'all' | 'riyadh' | 'jeddah' | 'khobar' | 'ahsa' | 'kharj'>('all');
   const [viewMode, setViewMode] = useState<'slider' | 'grid'>('slider');
   
@@ -45,21 +47,6 @@ export const BranchesSection: React.FC<BranchesSectionProps> = ({ onSelectBranch
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  // Sync with updates from other tabs or persistent storage
-  useEffect(() => {
-    const handleUpdate = () => {
-      setBranches(getStoredBranchesData());
-    };
-    window.addEventListener('raba_branches_updated', handleUpdate);
-    window.addEventListener('raba_persistent_sync_ready' as any, handleUpdate);
-    window.addEventListener('storage', handleUpdate);
-    return () => {
-      window.removeEventListener('raba_branches_updated', handleUpdate);
-      window.removeEventListener('raba_persistent_sync_ready' as any, handleUpdate);
-      window.removeEventListener('storage', handleUpdate);
-    };
-  }, []);
 
   const filteredBranches = branches.filter((b) => {
     if (selectedCity === 'all') return true;

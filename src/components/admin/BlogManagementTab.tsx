@@ -23,6 +23,8 @@ import {
   Heart
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useLiveDataOptional } from '../../context/LiveDataContext';
+import { syncBlogPostsCollectionToFirestore, deleteBlogPostFromFirestore } from '../../services/firestoreService';
 import { BlogPost } from '../../types';
 import { 
   getStoredBlogPosts, 
@@ -39,6 +41,7 @@ interface BlogManagementTabProps {
 
 export const BlogManagementTab: React.FC<BlogManagementTabProps> = ({ isSystemAdmin = false }) => {
   const { isArabic } = useLanguage();
+  const liveData = useLiveDataOptional();
   const [posts, setPosts] = useState<BlogPost[]>(() => getStoredBlogPosts());
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -74,6 +77,20 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = ({ isSystemAd
   const fileInputRef = useRef<HTMLInputElement>(null);
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    if (!liveData || isModalOpen || postToDelete || isResetConfirmOpen) return;
+    if (liveData.isAuthoritativeBlogPosts) {
+      setPosts(liveData.blogPosts);
+    }
+  }, [
+    liveData,
+    liveData?.blogPosts,
+    liveData?.isAuthoritativeBlogPosts,
+    isModalOpen,
+    postToDelete,
+    isResetConfirmOpen
+  ]);
+
   const showFeedback = (text: string, type: 'success' | 'error' = 'success') => {
     setFeedbackMsg({ type, text });
     setTimeout(() => setFeedbackMsg(null), 3500);
@@ -82,6 +99,7 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = ({ isSystemAd
   const updatePostsState = (newPosts: BlogPost[]) => {
     setPosts(newPosts);
     saveStoredBlogPosts(newPosts);
+    void syncBlogPostsCollectionToFirestore(newPosts);
     showFeedback(isArabic ? 'تم حفظ التعديلات بنجاح' : 'Changes saved successfully');
   };
 
@@ -138,8 +156,10 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = ({ isSystemAd
   // Confirm delete post (System Admin only)
   const handleConfirmDelete = () => {
     if (!postToDelete || !isSystemAdmin) return;
-    const next = posts.filter((p) => p.id !== postToDelete.id);
+    const deletedId = postToDelete.id;
+    const next = posts.filter((p) => p.id !== deletedId);
     next.forEach((p, idx) => { p.order = idx + 1; });
+    void deleteBlogPostFromFirestore(deletedId);
     updatePostsState(next);
     setPostToDelete(null);
     showFeedback(isArabic ? '✓ تم حذف المقال بنجاح' : 'Article deleted successfully');
@@ -149,6 +169,7 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = ({ isSystemAd
   const handleConfirmReset = () => {
     const defs = resetBlogPostsToDefault();
     setPosts(defs);
+    void syncBlogPostsCollectionToFirestore(defs);
     setIsResetConfirmOpen(false);
     showFeedback(isArabic ? '✓ تمت استعادة المقالات الافتراضية بنجاح' : 'Reset to default articles');
   };
@@ -263,11 +284,13 @@ export const BlogManagementTab: React.FC<BlogManagementTabProps> = ({ isSystemAd
     };
 
     if (isNewPost) {
+      const newId = `blog-post-${Date.now()}`;
+      const rawSlug = formTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
       const newPostItem: BlogPost = {
-        id: `blog-post-${Date.now()}`,
+        id: newId,
         title: formTitle,
         titleEn: formTitleEn || formTitle,
-        slug: formTitle.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+        slug: rawSlug || newId,
         excerpt: formExcerpt || formTitle,
         excerptEn: formExcerptEn || formExcerpt,
         content: contentParagraphs.length > 0 ? contentParagraphs : [formExcerpt],

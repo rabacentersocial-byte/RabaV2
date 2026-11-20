@@ -27,9 +27,13 @@ import {
   Camera,
   Palette,
   Sliders,
-  CheckCheck
+  CheckCheck,
+  AlertTriangle
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useLiveDataOptional } from '../../context/LiveDataContext';
+import { syncPartnersCollectionToFirestore, deletePartnerFromFirestore } from '../../services/firestoreService';
+import { uploadAttachmentToServer } from '../../utils/persistentSync';
 import { compressImage } from '../../utils/imageCompressor';
 import { 
   PartnerItem, 
@@ -87,6 +91,7 @@ const ACCENT_COLOR_PRESETS = [
 
 export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = ({ isSystemAdmin = false }) => {
   const { isArabic } = useLanguage();
+  const liveData = useLiveDataOptional();
 
   const [partners, setPartners] = useState<PartnerItem[]>(() => getStoredPartners());
   const [settings, setSettings] = useState<PartnersSliderSettings>(() => getStoredPartnersSettings());
@@ -96,9 +101,30 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = ({ isSyst
   const [feedbackMessage, setFeedbackMessage] = useState('');
   const [isUploading, setIsUploading] = useState(false);
 
-  // Edit / Add Modal State
+  // Edit / Add / Confirm Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPartner, setEditingPartner] = useState<PartnerItem | null>(null);
+  const [partnerToDelete, setPartnerToDelete] = useState<PartnerItem | null>(null);
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
+
+  useEffect(() => {
+    if (!liveData || isModalOpen || partnerToDelete || isResetConfirmOpen) return;
+    if (liveData.isAuthoritativePartners) {
+      setPartners(liveData.partners);
+    }
+    if (!liveData.loadingSettings && liveData.partnersSettings) {
+      setSettings(liveData.partnersSettings);
+    }
+  }, [
+    liveData,
+    liveData?.partners,
+    liveData?.isAuthoritativePartners,
+    liveData?.partnersSettings,
+    liveData?.loadingSettings,
+    isModalOpen,
+    partnerToDelete,
+    isResetConfirmOpen
+  ]);
 
   // Form Fields
   const [formData, setFormData] = useState<Partial<PartnerItem>>({
@@ -188,21 +214,11 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = ({ isSyst
     setIsModalOpen(true);
   };
 
-  // Upload image to server disk via /api/sync/upload
+  // Upload image to server disk via authenticated uploadAttachmentToServer helper
   const uploadImageToServer = async (file: File, fallbackData: string): Promise<string> => {
     try {
-      const res = await fetch('/api/sync/upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          filename: file.name,
-          fileData: fallbackData
-        })
-      });
-      if (res.ok) {
-        const json = await res.json();
-        if (json.url) return json.url;
-      }
+      const res = await uploadAttachmentToServer(fallbackData, file.name);
+      if (res?.success && res.url) return res.url;
     } catch (err) {
       console.warn('Server upload notice, falling back:', err);
     }
@@ -278,6 +294,7 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = ({ isSyst
       );
       setPartners(updated);
       saveStoredPartners(updated);
+      void syncPartnersCollectionToFirestore(updated);
       triggerSuccessFeedback(isArabic ? 'تم حفظ صورة الشعار على الخادم وتطبيقها في السلايدر بنجاح!' : 'Partner logo saved to server and updated in slider!');
     } catch (err) {
       console.error('Quick upload failed:', err);
@@ -346,19 +363,26 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = ({ isSyst
 
     setPartners(updatedList);
     saveStoredPartners(updatedList);
+    void syncPartnersCollectionToFirestore(updatedList);
     setIsModalOpen(false);
     triggerSuccessFeedback(isArabic ? 'تم حفظ وتخصيص بطاقة الشريك بنجاح!' : 'Partner card customized successfully!');
   };
 
   // Delete Partner (System Admin only)
-  const handleDeletePartner = (id: string) => {
+  const handleDeletePartner = (partner: PartnerItem) => {
     if (!isSystemAdmin) return;
-    if (!window.confirm(isArabic ? 'هل أنت متأكد من حذف هذا الشريك من السلايدر؟' : 'Are you sure you want to delete this partner?')) {
-      return;
-    }
-    const updated = partners.filter(p => p.id !== id);
+    setPartnerToDelete(partner);
+  };
+
+  const handleConfirmDeletePartner = () => {
+    if (!isSystemAdmin || !partnerToDelete) return;
+    const deletedId = partnerToDelete.id;
+    const updated = partners.filter(p => p.id !== deletedId);
     setPartners(updated);
     saveStoredPartners(updated);
+    void deletePartnerFromFirestore(deletedId);
+    void syncPartnersCollectionToFirestore(updated);
+    setPartnerToDelete(null);
     triggerSuccessFeedback(isArabic ? 'تم حذف الشريك بنجاح.' : 'Partner removed.');
   };
 
@@ -369,6 +393,7 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = ({ isSyst
     );
     setPartners(updated);
     saveStoredPartners(updated);
+    void syncPartnersCollectionToFirestore(updated);
     triggerSuccessFeedback(isArabic ? 'تم تحديث حالة الظهور.' : 'Visibility updated.');
   };
 
@@ -384,6 +409,7 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = ({ isSyst
 
     setPartners(listCopy);
     saveStoredPartners(listCopy);
+    void syncPartnersCollectionToFirestore(listCopy);
   };
 
   // Save Settings
@@ -394,13 +420,16 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = ({ isSyst
 
   // Restore Default Partners
   const handleRestoreDefaults = () => {
-    if (!window.confirm(isArabic ? 'هل تريد استعادة قائمة الشركاء والإعدادات الافتراضية الرسمية (21 شريكاً معتمداً)؟' : 'Restore official default partners (21 partners)?')) {
-      return;
-    }
+    setIsResetConfirmOpen(true);
+  };
+
+  const handleConfirmRestoreDefaults = () => {
     setPartners(DEFAULT_PARTNERS);
     saveStoredPartners(DEFAULT_PARTNERS);
+    void syncPartnersCollectionToFirestore(DEFAULT_PARTNERS);
     setSettings(DEFAULT_PARTNERS_SETTINGS);
     saveStoredPartnersSettings(DEFAULT_PARTNERS_SETTINGS);
+    setIsResetConfirmOpen(false);
     triggerSuccessFeedback(isArabic ? 'تمت استعادة القائمة الافتراضية بنجاح!' : 'Defaults restored!');
   };
 
@@ -710,7 +739,7 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = ({ isSyst
                   {/* Delete (System Admin Only) */}
                   {isSystemAdmin && (
                     <button
-                      onClick={() => handleDeletePartner(partner.id)}
+                      onClick={() => handleDeletePartner(partner)}
                       className="p-1.5 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                       title={isArabic ? 'حذف الشريك' : 'Delete'}
                     >
@@ -1380,6 +1409,84 @@ export const PartnersSettingsTab: React.FC<PartnersSettingsTabProps> = ({ isSyst
               </div>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* Delete Partner Confirmation Modal */}
+      {partnerToDelete && isSystemAdmin && (
+        <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/10 shadow-2xl p-6 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 border border-rose-200 dark:border-rose-800/40">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-black text-slate-900 dark:text-white">
+                  {isArabic ? 'تأكيد حذف الشريك' : 'Confirm Partner Deletion'}
+                </h4>
+                <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                  {isArabic
+                    ? `هل أنت متأكد من حذف الشريك «${partnerToDelete.name}» من السلايدر وقاعدة البيانات نهائياً؟`
+                    : `Are you sure you want to delete partner "${partnerToDelete.nameEn || partnerToDelete.name}"?`}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setPartnerToDelete(null)}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+              >
+                {isArabic ? 'إلغاء' : 'Cancel'}
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDeletePartner}
+                className="px-4 py-2 rounded-xl text-xs font-black text-white bg-rose-600 hover:bg-rose-700 cursor-pointer shadow-sm"
+              >
+                {isArabic ? 'تأكيد الحذف' : 'Delete Partner'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Restore Default Partners Confirmation Modal */}
+      {isResetConfirmOpen && (
+        <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/10 shadow-2xl p-6 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-200 dark:border-amber-800/40">
+                <RotateCcw className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-black text-slate-900 dark:text-white">
+                  {isArabic ? 'استعادة قائمة الشركاء الافتراضية' : 'Restore Default Partners'}
+                </h4>
+                <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                  {isArabic
+                    ? 'هل تريد استعادة قائمة الشركاء والإعدادات الافتراضية الرسمية (21 شريكاً معتمداً)؟'
+                    : 'Restore the official default partners list (21 partners) and slider settings?'}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsResetConfirmOpen(false)}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+              >
+                {isArabic ? 'إلغاء' : 'Cancel'}
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmRestoreDefaults}
+                className="px-4 py-2 rounded-xl text-xs font-black text-white bg-[#0D6D54] hover:bg-[#0b5c47] cursor-pointer shadow-sm"
+              >
+                {isArabic ? 'تأكيد الاستعادة' : 'Confirm Restore'}
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -18,6 +18,7 @@ import {
   Check
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useLiveDataOptional } from '../../context/LiveDataContext';
 import { TrackingPixelsConfig, DEFAULT_TRACKING_PIXELS } from '../../types';
 import { getStoredTrackingPixels, saveStoredTrackingPixels } from '../../utils/trackingPixels';
 
@@ -27,6 +28,7 @@ interface TrackingPixelSettingsProps {
 
 export const TrackingPixelSettings: React.FC<TrackingPixelSettingsProps> = () => {
   const { isArabic } = useLanguage();
+  const liveData = useLiveDataOptional();
   const [isPending, startTransition] = useTransition();
 
   // State matching the required specifications
@@ -35,6 +37,15 @@ export const TrackingPixelSettings: React.FC<TrackingPixelSettingsProps> = () =>
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
+
+  // Hydrate from live Firestore snapshot when available
+  useEffect(() => {
+    if (liveData && !liveData.loadingSettings && liveData.trackingPixels) {
+      setPixels(liveData.trackingPixels);
+      setIsLoading(false);
+    }
+  }, [liveData, liveData?.loadingSettings, liveData?.trackingPixels]);
 
   // Fetch existing settings on mount from GET /api/admin/tracking-pixels
   useEffect(() => {
@@ -44,13 +55,12 @@ export const TrackingPixelSettings: React.FC<TrackingPixelSettingsProps> = () =>
         const res = await fetch('/api/admin/tracking-pixels');
         if (res.ok) {
           const json = await res.json();
-          if (json.success && json.data && isMounted) {
+          if (json.success && json.data && isMounted && (!liveData || liveData.loadingSettings)) {
             setPixels(json.data);
-            saveStoredTrackingPixels(json.data);
           }
         }
       } catch (err) {
-        console.warn('[TrackingPixels] Server fetch notice (using local storage cache):', err);
+        console.warn('[TrackingPixels] Server fetch notice:', err);
       } finally {
         if (isMounted) setIsLoading(false);
       }
@@ -108,12 +118,15 @@ export const TrackingPixelSettings: React.FC<TrackingPixelSettingsProps> = () =>
   };
 
   const handleResetToDefault = () => {
-    if (window.confirm(isArabic ? 'هل أنت متأكد من رغبتك في إعادة ضبط إعدادات البيكسل إلى الحالة الافتراضية؟' : 'Are you sure you want to reset all tracking pixel settings?')) {
-      setPixels(DEFAULT_TRACKING_PIXELS);
-      saveStoredTrackingPixels(DEFAULT_TRACKING_PIXELS);
-      setSaveSuccess(isArabic ? 'تمت استعادة الإعدادات الافتراضية بنجاح' : 'Reset to default configuration successfully');
-      setTimeout(() => setSaveSuccess(null), 3000);
-    }
+    setIsResetConfirmOpen(true);
+  };
+
+  const handleConfirmResetToDefault = () => {
+    setPixels(DEFAULT_TRACKING_PIXELS);
+    saveStoredTrackingPixels(DEFAULT_TRACKING_PIXELS);
+    setIsResetConfirmOpen(false);
+    setSaveSuccess(isArabic ? 'تمت استعادة الإعدادات الافتراضية بنجاح' : 'Reset to default configuration successfully');
+    setTimeout(() => setSaveSuccess(null), 3000);
   };
 
   // Quick summary counts
@@ -690,6 +703,44 @@ export const TrackingPixelSettings: React.FC<TrackingPixelSettingsProps> = () =>
         </div>
 
       </form>
+
+      {isResetConfirmOpen && (
+        <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/10 shadow-2xl p-6 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-200 dark:border-amber-800/40">
+                <RotateCcw className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-black text-slate-900 dark:text-white">
+                  {isArabic ? 'إعادة ضبط إعدادات البيكسل' : 'Reset Tracking Pixel Settings'}
+                </h4>
+                <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                  {isArabic
+                    ? 'هل أنت متأكد من رغبتك في إعادة ضبط إعدادات البيكسل وأكواد التتبع إلى الحالة الافتراضية؟'
+                    : 'Are you sure you want to reset all tracking pixel settings to defaults?'}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsResetConfirmOpen(false)}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+              >
+                {isArabic ? 'إلغاء' : 'Cancel'}
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmResetToDefault}
+                className="px-4 py-2 rounded-xl text-xs font-black text-slate-950 bg-[#00E5BE] hover:brightness-105 cursor-pointer shadow-sm"
+              >
+                {isArabic ? 'تأكيد إعادة الضبط' : 'Confirm Reset'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

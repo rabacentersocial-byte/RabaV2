@@ -18,8 +18,9 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { SPECIALISTS, SERVICES, THERAPY_PACKAGES, TIME_SLOTS } from '../data/mockData';
-import { getStoredBranchesData, BranchItem } from '../data/branchesData';
+import { BRANCHES_DATA, BranchItem } from '../data/branchesData';
 import { Specialist, ServiceItem, TherapyPackage, Appointment } from '../types';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 import { 
   generateRequestReference, 
   saveAndBroadcastCustomerRequestAsync,
@@ -52,6 +53,16 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 }) => {
   const { isArabic, direction } = useLanguage();
   const { user, clientProfile } = useAuth();
+  const live = useLiveDataOptional();
+
+  const activeLiveServices = (live?.services || []).filter((s) => s.active !== false && s.isActive !== false);
+  const activeLivePackages = (live?.packages || []).filter((p) => p.active !== false && p.isActive !== false);
+  const activeLiveSpecialists = (live?.specialists || []).filter((s) => s.active !== false && s.isActive !== false);
+
+  const servicesList = activeLiveServices.length ? activeLiveServices : (live?.isAuthoritativeServices ? [] : SERVICES);
+  const packagesList = activeLivePackages.length ? activeLivePackages : (live?.isAuthoritativePackages ? [] : THERAPY_PACKAGES);
+  const branchesList: BranchItem[] = live?.branches?.length ? live.branches : BRANCHES_DATA;
+  const liveSpecialists: Specialist[] = activeLiveSpecialists.length ? activeLiveSpecialists : (live?.isAuthoritativeSpecialists ? [] : SPECIALISTS);
 
   // Booking Type: service or package
   const [bookingType, setBookingType] = useState<'service' | 'package'>(
@@ -59,13 +70,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   );
 
   const [selectedServiceId, setSelectedServiceId] = useState<string>(
-    initialService?.id || SERVICES[0].id
+    initialService?.id || servicesList[0]?.id || SERVICES[0].id
   );
   const [selectedPackageId, setSelectedPackageId] = useState<string>(
-    initialPackage?.id || THERAPY_PACKAGES[0].id
+    initialPackage?.id || packagesList[0]?.id || THERAPY_PACKAGES[0].id
   );
   const [selectedSpecialistId, setSelectedSpecialistId] = useState<string>(
-    initialSpecialist?.id || SPECIALISTS[0].id
+    initialSpecialist?.id || liveSpecialists[0]?.id || SPECIALISTS[0].id
   );
 
   // Date & Time
@@ -77,7 +88,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [fullName, setFullName] = useState('');
   const [mobilePhone, setMobilePhone] = useState('');
 
-  const [branchesList, setBranchesList] = useState<BranchItem[]>(() => getStoredBranchesData());
   const [selectedBranchId, setSelectedBranchId] = useState<string>('');
 
   // Optional expandable details
@@ -93,38 +103,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [confirmedApp, setConfirmedApp] = useState<Appointment | null>(null);
-
-  const [liveSpecialists, setLiveSpecialists] = useState<Specialist[]>(() => {
-    try {
-      const saved = localStorage.getItem('raba_specialists');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch { /* ignore */ }
-    return SPECIALISTS;
-  });
-
-  useEffect(() => {
-    const syncSpecs = () => {
-      try {
-        const saved = localStorage.getItem('raba_specialists');
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) setLiveSpecialists(parsed);
-        }
-      } catch { /* ignore */ }
-    };
-    const syncBranches = () => setBranchesList(getStoredBranchesData());
-    window.addEventListener('raba_branches_updated', syncBranches);
-    window.addEventListener('raba_specialists_updated', syncSpecs);
-    window.addEventListener('raba_persistent_sync_ready' as any, syncSpecs);
-    return () => {
-      window.removeEventListener('raba_branches_updated', syncBranches);
-      window.removeEventListener('raba_specialists_updated', syncSpecs);
-      window.removeEventListener('raba_persistent_sync_ready' as any, syncSpecs);
-    };
-  }, []);
 
   useEffect(() => {
     if (initialPackage) {
@@ -195,14 +173,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   if (!isOpen) return null;
 
-  const activeService = SERVICES.find((s) => s.id === selectedServiceId) || SERVICES[0];
-  const activePackage = THERAPY_PACKAGES.find((p) => p.id === selectedPackageId) || THERAPY_PACKAGES[0];
+  const activeService = servicesList.find((s) => s.id === selectedServiceId) || servicesList[0];
+  const activePackage = packagesList.find((p) => p.id === selectedPackageId) || packagesList[0];
   const activeSpecialist =
     liveSpecialists.find((s) => s.id === selectedSpecialistId) ||
     (initialSpecialist && initialSpecialist.id === selectedSpecialistId ? initialSpecialist : null) ||
-    SPECIALISTS.find((s) => s.id === selectedSpecialistId) ||
-    liveSpecialists[0] ||
-    SPECIALISTS[0];
+    liveSpecialists[0];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -515,7 +491,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   onChange={(e) => setSelectedServiceId(e.target.value)}
                   className="w-full h-11 bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none cursor-pointer"
                 >
-                  {SERVICES.map((srv) => (
+                  {servicesList.map((srv) => (
                     <option key={srv.id} value={srv.id}>
                       {!isArabic && srv.titleEn ? srv.titleEn : srv.title}
                     </option>
@@ -529,7 +505,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   onChange={(e) => setSelectedPackageId(e.target.value)}
                   className="w-full h-11 bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none cursor-pointer"
                 >
-                  {THERAPY_PACKAGES.map((pkg) => (
+                  {packagesList.map((pkg) => (
                     <option key={pkg.id} value={pkg.id}>
                       {!isArabic && pkg.nameEn ? pkg.nameEn : pkg.name}
                     </option>

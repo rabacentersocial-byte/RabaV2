@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { 
   UserCheck, 
   Lightbulb, 
@@ -12,7 +12,8 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { getStoredPillars, ProgramPillarItem } from '../data/siteCustomizer';
+import { useLiveDataOptional } from '../context/LiveDataContext';
+import { DEFAULT_PROGRAM_PILLARS, ProgramPillarItem } from '../data/siteCustomizer';
 
 interface ProgramPillarsSectionProps {
   onOpenBooking?: () => void;
@@ -31,19 +32,8 @@ const ICON_MAP: Record<string, any> = {
 
 export const ProgramPillarsSection: React.FC<ProgramPillarsSectionProps> = ({ onOpenBooking }) => {
   const { t, isArabic } = useLanguage();
-  const [pillars, setPillars] = useState<ProgramPillarItem[]>(() => getStoredPillars());
-
-  useEffect(() => {
-    const handleUpdate = () => {
-      setPillars(getStoredPillars());
-    };
-    window.addEventListener('raba_pillars_updated', handleUpdate);
-    window.addEventListener('raba_persistent_sync_ready', handleUpdate);
-    return () => {
-      window.removeEventListener('raba_pillars_updated', handleUpdate);
-      window.removeEventListener('raba_persistent_sync_ready', handleUpdate);
-    };
-  }, []);
+  const live = useLiveDataOptional();
+  const pillars: ProgramPillarItem[] = live?.pillars || DEFAULT_PROGRAM_PILLARS;
 
   const activePillars = pillars.filter((p) => p.active !== false);
 

@@ -15,6 +15,7 @@ import {
   Search,
   Filter,
   Eye,
+  EyeOff,
   Check,
   Building2,
   Brain,
@@ -26,6 +27,7 @@ import {
 } from 'lucide-react';
 import { Specialist, PermissionId } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
+import { useLiveDataOptional } from '../../context/LiveDataContext';
 import { SpecialistImageCustomizerModal } from './SpecialistImageCustomizerModal';
 import { 
   getSpecialistImageSetting, 
@@ -53,6 +55,8 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
   isSystemAdmin = false
 }) => {
   const { isArabic } = useLanguage();
+  const liveData = useLiveDataOptional();
+  const [localSpecialists, setLocalSpecialists] = useState<Specialist[]>(specialists);
   
   // Customization & editing states
   const [editingSpecialist, setEditingSpecialist] = useState<Specialist | null>(null);
@@ -99,6 +103,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
   const [editSpecialties, setEditSpecialties] = useState('');
   const [editAvatar, setEditAvatar] = useState('');
   const [editIsTopRated, setEditIsTopRated] = useState(false);
+  const [editActive, setEditActive] = useState(true);
   const [isUploadingEditAvatar, setIsUploadingEditAvatar] = useState(false);
   const [isSavingEdit, setIsSavingEdit] = useState(false);
   const editAvatarInputRef = useRef<HTMLInputElement>(null);
@@ -115,6 +120,23 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
 
   // Re-render trigger when settings change in customizer
   const [settingsVersion, setSettingsVersion] = useState(0);
+
+  useEffect(() => {
+    if (editingSpecialist || isAddModalOpen || deletingSpecialist || customizingSpecialist) return;
+    if (liveData?.isAuthoritativeSpecialists && liveData.specialists) {
+      setLocalSpecialists(liveData.specialists);
+    } else {
+      setLocalSpecialists(specialists);
+    }
+  }, [
+    specialists,
+    liveData?.specialists,
+    liveData?.isAuthoritativeSpecialists,
+    editingSpecialist,
+    isAddModalOpen,
+    deletingSpecialist,
+    customizingSpecialist
+  ]);
 
   useEffect(() => {
     const handleSettingsUpdated = () => {
@@ -159,6 +181,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
     setEditSpecialties((spec.specialties || []).join(', '));
     setEditAvatar(setting.avatar || spec.avatar);
     setEditIsTopRated(setting.isTopRated ?? spec.isTopRated ?? spec.rating >= 4.9);
+    setEditActive(spec.isActive !== false && spec.active !== false);
   };
 
   // Save profile changes (preserves licenseNumber & sessionPrice set elsewhere)
@@ -176,7 +199,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
       const finalAvatar = editAvatar.trim() || editingSpecialist.avatar;
       let updatedSpec: Specialist | null = null;
 
-      const updated = specialists.map((s) => {
+      const updated = localSpecialists.map((s) => {
         if (s.id === editingSpecialist.id) {
           updatedSpec = {
             ...s,
@@ -193,13 +216,16 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
             rating: Math.min(5, Math.max(1, Number(rating) || s.rating || 5.0)),
             bio: bio.trim(),
             specialties: specialtiesList.length > 0 ? specialtiesList : s.specialties,
-            isTopRated: editIsTopRated
+            isTopRated: editIsTopRated,
+            active: editActive,
+            isActive: editActive
           };
           return updatedSpec;
         }
         return s;
       });
 
+      setLocalSpecialists(updated);
       await Promise.resolve(onUpdateSpecialists(updated));
 
       updateSpecialistCardSetting(
@@ -266,10 +292,13 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
         rating: Math.min(5, Math.max(1, Number(newRating) || 5.0)),
         reviewsCount: 1,
         sessionPrice: 0,
-        isTopRated: newIsTopRated
+        isTopRated: newIsTopRated,
+        active: true,
+        isActive: true
       };
 
-      const updated = [newSpecialist, ...specialists];
+      const updated = [newSpecialist, ...localSpecialists];
+      setLocalSpecialists(updated);
       await Promise.resolve(onUpdateSpecialists(updated));
 
       updateSpecialistCardSetting(
@@ -316,8 +345,9 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
     try {
       const targetId = deletingSpecialist.id;
       const deletedName = deletingSpecialist.name;
-      const updated = specialists.filter((s) => s.id !== targetId);
+      const updated = localSpecialists.filter((s) => s.id !== targetId);
 
+      setLocalSpecialists(updated);
       await Promise.resolve(onUpdateSpecialists(updated));
       removeSpecialistCardSetting(targetId);
       await deleteSpecialistFromFirestore(targetId).catch(() => false);
@@ -389,7 +419,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
     );
 
     let updatedSpec: Specialist | null = null;
-    const updatedList = specialists.map((s) => {
+    const updatedList = localSpecialists.map((s) => {
       if (s.id === spec.id) {
         updatedSpec = { ...s, isTopRated: nextVal };
         return updatedSpec;
@@ -397,6 +427,7 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
       return s;
     });
 
+    setLocalSpecialists(updatedList);
     setSettingsVersion((v) => v + 1);
     await Promise.resolve(onUpdateSpecialists(updatedList));
     if (updatedSpec) {
@@ -404,10 +435,36 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
     }
   };
 
+  // Quick toggle for Active / Inactive visibility (persists immediately to Firestore)
+  const handleToggleActive = async (spec: Specialist) => {
+    const currentlyActive = spec.isActive !== false && spec.active !== false;
+    const nextVal = !currentlyActive;
+
+    let updatedSpec: Specialist | null = null;
+    const updatedList = localSpecialists.map((s) => {
+      if (s.id === spec.id) {
+        updatedSpec = { ...s, active: nextVal, isActive: nextVal };
+        return updatedSpec;
+      }
+      return s;
+    });
+
+    setLocalSpecialists(updatedList);
+    await Promise.resolve(onUpdateSpecialists(updatedList));
+    if (updatedSpec) {
+      await saveSpecialistToFirestore(updatedSpec).catch(() => false);
+    }
+    showToast(
+      nextVal
+        ? (isArabic ? '✓ تم إظهار بطاقة الأخصائي للزوار ومزامنتها' : 'Specialist visible & synced')
+        : (isArabic ? 'تم إخفاء بطاقة الأخصائي من الواجهة ومزامنتها' : 'Specialist hidden & synced')
+    );
+  };
+
   // Deduplicated unique specialists list
   const uniqueSpecialists = useMemo(() => {
-    return deduplicateSpecialists(specialists);
-  }, [specialists]);
+    return deduplicateSpecialists(localSpecialists);
+  }, [localSpecialists]);
 
   // KPI calculations
   const stats = useMemo(() => {
@@ -643,12 +700,15 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
           const rawAvatar = setting.avatar || spec.avatar;
           const activeAvatar = getResolvedImageUrl(rawAvatar);
           const isTop = setting.isTopRated ?? spec.isTopRated ?? spec.rating >= 4.9;
+          const isSpecActive = spec.isActive !== false && spec.active !== false;
           const theme = getSpecialistLogoTheme(spec, idx);
 
           return (
             <div
               key={spec.id}
-              className={`bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border ${theme.cardBorderHover} shadow-sm hover:shadow-md transition-all flex flex-col justify-between group`}
+              className={`bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border ${
+                isSpecActive ? theme.cardBorderHover : 'border-dashed border-slate-300 dark:border-white/20 opacity-65'
+              } shadow-sm hover:shadow-md transition-all flex flex-col justify-between group`}
             >
               <div>
                 {/* Top Slim Accent Strip in Logo Color */}
@@ -729,20 +789,38 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
 
               {/* Bottom Action Row with Edit and Delete */}
               <div className="p-4 pt-0 flex items-center justify-between gap-2 border-t border-slate-100 dark:border-white/10 pt-3 mt-1">
-                {/* Toggle Top Rated */}
-                <button
-                  type="button"
-                  onClick={() => handleToggleTopRated(spec, isTop)}
-                  className={`px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer ${
-                    isTop
-                      ? 'bg-amber-400/15 text-amber-700 dark:text-amber-300 border border-amber-300/30'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
-                  }`}
-                  title={isArabic ? 'تبديل شارة الأعلى تقييماً' : 'Toggle Top Rated'}
-                >
-                  <Star className={`w-3 h-3 ${isTop ? 'fill-amber-400 text-amber-400' : ''}`} />
-                  <span>{isTop ? (isArabic ? 'مميز' : 'Featured') : (isArabic ? 'عادي' : 'Standard')}</span>
-                </button>
+                <div className="flex items-center gap-1.5">
+                  {/* Toggle Top Rated */}
+                  <button
+                    type="button"
+                    onClick={() => handleToggleTopRated(spec, isTop)}
+                    className={`px-2.5 py-1.5 rounded-xl text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                      isTop
+                        ? 'bg-amber-400/15 text-amber-700 dark:text-amber-300 border border-amber-300/30'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                    }`}
+                    title={isArabic ? 'تبديل شارة الأعلى تقييماً' : 'Toggle Top Rated'}
+                  >
+                    <Star className={`w-3 h-3 ${isTop ? 'fill-amber-400 text-amber-400' : ''}`} />
+                    <span>{isTop ? (isArabic ? 'مميز' : 'Featured') : (isArabic ? 'عادي' : 'Standard')}</span>
+                  </button>
+
+                  {/* Toggle Active / Hidden */}
+                  {canManage && (
+                    <button
+                      type="button"
+                      onClick={() => handleToggleActive(spec)}
+                      className={`p-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                        isSpecActive
+                          ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/20'
+                          : 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                      }`}
+                      title={isSpecActive ? (isArabic ? 'إخفاء من الموقع' : 'Hide from site') : (isArabic ? 'إظهار بالموقع' : 'Show on site')}
+                    >
+                      {isSpecActive ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                    </button>
+                  )}
+                </div>
 
                 <div className="flex items-center gap-1.5">
                   {/* Edit Profile Details */}
@@ -995,16 +1073,28 @@ export const SpecialistsTab: React.FC<SpecialistsTabProps> = ({
                 />
               </div>
 
-              {/* Featured Badge Toggle */}
-              <label className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer pt-1">
-                <input
-                  type="checkbox"
-                  checked={editIsTopRated}
-                  onChange={(e) => setEditIsTopRated(e.target.checked)}
-                  className="w-4 h-4 rounded text-[#0B3B36] focus:ring-[#00E5BE] cursor-pointer"
-                />
-                <span>{isArabic ? 'تمييز البطاقة بشارة "الأعلى تقييماً" (TOP RATED)' : 'Feature with "TOP RATED" badge'}</span>
-              </label>
+              {/* Featured Badge & Active Visibility Toggles */}
+              <div className="space-y-2 pt-1">
+                <label className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editIsTopRated}
+                    onChange={(e) => setEditIsTopRated(e.target.checked)}
+                    className="w-4 h-4 rounded text-[#0B3B36] focus:ring-[#00E5BE] cursor-pointer"
+                  />
+                  <span>{isArabic ? 'تمييز البطاقة بشارة "الأعلى تقييماً" (TOP RATED)' : 'Feature with "TOP RATED" badge'}</span>
+                </label>
+
+                <label className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editActive}
+                    onChange={(e) => setEditActive(e.target.checked)}
+                    className="w-4 h-4 rounded text-[#0B3B36] focus:ring-[#00E5BE] cursor-pointer"
+                  />
+                  <span>{isArabic ? 'نشط وظاهر للمراجعين في الموقع' : 'Active and visible on website'}</span>
+                </label>
+              </div>
 
               <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-white/10">
                 <button

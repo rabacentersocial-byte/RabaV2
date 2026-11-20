@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 import { 
-  getStoredLogoSettings, 
   SiteLogoSettings, 
   DEFAULT_LOGO_SETTINGS 
 } from '../data/siteCustomizer';
@@ -49,28 +49,13 @@ export const RabaLogo: React.FC<RabaLogoProps> = ({
     isDarkMode = propIsLight !== undefined ? !propIsLight : true;
   }
 
-  // 3. Stored Logo Settings + Live Listener
-  const [storedSettings, setStoredSettings] = useState<SiteLogoSettings>(() => getStoredLogoSettings());
+  // 3. Live Logo Settings from Firestore Context + Overrides for Admin Customizer
+  const live = useLiveDataOptional();
+  const baseLogoSettings = live?.logo || DEFAULT_LOGO_SETTINGS;
 
-  useEffect(() => {
-    const handleUpdate = (e?: any) => {
-      if (e?.type === 'raba_logo_updated' && e?.detail && !('timestamp' in e.detail) && (e.detail.logoSource || e.detail.customLogoUrl)) {
-        setStoredSettings(e.detail);
-      } else {
-        setStoredSettings(getStoredLogoSettings());
-      }
-    };
-    window.addEventListener('raba_logo_updated' as any, handleUpdate);
-    window.addEventListener('raba_persistent_sync_ready' as any, handleUpdate);
-    return () => {
-      window.removeEventListener('raba_logo_updated' as any, handleUpdate);
-      window.removeEventListener('raba_persistent_sync_ready' as any, handleUpdate);
-    };
-  }, []);
-
-  // Merge stored with overrides (e.g. for real-time live preview in Admin Customizer)
+  // Merge live settings with overrides (e.g. for real-time live preview in Admin Customizer)
   const currentSettings: SiteLogoSettings = {
-    ...storedSettings,
+    ...baseLogoSettings,
     ...(overrideSettings || {})
   };
 

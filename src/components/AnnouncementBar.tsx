@@ -13,14 +13,14 @@ import {
 import {
   AnnouncementBarSettings,
   AnnouncementIconName,
-  SiteThemeSettings,
-  STORAGE_ANNOUNCEMENT_BAR_KEY,
-  getStoredAnnouncementBarSettings,
-  getStoredSocialSettings,
-  getStoredThemeSettings
+  DEFAULT_ANNOUNCEMENT_BAR_SETTINGS,
+  DEFAULT_SOCIAL_SETTINGS,
+  DEFAULT_THEME_SETTINGS,
+  SiteThemeSettings
 } from '../data/siteCustomizer';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 
 interface AnnouncementBarProps {
   onOpenBooking?: () => void;
@@ -69,11 +69,8 @@ export const AnnouncementBar: React.FC<AnnouncementBarProps> = ({
   const { isArabic } = useLanguage();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
+  const live = useLiveDataOptional();
 
-  const [storedSettings, setStoredSettings] = useState<AnnouncementBarSettings>(() =>
-    getStoredAnnouncementBarSettings()
-  );
-  const [siteTheme, setSiteTheme] = useState<SiteThemeSettings>(() => getStoredThemeSettings());
   const [dismissedSig, setDismissedSig] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null;
     try {
@@ -83,46 +80,8 @@ export const AnnouncementBar: React.FC<AnnouncementBarProps> = ({
     }
   });
 
-  useEffect(() => {
-    if (isPreview) return;
-
-    const refreshSettings = () => {
-      setStoredSettings(getStoredAnnouncementBarSettings());
-    };
-    const refreshTheme = () => {
-      setSiteTheme(getStoredThemeSettings());
-    };
-
-    window.addEventListener('raba_announcement_bar_updated', refreshSettings);
-    window.addEventListener('raba_theme_updated', refreshTheme);
-    window.addEventListener('raba_persistent_sync_ready', refreshSettings);
-    window.addEventListener('storage', refreshSettings);
-
-    // Fetch latest published announcement config from Firestore for public visitors
-    import('../services/firestoreService')
-      .then(({ getSiteSettingFromFirestore }) =>
-        getSiteSettingFromFirestore(STORAGE_ANNOUNCEMENT_BAR_KEY).then((remote) => {
-          if (remote && typeof remote === 'object') {
-            setStoredSettings((prev) => ({ ...prev, ...remote }));
-            try {
-              localStorage.setItem(STORAGE_ANNOUNCEMENT_BAR_KEY, JSON.stringify(remote));
-            } catch {
-              // ignore quota error
-            }
-          }
-        })
-      )
-      .catch(() => {});
-
-    return () => {
-      window.removeEventListener('raba_announcement_bar_updated', refreshSettings);
-      window.removeEventListener('raba_theme_updated', refreshTheme);
-      window.removeEventListener('raba_persistent_sync_ready', refreshSettings);
-      window.removeEventListener('storage', refreshSettings);
-    };
-  }, [isPreview]);
-
-  const settings = previewSettings || storedSettings;
+  const settings = previewSettings || live?.announcementBar || DEFAULT_ANNOUNCEMENT_BAR_SETTINGS;
+  const siteTheme: SiteThemeSettings = live?.siteTheme || DEFAULT_THEME_SETTINGS;
   const sig = useMemo(() => buildSignature(settings), [settings]);
 
   const message = isArabic
@@ -136,6 +95,10 @@ export const AnnouncementBar: React.FC<AnnouncementBarProps> = ({
   const ctaText = isArabic
     ? (settings.ctaTextAr || '').trim()
     : (settings.ctaTextEn || settings.ctaTextAr || '').trim();
+
+  if (!isPreview && !previewSettings && live?.loadingSettings) {
+    return null;
+  }
 
   if (!isPreview && (!settings.enabled || !message)) {
     return null;
@@ -178,7 +141,7 @@ export const AnnouncementBar: React.FC<AnnouncementBarProps> = ({
         else if (onNavigate) onNavigate('/portal');
         break;
       case 'whatsapp': {
-        const social = getStoredSocialSettings();
+        const social = live?.social || DEFAULT_SOCIAL_SETTINGS;
         const waUrl = social.whatsapp || 'https://wa.me/966575100100';
         window.open(waUrl, '_blank', 'noopener,noreferrer');
         break;

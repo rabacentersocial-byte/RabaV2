@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Tag, 
   Star, 
@@ -18,10 +18,17 @@ import {
   Clock,
   Palette,
   Sliders,
-  CopyPlus
+  CopyPlus,
+  ShieldCheck
 } from 'lucide-react';
 import { ParentReview, PermissionId, OfferData } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
+import { useLiveDataOptional } from '../../context/LiveDataContext';
+import {
+  syncOffersCollectionToFirestore,
+  deleteOfferFromFirestore,
+  deleteTestimonialFromFirestore
+} from '../../services/firestoreService';
 import { getStoredOffers, saveStoredOffers } from '../../data/offersData';
 import { OfferCustomizerModal } from './OfferCustomizerModal';
 
@@ -43,6 +50,7 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
   isSystemAdmin = false
 }) => {
   const { isArabic } = useLanguage();
+  const liveData = useLiveDataOptional();
   const [activeSubTab, setActiveSubTab] = useState<'reviews' | 'offers'>('reviews');
 
   const canManageOffers = hasPermission('manage_offers');
@@ -60,6 +68,15 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
   const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  useEffect(() => {
+    if (isCustomizerOpen) return;
+    if (liveData?.isAuthoritativeOffers) {
+      setOffersList(liveData.offers);
+    } else if (propOffers) {
+      setOffersList(propOffers);
+    }
+  }, [liveData?.offers, liveData?.isAuthoritativeOffers, propOffers, isCustomizerOpen]);
+
   const showFeedback = (text: string, type: 'success' | 'error' = 'success') => {
     setFeedbackMsg({ text, type });
     setTimeout(() => setFeedbackMsg(null), 3500);
@@ -68,6 +85,7 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
   const syncOffers = (updated: OfferData[]) => {
     setOffersList(updated);
     saveStoredOffers(updated);
+    void syncOffersCollectionToFirestore(updated);
     if (onUpdateOffers) {
       onUpdateOffers(updated);
     }
@@ -76,15 +94,32 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
   // Toggle Review Verified Status
   const handleToggleVerified = (reviewId: string) => {
     if (!canManageReviews) return;
-    const updated = reviews.map((r) => r.id === reviewId ? { ...r, isVerifiedParent: !r.isVerifiedParent } : r);
+    const updated = reviews.map((r) =>
+      r.id === reviewId
+        ? { ...r, isVerifiedParent: !r.isVerifiedParent, verifiedBeneficiary: !r.isVerifiedParent }
+        : r
+    );
     onUpdateReviews(updated);
-    showFeedback(isArabic ? 'تم تحديث حالة توثيق ولي الأمر' : 'Review status updated');
+    showFeedback(isArabic ? 'تم تحديث حالة توثيق ولي الأمر' : 'Review verification updated');
+  };
+
+  // Toggle Review Visibility (Active/Inactive on client frontend)
+  const handleToggleReviewActive = (reviewId: string) => {
+    if (!canManageReviews) return;
+    const updated = reviews.map((r) => {
+      if (r.id !== reviewId) return r;
+      const nextActive = !(r.active !== false && r.isActive !== false);
+      return { ...r, active: nextActive, isActive: nextActive };
+    });
+    onUpdateReviews(updated);
+    showFeedback(isArabic ? 'تم تحديث حالة ظهور التقييم في الموقع' : 'Review visibility updated');
   };
 
   // Delete review (System Admin only)
   const handleDeleteReview = (reviewId: string) => {
     if (!canManageReviews || !isSystemAdmin) return;
     const updated = reviews.filter((r) => r.id !== reviewId);
+    void deleteTestimonialFromFirestore(reviewId);
     onUpdateReviews(updated);
     showFeedback(isArabic ? '✓ تم حذف التقييم بنجاح' : 'Review deleted successfully');
   };
@@ -101,6 +136,7 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
   const handleDeleteOffer = (offerId: string) => {
     if (!canManageOffers || !isSystemAdmin) return;
     const updated = offersList.filter((o) => o.id !== offerId);
+    void deleteOfferFromFirestore(offerId);
     syncOffers(updated);
     showFeedback(isArabic ? '✓ تم حذف العرض بنجاح' : 'Offer deleted successfully');
   };
@@ -192,67 +228,119 @@ export const MarketingReviewsTab: React.FC<MarketingReviewsTabProps> = ({
         )}
       </div>
 
+      {/* Feedback Toast */}
+      {feedbackMsg && (
+        <div
+          className={`p-3.5 rounded-2xl text-xs font-black flex items-center gap-2 shadow-sm animate-in fade-in ${
+            feedbackMsg.type === 'success'
+              ? 'bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/40 text-emerald-800 dark:text-emerald-300'
+              : 'bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/40 text-rose-800 dark:text-rose-300'
+          }`}
+        >
+          {feedbackMsg.type === 'success' ? (
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          ) : (
+            <XCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
+          )}
+          <span>{feedbackMsg.text}</span>
+        </div>
+      )}
+
       {/* Reviews Management Sub-Tab */}
       {activeSubTab === 'reviews' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {reviews.map((rev) => (
-            <div
-              key={rev.id}
-              className="p-5 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-xs flex flex-col justify-between"
-            >
-              <div className="space-y-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">
-                      {isArabic ? rev.parentName : (rev.parentNameEn || rev.parentName)}
-                    </h4>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
-                      {rev.childIssue || 'تأهيل سلوكي ونمائي'} • {rev.location || 'الرياض'}
-                    </p>
+          {reviews.map((rev) => {
+            const isVisible = rev.active !== false && rev.isActive !== false;
+            const isVerified = Boolean(rev.isVerifiedParent || rev.verifiedBeneficiary);
+            return (
+              <div
+                key={rev.id}
+                className={`p-5 rounded-3xl bg-white dark:bg-slate-900 border shadow-xs flex flex-col justify-between transition-all ${
+                  isVisible
+                    ? 'border-slate-200 dark:border-white/10'
+                    : 'border-dashed border-slate-300 dark:border-white/15 opacity-65'
+                }`}
+              >
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h4 className="font-bold text-slate-900 dark:text-white text-sm">
+                          {isArabic ? rev.parentName : (rev.parentNameEn || rev.parentName)}
+                        </h4>
+                        <span
+                          className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+                            isVisible
+                              ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200/70 dark:border-emerald-800/40'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-white/10'
+                          }`}
+                        >
+                          {isVisible ? (isArabic ? 'ظاهر بالموقع' : 'Visible') : (isArabic ? 'مخفي' : 'Hidden')}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                        {rev.childIssue || 'تأهيل سلوكي ونمائي'} • {rev.location || 'الرياض'}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/40 px-2 py-0.5 rounded-lg text-amber-700 dark:text-amber-400 text-xs font-bold shrink-0">
+                      <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      <span>{rev.rating}</span>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-1 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/40 px-2 py-0.5 rounded-lg text-amber-700 dark:text-amber-400 text-xs font-bold shrink-0">
-                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                    <span>{rev.rating}</span>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-white/5 p-3 rounded-2xl">
+                    "{isArabic ? rev.comment : (rev.commentEn || rev.comment)}"
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 dark:border-white/5 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className={`inline-flex items-center gap-1 font-bold ${isVerified ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>{isVerified ? (isArabic ? 'مستفيد موثّق' : 'Verified Beneficiary') : (isArabic ? 'غير موثّق' : 'Unverified')}</span>
+                    </span>
                   </div>
-                </div>
 
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-white/5 p-3 rounded-2xl">
-                  "{isArabic ? rev.comment : (rev.commentEn || rev.comment)}"
-                </p>
-              </div>
-
-              <div className="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 dark:border-white/5 text-xs">
-                <div className="flex items-center gap-2">
-                  <span className={`inline-flex items-center gap-1 font-bold ${rev.isVerifiedParent || rev.verifiedBeneficiary ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-400'}`}>
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>{isArabic ? 'مستفيد موثّق' : 'Verified Beneficiary'}</span>
-                  </span>
-                </div>
-
-                {canManageReviews && (
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => handleToggleVerified(rev.id)}
-                      title={isArabic ? 'تبديل حالة التوثيق' : 'Toggle verified status'}
-                      className="p-1 text-slate-600 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg cursor-pointer"
-                    >
-                      {rev.isVerifiedParent ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                    </button>
-                    {isSystemAdmin && (
+                  {canManageReviews && (
+                    <div className="flex items-center gap-1">
                       <button
-                        onClick={() => handleDeleteReview(rev.id)}
-                        title={isArabic ? 'حذف التقييم' : 'Delete review'}
-                        className="p-1 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg cursor-pointer"
+                        onClick={() => handleToggleReviewActive(rev.id)}
+                        title={isVisible ? (isArabic ? 'إخفاء من الموقع' : 'Hide from site') : (isArabic ? 'إظهار في الموقع' : 'Show on site')}
+                        className={`p-1.5 rounded-lg cursor-pointer transition-colors ${
+                          isVisible
+                            ? 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
+                            : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10'
+                        }`}
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        {isVisible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
                       </button>
-                    )}
-                  </div>
-                )}
+                      <button
+                        onClick={() => handleToggleVerified(rev.id)}
+                        title={isArabic ? 'تبديل حالة التوثيق' : 'Toggle verified status'}
+                        className={`p-1.5 rounded-lg cursor-pointer transition-colors ${
+                          isVerified
+                            ? 'text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950/40'
+                            : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/10'
+                        }`}
+                      >
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                      </button>
+                      {isSystemAdmin && (
+                        <button
+                          onClick={() => handleDeleteReview(rev.id)}
+                          title={isArabic ? 'حذف التقييم' : 'Delete review'}
+                          className="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

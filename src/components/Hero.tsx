@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import { 
   Play, 
@@ -8,13 +8,14 @@ import {
   ChevronLeft
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 
 import { Specialist } from '../types';
 import { 
+  DEFAULT_HERO_SLIDER_CONFIG,
+  DEFAULT_HERO_SLIDES,
   HeroSlideItem, 
-  HeroSliderConfig, 
-  getStoredHeroSlides, 
-  getStoredHeroSliderConfig 
+  HeroSliderConfig
 } from '../data/sliderCustomizer';
 import { getResolvedImageUrl, handleImageErrorWithStore } from '../utils/persistentImageStore';
 import { useDailyChildrenCounter } from '../utils/dailyChildrenCounter';
@@ -41,36 +42,23 @@ export const Hero: React.FC<HeroProps> = ({
   onViewCv
 }) => {
   const { language, isArabic } = useLanguage();
-  
-  const [slides, setSlides] = useState<HeroSlideItem[]>(() => {
-    const all = getStoredHeroSlides();
-    const active = all.filter((s) => s.active !== false);
-    return active.length > 0 ? active : all;
-  });
-  const [config, setConfig] = useState<HeroSliderConfig>(() => getStoredHeroSliderConfig());
+  const live = useLiveDataOptional();
+
+  const slides = useMemo<HeroSlideItem[]>(() => {
+    if (live?.loadingSliders || live?.loadingSettings) return [];
+    const all = live
+      ? (live.isAuthoritativeSliders ? live.heroSlides : (live.heroSlides.length > 0 ? live.heroSlides : DEFAULT_HERO_SLIDES))
+      : DEFAULT_HERO_SLIDES;
+    return all.filter((s) => s.active !== false);
+  }, [live]);
+
+  const config: HeroSliderConfig = live?.heroConfig || DEFAULT_HERO_SLIDER_CONFIG;
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const touchStartXRef = useRef<number | null>(null);
 
   // Dynamic daily children counter (10 children from 8 AM to 6 PM) synchronized with cumulative beneficiaries
   const { count: dailyChildrenCount, formattedTotal, isWithinHours } = useDailyChildrenCounter(10);
-
-  useEffect(() => {
-    const handleUpdated = () => {
-      const all = getStoredHeroSlides();
-      const active = all.filter((s) => s.active !== false);
-      setSlides(active.length > 0 ? active : all);
-      setConfig(getStoredHeroSliderConfig());
-    };
-    window.addEventListener('raba_hero_slides_updated', handleUpdated);
-    window.addEventListener('raba_slider_updated', handleUpdated);
-    window.addEventListener('raba_persistent_sync_ready', handleUpdated);
-    return () => {
-      window.removeEventListener('raba_hero_slides_updated', handleUpdated);
-      window.removeEventListener('raba_slider_updated', handleUpdated);
-      window.removeEventListener('raba_persistent_sync_ready', handleUpdated);
-    };
-  }, []);
 
   // Safeguard index if slides count changes
   useEffect(() => {
@@ -354,48 +342,52 @@ export const Hero: React.FC<HeroProps> = ({
                   className="absolute inset-0 w-full h-full rounded-full overflow-hidden z-10 aspect-square"
                   style={{ aspectRatio: HERO_IMAGE_ASPECT_RATIO }}
                 >
-                  {slides.map((s, idx) => {
-                    const isActive = idx === currentSlideIndex;
-                    if (!isActive) return null;
+                  {slides.length === 0 ? (
+                    <div className="w-full h-full rounded-full bg-gradient-to-br from-[#2B95FF]/15 via-[#10B981]/10 to-[#8B5CF6]/15" />
+                  ) : (
+                    slides.map((s, idx) => {
+                      const isActive = idx === currentSlideIndex;
+                      if (!isActive) return null;
 
-                    return (
-                      <div
-                        key={s.id || idx}
-                        data-slide-active={isActive ? "true" : "false"}
-                        className={`absolute inset-0 w-full h-full rounded-full overflow-hidden aspect-square ${
-                          isActive ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
-                        }`}
-                        style={{
-                          aspectRatio: HERO_IMAGE_ASPECT_RATIO,
-                          opacity: 1,
-                          visibility: 'visible'
-                        }}
-                      >
-                        <Image
-                          src={getSlideDisplayImage(s)}
-                          alt={s.alt || 'مركز رابا للعلاج بتحليل السلوك التطبيقي ABA'}
-                          width={HERO_IMAGE_INTRINSIC_WIDTH}
-                          height={HERO_IMAGE_INTRINSIC_HEIGHT}
-                          sizes={HERO_IMAGE_SIZES}
-                          priority={true}
-                          loading="eager"
-                          decoding="async"
-                          onError={(e) => handleImageErrorWithStore(e, s.src, '/images/hero/card_1_journey.webp')}
-                          className={`w-full h-full object-cover rounded-full aspect-square ${
-                            s.objectPosition === 'center'
-                              ? 'object-center'
-                              : s.objectPosition === 'bottom'
-                              ? 'object-bottom'
-                              : 'object-[center_12%]'
+                      return (
+                        <div
+                          key={s.id || idx}
+                          data-slide-active={isActive ? "true" : "false"}
+                          className={`absolute inset-0 w-full h-full rounded-full overflow-hidden aspect-square ${
+                            isActive ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none z-0'
                           }`}
                           style={{
                             aspectRatio: HERO_IMAGE_ASPECT_RATIO,
-                            transform: `scale(${(s.zoomLevel || 100) / 100})`
+                            opacity: 1,
+                            visibility: 'visible'
                           }}
-                        />
-                      </div>
-                    );
-                  })}
+                        >
+                          <Image
+                            src={getSlideDisplayImage(s)}
+                            alt={s.alt || 'مركز رابا للعلاج بتحليل السلوك التطبيقي ABA'}
+                            width={HERO_IMAGE_INTRINSIC_WIDTH}
+                            height={HERO_IMAGE_INTRINSIC_HEIGHT}
+                            sizes={HERO_IMAGE_SIZES}
+                            priority={true}
+                            loading="eager"
+                            decoding="async"
+                            onError={(e) => handleImageErrorWithStore(e, s.src, '/images/hero/card_1_journey.webp')}
+                            className={`w-full h-full object-cover rounded-full aspect-square ${
+                              s.objectPosition === 'center'
+                                ? 'object-center'
+                                : s.objectPosition === 'bottom'
+                                ? 'object-bottom'
+                                : 'object-[center_12%]'
+                            }`}
+                            style={{
+                              aspectRatio: HERO_IMAGE_ASPECT_RATIO,
+                              transform: `scale(${(s.zoomLevel || 100) / 100})`
+                            }}
+                          />
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
 
               </div>

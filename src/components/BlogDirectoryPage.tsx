@@ -38,8 +38,9 @@ import {
 } from 'lucide-react';
 import { BlogPost, Specialist } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 import { SPECIALISTS } from '../data/mockData';
-import { getStoredBlogPosts } from '../data/blogCustomizer';
+import { BLOG_POSTS } from '../data/blogData';
 import { getRelatedServiceForBlogPost } from '../data/seoRoutes';
 
 interface BlogDirectoryPageProps {
@@ -61,8 +62,17 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
 }) => {
   const { isArabic } = useLanguage();
 
-  // All blog posts state (synchronized with localStorage, persistent sync, and Firestore)
-  const [allPosts, setAllPosts] = useState<BlogPost[]>(() => getStoredBlogPosts());
+  // All blog posts state (live from Firestore LiveDataContext)
+  const live = useLiveDataOptional();
+  const allPosts: BlogPost[] = live
+    ? (live.loadingBlogPosts || live.loadingSettings
+        ? []
+        : live.isAuthoritativeBlogPosts
+        ? live.blogPosts
+        : live.blogPosts.length > 0
+        ? live.blogPosts
+        : BLOG_POSTS)
+    : BLOG_POSTS;
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
@@ -73,8 +83,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
   // Active Reader full standalone article view
   const [readingPost, setReadingPost] = useState<BlogPost | null>(() => {
     if (initialPostSlug) {
-      const stored = getStoredBlogPosts();
-      return stored.find(p => p.slug === initialPostSlug) || null;
+      return allPosts.find(p => p.slug === initialPostSlug) || null;
     }
     return null;
   });
@@ -180,18 +189,15 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
     }
   };
 
-  // Synchronize dynamic updates from admin
+  // Keep currently opened post hydrated if Firestore blogPosts update
   useEffect(() => {
-    const handleUpdate = () => {
-      setAllPosts(getStoredBlogPosts());
-    };
-    window.addEventListener('raba_blog_posts_updated', handleUpdate);
-    window.addEventListener('raba_persistent_sync_ready', handleUpdate);
-    return () => {
-      window.removeEventListener('raba_blog_posts_updated', handleUpdate);
-      window.removeEventListener('raba_persistent_sync_ready', handleUpdate);
-    };
-  }, []);
+    if (readingPost) {
+      const updated = allPosts.find(p => p.slug === readingPost.slug || p.id === readingPost.id);
+      if (updated && updated !== readingPost) {
+        setReadingPost(updated);
+      }
+    }
+  }, [allPosts, readingPost]);
 
   // Sync initial slug from URL routing cleanly
   useEffect(() => {
@@ -305,12 +311,22 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
     setTimeout(() => setCopyFeedback(false), 2000);
   };
 
+  const openExternalShareUrl = (shareUrl: string) => {
+    const link = document.createElement('a');
+    link.href = shareUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
   const handleShareWhatsApp = () => {
     if (!readingPost) return;
     const title = isArabic ? readingPost.title : (readingPost.titleEn || readingPost.title);
     const url = `${window.location.origin}/blog/${readingPost.slug}`;
     const text = encodeURIComponent(`*${title}*\n\nمقال قيم من مركز رابا للتأهيل:\n${url}`);
-    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    openExternalShareUrl(`https://api.whatsapp.com/send?text=${text}`);
   };
 
   const handleShareTwitter = () => {
@@ -318,7 +334,7 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
     const title = isArabic ? readingPost.title : (readingPost.titleEn || readingPost.title);
     const url = `${window.location.origin}/blog/${readingPost.slug}`;
     const text = encodeURIComponent(`${title} - مركز رابا`);
-    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}`, '_blank');
+    openExternalShareUrl(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}`);
   };
 
   const handleBookWithAuthor = (authorId?: string) => {
@@ -326,7 +342,8 @@ export const BlogDirectoryPage: React.FC<BlogDirectoryPageProps> = ({
       if (onOpenBooking) onOpenBooking('استشارة عامة بناءً على مقال في المدونة الطبية');
       return;
     }
-    const matched = SPECIALISTS.find(s => s.id === authorId);
+    const specs = live?.specialists && live.specialists.length > 0 ? live.specialists : SPECIALISTS;
+    const matched = specs.find(s => s.id === authorId);
     if (matched && onBookSpecialist) {
       onBookSpecialist(matched);
     } else if (onOpenBooking) {

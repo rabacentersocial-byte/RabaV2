@@ -12,23 +12,30 @@ import {
   Pause
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 import { 
   AccreditationItem, 
   AccreditationsSectionSettings,
   ACCREDITATIONS_LIST,
-  getStoredAccreditations, 
-  getStoredAccreditationSettings 
+  DEFAULT_ACCREDITATIONS_SETTINGS
 } from '../data/accreditationsData';
 
 export const AccreditationsSection: React.FC = () => {
   const { isArabic } = useLanguage();
+  const live = useLiveDataOptional();
 
-  const [accreditations, setAccreditations] = useState<AccreditationItem[]>(() => {
-    const stored = getStoredAccreditations();
-    return Array.isArray(stored) && stored.length > 0 ? stored : ACCREDITATIONS_LIST;
-  });
+  const accreditations: AccreditationItem[] = live
+    ? (live.loadingAccreditations || live.loadingSettings
+        ? []
+        : live.isAuthoritativeAccreditations
+        ? live.accreditations
+        : live.accreditations.length > 0
+        ? live.accreditations
+        : ACCREDITATIONS_LIST)
+    : ACCREDITATIONS_LIST;
+  const settings: AccreditationsSectionSettings =
+    live?.accreditationSettings || DEFAULT_ACCREDITATIONS_SETTINGS;
 
-  const [settings, setSettings] = useState<AccreditationsSectionSettings>(() => getStoredAccreditationSettings());
   const [selectedItem, setSelectedItem] = useState<AccreditationItem | null>(null);
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
@@ -36,29 +43,6 @@ export const AccreditationsSection: React.FC = () => {
   const touchStartXRef = React.useRef(0);
   const hasMovedRef = React.useRef(false);
   const resumeTimerRef = React.useRef<any>(null);
-
-  // Sync with Admin updates
-  useEffect(() => {
-    const handleAccreditationsUpdate = (e?: any) => {
-      const stored = Array.isArray(e?.detail) ? e.detail : getStoredAccreditations();
-      setAccreditations(Array.isArray(stored) && stored.length > 0 ? stored : ACCREDITATIONS_LIST);
-    };
-
-    const handleSettingsUpdate = (e?: any) => {
-      const stored = e?.detail || getStoredAccreditationSettings();
-      setSettings(stored);
-    };
-
-    window.addEventListener('raba_accreditations_updated', handleAccreditationsUpdate);
-    window.addEventListener('raba_accreditations_settings_updated', handleSettingsUpdate);
-    window.addEventListener('raba_persistent_sync_ready', handleAccreditationsUpdate);
-
-    return () => {
-      window.removeEventListener('raba_accreditations_updated', handleAccreditationsUpdate);
-      window.removeEventListener('raba_accreditations_settings_updated', handleSettingsUpdate);
-      window.removeEventListener('raba_persistent_sync_ready', handleAccreditationsUpdate);
-    };
-  }, []);
 
   // Standard items matching user screenshot
   const defaultBadges = [
@@ -101,7 +85,7 @@ export const AccreditationsSection: React.FC = () => {
       certificateNumber: item.certificateNumber,
       validUntil: item.validUntil
     };
-  }) : defaultBadges;
+  }) : (live?.isAuthoritativeAccreditations || live?.loadingAccreditations || live?.loadingSettings ? [] : defaultBadges);
 
   // Duplicate list once for pure GPU CSS marquee (-50% transform)
   const loopList = useMemo(() => {

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Sparkles, 
   Upload, 
@@ -20,6 +20,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useLiveDataOptional } from '../../context/LiveDataContext';
 import { 
   getStoredLogoSettings, 
   saveStoredLogoSettings, 
@@ -37,12 +38,20 @@ interface LogoSettingsSubTabProps {
 
 export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedback }) => {
   const { isArabic } = useLanguage();
+  const liveData = useLiveDataOptional();
 
   // Settings State
   const [settings, setSettings] = useState<SiteLogoSettings>(() => getStoredLogoSettings());
   const [isCompressing, setIsCompressing] = useState(false);
   const [isRemovingBg, setIsRemovingBg] = useState(false);
   const [localFeedback, setLocalFeedback] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
+
+  useEffect(() => {
+    if (liveData && !liveData.loadingSettings && liveData.logo) {
+      setSettings(liveData.logo);
+    }
+  }, [liveData, liveData?.loadingSettings, liveData?.logo]);
 
   // Live preview state (Theme & Language)
   const [previewTheme, setPreviewTheme] = useState<'light' | 'dark'>('dark');
@@ -130,15 +139,13 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
 
   // Reset to default factory settings
   const handleReset = () => {
-    const confirmed = window.confirm(
-      isArabic 
-        ? 'هل أنت متأكد من استعادة الشعار المعتمد والإعدادات الأصلية؟' 
-        : 'Are you sure you want to reset the logo and branding to original defaults?'
-    );
-    if (!confirmed) return;
+    setIsResetConfirmOpen(true);
+  };
 
+  const handleConfirmReset = () => {
     const resetDefaults = resetLogoSettingsToDefault();
     setSettings(resetDefaults);
+    setIsResetConfirmOpen(false);
     showMsg(
       isArabic ? '✓ تمت استعادة إعدادات الشعار الافتراضية بنجاح' : 'Logo reset to default brand configuration',
       'success'
@@ -806,6 +813,44 @@ export const LogoSettingsSubTab: React.FC<LogoSettingsSubTabProps> = ({ onFeedba
           </button>
         </div>
       </div>
+
+      {isResetConfirmOpen && (
+        <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-white/10 shadow-2xl p-6 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-200 dark:border-amber-800/40">
+                <RotateCcw className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-black text-slate-900 dark:text-white">
+                  {isArabic ? 'استعادة الشعار الافتراضي' : 'Reset Logo to Defaults'}
+                </h4>
+                <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                  {isArabic
+                    ? 'هل أنت متأكد من استعادة الشعار المعتمد والإعدادات الأصلية؟'
+                    : 'Are you sure you want to reset the logo and branding to original defaults?'}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsResetConfirmOpen(false)}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 cursor-pointer"
+              >
+                {isArabic ? 'إلغاء' : 'Cancel'}
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmReset}
+                className="px-4 py-2 rounded-xl text-xs font-black text-slate-950 bg-[#00E5BE] hover:brightness-105 cursor-pointer shadow-sm"
+              >
+                {isArabic ? 'تأكيد الاستعادة' : 'Confirm Reset'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

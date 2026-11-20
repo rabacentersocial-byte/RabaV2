@@ -1,6 +1,6 @@
 import { initializeApp, getApps, cert, App } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
-import { getFirestore, Firestore } from 'firebase-admin/firestore';
+import { getFirestore, Firestore, FieldValue } from 'firebase-admin/firestore';
 import fs from 'fs';
 import path from 'path';
 
@@ -108,7 +108,8 @@ export async function saveAdminFirestoreSetting(key: string, data: any): Promise
     await docRef.set({
       key,
       data,
-      updatedAt: new Date().toISOString()
+      updatedAt: FieldValue.serverTimestamp(),
+      updatedAtISO: new Date().toISOString()
     }, { merge: true });
     return true;
   } catch (error: any) {

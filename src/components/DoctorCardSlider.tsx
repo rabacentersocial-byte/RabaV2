@@ -14,12 +14,13 @@ import {
   Stethoscope
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 import { Specialist } from '../types';
 import { 
-  getStoredSpecialistSettings, 
+  DEFAULT_SPECIALIST_SETTINGS,
+  DEFAULT_GLOBAL_CARD_SETTINGS,
   SpecialistImageSetting,
   GlobalCardSettings,
-  getStoredGlobalCardSettings,
   findCustomSettingForDoctor
 } from '../data/specialistCustomizer';
 import { getResolvedImageUrl, handleImageErrorWithStore } from '../utils/persistentImageStore';
@@ -2588,24 +2589,28 @@ export function doctorToSpecialist(doctor: Doctor, allSpecialists?: Specialist[]
   };
 }
 
-export function getUnifiedDoctors(baseDoctors: Doctor[] = DOCTORS_DATA, extraSpecialists?: Specialist[]): Doctor[] {
+export function getUnifiedDoctors(
+  baseDoctors: Doctor[] = DOCTORS_DATA,
+  extraSpecialists?: Specialist[],
+  isAuthoritative?: boolean
+): Doctor[] {
   if (!extraSpecialists) {
     return deduplicateDoctors(baseDoctors);
   }
 
-  // If raba_specialists is explicitly synced in storage (even if customized/filtered/empty), treat extraSpecialists as authoritative
-  let hasStoredSpecialists = false;
-  try {
-    hasStoredSpecialists = typeof window !== 'undefined' && localStorage.getItem('raba_specialists') !== null;
-  } catch {
-    hasStoredSpecialists = false;
-  }
-
   if (extraSpecialists.length === 0) {
-    return hasStoredSpecialists ? [] : deduplicateDoctors(baseDoctors);
+    if (isAuthoritative !== undefined) {
+      return isAuthoritative ? [] : deduplicateDoctors(baseDoctors);
+    }
+    return deduplicateDoctors(baseDoctors);
   }
 
-  const convertedFromSpecialists: Doctor[] = extraSpecialists.map((s) => {
+  const activeExtra = extraSpecialists.filter((s) => s.active !== false && s.isActive !== false);
+  if (activeExtra.length === 0) {
+    return [];
+  }
+
+  const convertedFromSpecialists: Doctor[] = activeExtra.map((s) => {
     const matchingBase = baseDoctors.find((b) => isSameSpecialist(b, s));
     return {
       id: s.id.startsWith('spec-') ? s.id.replace('spec-', 'doc-') : s.id.startsWith('doc-') ? s.id : `doc-${s.id}`,
@@ -2730,38 +2735,10 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
     }, 2800);
   };
 
-  // Dynamic Specialist Image and Card Customizations (from Admin Dashboard)
-  const [customSettings, setCustomSettings] = useState<Record<string, SpecialistImageSetting>>(() => getStoredSpecialistSettings());
-  const [globalCardSettings, setGlobalCardSettings] = useState<GlobalCardSettings>(() => getStoredGlobalCardSettings());
-
-  useEffect(() => {
-    const handleUpdate = (e?: any) => {
-      if (e?.type === 'raba_specialist_settings_updated' && e?.detail && !('timestamp' in e.detail)) {
-        setCustomSettings(e.detail);
-      } else {
-        setCustomSettings(getStoredSpecialistSettings());
-      }
-    };
-    const handleGlobalUpdate = (e?: any) => {
-      if (e?.type === 'raba_global_card_settings_updated' && e?.detail && !('timestamp' in e.detail)) {
-        setGlobalCardSettings(e.detail);
-      } else {
-        setGlobalCardSettings(getStoredGlobalCardSettings());
-      }
-    };
-    window.addEventListener('raba_specialist_settings_updated', handleUpdate);
-    window.addEventListener('raba_global_card_settings_updated', handleGlobalUpdate);
-    window.addEventListener('storage', handleUpdate);
-    window.addEventListener('raba_persistent_sync_ready', handleUpdate);
-    window.addEventListener('raba_persistent_sync_ready', handleGlobalUpdate);
-    return () => {
-      window.removeEventListener('raba_specialist_settings_updated', handleUpdate);
-      window.removeEventListener('raba_global_card_settings_updated', handleGlobalUpdate);
-      window.removeEventListener('storage', handleUpdate);
-      window.removeEventListener('raba_persistent_sync_ready', handleUpdate);
-      window.removeEventListener('raba_persistent_sync_ready', handleGlobalUpdate);
-    };
-  }, []);
+  // Dynamic Specialist Image and Card Customizations (live from Firestore LiveDataContext)
+  const live = useLiveDataOptional();
+  const customSettings: Record<string, SpecialistImageSetting> = live?.specialistCardSettings || DEFAULT_SPECIALIST_SETTINGS;
+  const globalCardSettings: GlobalCardSettings = live?.globalCardSettings || DEFAULT_GLOBAL_CARD_SETTINGS;
 
   // Single unified slider ref
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -2773,8 +2750,9 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
 
   // Merge doctors list with any specialists data passed dynamically, deduplicating rigorously
   const effectiveDoctors = useMemo(() => {
-    return getUnifiedDoctors(doctors, specialists);
-  }, [doctors, specialists]);
+    const resolvedSpecs = specialists !== undefined ? specialists : live?.specialists;
+    return getUnifiedDoctors(doctors, resolvedSpecs, live?.isAuthoritativeSpecialists);
+  }, [doctors, specialists, live?.specialists, live?.isAuthoritativeSpecialists]);
 
   // Categories list for classification filter (حسب التخصص)
   const categories = useMemo(() => [
@@ -2909,7 +2887,7 @@ export const DoctorCardSlider: React.FC<DoctorCardSliderProps> = ({
     const theme = getSpecialistLogoTheme(doctor, index);
     
     // Dynamic custom settings from Admin Dashboard
-    const custom = findCustomSettingForDoctor(doctor) || customSettings[doctor.id] || customSettings[doctor.id.replace('doc-', 'spec-')];
+    const custom = findCustomSettingForDoctor(doctor, customSettings) || customSettings[doctor.id] || customSettings[doctor.id.replace('doc-', 'spec-')];
     const rawAvatar = custom?.avatar || doctor.avatar;
     const activeAvatar = getResolvedImageUrl(rawAvatar);
     const fitClass = custom?.displayMode === 'contain' ? 'object-contain' : 'object-cover';

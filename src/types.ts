@@ -42,6 +42,8 @@ export interface Specialist {
   rating: number;
   reviewsCount: number;
   sessionPrice: number;
+  active?: boolean;
+  isActive?: boolean;
   cardCustomization?: SpecialistCardCustomization;
 }
 
@@ -62,6 +64,9 @@ export interface ServiceItem {
   iconName: string;
   image: string;
   featured?: boolean;
+  active?: boolean;
+  isActive?: boolean;
+  order?: number;
   sessionPrice?: number;
   assessmentPrice?: number;
   originalPrice?: number;
@@ -94,6 +99,9 @@ export interface TherapyPackage {
   recommendedFor: string;
   recommendedForEn?: string;
   popular?: boolean;
+  active?: boolean;
+  isActive?: boolean;
+  order?: number;
   colorTheme: string;
   isSummer?: boolean;
   sessionDurationText?: string;
@@ -288,6 +296,8 @@ export interface ParentReview {
   verified?: boolean;
   verifiedBeneficiary?: boolean;
   isAnonymous?: boolean;
+  active?: boolean;
+  isActive?: boolean;
 }
 
 export type PermissionId = 

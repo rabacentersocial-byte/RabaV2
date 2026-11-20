@@ -10,8 +10,15 @@ import {
   FamilyMember,
   MemberRecord,
   MemberRecordCategory,
-  MemberReportType
+  MemberReportType,
+  ServiceItem,
+  TherapyPackage,
+  OfferData
 } from '../types';
+import type { HeroSlideItem, HeroSliderConfig } from '../data/sliderCustomizer';
+import type { CourseItem } from '../data/coursesData';
+import type { AccreditationItem } from '../data/accreditationsData';
+import type { PartnerItem } from '../data/partnersData';
 
 async function loadFirestoreCtx() {
   const [fs, db] = await Promise.all([
@@ -19,6 +26,23 @@ async function loadFirestoreCtx() {
     getLazyDb()
   ]);
   return { fs, db };
+}
+
+export async function testFirestoreConnection(): Promise<boolean> {
+  try {
+    const { fs, db } = await loadFirestoreCtx();
+    await fs.getDocFromServer(fs.doc(db, 'test', 'connection'));
+    return true;
+  } catch (error: any) {
+    const code = error?.code || 'unknown';
+    const message = error?.message || String(error);
+    if (message.includes('the client is offline')) {
+      console.error('[Firestore Live Sync Error]:', code, 'Client is offline - check network or Firestore config');
+    } else {
+      console.error('[Firestore Live Sync Error]:', code, message);
+    }
+    return false;
+  }
 }
 
 async function ensureFirebaseUser() {
@@ -281,16 +305,24 @@ export function sanitizeFirestoreData<T>(obj: T): T {
 // 1. DYNAMIC SITE SETTINGS (Synchronized with Admin Dashboard & Visitor UI)
 // ============================================================================
 
-function sanitizeFirestoreDocId(id: string): string {
+export function isValidFirestoreRuleId(id: string): boolean {
+  return typeof id === 'string' && id.length >= 1 && id.length <= 128 && /^[a-zA-Z0-9_-]+$/.test(id);
+}
+
+export function sanitizeFirestoreDocId(id: string, fallbackPrefix = 'item'): string {
   const cleaned = String(id || '')
     .trim()
     .replace(/[^a-zA-Z0-9_-]/g, '_')
+    .replace(/^_+|_+$/g, '')
     .slice(0, 128);
-  return cleaned || `item_${Date.now()}`;
+  return cleaned || `${fallbackPrefix}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
 }
 
-function isValidFirestoreRuleId(id: string): boolean {
-  return typeof id === 'string' && id.length >= 1 && id.length <= 128 && /^[a-zA-Z0-9_-]+$/.test(id);
+export function resolveFirestoreDocId(rawId: string | undefined | null, fallbackPrefix = 'item'): string {
+  if (rawId && isValidFirestoreRuleId(rawId)) {
+    return rawId;
+  }
+  return sanitizeFirestoreDocId(rawId || '', fallbackPrefix);
 }
 
 /**
@@ -341,12 +373,46 @@ export async function saveSiteSettingToFirestore(key: string, data: any): Promis
     const { fs, db } = await loadFirestoreCtx();
     const docRef = fs.doc(db, 'site_settings', safeKey);
     const preparedData = prepareSiteSettingPayloadForFirestore(safeKey, data);
-    await fs.setDoc(docRef, sanitizeFirestoreData({
+    const cleanPayload = sanitizeFirestoreData({
       key: safeKey,
       data: preparedData,
-      updatedAt: new Date().toISOString()
-    }), { merge: true });
+      updatedAtISO: new Date().toISOString()
+    });
+    // Attach serverTimestamp() AFTER sanitizeFirestoreData so the FieldValue sentinel is preserved
+    await fs.setDoc(docRef, {
+      ...cleanPayload,
+      updatedAt: fs.serverTimestamp()
+    }, { merge: true });
     console.log(`[Firestore] Successfully saved site setting: ${safeKey}`);
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, path, false);
+    return false;
+  }
+}
+
+export const saveAdminSiteSetting = saveSiteSettingToFirestore;
+
+export async function markCollectionAuthoritative(collectionKey: string): Promise<boolean> {
+  const safeKey = sanitizeFirestoreDocId(collectionKey, 'col');
+  const path = 'site_settings/raba_collection_authority';
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser) return false;
+    const isAdminUser = await verifyIsFirebaseAdmin(fbUser);
+    if (!isAdminUser) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'site_settings', 'raba_collection_authority');
+    await fs.setDoc(
+      docRef,
+      {
+        key: 'raba_collection_authority',
+        data: { [safeKey]: true },
+        updatedAtISO: new Date().toISOString(),
+        updatedAt: fs.serverTimestamp()
+      },
+      { merge: true }
+    );
     return true;
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, path, false);
@@ -432,13 +498,14 @@ export function subscribeSiteSettings(
           onUpdate(data);
         },
         (error) => {
-          console.warn('[Firestore Realtime Notice] site_settings listener info:', error?.message || error);
+          console.error('[Firestore Live Sync Error]:', (error as any)?.code || 'unknown', (error as any)?.message || error);
           if (onError) onError(error);
           handleFirestoreError(error, OperationType.LIST, path, false);
         }
       );
     })
     .catch((err) => {
+      console.error('[Firestore Live Sync Error]:', err?.code || 'init-failed', err?.message || err);
       if (onError) onError(err);
     });
 
@@ -453,7 +520,7 @@ export function subscribeSiteSettings(
 // ============================================================================
 
 export async function saveSpecialistToFirestore(specialist: Specialist): Promise<boolean> {
-  const docId = sanitizeFirestoreDocId(specialist.id);
+  const docId = resolveFirestoreDocId(specialist.id, 'spec');
   const path = `specialists/${docId}`;
   try {
     const fbUser = await ensureFirebaseUser();
@@ -466,12 +533,22 @@ export async function saveSpecialistToFirestore(specialist: Specialist): Promise
     }
     const { fs, db } = await loadFirestoreCtx();
     const docRef = fs.doc(db, 'specialists', docId);
-    const payload = sanitizeFirestoreData({
+    const cleanPayload = sanitizeFirestoreData({
       ...specialist,
       id: docId,
-      updatedAt: new Date().toISOString()
+      name: (specialist.name || specialist.nameEn || 'أخصائي').trim().slice(0, 200),
+      bio: (specialist.bio || '').slice(0, 5000),
+      active: specialist.active !== false,
+      isActive: specialist.isActive !== false && specialist.active !== false,
+      updatedAtISO: new Date().toISOString()
     });
-    await withTimeout(fs.setDoc(docRef, payload, { merge: true }), 10000);
+    await withTimeout(
+      fs.setDoc(docRef, {
+        ...cleanPayload,
+        updatedAt: fs.serverTimestamp()
+      }, { merge: true }),
+      10000
+    );
     console.log(`[Firestore] Successfully saved specialist: ${specialist.name} (${docId})`);
     return true;
   } catch (error) {
@@ -481,7 +558,7 @@ export async function saveSpecialistToFirestore(specialist: Specialist): Promise
 }
 
 export async function deleteSpecialistFromFirestore(specialistId: string): Promise<boolean> {
-  const docId = sanitizeFirestoreDocId(specialistId);
+  const docId = resolveFirestoreDocId(specialistId, 'spec');
   const path = `specialists/${docId}`;
   try {
     const fbUser = await ensureFirebaseUser();
@@ -509,6 +586,58 @@ export async function deleteSpecialistFromFirestore(specialistId: string): Promi
     return true;
   } catch (error) {
     handleFirestoreError(error, OperationType.DELETE, path, false);
+    return false;
+  }
+}
+
+export async function syncSpecialistsCollectionToFirestore(specialists: Specialist[]): Promise<boolean> {
+  const path = 'specialists';
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser) return false;
+    const isAdminUser = await verifyIsFirebaseAdmin(fbUser);
+    if (!isAdminUser) return false;
+
+    const { fs, db } = await loadFirestoreCtx();
+    const colRef = fs.collection(db, 'specialists');
+    const keepIds = new Set<string>();
+
+    await Promise.all(
+      specialists.map((spec, idx) => {
+        const docId = resolveFirestoreDocId(spec.id, 'spec');
+        keepIds.add(docId);
+        const docRef = fs.doc(db, 'specialists', docId);
+        const cleanPayload = sanitizeFirestoreData({
+          ...spec,
+          id: docId,
+          name: (spec.name || spec.nameEn || 'أخصائي').trim().slice(0, 200),
+          bio: (spec.bio || '').slice(0, 5000),
+          orderIndex: spec.orderIndex !== undefined ? spec.orderIndex : idx,
+          active: spec.active !== false,
+          isActive: spec.isActive !== false && spec.active !== false,
+          updatedAtISO: new Date().toISOString()
+        });
+        return fs.setDoc(docRef, { ...cleanPayload, updatedAt: fs.serverTimestamp() }, { merge: true });
+      })
+    );
+
+    const snap = await withTimeout(fs.getDocs(colRef), 8000);
+    await Promise.all(
+      snap.docs
+        .filter((d) => !keepIds.has(d.id))
+        .map(async (d) => {
+          try {
+            await fs.deleteDoc(d.ref);
+          } catch (delErr: any) {
+            if (delErr?.code !== 'permission-denied') throw delErr;
+          }
+        })
+    );
+
+    await markCollectionAuthoritative('specialists');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, path, false);
     return false;
   }
 }
@@ -558,13 +687,14 @@ export function subscribeSpecialists(
           onUpdate(list);
         },
         (error) => {
-          console.warn('[Firestore Realtime Notice] specialists listener info:', error?.message || error);
+          console.error('[Firestore Live Sync Error]:', (error as any)?.code || 'unknown', (error as any)?.message || error);
           if (onError) onError(error);
           handleFirestoreError(error, OperationType.LIST, path, false);
         }
       );
     })
     .catch((err) => {
+      console.error('[Firestore Live Sync Error]:', err?.code || 'init-failed', err?.message || err);
       if (onError) onError(err);
     });
 
@@ -951,7 +1081,7 @@ export function subscribeAppointments(
           attachListener(fs, db, false);
           return;
         }
-        console.error('[Firestore Realtime Error] appointments listener error:', error);
+        console.error('[Firestore Live Sync Error]:', code || 'unknown', msg || error);
         if (onError) onError(error);
         handleFirestoreError(error, OperationType.LIST, path, false);
       }
@@ -964,6 +1094,7 @@ export function subscribeAppointments(
       attachListener(fs, db, true);
     })
     .catch((err) => {
+      console.error('[Firestore Live Sync Error]:', err?.code || 'init-failed', err?.message || err);
       if (onError) onError(err);
     });
 
@@ -978,50 +1109,124 @@ export function subscribeAppointments(
 // ============================================================================
 
 export async function saveTestimonialToFirestore(review: ParentReview): Promise<boolean> {
-  const rawId = review.id || `rev-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-  const docId = rawId.replace(/[^a-zA-Z0-9_\-]/g, '-').slice(0, 128);
+  const docId = resolveFirestoreDocId(review.id, 'rev');
   const path = `testimonials/${docId}`;
   try {
     const { fs, db } = await loadFirestoreCtx();
     const docRef = fs.doc(db, 'testimonials', docId);
 
     const sanitizedPayload = sanitizeFirestoreData({
+      ...review,
       id: docId,
       parentName: (review.parentName || 'ولي أمر مستفيد').trim().slice(0, 100),
       parentNameEn: (review.parentNameEn || 'Beneficiary Parent').trim().slice(0, 100),
       rating: Math.min(5, Math.max(1, Number(review.rating) || 5)),
-      comment: (review.comment || '').trim().slice(0, 1500),
+      comment: (review.comment || review.content || 'تقييم متميز').trim().slice(0, 1500),
       category: (review.category || 'general').slice(0, 80),
       specialistName: (review.specialistName || '').slice(0, 120),
       location: (review.location || 'الرياض').slice(0, 100),
       date: (review.date || 'اليوم').slice(0, 50),
       isAnonymous: Boolean(review.isAnonymous),
+      active: review.active !== false,
+      isActive: review.isActive !== false && review.active !== false,
       avatar: (review.avatar || '').slice(0, 300),
-      createdAtISO: new Date().toISOString()
+      createdAtISO: (review as any).createdAtISO || new Date().toISOString(),
+      updatedAtISO: new Date().toISOString()
     });
 
     await fs.setDoc(docRef, {
       ...sanitizedPayload,
-      createdAt: fs.serverTimestamp()
+      createdAt: fs.serverTimestamp(),
+      updatedAt: fs.serverTimestamp()
     }, { merge: true });
     console.log(`[Firestore] Successfully saved review: ${docId}`);
     return true;
   } catch (error) {
     console.error(`[Firestore Error - WRITE] Failed to save testimonial to ${path}:`, error);
-    handleFirestoreError(error, OperationType.WRITE, path, true);
+    handleFirestoreError(error, OperationType.WRITE, path, false);
     return false;
   }
 }
 
-export async function deleteTestimonialFromFirestore(reviewId: string): Promise<void> {
-  const path = `testimonials/${reviewId}`;
+export async function deleteTestimonialFromFirestore(reviewId: string): Promise<boolean> {
+  const docId = resolveFirestoreDocId(reviewId, 'rev');
+  const path = `testimonials/${docId}`;
   try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser) return false;
+    const isAdminUser = await verifyIsFirebaseAdmin(fbUser);
+    if (!isAdminUser) return false;
     const { fs, db } = await loadFirestoreCtx();
-    const docRef = fs.doc(db, 'testimonials', reviewId);
+    const docRef = fs.doc(db, 'testimonials', docId);
     await fs.deleteDoc(docRef);
-    console.log(`[Firestore] Successfully deleted testimonial: ${reviewId}`);
+    console.log(`[Firestore] Successfully deleted testimonial: ${docId}`);
+    return true;
   } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, path);
+    handleFirestoreError(error, OperationType.DELETE, path, false);
+    return false;
+  }
+}
+
+export async function syncTestimonialsCollectionToFirestore(reviews: ParentReview[]): Promise<boolean> {
+  const path = 'testimonials';
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser) return false;
+    const isAdminUser = await verifyIsFirebaseAdmin(fbUser);
+    if (!isAdminUser) return false;
+
+    const { fs, db } = await loadFirestoreCtx();
+    const colRef = fs.collection(db, 'testimonials');
+    const keepIds = new Set<string>();
+
+    await Promise.all(
+      reviews.map((review) => {
+        const docId = resolveFirestoreDocId(review.id, 'rev');
+        keepIds.add(docId);
+        const docRef = fs.doc(db, 'testimonials', docId);
+        const sanitizedPayload = sanitizeFirestoreData({
+          ...review,
+          id: docId,
+          parentName: (review.parentName || 'ولي أمر مستفيد').trim().slice(0, 100),
+          parentNameEn: (review.parentNameEn || 'Beneficiary Parent').trim().slice(0, 100),
+          rating: Math.min(5, Math.max(1, Number(review.rating) || 5)),
+          comment: (review.comment || review.content || 'تقييم متميز').trim().slice(0, 1500),
+          category: (review.category || 'general').slice(0, 80),
+          specialistName: (review.specialistName || '').slice(0, 120),
+          location: (review.location || 'الرياض').slice(0, 100),
+          date: (review.date || 'اليوم').slice(0, 50),
+          isAnonymous: Boolean(review.isAnonymous),
+          active: review.active !== false,
+          isActive: review.isActive !== false && review.active !== false,
+          avatar: (review.avatar || '').slice(0, 300),
+          updatedAtISO: new Date().toISOString()
+        });
+        return fs.setDoc(docRef, {
+          ...sanitizedPayload,
+          createdAt: fs.serverTimestamp(),
+          updatedAt: fs.serverTimestamp()
+        }, { merge: true });
+      })
+    );
+
+    const snap = await withTimeout(fs.getDocs(colRef), 8000);
+    await Promise.all(
+      snap.docs
+        .filter((d) => !keepIds.has(d.id))
+        .map(async (d) => {
+          try {
+            await fs.deleteDoc(d.ref);
+          } catch (delErr: any) {
+            if (delErr?.code !== 'permission-denied') throw delErr;
+          }
+        })
+    );
+
+    await markCollectionAuthoritative('testimonials');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, path, false);
+    return false;
   }
 }
 
@@ -1059,18 +1264,20 @@ export function subscribeTestimonials(
         (snapshot) => {
           const list: ParentReview[] = [];
           snapshot.forEach((d) => {
-            list.push(d.data() as ParentReview);
+            const data = d.data() as ParentReview;
+            list.push({ ...data, id: data.id || d.id });
           });
           onUpdate(list);
         },
         (error) => {
-          console.error('[Firestore Realtime Error] testimonials listener error:', error);
+          console.error('[Firestore Live Sync Error]:', (error as any)?.code || 'unknown', (error as any)?.message || error);
           if (onError) onError(error);
           handleFirestoreError(error, OperationType.LIST, path);
         }
       );
     })
     .catch((err) => {
+      console.error('[Firestore Live Sync Error]:', err?.code || 'init-failed', err?.message || err);
       if (onError) onError(err);
     });
 
@@ -1084,35 +1291,778 @@ export function subscribeTestimonials(
 // 5. BLOG POSTS
 // ============================================================================
 
-export async function saveBlogPostToFirestore(post: BlogPost): Promise<void> {
-  const docId = post.id || `post-${Date.now()}`;
+export async function saveBlogPostToFirestore(post: BlogPost): Promise<boolean> {
+  const docId = resolveFirestoreDocId(post.id, 'post');
   const path = `blog_posts/${docId}`;
-  if (!auth.currentUser) {
-    return;
+  const currentUser = await ensureFirebaseUser();
+  if (!currentUser) {
+    return false;
+  }
+  const isAdminUser = await verifyIsFirebaseAdmin(currentUser);
+  if (!isAdminUser) {
+    return false;
   }
   try {
     const { fs, db } = await loadFirestoreCtx();
     const docRef = fs.doc(db, 'blog_posts', docId);
-    await fs.setDoc(docRef, sanitizeFirestoreData({ ...post, id: docId }), { merge: true });
+    const cleanPayload = sanitizeFirestoreData({
+      ...post,
+      id: docId,
+      title: (post.title || post.titleEn || 'مقال توعوي').trim().slice(0, 400),
+      category: (post.category || 'family_guidance').trim().slice(0, 100),
+      status: post.status === 'draft' ? 'draft' : 'published',
+      isSliderFeatured: post.isSliderFeatured !== false,
+      updatedAtISO: new Date().toISOString()
+    });
+    await fs.setDoc(docRef, {
+      ...cleanPayload,
+      updatedAt: fs.serverTimestamp()
+    }, { merge: true });
     console.log(`[Firestore] Successfully saved blog post: ${docId}`);
+    return true;
   } catch (error) {
-    handleFirestoreError(error, OperationType.WRITE, path);
+    handleFirestoreError(error, OperationType.WRITE, path, false);
+    return false;
   }
 }
 
-export async function deleteBlogPostFromFirestore(postId: string): Promise<void> {
-  const path = `blog_posts/${postId}`;
-  if (!auth.currentUser) {
-    return;
+export async function deleteBlogPostFromFirestore(postId: string): Promise<boolean> {
+  const docId = resolveFirestoreDocId(postId, 'post');
+  const path = `blog_posts/${docId}`;
+  const currentUser = await ensureFirebaseUser();
+  if (!currentUser) {
+    return false;
+  }
+  const isAdminUser = await verifyIsFirebaseAdmin(currentUser);
+  if (!isAdminUser) {
+    return false;
   }
   try {
     const { fs, db } = await loadFirestoreCtx();
-    const docRef = fs.doc(db, 'blog_posts', postId);
+    const docRef = fs.doc(db, 'blog_posts', docId);
     await fs.deleteDoc(docRef);
-    console.log(`[Firestore] Successfully deleted blog post: ${postId}`);
+    console.log(`[Firestore] Successfully deleted blog post: ${docId}`);
+    return true;
   } catch (error) {
-    handleFirestoreError(error, OperationType.DELETE, path);
+    handleFirestoreError(error, OperationType.DELETE, path, false);
+    return false;
   }
+}
+
+export async function syncBlogPostsCollectionToFirestore(posts: BlogPost[]): Promise<boolean> {
+  const path = 'blog_posts';
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser) return false;
+    const isAdminUser = await verifyIsFirebaseAdmin(fbUser);
+    if (!isAdminUser) return false;
+
+    const { fs, db } = await loadFirestoreCtx();
+    const colRef = fs.collection(db, 'blog_posts');
+    const keepIds = new Set<string>();
+
+    await Promise.all(
+      posts.map((post, idx) => {
+        const docId = resolveFirestoreDocId(post.id, 'post');
+        keepIds.add(docId);
+        const docRef = fs.doc(db, 'blog_posts', docId);
+        const cleanPayload = sanitizeFirestoreData({
+          ...post,
+          id: docId,
+          title: (post.title || post.titleEn || 'مقال توعوي').trim().slice(0, 400),
+          category: (post.category || 'family_guidance').trim().slice(0, 100),
+          status: post.status === 'draft' ? 'draft' : 'published',
+          isSliderFeatured: post.isSliderFeatured !== false,
+          order: post.order !== undefined ? post.order : idx + 1,
+          updatedAtISO: new Date().toISOString()
+        });
+        return fs.setDoc(docRef, { ...cleanPayload, updatedAt: fs.serverTimestamp() }, { merge: true });
+      })
+    );
+
+    const snap = await withTimeout(fs.getDocs(colRef), 8000);
+    await Promise.all(
+      snap.docs
+        .filter((d) => !keepIds.has(d.id))
+        .map(async (d) => {
+          try {
+            await fs.deleteDoc(d.ref);
+          } catch (delErr: any) {
+            if (delErr?.code !== 'permission-denied') throw delErr;
+          }
+        })
+    );
+
+    await markCollectionAuthoritative('blog_posts');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, path, false);
+    return false;
+  }
+}
+
+export function subscribeBlogPosts(
+  onUpdate: (posts: BlogPost[]) => void,
+  onError?: (err: any) => void
+): Unsubscribe {
+  const path = 'blog_posts';
+  let cancelled = false;
+  let realUnsub: Unsubscribe | null = null;
+
+  loadFirestoreCtx()
+    .then(({ fs, db }) => {
+      if (cancelled) return;
+      const colRef = fs.collection(db, 'blog_posts');
+      realUnsub = fs.onSnapshot(
+        colRef,
+        (snapshot) => {
+          const list: BlogPost[] = [];
+          snapshot.forEach((d) => {
+            const data = d.data() as BlogPost;
+            if (data && (data.title || data.id)) {
+              list.push({ ...data, id: data.id || d.id });
+            }
+          });
+          onUpdate(list);
+        },
+        (error) => {
+          console.error('[Firestore Live Sync Error]:', (error as any)?.code || 'unknown', (error as any)?.message || error);
+          if (onError) onError(error);
+          handleFirestoreError(error, OperationType.LIST, path, false);
+        }
+      );
+    })
+    .catch((err) => {
+      console.error('[Firestore Live Sync Error]:', err?.code || 'init-failed', err?.message || err);
+      if (onError) onError(err);
+    });
+
+  return () => {
+    cancelled = true;
+    if (realUnsub) realUnsub();
+  };
+}
+
+// ============================================================================
+// 5b. DEDICATED PUBLIC & FINANCE COLLECTIONS (services, packages, sliders,
+//     courses, accreditations, partners, offers, finance)
+// ============================================================================
+
+async function syncGenericCollection<T extends { id?: string }>(
+  collectionName: string,
+  items: T[],
+  fallbackPrefix: string,
+  mapPayload: (item: T, docId: string, idx: number) => Record<string, any>,
+  excludeDocIds: string[] = []
+): Promise<boolean> {
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser) return false;
+    const isAdminUser = await verifyIsFirebaseAdmin(fbUser);
+    if (!isAdminUser) return false;
+
+    const { fs, db } = await loadFirestoreCtx();
+    const colRef = fs.collection(db, collectionName);
+    const keepIds = new Set<string>(excludeDocIds);
+
+    await Promise.all(
+      items.map((item, idx) => {
+        const docId = resolveFirestoreDocId(item.id, fallbackPrefix);
+        keepIds.add(docId);
+        const docRef = fs.doc(db, collectionName, docId);
+        const cleanPayload = sanitizeFirestoreData({
+          ...mapPayload(item, docId, idx),
+          id: docId,
+          updatedAtISO: new Date().toISOString()
+        });
+        return fs.setDoc(docRef, { ...cleanPayload, updatedAt: fs.serverTimestamp() }, { merge: true });
+      })
+    );
+
+    const snap = await withTimeout(fs.getDocs(colRef), 8000);
+    await Promise.all(
+      snap.docs
+        .filter((d) => !keepIds.has(d.id))
+        .map(async (d) => {
+          try {
+            await fs.deleteDoc(d.ref);
+          } catch (delErr: any) {
+            if (delErr?.code !== 'permission-denied') throw delErr;
+          }
+        })
+    );
+
+    await markCollectionAuthoritative(collectionName);
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, collectionName, false);
+    return false;
+  }
+}
+
+function subscribeGenericCollection<T>(
+  collectionName: string,
+  onUpdate: (items: T[]) => void,
+  onError?: (err: any) => void,
+  filterFn?: (docId: string, data: any) => boolean
+): Unsubscribe {
+  let cancelled = false;
+  let realUnsub: Unsubscribe | null = null;
+
+  loadFirestoreCtx()
+    .then(({ fs, db }) => {
+      if (cancelled) return;
+      const colRef = fs.collection(db, collectionName);
+      realUnsub = fs.onSnapshot(
+        colRef,
+        (snapshot) => {
+          const list: T[] = [];
+          snapshot.forEach((d) => {
+            const data = d.data() as any;
+            if (!filterFn || filterFn(d.id, data)) {
+              list.push({ ...data, id: data?.id || d.id } as T);
+            }
+          });
+          onUpdate(list);
+        },
+        (error) => {
+          console.error('[Firestore Live Sync Error]:', (error as any)?.code || 'unknown', (error as any)?.message || error);
+          if (onError) onError(error);
+          handleFirestoreError(error, OperationType.LIST, collectionName, false);
+        }
+      );
+    })
+    .catch((err) => {
+      console.error('[Firestore Live Sync Error]:', err?.code || 'init-failed', err?.message || err);
+      if (onError) onError(err);
+    });
+
+  return () => {
+    cancelled = true;
+    if (realUnsub) realUnsub();
+  };
+}
+
+// --- SERVICES ---
+const mapServiceDoc = (srv: ServiceItem, docId: string, idx = 0) => ({
+  ...srv,
+  id: docId,
+  title: (srv.title || srv.titleEn || 'خدمة تأهيلية').trim().slice(0, 300),
+  ...(srv.titleEn !== undefined ? { titleEn: String(srv.titleEn).trim().slice(0, 300) } : {}),
+  description: (srv.description || '').slice(0, 5000),
+  active: srv.active !== false,
+  isActive: srv.isActive !== false && srv.active !== false,
+  order: srv.order !== undefined ? srv.order : idx + 1
+});
+
+export async function saveServiceToFirestore(service: ServiceItem): Promise<boolean> {
+  const docId = resolveFirestoreDocId(service.id, 'srv');
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser || !(await verifyIsFirebaseAdmin(fbUser))) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    await fs.setDoc(
+      fs.doc(db, 'services', docId),
+      { ...sanitizeFirestoreData(mapServiceDoc(service, docId)), updatedAtISO: new Date().toISOString(), updatedAt: fs.serverTimestamp() },
+      { merge: true }
+    );
+    await markCollectionAuthoritative('services');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, `services/${docId}`, false);
+    return false;
+  }
+}
+
+export async function deleteServiceFromFirestore(serviceId: string): Promise<boolean> {
+  const docId = resolveFirestoreDocId(serviceId, 'srv');
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser || !(await verifyIsFirebaseAdmin(fbUser))) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    await fs.deleteDoc(fs.doc(db, 'services', docId));
+    await markCollectionAuthoritative('services');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, `services/${docId}`, false);
+    return false;
+  }
+}
+
+export async function syncServicesCollectionToFirestore(services: ServiceItem[]): Promise<boolean> {
+  return syncGenericCollection('services', services, 'srv', mapServiceDoc);
+}
+
+export function subscribeServices(onUpdate: (items: ServiceItem[]) => void, onError?: (err: any) => void): Unsubscribe {
+  return subscribeGenericCollection<ServiceItem>('services', (list) => {
+    onUpdate([...list].sort((a, b) => (a.order ?? 999) - (b.order ?? 999)));
+  }, onError);
+}
+
+// --- PACKAGES ---
+const mapPackageDoc = (pkg: TherapyPackage, docId: string, idx = 0) => ({
+  ...pkg,
+  id: docId,
+  name: (pkg.name || pkg.nameEn || 'باقة تأهيلية').trim().slice(0, 300),
+  ...(pkg.nameEn !== undefined ? { nameEn: String(pkg.nameEn).trim().slice(0, 300) } : {}),
+  price: Math.min(1000000, Math.max(0, Number(pkg.price) || 0)),
+  active: pkg.active !== false,
+  isActive: pkg.isActive !== false && pkg.active !== false,
+  order: pkg.order !== undefined ? pkg.order : idx + 1
+});
+
+export async function savePackageToFirestore(pkg: TherapyPackage): Promise<boolean> {
+  const docId = resolveFirestoreDocId(pkg.id, 'pkg');
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser || !(await verifyIsFirebaseAdmin(fbUser))) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    await fs.setDoc(
+      fs.doc(db, 'packages', docId),
+      { ...sanitizeFirestoreData(mapPackageDoc(pkg, docId)), updatedAtISO: new Date().toISOString(), updatedAt: fs.serverTimestamp() },
+      { merge: true }
+    );
+    await markCollectionAuthoritative('packages');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, `packages/${docId}`, false);
+    return false;
+  }
+}
+
+export async function deletePackageFromFirestore(packageId: string): Promise<boolean> {
+  const docId = resolveFirestoreDocId(packageId, 'pkg');
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser || !(await verifyIsFirebaseAdmin(fbUser))) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    await fs.deleteDoc(fs.doc(db, 'packages', docId));
+    await markCollectionAuthoritative('packages');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, `packages/${docId}`, false);
+    return false;
+  }
+}
+
+export async function syncPackagesCollectionToFirestore(packages: TherapyPackage[]): Promise<boolean> {
+  return syncGenericCollection('packages', packages, 'pkg', mapPackageDoc);
+}
+
+export function subscribePackages(onUpdate: (items: TherapyPackage[]) => void, onError?: (err: any) => void): Unsubscribe {
+  return subscribeGenericCollection<TherapyPackage>('packages', (list) => {
+    onUpdate([...list].sort((a, b) => (a.order ?? 999) - (b.order ?? 999)));
+  }, onError);
+}
+
+// --- SLIDERS ---
+const mapSliderDoc = (slide: HeroSlideItem, docId: string, idx = 0) => {
+  const safeSrc = typeof slide.src === 'string' && slide.src.length <= 200000
+    ? slide.src
+    : '';
+  return {
+    ...slide,
+    id: docId,
+    titleAr: (slide.titleAr || '').slice(0, 400),
+    titleEn: (slide.titleEn || '').slice(0, 400),
+    src: safeSrc,
+    active: slide.active !== false,
+    order: slide.order !== undefined ? slide.order : idx + 1
+  };
+};
+
+export async function saveSliderToFirestore(slide: HeroSlideItem): Promise<boolean> {
+  const docId = resolveFirestoreDocId(slide.id, 'slide');
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser || !(await verifyIsFirebaseAdmin(fbUser))) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    await fs.setDoc(
+      fs.doc(db, 'sliders', docId),
+      { ...sanitizeFirestoreData(mapSliderDoc(slide, docId)), updatedAtISO: new Date().toISOString(), updatedAt: fs.serverTimestamp() },
+      { merge: true }
+    );
+    await markCollectionAuthoritative('sliders');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, `sliders/${docId}`, false);
+    return false;
+  }
+}
+
+export async function saveSliderConfigToFirestore(config: HeroSliderConfig): Promise<boolean> {
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser || !(await verifyIsFirebaseAdmin(fbUser))) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    await fs.setDoc(
+      fs.doc(db, 'sliders', 'slider_config'),
+      { ...sanitizeFirestoreData({ ...config, id: 'slider_config', isConfigDoc: true }), updatedAtISO: new Date().toISOString(), updatedAt: fs.serverTimestamp() },
+      { merge: true }
+    );
+    await markCollectionAuthoritative('sliders');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, 'sliders/slider_config', false);
+    return false;
+  }
+}
+
+export async function deleteSliderFromFirestore(slideId: string): Promise<boolean> {
+  const docId = resolveFirestoreDocId(slideId, 'slide');
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser || !(await verifyIsFirebaseAdmin(fbUser))) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    await fs.deleteDoc(fs.doc(db, 'sliders', docId));
+    await markCollectionAuthoritative('sliders');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, `sliders/${docId}`, false);
+    return false;
+  }
+}
+
+export async function syncSlidersCollectionToFirestore(slides: HeroSlideItem[], config?: HeroSliderConfig): Promise<boolean> {
+  const ok = await syncGenericCollection('sliders', slides, 'slide', mapSliderDoc, ['slider_config']);
+  if (config) {
+    await saveSliderConfigToFirestore(config);
+  }
+  return ok;
+}
+
+export function subscribeSliders(
+  onUpdate: (payload: { slides: HeroSlideItem[]; config?: HeroSliderConfig }) => void,
+  onError?: (err: any) => void
+): Unsubscribe {
+  let cancelled = false;
+  let realUnsub: Unsubscribe | null = null;
+
+  loadFirestoreCtx()
+    .then(({ fs, db }) => {
+      if (cancelled) return;
+      const colRef = fs.collection(db, 'sliders');
+      realUnsub = fs.onSnapshot(
+        colRef,
+        (snapshot) => {
+          const slides: HeroSlideItem[] = [];
+          let config: HeroSliderConfig | undefined;
+          snapshot.forEach((d) => {
+            const data = d.data() as any;
+            if (d.id === 'slider_config' || data?.isConfigDoc) {
+              config = {
+                autoplay: data.autoplay !== undefined ? Boolean(data.autoplay) : true,
+                intervalSeconds: Number(data.intervalSeconds) || 4,
+                showBadges: data.showBadges !== undefined ? Boolean(data.showBadges) : true,
+                glowEffect: data.glowEffect !== undefined ? Boolean(data.glowEffect) : true
+              };
+            } else {
+              slides.push({ ...data, id: data?.id || d.id } as HeroSlideItem);
+            }
+          });
+          slides.sort((a, b) => (a.order || 0) - (b.order || 0));
+          onUpdate({ slides, config });
+        },
+        (error) => {
+          console.error('[Firestore Live Sync Error]:', (error as any)?.code || 'unknown', (error as any)?.message || error);
+          if (onError) onError(error);
+          handleFirestoreError(error, OperationType.LIST, 'sliders', false);
+        }
+      );
+    })
+    .catch((err) => {
+      console.error('[Firestore Live Sync Error]:', err?.code || 'init-failed', err?.message || err);
+      if (onError) onError(err);
+    });
+
+  return () => {
+    cancelled = true;
+    if (realUnsub) realUnsub();
+  };
+}
+
+// --- COURSES ---
+const mapCourseDoc = (course: CourseItem, docId: string, idx = 0) => ({
+  ...course,
+  id: docId,
+  titleAr: (course.titleAr || course.titleEn || 'دورة تدريبية').trim().slice(0, 300),
+  titleEn: (course.titleEn || course.titleAr || 'Training Course').trim().slice(0, 300),
+  isActive: course.isActive !== false,
+  active: course.isActive !== false,
+  order: course.order !== undefined ? course.order : idx + 1
+});
+
+export async function saveCourseToFirestore(course: CourseItem): Promise<boolean> {
+  const docId = resolveFirestoreDocId(course.id, 'course');
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser || !(await verifyIsFirebaseAdmin(fbUser))) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    await fs.setDoc(
+      fs.doc(db, 'courses', docId),
+      { ...sanitizeFirestoreData(mapCourseDoc(course, docId)), updatedAtISO: new Date().toISOString(), updatedAt: fs.serverTimestamp() },
+      { merge: true }
+    );
+    await markCollectionAuthoritative('courses');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, `courses/${docId}`, false);
+    return false;
+  }
+}
+
+export async function deleteCourseFromFirestore(courseId: string): Promise<boolean> {
+  const docId = resolveFirestoreDocId(courseId, 'course');
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser || !(await verifyIsFirebaseAdmin(fbUser))) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    await fs.deleteDoc(fs.doc(db, 'courses', docId));
+    await markCollectionAuthoritative('courses');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, `courses/${docId}`, false);
+    return false;
+  }
+}
+
+export async function syncCoursesCollectionToFirestore(courses: CourseItem[]): Promise<boolean> {
+  return syncGenericCollection('courses', courses, 'course', mapCourseDoc);
+}
+
+export function subscribeCourses(onUpdate: (items: CourseItem[]) => void, onError?: (err: any) => void): Unsubscribe {
+  return subscribeGenericCollection<CourseItem>('courses', (list) => {
+    onUpdate([...list].sort((a, b) => (a.order || 999) - (b.order || 999)));
+  }, onError);
+}
+
+// --- ACCREDITATIONS ---
+const mapAccreditationDoc = (acc: AccreditationItem, docId: string, idx = 0) => ({
+  ...acc,
+  id: docId,
+  nameAr: (acc.nameAr || acc.nameEn || 'اعتماد').trim().slice(0, 300),
+  nameEn: (acc.nameEn || acc.nameAr || 'Accreditation').trim().slice(0, 300),
+  active: acc.active !== false,
+  order: acc.order !== undefined ? acc.order : idx + 1
+});
+
+export async function saveAccreditationToFirestore(acc: AccreditationItem): Promise<boolean> {
+  const docId = resolveFirestoreDocId(acc.id, 'acc');
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser || !(await verifyIsFirebaseAdmin(fbUser))) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    await fs.setDoc(
+      fs.doc(db, 'accreditations', docId),
+      { ...sanitizeFirestoreData(mapAccreditationDoc(acc, docId)), updatedAtISO: new Date().toISOString(), updatedAt: fs.serverTimestamp() },
+      { merge: true }
+    );
+    await markCollectionAuthoritative('accreditations');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, `accreditations/${docId}`, false);
+    return false;
+  }
+}
+
+export async function deleteAccreditationFromFirestore(accId: string): Promise<boolean> {
+  const docId = resolveFirestoreDocId(accId, 'acc');
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser || !(await verifyIsFirebaseAdmin(fbUser))) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    await fs.deleteDoc(fs.doc(db, 'accreditations', docId));
+    await markCollectionAuthoritative('accreditations');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, `accreditations/${docId}`, false);
+    return false;
+  }
+}
+
+export async function syncAccreditationsCollectionToFirestore(items: AccreditationItem[]): Promise<boolean> {
+  return syncGenericCollection('accreditations', items, 'acc', mapAccreditationDoc);
+}
+
+export function subscribeAccreditations(onUpdate: (items: AccreditationItem[]) => void, onError?: (err: any) => void): Unsubscribe {
+  return subscribeGenericCollection<AccreditationItem>('accreditations', (list) => {
+    onUpdate([...list].sort((a, b) => (a.order || 999) - (b.order || 999)));
+  }, onError);
+}
+
+// --- PARTNERS ---
+const mapPartnerDoc = (partner: PartnerItem, docId: string, idx = 0) => ({
+  ...partner,
+  id: docId,
+  name: (partner.name || partner.nameEn || 'شريك').trim().slice(0, 300),
+  nameEn: (partner.nameEn || partner.name || 'Partner').trim().slice(0, 300),
+  isActive: partner.isActive !== false,
+  active: partner.isActive !== false,
+  order: partner.order !== undefined ? partner.order : idx + 1
+});
+
+export async function savePartnerToFirestore(partner: PartnerItem): Promise<boolean> {
+  const docId = resolveFirestoreDocId(partner.id, 'partner');
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser || !(await verifyIsFirebaseAdmin(fbUser))) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    await fs.setDoc(
+      fs.doc(db, 'partners', docId),
+      { ...sanitizeFirestoreData(mapPartnerDoc(partner, docId)), updatedAtISO: new Date().toISOString(), updatedAt: fs.serverTimestamp() },
+      { merge: true }
+    );
+    await markCollectionAuthoritative('partners');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, `partners/${docId}`, false);
+    return false;
+  }
+}
+
+export async function deletePartnerFromFirestore(partnerId: string): Promise<boolean> {
+  const docId = resolveFirestoreDocId(partnerId, 'partner');
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser || !(await verifyIsFirebaseAdmin(fbUser))) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    await fs.deleteDoc(fs.doc(db, 'partners', docId));
+    await markCollectionAuthoritative('partners');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, `partners/${docId}`, false);
+    return false;
+  }
+}
+
+export async function syncPartnersCollectionToFirestore(partners: PartnerItem[]): Promise<boolean> {
+  return syncGenericCollection('partners', partners, 'partner', mapPartnerDoc);
+}
+
+export function subscribePartners(onUpdate: (items: PartnerItem[]) => void, onError?: (err: any) => void): Unsubscribe {
+  return subscribeGenericCollection<PartnerItem>('partners', (list) => {
+    onUpdate([...list].sort((a, b) => (a.order || 999) - (b.order || 999)));
+  }, onError);
+}
+
+// --- OFFERS ---
+const mapOfferDoc = (offer: OfferData, docId: string) => ({
+  ...offer,
+  id: docId,
+  titleAr: (offer.titleAr || offer.titleEn || 'عرض خاص').trim().slice(0, 300),
+  titleEn: (offer.titleEn || offer.titleAr || 'Special Offer').trim().slice(0, 300),
+  active: offer.active !== false
+});
+
+export async function saveOfferToFirestore(offer: OfferData): Promise<boolean> {
+  const docId = resolveFirestoreDocId(offer.id, 'offer');
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser || !(await verifyIsFirebaseAdmin(fbUser))) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    await fs.setDoc(
+      fs.doc(db, 'offers', docId),
+      { ...sanitizeFirestoreData(mapOfferDoc(offer, docId)), updatedAtISO: new Date().toISOString(), updatedAt: fs.serverTimestamp() },
+      { merge: true }
+    );
+    await markCollectionAuthoritative('offers');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, `offers/${docId}`, false);
+    return false;
+  }
+}
+
+export async function deleteOfferFromFirestore(offerId: string): Promise<boolean> {
+  const docId = resolveFirestoreDocId(offerId, 'offer');
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser || !(await verifyIsFirebaseAdmin(fbUser))) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    await fs.deleteDoc(fs.doc(db, 'offers', docId));
+    await markCollectionAuthoritative('offers');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, `offers/${docId}`, false);
+    return false;
+  }
+}
+
+export async function syncOffersCollectionToFirestore(offers: OfferData[]): Promise<boolean> {
+  return syncGenericCollection('offers', offers, 'offer', mapOfferDoc);
+}
+
+export function subscribeOffers(onUpdate: (items: OfferData[]) => void, onError?: (err: any) => void): Unsubscribe {
+  return subscribeGenericCollection<OfferData>('offers', onUpdate, onError);
+}
+
+// --- FINANCE (Admin-Only Read & Write) ---
+export async function saveFinanceRecordToFirestore(
+  recordId: string,
+  data: Record<string, any>
+): Promise<boolean> {
+  const docId = resolveFirestoreDocId(recordId, 'fin');
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser || !(await verifyIsFirebaseAdmin(fbUser))) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    const cleanPayload = sanitizeFirestoreData({
+      ...data,
+      id: docId,
+      ...(data.currencySymbol !== undefined ? { currencySymbol: String(data.currencySymbol).slice(0, 20) } : {}),
+      ...(data.installmentNote !== undefined ? { installmentNote: String(data.installmentNote).slice(0, 500) } : {}),
+      updatedAtISO: new Date().toISOString()
+    });
+    await fs.setDoc(
+      fs.doc(db, 'finance', docId),
+      { ...cleanPayload, updatedAt: fs.serverTimestamp() },
+      { merge: true }
+    );
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, `finance/${docId}`, false);
+    return false;
+  }
+}
+
+export function subscribeFinanceRecords(
+  onUpdate: (records: Record<string, any>) => void,
+  onError?: (err: any) => void
+): Unsubscribe {
+  let cancelled = false;
+  let realUnsub: Unsubscribe | null = null;
+
+  Promise.all([ensureFirebaseUser(), loadFirestoreCtx()])
+    .then(async ([fbUser, { fs, db }]) => {
+      if (cancelled || !fbUser) return;
+      const isAdminUser = await verifyIsFirebaseAdmin(fbUser);
+      if (cancelled || !isAdminUser) return;
+      const colRef = fs.collection(db, 'finance');
+      realUnsub = fs.onSnapshot(
+        colRef,
+        (snapshot) => {
+          const map: Record<string, any> = {};
+          snapshot.forEach((d) => {
+            map[d.id] = { ...d.data(), id: d.id };
+          });
+          onUpdate(map);
+        },
+        (error) => {
+          console.error('[Firestore Live Sync Error]:', (error as any)?.code || 'unknown', (error as any)?.message || error);
+          if (onError) onError(error);
+          handleFirestoreError(error, OperationType.LIST, 'finance', false);
+        }
+      );
+    })
+    .catch((err) => {
+      console.error('[Firestore Live Sync Error]:', err?.code || 'init-failed', err?.message || err);
+      if (onError) onError(err);
+    });
+
+  return () => {
+    cancelled = true;
+    if (realUnsub) realUnsub();
+  };
 }
 
 // ============================================================================
@@ -1133,11 +2083,15 @@ export async function saveAdminUserToFirestore(
   try {
     const { fs, db } = await loadFirestoreCtx();
     const { password: _, ...cleanUser } = user;
-    const payload = sanitizeFirestoreData({
+    const cleanPayload = sanitizeFirestoreData({
       ...cleanUser,
       ...(resolvedUid ? { firebaseUid: resolvedUid } : {}),
-      updatedAt: new Date().toISOString()
+      updatedAtISO: new Date().toISOString()
     });
+    const payload = {
+      ...cleanPayload,
+      updatedAt: fs.serverTimestamp()
+    };
 
     await fs.setDoc(fs.doc(db, 'admins', docId), payload, { merge: true });
 
@@ -1499,12 +2453,14 @@ export function subscribeClientProfile(
           }
         },
         (error: any) => {
+          console.error('[Firestore Live Sync Error]:', error?.code || 'unknown', error?.message || error);
           if (onError) onError(error);
           handleFirestoreError(error, OperationType.GET, path, false);
         }
       );
     })
     .catch((err) => {
+      console.error('[Firestore Live Sync Error]:', err?.code || 'init-failed', err?.message || err);
       if (onError) onError(err);
     });
 
@@ -1582,6 +2538,7 @@ export function subscribeAllClients(
           attachListener(fs, db, false);
           return;
         }
+        console.error('[Firestore Live Sync Error]:', code || 'unknown', msg || error);
         if (onError) onError(error);
         handleFirestoreError(error, OperationType.LIST, path, false);
       }
@@ -1594,6 +2551,7 @@ export function subscribeAllClients(
       attachListener(fs, db, true);
     })
     .catch((err) => {
+      console.error('[Firestore Live Sync Error]:', err?.code || 'init-failed', err?.message || err);
       if (onError) onError(err);
     });
 
@@ -1680,6 +2638,7 @@ export function subscribeClientAppointments(
           attachListener(fs, db, false);
           return;
         }
+        console.error('[Firestore Live Sync Error]:', code || 'unknown', msg || error);
         if (onError) onError(error);
         handleFirestoreError(error, OperationType.LIST, path, false);
       }
@@ -1692,6 +2651,7 @@ export function subscribeClientAppointments(
       attachListener(fs, db, true);
     })
     .catch((err) => {
+      console.error('[Firestore Live Sync Error]:', err?.code || 'init-failed', err?.message || err);
       if (onError) onError(err);
     });
 
@@ -1800,12 +2760,14 @@ export function subscribeMemberRecords(
           onUpdate(sortMemberRecordsNewestFirst(list));
         },
         (error: any) => {
+          console.error('[Firestore Live Sync Error]:', error?.code || 'unknown', error?.message || error);
           if (onError) onError(error);
           handleFirestoreError(error, OperationType.LIST, path, false);
         }
       );
     })
     .catch((err) => {
+      console.error('[Firestore Live Sync Error]:', err?.code || 'init-failed', err?.message || err);
       if (onError) onError(err);
     });
 

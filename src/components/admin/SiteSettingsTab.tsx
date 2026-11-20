@@ -39,6 +39,7 @@ import { LogoSettingsSubTab } from './LogoSettingsSubTab';
 import { PersistentSyncTab } from './PersistentSyncTab';
 import { AnnouncementBar } from '../AnnouncementBar';
 import { useLanguage } from '../../context/LanguageContext';
+import { useLiveDataOptional } from '../../context/LiveDataContext';
 import { 
   getStoredThemeSettings, 
   saveStoredThemeSettings, 
@@ -77,6 +78,7 @@ interface SiteSettingsTabProps {
 
 export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = ({ hasPermission, isSystemAdmin = false }) => {
   const { isArabic } = useLanguage();
+  const liveData = useLiveDataOptional();
   const canEditSiteSettings = isSystemAdmin || Boolean(hasPermission?.('system_settings'));
 
   // Active Sub-Tab
@@ -115,6 +117,28 @@ export const SiteSettingsTab: React.FC<SiteSettingsTabProps> = ({ hasPermission,
   const [announcementSettings, setAnnouncementSettings] = useState<AnnouncementBarSettings>(() =>
     getStoredAnnouncementBarSettings()
   );
+
+  useEffect(() => {
+    if (!liveData || liveData.loadingSettings) return;
+    setThemeSettings(liveData.siteTheme);
+    setSocialSettings(liveData.social);
+    if (!isPillarModalOpen) {
+      setPillars(liveData.pillars);
+    }
+    setFooterSettings(liveData.footer);
+    setModulesVisibility(liveData.modules);
+    setAnnouncementSettings(liveData.announcementBar);
+  }, [
+    liveData,
+    liveData?.loadingSettings,
+    liveData?.siteTheme,
+    liveData?.social,
+    liveData?.pillars,
+    liveData?.footer,
+    liveData?.modules,
+    liveData?.announcementBar,
+    isPillarModalOpen
+  ]);
 
   useEffect(() => {
     const syncAnnouncement = () => {

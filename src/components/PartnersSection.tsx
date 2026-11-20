@@ -23,14 +23,13 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 import { getAccessibleAccentColor } from '../utils/colorContrast';
 import { 
   PartnerItem, 
   PartnersSliderSettings, 
   DEFAULT_PARTNERS, 
-  DEFAULT_PARTNERS_SETTINGS, 
-  getStoredPartners, 
-  getStoredPartnersSettings,
+  DEFAULT_PARTNERS_SETTINGS
 } from '../data/partnersData';
 import { PartnerLogoRenderer } from './PartnerLogos';
 
@@ -503,13 +502,18 @@ export const PartnersSection: React.FC<PartnersSectionProps> = ({
   const sectionRef = useRef<HTMLElement>(null);
   const arcControlsRef = useRef<ConcaveArcSliderHandle | null>(null);
 
-  const [partners, setPartners] = useState<PartnerItem[]>(() => {
-    const stored = getStoredPartners();
-    const active = stored.filter(p => p.isActive !== false);
-    return active.length > 0 ? active : DEFAULT_PARTNERS;
-  });
+  const live = useLiveDataOptional();
+  const partners = useMemo<PartnerItem[]>(() => {
+    if (live) {
+      if (live.loadingPartners || live.loadingSettings) return [];
+      const active = live.partners.filter((p) => p.isActive !== false && (p as any).active !== false);
+      if (live.isAuthoritativePartners) return active;
+      return active.length > 0 ? active : DEFAULT_PARTNERS;
+    }
+    return DEFAULT_PARTNERS.filter((p) => p.isActive !== false);
+  }, [live]);
 
-  const [settings, setSettings] = useState<PartnersSliderSettings>(() => getStoredPartnersSettings());
+  const settings: PartnersSliderSettings = live?.partnersSettings || DEFAULT_PARTNERS_SETTINGS;
   const [selectedSector, setSelectedSector] = useState<'all' | 'government' | 'academic' | 'health' | 'corporate'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'slider' | 'grid'>(defaultViewMode);
@@ -530,27 +534,6 @@ export const PartnersSection: React.FC<PartnersSectionProps> = ({
     setIsMobileViewport(mql.matches);
     mql.addEventListener('change', onChange);
     return () => mql.removeEventListener('change', onChange);
-  }, []);
-
-  // Sync with storage updates
-  useEffect(() => {
-    const handlePartnersUpdate = (e?: any) => {
-      const stored = Array.isArray(e?.detail) && e.detail.length > 0 ? e.detail : getStoredPartners();
-      const active = stored.filter((p: PartnerItem) => p.isActive !== false);
-      setPartners(active.length > 0 ? active : DEFAULT_PARTNERS);
-    };
-
-    const handleSettingsUpdate = (e?: any) => {
-      const stored = e?.detail || getStoredPartnersSettings();
-      setSettings(stored);
-    };
-
-    window.addEventListener('raba_partners_updated', handlePartnersUpdate);
-    window.addEventListener('raba_partners_settings_updated', handleSettingsUpdate);
-    return () => {
-      window.removeEventListener('raba_partners_updated', handlePartnersUpdate);
-      window.removeEventListener('raba_partners_settings_updated', handleSettingsUpdate);
-    };
   }, []);
 
   // Filter partners by sector and search query

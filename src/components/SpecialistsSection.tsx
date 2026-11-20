@@ -3,6 +3,7 @@ import { SPECIALISTS } from '../data/mockData';
 import { Specialist } from '../types';
 import { DoctorCardSlider, Doctor } from './DoctorCardSlider';
 import { isSameSpecialist } from '../utils/specialistDeduplication';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 
 interface SpecialistsSectionProps {
   specialists?: Specialist[];
@@ -12,11 +13,25 @@ interface SpecialistsSectionProps {
 }
 
 export const SpecialistsSection: React.FC<SpecialistsSectionProps> = ({
-  specialists = SPECIALISTS,
+  specialists: propSpecialists,
   onViewCv,
   onBookSpecialist,
   onOpenSpecialistsPage
 }) => {
+  const live = useLiveDataOptional();
+  const rawSpecialists = propSpecialists !== undefined
+    ? propSpecialists
+    : live
+    ? (live.loadingSpecialists || live.loadingSettings
+        ? []
+        : live.isAuthoritativeSpecialists
+        ? live.specialists
+        : live.specialists.length > 0
+        ? live.specialists
+        : SPECIALISTS)
+    : SPECIALISTS;
+  const specialists = rawSpecialists.filter((s) => s.active !== false && s.isActive !== false);
+
   const findSpecialist = (doctor: Doctor): Specialist => {
     // 1. Direct or normalized match across ID & Name
     const matched = specialists.find((s) => isSameSpecialist(s, doctor));

@@ -16,9 +16,10 @@ import {
   Gift,
   AlertCircle
 } from 'lucide-react';
-import { THERAPY_PACKAGES, getStoredPackages } from '../data/mockData';
+import { THERAPY_PACKAGES } from '../data/servicesData';
 import { TherapyPackage } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 import { TamaraLogo, EmkanLogo } from './InstallmentLogos';
 
 interface PackagesSectionProps {
@@ -27,7 +28,19 @@ interface PackagesSectionProps {
 
 export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackage }) => {
   const { isArabic } = useLanguage();
-  const [packages, setPackages] = useState<TherapyPackage[]>(() => getStoredPackages());
+  const live = useLiveDataOptional();
+  const packages: TherapyPackage[] = useMemo(() => {
+    const raw: TherapyPackage[] = live
+      ? (live.loadingPackages || live.loadingSettings
+          ? []
+          : live.isAuthoritativePackages
+          ? live.packages
+          : live.packages.length > 0
+          ? live.packages
+          : THERAPY_PACKAGES)
+      : THERAPY_PACKAGES;
+    return raw.filter((p) => p.active !== false && p.isActive !== false);
+  }, [live]);
 
   // Filter state
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -40,15 +53,6 @@ export const PackagesSection: React.FC<PackagesSectionProps> = ({ onSelectPackag
   const startXRef = useRef(0);
   const scrollLeftRef = useRef(0);
   const movedDistanceRef = useRef(0);
-
-  // Sync with updates from Admin Dashboard
-  useEffect(() => {
-    const handleUpdate = () => {
-      setPackages(getStoredPackages());
-    };
-    window.addEventListener('raba_packages_updated', handleUpdate);
-    return () => window.removeEventListener('raba_packages_updated', handleUpdate);
-  }, []);
 
   // Category filter tabs matching the user's reference design
   const categories = useMemo(() => [

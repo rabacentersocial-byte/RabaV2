@@ -32,6 +32,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useLiveDataOptional } from '../../context/LiveDataContext';
 import { 
   HeroSlideItem, 
   HeroSliderConfig, 
@@ -40,10 +41,16 @@ import {
   getStoredHeroSliderConfig, 
   saveStoredHeroSliderConfig, 
   resetHeroSlidesToDefault,
-  DEFAULT_HERO_SLIDES
+  DEFAULT_HERO_SLIDER_CONFIG
 } from '../../data/sliderCustomizer';
 import { compressImage } from '../../utils/imageCompressor';
 import { useDailyChildrenCounter } from '../../utils/dailyChildrenCounter';
+import { uploadAttachmentToServer } from '../../utils/persistentSync';
+import {
+  syncSlidersCollectionToFirestore,
+  saveSliderConfigToFirestore,
+  deleteSliderFromFirestore
+} from '../../services/firestoreService';
 
 interface SliderManagementTabProps {
   hasPermission?: (perm: any) => boolean;
@@ -52,6 +59,7 @@ interface SliderManagementTabProps {
 
 export const SliderManagementTab: React.FC<SliderManagementTabProps> = ({ isSystemAdmin = false }) => {
   const { isArabic } = useLanguage();
+  const liveData = useLiveDataOptional();
 
   // State
   const [slides, setSlides] = useState<HeroSlideItem[]>(() => getStoredHeroSlides());
@@ -85,9 +93,21 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = ({ isSyst
   const [formCtaTextAr, setFormCtaTextAr] = useState('');
   const [formActive, setFormActive] = useState(true);
   const [isCompressing, setIsCompressing] = useState(false);
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Hydrate live from Firestore via LiveDataContext when modals are closed
+  useEffect(() => {
+    if (isModalOpen || isResetConfirmOpen) return;
+    if (liveData?.isAuthoritativeSliders && liveData.heroSlides) {
+      setSlides(liveData.heroSlides);
+    }
+    if (liveData?.heroConfig) {
+      setConfig(liveData.heroConfig);
+    }
+  }, [liveData?.heroSlides, liveData?.heroConfig, liveData?.isAuthoritativeSliders, isModalOpen, isResetConfirmOpen]);
 
   // Live auto-play for preview box
   useEffect(() => {
@@ -106,15 +126,17 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = ({ isSyst
   const activeSlides = slides.filter((s) => s.active);
   const currentPreviewSlide = activeSlides[previewIndex] || activeSlides[0] || slides[0];
 
-  // Save changes to localStorage & persistence
+  // Save changes to localStorage & Firestore collection
   const updateSlidesState = (newSlides: HeroSlideItem[]) => {
     setSlides(newSlides);
     saveStoredHeroSlides(newSlides);
+    void syncSlidersCollectionToFirestore(newSlides, config);
   };
 
   const updateConfigState = (newConfig: HeroSliderConfig) => {
     setConfig(newConfig);
     saveStoredHeroSliderConfig(newConfig);
+    void saveSliderConfigToFirestore(newConfig);
     showFeedback(isArabic ? 'تم تحديث إعدادات السلايدر' : 'Slider settings updated');
   };
 
@@ -177,6 +199,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = ({ isSyst
     filtered.forEach((s, idx) => {
       s.order = idx + 1;
     });
+    void deleteSliderFromFirestore(id);
     updateSlidesState(filtered);
     if (previewIndex >= filtered.length) {
       setPreviewIndex(0);
@@ -186,13 +209,19 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = ({ isSyst
 
   // Reset to default
   const handleResetDefaults = () => {
-    if (window.confirm(isArabic ? 'هل تريد استعادة شرائح الخدمات والعروض الافتراضية؟' : 'Reset to default service/offer slides?')) {
-      const reset = resetHeroSlidesToDefault();
-      setSlides(reset);
-      setConfig(getStoredHeroSliderConfig());
-      setPreviewIndex(0);
-      showFeedback(isArabic ? '✓ تمت استعادة شرائح الخدمات والعروض الافتراضية' : 'Reset to default slides');
-    }
+    setIsResetConfirmOpen(true);
+  };
+
+  const handleConfirmResetDefaults = () => {
+    const reset = resetHeroSlidesToDefault();
+    const defaultCfg = { ...DEFAULT_HERO_SLIDER_CONFIG };
+    setSlides(reset);
+    setConfig(defaultCfg);
+    saveStoredHeroSliderConfig(defaultCfg);
+    void syncSlidersCollectionToFirestore(reset, defaultCfg);
+    setPreviewIndex(0);
+    setIsResetConfirmOpen(false);
+    showFeedback(isArabic ? '✓ تمت استعادة شرائح الخدمات والعروض الافتراضية' : 'Reset to default slides');
   };
 
   // Open modal for editing existing slide
@@ -237,15 +266,17 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = ({ isSyst
     setIsModalOpen(true);
   };
 
-  // Handle image upload from computer
+  // Handle image upload from computer (with server upload to keep Firestore doc under 200KB rule limit)
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     try {
       setIsCompressing(true);
-      const compressedDataUrl = await compressImage(file, 900, 900, 0.85);
-      setFormSrc(compressedDataUrl);
+      const compressedDataUrl = await compressImage(file, 900, 900, 0.82);
+      const uploaded = await uploadAttachmentToServer(compressedDataUrl, file.name);
+      const finalSrc = uploaded.success && uploaded.url ? uploaded.url : compressedDataUrl;
+      setFormSrc(finalSrc);
       setIsCompressing(false);
     } catch (err) {
       console.error(err);
@@ -277,7 +308,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = ({ isSyst
   ];
 
   // Save Modal Form
-  const handleSaveModal = (e: React.FormEvent) => {
+  const handleSaveModal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formSrc.trim()) {
       showFeedback(isArabic ? 'يرجى إدخال رابط أو رفع صورة للشريحة' : 'Please provide an image', 'error');
@@ -289,10 +320,27 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = ({ isSyst
       return;
     }
 
+    let resolvedSrc = formSrc.trim();
+    if (resolvedSrc.startsWith('data:') && resolvedSrc.length > 195000) {
+      const uploaded = await uploadAttachmentToServer(resolvedSrc, `slide-${Date.now()}.webp`);
+      if (uploaded.success && uploaded.url) {
+        resolvedSrc = uploaded.url;
+        setFormSrc(resolvedSrc);
+      } else {
+        showFeedback(
+          isArabic
+            ? 'حجم الصورة المضمنة كبير جداً لقاعدة البيانات السحابية (الحد الأقصى 200KB). يرجى اختيار صورة أصغر أو رابط مباشر.'
+            : 'Inline image exceeds the 200KB cloud limit. Please upload a smaller image or use a direct URL.',
+          'error'
+        );
+        return;
+      }
+    }
+
     if (isNewSlide) {
       const newSlide: HeroSlideItem = {
         id: `slide-custom-${Date.now()}`,
-        src: formSrc,
+        src: resolvedSrc,
         alt: formAlt || formTitleAr,
         titleAr: formTitleAr,
         titleEn: formTitleEn || formTitleAr,
@@ -315,7 +363,7 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = ({ isSyst
         if (s.id === editingSlide.id) {
           return {
             ...s,
-            src: formSrc,
+            src: resolvedSrc,
             alt: formAlt || formTitleAr || s.alt,
             titleAr: formTitleAr,
             titleEn: formTitleEn,
@@ -1216,6 +1264,49 @@ export const SliderManagementTab: React.FC<SliderManagementTabProps> = ({ isSyst
 
             </form>
 
+          </div>
+        </div>
+      )}
+
+      {/* 6. Reset Confirmation Modal */}
+      {isResetConfirmOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in"
+          onClick={() => setIsResetConfirmOpen(false)}
+        >
+          <div
+            className="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-sm w-full border border-slate-200 dark:border-white/15 shadow-2xl text-center space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto border border-amber-500/20">
+              <RotateCcw className="w-6 h-6" />
+            </div>
+            <div className="space-y-1.5">
+              <h4 className="text-base font-black text-slate-900 dark:text-white">
+                {isArabic ? 'استعادة الشرائح الافتراضية' : 'Reset Default Slides'}
+              </h4>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                {isArabic
+                  ? 'هل تريد استعادة شرائح الخدمات والعروض الافتراضية ومزامنتها مع قاعدة البيانات؟'
+                  : 'Reset to default service and offer slides and sync with Firestore?'}
+              </p>
+            </div>
+            <div className="flex items-center gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsResetConfirmOpen(false)}
+                className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+              >
+                {isArabic ? 'إلغاء' : 'Cancel'}
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmResetDefaults}
+                className="flex-1 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black shadow-md cursor-pointer"
+              >
+                {isArabic ? 'تأكيد الاستعادة' : 'Confirm Reset'}
+              </button>
+            </div>
           </div>
         </div>
       )}

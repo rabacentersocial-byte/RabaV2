@@ -15,11 +15,10 @@ import {
   CourseItem,
   CoursesSectionSettings,
   DEFAULT_COURSES_SETTINGS,
-  MIDDLE_EAST_COUNTRIES,
-  STORAGE_COURSES_SETTINGS_KEY,
-  getStoredCoursesSettings
+  MIDDLE_EAST_COUNTRIES
 } from '../data/coursesData';
 import { useLanguage } from '../context/LanguageContext';
+import { useLiveDataOptional } from '../context/LiveDataContext';
 import { dispatchCustomerRequestAsync } from '../data/customerRequests';
 import { Appointment } from '../types';
 
@@ -37,7 +36,8 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
   onClose
 }) => {
   const { isArabic } = useLanguage();
-  const [coursesSettings, setCoursesSettings] = useState<CoursesSectionSettings>(() => getStoredCoursesSettings());
+  const live = useLiveDataOptional();
+  const coursesSettings: CoursesSectionSettings = live?.coursesSettings || DEFAULT_COURSES_SETTINGS;
 
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
@@ -50,61 +50,6 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-
-  // Synchronize courses settings (payment toggles & routing coordinator) dynamically
-  useEffect(() => {
-    const syncFromStorage = () => {
-      setCoursesSettings(getStoredCoursesSettings());
-    };
-    window.addEventListener('raba_courses_settings_updated', syncFromStorage);
-    window.addEventListener('raba_persistent_sync_ready' as any, syncFromStorage);
-    window.addEventListener('storage', syncFromStorage);
-    return () => {
-      window.removeEventListener('raba_courses_settings_updated', syncFromStorage);
-      window.removeEventListener('raba_persistent_sync_ready' as any, syncFromStorage);
-      window.removeEventListener('storage', syncFromStorage);
-    };
-  }, []);
-
-  // Refresh latest settings from Firestore public site_settings when modal opens
-  useEffect(() => {
-    if (!isOpen) return;
-    setCoursesSettings(getStoredCoursesSettings());
-    let active = true;
-    import('../services/firestoreService')
-      .then((m) => m.getSiteSettingFromFirestore(STORAGE_COURSES_SETTINGS_KEY))
-      .then((remote) => {
-        if (!active || !remote || typeof remote !== 'object') return;
-        const merged: CoursesSectionSettings = {
-          ...DEFAULT_COURSES_SETTINGS,
-          ...getStoredCoursesSettings(),
-          ...remote,
-          paymentOptions: {
-            tamara: remote?.paymentOptions?.tamara !== undefined ? Boolean(remote.paymentOptions.tamara) : true,
-            emkan: remote?.paymentOptions?.emkan !== undefined ? Boolean(remote.paymentOptions.emkan) : true,
-            cash: remote?.paymentOptions?.cash !== undefined ? Boolean(remote.paymentOptions.cash) : true
-          },
-          courseRouting: {
-            mode: remote?.courseRouting?.mode === 'specific_user' ? 'specific_user' : 'all_authorized',
-            assignedUserId: remote?.courseRouting?.assignedUserId || '',
-            assignedUserName: remote?.courseRouting?.assignedUserName || '',
-            assignedUserEmail: remote?.courseRouting?.assignedUserEmail || ''
-          }
-        };
-        setCoursesSettings(merged);
-        try {
-          localStorage.setItem(STORAGE_COURSES_SETTINGS_KEY, JSON.stringify(merged));
-        } catch {
-          // ignore
-        }
-      })
-      .catch(() => {
-        // non-blocking fallback to local settings
-      });
-    return () => {
-      active = false;
-    };
-  }, [isOpen]);
 
   const paymentConfig = useMemo(() => ({
     tamara: coursesSettings.paymentOptions?.tamara !== false,
