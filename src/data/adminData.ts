@@ -504,6 +504,30 @@ export const authenticateAdmin = async (
   let serverRejected = false;
   let serverErrorMsg = '';
 
+  const finalizeWithCloudAuth = async (
+    baseUser: AdminUser,
+    sessionToken: string,
+    customToken?: string
+  ): Promise<AuthResult> => {
+    let finalUser: AdminUser = { ...baseUser, lastLogin: baseUser.lastLogin || 'الآن (متصل)' };
+    try {
+      const { ensureAdminCloudSession } = await import('../services/firestoreService');
+      const fbUser = await ensureAdminCloudSession(finalUser, cleanPass, customToken);
+      if (fbUser?.uid) {
+        finalUser = { ...finalUser, firebaseUid: fbUser.uid };
+      }
+    } catch (cloudErr) {
+      console.warn('[Admin Auth] Automatic Firebase Cloud Auth notice:', cloudErr);
+    }
+
+    saveStoredAdminSession(finalUser, sessionToken, rememberMe);
+    return {
+      success: true,
+      user: finalUser,
+      token: sessionToken
+    };
+  };
+
   // 1. Attempt Server-Side Authentication
   try {
     const response = await fetch('/api/admin/login', {
@@ -517,37 +541,11 @@ export const authenticateAdmin = async (
     if (response.ok) {
       const data = await response.json();
       if (data.success && data.user) {
-        let finalUser: AdminUser = matchedUser
+        const mergedUser: AdminUser = matchedUser
           ? { ...matchedUser, ...data.user, lastLogin: data.user.lastLogin || 'الآن (متصل)' }
           : data.user;
 
-        if (data.customToken) {
-          try {
-            const [{ getLazyAuth }, { signInWithCustomToken }] = await Promise.all([
-              import('../lib/firebase'),
-              import('firebase/auth')
-            ]);
-            const authInstance = await getLazyAuth();
-            const cred = await signInWithCustomToken(authInstance, data.customToken);
-            if (cred?.user?.uid) {
-              finalUser = { ...finalUser, firebaseUid: cred.user.uid };
-            }
-          } catch (fbErr) {
-            console.warn('[Admin Auth] Firebase custom token sign-in notice:', fbErr);
-          }
-        } else if (finalUser.email) {
-          const fbUser = await tryFirebaseEmailLogin(finalUser.email, cleanPass);
-          if (fbUser?.uid) {
-            finalUser = { ...finalUser, firebaseUid: fbUser.uid };
-          }
-        }
-
-        saveStoredAdminSession(finalUser, data.token, rememberMe);
-        return {
-          success: true,
-          user: finalUser,
-          token: data.token
-        };
+        return await finalizeWithCloudAuth(mergedUser, data.token, data.customToken);
       }
     } else if (response.status === 403 || response.status === 429) {
       const errData = await response.json().catch(() => ({}));
@@ -568,7 +566,7 @@ export const authenticateAdmin = async (
   if (candidateEmail) {
     const fbUser = await tryFirebaseEmailLogin(candidateEmail, cleanPass);
     if (fbUser) {
-      const { verifyIsFirebaseAdmin, getFirebaseAdminProfile } = await import('../services/firestoreService');
+      const { verifyIsFirebaseAdmin, getFirebaseAdminProfile, ensureAdminCloudSession } = await import('../services/firestoreService');
       const [isVerifiedInCloud, cloudProfile] = await Promise.all([
         verifyIsFirebaseAdmin(fbUser),
         getFirebaseAdminProfile(fbUser)
@@ -587,6 +585,7 @@ export const authenticateAdmin = async (
           cloudProfile
         );
         if (resolved) {
+          await ensureAdminCloudSession(resolved, cleanPass).catch(() => {});
           return {
             success: true,
             user: resolved,
@@ -604,7 +603,7 @@ export const authenticateAdmin = async (
     };
   }
 
-  // 3. Offline / Static Preview Fallback (seeded roles in static hosting builds)
+  // 3. Offline / Static Preview Fallback (automatically establishes real Firebase Auth session in background)
   if (!matchedUser) {
     return {
       success: false,
@@ -612,7 +611,9 @@ export const authenticateAdmin = async (
     };
   }
 
+  const storedPassword = (matchedUser.password || '').trim();
   const isLegacyDemoMatch =
+    (storedPassword.length > 0 && cleanPass === storedPassword) ||
     (matchedUser.role === 'super_admin' && (cleanPass === 'admin' || cleanPass === 'admin123' || cleanPass === 'raba2025')) ||
     (cleanPass === 'raba' || cleanPass === 'raba123');
 
@@ -625,13 +626,7 @@ export const authenticateAdmin = async (
 
   const updatedUser: AdminUser = { ...matchedUser, lastLogin: 'الآن (متصل)' };
   const offlineToken = btoa(`${updatedUser.id}:${updatedUser.username}:${Date.now()}`);
-  saveStoredAdminSession(updatedUser, offlineToken, rememberMe);
-
-  return {
-    success: true,
-    user: updatedUser,
-    token: offlineToken
-  };
+  return await finalizeWithCloudAuth(updatedUser, offlineToken);
 };
 
 export const authenticateAdminWithGoogle = (

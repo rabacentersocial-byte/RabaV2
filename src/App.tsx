@@ -420,7 +420,7 @@ export default function App() {
     setAppointmentsSyncLoading(true);
     setAppointmentsSyncError(null);
     try {
-      const [{ getLazyAuth }, { verifyIsFirebaseAdmin, getAppointmentsFromFirestore }] = await Promise.all([
+      const [{ getLazyAuth }, { ensureAdminCloudSession, verifyIsFirebaseAdmin, getAppointmentsFromFirestore }] = await Promise.all([
         import('./lib/firebase'),
         import('./services/firestoreService'),
       ]);
@@ -429,9 +429,18 @@ export default function App() {
         await (authInstance as any).authStateReady();
       }
 
-      const currentFbUser = authInstance.currentUser;
+      let currentFbUser = authInstance.currentUser;
+      let isVerifiedAdmin = currentFbUser ? await verifyIsFirebaseAdmin(currentFbUser) : false;
+
+      if (!isVerifiedAdmin && adminSession) {
+        const autoFbUser = await ensureAdminCloudSession(adminSession);
+        if (autoFbUser) {
+          currentFbUser = autoFbUser;
+          isVerifiedAdmin = await verifyIsFirebaseAdmin(autoFbUser);
+        }
+      }
+
       setFirebaseAdminEmail(currentFbUser?.email || null);
-      const isVerifiedAdmin = currentFbUser ? await verifyIsFirebaseAdmin(currentFbUser) : false;
 
       if (isVerifiedAdmin && currentFbUser) {
         setFirebaseAdminUid(currentFbUser.uid);
@@ -500,7 +509,7 @@ export default function App() {
     } finally {
       setAppointmentsSyncLoading(false);
     }
-  }, []);
+  }, [adminSession]);
 
   // Lazy-hydrate appointments/notifications defaults after Hero render / on interactive demand
   useEffect(() => {
@@ -537,7 +546,7 @@ export default function App() {
     };
   }, [isReadyToHydrate, isAdminOpen, isSpecialistsPageOpen, isNotificationsOpen, isBookingOpen]);
 
-  // Validate admin session & Firebase Admin Auth state lazily only when admin portal is opened
+  // Automatically hydrate & persist Firebase Admin Auth state via onAuthStateChanged whenever Admin Dashboard is active
   useEffect(() => {
     if (!isAdminOpen) return;
     import('./data/adminData')
@@ -546,11 +555,13 @@ export default function App() {
 
     let cancelled = false;
     let unsubAuth: (() => void) | undefined;
+    let didAttemptSilentProvision = false;
+
     Promise.all([
       import('./lib/firebase'),
       import('firebase/auth'),
       import('./services/firestoreService'),
-    ]).then(async ([{ getLazyAuth }, { onAuthStateChanged }, { verifyIsFirebaseAdmin }]) => {
+    ]).then(async ([{ getLazyAuth }, { onAuthStateChanged }, { verifyIsFirebaseAdmin, ensureAdminCloudSession }]) => {
       if (cancelled) return;
       const authInstance = await getLazyAuth();
       if (typeof (authInstance as any).authStateReady === 'function') {
@@ -561,13 +572,31 @@ export default function App() {
       const evaluateUser = async (fbUser: any) => {
         if (cancelled) return;
         setFirebaseAdminEmail(fbUser?.email || null);
-        if (!fbUser) {
-          setFirebaseAdminUid(null);
-          return;
+
+        if (fbUser) {
+          const ok = await verifyIsFirebaseAdmin(fbUser);
+          if (!cancelled && ok) {
+            setFirebaseAdminUid(fbUser.uid);
+            return;
+          }
         }
-        const ok = await verifyIsFirebaseAdmin(fbUser);
+
+        // Silent automatic cloud auth provisioning for active admin sessions (zero manual linking)
+        if (!didAttemptSilentProvision && adminSession && adminSession.status !== 'suspended') {
+          didAttemptSilentProvision = true;
+          const provisionedUser = await ensureAdminCloudSession(adminSession);
+          if (!cancelled && provisionedUser) {
+            const okAfter = await verifyIsFirebaseAdmin(provisionedUser);
+            if (!cancelled) {
+              setFirebaseAdminEmail(provisionedUser.email || adminSession.email || null);
+              setFirebaseAdminUid(okAfter ? provisionedUser.uid : provisionedUser.uid);
+            }
+            return;
+          }
+        }
+
         if (!cancelled) {
-          setFirebaseAdminUid(ok ? fbUser.uid : null);
+          setFirebaseAdminUid(null);
         }
       };
 
@@ -582,9 +611,9 @@ export default function App() {
       cancelled = true;
       if (unsubAuth) unsubAuth();
     };
-  }, [isAdminOpen]);
+  }, [isAdminOpen, adminSession?.id]);
 
-  // Fetch & subscribe to live Firestore appointments whenever Admin Dashboard is active
+  // Immediately stream live Firestore appointments the millisecond Admin Dashboard mounts
   useEffect(() => {
     if (!isAdminOpen || !adminSession) return;
     let cancelled = false;
@@ -592,15 +621,12 @@ export default function App() {
 
     fetchCloudAppointments();
 
-    // Only attach Firestore real-time listener once verified Firebase Admin Auth is authenticated
-    if (!firebaseAdminUid) {
-      return () => {
-        cancelled = true;
-      };
-    }
-
     import('./services/firestoreService')
-      .then(({ subscribeAppointments, formatFirestoreUiError }) => {
+      .then(async ({ ensureAdminCloudSession, subscribeAppointments, formatFirestoreUiError }) => {
+        if (cancelled) return;
+        if (!firebaseAdminUid) {
+          await ensureAdminCloudSession(adminSession);
+        }
         if (cancelled) return;
         unsubAppointments = subscribeAppointments(
           (cloudList) => {
@@ -611,6 +637,7 @@ export default function App() {
           },
           (err) => {
             if (!cancelled) {
+              console.error('[Firestore Live Sync Error]:', err?.code || 'unknown', err?.message || err);
               setAppointmentsSyncError(formatFirestoreUiError(err, true).message);
             }
           }
@@ -960,6 +987,15 @@ export default function App() {
             setAdminSession(null);
             setFirebaseAdminUid(null);
             setFirebaseAdminEmail(null);
+            Promise.all([
+              import('./lib/firebase'),
+              import('firebase/auth')
+            ])
+              .then(async ([{ getLazyAuth }, { signOut }]) => {
+                const authInstance = await getLazyAuth();
+                await signOut(authInstance);
+              })
+              .catch(() => {});
             import('./data/adminData')
               .then(({ clearStoredAdminSession }) => clearStoredAdminSession())
               .catch(() => {

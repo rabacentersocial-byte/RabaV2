@@ -30,8 +30,6 @@ import {
   AlertCircle,
   Tag,
   RefreshCw,
-  Cloud,
-  ShieldAlert,
   GitBranch,
   Globe,
   UserCheck,
@@ -52,7 +50,6 @@ import {
   isUserBranchScoped
 } from '../../utils/branchPermissions';
 import { useLanguage } from '../../context/LanguageContext';
-import { useAuth } from '../../context/AuthContext';
 import { BookingReportModal } from './BookingReportModal';
 import { getCustomerWhatsAppMessage, generateRequestReference } from '../../data/customerRequests';
 import {
@@ -105,11 +102,9 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
   adminUsers,
   isSyncingAppointments = false,
   appointmentsSyncError = null,
-  isFirebaseAuthenticated = false,
   onRefreshAppointments
 }) => {
   const { isArabic } = useLanguage();
-  const { signInWithGoogle } = useAuth();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -123,7 +118,6 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
   const [requestToDelete, setRequestToDelete] = useState<Appointment | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
-  const [isActivatingCloudAuth, setIsActivatingCloudAuth] = useState(false);
   const [assignedToMeOnly, setAssignedToMeOnly] = useState(false);
 
   useEffect(() => {
@@ -273,27 +267,6 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
     setTimeout(() => setActionSuccess(null), 3500);
   };
 
-  const handleActivateCloudSync = async () => {
-    setIsActivatingCloudAuth(true);
-    setActionError(null);
-    try {
-      await signInWithGoogle();
-      if (onRefreshAppointments) {
-        await onRefreshAppointments();
-      }
-      showToastSuccess(isArabic ? 'تم تفعيل الربط السحابي ومزامنة الطلبات بنجاح' : 'Cloud sync activated and synced!');
-    } catch (err: any) {
-      console.error('[AppointmentsTab] Cloud Auth activation error:', err);
-      setActionError(
-        isArabic
-          ? 'تعذر تفعيل الربط السحابي عبر Google. يرجى السماح بالنوافذ المنبثقة والمحاولة مجدداً.'
-          : 'Failed to activate Google cloud authentication. Please allow popups and try again.'
-      );
-    } finally {
-      setIsActivatingCloudAuth(false);
-    }
-  };
-
   // Filtered List
   const filtered = scopedAppointments.filter((app) => {
     const q = searchQuery.toLowerCase();
@@ -359,8 +332,8 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
       onUpdateAppointments(previous);
       setActionError(
         isArabic
-          ? 'تعذر حفظ تغيير الحالة في قاعدة البيانات. تأكد من تسجيل الدخول السحابي عبر Google.'
-          : 'Failed to persist status update to Firestore. Ensure cloud sync authentication is active.'
+          ? 'تعذر حفظ تغيير الحالة في قاعدة البيانات. يرجى المحاولة مرة أخرى.'
+          : 'Failed to persist status update to Firestore. Please try again.'
       );
     }
   };
@@ -390,7 +363,7 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
       onUpdateAppointments(previous);
       setActionError(
         isArabic
-          ? 'تعذر حفظ الملاحظة في قاعدة البيانات. تأكد من تفعيل الربط السحابي.'
+          ? 'تعذر حفظ الملاحظة في قاعدة البيانات. يرجى المحاولة مرة أخرى.'
           : 'Failed to save internal note to Firestore.'
       );
     }
@@ -640,68 +613,27 @@ export const AppointmentsTab: React.FC<AppointmentsTabProps> = ({
     }
   };
 
-  const hasPermissionDeniedError = Boolean(
-    appointmentsSyncError &&
-      (appointmentsSyncError.toLowerCase().includes('permission') ||
-        appointmentsSyncError.toLowerCase().includes('insufficient'))
-  );
-
   return (
     <div className="space-y-6">
 
-      {/* Cloud Sync Auth / Error Warning Banner */}
-      {!isSyncingAppointments && (!isFirebaseAuthenticated || appointmentsSyncError) && (
-        <div className="p-4 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-950 dark:text-amber-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
-          <div className="flex items-start gap-3">
-            <ShieldAlert className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-            <div className="space-y-0.5">
-              <h4 className="text-xs sm:text-sm font-black">
-                {!isFirebaseAuthenticated || hasPermissionDeniedError
-                  ? isArabic
-                    ? 'يلزم تفعيل الربط السحابي لقراءة وتعديل حجوزات Firestore المباشرة'
-                    : 'Cloud authentication required to read & manage live Firestore bookings'
-                  : isArabic
-                    ? 'تنبيه مزامنة قاعدة البيانات السحابية'
-                    : 'Cloud Database Sync Notice'}
-              </h4>
-              <p className="text-[11px] opacity-90 leading-relaxed">
-                {!isFirebaseAuthenticated || hasPermissionDeniedError
-                  ? isArabic
-                    ? 'هذا الحساب متصل حالياً بالجلسة المحلية فقط. يتفعل الربط السحابي تلقائياً عند تسجيل الدخول بحساب موظف مرتبط سحابياً (بريد إلكتروني + كلمة مرور من 6 أحرف فأكثر)، أو بالنقر على «تفعيل الربط السحابي (Google)».'
-                    : 'Signed in with a local-only session. Cloud sync activates automatically for staff linked with Email/Password (6+ chars) or by clicking "Activate Cloud Sync (Google)".'
-                  : appointmentsSyncError}
-              </p>
-            </div>
+      {/* Network / Live Sync Error Notice (only shown on real Firestore connectivity errors) */}
+      {!isSyncingAppointments && appointmentsSyncError && (
+        <div className="p-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-800 dark:text-rose-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-bold">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>{appointmentsSyncError}</span>
           </div>
-
-          <div className="flex items-center gap-2 shrink-0">
-            {(!isFirebaseAuthenticated || hasPermissionDeniedError) && (
-              <button
-                type="button"
-                onClick={handleActivateCloudSync}
-                disabled={isActivatingCloudAuth}
-                className="px-3.5 py-2 rounded-xl bg-amber-700 hover:bg-amber-800 text-white text-xs font-black flex items-center gap-1.5 shadow-sm cursor-pointer disabled:opacity-60"
-              >
-                <Cloud className="w-3.5 h-3.5" />
-                <span>
-                  {isActivatingCloudAuth
-                    ? isArabic ? 'جاري التفعيل...' : 'Activating...'
-                    : isArabic ? 'تفعيل الربط السحابي (Google)' : 'Activate Cloud Sync (Google)'}
-                </span>
-              </button>
-            )}
-            {onRefreshAppointments && (
-              <button
-                type="button"
-                onClick={() => onRefreshAppointments()}
-                disabled={isSyncingAppointments}
-                className="px-3 py-2 rounded-xl bg-white/80 dark:bg-slate-800 text-slate-900 dark:text-white border border-amber-500/30 text-xs font-bold flex items-center gap-1.5 cursor-pointer disabled:opacity-60"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${isSyncingAppointments ? 'animate-spin' : ''}`} />
-                <span>{isArabic ? 'إعادة المحاولة' : 'Retry'}</span>
-              </button>
-            )}
-          </div>
+          {onRefreshAppointments && (
+            <button
+              type="button"
+              onClick={() => onRefreshAppointments()}
+              disabled={isSyncingAppointments}
+              className="px-3 py-1.5 rounded-xl bg-white/80 dark:bg-slate-800 text-slate-900 dark:text-white border border-rose-500/30 text-xs font-bold flex items-center gap-1.5 cursor-pointer disabled:opacity-60 shrink-0"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isSyncingAppointments ? 'animate-spin' : ''}`} />
+              <span>{isArabic ? 'إعادة المحاولة' : 'Retry'}</span>
+            </button>
+          )}
         </div>
       )}
 

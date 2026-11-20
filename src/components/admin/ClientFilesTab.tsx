@@ -17,7 +17,6 @@ import {
   Plus,
   Trash2,
   Package,
-  Cloud,
   FolderHeart,
   Clock,
   MapPin,
@@ -44,7 +43,6 @@ import {
   Specialist,
 } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
-import { useAuth } from '../../context/AuthContext';
 import {
   subscribeAllClients,
   getAllClientsFromFirestore,
@@ -59,7 +57,6 @@ import {
   deleteMemberRecordFromFirestore,
   subscribeSpecialists,
   formatFirestoreUiError,
-  verifyIsFirebaseAdmin,
 } from '../../services/firestoreService';
 import { SPECIALISTS } from '../../data/mockData';
 import { getStoredAdminUsers } from '../../data/adminData';
@@ -97,16 +94,12 @@ export const ClientFilesTab: React.FC<ClientFilesTabProps> = ({
   currentUser,
   hasPermission,
   isFirebaseAuthenticated = false,
-  firebaseAuthEmail = null,
 }) => {
   const { isArabic } = useLanguage();
-  const { signInWithGoogle } = useAuth();
 
   const [clients, setClients] = useState<ClientProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [syncError, setSyncError] = useState<string | null>(null);
-  const [isPermissionSyncError, setIsPermissionSyncError] = useState(false);
-  const [isActivatingCloudAuth, setIsActivatingCloudAuth] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'suspended'>('all');
@@ -191,10 +184,6 @@ export const ClientFilesTab: React.FC<ClientFilesTabProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!isFirebaseAuthenticated) {
-      setCloudSpecialists([]);
-      return;
-    }
     const unsub = subscribeSpecialists(
       (list) => {
         if (Array.isArray(list)) {
@@ -206,7 +195,7 @@ export const ClientFilesTab: React.FC<ClientFilesTabProps> = ({
       }
     );
     return () => unsub();
-  }, [isFirebaseAuthenticated]);
+  }, []);
 
   const activeSpecialists = useMemo(() => {
     let baseList: Specialist[] = [];
@@ -335,22 +324,13 @@ export const ClientFilesTab: React.FC<ClientFilesTabProps> = ({
   };
 
   useEffect(() => {
-    if (!isFirebaseAuthenticated) {
-      setIsLoading(false);
-      setSyncError(null);
-      setIsPermissionSyncError(false);
-      return;
-    }
-
     setIsLoading(true);
     setSyncError(null);
-    setIsPermissionSyncError(false);
     const unsub = subscribeAllClients(
       (list) => {
         setClients(list);
         setIsLoading(false);
         setSyncError(null);
-        setIsPermissionSyncError(false);
         // Keep drawer synced if currently viewing a client
         setSelectedClient((prev) => {
           if (!prev) return null;
@@ -366,13 +346,7 @@ export const ClientFilesTab: React.FC<ClientFilesTabProps> = ({
           'تعذر مزامنة ملفات العملاء من قاعدة البيانات السحابية.',
           'Failed to sync client files from Cloud Firestore.'
         );
-        if (formatted.isPermissionDenied) {
-          setIsPermissionSyncError(true);
-          setSyncError(null);
-        } else {
-          setIsPermissionSyncError(false);
-          setSyncError(formatted.message);
-        }
+        setSyncError(formatted.message);
       }
     );
 
@@ -380,18 +354,8 @@ export const ClientFilesTab: React.FC<ClientFilesTabProps> = ({
   }, [isFirebaseAuthenticated, isArabic]);
 
   const handleManualRefresh = async () => {
-    if (!isFirebaseAuthenticated) {
-      showToast(
-        'error',
-        isArabic
-          ? 'يرجى تفعيل المزامنة السحابية بحساب الإدارة المعتمد أولاً.'
-          : 'Please activate Cloud Sync with an authorized admin account first.'
-      );
-      return;
-    }
     setIsLoading(true);
     setSyncError(null);
-    setIsPermissionSyncError(false);
     try {
       const list = await getAllClientsFromFirestore();
       setClients(list);
@@ -402,50 +366,9 @@ export const ClientFilesTab: React.FC<ClientFilesTabProps> = ({
         'تعذر تحديث قائمة العملاء من قاعدة البيانات السحابية.',
         'Failed to refresh client files.'
       );
-      if (formatted.isPermissionDenied) {
-        setIsPermissionSyncError(true);
-        setSyncError(null);
-      } else {
-        setSyncError(formatted.message);
-      }
+      setSyncError(formatted.message);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleActivateCloudSync = async () => {
-    setIsActivatingCloudAuth(true);
-    try {
-      const fbUser = await signInWithGoogle();
-      const isAuthorized = await verifyIsFirebaseAdmin(fbUser);
-      if (isAuthorized) {
-        setIsPermissionSyncError(false);
-        setSyncError(null);
-        showToast('success', isArabic ? 'تم تفعيل المزامنة السحابية الإدارية بنجاح.' : 'Admin Cloud Sync activated.');
-      } else {
-        const chosenEmail = fbUser?.email || '';
-        showToast(
-          'error',
-          isArabic
-            ? `الحساب (${chosenEmail}) لا يملك صلاحيات الإدارة السحابية. يرجى اختيار حساب الإدارة المعتمد (rabacentersocial@gmail.com).`
-            : `Account (${chosenEmail}) does not have admin permissions. Please choose rabacentersocial@gmail.com.`
-        );
-      }
-    } catch (err: any) {
-      const code = err?.code || '';
-      if (code === 'auth/popup-closed-by-user') {
-        showToast('error', isArabic ? 'تم إغلاق نافذة تسجيل الدخول قبل إتمام العملية.' : 'Google sign-in popup was closed.');
-      } else {
-        const formatted = formatFirestoreUiError(
-          err,
-          isArabic,
-          'تعذر ربط حساب Google للمزامنة السحابية.',
-          'Failed to connect Google account for Cloud Sync.'
-        );
-        showToast('error', formatted.message);
-      }
-    } finally {
-      setIsActivatingCloudAuth(false);
     }
   };
 
@@ -466,7 +389,7 @@ export const ClientFilesTab: React.FC<ClientFilesTabProps> = ({
   };
 
   useEffect(() => {
-    if (!selectedClient?.uid || !isFirebaseAuthenticated) {
+    if (!selectedClient?.uid) {
       setClientMemberRecords([]);
       setRecordsError(null);
       setRecordsLoading(false);
@@ -543,11 +466,6 @@ export const ClientFilesTab: React.FC<ClientFilesTabProps> = ({
     const propMatches = getLinkedAppointmentsForClient(client);
     setClientLiveAppointments(propMatches);
 
-    if (!isFirebaseAuthenticated) {
-      setIsLoadingClientAppointments(false);
-      return;
-    }
-
     setIsLoadingClientAppointments(true);
     try {
       const liveDocs = await getClientAppointmentsFromFirestore(client.uid);
@@ -611,15 +529,6 @@ export const ClientFilesTab: React.FC<ClientFilesTabProps> = ({
 
   const handleSaveMemberRecord = async () => {
     if (!selectedClient || !canManage) return;
-    if (!isFirebaseAuthenticated) {
-      showToast(
-        'error',
-        isArabic
-          ? 'يرجى تفعيل المزامنة السحابية بحساب الإدارة أولاً لنشر التقارير.'
-          : 'Please activate Cloud Sync with an authorized admin account first.'
-      );
-      return;
-    }
 
     const availableMembers = selectedClient.familyMembers || [];
     const matchedMember = availableMembers.find((m) => m.id === recMemberId);
@@ -713,15 +622,6 @@ export const ClientFilesTab: React.FC<ClientFilesTabProps> = ({
 
   const handleDeleteMemberRecord = async (rec: MemberRecord) => {
     if (!selectedClient || !canDeleteClient) return;
-    if (!isFirebaseAuthenticated) {
-      showToast(
-        'error',
-        isArabic
-          ? 'يرجى تفعيل المزامنة السحابية بحساب الإدارة أولاً لحذف السجلات.'
-          : 'Please activate Cloud Sync with an authorized admin account first.'
-      );
-      return;
-    }
     setDeletingRecordId(rec.id);
     try {
       await deleteMemberRecordFromFirestore(selectedClient.uid, rec.id);
@@ -751,15 +651,6 @@ export const ClientFilesTab: React.FC<ClientFilesTabProps> = ({
   const handleSaveClientDrawer = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedClient || !canManage) return;
-    if (!isFirebaseAuthenticated) {
-      showToast(
-        'error',
-        isArabic
-          ? 'يرجى تفعيل المزامنة السحابية بحساب الإدارة أولاً لحفظ التعديلات.'
-          : 'Please activate Cloud Sync with an authorized admin account first.'
-      );
-      return;
-    }
 
     const cleanFullName = editFullName.trim();
     const cleanPhone = editPhone.trim();
@@ -859,15 +750,6 @@ export const ClientFilesTab: React.FC<ClientFilesTabProps> = ({
     if (!canAddClient) return;
     setCreateError(null);
 
-    if (!isFirebaseAuthenticated) {
-      setCreateError(
-        isArabic
-          ? 'يرجى تفعيل المزامنة السحابية بحساب الإدارة المعتمد أولاً لإضافة ملف عميل جديد.'
-          : 'Please activate Admin Cloud Sync first to create a new client file.'
-      );
-      return;
-    }
-
     const cleanFullName = createFullName.trim();
     const cleanPhone = createPhone.trim();
     const cleanEmail = createEmail.trim();
@@ -943,15 +825,6 @@ export const ClientFilesTab: React.FC<ClientFilesTabProps> = ({
 
   const openStatusToggleModal = (client: ClientProfile) => {
     if (!canToggleStatus) return;
-    if (!isFirebaseAuthenticated) {
-      showToast(
-        'error',
-        isArabic
-          ? 'يرجى تفعيل المزامنة السحابية بحساب الإدارة أولاً لتغيير حالة الملف.'
-          : 'Please activate Cloud Sync with an authorized admin account first.'
-      );
-      return;
-    }
     setStatusModalClient(client);
     setStatusComment('');
     setStatusModalError(null);
@@ -1037,16 +910,6 @@ export const ClientFilesTab: React.FC<ClientFilesTabProps> = ({
 
   const handleConfirmDeleteClient = async () => {
     if (!deleteModalClient || !canDeleteClient) return;
-    if (!isFirebaseAuthenticated) {
-      showToast(
-        'error',
-        isArabic
-          ? 'يرجى تفعيل المزامنة السحابية بحساب الأدمن الرئيسي أولاً لحذف الملف.'
-          : 'Please activate Cloud Sync with the primary admin account first.'
-      );
-      return;
-    }
-
     setIsDeletingClient(true);
     const target = deleteModalClient;
     try {
@@ -1143,7 +1006,7 @@ export const ClientFilesTab: React.FC<ClientFilesTabProps> = ({
           <button
             type="button"
             onClick={handleManualRefresh}
-            disabled={isLoading || !isFirebaseAuthenticated}
+            disabled={isLoading}
             className="px-4 py-2.5 rounded-full bg-[#1463D6] hover:bg-[#1152B8] text-white text-xs font-black inline-flex items-center gap-2 shadow-md cursor-pointer disabled:opacity-50"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
@@ -1152,64 +1015,20 @@ export const ClientFilesTab: React.FC<ClientFilesTabProps> = ({
         </div>
       </div>
 
-      {/* Firebase Auth Check Notice */}
-      {(!isFirebaseAuthenticated || isPermissionSyncError) && (
-        <div className="p-4 rounded-2xl bg-amber-500/12 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-start gap-2.5 text-xs text-amber-800 dark:text-amber-200">
-            <Cloud className="w-5 h-5 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
-            <div className="space-y-1">
-              <div className="font-black">
-                {isArabic
-                  ? 'مطلوب تفعيل الجلسة السحابية الإدارية لقراءة وإدارة ملفات العملاء'
-                  : 'Admin Cloud Session Required for Client Files Management'}
-              </div>
-              <p className="opacity-90 leading-relaxed">
-                {firebaseAuthEmail && firebaseAuthEmail.toLowerCase() !== 'rabacentersocial@gmail.com'
-                  ? isArabic
-                    ? `الجلسة السحابية النشطة حالياً متصلة بحساب (${firebaseAuthEmail}) ولا تملك صلاحيات الإدارة. اضغط على الزر لتسجيل الدخول بحساب إداري معتمد أو حساب Google الإداري.`
-                    : `The current Firebase session (${firebaseAuthEmail}) does not have admin privileges. Click below to sign in with an authorized Admin account or Admin Google account.`
-                  : isArabic
-                  ? 'يتفعل الربط السحابي تلقائياً عند تسجيل الدخول بحساب موظف مرتبط بالبريد الإلكتروني وكلمة مرور (6 أحرف فأكثر)، أو اضغط على الزر لتسجيل الدخول عبر Google ومزامنة ملفات العملاء لحظياً.'
-                  : 'Cloud sync activates automatically when signing in with a cloud-linked staff Email/Password (6+ chars), or click to sign in with your Admin Google account.'}
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={handleActivateCloudSync}
-            disabled={isActivatingCloudAuth}
-            className="px-4 py-2 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-black shrink-0 cursor-pointer disabled:opacity-60 inline-flex items-center gap-1.5"
-          >
-            <Cloud className="w-3.5 h-3.5" />
-            <span>
-              {isActivatingCloudAuth
-                ? isArabic
-                  ? 'جاري الربط...'
-                  : 'Connecting...'
-                : isArabic
-                ? 'تفعيل المزامنة السحابية (Google)'
-                : 'Activate Cloud Sync (Google)'}
-            </span>
-          </button>
-        </div>
-      )}
-
-      {syncError && !isPermissionSyncError && (
+      {syncError && (
         <div className="p-3.5 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-xs font-bold text-rose-700 dark:text-rose-200 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{syncError}</span>
           </div>
-          {isFirebaseAuthenticated && (
-            <button
-              type="button"
-              onClick={handleManualRefresh}
-              disabled={isLoading}
-              className="px-3 py-1 rounded-full bg-rose-600/15 hover:bg-rose-600/25 text-rose-700 dark:text-rose-200 text-[11px] font-black shrink-0 cursor-pointer"
-            >
-              {isArabic ? 'إعادة المحاولة' : 'Retry'}
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={handleManualRefresh}
+            disabled={isLoading}
+            className="px-3 py-1 rounded-full bg-rose-600/15 hover:bg-rose-600/25 text-rose-700 dark:text-rose-200 text-[11px] font-black shrink-0 cursor-pointer"
+          >
+            {isArabic ? 'إعادة المحاولة' : 'Retry'}
+          </button>
         </div>
       )}
 

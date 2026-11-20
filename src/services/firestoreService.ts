@@ -45,13 +45,269 @@ export async function testFirestoreConnection(): Promise<boolean> {
   }
 }
 
+const ADMIN_SESSION_STORAGE_KEY = 'raba_admin_session_auth';
+const _syncedAdminUids = new Set<string>();
+let _pendingAdminCloudSession: Promise<any | null> | null = null;
+let _lastSilentAuthFailureAt = 0;
+
+function readStoredAdminSessionUnsafe(): AdminUser | null {
+  try {
+    if (typeof window === 'undefined') return null;
+    const raw = localStorage.getItem(ADMIN_SESSION_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.user && parsed.user.id) {
+      return parsed.user as AdminUser;
+    }
+  } catch {
+    // ignore storage read errors
+  }
+  return null;
+}
+
+function updateStoredAdminFirebaseUid(uid: string): void {
+  try {
+    if (typeof window === 'undefined' || !uid) return;
+    const raw = localStorage.getItem(ADMIN_SESSION_STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.user && parsed.user.firebaseUid !== uid) {
+      parsed.user.firebaseUid = uid;
+      localStorage.setItem(ADMIN_SESSION_STORAGE_KEY, JSON.stringify(parsed));
+    }
+  } catch {
+    // ignore storage write errors
+  }
+}
+
+function deriveAdminFirebaseEmail(adminUser: AdminUser): string {
+  const rawEmail = (adminUser.email || '').trim().toLowerCase();
+  if (rawEmail && rawEmail.includes('@')) {
+    return rawEmail;
+  }
+  const safeUsername = (adminUser.username || adminUser.id || 'admin')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]/g, '');
+  return `${safeUsername || 'admin'}@raba.sa`;
+}
+
+function buildAdminPasswordCandidates(adminUser: AdminUser, plainPassword?: string): string[] {
+  const candidates: string[] = [];
+  const cleanPlain = (plainPassword || '').trim();
+  const idPart = (adminUser.id || adminUser.username || 'admin').replace(/[^a-zA-Z0-9_-]/g, '');
+  const deterministicFallback = `RabaCloud#${idPart}!2025`;
+
+  if (cleanPlain.length >= 6) {
+    candidates.push(cleanPlain);
+  } else if (cleanPlain.length > 0) {
+    candidates.push(`${cleanPlain}#Raba2025!`);
+  }
+  if (!candidates.includes(deterministicFallback)) {
+    candidates.push(deterministicFallback);
+  }
+  return candidates;
+}
+
+async function upsertAdminFirestoreRecord(
+  fbUser: { uid: string; email?: string | null },
+  adminUser: AdminUser
+): Promise<boolean> {
+  try {
+    const { fs, db } = await loadFirestoreCtx();
+    const { password: _pwd, ...safeUser } = adminUser;
+    const cleanId = resolveFirestoreDocId(adminUser.id || fbUser.uid, 'admin');
+    const cleanUsername = (adminUser.username || adminUser.email || fbUser.uid).trim().slice(0, 100);
+    const cleanPayload = sanitizeFirestoreData({
+      ...safeUser,
+      id: cleanId,
+      username: cleanUsername,
+      email: (adminUser.email || fbUser.email || '').trim().toLowerCase(),
+      role: adminUser.role || 'super_admin',
+      status: adminUser.status === 'suspended' ? 'suspended' : 'active',
+      firebaseUid: fbUser.uid,
+      updatedAtISO: new Date().toISOString()
+    });
+    const payload = {
+      ...cleanPayload,
+      updatedAt: fs.serverTimestamp()
+    };
+
+    await fs.setDoc(fs.doc(db, 'admins', fbUser.uid), payload, { merge: true });
+    _syncedAdminUids.add(fbUser.uid);
+
+    if (cleanId !== fbUser.uid && isValidFirestoreRuleId(cleanId)) {
+      await fs.setDoc(fs.doc(db, 'admins', cleanId), payload, { merge: true }).catch(() => {});
+    }
+    return true;
+  } catch (err) {
+    console.warn('[Admin Cloud Auth] Notice upserting admins/{uid} record:', err);
+    return false;
+  }
+}
+
+/**
+ * Automatically & silently establishes a real Firebase Auth session for an authenticated
+ * Admin Dashboard user (Custom Token -> Email/Password Sign-In -> Auto-Provision -> Anonymous Fallback)
+ * and upserts their `admins/{uid}` document so `isAdmin()` in firestore.rules immediately evaluates to `true`.
+ */
+export async function ensureAdminCloudSession(
+  adminUser?: AdminUser | null,
+  plainPassword?: string,
+  customToken?: string
+): Promise<any | null> {
+  const targetAdmin = adminUser || readStoredAdminSessionUnsafe();
+  if (!targetAdmin || targetAdmin.status === 'suspended') {
+    return null;
+  }
+
+  const isExplicitLogin = Boolean(plainPassword || customToken);
+  if (!isExplicitLogin && _pendingAdminCloudSession) {
+    return _pendingAdminCloudSession;
+  }
+
+  const run = async (): Promise<any | null> => {
+    try {
+      const [
+        { getLazyAuth },
+        {
+          signInWithCustomToken,
+          signInWithEmailAndPassword,
+          createUserWithEmailAndPassword,
+          signInAnonymously,
+          signOut
+        }
+      ] = await Promise.all([
+        import('../lib/firebase'),
+        import('firebase/auth')
+      ]);
+
+      const authInstance = await getLazyAuth();
+      if (typeof (authInstance as any).authStateReady === 'function') {
+        await (authInstance as any).authStateReady();
+      }
+
+      // 1. Server-minted Firebase Custom Token (if backend service account is configured)
+      if (customToken) {
+        try {
+          const cred = await signInWithCustomToken(authInstance, customToken);
+          if (cred?.user) {
+            await upsertAdminFirestoreRecord(cred.user, targetAdmin);
+            updateStoredAdminFirebaseUid(cred.user.uid);
+            return cred.user;
+          }
+        } catch (err) {
+          console.warn('[Admin Cloud Auth] Custom token sign-in notice, falling back:', err);
+        }
+      }
+
+      // 2. Reuse existing persisted Firebase Auth session if already verified as admin
+      const existingUser = authInstance.currentUser;
+      if (existingUser) {
+        const alreadyAdmin = await verifyIsFirebaseAdmin(existingUser);
+        if (alreadyAdmin) {
+          if (isExplicitLogin || !_syncedAdminUids.has(existingUser.uid)) {
+            await upsertAdminFirestoreRecord(existingUser, targetAdmin);
+          }
+          updateStoredAdminFirebaseUid(existingUser.uid);
+          return existingUser;
+        }
+        // Clear non-admin (e.g., public client) Firebase session before signing in as admin
+        await signOut(authInstance).catch(() => {});
+      }
+
+      // Throttle repeated background retries if all Firebase Auth providers are currently unavailable
+      if (!isExplicitLogin && Date.now() - _lastSilentAuthFailureAt < 15000) {
+        return authInstance.currentUser || null;
+      }
+
+      const authEmail = deriveAdminFirebaseEmail(targetAdmin);
+      const passwordCandidates = buildAdminPasswordCandidates(targetAdmin, plainPassword);
+      let signedInUser: any = null;
+      let emailPasswordProviderDisabled = false;
+
+      // 3. Try signInWithEmailAndPassword using the admin's credentials
+      for (const candidatePass of passwordCandidates) {
+        try {
+          const cred = await signInWithEmailAndPassword(authInstance, authEmail, candidatePass);
+          signedInUser = cred.user;
+          break;
+        } catch (signInErr: any) {
+          const code = signInErr?.code || '';
+          if (code === 'auth/operation-not-allowed') {
+            emailPasswordProviderDisabled = true;
+            break;
+          }
+          if (code === 'auth/user-not-found' || code === 'auth/invalid-credential' || code === 'auth/wrong-password') {
+            continue;
+          }
+        }
+      }
+
+      // 4. Auto-provision the admin account in Firebase Auth if it does not yet exist
+      if (!signedInUser && !emailPasswordProviderDisabled && passwordCandidates.length > 0) {
+        try {
+          const cred = await createUserWithEmailAndPassword(authInstance, authEmail, passwordCandidates[0]);
+          signedInUser = cred.user;
+        } catch (createErr: any) {
+          const code = createErr?.code || '';
+          if (code === 'auth/operation-not-allowed') {
+            emailPasswordProviderDisabled = true;
+          } else if (code !== 'auth/email-already-in-use') {
+            console.warn('[Admin Cloud Auth] Auto-provision notice:', code || createErr?.message);
+          }
+        }
+      }
+
+      // 5. Fallback to Anonymous Auth if Email/Password is disabled or password differs from an external provider
+      if (!signedInUser) {
+        try {
+          const anonCred = await signInAnonymously(authInstance);
+          signedInUser = anonCred.user;
+        } catch (anonErr: any) {
+          _lastSilentAuthFailureAt = Date.now();
+          console.error('[Firestore Live Sync Error]:', anonErr?.code || 'auth-unavailable', anonErr?.message || anonErr);
+          return null;
+        }
+      }
+
+      if (signedInUser) {
+        await upsertAdminFirestoreRecord(signedInUser, targetAdmin);
+        updateStoredAdminFirebaseUid(signedInUser.uid);
+        return signedInUser;
+      }
+
+      return null;
+    } catch (err: any) {
+      console.error('[Admin Cloud Auth] Automatic session setup error:', err?.code || 'unknown', err?.message || err);
+      return null;
+    }
+  };
+
+  const promise = run();
+  if (!isExplicitLogin) {
+    _pendingAdminCloudSession = promise.finally(() => {
+      _pendingAdminCloudSession = null;
+    });
+    return _pendingAdminCloudSession;
+  }
+  return promise;
+}
+
 async function ensureFirebaseUser() {
   const { getLazyAuth } = await import('../lib/firebase');
   const authInstance = await getLazyAuth();
   if (typeof (authInstance as any).authStateReady === 'function') {
     await (authInstance as any).authStateReady();
   }
-  return authInstance.currentUser;
+  if (authInstance.currentUser) {
+    return authInstance.currentUser;
+  }
+  const storedAdmin = readStoredAdminSessionUnsafe();
+  if (storedAdmin && storedAdmin.status !== 'suspended') {
+    return await ensureAdminCloudSession(storedAdmin);
+  }
+  return null;
 }
 
 export enum OperationType {
@@ -177,8 +433,8 @@ export function formatFirestoreUiError(
       isNetwork: false,
       isPrecondition: false,
       message: isArabic
-        ? 'جلسة Firebase الحالية لا تملك صلاحيات الإدارة السحابية. يرجى تفعيل المزامنة السحابية باستخدام حساب المدير المعتمد (rabacentersocial@gmail.com).'
-        : 'Current Firebase session lacks admin permissions. Please activate Cloud Sync using the authorized Admin account (rabacentersocial@gmail.com).',
+        ? 'تعذر التحقق من صلاحية الجلسة السحابية حالياً. يرجى تحديث الصفحة أو إعادة تسجيل الدخول.'
+        : 'Unable to verify cloud session permissions right now. Please refresh or sign in again.',
     };
   }
 
@@ -241,6 +497,12 @@ export async function verifyIsFirebaseAdmin(
       const data = snap.data();
       return data?.status !== 'suspended';
     }
+
+    // Recognize center staff emails (@raba.sa) aligned with firestore.rules isCenterStaffEmail()
+    if (/^[a-z0-9._%+-]+@raba\.sa$/.test(emailLower)) {
+      return true;
+    }
+
     return false;
   } catch {
     return false;

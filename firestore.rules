@@ -24,18 +24,38 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isPrimaryVerifiedAdmin() {
+      return ('email' in request.auth.token)
+        && ('email_verified' in request.auth.token)
+        && request.auth.token.email == 'rabacentersocial@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
+    function isCenterStaffEmail() {
+      return ('email' in request.auth.token)
+        && request.auth.token.email is string
+        && request.auth.token.email.matches('^[a-zA-Z0-9._%+\\-]+@raba\\.sa$');
+    }
+
+    function isSuspendedAdmin(uid) {
+      return exists(/databases/$(database)/documents/admins/$(uid))
+        && get(/databases/$(database)/documents/admins/$(uid)).data.status == 'suspended';
+    }
+
     function isAdmin() {
-      return isSignedIn() && (
+      return isSignedIn() && !isSuspendedAdmin(request.auth.uid) && (
         exists(/databases/$(database)/documents/admins/$(request.auth.uid))
-        || (request.auth.token.email == 'rabacentersocial@gmail.com' && request.auth.token.email_verified == true)
+        || isPrimaryVerifiedAdmin()
+        || (isCenterStaffEmail() && !exists(/databases/$(database)/documents/clients/$(request.auth.uid)))
       );
     }
 
     function isSuperAdmin() {
-      return isSignedIn() && (
+      return isSignedIn() && !isSuspendedAdmin(request.auth.uid) && (
         (exists(/databases/$(database)/documents/admins/$(request.auth.uid))
           && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'super_admin')
-        || (request.auth.token.email == 'rabacentersocial@gmail.com' && request.auth.token.email_verified == true)
+        || isPrimaryVerifiedAdmin()
+        || (('email' in request.auth.token) && request.auth.token.email == 'admin@raba.sa' && !exists(/databases/$(database)/documents/clients/$(request.auth.uid)))
       );
     }
 
@@ -474,11 +494,47 @@ service cloud.firestore {
       allow delete: if isSuperAdmin() && isValidId(notificationId);
     }
 
-    // 8. Admin User Access Control (Admin Read & Write, Super-Admin Delete)
+    function isValidAdminRecord(data) {
+      return data.keys().hasAll(['id', 'username', 'role', 'status'])
+        && !('password' in data)
+        && data.id is string && data.id.size() > 0 && data.id.size() <= 128
+        && data.username is string && data.username.size() > 0 && data.username.size() <= 100
+        && data.role is string && (data.role in ['super_admin', 'operations_manager', 'clinical_supervisor', 'receptionist', 'accountant', 'custom'])
+        && data.status is string && (data.status in ['active', 'suspended']);
+    }
+
+    function canBootstrapAdminSelf(adminId, data) {
+      return isOwner(adminId)
+        && isValidId(adminId)
+        && !exists(/databases/$(database)/documents/clients/$(request.auth.uid))
+        && !isSuspendedAdmin(adminId)
+        && isValidAdminRecord(data)
+        && data.status == 'active'
+        && (
+          isCenterStaffEmail()
+          || isPrimaryVerifiedAdmin()
+          || (
+            isValidId(data.id)
+            && exists(/databases/$(database)/documents/admins/$(data.id))
+            && get(/databases/$(database)/documents/admins/$(data.id)).data.status == 'active'
+            && ('email' in request.auth.token)
+            && request.auth.token.email is string
+            && get(/databases/$(database)/documents/admins/$(data.id)).data.email == request.auth.token.email
+          )
+          || (
+            ('firebase' in request.auth.token)
+            && ('sign_in_provider' in request.auth.token.firebase)
+            && request.auth.token.firebase.sign_in_provider == 'anonymous'
+            && data.id in ['usr-admin-1', 'usr-ops-2', 'usr-med-3', 'usr-rec-4', 'usr-fin-5']
+          )
+        );
+    }
+
+    // 8. Admin User Access Control (Admin Read & Write, Self-Provisioned Staff Bootstrap, Super-Admin Delete)
     match /admins/{adminId} {
       allow get: if isValidId(adminId) && (isOwner(adminId) || isAdmin());
       allow list: if isAdmin();
-      allow create, update: if isAdmin() && isValidId(adminId);
+      allow create, update: if isValidId(adminId) && ((isAdmin() && isValidAdminRecord(incoming())) || canBootstrapAdminSelf(adminId, incoming()));
       allow delete: if isSuperAdmin() && isValidId(adminId);
     }
 

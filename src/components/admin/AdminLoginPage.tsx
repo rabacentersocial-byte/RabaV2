@@ -439,12 +439,12 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
                 <div className="relative flex items-center py-1">
                   <div className="flex-grow border-t border-white/10" />
                   <span className="flex-shrink mx-3 text-[11px] font-bold text-slate-400">
-                    {isArabic ? 'أو للمزامنة السحابية المباشرة (Firestore)' : 'Or for live Firestore Cloud Sync'}
+                    {isArabic ? 'أو الدخول السريع عبر Google' : 'Or quick sign-in with Google'}
                   </span>
                   <div className="flex-grow border-t border-white/10" />
                 </div>
 
-                {/* Google Cloud Auth Button */}
+                {/* Optional Google Sign-In Button */}
                 <button
                   type="button"
                   onClick={handleGoogleSignIn}
@@ -464,7 +464,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
                         <path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z" />
                         <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z" />
                       </svg>
-                      <span>{isArabic ? 'تسجيل الدخول عبر Google (المزامنة السحابية)' : 'Sign in with Google (Cloud Sync)'}</span>
+                      <span>{isArabic ? 'تسجيل الدخول باستخدام Google' : 'Sign in with Google'}</span>
                     </>
                   )}
                 </button>
