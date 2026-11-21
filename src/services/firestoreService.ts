@@ -174,7 +174,6 @@ export async function ensureAdminCloudSession(
           signInWithCustomToken,
           signInWithEmailAndPassword,
           createUserWithEmailAndPassword,
-          signInAnonymously,
           signOut
         }
       ] = await Promise.all([
@@ -259,16 +258,10 @@ export async function ensureAdminCloudSession(
         }
       }
 
-      // 5. Fallback to Anonymous Auth if Email/Password is disabled or password differs from an external provider
+      // Do NOT fall back to anonymous auth for admin sessions; require verified Firebase credentials.
       if (!signedInUser) {
-        try {
-          const anonCred = await signInAnonymously(authInstance);
-          signedInUser = anonCred.user;
-        } catch (anonErr: any) {
-          _lastSilentAuthFailureAt = Date.now();
-          console.error('[Firestore Live Sync Error]:', anonErr?.code || 'auth-unavailable', anonErr?.message || anonErr);
-          return null;
-        }
+        _lastSilentAuthFailureAt = Date.now();
+        return null;
       }
 
       if (signedInUser) {

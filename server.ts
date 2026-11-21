@@ -15,6 +15,7 @@ import { syncDbSpecialists } from './src/db/specialists.ts';
 import { syncDbServices } from './src/db/services.ts';
 import { backgroundQueue } from './src/utils/backgroundQueue.ts';
 import { invalidateDbSettingsCache } from './src/db/settings.ts';
+import crypto from 'crypto';
 import {
   securityHeaders,
   createRateLimiter,
@@ -24,6 +25,8 @@ import {
   sanitizeDate,
   isSafeSvg,
   requireAdminAuth,
+  signAdminSessionToken,
+  isAuthorizedAdminTokenClaims,
   sendSafeError
 } from './src/middleware/security.ts';
 import {
@@ -606,18 +609,21 @@ async function startServer() {
         return res.status(403).json({ success: false, error: 'عذراً، هذا الحساب معطل حالياً من قِبل إدارة النظام.' });
       }
 
-      const validPassword = matchedUser.password || (matchedUser.role === 'super_admin' ? 'admin' : 'raba');
-      const isMatch = cleanPass === validPassword ||
-        (matchedUser.role === 'super_admin' && (cleanPass === 'admin' || cleanPass === 'admin123' || cleanPass === 'raba2025')) ||
-        (cleanPass === 'raba' || cleanPass === 'raba123');
+      const validPassword = typeof matchedUser.password === 'string' ? matchedUser.password.trim() : '';
+      const passA = Buffer.from(cleanPass, 'utf-8');
+      const passB = Buffer.from(validPassword, 'utf-8');
+      const isMatch = validPassword.length > 0 && passA.length === passB.length && crypto.timingSafeEqual(passA, passB);
 
       if (!isMatch) {
         return res.status(401).json({ success: false, error: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
       }
 
-      // Generate signed base64 session token
-      const tokenPayload = `${matchedUser.id}:${matchedUser.username}:${Date.now()}`;
-      const token = Buffer.from(tokenPayload).toString('base64');
+      // Generate HMAC-SHA256 signed session token
+      const token = signAdminSessionToken(
+        String(matchedUser.id),
+        String(matchedUser.username || cleanId),
+        String(matchedUser.role || 'admin')
+      );
 
       // Generate Firebase Custom Token so client admin portal authenticates into Firestore rules (request.auth != null)
       let customToken: string | undefined;
@@ -651,6 +657,29 @@ async function startServer() {
       });
     } catch (err: any) {
       return sendSafeError(res, 500, 'فشل معالجة تسجيل الدخول', err);
+    }
+  });
+
+  // 4b. Exchange verified Firebase Admin ID Token for HMAC-signed backend session token
+  app.post('/api/admin/firebase-session', adminLoginLimiter, async (req: Request, res: Response) => {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ success: false, error: 'مطلوب رمز تحقق Firebase صالح' });
+      }
+      const idToken = authHeader.split('Bearer ')[1];
+      const decoded = await adminAuth.verifyIdToken(idToken);
+      if (!isAuthorizedAdminTokenClaims(decoded)) {
+        return res.status(403).json({ success: false, error: 'هذا الحساب غير مخول للوصول الإداري' });
+      }
+      const token = signAdminSessionToken(
+        String(decoded.uid),
+        String(decoded.email || decoded.uid),
+        String((decoded as any).role || 'super_admin')
+      );
+      return res.json({ success: true, token });
+    } catch {
+      return res.status(401).json({ success: false, error: 'فشل التحقق من جلسة Firebase' });
     }
   });
 

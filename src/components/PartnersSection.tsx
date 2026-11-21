@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   ChevronRight, 
   ChevronLeft, 
@@ -1125,9 +1126,9 @@ export const PartnersSection: React.FC<PartnersSectionProps> = ({
       {/* ========================================================================= */}
       {/* PARTNER DETAILS MODAL                                                     */}
       {/* ========================================================================= */}
-      {activePartnerModal && (
+      {activePartnerModal && typeof document !== 'undefined' && createPortal(
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-sm animate-fadeIn"
+          className="fixed inset-0 z-[115] isolate overflow-y-auto overscroll-contain flex items-start sm:items-center justify-center p-4 bg-black/65 backdrop-blur-sm"
           onClick={() => setActivePartnerModal(null)}
         >
           <div 
@@ -1237,7 +1238,8 @@ export const PartnersSection: React.FC<PartnersSectionProps> = ({
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </section>

@@ -65,7 +65,7 @@ const AccreditationsSection = lazy<React.ComponentType<any>>(() => safeImport(()
 const PartnersSection = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/PartnersSection')).then((m: any) => ({ default: m.default || m.PartnersSection || (() => null) })));
 const BranchesSection = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BranchesSection')).then((m: any) => ({ default: m.default || m.BranchesSection || (() => null) })));
 const CoursesSliderSection = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/CoursesSliderSection')).then((m: any) => ({ default: m.default || m.CoursesSliderSection || (() => null) })));
-const CourseRegistrationModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/CourseRegistrationModal')).then((m: any) => ({ default: m.default || m.CourseRegistrationModal || (() => null) })));
+import { CourseRegistrationModal } from './components/CourseRegistrationModal';
 const LoginModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/LoginModal')).then((m: any) => ({ default: m.default || m.LoginModal || (() => null) })));
 const StoreModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/StoreModal')).then((m: any) => ({ default: m.default || m.StoreModal || (() => null) })));
 const VideoModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/VideoModal')).then((m: any) => ({ default: m.default || m.VideoModal || (() => null) })));
@@ -1455,16 +1455,14 @@ export default function App() {
       )}
 
       {isCourseRegistrationOpen && (
-        <Suspense fallback={null}>
-          <CourseRegistrationModal
-            course={selectedCourseForRegistration}
-            isOpen={isCourseRegistrationOpen}
-            onClose={() => {
-              setIsCourseRegistrationOpen(false);
-              setSelectedCourseForRegistration(null);
-            }}
-          />
-        </Suspense>
+        <CourseRegistrationModal
+          course={selectedCourseForRegistration}
+          isOpen={isCourseRegistrationOpen}
+          onClose={() => {
+            setIsCourseRegistrationOpen(false);
+            setSelectedCourseForRegistration(null);
+          }}
+        />
       )}
 
       {isVideoOpen && (

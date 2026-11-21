@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   ChevronRight, 
   ChevronLeft, 
@@ -594,10 +595,10 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
 
       </div>
 
-      {/* ADD TESTIMONIAL MODAL */}
-      {isAddModalOpen && (
+      {/* ADD TESTIMONIAL MODAL (Portaled to document.body to escape section content-visibility:auto) */}
+      {isAddModalOpen && typeof document !== 'undefined' && createPortal(
         <div 
-          className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
+          className="fixed inset-0 z-[115] isolate overflow-y-auto overscroll-contain bg-black/60 backdrop-blur-md flex items-start sm:items-center justify-center p-3 sm:p-6"
           onClick={() => setIsAddModalOpen(false)}
         >
           <div 
@@ -830,7 +831,8 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({
 
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </section>

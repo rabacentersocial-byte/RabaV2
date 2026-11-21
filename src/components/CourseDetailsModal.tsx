@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   X, 
   Check, 
@@ -39,20 +40,36 @@ export const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
 
   useEffect(() => {
+    if (isOpen) {
+      setActiveTab('overview');
+      setIsPlayingVideo(false);
+    }
+  }, [isOpen, course?.id]);
+
+  useEffect(() => {
+    if (!isOpen || typeof document === 'undefined') return;
+    const currentLocks = Number(document.body.dataset.modalLockCount || '0');
+    document.body.dataset.modalLockCount = String(currentLocks + 1);
+    document.body.style.overflow = 'hidden';
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
-    if (isOpen) {
-      window.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
-    }
+    window.addEventListener('keydown', handleKeyDown);
+
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'unset';
+      const nextLocks = Math.max(0, Number(document.body.dataset.modalLockCount || '1') - 1);
+      if (nextLocks === 0) {
+        delete document.body.dataset.modalLockCount;
+        document.body.style.overflow = '';
+      } else {
+        document.body.dataset.modalLockCount = String(nextLocks);
+      }
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen || !course) return null;
+  if (!isOpen || !course || typeof document === 'undefined') return null;
 
   const title = isArabic ? course.titleAr : course.titleEn;
   const hoursBadge = isArabic ? course.hoursBadgeAr : course.hoursBadgeEn;
@@ -67,18 +84,20 @@ export const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
   );
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
 
-  return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/80 backdrop-blur-md animate-fade-in"
+  const modalNode = (
+    <div
+      className="fixed inset-0 z-[115] isolate overflow-y-auto overscroll-contain flex items-start sm:items-center justify-center p-3 sm:p-5 bg-slate-950/80 backdrop-blur-md"
       dir={isArabic ? 'rtl' : 'ltr'}
+      role="dialog"
+      aria-modal="true"
       onClick={onClose}
     >
-      <div 
-        className="relative w-full max-w-3xl bg-white dark:bg-[#121c24] border border-slate-200 dark:border-slate-800 rounded-[28px] shadow-2xl overflow-hidden max-h-[92vh] flex flex-col"
+      <div
+        className="relative my-auto w-full max-w-3xl bg-white dark:bg-[#121c24] border border-slate-200 dark:border-slate-800 rounded-[28px] shadow-2xl overflow-hidden max-h-[90dvh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header & Cover Media */}
-        <div className="relative h-56 sm:h-64 w-full bg-slate-900 overflow-hidden shrink-0">
+        <div className="relative h-52 sm:h-64 w-full bg-slate-900 overflow-hidden shrink-0">
           {isPlayingVideo ? (
             <div className="w-full h-full relative bg-black flex items-center justify-center">
               <iframe
@@ -118,11 +137,11 @@ export const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="absolute top-4 right-4 rtl:right-4 rtl:left-auto ltr:left-4 ltr:right-auto z-10 flex items-center gap-2">
-                <span className="px-3.5 py-1 rounded-full bg-[#fefce8] text-[#78350f] text-xs font-bold border border-[#fef08a] shadow-sm">
+              <div className="absolute top-4 right-4 rtl:right-4 rtl:left-16 ltr:left-4 ltr:right-16 z-10 flex flex-wrap items-center gap-2">
+                <span className="px-3 py-1 rounded-full bg-[#fefce8] text-[#78350f] text-xs font-bold border border-[#fef08a] shadow-sm">
                   {course.floatingBadgeAr || 'اعتماد دولي'}
                 </span>
-                <span className="px-3.5 py-1 rounded-full bg-[#0d5c52] text-white text-xs font-bold shadow-sm">
+                <span className="px-3 py-1 rounded-full bg-[#0d5c52] text-white text-xs font-bold shadow-sm">
                   {course.accreditationBadgeAr || 'بورد دولي'}
                 </span>
               </div>
@@ -374,4 +393,6 @@ export const CourseDetailsModal: React.FC<CourseDetailsModalProps> = ({
       </div>
     </div>
   );
+
+  return createPortal(modalNode, document.body);
 };

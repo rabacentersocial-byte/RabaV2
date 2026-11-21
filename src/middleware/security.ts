@@ -1,5 +1,85 @@
+import crypto from 'crypto';
 import type { Request, Response, NextFunction } from 'express';
 import { adminAuth } from '../lib/firebase-admin.ts';
+
+const ADMIN_SESSION_SECRET =
+  process.env.ADMIN_SESSION_SECRET && process.env.ADMIN_SESSION_SECRET.trim().length >= 16
+    ? process.env.ADMIN_SESSION_SECRET.trim()
+    : crypto.randomBytes(32).toString('hex');
+
+const ADMIN_SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+const VALID_ADMIN_ROLES = new Set([
+  'super_admin',
+  'operations_manager',
+  'clinical_supervisor',
+  'receptionist',
+  'accountant',
+  'custom',
+  'admin'
+]);
+
+export function signAdminSessionToken(userId: string, username: string, role = 'admin'): string {
+  const payload = JSON.stringify({
+    uid: String(userId),
+    u: String(username),
+    r: String(role),
+    exp: Date.now() + ADMIN_SESSION_TTL_MS
+  });
+  const encodedPayload = Buffer.from(payload, 'utf-8').toString('base64url');
+  const signature = crypto
+    .createHmac('sha256', ADMIN_SESSION_SECRET)
+    .update(encodedPayload)
+    .digest('base64url');
+  return `${encodedPayload}.${signature}`;
+}
+
+export function verifyAdminSessionToken(token: string): { uid: string; username: string; role: string } | null {
+  if (!token || typeof token !== 'string') return null;
+  const parts = token.split('.');
+  if (parts.length !== 2) return null;
+  const [encodedPayload, providedSig] = parts;
+  if (!encodedPayload || !providedSig) return null;
+
+  const expectedSig = crypto
+    .createHmac('sha256', ADMIN_SESSION_SECRET)
+    .update(encodedPayload)
+    .digest('base64url');
+
+  const providedBuf = Buffer.from(providedSig, 'utf-8');
+  const expectedBuf = Buffer.from(expectedSig, 'utf-8');
+  if (providedBuf.length !== expectedBuf.length || !crypto.timingSafeEqual(providedBuf, expectedBuf)) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(Buffer.from(encodedPayload, 'base64url').toString('utf-8'));
+    if (!parsed || typeof parsed.uid !== 'string' || typeof parsed.exp !== 'number') {
+      return null;
+    }
+    if (Date.now() > parsed.exp) {
+      return null;
+    }
+    return {
+      uid: parsed.uid,
+      username: String(parsed.u || ''),
+      role: String(parsed.r || 'admin')
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function isAuthorizedAdminTokenClaims(decoded: any): boolean {
+  if (!decoded || typeof decoded !== 'object') return false;
+  if (typeof decoded.role === 'string' && VALID_ADMIN_ROLES.has(decoded.role)) {
+    return true;
+  }
+  const email = typeof decoded.email === 'string' ? decoded.email.trim().toLowerCase() : '';
+  const emailVerified = decoded.email_verified === true;
+  if (!email || !emailVerified) return false;
+  if (email === 'rabacentersocial@gmail.com') return true;
+  return /^[a-z0-9._%+-]+@(rabacenters\.com|raba\.sa)$/.test(email);
+}
 
 /**
  * 1. HTTP Security Headers Middleware (OWASP Secure Headers)
@@ -178,40 +258,29 @@ export function isSafeSvg(svgContent: string): boolean {
  * Protects administrative and sensitive medical/patient endpoints.
  */
 export const requireAdminAuth = async (req: Request, res: Response, next: NextFunction) => {
-  // Check 1: Firebase Auth Bearer token
+  // Check 1: Verified Firebase Auth Bearer token belonging to an authorized admin
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.split('Bearer ')[1];
     try {
       const decoded = await adminAuth.verifyIdToken(token);
-      (req as any).user = decoded;
-      return next();
-    } catch {
-      // Fall through to check session tokens
-    }
-  }
-
-  // Check 2: Admin Session Token in header
-  const adminToken = req.headers['x-admin-token'] || req.headers['x-admin-session'];
-  if (typeof adminToken === 'string' && adminToken.length > 10) {
-    try {
-      const decoded = Buffer.from(adminToken, 'base64').toString('utf-8');
-      const parts = decoded.split(':');
-      // Format: userId:username:timestamp
-      if (parts.length >= 2 && (parts[0].startsWith('usr-') || parts[1] === 'admin' || parts[1].includes('.'))) {
-        // Token is valid structure
+      if (isAuthorizedAdminTokenClaims(decoded)) {
+        (req as any).user = decoded;
         return next();
       }
     } catch {
-      // Invalid base64
+      // Fall through to check HMAC-signed admin session token
     }
   }
 
-  // Check 3: Development mode localhost bypass for internal tooling
-  const host = req.headers.host || '';
-  if (process.env.NODE_ENV !== 'production' && (host.includes('localhost') || host.includes('127.0.0.1'))) {
-    const token = req.headers['x-admin-token'];
-    if (token) return next();
+  // Check 2: HMAC-SHA256 Signed Admin Session Token
+  const adminToken = req.headers['x-admin-token'] || req.headers['x-admin-session'];
+  if (typeof adminToken === 'string') {
+    const verifiedSession = verifyAdminSessionToken(adminToken);
+    if (verifiedSession) {
+      (req as any).adminSession = verifiedSession;
+      return next();
+    }
   }
 
   return res.status(401).json({

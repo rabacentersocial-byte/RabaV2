@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   BookOpen, 
   ChevronRight, 
@@ -953,10 +954,10 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
 
       </div>
 
-      {/* Full Article Reading Modal */}
-      {selectedPost && (
+      {/* Full Article Reading Modal (Portaled to document.body to escape section content-visibility:auto) */}
+      {selectedPost && typeof document !== 'undefined' && createPortal(
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/65 backdrop-blur-md animate-fade-in"
+          className="fixed inset-0 z-[115] isolate overflow-y-auto overscroll-contain flex items-start sm:items-center justify-center p-3 sm:p-5 bg-black/65 backdrop-blur-md"
           onClick={() => setSelectedPost(null)}
         >
           <div 
@@ -1194,7 +1195,8 @@ export const BlogSliderSection: React.FC<BlogSliderSectionProps> = ({
 
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   );

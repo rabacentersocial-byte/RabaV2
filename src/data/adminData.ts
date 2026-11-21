@@ -612,10 +612,7 @@ export const authenticateAdmin = async (
   }
 
   const storedPassword = (matchedUser.password || '').trim();
-  const isLegacyDemoMatch =
-    (storedPassword.length > 0 && cleanPass === storedPassword) ||
-    (matchedUser.role === 'super_admin' && (cleanPass === 'admin' || cleanPass === 'admin123' || cleanPass === 'raba2025')) ||
-    (cleanPass === 'raba' || cleanPass === 'raba123');
+  const isLegacyDemoMatch = storedPassword.length > 0 && cleanPass === storedPassword;
 
   if (!isLegacyDemoMatch) {
     return {
@@ -714,5 +711,28 @@ export const authenticateAdminWithGoogle = (
 
   const sessionToken = btoa(`${resolvedUser.id}:${resolvedUser.username}:${Date.now()}`);
   saveStoredAdminSession(resolvedUser, sessionToken, rememberMe);
+
+  // Best-effort exchange of verified Firebase ID token for HMAC-signed backend session token
+  if (typeof (firebaseUser as any).getIdToken === 'function') {
+    (firebaseUser as any)
+      .getIdToken()
+      .then((idToken: string) =>
+        fetch('/api/admin/firebase-session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${idToken}`
+          }
+        })
+      )
+      .then((res: Response) => (res.ok ? res.json() : null))
+      .then((data: any) => {
+        if (data?.success && typeof data.token === 'string') {
+          saveStoredAdminSession(resolvedUser as AdminUser, data.token, rememberMe);
+        }
+      })
+      .catch(() => {});
+  }
+
   return resolvedUser;
 };
