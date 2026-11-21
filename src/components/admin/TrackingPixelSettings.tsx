@@ -21,6 +21,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useLiveDataOptional } from '../../context/LiveDataContext';
 import { TrackingPixelsConfig, DEFAULT_TRACKING_PIXELS } from '../../types';
 import { getStoredTrackingPixels, saveStoredTrackingPixels } from '../../utils/trackingPixels';
+import { getAdminHeaders } from '../../utils/persistentSync';
 
 interface TrackingPixelSettingsProps {
   hasPermission?: (perm: any) => boolean;
@@ -90,12 +91,10 @@ export const TrackingPixelSettings: React.FC<TrackingPixelSettingsProps> = () =>
         // 1. Immediately persist locally for zero-latency client state
         saveStoredTrackingPixels(pixels);
 
-        // 2. Submit to server endpoint POST /api/admin/tracking-pixels
+        // 2. Submit to server endpoint POST /api/admin/tracking-pixels with admin auth headers
         const response = await fetch('/api/admin/tracking-pixels', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: getAdminHeaders(),
           body: JSON.stringify(pixels)
         });
 

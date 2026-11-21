@@ -5,6 +5,8 @@ import { AnimatedBackground } from './components/AnimatedBackground';
 import { Hero } from './components/Hero';
 import { MobileBottomBar } from './components/MobileBottomBar';
 import { LazyViewportWrapper, SectionSkeleton } from './components/LazyViewportWrapper';
+import { BookingModal } from './components/BookingModal';
+import { BookingDirectoryPage } from './components/BookingDirectoryPage';
 import { CourseItem } from './data/coursesData';
 import { DISPATCH_REQUEST_EVENT } from './data/customerRequests';
 
@@ -56,7 +58,6 @@ const ShadowTeacherDirectoryPage = lazy<React.ComponentType<any>>(() => safeImpo
 const PartnersDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/PartnersDirectoryPage')).then((m: any) => ({ default: m.default || m.PartnersDirectoryPage || (() => null) })));
 const TestimonialsDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/TestimonialsDirectoryPage')).then((m: any) => ({ default: m.default || m.TestimonialsDirectoryPage || (() => null) })));
 const SpecialistCvModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/SpecialistCvModal')).then((m: any) => ({ default: m.default || m.SpecialistCvModal || (() => null) })));
-const BookingModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BookingModal')).then((m: any) => ({ default: m.default || m.BookingModal || (() => null) })));
 const NotificationCenterModal = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/NotificationCenterModal')).then((m: any) => ({ default: m.default || m.NotificationCenterModal || (() => null) })));
 const TestimonialsSection = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/TestimonialsSection')).then((m: any) => ({ default: m.default || m.TestimonialsSection || (() => null) })));
 const BlogSliderSection = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BlogSliderSection')).then((m: any) => ({ default: m.default || m.BlogSliderSection || (() => null) })));
@@ -78,7 +79,6 @@ const FloatingActions = lazy<React.ComponentType<any>>(() => safeImport(() => im
 const ServiceDetailPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/ServiceDetailPage')).then((m: any) => ({ default: m.default || m.ServiceDetailPage || (() => null) })));
 const BranchDetailPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BranchDetailPage')).then((m: any) => ({ default: m.default || m.BranchDetailPage || (() => null) })));
 const AboutDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/AboutDirectoryPage')).then((m: any) => ({ default: m.default || m.AboutDirectoryPage || (() => null) })));
-const BookingDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/BookingDirectoryPage')).then((m: any) => ({ default: m.default || m.BookingDirectoryPage || (() => null) })));
 const CoursesDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/CoursesDirectoryPage')).then((m: any) => ({ default: m.default || m.CoursesDirectoryPage || (() => null) })));
 const InfoDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/InfoDirectoryPage')).then((m: any) => ({ default: m.default || m.InfoDirectoryPage || (() => null) })));
 const ClientPortalPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/ClientPortalPage')).then((m: any) => ({ default: m.default || m.ClientPortalPage || (() => null) })));
@@ -134,7 +134,7 @@ const mapLegacyHashToPath = (hash: string): string | null => {
   if (lower === '#testimonials-directory' || lower === '#testimonials-page' || lower === '#testimonials' || lower === '#reviews-directory' || lower === '#reviews') return '/testimonials';
   if (lower === '#courses') return '/courses';
   if (lower === '#about') return '/about';
-  if (lower === '#booking') return '/booking';
+  if (lower === '#booking' || lower === '#bookings' || lower === '#book' || lower === '#appointment' || lower === '#appointments' || lower === '#booking-form') return '/booking';
   if (lower === '#portal' || lower === '#family-portal') return '/portal';
   return null;
 };
@@ -387,7 +387,13 @@ export default function App() {
   const isOffersPageOpen = lowerPath === '/offers' || lowerPath === '/offers-directory';
   const isCoursesPageOpen = lowerPath === '/courses' || lowerPath === '/courses-directory' || lowerPath.startsWith('/courses/');
   const isAboutPageOpen = lowerPath === '/about';
-  const isBookingPageOpen = lowerPath === '/booking';
+  const isBookingPageOpen =
+    lowerPath === '/booking' ||
+    lowerPath === '/bookings' ||
+    lowerPath === '/book' ||
+    lowerPath === '/appointment' ||
+    lowerPath === '/appointments' ||
+    lowerPath === '/booking-form';
   const isShadowTeacherPageOpen = lowerPath === '/shadow-teacher' || lowerPath === '/shadow-teacher-directory' || lowerPath === '/sewar';
   const isPartnersPageOpen = lowerPath === '/partners' || lowerPath === '/partners-directory';
   const isTestimonialsPageOpen = lowerPath === '/testimonials' || lowerPath === '/testimonials-directory' || lowerPath === '/reviews';
@@ -809,14 +815,30 @@ export default function App() {
     setBookingInitialNotes('');
     setBookingInitialDate('');
     if (isBookingPageOpen) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const formEl = document.getElementById('booking-directory-form');
+      if (formEl) {
+        formEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
       return;
     }
     setIsBookingOpen(true);
   };
 
-  const handleSelectServiceForBooking = (service: ServiceItem) => {
-    setBookingInitialService(service);
+  const handleOpenBookingWithNotes = (notes?: string) => {
+    setIsReadyToHydrate(true);
+    setBookingInitialService(null);
+    setBookingInitialPackage(null);
+    setBookingInitialSpecialist(null);
+    setBookingInitialDate('');
+    setBookingInitialNotes(notes || '');
+    setIsBookingOpen(true);
+  };
+
+  const handleSelectServiceForBooking = (service?: ServiceItem | null) => {
+    setIsReadyToHydrate(true);
+    setBookingInitialService(service || null);
     setBookingInitialPackage(null);
     setBookingInitialSpecialist(null);
     setBookingInitialNotes('');
@@ -824,8 +846,9 @@ export default function App() {
     setIsBookingOpen(true);
   };
 
-  const handleSelectPackageForBooking = (pkg: TherapyPackage) => {
-    setBookingInitialPackage(pkg);
+  const handleSelectPackageForBooking = (pkg?: TherapyPackage | null) => {
+    setIsReadyToHydrate(true);
+    setBookingInitialPackage(pkg || null);
     setBookingInitialService(null);
     setBookingInitialSpecialist(null);
     setBookingInitialNotes('');
@@ -833,8 +856,9 @@ export default function App() {
     setIsBookingOpen(true);
   };
 
-  const handleSelectSpecialistForBooking = (specialist: Specialist) => {
-    setBookingInitialSpecialist(specialist);
+  const handleSelectSpecialistForBooking = (specialist?: Specialist | null) => {
+    setIsReadyToHydrate(true);
+    setBookingInitialSpecialist(specialist || null);
     setBookingInitialService(null);
     setBookingInitialPackage(null);
     setBookingInitialNotes('');
@@ -843,6 +867,7 @@ export default function App() {
   };
 
   const handleClaimOffer = (offerTitle: string, discountedPrice?: number) => {
+    setIsReadyToHydrate(true);
     if (offerTitle.includes('مجاني') || offerTitle.includes('Free') || offerTitle.includes('24/9')) {
       // Saudi National Day 96 Free Day (Thursday 24/09/2026)
       setBookingInitialService(null);
@@ -1006,14 +1031,6 @@ export default function App() {
                   // ignore
                 }
               });
-            Promise.all([import('./lib/firebase'), import('firebase/auth')])
-              .then(async ([{ getLazyAuth }, { signOut }]) => {
-                const authInstance = await getLazyAuth();
-                if (authInstance.currentUser) {
-                  await signOut(authInstance);
-                }
-              })
-              .catch(() => {});
           }}
           onClose={() => {
             setIsAdminOpen(false);
@@ -1114,10 +1131,7 @@ export default function App() {
               branchSlug={branchDetailConfig.slug}
               onBackToHome={handleBackToHome}
               onNavigate={navigateTo}
-              onOpenBooking={(notes) => {
-                if (notes) setBookingInitialNotes(notes);
-                setIsBookingOpen(true);
-              }}
+              onOpenBooking={handleOpenBookingWithNotes}
             />
           </Suspense>
         ) : isBranchesPageOpen ? (
@@ -1127,13 +1141,9 @@ export default function App() {
               onBackToHome={handleBackToHome}
               onNavigate={navigateTo}
               onSelectBranch={(branch) => {
-                setBookingInitialNotes(`استفسار وحجز في فرع: ${branch.name} (${branch.cityNameAr})`);
-                setIsBookingOpen(true);
+                handleOpenBookingWithNotes(`استفسار وحجز في فرع: ${branch.name} (${branch.cityNameAr})`);
               }}
-              onOpenBooking={(branchNotes) => {
-                if (branchNotes) setBookingInitialNotes(branchNotes);
-                setIsBookingOpen(true);
-              }}
+              onOpenBooking={handleOpenBookingWithNotes}
             />
           </Suspense>
         ) : isOffersPageOpen ? (
@@ -1142,10 +1152,7 @@ export default function App() {
             <OffersDirectoryPage
               onBackToHome={handleBackToHome}
               onClaimOffer={handleClaimOffer}
-              onOpenBooking={(notes) => {
-                if (notes) setBookingInitialNotes(notes);
-                setIsBookingOpen(true);
-              }}
+              onOpenBooking={handleOpenBookingWithNotes}
             />
           </Suspense>
         ) : isCoursesPageOpen ? (
@@ -1166,28 +1173,23 @@ export default function App() {
             />
           </Suspense>
         ) : isBookingPageOpen ? (
-          /* Dedicated Standalone Booking Page (/booking) */
-          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-[#1263D6] dark:text-[#60AFFF] font-bold">جاري تحميل صفحة حجز المواعيد...</div>}>
-            <BookingDirectoryPage
-              onBackToHome={handleBackToHome}
-              onConfirmBooking={handleConfirmBooking}
-              initialService={bookingInitialService}
-              initialPackage={bookingInitialPackage}
-              initialSpecialist={bookingInitialSpecialist}
-              initialNotes={bookingInitialNotes}
-              initialDate={bookingInitialDate}
-              onNavigate={navigateTo}
-            />
-          </Suspense>
+          /* Dedicated Standalone Booking Page (/booking) - Statically imported for guaranteed immediate rendering */
+          <BookingDirectoryPage
+            onBackToHome={handleBackToHome}
+            onConfirmBooking={handleConfirmBooking}
+            initialService={bookingInitialService}
+            initialPackage={bookingInitialPackage}
+            initialSpecialist={bookingInitialSpecialist}
+            initialNotes={bookingInitialNotes}
+            initialDate={bookingInitialDate}
+            onNavigate={navigateTo}
+          />
         ) : isBlogPageOpen ? (
           /* Dedicated Articles & Clinical Blog Directory Page */
           <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-[#1263D6] dark:text-[#60AFFF] font-bold">جاري تحميل المدونة الطبية والدليل المعرفي...</div>}>
             <BlogDirectoryPage
               onBackToHome={handleBackToHome}
-              onOpenBooking={(notes) => {
-                if (notes) setBookingInitialNotes(notes);
-                setIsBookingOpen(true);
-              }}
+              onOpenBooking={handleOpenBookingWithNotes}
               onBookSpecialist={handleSelectSpecialistForBooking}
               initialPostSlug={activeBlogSlug}
               onNavigate={navigateTo}
@@ -1408,75 +1410,95 @@ export default function App() {
         isOffersPageOpen={isOffersPageOpen}
       />
 
-      {/* Modals wrapped in Suspense for zero initial blocking time */}
-      <Suspense fallback={null}>
-        {/* Quick Consultation Request Modal */}
-        <QuickConsultationModal
-          isOpen={isQuickConsultOpen}
-          onClose={() => setIsQuickConsultOpen(false)}
-          onSuccessSubmit={handleConfirmBooking}
-        />
-        {/* Login Modal */}
-        <LoginModal
-          isOpen={isLoginOpen}
-          onClose={() => setIsLoginOpen(false)}
-          onOpenAdmin={() => setIsAdminOpen(true)}
-          onOpenPortal={() => navigateTo('/portal')}
-        />
+      {/* Booking Appointment Modal (Statically imported & portaled - zero Suspense blocking) */}
+      <BookingModal
+        isOpen={isBookingOpen}
+        onClose={() => setIsBookingOpen(false)}
+        initialService={bookingInitialService}
+        initialPackage={bookingInitialPackage}
+        initialSpecialist={bookingInitialSpecialist}
+        initialNotes={bookingInitialNotes}
+        initialDate={bookingInitialDate}
+        onConfirmBooking={handleConfirmBooking}
+      />
 
-        {/* Store Modal */}
-        <StoreModal
-          isOpen={isStoreOpen}
-          onClose={() => setIsStoreOpen(false)}
-          onAddToCart={() => setCartCount((prev) => prev + 1)}
-        />
+      {/* Secondary Modals isolated in individual conditional Suspense boundaries */}
+      {isQuickConsultOpen && (
+        <Suspense fallback={null}>
+          <QuickConsultationModal
+            isOpen={isQuickConsultOpen}
+            onClose={() => setIsQuickConsultOpen(false)}
+            onSuccessSubmit={handleConfirmBooking}
+          />
+        </Suspense>
+      )}
 
-        {/* Course Registration Modal */}
-        <CourseRegistrationModal
-          course={selectedCourseForRegistration}
-          isOpen={isCourseRegistrationOpen}
-          onClose={() => {
-            setIsCourseRegistrationOpen(false);
-            setSelectedCourseForRegistration(null);
-          }}
-        />
+      {isLoginOpen && (
+        <Suspense fallback={null}>
+          <LoginModal
+            isOpen={isLoginOpen}
+            onClose={() => setIsLoginOpen(false)}
+            onOpenAdmin={() => setIsAdminOpen(true)}
+            onOpenPortal={() => navigateTo('/portal')}
+          />
+        </Suspense>
+      )}
 
-        {/* Video Presentation Modal */}
-        <VideoModal
-          isOpen={isVideoOpen}
-          onClose={() => setIsVideoOpen(false)}
-          onBookNow={handleOpenBooking}
-        />
+      {isStoreOpen && (
+        <Suspense fallback={null}>
+          <StoreModal
+            isOpen={isStoreOpen}
+            onClose={() => setIsStoreOpen(false)}
+            onAddToCart={() => setCartCount((prev) => prev + 1)}
+          />
+        </Suspense>
+      )}
 
-        {/* Specialist CV Modal */}
-        <SpecialistCvModal
-          specialist={selectedCvSpecialist}
-          onClose={() => setSelectedCvSpecialist(null)}
-          onBookSpecialist={handleSelectSpecialistForBooking}
-        />
+      {isCourseRegistrationOpen && (
+        <Suspense fallback={null}>
+          <CourseRegistrationModal
+            course={selectedCourseForRegistration}
+            isOpen={isCourseRegistrationOpen}
+            onClose={() => {
+              setIsCourseRegistrationOpen(false);
+              setSelectedCourseForRegistration(null);
+            }}
+          />
+        </Suspense>
+      )}
 
-        {/* Booking Appointment Modal (Direct Booking - No Payment) */}
-        <BookingModal
-          isOpen={isBookingOpen}
-          onClose={() => setIsBookingOpen(false)}
-          initialService={bookingInitialService}
-          initialPackage={bookingInitialPackage}
-          initialSpecialist={bookingInitialSpecialist}
-          initialNotes={bookingInitialNotes}
-          initialDate={bookingInitialDate}
-          onConfirmBooking={handleConfirmBooking}
-        />
+      {isVideoOpen && (
+        <Suspense fallback={null}>
+          <VideoModal
+            isOpen={isVideoOpen}
+            onClose={() => setIsVideoOpen(false)}
+            onBookNow={handleOpenBooking}
+          />
+        </Suspense>
+      )}
 
-        {/* Client Automated Session Notifications Center */}
-        <NotificationCenterModal
-          isOpen={isNotificationsOpen}
-          onClose={() => setIsNotificationsOpen(false)}
-          notifications={notifications}
-          appointments={appointments}
-          onMarkAllAsRead={handleMarkAllNotificationsAsRead}
-          onAddTestNotification={handleAddTestNotification}
-        />
-      </Suspense>
+      {Boolean(selectedCvSpecialist) && (
+        <Suspense fallback={null}>
+          <SpecialistCvModal
+            specialist={selectedCvSpecialist}
+            onClose={() => setSelectedCvSpecialist(null)}
+            onBookSpecialist={handleSelectSpecialistForBooking}
+          />
+        </Suspense>
+      )}
+
+      {isNotificationsOpen && (
+        <Suspense fallback={null}>
+          <NotificationCenterModal
+            isOpen={isNotificationsOpen}
+            onClose={() => setIsNotificationsOpen(false)}
+            notifications={notifications}
+            appointments={appointments}
+            onMarkAllAsRead={handleMarkAllNotificationsAsRead}
+            onAddTestNotification={handleAddTestNotification}
+          />
+        </Suspense>
+      )}
 
     </div>
   );

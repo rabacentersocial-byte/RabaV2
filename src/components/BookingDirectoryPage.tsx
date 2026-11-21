@@ -18,7 +18,6 @@ import {
   Sparkles,
   User,
 } from 'lucide-react';
-import confetti from 'canvas-confetti';
 import { SERVICES, THERAPY_PACKAGES, TIME_SLOTS } from '../data/mockData';
 import { BRANCHES_DATA, BranchItem } from '../data/branchesData';
 import { Specialist, ServiceItem, TherapyPackage, Appointment } from '../types';
@@ -59,18 +58,18 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
   const activeLiveServices = (live?.services || []).filter((s) => s.active !== false && s.isActive !== false);
   const activeLivePackages = (live?.packages || []).filter((p) => p.active !== false && p.isActive !== false);
 
-  const servicesList = activeLiveServices.length ? activeLiveServices : (live?.isAuthoritativeServices ? [] : SERVICES);
-  const packagesList = activeLivePackages.length ? activeLivePackages : (live?.isAuthoritativePackages ? [] : THERAPY_PACKAGES);
+  const servicesList = activeLiveServices.length ? activeLiveServices : SERVICES;
+  const packagesList = activeLivePackages.length ? activeLivePackages : THERAPY_PACKAGES;
   const branchesList: BranchItem[] = live?.branches?.length ? live.branches : BRANCHES_DATA;
 
   const [bookingType, setBookingType] = useState<'service' | 'package'>(
     initialPackage ? 'package' : 'service'
   );
   const [selectedServiceId, setSelectedServiceId] = useState<string>(
-    initialService?.id || servicesList[0]?.id || SERVICES[0].id
+    initialService?.id || servicesList[0]?.id || SERVICES[0]?.id || ''
   );
   const [selectedPackageId, setSelectedPackageId] = useState<string>(
-    initialPackage?.id || packagesList[0]?.id || THERAPY_PACKAGES[0].id
+    initialPackage?.id || packagesList[0]?.id || THERAPY_PACKAGES[0]?.id || ''
   );
 
   const availableCities = useMemo(() => {
@@ -133,7 +132,103 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Read optional URL query params (e.g. /booking?type=package&service=...&city=riyadh&branch=...)
+    if (typeof window !== 'undefined' && window.location.search) {
+      const params = new URLSearchParams(window.location.search);
+      const qType = params.get('type');
+      const qService = params.get('service');
+      const qPackage = params.get('package');
+      const qCity = params.get('city');
+      const qBranch = params.get('branch');
+      const qDate = params.get('date');
+      const qNotes = params.get('notes');
+
+      if (qType === 'package' || qPackage) {
+        setBookingType('package');
+      } else if (qType === 'service' || qService) {
+        setBookingType('service');
+      }
+      if (qService) {
+        const qSrvLower = qService.toLowerCase();
+        const matchSrv = servicesList.find(
+          (s) =>
+            s.id.toLowerCase() === qSrvLower ||
+            s.title.toLowerCase() === qSrvLower ||
+            (s.titleEn && s.titleEn.toLowerCase() === qSrvLower)
+        );
+        if (matchSrv) setSelectedServiceId(matchSrv.id);
+      }
+      if (qPackage) {
+        const qPkgLower = qPackage.toLowerCase();
+        const matchPkg = packagesList.find(
+          (p) =>
+            p.id.toLowerCase() === qPkgLower ||
+            p.name.toLowerCase() === qPkgLower ||
+            (p.nameEn && p.nameEn.toLowerCase() === qPkgLower)
+        );
+        if (matchPkg) setSelectedPackageId(matchPkg.id);
+      }
+      if (qCity) {
+        const matchCity = availableCities.find((c) => c.key.toLowerCase() === qCity.toLowerCase());
+        if (matchCity) setSelectedCity(matchCity.key);
+      }
+      if (qBranch) {
+        const qBranchLower = qBranch.toLowerCase();
+        const matchBranch = branchesList.find(
+          (b) =>
+            b.id.toLowerCase() === qBranchLower ||
+            b.name.toLowerCase().includes(qBranchLower) ||
+            (b.nameEn && b.nameEn.toLowerCase().includes(qBranchLower))
+        );
+        if (matchBranch) {
+          setSelectedCity(matchBranch.city);
+          setSelectedBranchId(matchBranch.id);
+        }
+      }
+      if (qDate) setSelectedDate(qDate);
+      if (qNotes) {
+        setNotes(qNotes);
+        setShowOptionalDetails(true);
+      }
+    }
   }, []);
+
+  // Sync pre-selected props if user navigates to /booking with pre-filled context
+  useEffect(() => {
+    if (initialPackage) {
+      setBookingType('package');
+      setSelectedPackageId(initialPackage.id);
+    } else if (initialService) {
+      setBookingType('service');
+      setSelectedServiceId(initialService.id);
+    }
+    if (initialNotes !== undefined && initialNotes.trim()) {
+      setNotes(initialNotes);
+      setShowOptionalDetails(true);
+    }
+    if (initialDate) {
+      setSelectedDate(initialDate);
+    }
+  }, [initialService, initialPackage, initialNotes, initialDate]);
+
+  // Keep selected dropdown values valid when live catalogs hydrate
+  useEffect(() => {
+    if (servicesList.length > 0 && !servicesList.some((s) => s.id === selectedServiceId)) {
+      setSelectedServiceId(servicesList[0].id);
+    }
+  }, [servicesList, selectedServiceId]);
+
+  useEffect(() => {
+    if (packagesList.length > 0 && !packagesList.some((p) => p.id === selectedPackageId)) {
+      setSelectedPackageId(packagesList[0].id);
+    }
+  }, [packagesList, selectedPackageId]);
+
+  useEffect(() => {
+    if (availableCities.length > 0 && !availableCities.some((c) => c.key === selectedCity)) {
+      setSelectedCity(availableCities[0].key);
+    }
+  }, [availableCities, selectedCity]);
 
   useEffect(() => {
     if (clientProfile) {
@@ -202,8 +297,8 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
     const ref = generateRequestReference(requestType);
     const serviceTitle =
       bookingType === 'package'
-        ? (!isArabic && activePackage.nameEn ? activePackage.nameEn : activePackage.name)
-        : (!isArabic && activeService.titleEn ? activeService.titleEn : activeService.title);
+        ? (activePackage ? (!isArabic && activePackage.nameEn ? activePackage.nameEn : activePackage.name) : (isArabic ? 'باقة تأهيلية متكاملة' : 'Therapy Package'))
+        : (activeService ? (!isArabic && activeService.titleEn ? activeService.titleEn : activeService.title) : (isArabic ? 'جلسة تقييم وتشخيص' : 'Clinical Assessment Session'));
     const cityLabel = isArabic ? activeCityObj.labelAr : activeCityObj.labelEn;
     const branchLabel = getCleanBranchName(activeBranchObj);
 
@@ -223,7 +318,7 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
       userId: user?.uid || undefined,
       clientId: user?.uid || undefined,
       ...(selectedMember ? { familyMemberId: selectedMember.id, familyMemberName: selectedMember.name } : {}),
-      serviceId: bookingType === 'package' ? activePackage.id : activeService.id,
+      serviceId: bookingType === 'package' ? (activePackage?.id || 'pkg-general') : (activeService?.id || 'srv-general'),
       serviceTitle,
       specialistId: initialSpecialist?.id || 'spec-general',
       specialistName: initialSpecialist
@@ -237,8 +332,8 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
       status: 'new',
       paymentStatus: 'unpaid',
       amount: bookingType === 'package'
-        ? activePackage.price
-        : (activeService.sessionPrice || initialSpecialist?.sessionPrice || 280),
+        ? (activePackage?.price ?? 0)
+        : (activeService?.sessionPrice || initialSpecialist?.sessionPrice || 280),
       reminderSettings: {
         whatsapp: true,
         sms: true,
@@ -259,6 +354,7 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
       setConfirmedApp(newAppointment);
       setIsSubmitted(true);
       try {
+        const { default: confetti } = await import('canvas-confetti');
         confetti({ particleCount: 55, spread: 60, origin: { y: 0.6 } });
       } catch {
         // ignore
@@ -315,7 +411,7 @@ export const BookingDirectoryPage: React.FC<BookingDirectoryPageProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Booking Form Column */}
-          <div className="lg:col-span-7 liquid-glass-card rounded-[28px] p-5 sm:p-8 shadow-xl space-y-6">
+          <div id="booking-directory-form" className="lg:col-span-7 liquid-glass-card rounded-[28px] p-5 sm:p-8 shadow-xl space-y-6">
             <div className="space-y-2 border-b border-[#161B26]/[0.08] dark:border-white/[0.08] pb-5">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2B95FF]/12 text-[#1263D6] dark:text-[#60AFFF] text-xs font-black">
                 <Calendar className="w-3.5 h-3.5" />

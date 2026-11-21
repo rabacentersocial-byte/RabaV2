@@ -1465,6 +1465,11 @@ export function resolveRouteSeo(pathname: string, blogPosts: ArticleSeed[] = [])
       };
 
     case '/booking':
+    case '/bookings':
+    case '/book':
+    case '/appointment':
+    case '/appointments':
+    case '/booking-form':
       return {
         path: cleanPath,
         title: 'حجز موعد أو استشارة | مركز رابا',

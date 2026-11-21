@@ -7,6 +7,7 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { requireAuth } from './src/middleware/auth.ts';
 import type { AuthRequest } from './src/middleware/auth.ts';
+import { createPool } from './src/db/index.ts';
 import { getUsers, getOrCreateUser } from './src/db/users.ts';
 import { saveDbSetting, getDbSetting, getAllDbSettings } from './src/db/settings.ts';
 import { createDbAppointment, getDbAppointments, syncDbAppointments } from './src/db/appointments.ts';
@@ -131,13 +132,17 @@ async function restoreUploadsFromCloudSql() {
   }
 }
 
-restoreUploadsFromManifest();
 setTimeout(() => {
+  // Defer heavy 14MB manifest restore until after server is already listening on port 3000
+  const existingUploadsCount = fs.existsSync(UPLOADS_DIR) ? fs.readdirSync(UPLOADS_DIR).length : 0;
+  if (existingUploadsCount < 5) {
+    restoreUploadsFromManifest();
+  }
   if (process.env.SQL_HOST) {
     getAllDbSettings().catch(() => {});
   }
   restoreUploadsFromCloudSql().catch(() => {});
-}, 1500);
+}, 2500);
 
 // Map of storage keys to data filenames (supporting current and legacy keys)
 const STORAGE_FILE_MAP: Record<string, string> = {
@@ -264,6 +269,10 @@ function getPort(): number {
       if (!isNaN(p)) return p;
     }
   }
+  // Explicit production deployments (e.g., Cloud Run) always honor PORT first
+  if (isExplicitProduction && process.env.PORT) {
+    return Number(process.env.PORT);
+  }
   // In AI Studio development, dev server MUST run on port 3000
   if (process.env.DEFAULT_APP_PORT) {
     return Number(process.env.DEFAULT_APP_PORT);
@@ -302,6 +311,7 @@ validateServerEnvironment();
 
 async function startServer() {
   const app = express();
+  app.set('trust proxy', 1);
   const PORT = getPort();
 
   // 0. Dedicated XML Sitemap route registered BEFORE all middlewares & HTML wrappers
@@ -479,8 +489,10 @@ async function startServer() {
     }
   }));
 
-  // Run initial regeneration of all_sync.json on server start
-  regenerateAllSyncFile();
+  // Defer initial regeneration of all_sync.json so port 3000 binds immediately on startup
+  setTimeout(() => {
+    regenerateAllSyncFile();
+  }, 1500);
 
   // --- Security Rate Limiters ---
   const adminLoginLimiter = createRateLimiter(6, 60_000); // 6 attempts per minute
@@ -757,53 +769,9 @@ async function startServer() {
         console.warn('[Cloud SQL Notice] Record persisted to disk and Firestore; Cloud SQL deferred:', sqlErr);
       }
 
-      // 4. Non-blocking mirror to Supabase in background queue
-      const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_API_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
-      if (supabaseUrl && supabaseKey) {
-        backgroundQueue.enqueue('mirror-supabase-appointment', async () => {
-          try {
-            const { createClient } = await import('@supabase/supabase-js');
-            const client = createClient(supabaseUrl, supabaseKey);
-            await client.from('appointments').insert([{
-              patient_name: cleanAppt.patientName,
-              phone: cleanAppt.phone,
-              specialist: cleanAppt.specialist,
-              service: cleanAppt.service,
-              date: cleanAppt.date,
-              time: cleanAppt.time,
-              notes: cleanAppt.notes,
-              status: cleanAppt.status
-            }]);
-          } catch (sErr) {
-            console.warn('[Supabase] Background appointment mirror notice:', sErr);
-          }
-        });
-      }
-
       return res.json({ success: true, appointment: savedDbAppt });
     } catch (error: any) {
       return sendSafeError(res, 500, 'فشل تأكيد موعد الحجز، يرجى المحاولة لاحقاً', error);
-    }
-  });
-
-  // Supabase Status API (Protected Admin Only)
-  app.get('/api/supabase/status', requireAdminAuth, async (_req: Request, res: Response) => {
-    try {
-      const url = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-      const key = process.env.SUPABASE_API_KEY || process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
-      if (!url || !key) {
-        return res.json({ connected: false, configured: false, message: 'SUPABASE_URL or SUPABASE_API_KEY not configured' });
-      }
-      const { createClient } = await import('@supabase/supabase-js');
-      const client = createClient(url, key);
-      const { data, error } = await client.from('appointments').select('*').limit(1);
-      if (error) {
-        return res.json({ connected: true, configured: true, tableFound: false, message: 'Supabase table query notice' });
-      }
-      return res.json({ connected: true, configured: true, tableFound: true, count: data?.length ?? 0 });
-    } catch (err: any) {
-      return sendSafeError(res, 500, 'فشل استعلام حالة Supabase', err);
     }
   });
 
@@ -839,7 +807,7 @@ async function startServer() {
     }
   });
 
-  app.post('/api/admin/tracking-pixels', async (req: Request, res: Response) => {
+  app.post('/api/admin/tracking-pixels', requireAdminAuth, async (req: Request, res: Response) => {
     try {
       const body = req.body || {};
       const sanitized = {
@@ -1483,7 +1451,6 @@ async function startServer() {
     // 2. Skip internal Vite dev assets, Vite module queries (?import, ?raw, etc.), XML sitemap, and API endpoints
     const isViteDevRequest =
       !isProduction &&
-      !hasDist &&
       ('import' in req.query ||
         'html-proxy' in req.query ||
         'direct' in req.query ||
@@ -1550,6 +1517,11 @@ async function startServer() {
       '/blog-directory',
       '/articles',
       '/booking',
+      '/bookings',
+      '/book',
+      '/appointment',
+      '/appointments',
+      '/booking-form',
       '/portal',
       '/family-portal',
       '/admin',
@@ -1609,6 +1581,11 @@ async function startServer() {
       '/blog-directory',
       '/articles',
       '/booking',
+      '/bookings',
+      '/book',
+      '/appointment',
+      '/appointments',
+      '/booking-form',
       '/portal',
       '/family-portal',
       '/admin',
@@ -1666,8 +1643,10 @@ async function startServer() {
   // --- Vite Dev Server Middleware or Production Static Serving ---
   let viteInstance: any = null;
 
-  const isDevAssetRequest = (reqPath: string): boolean => {
+  const isDevAssetRequest = (req: Request): boolean => {
+    const reqPath = req.path;
     if (
+      reqPath === '/__vite_ping' ||
       reqPath.startsWith('/api/') ||
       reqPath.startsWith('/@') ||
       reqPath.startsWith('/src/') ||
@@ -1680,7 +1659,14 @@ async function startServer() {
       reqPath.startsWith('/.well-known/') ||
       reqPath === '/sitemap.xml' ||
       reqPath === '/robots.txt' ||
-      reqPath === '/llms.txt'
+      reqPath === '/llms.txt' ||
+      'import' in req.query ||
+      'html-proxy' in req.query ||
+      'direct' in req.query ||
+      'raw' in req.query ||
+      'url' in req.query ||
+      'inline' in req.query ||
+      'worker' in req.query
     ) {
       return true;
     }
@@ -1691,7 +1677,94 @@ async function startServer() {
     return false;
   };
 
-  if (hasDist || isProduction || process.env.NODE_ENV === 'production') {
+  const NO_WS_VITE_CLIENT_JS = `// Lightweight Vite client shim (HMR & WebSocket disabled in preview)
+const sheetsMap = new Map();
+export function updateStyle(id, content) {
+  let style = sheetsMap.get(id);
+  if (!style) {
+    style = document.createElement('style');
+    style.setAttribute('type', 'text/css');
+    style.setAttribute('data-vite-dev-id', id);
+    style.textContent = content;
+    document.head.appendChild(style);
+    sheetsMap.set(id, style);
+  } else if (style.textContent !== content) {
+    style.textContent = content;
+  }
+}
+export function removeStyle(id) {
+  const style = sheetsMap.get(id);
+  if (style) {
+    style.remove();
+    sheetsMap.delete(id);
+  }
+}
+export function createHotContext() {
+  const noop = () => {};
+  return {
+    data: {},
+    accept: noop,
+    acceptExports: noop,
+    dispose: noop,
+    prune: noop,
+    decline: noop,
+    invalidate: noop,
+    on: noop,
+    off: noop,
+    send: noop,
+  };
+}
+export function injectQuery(url, queryToInject) {
+  if (!url || (url[0] !== '.' && url[0] !== '/')) return url;
+  const pathname = url.replace(/[?#].*$/, '');
+  const { search, hash } = new URL(url, 'http://vite.dev');
+  return pathname + '?' + queryToInject + (search ? '&' + search.slice(1) : '') + (hash || '');
+}
+export class ErrorOverlay extends HTMLElement {}
+`;
+
+  const mountViteDevMiddlewares = async () => {
+    viteInstance = await createViteServer({
+      server: {
+        middlewareMode: true,
+        allowedHosts: true,
+        hmr: false,
+        ws: false,
+        watch: null,
+      },
+      appType: 'custom',
+    });
+    app.get('/@vite/client', (_req: Request, res: Response) => {
+      res
+        .status(200)
+        .set({
+          'Content-Type': 'application/javascript; charset=utf-8',
+          'Cache-Control': 'no-cache',
+        })
+        .send(NO_WS_VITE_CLIENT_JS);
+    });
+    app.get('*', async (req: Request, res: Response, next) => {
+      if (isDevAssetRequest(req)) return next();
+      try {
+        const template = fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf-8');
+        const transformed = await viteInstance.transformIndexHtml(req.originalUrl, template);
+        const injectFn = (req as any).__rabaInjectSeo;
+        const finalHtml = typeof injectFn === 'function' ? injectFn(transformed, req.path) : transformed;
+        res.status(200)
+          .set({
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'public, max-age=0, must-revalidate',
+          })
+          .send(finalHtml);
+      } catch (err) {
+        viteInstance.ssrFixStacktrace(err as Error);
+        next(err);
+      }
+    });
+    app.use(viteInstance.middlewares);
+  };
+
+  if ((isProduction || process.env.NODE_ENV === 'production') && (hasDist || !isDevMode)) {
     // Auto-build client bundle if missing when starting in production
     if (!fs.existsSync(indexPath)) {
       console.log('[Raba Server] dist/index.html not found, generating production bundle...');
@@ -1730,6 +1803,22 @@ async function startServer() {
           }
         }
       }));
+      let cachedIndexHtml: string | null = null;
+      let cachedIndexMtime = 0;
+      const getCachedIndexHtml = (): string | null => {
+        try {
+          if (!fs.existsSync(indexPath)) return null;
+          const stat = fs.statSync(indexPath);
+          if (!cachedIndexHtml || stat.mtimeMs !== cachedIndexMtime) {
+            cachedIndexHtml = fs.readFileSync(indexPath, 'utf-8');
+            cachedIndexMtime = stat.mtimeMs;
+          }
+          return cachedIndexHtml;
+        } catch {
+          return null;
+        }
+      };
+
       app.get('*', (req: Request, res: Response) => {
         const isRouteValid = Boolean((req as any).__rabaIsValidRoute);
         if (!isRouteValid) {
@@ -1743,8 +1832,8 @@ async function startServer() {
 
         res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        if (fs.existsSync(indexPath)) {
-          const rawHtml = fs.readFileSync(indexPath, 'utf-8');
+        const rawHtml = getCachedIndexHtml();
+        if (rawHtml) {
           const injectFn = (req as any).__rabaInjectSeo;
           const finalHtml = typeof injectFn === 'function' ? injectFn(rawHtml, req.path) : rawHtml;
           return res.status(200).send(finalHtml);
@@ -1753,62 +1842,10 @@ async function startServer() {
         }
       });
     } else {
-      viteInstance = await createViteServer({
-        server: {
-          middlewareMode: true,
-          hmr: false,
-          watch: null,
-        },
-        appType: 'custom',
-      });
-      app.get('*', async (req: Request, res: Response, next) => {
-        if (isDevAssetRequest(req.path)) return next();
-        try {
-          const template = fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf-8');
-          const transformed = await viteInstance.transformIndexHtml(req.originalUrl, template);
-          const injectFn = (req as any).__rabaInjectSeo;
-          const finalHtml = typeof injectFn === 'function' ? injectFn(transformed, req.path) : transformed;
-          res.status(200)
-            .set({
-              'Content-Type': 'text/html; charset=utf-8',
-              'Cache-Control': 'public, max-age=0, must-revalidate',
-            })
-            .send(finalHtml);
-        } catch (err) {
-          viteInstance.ssrFixStacktrace(err as Error);
-          next(err);
-        }
-      });
-      app.use(viteInstance.middlewares);
+      await mountViteDevMiddlewares();
     }
   } else {
-    viteInstance = await createViteServer({
-      server: {
-        middlewareMode: true,
-        hmr: false,
-        watch: null,
-      },
-      appType: 'custom',
-    });
-    app.get('*', async (req: Request, res: Response, next) => {
-      if (isDevAssetRequest(req.path)) return next();
-      try {
-        const template = fs.readFileSync(path.join(process.cwd(), 'index.html'), 'utf-8');
-        const transformed = await viteInstance.transformIndexHtml(req.originalUrl, template);
-        const injectFn = (req as any).__rabaInjectSeo;
-        const finalHtml = typeof injectFn === 'function' ? injectFn(transformed, req.path) : transformed;
-        res.status(200)
-          .set({
-            'Content-Type': 'text/html; charset=utf-8',
-            'Cache-Control': 'public, max-age=0, must-revalidate',
-          })
-          .send(finalHtml);
-      } catch (err) {
-        viteInstance.ssrFixStacktrace(err as Error);
-        next(err);
-      }
-    });
-    app.use(viteInstance.middlewares);
+    await mountViteDevMiddlewares();
   }
 
   const server = app.listen(PORT, '0.0.0.0', () => {
@@ -1834,6 +1871,11 @@ async function startServer() {
     if (viteInstance) {
       try {
         await viteInstance.close();
+      } catch { /* ignore */ }
+    }
+    if (process.env.SQL_HOST) {
+      try {
+        await createPool().end();
       } catch { /* ignore */ }
     }
     process.exit(0);

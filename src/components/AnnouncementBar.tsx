@@ -149,8 +149,14 @@ export const AnnouncementBar: React.FC<AnnouncementBarProps> = ({
       case 'custom_url': {
         const url = (settings.ctaUrl || '').trim();
         if (!url) break;
-        if (url.startsWith('/') && onNavigate) {
+        const lowerUrl = url.toLowerCase();
+        if (['#booking', '#book', '#bookings', '#appointment', '#appointments'].includes(lowerUrl)) {
+          if (onOpenBooking) onOpenBooking();
+          else if (onNavigate) onNavigate('/booking');
+        } else if (url.startsWith('/') && onNavigate) {
           onNavigate(url);
+        } else if (url.startsWith('#') && typeof window !== 'undefined') {
+          window.location.hash = url;
         } else {
           window.open(url, '_blank', 'noopener,noreferrer');
         }

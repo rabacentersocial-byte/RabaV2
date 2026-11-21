@@ -1,16 +1,28 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
+import fs from 'fs';
 import path from 'path';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 
-export default defineConfig(() => {
+export default defineConfig(({ command }) => {
+  const isBuild = command === 'build';
   return {
     base: '/',
     plugins: [
       react(), 
       tailwindcss(),
+      ...(isBuild ? [
+      {
+        name: 'vite-plugin-prune-dev-aistudio-assets',
+        closeBundle() {
+          const unusedDir = path.resolve(import.meta.dirname || '.', 'dist', 'assets', 'aistudio');
+          if (fs.existsSync(unusedDir)) {
+            fs.rmSync(unusedDir, { recursive: true, force: true });
+          }
+        },
+      },
       {
         name: 'vite-plugin-async-css',
         enforce: 'post' as const,
@@ -164,6 +176,7 @@ export default defineConfig(() => {
           enabled: false,
         },
       }),
+      ] : []),
     ],
     resolve: {
       alias: {
@@ -176,8 +189,11 @@ export default defineConfig(() => {
       treeShaking: true,
     },
     server: {
-      // HMR is disabled in AI Studio preview iframe per environment constraints
+      // Allow AI Studio / Cloud Run preview hosts in Vite 8
+      allowedHosts: true,
+      // HMR and Vite dev WebSocket are disabled in AI Studio preview iframe per environment constraints
       hmr: false,
+      ws: false,
       watch: null,
     },
     build: {
@@ -196,7 +212,6 @@ export default defineConfig(() => {
             const lower = dep.toLowerCase();
             return (
               !lower.includes('firebase') &&
-              !lower.includes('supabase') &&
               !lower.includes('re2js') &&
               !lower.includes('data-mock') &&
               !lower.includes('data-appointments') &&
@@ -209,9 +224,6 @@ export default defineConfig(() => {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
-              if (id.includes('@supabase')) {
-                return 'vendor-supabase';
-              }
               if (id.includes('re2js')) {
                 return 'vendor-re2js';
               }
@@ -228,6 +240,15 @@ export default defineConfig(() => {
                 return 'vendor-react';
               }
               return 'vendor-libs';
+            }
+            if (id.includes('src/data/seoRoutes')) {
+              return 'data-seo';
+            }
+            if (id.includes('src/data/branchesData')) {
+              return 'data-branches';
+            }
+            if (id.includes('src/data/blogData')) {
+              return 'data-blog';
             }
             if (id.includes('src/data/specialistsData')) {
               return 'data-specialists';

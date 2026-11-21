@@ -21,7 +21,6 @@ import {
   Check
 } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
-import { SupabaseSettingsSection } from './SupabaseSettingsSection';
 import { 
   fetchSyncStatus, 
   syncAllToDiskNow, 
@@ -320,9 +319,6 @@ export const PersistentSyncTab: React.FC<PersistentSyncTabProps> = ({ onFeedback
           </div>
         </div>
       </div>
-
-      {/* Supabase Direct Integration Section */}
-      <SupabaseSettingsSection onNotify={showMsg} />
 
       {/* Grid of Synchronized Modules */}
       <div>

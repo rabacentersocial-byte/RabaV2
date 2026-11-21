@@ -138,8 +138,8 @@ export const ClientPortalPage: React.FC<ClientPortalPageProps> = ({
   const [isPortalBookingOpen, setIsPortalBookingOpen] = useState(false);
   const [bookingMemberId, setBookingMemberId] = useState<string>('primary');
   const [bookingType, setBookingType] = useState<'service' | 'package'>('service');
-  const [selectedServiceId, setSelectedServiceId] = useState<string>(servicesList[0].id);
-  const [selectedPackageId, setSelectedPackageId] = useState<string>(packagesList[0].id);
+  const [selectedServiceId, setSelectedServiceId] = useState<string>(servicesList[0]?.id || SERVICES[0]?.id || '');
+  const [selectedPackageId, setSelectedPackageId] = useState<string>(packagesList[0]?.id || THERAPY_PACKAGES[0]?.id || '');
   const [selectedCity, setSelectedCity] = useState<string>(() => branchesList[0]?.city || 'riyadh');
   const [selectedBranchId, setSelectedBranchId] = useState<string>(() => {
     const defaultCity = branchesList[0]?.city || 'riyadh';

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   X, 
   Calendar, 
@@ -16,7 +17,6 @@ import {
   Sparkles,
   Baby
 } from 'lucide-react';
-import confetti from 'canvas-confetti';
 import { SPECIALISTS, SERVICES, THERAPY_PACKAGES, TIME_SLOTS } from '../data/mockData';
 import { BRANCHES_DATA, BranchItem } from '../data/branchesData';
 import { Specialist, ServiceItem, TherapyPackage, Appointment } from '../types';
@@ -59,10 +59,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const activeLivePackages = (live?.packages || []).filter((p) => p.active !== false && p.isActive !== false);
   const activeLiveSpecialists = (live?.specialists || []).filter((s) => s.active !== false && s.isActive !== false);
 
-  const servicesList = activeLiveServices.length ? activeLiveServices : (live?.isAuthoritativeServices ? [] : SERVICES);
-  const packagesList = activeLivePackages.length ? activeLivePackages : (live?.isAuthoritativePackages ? [] : THERAPY_PACKAGES);
+  const servicesList = activeLiveServices.length ? activeLiveServices : SERVICES;
+  const packagesList = activeLivePackages.length ? activeLivePackages : THERAPY_PACKAGES;
   const branchesList: BranchItem[] = live?.branches?.length ? live.branches : BRANCHES_DATA;
-  const liveSpecialists: Specialist[] = activeLiveSpecialists.length ? activeLiveSpecialists : (live?.isAuthoritativeSpecialists ? [] : SPECIALISTS);
+  const liveSpecialists: Specialist[] = activeLiveSpecialists.length ? activeLiveSpecialists : SPECIALISTS;
 
   // Booking Type: service or package
   const [bookingType, setBookingType] = useState<'service' | 'package'>(
@@ -70,13 +70,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   );
 
   const [selectedServiceId, setSelectedServiceId] = useState<string>(
-    initialService?.id || servicesList[0]?.id || SERVICES[0].id
+    initialService?.id || servicesList[0]?.id || SERVICES[0]?.id || ''
   );
   const [selectedPackageId, setSelectedPackageId] = useState<string>(
-    initialPackage?.id || packagesList[0]?.id || THERAPY_PACKAGES[0].id
+    initialPackage?.id || packagesList[0]?.id || THERAPY_PACKAGES[0]?.id || ''
   );
   const [selectedSpecialistId, setSelectedSpecialistId] = useState<string>(
-    initialSpecialist?.id || liveSpecialists[0]?.id || SPECIALISTS[0].id
+    initialSpecialist?.id || liveSpecialists[0]?.id || SPECIALISTS[0]?.id || ''
   );
 
   // Date & Time
@@ -88,7 +88,38 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [fullName, setFullName] = useState('');
   const [mobilePhone, setMobilePhone] = useState('');
 
-  const [selectedBranchId, setSelectedBranchId] = useState<string>('');
+  // City & Branch (2-step dependent selection)
+  const availableCities = useMemo(() => {
+    const map = new Map<string, { key: string; labelAr: string; labelEn: string }>();
+    branchesList.forEach((b) => {
+      if (b.city && !map.has(b.city)) {
+        map.set(b.city, {
+          key: b.city,
+          labelAr: b.cityNameAr || b.city,
+          labelEn: b.cityNameEn || b.city,
+        });
+      }
+    });
+    return Array.from(map.values());
+  }, [branchesList]);
+
+  const [selectedCity, setSelectedCity] = useState<string>(() => branchesList[0]?.city || 'riyadh');
+
+  const branchesInCity = useMemo(
+    () => branchesList.filter((b) => b.city === selectedCity),
+    [branchesList, selectedCity]
+  );
+
+  const [selectedBranchId, setSelectedBranchId] = useState<string>(() => {
+    const defaultCity = branchesList[0]?.city || 'riyadh';
+    return branchesList.find((b) => b.city === defaultCity)?.id || '';
+  });
+
+  const handleCityChange = (cityKey: string) => {
+    setSelectedCity(cityKey);
+    const firstInCity = branchesList.find((b) => b.city === cityKey);
+    setSelectedBranchId(firstInCity?.id || '');
+  };
 
   // Optional expandable details
   const [selectedFamilyMemberId, setSelectedFamilyMemberId] = useState<string>('');
@@ -125,6 +156,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         return (cleanAr && normNotes.includes(cleanAr)) || (cleanEn && normNotes.includes(cleanEn));
       });
       if (matchedBranch) {
+        setSelectedCity(matchedBranch.city);
         setSelectedBranchId(matchedBranch.id);
       }
     }
@@ -132,6 +164,60 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       setSelectedDate(initialDate);
     }
   }, [initialService, initialPackage, initialSpecialist, initialNotes, initialDate, branchesList]);
+
+  // Reset submission/error state whenever the modal opens fresh and sync body scroll / Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    setIsSubmitted(false);
+    setIsSubmitting(false);
+    setConfirmedApp(null);
+    setFormError('');
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
+  // Keep selected dropdown values valid when live catalogs hydrate or change
+  useEffect(() => {
+    if (servicesList.length > 0 && !servicesList.some((s) => s.id === selectedServiceId)) {
+      setSelectedServiceId(initialService?.id && servicesList.some((s) => s.id === initialService.id) ? initialService.id : servicesList[0].id);
+    }
+  }, [servicesList, selectedServiceId, initialService]);
+
+  useEffect(() => {
+    if (packagesList.length > 0 && !packagesList.some((p) => p.id === selectedPackageId)) {
+      setSelectedPackageId(initialPackage?.id && packagesList.some((p) => p.id === initialPackage.id) ? initialPackage.id : packagesList[0].id);
+    }
+  }, [packagesList, selectedPackageId, initialPackage]);
+
+  useEffect(() => {
+    if (liveSpecialists.length > 0 && !liveSpecialists.some((s) => s.id === selectedSpecialistId)) {
+      setSelectedSpecialistId(initialSpecialist?.id && liveSpecialists.some((s) => s.id === initialSpecialist.id) ? initialSpecialist.id : liveSpecialists[0].id);
+    }
+  }, [liveSpecialists, selectedSpecialistId, initialSpecialist]);
+
+  useEffect(() => {
+    if (availableCities.length > 0 && !availableCities.some((c) => c.key === selectedCity)) {
+      setSelectedCity(availableCities[0].key);
+    }
+  }, [availableCities, selectedCity]);
+
+  useEffect(() => {
+    if (branchesInCity.length > 0 && !branchesInCity.some((b) => b.id === selectedBranchId)) {
+      setSelectedBranchId(branchesInCity[0].id);
+    }
+  }, [branchesInCity, selectedBranchId]);
 
   useEffect(() => {
     if (clientProfile) {
@@ -210,17 +296,22 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
     const ref = generateRequestReference(requestType);
     const serviceTitle = bookingType === 'package' 
-      ? (!isArabic && activePackage.nameEn ? activePackage.nameEn : activePackage.name)
-      : (!isArabic && activeService.titleEn ? activeService.titleEn : activeService.title);
+      ? (activePackage ? (!isArabic && activePackage.nameEn ? activePackage.nameEn : activePackage.name) : (isArabic ? 'باقة تأهيلية متكاملة' : 'Therapy Package'))
+      : (activeService ? (!isArabic && activeService.titleEn ? activeService.titleEn : activeService.title) : (isArabic ? 'جلسة تقييم وتشخيص' : 'Clinical Assessment Session'));
     
-    const specialistName = !isArabic && activeSpecialist.nameEn ? activeSpecialist.nameEn : activeSpecialist.name;
+    const specialistName = activeSpecialist
+      ? (!isArabic && activeSpecialist.nameEn ? activeSpecialist.nameEn : activeSpecialist.name)
+      : (isArabic ? 'الفريق الإكلينيكي المختص' : 'Clinical Specialist Team');
 
     const selectedMember = (clientProfile?.familyMembers || []).find(
       (m) => m.id === selectedFamilyMemberId
     );
-    const chosenBranch = branchesList.find((b) => b.id === selectedBranchId);
+    const activeCityObj = availableCities.find((c) => c.key === selectedCity) || availableCities[0];
+    const chosenBranch = branchesInCity.find((b) => b.id === selectedBranchId) || branchesInCity[0];
     const branchLabel = chosenBranch ? getCleanBranchDisplayName(chosenBranch, isArabic) : '';
-    const cityLabel = chosenBranch ? (isArabic ? chosenBranch.cityNameAr : chosenBranch.cityNameEn) : '';
+    const cityLabel = activeCityObj
+      ? (isArabic ? activeCityObj.labelAr : activeCityObj.labelEn)
+      : (chosenBranch ? (isArabic ? chosenBranch.cityNameAr : chosenBranch.cityNameEn) : '');
 
     const newAppointment: Appointment = {
       id: `apt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
@@ -234,9 +325,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       userId: user?.uid || undefined,
       clientId: user?.uid || undefined,
       ...(selectedMember ? { familyMemberId: selectedMember.id, familyMemberName: selectedMember.name } : {}),
-      serviceId: bookingType === 'package' ? activePackage.id : activeService.id,
+      serviceId: bookingType === 'package' ? (activePackage?.id || 'pkg-general') : (activeService?.id || 'srv-general'),
       serviceTitle: serviceTitle,
-      specialistId: activeSpecialist.id,
+      specialistId: activeSpecialist?.id || 'spec-general',
       specialistName: specialistName,
       ...(branchLabel ? { branch: branchLabel } : {}),
       ...(cityLabel ? { city: cityLabel } : {}),
@@ -245,7 +336,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       notes: notes.trim(),
       status: 'new',
       paymentStatus: 'unpaid',
-      amount: bookingType === 'package' ? activePackage.price : activeSpecialist.sessionPrice,
+      amount: bookingType === 'package' ? (activePackage?.price ?? 0) : (activeService?.sessionPrice ?? activeSpecialist?.sessionPrice ?? 280),
       reminderSettings: {
         whatsapp: true,
         sms: true,
@@ -267,6 +358,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       setIsSubmitted(true);
 
       try {
+        const { default: confetti } = await import('canvas-confetti');
         confetti({
           particleCount: 55,
           spread: 60,
@@ -291,10 +383,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     return getCustomerWhatsAppMessage(app, isArabic);
   };
 
-  return (
+  const modalContent = (
     <div 
-      className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 animate-in fade-in duration-200"
+      className="fixed inset-0 z-[120] overflow-y-auto bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 animate-in fade-in duration-200"
       onClick={handleModalClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="booking-modal-title"
     >
       <div 
         className={`relative glass-modal-dialog text-slate-900 dark:text-white rounded-2xl sm:rounded-3xl max-w-md w-full shadow-2xl overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh] my-auto ${isArabic ? 'text-right' : 'text-left'}`}
@@ -310,7 +405,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div>
-              <h3 className="text-xs sm:text-base font-black text-slate-900 dark:text-white flex items-center gap-1.5">
+              <h3 id="booking-modal-title" className="text-xs sm:text-base font-black text-slate-900 dark:text-white flex items-center gap-1.5">
                 <span>{isArabic ? 'حجز موعد سريع' : 'Quick Booking'}</span>
                 <span className="text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full bg-[#22C55E]/15 text-[#047857] dark:text-[#34D399] font-bold">
                   {isArabic ? 'تأكيد مباشر' : 'Instant'}
@@ -363,6 +458,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'الخدمة:' : 'Service:'}</span>
                 <span className="font-bold text-[#1263D6] dark:text-[#60AFFF]">{confirmedApp.serviceTitle}</span>
               </div>
+              {(confirmedApp.city || confirmedApp.branch) && (
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'المدينة / الفرع:' : 'City / Branch:'}</span>
+                  <span className="font-bold">
+                    {[confirmedApp.city, confirmedApp.branch].filter(Boolean).join(' - ')}
+                  </span>
+                </div>
+              )}
               <div className="flex items-center justify-between">
                 <span className="text-slate-600 dark:text-slate-400">{isArabic ? 'الموعد:' : 'Date & Time:'}</span>
                 <span className="font-bold">{confirmedApp.date} ({confirmedApp.timeSlot})</span>
@@ -514,27 +617,45 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               )}
             </div>
 
-            {/* Field 3.5: Preferred Clinic Branch (Optional for direct branch routing) */}
-            <div>
-              <label htmlFor="booking-branch-select" className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">
-                {isArabic ? 'الفرع المفضل (اختياري):' : 'Preferred Branch (Optional):'}
-              </label>
-              <select
-                id="booking-branch-select"
-                aria-label={isArabic ? 'الفرع المفضل' : 'Preferred Branch'}
-                value={selectedBranchId}
-                onChange={(e) => setSelectedBranchId(e.target.value)}
-                className="w-full h-11 bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-white/15 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none cursor-pointer"
-              >
-                <option value="">
-                  {isArabic ? '— أي فرع / يحدده فريق الاستقبال —' : '— Any Branch / Decided with Coordinator —'}
-                </option>
-                {branchesList.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {isArabic ? `${b.cityNameAr} - ${getCleanBranchDisplayName(b, true)}` : `${b.cityNameEn} - ${getCleanBranchDisplayName(b, false)}`}
-                  </option>
-                ))}
-              </select>
+            {/* Field 3.5: City & Branch Selection (2 separate fields) */}
+            <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
+              <div>
+                <label htmlFor="booking-city-select" className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">
+                  {isArabic ? 'المدينة:' : 'City:'} <span className="text-rose-500">*</span>
+                </label>
+                <select
+                  id="booking-city-select"
+                  aria-label={isArabic ? 'اختر المدينة' : 'Select City'}
+                  value={selectedCity}
+                  onChange={(e) => handleCityChange(e.target.value)}
+                  className="w-full h-11 bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-white/15 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none cursor-pointer"
+                >
+                  {availableCities.map((cityItem) => (
+                    <option key={cityItem.key} value={cityItem.key}>
+                      {isArabic ? cityItem.labelAr : cityItem.labelEn}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="booking-branch-select" className="text-xs font-bold text-slate-800 dark:text-slate-200 block mb-1">
+                  {isArabic ? 'الفرع:' : 'Branch:'} <span className="text-rose-500">*</span>
+                </label>
+                <select
+                  id="booking-branch-select"
+                  aria-label={isArabic ? 'اختر الفرع' : 'Select Branch'}
+                  value={selectedBranchId}
+                  onChange={(e) => setSelectedBranchId(e.target.value)}
+                  className="w-full h-11 bg-slate-50 dark:bg-slate-900 border border-slate-200/90 dark:border-white/15 rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-[#2E86EB]/30 focus:border-[#2E86EB] outline-none cursor-pointer"
+                >
+                  {branchesInCity.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {getCleanBranchDisplayName(b, isArabic)}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {/* Field 4: Preferred Date & Time (Optimized Touch Heights) */}
@@ -680,4 +801,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       </div>
     </div>
   );
+
+  if (typeof document !== 'undefined' && document.body) {
+    return createPortal(modalContent, document.body);
+  }
+  return modalContent;
 };
+
+export default BookingModal;

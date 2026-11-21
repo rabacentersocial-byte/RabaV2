@@ -6,8 +6,17 @@ import { adminAuth } from '../lib/firebase-admin.ts';
  * Protects against MIME-sniffing, clickjacking, XSS, and info leakage.
  */
 export const securityHeaders = (req: Request, res: Response, next: NextFunction) => {
+  const host = (req.headers.host || '').toLowerCase();
+  const isPreviewOrDevHost =
+    process.env.NODE_ENV !== 'production' ||
+    host.includes('.run.app') ||
+    host.includes('localhost') ||
+    host.includes('127.0.0.1');
+
   res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  if (!isPreviewOrDevHost) {
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  }
   res.setHeader('X-XSS-Protection', '1; mode=block');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
@@ -29,6 +38,16 @@ export const createRateLimiter = (maxRequests = 20, windowMs = 60_000) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0].trim() || req.ip || 'unknown';
     const now = Date.now();
+
+    // Prevent unbounded memory growth on long-running production instances
+    if (rateLimitMap.size > 1000) {
+      for (const [key, entry] of rateLimitMap.entries()) {
+        if (now > entry.resetAt) {
+          rateLimitMap.delete(key);
+        }
+      }
+    }
+
     const record = rateLimitMap.get(ip);
 
     if (!record || now > record.resetAt) {
@@ -59,14 +78,14 @@ export const csrfProtection = (req: Request, res: Response, next: NextFunction) 
   }
 
   const origin = (req.headers.origin as string) || (req.headers.referer as string);
-  const host = req.headers.host;
+  const rawHost = ((req.headers['x-forwarded-host'] as string) || req.headers.host || '').split(',')[0].trim().toLowerCase();
 
   // In non-production local development without origin header, permit request
   if (!origin && process.env.NODE_ENV !== 'production') {
     return next();
   }
 
-  if (!origin || !host) {
+  if (!origin || !rawHost) {
     return res.status(403).json({
       success: false,
       error: 'فشل التحقق الأمني من مصدر الطلب (CSRF validation failed)'
@@ -75,9 +94,13 @@ export const csrfProtection = (req: Request, res: Response, next: NextFunction) 
 
   try {
     const parsedOrigin = new URL(origin);
-    const originHost = parsedOrigin.host;
+    const originHost = parsedOrigin.host.toLowerCase();
+    const stripWww = (h: string) => h.replace(/^www\./, '');
     const isLocal = originHost.includes('localhost') || originHost.includes('127.0.0.1') || originHost.includes('0.0.0.0');
-    const isSameHost = originHost === host;
+    const isSameHost =
+      originHost === rawHost ||
+      stripWww(originHost) === stripWww(rawHost) ||
+      (req.headers.host ? stripWww(originHost) === stripWww(req.headers.host.toLowerCase()) : false);
 
     if (!isSameHost && !isLocal) {
       return res.status(403).json({

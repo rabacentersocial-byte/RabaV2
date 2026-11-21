@@ -454,7 +454,10 @@ service cloud.firestore {
 
     // 4. Appointments & Consultation Bookings (Public Create with Strict Validation, Client Own Read, Admin Update, Super-Admin Delete)
     match /appointments/{appointmentId} {
-      allow create: if isValidId(appointmentId) && isValidAppointmentCreate(appointmentId, incoming());
+      allow create: if isValidId(appointmentId) && (
+        isValidAppointmentCreate(appointmentId, incoming())
+        || (isAdmin() && isValidAppointment(incoming()))
+      );
       allow get: if isValidId(appointmentId) && (
         (isSignedIn() && (existing().userId == request.auth.uid || existing().clientId == request.auth.uid))
         || isAdmin()
@@ -540,7 +543,10 @@ service cloud.firestore {
 
     // 9. Public Customer Requests & Newsletter Subscriptions (Public Create with Validation, Admin Read/Update, Super-Admin Delete)
     match /customer_requests/{requestId} {
-      allow create: if isValidId(requestId) && isValidCustomerRequestCreate(requestId, incoming());
+      allow create: if isValidId(requestId) && (
+        isValidCustomerRequestCreate(requestId, incoming())
+        || (isAdmin() && incoming().status is string && incoming().status.size() <= 40)
+      );
       allow get: if isValidId(requestId) && (isAdmin() || isTestRecordDoc(requestId));
       allow list: if isAdmin();
       allow update: if isAdmin() && isValidId(requestId);
