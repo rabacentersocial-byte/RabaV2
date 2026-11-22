@@ -962,7 +962,7 @@ async function startServer() {
       if (process.env.SQL_HOST) {
         try {
           const dbPromise = getAllDbSettings().catch(() => ({} as Record<string, any>));
-          const timeoutPromise = new Promise<Record<string, any>>((resolve) => setTimeout(() => resolve({}), 2500));
+          const timeoutPromise = new Promise<Record<string, any>>((resolve) => setTimeout(() => resolve({}), 1500));
           const dbSettings = await Promise.race([dbPromise, timeoutPromise]);
 
           for (const [key, val] of Object.entries(dbSettings)) {

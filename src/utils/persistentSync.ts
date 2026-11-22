@@ -305,10 +305,11 @@ export async function initPersistentSync(): Promise<void> {
     let serverData: Record<string, any> | null = null;
     let syncTimestamp = new Date().toISOString();
 
-    // 1. Primary Attempt: Dynamic Express server API endpoint with 2500ms timeout
+    // 1. Primary Attempt: Dynamic Express server API endpoint with generous cold-start timeout
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2500);
+      timeoutId = setTimeout(() => controller.abort('sync-timeout'), 8000);
       const res = await fetch('/api/sync/all', {
         cache: 'no-store',
         signal: controller.signal,
@@ -317,7 +318,6 @@ export async function initPersistentSync(): Promise<void> {
           'Pragma': 'no-cache'
         }
       });
-      clearTimeout(timeoutId);
       const contentType = res.headers.get('content-type') || '';
       if (res.ok && contentType.includes('json')) {
         const json = await res.json();
@@ -325,11 +325,20 @@ export async function initPersistentSync(): Promise<void> {
           serverData = json.data;
           syncTimestamp = json.timestamp || syncTimestamp;
         }
-      } else if (!res.ok) {
-        console.warn(`[PersistentSync] /api/sync/all HTTP ${res.status}: ${res.statusText}`);
       }
-    } catch (netErr) {
-      console.warn('[PersistentSync] Backend sync notice, falling back to local/static cache:', netErr);
+    } catch (netErr: any) {
+      // Gracefully fall back to static/local cache & live Firestore without noisy AbortError warnings
+      const isAbort =
+        netErr === 'sync-timeout' ||
+        netErr?.name === 'AbortError' ||
+        String(netErr?.message || '').toLowerCase().includes('abort');
+      if (!isAbort) {
+        console.info('[PersistentSync] Using local/cloud cache fallback while server sync reconnects.');
+      }
+    } finally {
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
     }
 
     // 2. Secondary Attempt: Static bundled data fallback if backend is unreachable
