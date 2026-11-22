@@ -20,7 +20,10 @@ import {
   Building2,
   GitBranch,
   GraduationCap,
-  Cloud
+  Cloud,
+  Camera,
+  Upload,
+  Loader2
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { AdminUser, BranchAccessScope, PermissionId, UserRole } from '../../types';
@@ -33,6 +36,24 @@ import {
   deleteAdminUserFromFirestore
 } from '../../services/firestoreService';
 import { useLanguage } from '../../context/LanguageContext';
+import { compressImage } from '../../utils/imageCompressor';
+import {
+  getResolvedImageUrl,
+  handleImageErrorWithStore,
+  savePersistentImage
+} from '../../utils/persistentImageStore';
+import {
+  USER_AVATAR_BG_PRESETS,
+  getUserAvatarBgClass,
+  getUserAvatarPositionClass,
+  getUserAvatarTransformStyle,
+  getUserInitials,
+  isSafeAvatarUrl
+} from '../../utils/userAvatar';
+import {
+  UserAvatarCustomizerModal,
+  type UserAvatarSavePayload
+} from './UserAvatarCustomizerModal';
 
 interface UserManagementTabProps {
   users: AdminUser[];
@@ -58,6 +79,7 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
   // Modal states
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
+  const [avatarModalUser, setAvatarModalUser] = useState<AdminUser | null>(null);
   const [userToDelete, setUserToDelete] = useState<AdminUser | null>(null);
   const [toastMsg, setToastMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -106,8 +128,14 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
   const [formPermissions, setFormPermissions] = useState<PermissionId[]>([]);
   const [formBranchScope, setFormBranchScope] = useState<BranchAccessScope>('all');
   const [formAssignedBranches, setFormAssignedBranches] = useState<string[]>([]);
+  const [formAvatar, setFormAvatar] = useState('');
+  const [formAvatarPosition, setFormAvatarPosition] = useState<'top' | 'center' | 'bottom'>('center');
+  const [formAvatarZoom, setFormAvatarZoom] = useState<number>(100);
+  const [formAvatarBgColor, setFormAvatarBgColor] = useState<string>('emerald');
+  const [isUploadingFormAvatar, setIsUploadingFormAvatar] = useState(false);
   const [formError, setFormError] = useState('');
   const [isSavingUser, setIsSavingUser] = useState(false);
+  const formAvatarInputRef = React.useRef<HTMLInputElement>(null);
 
   const canManageUsers = hasPermission('manage_users');
   const isSystemAdmin = currentUser?.role === 'super_admin' && currentUser?.status !== 'suspended';
@@ -142,6 +170,10 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
     setFormBranchScope('all');
     setFormAssignedBranches([]);
     setFormStatus('active');
+    setFormAvatar('');
+    setFormAvatarPosition('center');
+    setFormAvatarZoom(100);
+    setFormAvatarBgColor('emerald');
     setFormError('');
     setIsAddModalOpen(true);
   };
@@ -160,8 +192,60 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
     setFormBranchScope(getEffectiveBranchScope(user));
     setFormAssignedBranches(Array.isArray(user.assignedBranches) ? [...user.assignedBranches] : []);
     setFormStatus(user.status);
+    setFormAvatar(user.avatar || '');
+    setFormAvatarPosition(user.avatarPosition || 'center');
+    setFormAvatarZoom(typeof user.avatarZoom === 'number' ? user.avatarZoom : 100);
+    setFormAvatarBgColor(user.avatarBgColor || 'emerald');
     setFormError('');
     setIsAddModalOpen(true);
+  };
+
+  // Inline avatar upload inside Add/Edit modal
+  const handleFormAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setFormError(isArabic ? 'يرجى اختيار ملف صورة صالح (JPG, PNG, WebP)' : 'Please choose a valid image file');
+      return;
+    }
+    try {
+      setIsUploadingFormAvatar(true);
+      setFormError('');
+      const compressedUrl = await compressImage(file, 512, 512, 0.86);
+      setFormAvatar(compressedUrl);
+    } catch {
+      setFormError(isArabic ? 'تعذر رفع الصورة، يرجى المحاولة بصورة أخرى' : 'Failed to upload image');
+    } finally {
+      setIsUploadingFormAvatar(false);
+      if (formAvatarInputRef.current) formAvatarInputRef.current.value = '';
+    }
+  };
+
+  // Save avatar from dedicated UserAvatarCustomizerModal
+  const handleSaveUserAvatar = async (userId: string, payload: UserAvatarSavePayload) => {
+    let savedUser: AdminUser | null = null;
+    const updatedList = users.map((u) => {
+      if (u.id === userId) {
+        savedUser = {
+          ...u,
+          avatar: payload.avatar,
+          avatarPosition: payload.avatarPosition,
+          avatarZoom: payload.avatarZoom,
+          avatarBgColor: payload.avatarBgColor
+        };
+        return savedUser;
+      }
+      return u;
+    });
+
+    onUpdateUsers(updatedList);
+    if (savedUser) {
+      await saveAdminUserToFirestore(savedUser, (savedUser as AdminUser).firebaseUid).catch(() => {});
+      if (currentUser.id === userId) {
+        onSwitchUser(savedUser);
+      }
+    }
+    showToast(isArabic ? 'تم تحديث صورة المستخدم وحفظها بنجاح' : 'User avatar updated successfully');
   };
 
   // When role changes, optionally autofill default permissions
@@ -264,6 +348,13 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
         }
       }
 
+      const cleanAvatar = formAvatar.trim();
+      if (cleanAvatar && !isSafeAvatarUrl(cleanAvatar)) {
+        setFormError(isArabic ? 'رابط الصورة غير صالح. استخدم رابط https:// أو ارفع صورة من جهازك.' : 'Invalid avatar URL.');
+        setIsSavingUser(false);
+        return;
+      }
+
       if (editingUser) {
         let savedUser: AdminUser | null = null;
         const updatedList = users.map((u) => {
@@ -279,6 +370,10 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
               roleTitleAr,
               roleTitleEn,
               status: formStatus,
+              avatar: cleanAvatar,
+              avatarPosition: formAvatarPosition,
+              avatarZoom: formAvatarZoom,
+              avatarBgColor: formAvatarBgColor,
               password: cleanPass || u.password || 'raba',
               permissions: formPermissions,
               branchScope: effectiveScope,
@@ -290,6 +385,9 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
           return u;
         });
 
+        if (cleanAvatar) {
+          await savePersistentImage(`admin_avatar_${editingUser.id}`, cleanAvatar).catch(() => {});
+        }
         onUpdateUsers(updatedList);
         if (savedUser) {
           await saveAdminUserToFirestore(savedUser, provisionedUid).catch(() => {});
@@ -304,8 +402,9 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
             : (isArabic ? 'تم تحديث بيانات المستخدم وصلاحيات الفروع بنجاح' : 'User & branch permissions updated')
         );
       } else {
+        const newUserId = 'usr-' + Date.now();
         const newUser: AdminUser = {
-          id: 'usr-' + Date.now(),
+          id: newUserId,
           ...(provisionedUid ? { firebaseUid: provisionedUid } : {}),
           name: formName.trim(),
           nameEn: formName.trim(),
@@ -317,6 +416,10 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
           roleTitleEn,
           department: formDepartment.trim(),
           status: formStatus,
+          avatar: cleanAvatar,
+          avatarPosition: formAvatarPosition,
+          avatarZoom: formAvatarZoom,
+          avatarBgColor: formAvatarBgColor,
           password: cleanPass || 'raba',
           permissions: formPermissions,
           branchScope: effectiveScope,
@@ -325,6 +428,9 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
           lastLogin: isArabic ? 'لم يسجل دخول بعد' : 'Never'
         };
 
+        if (cleanAvatar) {
+          await savePersistentImage(`admin_avatar_${newUserId}`, cleanAvatar).catch(() => {});
+        }
         onUpdateUsers([newUser, ...users]);
         await saveAdminUserToFirestore(newUser, provisionedUid).catch(() => {});
         showToast(
@@ -575,19 +681,40 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
                   </div>
                 </div>
 
-                {/* Profile Header */}
+                {/* Profile Header with 1-Click Avatar Customizer */}
                 <div className="flex items-center gap-3.5 mb-4">
-                  {user?.avatar ? (
-                    <img
-                      src={user.avatar}
-                      alt={user.name || ''}
-                      className="w-13 h-13 rounded-2xl object-cover border border-slate-200 dark:border-white/10 shrink-0"
-                    />
-                  ) : (
-                    <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-emerald-700 to-teal-900 text-white font-black text-lg flex items-center justify-center shrink-0 shadow-inner">
-                      {(user?.name || (user as any)?.username || 'م').slice(0, 2)}
-                    </div>
-                  )}
+                  <button
+                    type="button"
+                    disabled={!canManageUsers && !isMe}
+                    onClick={() => (canManageUsers || isMe) && setAvatarModalUser(user)}
+                    title={
+                      canManageUsers || isMe
+                        ? (isArabic ? 'انقر لتخصيص أو تغيير صورة المستخدم' : 'Click to customize user photo')
+                        : undefined
+                    }
+                    className={`relative group w-14 h-14 rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 shrink-0 shadow-xs ${
+                      canManageUsers || isMe ? 'cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/50' : 'cursor-default'
+                    }`}
+                  >
+                    {user?.avatar ? (
+                      <img
+                        src={getResolvedImageUrl(user.avatar)}
+                        alt={user.name || ''}
+                        style={getUserAvatarTransformStyle(user.avatarZoom, user.avatarPosition)}
+                        onError={(e) => handleImageErrorWithStore(e, user.avatar || '')}
+                        className={`w-full h-full object-cover ${getUserAvatarPositionClass(user.avatarPosition)} transition-transform duration-200`}
+                      />
+                    ) : (
+                      <div className={`w-full h-full bg-gradient-to-br ${getUserAvatarBgClass(user.avatarBgColor)} text-white font-black text-lg flex items-center justify-center shadow-inner`}>
+                        {getUserInitials(user, 2)}
+                      </div>
+                    )}
+                    {(canManageUsers || isMe) && (
+                      <span className="absolute inset-0 bg-slate-950/55 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                        <Camera className="w-4 h-4" />
+                      </span>
+                    )}
+                  </button>
 
                   <div className="min-w-0 flex-1">
                     <h3 className="text-base font-bold text-slate-900 dark:text-white truncate">
@@ -713,8 +840,18 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
                   <span>{isMe ? (isArabic ? 'المستخدم الحالي' : 'Active') : (isArabic ? 'دخول بحسابه' : 'Switch')}</span>
                 </button>
 
-                {/* Edit & Suspend & Delete controls */}
+                {/* Edit, Avatar, Suspend & Delete controls */}
                 <div className="flex items-center gap-1">
+                  {(canManageUsers || isMe) && (
+                    <button
+                      onClick={() => setAvatarModalUser(user)}
+                      className="p-1.5 rounded-xl text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/25 transition-colors cursor-pointer"
+                      title={isArabic ? 'تخصيص صورة المستخدم' : 'Customize User Photo'}
+                    >
+                      <Camera className="w-4 h-4" />
+                    </button>
+                  )}
+
                   {canManageUsers && (
                     <>
                       <button
@@ -803,6 +940,114 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
                   <span>{formError}</span>
                 </div>
               )}
+
+              {/* User Profile Photo Customizer Strip */}
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-white/10 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                  <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-white dark:border-slate-700 shadow-md shrink-0 bg-slate-200 dark:bg-slate-800">
+                    {formAvatar ? (
+                      <img
+                        src={getResolvedImageUrl(formAvatar)}
+                        alt={formName || 'Avatar'}
+                        style={getUserAvatarTransformStyle(formAvatarZoom, formAvatarPosition)}
+                        className={`w-full h-full object-cover ${getUserAvatarPositionClass(formAvatarPosition)}`}
+                      />
+                    ) : (
+                      <div className={`w-full h-full bg-gradient-to-br ${getUserAvatarBgClass(formAvatarBgColor)} text-white font-black text-xl flex items-center justify-center`}>
+                        {getUserInitials({ name: formName, username: formUsername }, 2)}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <span className="text-xs font-black text-slate-900 dark:text-white block">
+                          {isArabic ? 'صورة المستخدم الشخصية' : 'User Profile Photo'}
+                        </span>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400">
+                          {isArabic ? 'ارفع صورة من جهازك أو الصق رابطاً مباشراً أو اختر لون الأحرف' : 'Upload a photo, paste an image URL, or pick an initials color'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <input
+                          ref={formAvatarInputRef}
+                          type="file"
+                          accept="image/png,image/jpeg,image/webp,image/gif"
+                          onChange={handleFormAvatarUpload}
+                          className="hidden"
+                        />
+                        <button
+                          type="button"
+                          disabled={isUploadingFormAvatar}
+                          onClick={() => formAvatarInputRef.current?.click()}
+                          className="px-3 py-1.5 rounded-xl bg-[#0B3B36] hover:bg-[#0E5246] text-white text-[11px] font-bold inline-flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-60"
+                        >
+                          {isUploadingFormAvatar ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                          <span>{isArabic ? 'رفع صورة' : 'Upload'}</span>
+                        </button>
+                        {formAvatar && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormAvatar('');
+                              setFormAvatarPosition('center');
+                              setFormAvatarZoom(100);
+                            }}
+                            className="px-2.5 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 text-[11px] font-bold cursor-pointer"
+                          >
+                            {isArabic ? 'إزالة' : 'Remove'}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <input
+                        type="text"
+                        dir="ltr"
+                        value={formAvatar.startsWith('data:') ? '' : formAvatar}
+                        onChange={(e) => setFormAvatar(e.target.value)}
+                        placeholder={isArabic ? 'أو الصق رابط الصورة المباشر (https://...)' : 'Or paste direct image URL (https://...)'}
+                        className="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/15 text-slate-900 dark:text-white rounded-xl px-3 py-1.5 text-[11px] outline-none focus:ring-2 focus:ring-emerald-500/40"
+                      />
+
+                      {formAvatar ? (
+                        <div className="flex items-center gap-1 shrink-0">
+                          {(['top', 'center', 'bottom'] as const).map((pos) => (
+                            <button
+                              key={pos}
+                              type="button"
+                              onClick={() => setFormAvatarPosition(pos)}
+                              className={`px-2 py-1 rounded-lg text-[10px] font-bold border cursor-pointer ${
+                                formAvatarPosition === pos
+                                  ? 'bg-[#0B3B36] text-white border-[#0B3B36]'
+                                  : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10'
+                              }`}
+                            >
+                              {pos === 'top' ? (isArabic ? 'أعلى' : 'Top') : pos === 'center' ? (isArabic ? 'وسط' : 'Mid') : (isArabic ? 'أسفل' : 'Low')}
+                            </button>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          {USER_AVATAR_BG_PRESETS.map((p) => (
+                            <button
+                              key={p.id}
+                              type="button"
+                              onClick={() => setFormAvatarBgColor(p.id)}
+                              title={isArabic ? p.labelAr : p.labelEn}
+                              className={`w-6 h-6 rounded-lg ${p.swatchClass} cursor-pointer transition-transform ${
+                                formAvatarBgColor === p.id ? 'ring-2 ring-offset-1 ring-emerald-500 scale-110' : 'opacity-75 hover:opacity-100'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               {/* Basic Fields */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1246,6 +1491,14 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
           </div>
         </div>
       )}
+
+      {/* DEDICATED USER AVATAR CUSTOMIZER MODAL */}
+      <UserAvatarCustomizerModal
+        user={avatarModalUser}
+        isOpen={Boolean(avatarModalUser)}
+        onClose={() => setAvatarModalUser(null)}
+        onSave={handleSaveUserAvatar}
+      />
 
     </div>
   );

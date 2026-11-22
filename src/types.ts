@@ -339,6 +339,9 @@ export interface AdminUser {
   department: string;
   status: 'active' | 'suspended';
   avatar?: string;
+  avatarPosition?: 'top' | 'center' | 'bottom';
+  avatarZoom?: number;
+  avatarBgColor?: string;
   password?: string;
   permissions: PermissionId[];
   assignedBranches?: string[];

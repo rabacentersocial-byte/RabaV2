@@ -30,7 +30,8 @@ import {
   PanelRightClose,
   PanelLeftOpen,
   PanelLeftClose,
-  FolderHeart
+  FolderHeart,
+  Camera
 } from 'lucide-react';
 import { Appointment, ParentReview, AdminUser, PermissionId, ServiceItem, TherapyPackage, Specialist } from '../../types';
 import { syncAllToDiskNow, savePersistentModule } from '../../utils/persistentSync';
@@ -53,6 +54,7 @@ import {
   isUserBranchScoped
 } from '../../utils/branchPermissions';
 import {
+  saveAdminUserToFirestore,
   syncPackagesCollectionToFirestore,
   syncServicesCollectionToFirestore,
   syncSpecialistsCollectionToFirestore
@@ -62,9 +64,17 @@ import { useLiveDataOptional } from '../../context/LiveDataContext';
 import { useTheme } from '../../context/ThemeContext';
 import { AnimatedBackground } from '../AnimatedBackground';
 import { RabaLogo } from '../RabaLogo';
+import { getResolvedImageUrl, handleImageErrorWithStore } from '../../utils/persistentImageStore';
+import {
+  getUserAvatarBgClass,
+  getUserAvatarPositionClass,
+  getUserAvatarTransformStyle,
+  getUserInitials
+} from '../../utils/userAvatar';
 
 import { OverviewTab } from './OverviewTab';
 import { UserManagementTab } from './UserManagementTab';
+import { UserAvatarCustomizerModal, type UserAvatarSavePayload } from './UserAvatarCustomizerModal';
 import { AppointmentsTab } from './AppointmentsTab';
 import { ServicesPackagesTab } from './ServicesPackagesTab';
 import { PricingManagementTab } from './PricingManagementTab';
@@ -299,12 +309,46 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     saveStoredAdminUsers(newUsers);
   };
 
+  const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
+
   // Switch active user
   const handleSwitchUser = (user: AdminUser) => {
     setCurrentUser(user);
     saveStoredCurrentAdminUser(user);
     saveStoredAdminSession(user);
     setIsSwitchUserDropdownOpen(false);
+  };
+
+  // Customize current admin's own avatar directly from the topbar menu
+  const handleSaveCurrentUserAvatar = async (userId: string, payload: UserAvatarSavePayload) => {
+    let updatedSelf: AdminUser | null = null;
+    const updatedList = adminUsers.map((u) => {
+      if (u.id === userId) {
+        updatedSelf = {
+          ...u,
+          avatar: payload.avatar,
+          avatarPosition: payload.avatarPosition,
+          avatarZoom: payload.avatarZoom,
+          avatarBgColor: payload.avatarBgColor
+        };
+        return updatedSelf;
+      }
+      return u;
+    });
+    if (!updatedSelf && currentUser && currentUser.id === userId) {
+      updatedSelf = {
+        ...currentUser,
+        avatar: payload.avatar,
+        avatarPosition: payload.avatarPosition,
+        avatarZoom: payload.avatarZoom,
+        avatarBgColor: payload.avatarBgColor
+      };
+    }
+    handleUpdateUsers(updatedList);
+    if (updatedSelf) {
+      handleSwitchUser(updatedSelf);
+      await saveAdminUserToFirestore(updatedSelf, updatedSelf.firebaseUid).catch(() => {});
+    }
   };
 
   // Logout admin
@@ -541,10 +585,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 title={isArabic ? 'تبديل المستخدم النشط لتجربة الصلاحيات' : 'Switch active user to test RBAC'}
               >
                 {currentUser?.avatar ? (
-                  <img src={currentUser.avatar} alt={currentUser.name || ''} className="w-7 h-7 rounded-full object-cover shrink-0 ring-2 ring-[#2E86EB]/25" />
+                  <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 ring-2 ring-[#2E86EB]/25 bg-slate-200 dark:bg-slate-700">
+                    <img
+                      src={getResolvedImageUrl(currentUser.avatar)}
+                      alt={currentUser.name || ''}
+                      style={getUserAvatarTransformStyle(currentUser.avatarZoom, currentUser.avatarPosition)}
+                      onError={(e) => handleImageErrorWithStore(e, currentUser.avatar || '')}
+                      className={`w-full h-full object-cover ${getUserAvatarPositionClass(currentUser.avatarPosition)}`}
+                    />
+                  </div>
                 ) : (
-                  <div className="w-7 h-7 rounded-full bg-[#1463D6] text-white font-bold flex items-center justify-center text-[11px] shrink-0">
-                    {(currentUser?.name || currentUser?.username || 'أ').slice(0, 1)}
+                  <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${getUserAvatarBgClass(currentUser?.avatarBgColor)} text-white font-bold flex items-center justify-center text-[11px] shrink-0`}>
+                    {getUserInitials(currentUser, 1)}
                   </div>
                 )}
                 <div className="hidden md:block text-start">
@@ -561,7 +613,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               {/* Dropdown Menu */}
               {isSwitchUserDropdownOpen && (
                 <div className={`absolute top-full mt-2 ${isArabic ? 'left-0' : 'right-0'} w-72 max-w-[calc(100vw-24px)] bg-white/95 dark:bg-[#0D1B2A]/95 backdrop-blur-2xl rounded-[22px] shadow-2xl border border-slate-200/80 dark:border-white/15 p-2.5 z-50 animate-in fade-in zoom-in-95`}>
-                  <div className="px-2.5 py-2 border-b border-slate-100 dark:border-white/10 mb-1.5">
+                  <div className="px-2.5 py-2 border-b border-slate-100 dark:border-white/10 mb-1.5 flex items-center justify-between gap-2">
                     <div className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
                       {isArabic ? 'تبديل الحساب التجريبي واختبار الصلاحيات:' : 'Switch Role to Test RBAC:'}
                     </div>
@@ -581,10 +633,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
                           {u?.avatar ? (
-                            <img src={u.avatar} alt={u.name || ''} className="w-7 h-7 rounded-full object-cover shrink-0" />
+                            <div className="w-7 h-7 rounded-full overflow-hidden shrink-0 bg-slate-200 dark:bg-slate-700">
+                              <img
+                                src={getResolvedImageUrl(u.avatar)}
+                                alt={u.name || ''}
+                                style={getUserAvatarTransformStyle(u.avatarZoom, u.avatarPosition)}
+                                onError={(e) => handleImageErrorWithStore(e, u.avatar || '')}
+                                className={`w-full h-full object-cover ${getUserAvatarPositionClass(u.avatarPosition)}`}
+                              />
+                            </div>
                           ) : (
-                            <div className="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-700 text-xs font-bold flex items-center justify-center shrink-0">
-                              {(u?.name || u?.username || 'أ').slice(0, 1)}
+                            <div className={`w-7 h-7 rounded-full bg-gradient-to-br ${getUserAvatarBgClass(u?.avatarBgColor)} text-white text-xs font-bold flex items-center justify-center shrink-0`}>
+                              {getUserInitials(u, 1)}
                             </div>
                           )}
                           <div className="truncate">
@@ -608,7 +668,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       </button>
                     ))}
 
-                    <div className="pt-1.5 mt-1.5 border-t border-slate-100 dark:border-white/10">
+                    <div className="pt-1.5 mt-1.5 border-t border-slate-100 dark:border-white/10 space-y-1">
+                      <button
+                        onClick={() => {
+                          setIsSwitchUserDropdownOpen(false);
+                          setIsAvatarModalOpen(true);
+                        }}
+                        className="w-full p-2.5 rounded-2xl text-start text-xs font-bold text-sky-700 dark:text-sky-300 hover:bg-sky-50 dark:hover:bg-sky-950/40 transition-colors flex items-center justify-between cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Camera className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+                          <span>{isArabic ? 'تخصيص صورتي الشخصية' : 'Customize My Photo'}</span>
+                        </div>
+                      </button>
+
                       <button
                         onClick={handleLogout}
                         className="w-full p-2.5 rounded-2xl text-start text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors flex items-center justify-between cursor-pointer"
@@ -1083,6 +1156,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       </div>
 
+      {/* Quick Self-Avatar Customizer Modal */}
+      <UserAvatarCustomizerModal
+        user={currentUser}
+        isOpen={isAvatarModalOpen}
+        onClose={() => setIsAvatarModalOpen(false)}
+        onSave={handleSaveCurrentUserAvatar}
+      />
     </div>
   );
 };
