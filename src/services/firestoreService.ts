@@ -13,7 +13,12 @@ import {
   MemberReportType,
   ServiceItem,
   TherapyPackage,
-  OfferData
+  OfferData,
+  PaymentPublicConfig,
+  PaymentGatewayAdminConfig,
+  PaymentSecretsConfig,
+  PaymentTransaction,
+  DEFAULT_PAYMENT_PUBLIC_CONFIG
 } from '../types';
 import type { HeroSlideItem, HeroSliderConfig } from '../data/sliderCustomizer';
 import type { CourseItem } from '../data/coursesData';
@@ -3161,5 +3166,568 @@ export async function deleteMemberRecordFromFirestore(clientUid: string, recordI
     throw error;
   }
 }
+
+// ============================================================================
+// 11. ONLINE PAYMENT GATEWAY CONFIGURATION & TRANSACTIONS LEDGER
+// ============================================================================
+
+export function buildPublicPaymentConfig(config: Partial<PaymentGatewayAdminConfig>): PaymentPublicConfig {
+  return {
+    isOnlinePaymentEnabled: Boolean(config.isOnlinePaymentEnabled),
+    provider: config.provider || 'moyasar',
+    mode: config.mode === 'live' ? 'live' : 'sandbox',
+    publishableKey: String(config.publishableKey || '').trim().slice(0, 300),
+    currency: 'SAR',
+    enabledMethods: {
+      mada: config.enabledMethods?.mada !== false,
+      creditcard: config.enabledMethods?.creditcard !== false,
+      applepay: config.enabledMethods?.applepay !== false,
+      stcpay: config.enabledMethods?.stcpay !== false,
+      bank_transfer: config.enabledMethods?.bank_transfer !== false,
+      tabby: Boolean(config.enabledMethods?.tabby),
+      tamara: Boolean(config.enabledMethods?.tamara)
+    },
+    bankTransfer: {
+      ...DEFAULT_PAYMENT_PUBLIC_CONFIG.bankTransfer,
+      ...(config.bankTransfer || {})
+    },
+    tabby: {
+      ...DEFAULT_PAYMENT_PUBLIC_CONFIG.tabby,
+      ...(config.tabby || {})
+    },
+    tamara: {
+      ...DEFAULT_PAYMENT_PUBLIC_CONFIG.tamara,
+      ...(config.tamara || {})
+    },
+    vatEnabled: config.vatEnabled !== false,
+    vatRate: typeof config.vatRate === 'number' && !Number.isNaN(config.vatRate) ? Math.min(30, Math.max(0, config.vatRate)) : 15,
+    isVatInclusive: Boolean(config.isVatInclusive),
+    clinicTaxNumber: String(config.clinicTaxNumber || DEFAULT_PAYMENT_PUBLIC_CONFIG.clinicTaxNumber).trim().slice(0, 40),
+    clinicCommercialReg: String(config.clinicCommercialReg || '').trim().slice(0, 40),
+    applePayMerchantId: String(config.applePayMerchantId || '').trim().slice(0, 150),
+    updatedAtISO: new Date().toISOString()
+  };
+}
+
+/**
+ * Saves the non-secret operational payment gateway config to `finance/payment_gateway_config`
+ * (admin-only) and mirrors the strictly public checkout subset to `site_settings/payment_public_config`.
+ * NEVER writes secret keys to either document.
+ */
+export async function savePaymentGatewayConfigToFirestore(
+  adminConfig: PaymentGatewayAdminConfig
+): Promise<boolean> {
+  const path = 'finance/payment_gateway_config';
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser) return false;
+    const isAdminUser = await verifyIsFirebaseAdmin(fbUser);
+    if (!isAdminUser) return false;
+
+    const { fs, db } = await loadFirestoreCtx();
+    const publicSubset = buildPublicPaymentConfig(adminConfig);
+    const updatedAtISO = new Date().toISOString();
+
+    const adminPayload = sanitizeFirestoreData({
+      id: 'payment_gateway_config',
+      type: 'gateway_config',
+      title: 'إعدادات بوابات الدفع الإلكتروني',
+      ...publicSubset,
+      webhookUrl: String(adminConfig.webhookUrl || '').trim().slice(0, 300),
+      hasSecretKeyConfigured: Boolean(adminConfig.hasSecretKeyConfigured),
+      hasWebhookSecretConfigured: Boolean(adminConfig.hasWebhookSecretConfigured),
+      lastConnectionTestAt: adminConfig.lastConnectionTestAt || '',
+      lastConnectionTestStatus: adminConfig.lastConnectionTestStatus || 'untested',
+      lastConnectionTestMessage: String(adminConfig.lastConnectionTestMessage || '').slice(0, 300),
+      updatedBy: fbUser.email || fbUser.uid,
+      updatedAtISO
+    });
+
+    // Explicitly guarantee secret keys can never leak into `finance/` or `site_settings/`
+    delete (adminPayload as any).secretKey;
+    delete (adminPayload as any).webhookSecret;
+    delete (adminPayload as any).sandboxSecretKey;
+    delete (adminPayload as any).liveSecretKey;
+
+    const financeDocRef = fs.doc(db, 'finance', 'payment_gateway_config');
+    await fs.setDoc(
+      financeDocRef,
+      {
+        ...adminPayload,
+        updatedAt: fs.serverTimestamp()
+      },
+      { merge: true }
+    );
+
+    await saveSiteSettingToFirestore('payment_public_config', publicSubset);
+    console.log('[Firestore] Saved payment gateway config + public checkout subset');
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, path, false);
+    return false;
+  }
+}
+
+export function subscribePaymentGatewayConfig(
+  onUpdate: (config: PaymentGatewayAdminConfig | null) => void,
+  onError?: (err: any) => void
+): Unsubscribe {
+  const path = 'finance/payment_gateway_config';
+  let cancelled = false;
+  let realUnsub: Unsubscribe | null = null;
+
+  Promise.all([ensureFirebaseUser(), loadFirestoreCtx()])
+    .then(([currentUser, { fs, db }]) => {
+      if (cancelled || !currentUser) return;
+      const docRef = fs.doc(db, 'finance', 'payment_gateway_config');
+      realUnsub = fs.onSnapshot(
+        docRef,
+        (snap: any) => {
+          if (cancelled) return;
+          if (!snap.exists()) {
+            onUpdate(null);
+            return;
+          }
+          const data = snap.data() as PaymentGatewayAdminConfig;
+          onUpdate({
+            ...DEFAULT_PAYMENT_PUBLIC_CONFIG,
+            ...data,
+            enabledMethods: {
+              ...DEFAULT_PAYMENT_PUBLIC_CONFIG.enabledMethods,
+              ...(data.enabledMethods || {})
+            },
+            bankTransfer: {
+              ...DEFAULT_PAYMENT_PUBLIC_CONFIG.bankTransfer,
+              ...(data.bankTransfer || {})
+            }
+          });
+        },
+        (error: any) => {
+          console.error('[Firestore Payment Config Sync Error]:', error?.code || 'unknown', error?.message || error);
+          if (onError) onError(error);
+          handleFirestoreError(error, OperationType.GET, path, false);
+        }
+      );
+    })
+    .catch((err) => {
+      if (onError) onError(err);
+    });
+
+  return () => {
+    cancelled = true;
+    if (realUnsub) realUnsub();
+  };
+}
+
+/**
+ * Super-Admin-only storage for gateway secret keys (`payment_secrets/moyasar`).
+ * Firestore rules strictly enforce `isSuperAdmin()`.
+ */
+export async function savePaymentSecretsToFirestore(
+  secrets: Partial<PaymentSecretsConfig>
+): Promise<boolean> {
+  const path = 'payment_secrets/moyasar';
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser) return false;
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'payment_secrets', 'moyasar');
+
+    const payload: Record<string, any> = {
+      updatedAtISO: new Date().toISOString()
+    };
+    if (typeof secrets.secretKey === 'string' && secrets.secretKey.trim()) {
+      payload.secretKey = secrets.secretKey.trim().slice(0, 300);
+    }
+    if (typeof secrets.sandboxSecretKey === 'string' && secrets.sandboxSecretKey.trim()) {
+      payload.sandboxSecretKey = secrets.sandboxSecretKey.trim().slice(0, 300);
+    }
+    if (typeof secrets.liveSecretKey === 'string' && secrets.liveSecretKey.trim()) {
+      payload.liveSecretKey = secrets.liveSecretKey.trim().slice(0, 300);
+    }
+    if (typeof secrets.webhookSecret === 'string' && secrets.webhookSecret.trim()) {
+      payload.webhookSecret = secrets.webhookSecret.trim().slice(0, 300);
+    }
+    if (typeof secrets.tabbySecretKey === 'string' && secrets.tabbySecretKey.trim()) {
+      payload.tabbySecretKey = secrets.tabbySecretKey.trim().slice(0, 300);
+    }
+    if (typeof secrets.tamaraSecretKey === 'string' && secrets.tamaraSecretKey.trim()) {
+      payload.tamaraSecretKey = secrets.tamaraSecretKey.trim().slice(0, 300);
+    }
+
+    await fs.setDoc(
+      docRef,
+      {
+        ...sanitizeFirestoreData(payload),
+        updatedAt: fs.serverTimestamp()
+      },
+      { merge: true }
+    );
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, path, false);
+    return false;
+  }
+}
+
+export async function getPaymentSecretsStatusFromFirestore(): Promise<{
+  hasSecretKey: boolean;
+  hasWebhookSecret: boolean;
+  hasTabbySecret: boolean;
+  hasTamaraSecret: boolean;
+  secretKeyMasked?: string;
+  webhookSecretMasked?: string;
+}> {
+  const path = 'payment_secrets/moyasar';
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser) {
+      return { hasSecretKey: false, hasWebhookSecret: false, hasTabbySecret: false, hasTamaraSecret: false };
+    }
+    const { fs, db } = await loadFirestoreCtx();
+    const snap = await withTimeout(fs.getDoc(fs.doc(db, 'payment_secrets', 'moyasar')), 6000);
+    if (!snap.exists()) {
+      return { hasSecretKey: false, hasWebhookSecret: false, hasTabbySecret: false, hasTamaraSecret: false };
+    }
+    const data = snap.data() as PaymentSecretsConfig;
+    const mask = (v?: string) => {
+      if (!v || v.length < 8) return v ? '••••••••' : '';
+      return `${v.slice(0, 8)}••••••••${v.slice(-4)}`;
+    };
+    const activeSecret = data.secretKey || data.liveSecretKey || data.sandboxSecretKey || '';
+    return {
+      hasSecretKey: Boolean(activeSecret),
+      hasWebhookSecret: Boolean(data.webhookSecret),
+      hasTabbySecret: Boolean(data.tabbySecretKey),
+      hasTamaraSecret: Boolean(data.tamaraSecretKey),
+      secretKeyMasked: activeSecret ? mask(activeSecret) : undefined,
+      webhookSecretMasked: data.webhookSecret ? mask(data.webhookSecret) : undefined
+    };
+  } catch (error) {
+    handleFirestoreError(error, OperationType.GET, path, false);
+    return { hasSecretKey: false, hasWebhookSecret: false, hasTabbySecret: false, hasTamaraSecret: false };
+  }
+}
+
+function mapDocToPaymentTransaction(docId: string, data: Record<string, any>): PaymentTransaction {
+  const createdAtISO = normalizeTimestampToISO(data.createdAt, data.createdAtISO);
+  return {
+    id: data.id || docId,
+    invoiceNumber: data.invoiceNumber || `INV-${docId.slice(-6).toUpperCase()}`,
+    gatewayPaymentId: data.gatewayPaymentId || '',
+    provider: data.provider || 'moyasar',
+    mode: data.mode === 'live' ? 'live' : 'sandbox',
+    appointmentId: data.appointmentId || '',
+    referenceNumber: data.referenceNumber || '',
+    clientId: data.clientId || '',
+    fileNumber: data.fileNumber || '',
+    clientName: data.clientName || 'ولي أمر',
+    childName: data.childName || '',
+    clientPhone: data.clientPhone || '',
+    clientEmail: data.clientEmail || '',
+    serviceId: data.serviceId || '',
+    serviceTitle: data.serviceTitle || 'خدمة تأهيلية',
+    itemType: data.itemType || 'appointment',
+    subtotal: typeof data.subtotal === 'number' ? data.subtotal : Number(data.amount) || 0,
+    vatAmount: typeof data.vatAmount === 'number' ? data.vatAmount : 0,
+    vatRate: typeof data.vatRate === 'number' ? data.vatRate : 15,
+    amount: typeof data.amount === 'number' ? data.amount : 0,
+    currency: 'SAR',
+    method: data.method || 'mada',
+    cardBrand: data.cardBrand || '',
+    cardLast4: data.cardLast4 || '',
+    status: data.status || 'pending',
+    gatewayStatus: data.gatewayStatus || '',
+    gatewayMessage: data.gatewayMessage || '',
+    receiptUrl: data.receiptUrl || '',
+    transferReference: data.transferReference || '',
+    adminNotes: data.adminNotes || '',
+    verifiedByServer: Boolean(data.verifiedByServer),
+    verifiedAt: data.verifiedAt ? normalizeTimestampToISO(data.verifiedAt, data.verifiedAtISO) : data.verifiedAtISO || '',
+    verifiedAtISO: data.verifiedAtISO || (data.verifiedAt ? normalizeTimestampToISO(data.verifiedAt) : ''),
+    createdAt: createdAtISO,
+    createdAtISO: data.createdAtISO || createdAtISO,
+    updatedAt: data.updatedAt ? normalizeTimestampToISO(data.updatedAt) : undefined
+  };
+}
+
+export function sortPaymentsNewestFirst(list: PaymentTransaction[]): PaymentTransaction[] {
+  return [...list].sort((a, b) => {
+    const tA = Date.parse(a.createdAtISO || a.createdAt || '') || 0;
+    const tB = Date.parse(b.createdAtISO || b.createdAt || '') || 0;
+    if (tB !== tA) return tB - tA;
+    return String(b.id || '').localeCompare(String(a.id || ''));
+  });
+}
+
+/**
+ * Creates a new `pending` or `manual_review` payment intent document in `payments/{id}`.
+ * Strictly respects `isValidPaymentCreate` in `firestore.rules`.
+ */
+export async function createPaymentTransactionInFirestore(
+  tx: Omit<PaymentTransaction, 'id' | 'invoiceNumber' | 'createdAt' | 'createdAtISO'> & {
+    id?: string;
+    invoiceNumber?: string;
+  }
+): Promise<PaymentTransaction> {
+  const rawId = tx.id || `pay_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+  const docId = rawId.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 128);
+  const path = `payments/${docId}`;
+  const nowISO = new Date().toISOString();
+  const invoiceNumber =
+    tx.invoiceNumber ||
+    `RABA-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, '0')}-${Math.floor(
+      100000 + Math.random() * 900000
+    )}`;
+
+  try {
+    const { fs, db } = await loadFirestoreCtx();
+    const docRef = fs.doc(db, 'payments', docId);
+    const currentUid = auth?.currentUser?.uid || '';
+    const safeClientId = tx.clientId && currentUid && tx.clientId === currentUid ? currentUid : currentUid || '';
+    const initialStatus = tx.status === 'manual_review' ? 'manual_review' : 'pending';
+
+    const cleanFields = sanitizeFirestoreData({
+      id: docId,
+      invoiceNumber: invoiceNumber.slice(0, 60),
+      provider: (['moyasar', 'tabby', 'tamara', 'manual'].includes(tx.provider) ? tx.provider : 'moyasar') as PaymentTransaction['provider'],
+      mode: tx.mode === 'live' ? 'live' : 'sandbox',
+      method: String(tx.method || 'mada').slice(0, 40),
+      status: initialStatus,
+      amount: Math.max(0, Math.min(1000000, Number(tx.amount) || 0)),
+      subtotal: Math.max(0, Math.min(1000000, Number(tx.subtotal ?? tx.amount) || 0)),
+      vatAmount: Math.max(0, Math.min(1000000, Number(tx.vatAmount) || 0)),
+      vatRate: typeof tx.vatRate === 'number' ? tx.vatRate : 15,
+      currency: 'SAR',
+      clientName: (tx.clientName || 'ولي أمر مستفيد').trim().slice(0, 150) || 'ولي أمر مستفيد',
+      clientPhone: ((tx.clientPhone || '0500000000').trim().length >= 7
+        ? tx.clientPhone.trim()
+        : '0500000000'
+      ).slice(0, 35),
+      serviceTitle: (tx.serviceTitle || 'خدمة تأهيلية - مركز رابا').trim().slice(0, 250) || 'خدمة تأهيلية',
+      ...(tx.appointmentId ? { appointmentId: String(tx.appointmentId).slice(0, 128) } : {}),
+      ...(tx.referenceNumber ? { referenceNumber: String(tx.referenceNumber).slice(0, 80) } : {}),
+      ...(safeClientId ? { clientId: safeClientId.slice(0, 128) } : {}),
+      ...(tx.fileNumber ? { fileNumber: String(tx.fileNumber).slice(0, 50) } : {}),
+      ...(tx.childName ? { childName: String(tx.childName).trim().slice(0, 150) } : {}),
+      ...(tx.clientEmail ? { clientEmail: String(tx.clientEmail).trim().slice(0, 150) } : {}),
+      ...(tx.serviceId ? { serviceId: String(tx.serviceId).slice(0, 120) } : {}),
+      ...(tx.itemType ? { itemType: tx.itemType } : {}),
+      ...(tx.receiptUrl ? { receiptUrl: String(tx.receiptUrl).slice(0, 195000) } : {}),
+      ...(tx.transferReference ? { transferReference: String(tx.transferReference).trim().slice(0, 120) } : {}),
+      ...(tx.gatewayMessage ? { gatewayMessage: String(tx.gatewayMessage).slice(0, 500) } : {}),
+      createdAtISO: nowISO
+    });
+
+    await fs.setDoc(docRef, {
+      ...cleanFields,
+      createdAt: fs.serverTimestamp()
+    });
+
+    return mapDocToPaymentTransaction(docId, cleanFields);
+  } catch (error) {
+    handleFirestoreError(error, OperationType.CREATE, path, true);
+    throw error;
+  }
+}
+
+/**
+ * Admin-only update for a payment transaction (e.g., approving a bank transfer receipt or marking refunded).
+ * When marked `paid`, atomically updates the linked `appointments/{appointmentId}` and creates an admin notification.
+ */
+export async function updatePaymentTransactionStatusInFirestore(
+  paymentId: string,
+  patch: Partial<PaymentTransaction> & { status: PaymentTransaction['status'] }
+): Promise<boolean> {
+  const path = `payments/${paymentId}`;
+  try {
+    const fbUser = await ensureFirebaseUser();
+    if (!fbUser) return false;
+    const isAdminUser = await verifyIsFirebaseAdmin(fbUser);
+    if (!isAdminUser) return false;
+
+    const { fs, db } = await loadFirestoreCtx();
+    const payRef = fs.doc(db, 'payments', paymentId);
+    const snap = await fs.getDoc(payRef);
+    const existing = snap.exists() ? (snap.data() as PaymentTransaction) : null;
+
+    const nowISO = new Date().toISOString();
+    const updatePayload: Record<string, any> = sanitizeFirestoreData({
+      status: patch.status,
+      ...(patch.gatewayPaymentId ? { gatewayPaymentId: String(patch.gatewayPaymentId).slice(0, 150) } : {}),
+      ...(patch.gatewayMessage ? { gatewayMessage: String(patch.gatewayMessage).slice(0, 500) } : {}),
+      ...(patch.adminNotes !== undefined ? { adminNotes: String(patch.adminNotes).slice(0, 2000) } : {}),
+      ...(patch.status === 'paid' ? { verifiedAtISO: nowISO } : {})
+    });
+
+    await fs.updateDoc(payRef, {
+      ...updatePayload,
+      ...(patch.status === 'paid' ? { verifiedAt: fs.serverTimestamp() } : {}),
+      updatedAt: fs.serverTimestamp()
+    });
+
+    // Sync linked appointment payment status when paid or refunded
+    const linkedAppointmentId = patch.appointmentId || existing?.appointmentId;
+    if (linkedAppointmentId && (patch.status === 'paid' || patch.status === 'refunded')) {
+      try {
+        const aptRef = fs.doc(db, 'appointments', linkedAppointmentId);
+        await fs.updateDoc(aptRef, {
+          paymentStatus: patch.status === 'paid' ? 'paid' : 'refunded',
+          ...(patch.status === 'paid' ? { status: 'confirmed' } : {}),
+          updatedAt: fs.serverTimestamp()
+        });
+      } catch (aptErr) {
+        console.warn('[Firestore] Could not sync linked appointment paymentStatus:', aptErr);
+      }
+    }
+
+    // Create admin notification on confirmed payment
+    if (patch.status === 'paid') {
+      try {
+        const notifId = `notif_pay_${paymentId}_${Date.now()}`.slice(0, 128);
+        await fs.setDoc(fs.doc(db, 'notifications', notifId), {
+          id: notifId,
+          title: 'تم تأكيد دفعة مالية جديدة',
+          message: `تم استلام مبلغ ${existing?.amount || patch.amount || 0} ر.س من ${existing?.clientName || 'عميل'} مقابل ${existing?.serviceTitle || 'خدمة'} (فاتورة ${existing?.invoiceNumber || paymentId})`,
+          type: 'payment',
+          paymentId,
+          appointmentId: linkedAppointmentId || '',
+          read: false,
+          createdAtISO: nowISO,
+          createdAt: fs.serverTimestamp()
+        });
+      } catch {
+        // non-blocking
+      }
+    }
+
+    return true;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.UPDATE, path, false);
+    return false;
+  }
+}
+
+export function subscribePayments(
+  onUpdate: (payments: PaymentTransaction[]) => void,
+  onError?: (err: any) => void
+): Unsubscribe {
+  const path = 'payments';
+  let cancelled = false;
+  let realUnsub: Unsubscribe | null = null;
+
+  Promise.all([ensureFirebaseUser(), loadFirestoreCtx()])
+    .then(([currentUser, { fs, db }]) => {
+      if (cancelled || !currentUser) return;
+      const colRef = fs.collection(db, 'payments');
+      realUnsub = fs.onSnapshot(
+        colRef,
+        (snapshot: any) => {
+          if (cancelled) return;
+          const list: PaymentTransaction[] = [];
+          snapshot.forEach((d: any) => {
+            list.push(mapDocToPaymentTransaction(d.id, d.data()));
+          });
+          onUpdate(sortPaymentsNewestFirst(list));
+        },
+        (error: any) => {
+          console.error('[Firestore Payments Live Sync Error]:', error?.code || 'unknown', error?.message || error);
+          if (onError) onError(error);
+          handleFirestoreError(error, OperationType.LIST, path, false);
+        }
+      );
+    })
+    .catch((err) => {
+      if (onError) onError(err);
+    });
+
+  return () => {
+    cancelled = true;
+    if (realUnsub) realUnsub();
+  };
+}
+
+export function subscribeClientPayments(
+  clientUid: string,
+  onUpdate: (payments: PaymentTransaction[]) => void,
+  onError?: (err: any) => void
+): Unsubscribe {
+  const path = 'payments';
+  let cancelled = false;
+  let realUnsub: Unsubscribe | null = null;
+
+  Promise.all([ensureFirebaseUser(), loadFirestoreCtx()])
+    .then(([currentUser, { fs, db }]) => {
+      if (cancelled || !currentUser || !clientUid) return;
+      const q = fs.query(fs.collection(db, 'payments'), fs.where('clientId', '==', clientUid));
+      realUnsub = fs.onSnapshot(
+        q,
+        (snapshot: any) => {
+          if (cancelled) return;
+          const list: PaymentTransaction[] = [];
+          snapshot.forEach((d: any) => {
+            list.push(mapDocToPaymentTransaction(d.id, d.data()));
+          });
+          onUpdate(sortPaymentsNewestFirst(list));
+        },
+        (error: any) => {
+          if (onError) onError(error);
+          handleFirestoreError(error, OperationType.LIST, path, false);
+        }
+      );
+    })
+    .catch((err) => {
+      if (onError) onError(err);
+    });
+
+  return () => {
+    cancelled = true;
+    if (realUnsub) realUnsub();
+  };
+}
+
+export function subscribePaymentById(
+  paymentId: string,
+  onUpdate: (payment: PaymentTransaction | null) => void,
+  onError?: (err: any) => void
+): Unsubscribe {
+  const path = `payments/${paymentId}`;
+  let cancelled = false;
+  let realUnsub: Unsubscribe | null = null;
+
+  if (!paymentId) {
+    onUpdate(null);
+    return () => {};
+  }
+
+  loadFirestoreCtx()
+    .then(({ fs, db }) => {
+      if (cancelled) return;
+      const docRef = fs.doc(db, 'payments', paymentId);
+      realUnsub = fs.onSnapshot(
+        docRef,
+        (snap: any) => {
+          if (cancelled) return;
+          if (!snap.exists()) {
+            onUpdate(null);
+            return;
+          }
+          onUpdate(mapDocToPaymentTransaction(snap.id, snap.data()));
+        },
+        (error: any) => {
+          if (onError) onError(error);
+        }
+      );
+    })
+    .catch((err) => {
+      if (onError) onError(err);
+    });
+
+  return () => {
+    cancelled = true;
+    if (realUnsub) realUnsub();
+  };
+}
+
 
 

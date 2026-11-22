@@ -501,8 +501,340 @@ async function startServer() {
   const adminLoginLimiter = createRateLimiter(6, 60_000); // 6 attempts per minute
   const appointmentLimiter = createRateLimiter(15, 60_000); // 15 bookings per minute
   const uploadLimiter = createRateLimiter(30, 60_000); // 30 uploads per minute
+  const paymentVerifyLimiter = createRateLimiter(30, 60_000); // 30 payment verifications per minute
+  const paymentWebhookLimiter = createRateLimiter(120, 60_000); // 120 webhook events per minute
+
+  // --- Online Payment Gateway Helpers (Server-Side Authoritative) ---
+  const timingSafeSecretMatch = (provided: string, expected: string): boolean => {
+    if (!provided || !expected) return false;
+    const a = Buffer.from(provided, 'utf8');
+    const b = Buffer.from(expected, 'utf8');
+    if (a.length !== b.length) return false;
+    return crypto.timingSafeEqual(a, b);
+  };
+
+  const resolveMoyasarSecrets = async (): Promise<{ secretKey: string; webhookSecret: string; source: string }> => {
+    let secretKey = String(process.env.MOYASAR_SECRET_KEY || '').trim();
+    let webhookSecret = String(process.env.MOYASAR_WEBHOOK_SECRET || '').trim();
+    let source = secretKey ? 'env' : 'none';
+
+    if ((!secretKey || !webhookSecret) && adminDb) {
+      try {
+        const snap = await adminDb.doc('payment_secrets/moyasar').get();
+        if (snap.exists) {
+          const data = snap.data() || {};
+          if (!secretKey) {
+            secretKey = String(data.secretKey || data.liveSecretKey || data.sandboxSecretKey || '').trim();
+            if (secretKey) source = 'firestore_secrets';
+          }
+          if (!webhookSecret) {
+            webhookSecret = String(data.webhookSecret || '').trim();
+          }
+        }
+      } catch (err) {
+        console.warn('[Payments] Could not read payment_secrets/moyasar via Admin SDK:', err);
+      }
+    }
+    return { secretKey, webhookSecret, source };
+  };
+
+  const mapMoyasarStatus = (status: string): 'paid' | 'failed' | 'refunded' | 'pending' => {
+    const s = String(status || '').toLowerCase();
+    if (s === 'paid' || s === 'captured') return 'paid';
+    if (s === 'refunded' || s === 'voided') return 'refunded';
+    if (s === 'failed') return 'failed';
+    return 'pending';
+  };
+
+  const mapMoyasarMethod = (source: any): string => {
+    const type = String(source?.type || '').toLowerCase();
+    const company = String(source?.company || '').toLowerCase();
+    if (type === 'applepay') return 'applepay';
+    if (type === 'stcpay') return 'stcpay';
+    if (company === 'mada') return 'mada';
+    if (type === 'creditcard') return 'creditcard';
+    return 'mada';
+  };
+
+  const fetchMoyasarPaymentById = async (gatewayPaymentId: string, secretKey: string) => {
+    const cleanId = String(gatewayPaymentId || '').trim();
+    if (!/^[a-zA-Z0-9_-]{6,120}$/.test(cleanId)) {
+      throw new Error('INVALID_PAYMENT_ID');
+    }
+    const authHeader = `Basic ${Buffer.from(`${secretKey}:`).toString('base64')}`;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 10000);
+    try {
+      const resp = await fetch(`https://api.moyasar.com/v1/payments/${encodeURIComponent(cleanId)}`, {
+        method: 'GET',
+        headers: {
+          Authorization: authHeader,
+          Accept: 'application/json'
+        },
+        signal: controller.signal
+      });
+      if (!resp.ok) {
+        const body = await resp.text().catch(() => '');
+        throw new Error(`MOYASAR_HTTP_${resp.status}: ${body.slice(0, 160)}`);
+      }
+      return await resp.json();
+    } finally {
+      clearTimeout(timer);
+    }
+  };
+
+  const syncVerifiedMoyasarPaymentToAdminDb = async (moyasarPayment: any, explicitPaymentId?: string) => {
+    const internalStatus = mapMoyasarStatus(moyasarPayment?.status);
+    const meta = moyasarPayment?.metadata || {};
+    const paymentId = String(explicitPaymentId || meta.paymentId || `pay_${moyasarPayment?.id || Date.now()}`)
+      .replace(/[^a-zA-Z0-9_-]/g, '_')
+      .slice(0, 128);
+    const amountSar = Math.round(Number(moyasarPayment?.amount || 0)) / 100;
+    const method = mapMoyasarMethod(moyasarPayment?.source);
+    const cardBrand = String(moyasarPayment?.source?.company || moyasarPayment?.source?.type || '').toUpperCase();
+    const cardLast4 = String(moyasarPayment?.source?.number || '').slice(-4);
+    const nowISO = new Date().toISOString();
+    let appointmentId = String(meta.appointmentId || '').trim();
+
+    if (adminDb) {
+      try {
+        const { FieldValue } = await import('firebase-admin/firestore');
+        await adminDb.runTransaction(async (tx) => {
+          const payRef = adminDb!.collection('payments').doc(paymentId);
+          const paySnap = await tx.get(payRef);
+          const existing = paySnap.exists ? paySnap.data() || {} : {};
+          if (!appointmentId && typeof existing.appointmentId === 'string') {
+            appointmentId = existing.appointmentId;
+          }
+          const alreadyPaid = existing.status === 'paid' && existing.verifiedByServer === true;
+
+          const patch: Record<string, any> = {
+            id: paymentId,
+            gatewayPaymentId: String(moyasarPayment.id || '').slice(0, 150),
+            provider: 'moyasar',
+            method,
+            cardBrand,
+            cardLast4,
+            status: internalStatus,
+            gatewayStatus: String(moyasarPayment.status || '').slice(0, 50),
+            gatewayMessage: String(moyasarPayment?.source?.message || (internalStatus === 'paid' ? 'تم الدفع بنجاح' : '')).slice(0, 500),
+            verifiedByServer: true,
+            updatedAt: FieldValue.serverTimestamp(),
+            ...(internalStatus === 'paid'
+              ? { verifiedAt: FieldValue.serverTimestamp(), verifiedAtISO: nowISO }
+              : {})
+          };
+
+          if (!paySnap.exists) {
+            patch.invoiceNumber = `RABA-${new Date().getFullYear()}-${String(moyasarPayment.id || paymentId).slice(-6).toUpperCase()}`;
+            patch.amount = amountSar;
+            patch.subtotal = amountSar;
+            patch.vatAmount = 0;
+            patch.currency = 'SAR';
+            patch.mode = String(moyasarPayment.id || '').startsWith('live') ? 'live' : 'sandbox';
+            patch.clientName = String(meta.clientName || 'ولي أمر مستفيد').slice(0, 150);
+            patch.clientPhone = String(meta.clientPhone || '0500000000').slice(0, 35);
+            patch.serviceTitle = String(meta.serviceTitle || moyasarPayment.description || 'خدمة تأهيلية').slice(0, 250);
+            patch.appointmentId = appointmentId;
+            patch.clientId = String(meta.clientId || '').slice(0, 128);
+            patch.fileNumber = String(meta.fileNumber || '').slice(0, 50);
+            patch.createdAt = FieldValue.serverTimestamp();
+            patch.createdAtISO = nowISO;
+          }
+          tx.set(payRef, patch, { merge: true });
+
+          if (appointmentId && (internalStatus === 'paid' || internalStatus === 'refunded')) {
+            const aptRef = adminDb!.collection('appointments').doc(appointmentId);
+            const aptSnap = await tx.get(aptRef);
+            if (aptSnap.exists) {
+              tx.update(aptRef, {
+                paymentStatus: internalStatus === 'paid' ? 'paid' : 'refunded',
+                ...(internalStatus === 'paid' ? { status: 'confirmed' } : {}),
+                paymentMethod: method,
+                gatewayPaymentId: String(moyasarPayment.id || ''),
+                updatedAt: FieldValue.serverTimestamp()
+              });
+            }
+          }
+
+          if (internalStatus === 'paid' && !alreadyPaid) {
+            const notifId = `notif_pay_${paymentId}`.slice(0, 128);
+            tx.set(
+              adminDb!.collection('notifications').doc(notifId),
+              {
+                id: notifId,
+                type: 'payment',
+                title: 'تم استلام دفعة إلكترونية جديدة',
+                message: `تم استلام مبلغ ${amountSar.toLocaleString('en-US')} ر.س عبر ${cardBrand || method} من ${existing.clientName || meta.clientName || 'عميل'}`,
+                paymentId,
+                gatewayPaymentId: String(moyasarPayment.id || ''),
+                appointmentId,
+                amount: amountSar,
+                read: false,
+                createdAtISO: nowISO,
+                createdAt: FieldValue.serverTimestamp()
+              },
+              { merge: true }
+            );
+          }
+        });
+      } catch (dbErr) {
+        console.warn('[Payments] Firestore Admin transaction sync warning:', dbErr);
+      }
+    }
+
+    return {
+      paymentId,
+      gatewayPaymentId: String(moyasarPayment?.id || ''),
+      status: internalStatus,
+      gatewayStatus: String(moyasarPayment?.status || ''),
+      amount: amountSar,
+      currency: String(moyasarPayment?.currency || 'SAR'),
+      method,
+      cardBrand,
+      cardLast4,
+      message: String(moyasarPayment?.source?.message || ''),
+      appointmentId,
+      verifiedAtISO: nowISO
+    };
+  };
 
   // --- API Endpoints ---
+
+  // 0A. Admin-only: Test Moyasar Gateway Connection (never logs or echoes secrets)
+  app.post('/api/payments/test-connection', paymentVerifyLimiter, csrfProtection, requireAdminAuth, async (req: Request, res: Response) => {
+    try {
+      const providedSecret = typeof req.body?.secretKey === 'string' ? req.body.secretKey.trim() : '';
+      const publishableKey = typeof req.body?.publishableKey === 'string' ? req.body.publishableKey.trim() : '';
+      const mode = req.body?.mode === 'live' ? 'live' : 'sandbox';
+      const resolved = await resolveMoyasarSecrets();
+      const effectiveSecret = providedSecret || resolved.secretKey;
+
+      if (!effectiveSecret) {
+        return res.status(400).json({
+          success: false,
+          connected: false,
+          message: 'لم يتم إدخال المفتاح السري (Secret Key) بعد. يرجى إدخاله أو ضبط MOYASAR_SECRET_KEY في متغيرات البيئة.'
+        });
+      }
+
+      if (mode === 'live' && effectiveSecret.startsWith('sk_test_')) {
+        return res.status(400).json({
+          success: false,
+          connected: false,
+          message: 'تنبيه: الوضع المحدد هو (الإنتاج Live) بينما المفتاح السري يبدأ بـ sk_test_. يرجى التأكد من تطابق البيئة.'
+        });
+      }
+      if (mode === 'sandbox' && effectiveSecret.startsWith('sk_live_')) {
+        return res.status(400).json({
+          success: false,
+          connected: false,
+          message: 'تنبيه: الوضع المحدد هو (التجربة Sandbox) بينما المفتاح السري يبدأ بـ sk_live_. يرجى التأكد من تطابق البيئة.'
+        });
+      }
+      if (publishableKey && !publishableKey.startsWith(mode === 'live' ? 'pk_live_' : 'pk_test_')) {
+        return res.status(400).json({
+          success: false,
+          connected: false,
+          message: `المفتاح العام (Publishable Key) لا يطابق وضع ${mode === 'live' ? 'الإنتاج (pk_live_)' : 'التجربة (pk_test_)'}.`
+        });
+      }
+
+      const authHeader = `Basic ${Buffer.from(`${effectiveSecret}:`).toString('base64')}`;
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 8000);
+      try {
+        const probe = await fetch('https://api.moyasar.com/v1/payments?page=1', {
+          method: 'GET',
+          headers: { Authorization: authHeader, Accept: 'application/json' },
+          signal: controller.signal
+        });
+        if (probe.ok) {
+          return res.status(200).json({
+            success: true,
+            connected: true,
+            mode,
+            secretSource: providedSecret ? 'admin_form' : resolved.source,
+            message: `تم الاتصال بنجاح ببوابة Moyasar (${mode === 'live' ? 'بيئة الإنتاج Live' : 'البيئة التجريبية Sandbox'}) والمفاتيح صالحة ونشطة.`
+          });
+        }
+        return res.status(200).json({
+          success: false,
+          connected: false,
+          statusCode: probe.status,
+          message: probe.status === 401
+            ? 'فشلت المصادقة مع بوابة Moyasar (401): المفتاح السري غير صحيح أو منتهي الصلاحية.'
+            : `استجابت بوابة Moyasar بالرمز (${probe.status}). يرجى التحقق من صلاحية الحساب والمفاتيح.`
+        });
+      } finally {
+        clearTimeout(timer);
+      }
+    } catch (err: any) {
+      return sendSafeError(res, 502, 'تعذر الوصول إلى خوادم بوابة الدفع للتحقق من الاتصال حالياً', err);
+    }
+  });
+
+  // 0B. Server-Side Payment Verification (called by /payment-callback; NEVER trusts query params alone)
+  app.post('/api/payments/verify', paymentVerifyLimiter, csrfProtection, async (req: Request, res: Response) => {
+    try {
+      const gatewayPaymentId = sanitizeString(String(req.body?.gatewayPaymentId || req.body?.id || ''), 120);
+      const paymentId = sanitizeString(String(req.body?.paymentId || req.body?.tx || ''), 128);
+
+      if (!gatewayPaymentId) {
+        return res.status(400).json({ success: false, error: 'معرف العملية من بوابة الدفع مطلوب للتحقق' });
+      }
+
+      const { secretKey } = await resolveMoyasarSecrets();
+      if (!secretKey) {
+        return res.status(503).json({
+          success: false,
+          error: 'بوابة التحقق غير مهيأة بالكامل على الخادم (MOYASAR_SECRET_KEY غير مضبوط).'
+        });
+      }
+
+      const moyasarPayment = await fetchMoyasarPaymentById(gatewayPaymentId, secretKey);
+      const synced = await syncVerifiedMoyasarPaymentToAdminDb(moyasarPayment, paymentId || undefined);
+
+      return res.status(200).json({
+        success: true,
+        verified: true,
+        ...synced
+      });
+    } catch (err: any) {
+      return sendSafeError(res, 502, 'تعذر التحقق من حالة الدفع لدى البوابة حالياً', err);
+    }
+  });
+
+  // 0C. Moyasar Server-to-Server Webhook (exempt from browser CSRF; verified via timing-safe secret_token)
+  app.post('/api/payments/webhook/moyasar', paymentWebhookLimiter, async (req: Request, res: Response) => {
+    try {
+      const { secretKey, webhookSecret } = await resolveMoyasarSecrets();
+      if (!secretKey || !webhookSecret) {
+        return res.status(503).json({ received: false, error: 'Webhook secrets not configured' });
+      }
+
+      const incomingToken = String(req.body?.secret_token || req.headers['x-moyasar-secret'] || '').trim();
+      if (!timingSafeSecretMatch(incomingToken, webhookSecret)) {
+        return res.status(401).json({ received: false, error: 'Invalid webhook secret token' });
+      }
+
+      const gatewayPaymentId = String(req.body?.data?.id || req.body?.id || '').trim();
+      if (!gatewayPaymentId) {
+        return res.status(400).json({ received: false, error: 'Missing payment ID' });
+      }
+
+      const moyasarPayment = await fetchMoyasarPaymentById(gatewayPaymentId, secretKey);
+      const synced = await syncVerifiedMoyasarPaymentToAdminDb(moyasarPayment);
+
+      return res.status(200).json({
+        received: true,
+        paymentId: synced.paymentId,
+        status: synced.status
+      });
+    } catch (err: any) {
+      return sendSafeError(res, 500, 'Webhook processing failed', err);
+    }
+  });
 
   // 1. Health and Sync Status (Public basic check)
   app.get('/api/sync/status', (_req: Request, res: Response) => {
@@ -1553,6 +1885,7 @@ async function startServer() {
       '/booking-form',
       '/portal',
       '/family-portal',
+      '/payment-callback',
       '/admin',
       '/login'
     ]);
@@ -1617,6 +1950,7 @@ async function startServer() {
       '/booking-form',
       '/portal',
       '/family-portal',
+      '/payment-callback',
       '/admin',
       '/login'
     ]);

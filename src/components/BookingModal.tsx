@@ -15,12 +15,14 @@ import {
   ChevronDown,
   ChevronUp,
   Sparkles,
-  Baby
+  Baby,
+  CreditCard
 } from 'lucide-react';
 import { SPECIALISTS, SERVICES, THERAPY_PACKAGES, TIME_SLOTS } from '../data/mockData';
 import { BRANCHES_DATA, BranchItem } from '../data/branchesData';
-import { Specialist, ServiceItem, TherapyPackage, Appointment } from '../types';
-import { useLiveDataOptional } from '../context/LiveDataContext';
+import { Specialist, ServiceItem, TherapyPackage, Appointment, CheckoutItemPayload } from '../types';
+import { useLiveDataOptional, usePaymentPublicConfig } from '../context/LiveDataContext';
+import { CheckoutModal } from './CheckoutModal';
 import { 
   generateRequestReference, 
   saveAndBroadcastCustomerRequestAsync,
@@ -54,6 +56,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const { isArabic, direction } = useLanguage();
   const { user, clientProfile } = useAuth();
   const live = useLiveDataOptional();
+  const paymentPublicConfig = usePaymentPublicConfig();
+  const [checkoutItem, setCheckoutItem] = useState<CheckoutItemPayload | null>(null);
 
   const activeLiveServices = (live?.services || []).filter((s) => s.active !== false && s.isActive !== false);
   const activeLivePackages = (live?.packages || []).filter((p) => p.active !== false && p.isActive !== false);
@@ -472,8 +476,39 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </div>
             </div>
 
-            {/* WhatsApp & Close Actions */}
+            {/* Online Checkout, WhatsApp & Close Actions */}
             <div className="flex flex-col gap-2 pt-1">
+              {paymentPublicConfig.isOnlinePaymentEnabled && Number(confirmedApp.amount) > 0 && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCheckoutItem({
+                      appointmentId: confirmedApp.id,
+                      referenceNumber: confirmedApp.referenceNumber,
+                      serviceId: confirmedApp.serviceId,
+                      serviceTitle: confirmedApp.serviceTitle,
+                      itemType: confirmedApp.requestType === 'package' ? 'package' : 'appointment',
+                      baseAmount: Number(confirmedApp.amount) || 0,
+                      clientId: user?.uid || confirmedApp.clientId || '',
+                      fileNumber: clientProfile?.fileNumber || '',
+                      clientName: confirmedApp.guardianName,
+                      childName: confirmedApp.childName,
+                      clientPhone: confirmedApp.guardianPhone,
+                      clientEmail: confirmedApp.guardianEmail,
+                      branch: confirmedApp.branch
+                    })
+                  }
+                  className="w-full h-11 sm:h-12 py-2.5 px-4 rounded-xl bg-[#0B3B36] hover:bg-[#082925] active:scale-[0.98] text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+                >
+                  <CreditCard className="w-4 h-4 shrink-0 text-emerald-300" />
+                  <span>
+                    {isArabic
+                      ? `إتمام الدفع الإلكتروني الآن (${Number(confirmedApp.amount).toLocaleString('en-US')} ر.س)`
+                      : `Pay Online Now (${Number(confirmedApp.amount).toLocaleString('en-US')} SAR)`}
+                  </span>
+                </button>
+              )}
+
               <a
                 href={getWhatsAppLink(confirmedApp)}
                 target="_blank"
@@ -802,10 +837,28 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     </div>
   );
 
+  const checkoutPortal = (
+    <CheckoutModal
+      isOpen={Boolean(checkoutItem)}
+      onClose={() => setCheckoutItem(null)}
+      item={checkoutItem}
+    />
+  );
+
   if (typeof document !== 'undefined' && document.body) {
-    return createPortal(modalContent, document.body);
+    return (
+      <>
+        {createPortal(modalContent, document.body)}
+        {checkoutPortal}
+      </>
+    );
   }
-  return modalContent;
+  return (
+    <>
+      {modalContent}
+      {checkoutPortal}
+    </>
+  );
 };
 
 export default BookingModal;

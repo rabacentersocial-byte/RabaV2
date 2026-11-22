@@ -82,6 +82,7 @@ const AboutDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() =>
 const CoursesDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/CoursesDirectoryPage')).then((m: any) => ({ default: m.default || m.CoursesDirectoryPage || (() => null) })));
 const InfoDirectoryPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/InfoDirectoryPage')).then((m: any) => ({ default: m.default || m.InfoDirectoryPage || (() => null) })));
 const ClientPortalPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/ClientPortalPage')).then((m: any) => ({ default: m.default || m.ClientPortalPage || (() => null) })));
+const PaymentCallbackPage = lazy<React.ComponentType<any>>(() => safeImport(() => import('./components/PaymentCallbackPage')).then((m: any) => ({ default: m.default || m.PaymentCallbackPage || (() => null) })));
 import { resolveRouteSeo, getServiceSeoBySlug, getBranchSeoBySlug, generateBlogPostJsonLd } from './data/seoRoutes';
 
 
@@ -402,6 +403,7 @@ export default function App() {
   const isPrivacyPageOpen = lowerPath === '/privacy' || lowerPath === '/privacy-policy';
   const isTermsPageOpen = lowerPath === '/terms' || lowerPath === '/terms-of-service';
   const isPortalPageOpen = lowerPath === '/portal';
+  const isPaymentCallbackPageOpen = lowerPath === '/payment-callback';
 
   const activeBlogSlug = React.useMemo(() => {
     if (lowerPath.startsWith('/blog/') || lowerPath.startsWith('/articles/')) {
@@ -707,10 +709,10 @@ export default function App() {
     setMetaTag('meta[property="og:title"]', 'property', 'og:title', seo.title);
     setMetaTag('meta[property="og:description"]', 'property', 'og:description', seo.description);
     setMetaTag('meta[property="og:type"]', 'property', 'og:type', seo.ogType);
-    if (seo.ogImage) {
-      setMetaTag('meta[property="og:image"]', 'property', 'og:image', seo.ogImage);
-      setMetaTag('meta[name="twitter:image"]', 'name', 'twitter:image', seo.ogImage);
-    }
+    const activeOgImage = seo.ogImage || 'https://rabacenters.com/og-share-logo.png?v=2';
+    setMetaTag('meta[property="og:image"]', 'property', 'og:image', activeOgImage);
+    setMetaTag('meta[property="og:image:secure_url"]', 'property', 'og:image:secure_url', activeOgImage);
+    setMetaTag('meta[name="twitter:image"]', 'name', 'twitter:image', activeOgImage);
     setMetaTag('meta[name="twitter:title"]', 'name', 'twitter:title', seo.title);
     setMetaTag('meta[name="twitter:description"]', 'name', 'twitter:description', seo.description);
 
@@ -1239,6 +1241,13 @@ export default function App() {
               onBackToHome={handleBackToHome}
               onOpenBooking={handleOpenBooking}
               onNavigate={navigateTo}
+            />
+          </Suspense>
+        ) : isPaymentCallbackPageOpen ? (
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center text-[#0B3B36] dark:text-emerald-400 font-bold">جاري التحقق من حالة الدفع الإلكتروني...</div>}>
+            <PaymentCallbackPage
+              onGoPortal={() => navigateTo('/portal')}
+              onGoHome={handleBackToHome}
             />
           </Suspense>
         ) : isPortalPageOpen ? (

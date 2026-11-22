@@ -305,9 +305,65 @@ service cloud.firestore {
     }
 
     function isValidFinanceRecord(data) {
-      return data.id is string && data.id.size() > 0 && data.id.size() <= 128
+      return (!('id' in data) || (data.id is string && data.id.size() > 0 && data.id.size() <= 128))
         && (!('currencySymbol' in data) || (data.currencySymbol is string && data.currencySymbol.size() <= 20))
-        && (!('installmentNote' in data) || (data.installmentNote is string && data.installmentNote.size() <= 500));
+        && (!('currency' in data) || (data.currency is string && data.currency.size() <= 10))
+        && (!('installmentNote' in data) || (data.installmentNote is string && data.installmentNote.size() <= 500))
+        && (!('provider' in data) || (data.provider is string && data.provider in ['moyasar', 'tabby', 'tamara', 'manual']))
+        && (!('mode' in data) || (data.mode is string && data.mode in ['sandbox', 'live']))
+        && (!('isOnlinePaymentEnabled' in data) || data.isOnlinePaymentEnabled is bool)
+        && (!('publishableKey' in data) || (data.publishableKey is string && data.publishableKey.size() <= 300))
+        && !('secretKey' in data)
+        && !('webhookSecret' in data);
+    }
+
+    function isValidPaymentSecret(data) {
+      return (!('secretKey' in data) || (data.secretKey is string && data.secretKey.size() <= 300))
+        && (!('sandboxSecretKey' in data) || (data.sandboxSecretKey is string && data.sandboxSecretKey.size() <= 300))
+        && (!('liveSecretKey' in data) || (data.liveSecretKey is string && data.liveSecretKey.size() <= 300))
+        && (!('webhookSecret' in data) || (data.webhookSecret is string && data.webhookSecret.size() <= 300))
+        && (!('tabbySecretKey' in data) || (data.tabbySecretKey is string && data.tabbySecretKey.size() <= 300))
+        && (!('tamaraSecretKey' in data) || (data.tamaraSecretKey is string && data.tamaraSecretKey.size() <= 300))
+        && (!('updatedAtISO' in data) || (data.updatedAtISO is string && data.updatedAtISO.size() <= 50));
+    }
+
+    function isValidPaymentTransaction(data) {
+      return data.keys().hasAll(['id', 'invoiceNumber', 'clientName', 'clientPhone', 'serviceTitle', 'amount', 'currency', 'provider', 'mode', 'method', 'status'])
+        && data.id is string && data.id.size() > 0 && data.id.size() <= 128
+        && data.invoiceNumber is string && data.invoiceNumber.size() >= 3 && data.invoiceNumber.size() <= 60
+        && data.clientName is string && data.clientName.size() >= 2 && data.clientName.size() <= 150
+        && data.clientPhone is string && data.clientPhone.size() >= 7 && data.clientPhone.size() <= 35
+        && data.serviceTitle is string && data.serviceTitle.size() >= 2 && data.serviceTitle.size() <= 250
+        && data.amount is number && data.amount >= 0 && data.amount <= 1000000
+        && (!('subtotal' in data) || (data.subtotal is number && data.subtotal >= 0 && data.subtotal <= 1000000))
+        && (!('vatAmount' in data) || (data.vatAmount is number && data.vatAmount >= 0 && data.vatAmount <= 1000000))
+        && data.currency == 'SAR'
+        && data.provider is string && (data.provider in ['moyasar', 'tabby', 'tamara', 'manual'])
+        && data.mode is string && (data.mode in ['sandbox', 'live'])
+        && data.method is string && data.method.size() > 0 && data.method.size() <= 40
+        && data.status is string && (data.status in ['pending', 'paid', 'failed', 'refunded', 'manual_review'])
+        && (!('gatewayPaymentId' in data) || (data.gatewayPaymentId is string && data.gatewayPaymentId.size() <= 150))
+        && (!('appointmentId' in data) || (data.appointmentId is string && data.appointmentId.size() <= 128))
+        && (!('referenceNumber' in data) || (data.referenceNumber is string && data.referenceNumber.size() <= 80))
+        && (!('clientId' in data) || (data.clientId is string && data.clientId.size() <= 128))
+        && (!('fileNumber' in data) || (data.fileNumber is string && data.fileNumber.size() <= 50))
+        && (!('childName' in data) || (data.childName is string && data.childName.size() <= 150))
+        && (!('clientEmail' in data) || (data.clientEmail is string && data.clientEmail.size() <= 150))
+        && (!('receiptUrl' in data) || (data.receiptUrl is string && data.receiptUrl.size() <= 200000))
+        && (!('transferReference' in data) || (data.transferReference is string && data.transferReference.size() <= 120))
+        && (!('gatewayMessage' in data) || (data.gatewayMessage is string && data.gatewayMessage.size() <= 500))
+        && (!('adminNotes' in data) || (data.adminNotes is string && data.adminNotes.size() <= 2000))
+        && (!('createdAtISO' in data) || (data.createdAtISO is string && data.createdAtISO.size() <= 50))
+        && (!('verifiedAtISO' in data) || (data.verifiedAtISO is string && data.verifiedAtISO.size() <= 50));
+    }
+
+    function isValidPaymentCreate(paymentId, data) {
+      return isValidPaymentTransaction(data)
+        && data.id == paymentId
+        && (data.status in ['pending', 'manual_review'])
+        && ('createdAt' in data) && data.createdAt == request.time
+        && (!('verifiedAt' in data))
+        && (!('clientId' in data) || data.clientId == '' || (isSignedIn() && data.clientId == request.auth.uid));
     }
 
     // --- Collection Rule Blocks ---
@@ -600,7 +656,39 @@ service cloud.firestore {
       allow delete: if isSuperAdmin() && isValidId(userId);
     }
 
-    // 11. Connection Test Document
+    // 11. Payment Gateway Secrets (Strictly Super-Admin Only — Never Public or Regular Staff)
+    match /payment_secrets/{secretId} {
+      allow get: if isSuperAdmin() && isValidId(secretId);
+      allow list: if isSuperAdmin();
+      allow create, update: if isSuperAdmin() && isValidId(secretId) && isValidPaymentSecret(incoming());
+      allow delete: if isSuperAdmin() && isValidId(secretId);
+    }
+
+    // 12. Online Payments & VAT Invoices Ledger
+    // Clients can create pending/manual_review intents & read only their own payments.
+    // Status updates (paid/failed/refunded) are strictly restricted to Admin / Server Cloud Functions.
+    match /payments/{paymentId} {
+      allow create: if isValidId(paymentId) && (
+        isValidPaymentCreate(paymentId, incoming())
+        || (isAdmin() && isValidPaymentTransaction(incoming()) && incoming().id == paymentId)
+      );
+      allow get: if isValidId(paymentId) && (
+        (isSignedIn() && existing().clientId == request.auth.uid)
+        || isAdmin()
+      );
+      allow list: if isSignedIn() && (
+        resource.data.clientId == request.auth.uid
+        || isAdmin()
+      );
+      allow update: if isAdmin()
+        && isValidId(paymentId)
+        && isValidPaymentTransaction(incoming())
+        && incoming().id == existing().id
+        && incoming().createdAt == existing().createdAt;
+      allow delete: if isSuperAdmin() && isValidId(paymentId);
+    }
+
+    // 13. Connection Test Document
     match /test/connection {
       allow get: if true;
     }

@@ -475,3 +475,190 @@ export const DEFAULT_TRACKING_PIXELS: TrackingPixelsConfig = {
   custom_body: { script: '', is_active: false }
 };
 
+// ============================================================================
+// ONLINE PAYMENT SYSTEM & GATEWAY CONFIGURATION
+// ============================================================================
+
+export type PaymentGatewayProvider = 'moyasar' | 'tabby' | 'tamara';
+export type PaymentGatewayMode = 'sandbox' | 'live';
+export type PaymentMethodKey = 'mada' | 'creditcard' | 'applepay' | 'stcpay' | 'bank_transfer' | 'tabby' | 'tamara';
+export type PaymentTransactionStatus = 'pending' | 'paid' | 'failed' | 'refunded' | 'manual_review';
+
+export interface BankTransferConfig {
+  enabled: boolean;
+  bankNameAr: string;
+  bankNameEn: string;
+  accountNameAr: string;
+  accountNameEn: string;
+  iban: string;
+  accountNumber?: string;
+  instructionsAr?: string;
+  instructionsEn?: string;
+}
+
+export interface InstallmentProviderPublicConfig {
+  enabled: boolean;
+  publicKey?: string;
+  merchantCode?: string;
+  minAmount?: number;
+  maxAmount?: number;
+}
+
+/**
+ * Publicly readable, non-secret checkout configuration stored at
+ * `site_settings/payment_public_config`. NEVER contains secret keys.
+ */
+export interface PaymentPublicConfig {
+  isOnlinePaymentEnabled: boolean;
+  provider: PaymentGatewayProvider;
+  mode: PaymentGatewayMode;
+  publishableKey: string;
+  currency: string;
+  enabledMethods: {
+    mada: boolean;
+    creditcard: boolean;
+    applepay: boolean;
+    stcpay: boolean;
+    bank_transfer: boolean;
+    tabby?: boolean;
+    tamara?: boolean;
+  };
+  bankTransfer: BankTransferConfig;
+  tabby?: InstallmentProviderPublicConfig;
+  tamara?: InstallmentProviderPublicConfig;
+  vatEnabled: boolean;
+  vatRate: number;
+  isVatInclusive: boolean;
+  clinicTaxNumber: string;
+  clinicCommercialReg?: string;
+  applePayMerchantId?: string;
+  updatedAtISO?: string;
+}
+
+/**
+ * Full admin-only payment gateway operational configuration stored at
+ * `finance/payment_gateway_config`. Secret keys live strictly in
+ * `payment_secrets/moyasar` or server environment variables.
+ */
+export interface PaymentGatewayAdminConfig extends PaymentPublicConfig {
+  id?: string;
+  type?: 'gateway_config';
+  title?: string;
+  webhookUrl?: string;
+  hasSecretKeyConfigured?: boolean;
+  hasWebhookSecretConfigured?: boolean;
+  lastConnectionTestAt?: string;
+  lastConnectionTestStatus?: 'ok' | 'error' | 'untested';
+  lastConnectionTestMessage?: string;
+  updatedBy?: string;
+}
+
+/**
+ * Strictly Super-Admin-only secret credentials stored at `payment_secrets/moyasar`.
+ */
+export interface PaymentSecretsConfig {
+  provider: PaymentGatewayProvider;
+  secretKey?: string;
+  sandboxSecretKey?: string;
+  liveSecretKey?: string;
+  webhookSecret?: string;
+  tabbySecretKey?: string;
+  tamaraSecretKey?: string;
+  updatedAtISO?: string;
+}
+
+export interface PaymentTransaction {
+  id: string;
+  invoiceNumber: string;
+  gatewayPaymentId?: string;
+  provider: PaymentGatewayProvider | 'manual';
+  mode: PaymentGatewayMode;
+  appointmentId?: string;
+  referenceNumber?: string;
+  clientId?: string;
+  fileNumber?: string;
+  clientName: string;
+  childName?: string;
+  clientPhone: string;
+  clientEmail?: string;
+  serviceId?: string;
+  serviceTitle: string;
+  itemType?: 'appointment' | 'package' | 'course' | 'offer' | 'store_order';
+  subtotal: number;
+  vatAmount: number;
+  vatRate?: number;
+  amount: number;
+  currency: 'SAR';
+  method: PaymentMethodKey;
+  cardBrand?: string;
+  cardLast4?: string;
+  status: PaymentTransactionStatus;
+  gatewayStatus?: string;
+  gatewayMessage?: string;
+  receiptUrl?: string;
+  transferReference?: string;
+  adminNotes?: string;
+  verifiedByServer?: boolean;
+  verifiedAt?: string;
+  verifiedAtISO?: string;
+  createdAt?: string;
+  createdAtISO?: string;
+  updatedAt?: string;
+}
+
+export interface CheckoutItemPayload {
+  appointmentId?: string;
+  referenceNumber?: string;
+  serviceId?: string;
+  serviceTitle: string;
+  itemType?: 'appointment' | 'package' | 'course' | 'offer' | 'store_order';
+  baseAmount: number;
+  clientId?: string;
+  fileNumber?: string;
+  clientName: string;
+  childName?: string;
+  clientPhone: string;
+  clientEmail?: string;
+  branch?: string;
+  notes?: string;
+}
+
+export const DEFAULT_BANK_TRANSFER_CONFIG: BankTransferConfig = {
+  enabled: true,
+  bankNameAr: 'مصرف الراجحي',
+  bankNameEn: 'Al Rajhi Bank',
+  accountNameAr: 'مركز رابا لتأهيل أطفال التوحد',
+  accountNameEn: 'Raba Center for Autism Rehabilitation',
+  iban: '',
+  accountNumber: '',
+  instructionsAr: 'يرجى إرفاق صورة إيصال التحويل البنكي مع ذكر رقم الحجز أو اسم الطفل في خانة الملاحظات لتأكيد الحجز فوراً.',
+  instructionsEn: 'Please attach the bank transfer receipt image with the booking reference or child name for prompt confirmation.'
+};
+
+export const DEFAULT_PAYMENT_PUBLIC_CONFIG: PaymentPublicConfig = {
+  isOnlinePaymentEnabled: false,
+  provider: 'moyasar',
+  mode: 'sandbox',
+  publishableKey: '',
+  currency: 'SAR',
+  enabledMethods: {
+    mada: true,
+    creditcard: true,
+    applepay: true,
+    stcpay: true,
+    bank_transfer: true,
+    tabby: false,
+    tamara: false
+  },
+  bankTransfer: DEFAULT_BANK_TRANSFER_CONFIG,
+  tabby: { enabled: false, publicKey: '', merchantCode: '', minAmount: 100, maxAmount: 10000 },
+  tamara: { enabled: false, publicKey: '', merchantCode: '', minAmount: 100, maxAmount: 10000 },
+  vatEnabled: true,
+  vatRate: 15,
+  isVatInclusive: false,
+  clinicTaxNumber: '310000000000003',
+  clinicCommercialReg: '',
+  applePayMerchantId: ''
+};
+
+

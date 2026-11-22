@@ -370,18 +370,31 @@ export function updateTabFavicon(settings?: SiteLogoSettings): void {
   if (typeof document === 'undefined') return;
   try {
     const current = settings || getStoredLogoSettings();
-    const faviconUrl = (current.logoSource === 'custom' && current.customLogoUrl)
+    const isAdminUploadedCustomLogo =
+      current.logoSource === 'custom' &&
+      Boolean(current.customLogoUrl) &&
+      !current.customLogoUrl.includes('/logo/raba_puzzle_brain.png');
+
+    const faviconUrl = isAdminUploadedCustomLogo
       ? current.customLogoUrl
-      : '/logo/raba_puzzle_brain.png';
+      : '/favicon-192x192.png?v=2';
 
     const iconLinks = document.querySelectorAll<HTMLLinkElement>("link[rel*='icon']");
     if (iconLinks.length > 0) {
       iconLinks.forEach(link => {
-        link.href = faviconUrl;
+        const rel = (link.getAttribute('rel') || '').toLowerCase();
+        if (rel.includes('apple-touch-icon')) {
+          link.href = isAdminUploadedCustomLogo ? faviconUrl : '/apple-touch-icon.png?v=2';
+        } else if (rel === 'shortcut icon') {
+          link.href = isAdminUploadedCustomLogo ? faviconUrl : '/favicon.ico?v=2';
+        } else {
+          link.href = faviconUrl;
+        }
       });
     } else {
       const link = document.createElement('link');
       link.rel = 'icon';
+      link.type = 'image/png';
       link.href = faviconUrl;
       document.head.appendChild(link);
     }

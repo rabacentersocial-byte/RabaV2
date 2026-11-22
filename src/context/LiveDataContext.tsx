@@ -1,9 +1,12 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import {
   BlogPost,
+  DEFAULT_BANK_TRANSFER_CONFIG,
+  DEFAULT_PAYMENT_PUBLIC_CONFIG,
   DEFAULT_TRACKING_PIXELS,
   OfferData,
   ParentReview,
+  PaymentPublicConfig,
   ServiceItem,
   Specialist,
   TherapyPackage,
@@ -166,6 +169,7 @@ export interface LiveDataContextValue {
   specialistCardSettings: Record<string, SpecialistImageSetting>;
   globalCardSettings: GlobalCardSettings;
   pricingGlobalSettings: PricingGlobalSettings;
+  paymentPublicConfig: PaymentPublicConfig;
   specialists: Specialist[];
   testimonials: ParentReview[];
   blogPosts: BlogPost[];
@@ -1109,6 +1113,33 @@ export const LiveDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return { ...DEFAULT_PRICING_GLOBAL_SETTINGS };
   }, [rawSettings.raba_pricing_global_settings]);
 
+  const paymentPublicConfig = useMemo<PaymentPublicConfig>(() => {
+    const remote = rawSettings.payment_public_config;
+    if (remote && typeof remote === 'object') {
+      return {
+        ...DEFAULT_PAYMENT_PUBLIC_CONFIG,
+        ...remote,
+        enabledMethods: {
+          ...DEFAULT_PAYMENT_PUBLIC_CONFIG.enabledMethods,
+          ...(remote.enabledMethods || {}),
+        },
+        bankTransfer: {
+          ...DEFAULT_BANK_TRANSFER_CONFIG,
+          ...(remote.bankTransfer || {}),
+        },
+        tabby: {
+          ...DEFAULT_PAYMENT_PUBLIC_CONFIG.tabby,
+          ...(remote.tabby || {}),
+        },
+        tamara: {
+          ...DEFAULT_PAYMENT_PUBLIC_CONFIG.tamara,
+          ...(remote.tamara || {}),
+        },
+      };
+    }
+    return { ...DEFAULT_PAYMENT_PUBLIC_CONFIG };
+  }, [rawSettings.payment_public_config]);
+
   // --- SPECIALISTS ---
   const { specialists, isAuthoritativeSpecialists } = useMemo(() => {
     if (loadingSettings || loadingSpecialists) {
@@ -1301,6 +1332,7 @@ export const LiveDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       specialistCardSettings,
       globalCardSettings,
       pricingGlobalSettings,
+      paymentPublicConfig,
       specialists,
       testimonials,
       blogPosts,
@@ -1353,6 +1385,7 @@ export const LiveDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       specialistCardSettings,
       globalCardSettings,
       pricingGlobalSettings,
+      paymentPublicConfig,
       specialists,
       testimonials,
       blogPosts,
@@ -1380,4 +1413,12 @@ export function useLiveDataOptional(): LiveDataContextValue | null {
 export function useLiveModules(): SiteModulesVisibility {
   const ctx = useLiveDataOptional();
   return ctx ? ctx.modules : DEFAULT_MODULES_VISIBILITY;
+}
+
+/**
+ * Convenience hook returning live public payment gateway settings (non-secret).
+ */
+export function usePaymentPublicConfig(): PaymentPublicConfig {
+  const ctx = useLiveDataOptional();
+  return ctx ? ctx.paymentPublicConfig : DEFAULT_PAYMENT_PUBLIC_CONFIG;
 }

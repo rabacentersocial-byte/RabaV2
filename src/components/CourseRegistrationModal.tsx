@@ -24,9 +24,10 @@ import {
   MIDDLE_EAST_COUNTRIES
 } from '../data/coursesData';
 import { useLanguage } from '../context/LanguageContext';
-import { useLiveDataOptional } from '../context/LiveDataContext';
+import { useLiveDataOptional, usePaymentPublicConfig } from '../context/LiveDataContext';
 import { dispatchCustomerRequestAsync } from '../data/customerRequests';
-import { Appointment } from '../types';
+import { Appointment, CheckoutItemPayload } from '../types';
+import { CheckoutModal } from './CheckoutModal';
 
 interface CourseRegistrationModalProps {
   course: CourseItem | null;
@@ -43,6 +44,7 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
 }) => {
   const { isArabic } = useLanguage();
   const live = useLiveDataOptional();
+  const paymentPublicConfig = usePaymentPublicConfig();
   const coursesSettings: CoursesSectionSettings = live?.coursesSettings || DEFAULT_COURSES_SETTINGS;
 
   const [fullName, setFullName] = useState('');
@@ -57,6 +59,9 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [submittedRef, setSubmittedRef] = useState('');
+  const [submittedRequestId, setSubmittedRequestId] = useState('');
+  const [submittedPrice, setSubmittedPrice] = useState(0);
+  const [checkoutItem, setCheckoutItem] = useState<CheckoutItemPayload | null>(null);
 
   const paymentConfig = useMemo(() => ({
     tamara: coursesSettings.paymentOptions?.tamara !== false,
@@ -220,6 +225,8 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
       });
 
       setSubmittedRef(created?.referenceNumber || '');
+      setSubmittedRequestId(created?.id || '');
+      setSubmittedPrice(parsedPrice);
       setIsSuccess(true);
     } catch (err: any) {
       console.error('[CourseRegistrationModal Error]:', err);
@@ -362,23 +369,52 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
                 </div>
               </div>
 
-              <div className="pt-1 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 max-w-md mx-auto">
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 min-h-[46px] px-5 py-3 bg-[#047857] hover:bg-[#065F46] text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm transition-colors"
-                >
-                  <MessageCircle className="w-4 h-4 shrink-0" />
-                  <span>{isArabic ? 'تأكيد فوري عبر واتساب' : 'Confirm on WhatsApp'}</span>
-                </a>
-                <button
-                  type="button"
-                  onClick={handleReset}
-                  className="min-h-[46px] px-6 py-3 bg-[#161B26]/[0.06] hover:bg-[#161B26]/[0.12] dark:bg-white/10 dark:hover:bg-white/16 text-[#161B26] dark:text-[#F8FAFC] font-bold rounded-xl text-sm transition-colors cursor-pointer"
-                >
-                  {isArabic ? 'إغلاق' : 'Close'}
-                </button>
+              <div className="pt-1 space-y-2.5 max-w-md mx-auto">
+                {paymentPublicConfig.isOnlinePaymentEnabled && submittedPrice > 0 && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCheckoutItem({
+                        appointmentId: submittedRequestId || undefined,
+                        referenceNumber: submittedRef || undefined,
+                        serviceId: course?.id || 'course',
+                        serviceTitle: courseTitle,
+                        itemType: 'course',
+                        baseAmount: submittedPrice,
+                        clientName: fullName.trim() || 'متدرب',
+                        clientPhone: phone.trim(),
+                        clientEmail: email.trim()
+                      })
+                    }
+                    className="w-full min-h-[46px] px-5 py-3 bg-[#0B3B36] hover:bg-[#082925] text-white font-extrabold rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer"
+                  >
+                    <CreditCard className="w-4 h-4 shrink-0 text-emerald-300" />
+                    <span>
+                      {isArabic
+                        ? `إتمام الدفع الإلكتروني الآن (${submittedPrice.toLocaleString('en-US')} ر.س)`
+                        : `Pay Online Now (${submittedPrice.toLocaleString('en-US')} SAR)`}
+                    </span>
+                  </button>
+                )}
+
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 min-h-[46px] px-5 py-3 bg-[#047857] hover:bg-[#065F46] text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm transition-colors"
+                  >
+                    <MessageCircle className="w-4 h-4 shrink-0" />
+                    <span>{isArabic ? 'تأكيد فوري عبر واتساب' : 'Confirm on WhatsApp'}</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className="min-h-[46px] px-6 py-3 bg-[#161B26]/[0.06] hover:bg-[#161B26]/[0.12] dark:bg-white/10 dark:hover:bg-white/16 text-[#161B26] dark:text-[#F8FAFC] font-bold rounded-xl text-sm transition-colors cursor-pointer"
+                  >
+                    {isArabic ? 'إغلاق' : 'Close'}
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
@@ -659,7 +695,16 @@ export const CourseRegistrationModal: React.FC<CourseRegistrationModalProps> = (
     </div>
   );
 
-  return createPortal(modalNode, document.body);
+  return (
+    <>
+      {createPortal(modalNode, document.body)}
+      <CheckoutModal
+        isOpen={Boolean(checkoutItem)}
+        onClose={() => setCheckoutItem(null)}
+        item={checkoutItem}
+      />
+    </>
+  );
 };
 
 export default CourseRegistrationModal;

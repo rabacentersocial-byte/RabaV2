@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   ClipboardList,
   Clock,
+  CreditCard,
   Edit3,
   ExternalLink,
   Eye,
@@ -42,6 +43,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import {
   Appointment,
+  CheckoutItemPayload,
   FamilyMember,
   MemberRecord,
   MemberReportType,
@@ -53,9 +55,10 @@ import {
   updateClientProfileInFirestore,
 } from '../services/firestoreService';
 import { ClientProfileOnboardingForm } from './ClientProfileOnboardingForm';
+import { CheckoutModal } from './CheckoutModal';
 import { SERVICES, THERAPY_PACKAGES, TIME_SLOTS } from '../data/mockData';
 import { BRANCHES_DATA, BranchItem } from '../data/branchesData';
-import { useLiveDataOptional } from '../context/LiveDataContext';
+import { useLiveDataOptional, usePaymentPublicConfig } from '../context/LiveDataContext';
 import {
   generateRequestReference,
   saveAndBroadcastCustomerRequestAsync,
@@ -168,6 +171,28 @@ export const ClientPortalPage: React.FC<ClientPortalPageProps> = ({
 
   // Full Report / Sub-file Preview Modal
   const [viewingRecord, setViewingRecord] = useState<MemberRecord | null>(null);
+
+  // Online Payment Checkout State
+  const paymentPublicConfig = usePaymentPublicConfig();
+  const [portalCheckoutItem, setPortalCheckoutItem] = useState<CheckoutItemPayload | null>(null);
+
+  const openPortalCheckoutForAppointment = (apt: Appointment) => {
+    setPortalCheckoutItem({
+      appointmentId: apt.id,
+      referenceNumber: apt.referenceNumber,
+      serviceId: apt.serviceId,
+      serviceTitle: apt.serviceTitle,
+      itemType: apt.requestType === 'package' ? 'package' : apt.requestType === 'course' ? 'course' : 'appointment',
+      baseAmount: Number(apt.amount) || 0,
+      clientId: user?.uid || apt.clientId || '',
+      fileNumber: clientProfile?.fileNumber || '',
+      clientName: apt.guardianName || clientProfile?.fullName || '',
+      childName: apt.familyMemberName || apt.childName || '',
+      clientPhone: apt.guardianPhone || clientProfile?.phone || '',
+      clientEmail: apt.guardianEmail || clientProfile?.email || user?.email || '',
+      branch: apt.branch
+    });
+  };
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1513,6 +1538,26 @@ export const ClientPortalPage: React.FC<ClientPortalPageProps> = ({
                                     </span>
                                   </div>
                                 </div>
+
+                                {paymentPublicConfig.isOnlinePaymentEnabled &&
+                                  Number(apt.amount) > 0 &&
+                                  apt.paymentStatus !== 'paid' && (
+                                    <div className="pt-2 border-t border-slate-200/60 dark:border-white/10 flex items-center justify-between gap-2">
+                                      <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300">
+                                        {isArabic
+                                          ? `المبلغ المستحق: ${Number(apt.amount).toLocaleString('en-US')} ر.س`
+                                          : `Amount Due: ${Number(apt.amount).toLocaleString('en-US')} SAR`}
+                                      </span>
+                                      <button
+                                        type="button"
+                                        onClick={() => openPortalCheckoutForAppointment(apt)}
+                                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#0B3B36] hover:bg-[#082925] text-white text-[11px] font-extrabold cursor-pointer transition-all"
+                                      >
+                                        <CreditCard className="w-3.5 h-3.5 text-emerald-300" />
+                                        <span>{isArabic ? 'ادفع الآن' : 'Pay Now'}</span>
+                                      </button>
+                                    </div>
+                                  )}
                               </div>
                             );
                           })}
@@ -2077,6 +2122,26 @@ export const ClientPortalPage: React.FC<ClientPortalPageProps> = ({
                                   )}
                                 </div>
                               )}
+
+                              {paymentPublicConfig.isOnlinePaymentEnabled &&
+                                Number(apt.amount) > 0 &&
+                                apt.paymentStatus !== 'paid' && (
+                                  <div className="pt-2 border-t border-slate-200/60 dark:border-white/10 flex items-center justify-between gap-2">
+                                    <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300">
+                                      {isArabic
+                                        ? `المبلغ المستحق: ${Number(apt.amount).toLocaleString('en-US')} ر.س`
+                                        : `Amount Due: ${Number(apt.amount).toLocaleString('en-US')} SAR`}
+                                    </span>
+                                    <button
+                                      type="button"
+                                      onClick={() => openPortalCheckoutForAppointment(apt)}
+                                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#0B3B36] hover:bg-[#082925] text-white text-[11px] font-extrabold cursor-pointer transition-all"
+                                    >
+                                      <CreditCard className="w-3.5 h-3.5 text-emerald-300" />
+                                      <span>{isArabic ? 'ادفع إلكترونياً الآن' : 'Pay Online Now'}</span>
+                                    </button>
+                                  </div>
+                                )}
                             </div>
                           );
                         })}
@@ -2146,6 +2211,23 @@ export const ClientPortalPage: React.FC<ClientPortalPageProps> = ({
                   <div><strong>{isArabic ? 'الموعد:' : 'Date & Time:'}</strong> {confirmedBooking.date} ({confirmedBooking.timeSlot})</div>
                 </div>
                 <div className="flex flex-col gap-2">
+                  {paymentPublicConfig.isOnlinePaymentEnabled && Number(confirmedBooking.amount) > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        openPortalCheckoutForAppointment(confirmedBooking);
+                        setIsPortalBookingOpen(false);
+                      }}
+                      className="w-full py-3 px-4 rounded-xl bg-[#0B3B36] hover:bg-[#082925] text-white font-black text-xs sm:text-sm inline-flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <CreditCard className="w-4 h-4 text-emerald-300" />
+                      <span>
+                        {isArabic
+                          ? `إتمام الدفع الإلكتروني الآن (${Number(confirmedBooking.amount).toLocaleString('en-US')} ر.س)`
+                          : `Pay Online Now (${Number(confirmedBooking.amount).toLocaleString('en-US')} SAR)`}
+                      </span>
+                    </button>
+                  )}
                   <a
                     href={getCustomerWhatsAppMessage(confirmedBooking, isArabic)}
                     target="_blank"
@@ -2719,6 +2801,13 @@ export const ClientPortalPage: React.FC<ClientPortalPageProps> = ({
           </div>
         </div>
       )}
+
+      {/* Unified Online Checkout Modal */}
+      <CheckoutModal
+        isOpen={Boolean(portalCheckoutItem)}
+        onClose={() => setPortalCheckoutItem(null)}
+        item={portalCheckoutItem}
+      />
     </div>
   );
 };

@@ -1028,7 +1028,7 @@ const ORG_NODE = {
   url: `${SITE_URL}/`,
   telephone: '+966575100100',
   email: 'info@rabacenters.com',
-  logo: `${SITE_URL}/logo/raba_puzzle_brain.png`,
+  logo: `${SITE_URL}/favicon-512x512.png?v=2`,
   address: {
     '@type': 'PostalAddress',
     addressCountry: 'SA',
@@ -1092,7 +1092,7 @@ export function generateBlogPostJsonLd(
     ? post.image.startsWith('http')
       ? post.image
       : `${SITE_URL}${post.image.startsWith('/') ? '' : '/'}${post.image}`
-    : `${SITE_URL}/favicon-512x512.png`;
+    : `${SITE_URL}/og-share-logo.png?v=2`;
   const datePublished = normalizeSchemaIsoDate(post?.publishDate, '2026-11-14');
   const dateModified = normalizeSchemaIsoDate(post?.updatedAt || post?.publishDate, datePublished);
 
@@ -1104,7 +1104,7 @@ export function generateBlogPostJsonLd(
     url: `${SITE_URL}/`,
     logo: {
       '@type': 'ImageObject',
-      url: `${SITE_URL}/logo/raba_puzzle_brain.png`,
+      url: `${SITE_URL}/favicon-512x512.png?v=2`,
     },
     telephone: '+966575100100',
     email: 'info@rabacenters.com',
@@ -1137,7 +1137,7 @@ export function generateBlogPostJsonLd(
       url: `${SITE_URL}/`,
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE_URL}/logo/raba_puzzle_brain.png`,
+        url: `${SITE_URL}/favicon-512x512.png?v=2`,
       },
     },
   };
@@ -1210,8 +1210,8 @@ export function resolveRouteSeo(pathname: string, blogPosts: ArticleSeed[] = [])
               url: canonical,
               telephone: `+966${branchSeo.phone.replace(/^0/, '')}`,
               email: 'info@rabacenters.com',
-              logo: `${SITE_URL}/logo/raba_puzzle_brain.png`,
-              image: `${SITE_URL}/images/hero/card_1_journey.webp`,
+              logo: `${SITE_URL}/favicon-512x512.png?v=2`,
+              image: `${SITE_URL}/og-share-logo.png?v=2`,
               parentOrganization: { '@id': `${SITE_URL}/#organization` },
               address: {
                 '@type': 'PostalAddress',
@@ -2195,6 +2195,10 @@ export function injectRouteSeoHtml(
     html = html.replace(
       /<meta\s+[^>]*property=["']og:image["'][^>]*\/?>/i,
       `<meta property="og:image" content="${escImg}" />`
+    );
+    html = html.replace(
+      /<meta\s+[^>]*property=["']og:image:secure_url["'][^>]*\/?>/i,
+      `<meta property="og:image:secure_url" content="${escImg}" />`
     );
     html = html.replace(
       /<meta\s+[^>]*name=["']twitter:image["'][^>]*\/?>/i,

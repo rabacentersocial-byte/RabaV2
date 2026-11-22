@@ -379,7 +379,7 @@
     },
     "SiteSetting": {
       "title": "SiteSetting",
-      "description": "Dynamic site configuration, module customizer data, and page content",
+      "description": "Dynamic site configuration, module customizer data, public payment config, and page content",
       "type": "object",
       "properties": {
         "key": { "type": "string" },
@@ -387,6 +387,55 @@
         "updatedAt": { "type": "string" }
       },
       "required": ["data"]
+    },
+    "PaymentTransaction": {
+      "title": "PaymentTransaction",
+      "description": "Online payment ledger transaction and Arabic VAT invoice record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "gatewayPaymentId": { "type": "string", "maxLength": 150 },
+        "invoiceNumber": { "type": "string", "maxLength": 60 },
+        "appointmentId": { "type": "string", "maxLength": 128 },
+        "referenceNumber": { "type": "string", "maxLength": 80 },
+        "clientId": { "type": "string", "maxLength": 128 },
+        "fileNumber": { "type": "string", "maxLength": 50 },
+        "clientName": { "type": "string", "maxLength": 150 },
+        "childName": { "type": "string", "maxLength": 150 },
+        "clientPhone": { "type": "string", "minLength": 7, "maxLength": 35 },
+        "clientEmail": { "type": "string", "maxLength": 150 },
+        "serviceTitle": { "type": "string", "maxLength": 250 },
+        "subtotal": { "type": "number" },
+        "vatAmount": { "type": "number" },
+        "amount": { "type": "number" },
+        "currency": { "type": "string", "enum": ["SAR"] },
+        "provider": { "type": "string", "enum": ["moyasar", "tabby", "tamara", "manual"] },
+        "mode": { "type": "string", "enum": ["sandbox", "live"] },
+        "method": { "type": "string", "maxLength": 40 },
+        "status": { "type": "string", "enum": ["pending", "paid", "failed", "refunded", "manual_review"] },
+        "receiptUrl": { "type": "string", "maxLength": 200000 },
+        "transferReference": { "type": "string", "maxLength": 120 },
+        "gatewayMessage": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string" },
+        "createdAtISO": { "type": "string", "maxLength": 50 },
+        "verifiedAt": { "type": "string" },
+        "verifiedAtISO": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "invoiceNumber", "clientName", "clientPhone", "serviceTitle", "amount", "currency", "provider", "mode", "method", "status"]
+    },
+    "PaymentSecret": {
+      "title": "PaymentSecret",
+      "description": "Super-Admin restricted payment gateway secret keys and webhook secrets",
+      "type": "object",
+      "properties": {
+        "secretKey": { "type": "string", "maxLength": 300 },
+        "sandboxSecretKey": { "type": "string", "maxLength": 300 },
+        "liveSecretKey": { "type": "string", "maxLength": 300 },
+        "webhookSecret": { "type": "string", "maxLength": 300 },
+        "tabbySecretKey": { "type": "string", "maxLength": 300 },
+        "tamaraSecretKey": { "type": "string", "maxLength": 300 },
+        "updatedAtISO": { "type": "string", "maxLength": 50 }
+      }
     }
   },
   "firestore": {
@@ -461,6 +510,14 @@
     "/admins/{adminId}": {
       "schema": "Admin",
       "description": "Collection of administrative users with privileged system access"
+    },
+    "/payments/{paymentId}": {
+      "schema": "PaymentTransaction",
+      "description": "Collection of online payments, bank transfer receipts, and Arabic VAT invoices"
+    },
+    "/payment_secrets/{secretId}": {
+      "schema": "PaymentSecret",
+      "description": "Strictly Super-Admin restricted payment gateway secret keys and webhook tokens"
     }
   }
 }
