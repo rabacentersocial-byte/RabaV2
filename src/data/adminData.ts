@@ -421,7 +421,21 @@ export const saveStoredAdminSession = (
   rememberMe = true
 ): void => {
   try {
-    const sessionToken = token || btoa(`${user.id}:${user.username}:${Date.now()}`);
+    let existingSignedToken = '';
+    if (!token) {
+      try {
+        const prevRaw = localStorage.getItem(SESSION_STORAGE_KEY);
+        if (prevRaw) {
+          const prev = JSON.parse(prevRaw);
+          if (typeof prev?.token === 'string' && prev.token.includes('.')) {
+            existingSignedToken = prev.token;
+          }
+        }
+      } catch {
+        // ignore
+      }
+    }
+    const sessionToken = token || existingSignedToken || btoa(`${user.id}:${user.username}:${Date.now()}`);
     const ttlMs = rememberMe ? 7 * 24 * 60 * 60 * 1000 : 12 * 60 * 60 * 1000;
     const sessionData = {
       userId: user.id,
@@ -438,6 +452,74 @@ export const saveStoredAdminSession = (
     window.dispatchEvent(new CustomEvent('raba_admin_auth_changed', { detail: user }));
   } catch {
     // ignore
+  }
+};
+
+export interface SaveCredentialsPayload {
+  userId: string;
+  username: string;
+  email: string;
+  password?: string;
+  profile?: AdminUser;
+}
+
+/**
+ * Persists custom admin username/password securely on the server (scrypt-hashed in data/admin_credentials.json)
+ * and atomically upserts the non-sensitive user profile into data/admin_users.json.
+ */
+export const saveAdminUserCredentialsOnServer = async (
+  payload: SaveCredentialsPayload
+): Promise<{ success: boolean; error?: string }> => {
+  try {
+    const { getAdminHeadersAsync } = await import('../utils/persistentSync');
+    const headers = await getAdminHeadersAsync();
+    const cleanProfile = payload.profile
+      ? (({ password: _p, ...rest }) => rest)(payload.profile)
+      : undefined;
+
+    const res = await fetch('/api/admin/users/credentials', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        userId: payload.userId,
+        username: payload.username,
+        email: payload.email,
+        ...(payload.password ? { password: payload.password } : {}),
+        ...(cleanProfile ? { profile: cleanProfile } : {})
+      })
+    });
+
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || !json.success) {
+      return {
+        success: false,
+        error: json.error || 'تعذر حفظ كلمة المرور على الخادم. يرجى إعادة تسجيل الدخول والمحاولة مجدداً.'
+      };
+    }
+    return { success: true };
+  } catch (err) {
+    console.error('[AdminData] Failed to save user credentials on server:', err);
+    return {
+      success: false,
+      error: 'تعذر الاتصال بالخادم لحفظ بيانات الدخول.'
+    };
+  }
+};
+
+/**
+ * Removes deleted admin user's server-side hashed credentials.
+ */
+export const deleteAdminUserCredentialsOnServer = async (userId: string): Promise<boolean> => {
+  try {
+    const { getAdminHeadersAsync } = await import('../utils/persistentSync');
+    const headers = await getAdminHeadersAsync();
+    const res = await fetch(`/api/admin/users/credentials/${encodeURIComponent(userId)}`, {
+      method: 'DELETE',
+      headers
+    });
+    return res.ok;
+  } catch {
+    return false;
   }
 };
 
@@ -712,27 +794,41 @@ export const authenticateAdminWithGoogle = (
   const sessionToken = btoa(`${resolvedUser.id}:${resolvedUser.username}:${Date.now()}`);
   saveStoredAdminSession(resolvedUser, sessionToken, rememberMe);
 
-  // Best-effort exchange of verified Firebase ID token for HMAC-signed backend session token
-  if (typeof (firebaseUser as any).getIdToken === 'function') {
-    (firebaseUser as any)
-      .getIdToken()
-      .then((idToken: string) =>
-        fetch('/api/admin/firebase-session', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${idToken}`
-          }
-        })
-      )
-      .then((res: Response) => (res.ok ? res.json() : null))
-      .then((data: any) => {
-        if (data?.success && typeof data.token === 'string') {
-          saveStoredAdminSession(resolvedUser as AdminUser, data.token, rememberMe);
+  // Always exchange verified Firebase ID token for an HMAC-signed backend session token
+  const obtainIdToken = async (): Promise<string | null> => {
+    try {
+      if (typeof (firebaseUser as any).getIdToken === 'function') {
+        return await (firebaseUser as any).getIdToken();
+      }
+      const { getLazyAuth } = await import('../lib/firebase');
+      const authInstance = await getLazyAuth();
+      if (authInstance.currentUser && typeof authInstance.currentUser.getIdToken === 'function') {
+        return await authInstance.currentUser.getIdToken();
+      }
+    } catch {
+      // ignore
+    }
+    return null;
+  };
+
+  obtainIdToken()
+    .then((idToken) => {
+      if (!idToken) return null;
+      return fetch('/api/admin/firebase-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${idToken}`
         }
-      })
-      .catch(() => {});
-  }
+      });
+    })
+    .then((res) => (res && res.ok ? res.json() : null))
+    .then((data: any) => {
+      if (data?.success && typeof data.token === 'string') {
+        saveStoredAdminSession(resolvedUser as AdminUser, data.token, rememberMe);
+      }
+    })
+    .catch(() => {});
 
   return resolvedUser;
 };

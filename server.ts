@@ -22,6 +22,7 @@ import {
   csrfProtection,
   sanitizeString,
   sanitizePhone,
+  sanitizeEmail,
   sanitizeDate,
   isSafeSvg,
   requireAdminAuth,
@@ -211,13 +212,162 @@ function readJsonFile(filename: string, fallback: any = null): any {
   return fallback;
 }
 
+// Dedicated server-only hashed credentials store (NEVER copied to public/data or all_sync.json)
+const ADMIN_CREDENTIALS_FILE = path.join(DATA_DIR, 'admin_credentials.json');
+
+interface StoredAdminCredential {
+  userId: string;
+  username: string;
+  email: string;
+  passwordHash: string;
+  updatedAt: string;
+}
+
+function hashPasswordScrypt(plainPassword: string): string {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const derived = crypto.scryptSync(plainPassword, salt, 64).toString('hex');
+  return `scrypt$${salt}$${derived}`;
+}
+
+function verifyPasswordScrypt(plainPassword: string, storedHash: string): boolean {
+  if (!plainPassword || !storedHash || typeof storedHash !== 'string') return false;
+  const parts = storedHash.split('$');
+  if (parts.length !== 3 || parts[0] !== 'scrypt') return false;
+  const [, salt, expectedHex] = parts;
+  if (!salt || !expectedHex) return false;
+  try {
+    const derived = crypto.scryptSync(plainPassword, salt, 64);
+    const expected = Buffer.from(expectedHex, 'hex');
+    return derived.length === expected.length && crypto.timingSafeEqual(derived, expected);
+  } catch {
+    return false;
+  }
+}
+
+function readAdminCredentialsFromDisk(): Record<string, StoredAdminCredential> {
+  try {
+    if (fs.existsSync(ADMIN_CREDENTIALS_FILE)) {
+      const parsed = JSON.parse(fs.readFileSync(ADMIN_CREDENTIALS_FILE, 'utf-8'));
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.error('[Admin Auth] Error reading admin_credentials.json:', err);
+  }
+  return {};
+}
+
+function writeAdminCredentialsToDisk(creds: Record<string, StoredAdminCredential>): boolean {
+  try {
+    fs.writeFileSync(ADMIN_CREDENTIALS_FILE, JSON.stringify(creds, null, 2), { encoding: 'utf-8', mode: 0o600 });
+    return true;
+  } catch (err) {
+    console.error('[Admin Auth] Error writing admin_credentials.json:', err);
+    return false;
+  }
+}
+
+function mirrorAdminCredentialsToCloud(creds: Record<string, StoredAdminCredential>): void {
+  if (process.env.SQL_HOST) {
+    backgroundQueue.enqueue('save-admin-credentials-sql', async () => {
+      await saveDbSetting('raba_admin_credentials_v1', creds).catch(() => {});
+    });
+  }
+  if (isFirestoreAdminConfigured()) {
+    adminDb
+      .collection('admin_credentials')
+      .doc('store')
+      .set({ credentials: creds, updatedAt: new Date().toISOString() }, { merge: true })
+      .catch(() => {});
+  }
+}
+
+async function loadAdminCredentialsWithCloudFallback(): Promise<Record<string, StoredAdminCredential>> {
+  let creds = readAdminCredentialsFromDisk();
+  if (Object.keys(creds).length > 0) {
+    return creds;
+  }
+  if (isFirestoreAdminConfigured()) {
+    try {
+      const snap = await adminDb.collection('admin_credentials').doc('store').get();
+      const cloudCreds = snap.exists ? snap.data()?.credentials : null;
+      if (cloudCreds && typeof cloudCreds === 'object' && Object.keys(cloudCreds).length > 0) {
+        creds = cloudCreds;
+        writeAdminCredentialsToDisk(creds);
+        return creds;
+      }
+    } catch { /* ignore */ }
+  }
+  if (process.env.SQL_HOST) {
+    try {
+      const sqlCreds = await getDbSetting('raba_admin_credentials_v1');
+      if (sqlCreds && typeof sqlCreds === 'object' && Object.keys(sqlCreds).length > 0) {
+        creds = sqlCreds;
+        writeAdminCredentialsToDisk(creds);
+        return creds;
+      }
+    } catch { /* ignore */ }
+  }
+  return creds;
+}
+
+// One-time migration: hash any legacy plaintext passwords in data/admin_users.json into data/admin_credentials.json
+let adminCredentialsMigrated = false;
+function ensureAdminCredentialsMigrated(): Record<string, StoredAdminCredential> {
+  const creds = readAdminCredentialsFromDisk();
+  if (adminCredentialsMigrated && Object.keys(creds).length > 0) {
+    return creds;
+  }
+  try {
+    const users = readJsonFile('admin_users.json', []);
+    if (Array.isArray(users) && users.length > 0) {
+      let credsChanged = false;
+      let usersHadPlaintext = false;
+      const sanitizedUsers = users.map((u: any) => {
+        if (u && typeof u.password === 'string' && u.password.trim().length > 0) {
+          usersHadPlaintext = true;
+          const uid = String(u.id || '');
+          if (uid && !creds[uid]?.passwordHash) {
+            creds[uid] = {
+              userId: uid,
+              username: String(u.username || '').trim().toLowerCase(),
+              email: String(u.email || '').trim().toLowerCase(),
+              passwordHash: hashPasswordScrypt(u.password.trim()),
+              updatedAt: new Date().toISOString()
+            };
+            credsChanged = true;
+          }
+          const { password: _p, ...cleanUser } = u;
+          return cleanUser;
+        }
+        return u;
+      });
+      if (credsChanged) {
+        writeAdminCredentialsToDisk(creds);
+        mirrorAdminCredentialsToCloud(creds);
+      }
+      if (usersHadPlaintext) {
+        writeJsonFile('admin_users.json', sanitizedUsers);
+      }
+    }
+    adminCredentialsMigrated = true;
+  } catch (err) {
+    console.error('[Admin Auth] Credential migration error:', err);
+  }
+  return creds;
+}
+
 // Regenerate public/data/all_sync.json for static deployment compatibility
 function regenerateAllSyncFile(): void {
   try {
     const combinedData: Record<string, any> = {};
     for (const [key, filename] of Object.entries(STORAGE_FILE_MAP)) {
-      const data = readJsonFile(filename, null);
+      let data = readJsonFile(filename, null);
       if (data !== null) {
+        if (key === 'raba_admin_users' && Array.isArray(data)) {
+          data = data.map(({ password: _p, ...safe }: any) => safe);
+        }
         combinedData[key] = data;
       }
     }
@@ -237,7 +387,11 @@ function writeJsonFile(filename: string, data: any): boolean {
   const filePath1 = path.join(DATA_DIR, filename);
   const filePath2 = path.join(PUBLIC_DATA_DIR, filename);
   try {
-    const content = JSON.stringify(data, null, 2);
+    const safeData =
+      filename === 'admin_users.json' && Array.isArray(data)
+        ? data.map(({ password: _p, ...safe }: any) => safe)
+        : data;
+    const content = JSON.stringify(safeData, null, 2);
     fs.writeFileSync(filePath1, content, 'utf-8');
     try {
       fs.writeFileSync(filePath2, content, 'utf-8');
@@ -375,8 +529,8 @@ async function startServer() {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
   });
 
-  // 4. Block direct static access to sensitive admin user data
-  app.get('/data/admin_users.json', (_req: Request, res: Response) => {
+  // 4. Block direct static access to sensitive admin user and credential data
+  app.get(['/data/admin_users.json', '/data/admin_credentials.json'], (_req: Request, res: Response) => {
     return res.status(403).json({ success: false, error: 'Access denied' });
   });
 
@@ -492,13 +646,14 @@ async function startServer() {
     }
   }));
 
-  // Defer initial regeneration of all_sync.json so port 3000 binds immediately on startup
+  // Defer initial migration & regeneration of all_sync.json so port 3000 binds immediately on startup
   setTimeout(() => {
+    ensureAdminCredentialsMigrated();
     regenerateAllSyncFile();
   }, 1500);
 
   // --- Security Rate Limiters ---
-  const adminLoginLimiter = createRateLimiter(6, 60_000); // 6 attempts per minute
+  const adminLoginLimiter = createRateLimiter(15, 60_000); // 15 attempts per minute
   const appointmentLimiter = createRateLimiter(15, 60_000); // 15 bookings per minute
   const uploadLimiter = createRateLimiter(30, 60_000); // 30 uploads per minute
   const paymentVerifyLimiter = createRateLimiter(30, 60_000); // 30 payment verifications per minute
@@ -916,7 +1071,7 @@ async function startServer() {
     }
   });
 
-  // 4. Secure Server-Side Admin Authentication Endpoint
+  // 4. Secure Server-Side Admin Authentication Endpoint (Scrypt Hashed Credentials + Optional Env Override)
   app.post('/api/admin/login', adminLoginLimiter, async (req: Request, res: Response) => {
     try {
       const { identifier, password } = req.body || {};
@@ -927,11 +1082,77 @@ async function startServer() {
       const cleanId = String(identifier).trim().toLowerCase();
       const cleanPass = String(password).trim();
 
-      // Read admin users from server data directory (passwords NEVER leave the server)
-      const adminUsers = readJsonFile('admin_users.json', []);
-      const matchedUser = adminUsers.find((u: any) =>
-        u.username?.toLowerCase() === cleanId || u.email?.toLowerCase() === cleanId
-      );
+      // Ensure legacy plaintext passwords have been migrated to scrypt hashes
+      ensureAdminCredentialsMigrated();
+      const creds = await loadAdminCredentialsWithCloudFallback();
+
+      // Load admin users from disk and merge cloud fallback if missing
+      let adminUsers: any[] = readJsonFile('admin_users.json', []);
+      if (!Array.isArray(adminUsers)) adminUsers = [];
+
+      const findMatch = (list: any[]) =>
+        list.find(
+          (u: any) =>
+            String(u?.username || '').trim().toLowerCase() === cleanId ||
+            String(u?.email || '').trim().toLowerCase() === cleanId
+        );
+
+      let matchedUser = findMatch(adminUsers);
+
+      if (!matchedUser && isFirestoreAdminConfigured()) {
+        try {
+          const cloudUsers = await getAdminFirestoreSetting('raba_admin_users');
+          if (Array.isArray(cloudUsers)) {
+            matchedUser = findMatch(cloudUsers);
+          }
+        } catch { /* ignore */ }
+      }
+
+      if (!matchedUser && process.env.SQL_HOST) {
+        try {
+          const sqlUsers = await getDbSetting('raba_admin_users');
+          if (Array.isArray(sqlUsers)) {
+            matchedUser = findMatch(sqlUsers);
+          }
+        } catch { /* ignore */ }
+      }
+
+      // Check optional environment variable override for Super Admin (never hardcoded)
+      const envAdminPass = String(process.env.ADMIN_PASSWORD || '').trim();
+      const envAdminUser = String(process.env.ADMIN_USERNAME || 'admin').trim().toLowerCase();
+      let isMatch = false;
+
+      if (envAdminPass.length > 0 && (cleanId === envAdminUser || cleanId === 'admin@raba.sa')) {
+        if (timingSafeSecretMatch(cleanPass, envAdminPass)) {
+          isMatch = true;
+          if (!matchedUser) {
+            matchedUser = adminUsers.find((u: any) => u?.role === 'super_admin') || {
+              id: 'usr-admin-1',
+              name: 'مدير النظام',
+              nameEn: 'Super Administrator',
+              username: envAdminUser,
+              email: 'admin@raba.sa',
+              role: 'super_admin',
+              roleTitleAr: 'المدير العام والتنفيذي',
+              roleTitleEn: 'Super Administrator',
+              department: 'الإدارة التنفيذية العليا',
+              status: 'active',
+              permissions: [
+                'manage_appointments',
+                'send_notifications',
+                'manage_services',
+                'manage_packages',
+                'manage_specialists',
+                'manage_offers',
+                'manage_reviews',
+                'view_finances',
+                'manage_users',
+                'system_settings'
+              ]
+            };
+          }
+        }
+      }
 
       if (!matchedUser) {
         return res.status(401).json({ success: false, error: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
@@ -941,10 +1162,35 @@ async function startServer() {
         return res.status(403).json({ success: false, error: 'عذراً، هذا الحساب معطل حالياً من قِبل إدارة النظام.' });
       }
 
-      const validPassword = typeof matchedUser.password === 'string' ? matchedUser.password.trim() : '';
-      const passA = Buffer.from(cleanPass, 'utf-8');
-      const passB = Buffer.from(validPassword, 'utf-8');
-      const isMatch = validPassword.length > 0 && passA.length === passB.length && crypto.timingSafeEqual(passA, passB);
+      if (!isMatch) {
+        // Look up salted scrypt hash by userId first, then by normalized username/email
+        const credEntry =
+          creds[String(matchedUser.id)] ||
+          Object.values(creds).find(
+            (c) =>
+              c &&
+              ((c.username && c.username === cleanId) ||
+                (c.email && c.email === cleanId))
+          );
+
+        if (credEntry?.passwordHash) {
+          isMatch = verifyPasswordScrypt(cleanPass, credEntry.passwordHash);
+        } else if (typeof matchedUser.password === 'string' && matchedUser.password.trim().length > 0) {
+          // Emergency migration if a legacy plaintext record was loaded from an external store
+          isMatch = timingSafeSecretMatch(cleanPass, matchedUser.password.trim());
+          if (isMatch) {
+            creds[String(matchedUser.id)] = {
+              userId: String(matchedUser.id),
+              username: String(matchedUser.username || cleanId).trim().toLowerCase(),
+              email: String(matchedUser.email || '').trim().toLowerCase(),
+              passwordHash: hashPasswordScrypt(cleanPass),
+              updatedAt: new Date().toISOString()
+            };
+            writeAdminCredentialsToDisk(creds);
+            mirrorAdminCredentialsToCloud(creds);
+          }
+        }
+      }
 
       if (!isMatch) {
         return res.status(401).json({ success: false, error: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
@@ -989,6 +1235,172 @@ async function startServer() {
       });
     } catch (err: any) {
       return sendSafeError(res, 500, 'فشل معالجة تسجيل الدخول', err);
+    }
+  });
+
+  // 4a. Protected Endpoint: Save / Update Custom Admin User Credentials (Scrypt Hashed on Server)
+  app.post('/api/admin/users/credentials', adminLoginLimiter, csrfProtection, requireAdminAuth, async (req: Request, res: Response) => {
+    try {
+      const { userId, username, email, password, profile } = req.body || {};
+      const cleanUserId = String(userId || '').trim();
+      const cleanUsername = String(username || '').trim().toLowerCase();
+      const cleanEmail = sanitizeEmail(email || '');
+
+      if (!cleanUserId || !/^[a-zA-Z0-9_-]{2,128}$/.test(cleanUserId)) {
+        return res.status(400).json({ success: false, error: 'معرّف المستخدم غير صالح' });
+      }
+      if (!cleanUsername || cleanUsername.length < 2 || cleanUsername.length > 80) {
+        return res.status(400).json({ success: false, error: 'اسم المستخدم غير صالح' });
+      }
+
+      // Authorization: must be super_admin, Firebase verified admin, have manage_users permission, or updating self
+      const adminSession = (req as any).adminSession as { uid: string; username: string; role: string } | undefined;
+      const firebaseCaller = (req as any).user;
+      let callerAuthorized = Boolean(firebaseCaller);
+
+      const adminUsers: any[] = Array.isArray(readJsonFile('admin_users.json', []))
+        ? readJsonFile('admin_users.json', [])
+        : [];
+
+      if (!callerAuthorized && adminSession) {
+        if (adminSession.role === 'super_admin' || adminSession.uid === cleanUserId) {
+          callerAuthorized = true;
+        } else {
+          const callerRecord = adminUsers.find((u: any) => String(u?.id) === adminSession.uid);
+          if (
+            callerRecord &&
+            callerRecord.status !== 'suspended' &&
+            (callerRecord.role === 'super_admin' ||
+              (Array.isArray(callerRecord.permissions) && callerRecord.permissions.includes('manage_users')))
+          ) {
+            callerAuthorized = true;
+          }
+        }
+      }
+
+      if (!callerAuthorized) {
+        return res.status(403).json({
+          success: false,
+          error: 'غير مصرح لك بتعديل بيانات دخول هذا المستخدم'
+        });
+      }
+
+      const duplicate = adminUsers.find(
+        (u: any) =>
+          String(u?.id || '') !== cleanUserId &&
+          (String(u?.username || '').trim().toLowerCase() === cleanUsername ||
+            (cleanEmail && String(u?.email || '').trim().toLowerCase() === cleanEmail))
+      );
+      if (duplicate) {
+        return res.status(409).json({
+          success: false,
+          error: 'اسم المستخدم أو البريد الإلكتروني مستخدم بالفعل لحساب آخر'
+        });
+      }
+
+      ensureAdminCredentialsMigrated();
+      const creds = await loadAdminCredentialsWithCloudFallback();
+
+      const hasNewPassword = typeof password === 'string' && password.trim().length > 0;
+      if (hasNewPassword) {
+        const cleanPass = password.trim();
+        if (cleanPass.length < 4 || cleanPass.length > 128) {
+          return res.status(400).json({
+            success: false,
+            error: 'يجب أن تتكون كلمة المرور من 4 إلى 128 حرفاً'
+          });
+        }
+        creds[cleanUserId] = {
+          userId: cleanUserId,
+          username: cleanUsername,
+          email: cleanEmail || creds[cleanUserId]?.email || '',
+          passwordHash: hashPasswordScrypt(cleanPass),
+          updatedAt: new Date().toISOString()
+        };
+      } else if (creds[cleanUserId]) {
+        // Keep existing passwordHash while syncing updated username / email
+        creds[cleanUserId] = {
+          ...creds[cleanUserId],
+          username: cleanUsername,
+          email: cleanEmail || creds[cleanUserId].email,
+          updatedAt: new Date().toISOString()
+        };
+      }
+
+      writeAdminCredentialsToDisk(creds);
+      mirrorAdminCredentialsToCloud(creds);
+
+      // Atomically upsert non-sensitive user profile into data/admin_users.json so login works immediately
+      if (profile && typeof profile === 'object') {
+        const { password: _ignoredPass, ...safeProfile } = profile;
+        const normalizedProfile = {
+          ...safeProfile,
+          id: cleanUserId,
+          username: String(profile.username || username).trim(),
+          email: cleanEmail || String(profile.email || '').trim()
+        };
+        const existingIdx = adminUsers.findIndex((u: any) => String(u?.id) === cleanUserId);
+        if (existingIdx >= 0) {
+          adminUsers[existingIdx] = { ...adminUsers[existingIdx], ...normalizedProfile };
+        } else {
+          adminUsers.unshift(normalizedProfile);
+        }
+        writeJsonFile('admin_users.json', adminUsers);
+        if (isFirestoreAdminConfigured()) {
+          saveAdminFirestoreSetting('raba_admin_users', adminUsers).catch(() => {});
+        }
+        if (process.env.SQL_HOST) {
+          backgroundQueue.enqueue('save-db-setting-raba_admin_users', async () => {
+            await saveDbSetting('raba_admin_users', adminUsers).catch(() => {});
+          });
+        }
+      }
+
+      return res.json({
+        success: true,
+        hasPassword: Boolean(creds[cleanUserId]?.passwordHash)
+      });
+    } catch (err: any) {
+      return sendSafeError(res, 500, 'تعذر حفظ بيانات الدخول على الخادم', err);
+    }
+  });
+
+  // 4a-2. Protected Endpoint: Delete Server Credentials when Admin User is Deleted
+  app.delete('/api/admin/users/credentials/:userId', csrfProtection, requireAdminAuth, async (req: Request, res: Response) => {
+    try {
+      const targetUserId = String(req.params.userId || '').trim();
+      if (!targetUserId || !/^[a-zA-Z0-9_-]{2,128}$/.test(targetUserId)) {
+        return res.status(400).json({ success: false, error: 'معرّف المستخدم غير صالح' });
+      }
+
+      const adminSession = (req as any).adminSession as { uid: string; username: string; role: string } | undefined;
+      const firebaseCaller = (req as any).user;
+      if (!firebaseCaller && adminSession?.role !== 'super_admin') {
+        return res.status(403).json({ success: false, error: 'صلاحية الحذف محصورة بالمدير العام فقط' });
+      }
+      if (adminSession?.uid === targetUserId) {
+        return res.status(400).json({ success: false, error: 'لا يمكنك حذف حسابك النشط' });
+      }
+
+      ensureAdminCredentialsMigrated();
+      const creds = await loadAdminCredentialsWithCloudFallback();
+      if (creds[targetUserId]) {
+        delete creds[targetUserId];
+        writeAdminCredentialsToDisk(creds);
+        mirrorAdminCredentialsToCloud(creds);
+      }
+
+      const adminUsers: any[] = readJsonFile('admin_users.json', []);
+      if (Array.isArray(adminUsers)) {
+        const filtered = adminUsers.filter((u: any) => String(u?.id) !== targetUserId);
+        if (filtered.length !== adminUsers.length) {
+          writeJsonFile('admin_users.json', filtered);
+        }
+      }
+
+      return res.json({ success: true });
+    } catch (err: any) {
+      return sendSafeError(res, 500, 'تعذر حذف بيانات المستخدم من الخادم', err);
     }
   });
 

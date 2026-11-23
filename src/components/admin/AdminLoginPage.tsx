@@ -131,12 +131,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({
         getFirebaseAdminProfile(fbUser),
       ]);
       const adminUser = authenticateAdminWithGoogle(
-        {
-          uid: fbUser.uid,
-          email: fbUser.email,
-          displayName: fbUser.displayName,
-          photoURL: fbUser.photoURL
-        },
+        fbUser,
         isVerified,
         rememberMe,
         cloudProfile

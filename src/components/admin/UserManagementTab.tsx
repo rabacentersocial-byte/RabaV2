@@ -27,7 +27,12 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { AdminUser, BranchAccessScope, PermissionId, UserRole } from '../../types';
-import { SYSTEM_PERMISSIONS, ROLE_PRESETS } from '../../data/adminData';
+import {
+  SYSTEM_PERMISSIONS,
+  ROLE_PRESETS,
+  saveAdminUserCredentialsOnServer,
+  deleteAdminUserCredentialsOnServer
+} from '../../data/adminData';
 import { BranchItem, getStoredBranchesData } from '../../data/branchesData';
 import { getCleanBranchDisplayName, getEffectiveBranchScope } from '../../utils/branchPermissions';
 import { provisionStaffFirebaseAccount } from '../../lib/firebase';
@@ -334,6 +339,40 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
     const roleTitleEn = preset ? preset.titleEn : 'Custom Role';
     const cleanPass = formPassword.trim();
     const cleanEmail = formEmail.trim();
+    const cleanUsername = formUsername.trim();
+
+    // Check duplicate username or email among other users
+    const duplicateUser = users.find(
+      (u) =>
+        u.id !== editingUser?.id &&
+        (u.username.trim().toLowerCase() === cleanUsername.toLowerCase() ||
+          u.email.trim().toLowerCase() === cleanEmail.toLowerCase())
+    );
+    if (duplicateUser) {
+      setFormError(
+        isArabic
+          ? 'اسم المستخدم أو البريد الإلكتروني مستخدم بالفعل لحساب آخر.'
+          : 'Username or email is already used by another account.'
+      );
+      return;
+    }
+
+    if (!editingUser && cleanPass.length < 4) {
+      setFormError(
+        isArabic
+          ? 'يرجى إدخال كلمة مرور مخصصة من 4 أحرف على الأقل لحساب المستخدم الجديد.'
+          : 'Please enter a custom password of at least 4 characters for the new user.'
+      );
+      return;
+    }
+    if (editingUser && cleanPass.length > 0 && cleanPass.length < 4) {
+      setFormError(
+        isArabic
+          ? 'كلمة المرور الجديدة يجب أن تتكون من 4 أحرف على الأقل.'
+          : 'New password must be at least 4 characters long.'
+      );
+      return;
+    }
 
     setIsSavingUser(true);
     try {
@@ -359,10 +398,11 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
         let savedUser: AdminUser | null = null;
         const updatedList = users.map((u) => {
           if (u.id === editingUser.id) {
+            const { password: _oldPass, ...restUser } = u;
             savedUser = {
-              ...u,
+              ...restUser,
               name: formName.trim(),
-              username: formUsername.trim(),
+              username: cleanUsername,
               email: cleanEmail,
               phone: formPhone.trim() || u.phone,
               department: formDepartment.trim(),
@@ -374,7 +414,6 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
               avatarPosition: formAvatarPosition,
               avatarZoom: formAvatarZoom,
               avatarBgColor: formAvatarBgColor,
-              password: cleanPass || u.password || 'raba',
               permissions: formPermissions,
               branchScope: effectiveScope,
               assignedBranches: effectiveAssignedBranches,
@@ -384,6 +423,24 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
           }
           return u;
         });
+
+        if (savedUser) {
+          const credResult = await saveAdminUserCredentialsOnServer({
+            userId: editingUser.id,
+            username: cleanUsername,
+            email: cleanEmail,
+            password: cleanPass || undefined,
+            profile: savedUser
+          });
+          if (!credResult.success) {
+            setFormError(
+              credResult.error ||
+                (isArabic ? 'تعذر حفظ بيانات الدخول على الخادم.' : 'Failed to save credentials on server.')
+            );
+            setIsSavingUser(false);
+            return;
+          }
+        }
 
         if (cleanAvatar) {
           await savePersistentImage(`admin_avatar_${editingUser.id}`, cleanAvatar).catch(() => {});
@@ -397,9 +454,11 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
           if (myUpdated) onSwitchUser(myUpdated);
         }
         showToast(
-          cloudAuthLinked
-            ? (isArabic ? 'تم تحديث الحساب وتفعيل الربط السحابي التلقائي بنجاح' : 'User updated & cloud auto-sync enabled')
-            : (isArabic ? 'تم تحديث بيانات المستخدم وصلاحيات الفروع بنجاح' : 'User & branch permissions updated')
+          cleanPass
+            ? (isArabic ? 'تم تحديث الحساب وحفظ كلمة المرور الجديدة بنجاح' : 'User updated & new password saved securely')
+            : cloudAuthLinked
+              ? (isArabic ? 'تم تحديث الحساب وتفعيل الربط السحابي التلقائي بنجاح' : 'User updated & cloud auto-sync enabled')
+              : (isArabic ? 'تم تحديث بيانات المستخدم وصلاحيات الفروع بنجاح' : 'User & branch permissions updated')
         );
       } else {
         const newUserId = 'usr-' + Date.now();
@@ -408,7 +467,7 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
           ...(provisionedUid ? { firebaseUid: provisionedUid } : {}),
           name: formName.trim(),
           nameEn: formName.trim(),
-          username: formUsername.trim(),
+          username: cleanUsername,
           email: cleanEmail,
           phone: formPhone.trim() || '+966 50 000 0000',
           role: formRole,
@@ -420,13 +479,28 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
           avatarPosition: formAvatarPosition,
           avatarZoom: formAvatarZoom,
           avatarBgColor: formAvatarBgColor,
-          password: cleanPass || 'raba',
           permissions: formPermissions,
           branchScope: effectiveScope,
           assignedBranches: effectiveAssignedBranches,
           createdAt: new Date().toISOString().split('T')[0],
           lastLogin: isArabic ? 'لم يسجل دخول بعد' : 'Never'
         };
+
+        const credResult = await saveAdminUserCredentialsOnServer({
+          userId: newUserId,
+          username: cleanUsername,
+          email: cleanEmail,
+          password: cleanPass,
+          profile: newUser
+        });
+        if (!credResult.success) {
+          setFormError(
+            credResult.error ||
+              (isArabic ? 'تعذر حفظ اسم المستخدم وكلمة المرور على الخادم.' : 'Failed to save credentials on server.')
+          );
+          setIsSavingUser(false);
+          return;
+        }
 
         if (cleanAvatar) {
           await savePersistentImage(`admin_avatar_${newUserId}`, cleanAvatar).catch(() => {});
@@ -435,8 +509,8 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
         await saveAdminUserToFirestore(newUser, provisionedUid).catch(() => {});
         showToast(
           cloudAuthLinked
-            ? (isArabic ? 'تم إنشاء الحساب وتفعيل الربط السحابي التلقائي للموظف بنجاح' : 'Staff account created with automatic cloud sync')
-            : (isArabic ? 'تم إنشاء الحساب وتخصيص صلاحيات الفروع بنجاح' : 'User created with branch routing permissions')
+            ? (isArabic ? 'تم إنشاء الحساب وحفظ كلمة المرور وتفعيل الربط السحابي بنجاح' : 'Staff account created with password & cloud sync')
+            : (isArabic ? 'تم إنشاء الحساب وحفظ بيانات الدخول بنجاح' : 'User created & login credentials saved')
         );
 
         try {
@@ -482,6 +556,7 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
     const updated = users.filter(u => u.id !== userToDelete.id);
     onUpdateUsers(updated);
     deleteAdminUserFromFirestore(userToDelete.id, userToDelete.firebaseUid).catch(() => {});
+    deleteAdminUserCredentialsOnServer(userToDelete.id).catch(() => {});
     setUserToDelete(null);
     showToast(isArabic ? 'تم حذف المستخدم بنجاح' : 'User deleted successfully');
   };
@@ -1082,22 +1157,26 @@ export const UserManagementTab: React.FC<UserManagementTabProps> = ({
                 <div>
                   <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
                     {editingUser 
-                      ? (isArabic ? 'كلمة المرور (اتركه فارغاً للإبقاء):' : 'Password (leave blank to keep):')
+                      ? (isArabic ? 'كلمة المرور (اتركه فارغاً للإبقاء على الحالية):' : 'Password (leave blank to keep current):')
                       : (isArabic ? 'كلمة المرور للدخول:' : 'Login Password:')}
+                    {!editingUser && <span className="text-rose-500"> *</span>}
                   </label>
                   <input
                     type="password"
+                    required={!editingUser}
+                    minLength={4}
+                    autoComplete="new-password"
                     value={formPassword}
                     onChange={(e) => setFormPassword(e.target.value)}
-                    placeholder={editingUser ? (isArabic ? '•••••••• (غير معدل)' : 'Unchanged') : (isArabic ? '6 أحرف فأكثر للربط السحابي التلقائي' : '6+ chars for auto cloud sync')}
+                    placeholder={editingUser ? (isArabic ? '•••••••• (غير معدلة)' : 'Unchanged') : (isArabic ? 'أدخل كلمة مرور من 4 أحرف فأكثر' : 'Enter password (4+ chars)')}
                     className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-white/15 text-slate-900 dark:text-white rounded-xl p-2.5 text-xs outline-none focus:ring-2 focus:ring-emerald-500/40 font-mono"
                   />
                   <p className="text-[10px] text-emerald-700 dark:text-emerald-300/90 mt-1 flex items-center gap-1">
                     <Cloud className="w-3 h-3 shrink-0" />
                     <span>
                       {isArabic
-                        ? 'كلمة مرور من 6 أحرف فأكثر تفعّل المزامنة السحابية تلقائياً لهذا الموظف بدون الحاجة لـ Google.'
-                        : 'A password of 6+ characters enables automatic cloud sync on login without requiring Google.'}
+                        ? 'تُحفظ كلمة المرور مشفرة على الخادم مباشرة، ويمكن للموظف الدخول باسم المستخدم أو البريد الإلكتروني فور الحفظ.'
+                        : 'Password is encrypted and saved on the server immediately so the staff member can sign in with username or email right away.'}
                     </span>
                   </p>
                 </div>

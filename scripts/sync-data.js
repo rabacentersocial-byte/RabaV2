@@ -43,8 +43,10 @@ const STORAGE_FILE_MAP = {
   raba_admin_users: 'admin_users.json'
 };
 
-// Copy all JSON files from data/ to public/data/
-const dataFiles = fs.readdirSync(DATA_DIR).filter(f => f.endsWith('.json'));
+// Copy all JSON files from data/ to public/data/ (excluding server-only credentials)
+const dataFiles = fs
+  .readdirSync(DATA_DIR)
+  .filter(f => f.endsWith('.json') && f !== 'admin_credentials.json');
 const combinedData = {};
 
 for (const file of dataFiles) {

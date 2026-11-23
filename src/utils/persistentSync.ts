@@ -28,6 +28,28 @@ export function getAdminHeaders(): Record<string, string> {
   return headers;
 }
 
+/**
+ * Async version of getAdminHeaders that also attaches the live Firebase Auth Bearer ID token
+ * whenever available so both Google-authenticated and password-authenticated admins pass requireAdminAuth.
+ */
+export async function getAdminHeadersAsync(): Promise<Record<string, string>> {
+  const headers = getAdminHeaders();
+  try {
+    const { getLazyAuth } = await import('../lib/firebase');
+    const authInstance = await getLazyAuth();
+    const fbUser = authInstance.currentUser;
+    if (fbUser && typeof fbUser.getIdToken === 'function') {
+      const idToken = await fbUser.getIdToken();
+      if (idToken) {
+        headers['Authorization'] = `Bearer ${idToken}`;
+      }
+    }
+  } catch {
+    // ignore if Firebase Auth is not initialized or user is not signed in via Firebase
+  }
+  return headers;
+}
+
 export interface SyncStatus {
   status: 'online' | 'offline' | 'error';
   persistent: boolean;
@@ -515,9 +537,10 @@ export async function savePersistentModule<T>(key: string, data: T): Promise<boo
   // 4. Save to server persistent API endpoint (which also writes to Firestore admin SDK)
   let apiSaved = false;
   try {
+    const headers = await getAdminHeadersAsync();
     const res = await fetch('/api/sync/save', {
       method: 'POST',
-      headers: getAdminHeaders(),
+      headers,
       body: JSON.stringify({ key, data })
     });
     if (res.ok) {
@@ -554,9 +577,10 @@ export async function deletePersistentModule(key: string, collectionName?: strin
     }
 
     // Server deletion
+    const headers = await getAdminHeadersAsync();
     const res = await fetch('/api/sync/delete', {
       method: 'POST',
-      headers: getAdminHeaders(),
+      headers,
       body: JSON.stringify({ key, collectionName, id })
     });
 
@@ -594,9 +618,10 @@ export async function syncAllToDiskNow(): Promise<{ success: boolean; count: num
       }
     }
 
+    const headers = await getAdminHeadersAsync();
     const res = await fetch('/api/sync/bake', {
       method: 'POST',
-      headers: getAdminHeaders(),
+      headers,
       body: JSON.stringify({ all: payload })
     });
 

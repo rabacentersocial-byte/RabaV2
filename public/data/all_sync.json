@@ -1,6 +1,6 @@
 {
   "success": true,
-  "timestamp": "2026-11-21T23:16:11.507Z",
+  "timestamp": "2026-11-23T15:36:54.678Z",
   "data": {
     "raba_site_logo_v3": {
       "logoSource": "custom",
@@ -12303,21 +12303,6 @@
         "isActive": true
       }
     ],
-    "raba_announcement_bar_v1": {
-      "enabled": true,
-      "badgeAr": "إعلان هام",
-      "badgeEn": "Notice",
-      "messageAr": "المنصة الإلكترونية الجديدة لمركز رابا - النسخة التجريبية ",
-      "messageEn": "The New Raba Center Online Platform – Beta Version",
-      "ctaTextAr": "احجز موعدك الآن",
-      "ctaTextEn": "Book Now",
-      "ctaAction": "booking",
-      "ctaUrl": "",
-      "iconName": "calendar",
-      "styleVariant": "theme_glass",
-      "dismissible": true,
-      "updatedAt": "2026-11-19T17:55:25.961Z"
-    },
     "raba_admin_users": [
       {
         "id": "usr-admin-1",
@@ -12332,7 +12317,6 @@
         "department": "الإدارة التنفيذية العليا",
         "status": "active",
         "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
-        "password": "admin",
         "permissions": [
           "manage_appointments",
           "send_notifications",
@@ -12361,7 +12345,6 @@
         "department": "إدارة الجودة والتشغيل",
         "status": "active",
         "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80",
-        "password": "raba",
         "permissions": [
           "manage_appointments",
           "send_notifications",
@@ -12388,7 +12371,6 @@
         "department": "القسم الطبي والتأهيلي",
         "status": "active",
         "avatar": "/specialists/hanaa_basheer.jpg",
-        "password": "raba",
         "permissions": [
           "manage_appointments",
           "send_notifications",
@@ -12412,7 +12394,6 @@
         "department": "خدمة العملاء والاستقبال",
         "status": "active",
         "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
-        "password": "raba",
         "permissions": [
           "manage_appointments",
           "send_notifications",
@@ -12434,7 +12415,6 @@
         "department": "الإدارة المالية والحسابات",
         "status": "active",
         "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
-        "password": "raba",
         "permissions": [
           "view_finances",
           "manage_appointments",
